@@ -1,26 +1,27 @@
-# MAK8D Dashboard
+# Rascal AI Dashboard
 
-Moderni React-pohjainen dashboard-sovellus, joka näyttää tietoja tulevista julkaisuista, sähköposteista, tilaajista ja seuraavasta sukupolven ajasta. Tiedot haetaan Airtable-tietokannasta n8n:n kautta HTTP-kutsuilla.
+Moderni React-pohjainen dashboard-sovellus, joka kokoaa markkinoinnin olennaiset tiedot yhteen näkymään: julkaisut, uutiskirjeet, tilaajat ja sisällöntuotannon aikataulut. Tiedot haetaan ulkoisista API-rajapinnoista (esim. n8n-workflow, webhookit).
 
 ## Ominaisuudet
 
 - 🎨 Moderni ja responsiivinen käyttöliittymä
-- 📊 Dashboard-näkymä keskeisille tiedoille
-- 📝 Tulevien julkaisujen seuranta
-- 📧 Sähköpostien tilastot ja analyysi
-- 👥 Tilaajien hallinta ja seuranta
-- ⏰ Seuraavan sukupolven ajan laskenta
+- 📊 Dashboard-näkymä keskeisille markkinointitiedoille
+- 📝 Tulevien julkaisujen ja sähköpostien seuranta
+- 👥 Tilaajien kasvu ja analytiikka
+- ⏰ Sisällöntuotannon sykli ja seuraavan julkaisun aikataulu
 - 🔄 Reaaliaikainen tietojen päivitys
 - 📱 Mobiiliystävällinen design
+- 🔐 Kirjautuminen modaalina etusivulla
+- 🖼️ Oma favicon ja brändi-ilme
 
 ## Teknologiat
 
-- **React 19** - Moderni käyttöliittymä
-- **Vite** - Nopea kehitysympäristö
-- **Axios** - HTTP-kutsut
-- **CSS Grid & Flexbox** - Responsiivinen layout
-- **n8n** - Workflow-automaatio
-- **Airtable** - Tietokanta
+- **React** – Käyttöliittymä
+- **Vite** – Nopea kehitysympäristö
+- **Axios** – HTTP-kutsut
+- **CSS (Flexbox & Grid)** – Responsiivinen ulkoasu
+- **n8n** – Workflow-automaatio ja API-rajapinnat
+- **Ulkoiset backendit/webhookit** – Datan haku
 
 ## Asennus ja käyttö
 
@@ -44,55 +45,25 @@ npm run dev
 
 ## Konfiguraatio
 
-### n8n Webhook URL
+### API/Webhook URL
 
-Muokkaa `src/services/api.js` tiedostoa ja aseta oikea n8n webhook URL:
+Muokkaa `src/services/api.js` tiedostoa ja aseta oikeat API- tai webhook-osoitteet:
 
 ```javascript
-const N8N_WEBHOOK_URL = 'https://your-n8n-instance.com/webhook/dashboard'
+const API_URL = 'https://your-backend-or-n8n-instance.com/webhook/...' 
 ```
 
-### Airtable Integraatio
+### Datan rakenne
 
-n8n-workflow tulee konfiguroida hakemaan tietoja Airtable-tietokannasta ja palauttamaan ne seuraavassa muodossa:
+API:n palauttaman datan tulee olla muodossa:
 
 ```json
 {
-  "upcomingPosts": [
-    {
-      "id": 1,
-      "title": "Julkaisun otsikko",
-      "date": "2024-01-15",
-      "status": "draft",
-      "excerpt": "Julkaisun esikatselu..."
-    }
-  ],
-  "emails": [
-    {
-      "id": 1,
-      "subject": "Sähköpostin otsikko",
-      "sent": "2024-01-10",
-      "opens": 150,
-      "clicks": 45,
-      "unsubscribes": 2
-    }
-  ],
-  "subscribers": [
-    {
-      "id": 1,
-      "email": "user@example.com",
-      "joined": "2024-01-01",
-      "status": "active",
-      "lastActivity": "2024-01-14"
-    }
-  ],
-  "nextGenerationTime": "2024-01-25T10:00:00Z",
-  "stats": {
-    "totalSubscribers": 1250,
-    "activeSubscribers": 1180,
-    "averageOpenRate": 0.75,
-    "averageClickRate": 0.25
-  }
+  "upcomingPosts": [ ... ],
+  "emails": [ ... ],
+  "subscribers": [ ... ],
+  "nextGenerationTime": "...",
+  "stats": { ... }
 }
 ```
 
@@ -102,33 +73,26 @@ n8n-workflow tulee konfiguroida hakemaan tietoja Airtable-tietokannasta ja palau
 src/
 ├── App.jsx              # Pääkomponentti
 ├── App.css              # Tyylit
+├── pages/               # Sivukomponentit (mm. LandingPage, DashboardPage)
 ├── services/
 │   └── api.js           # API-kutsut ja mock-data
 └── assets/              # Kuvat ja muut resurssit
+public/
+└── favicon.png          # Favicon ja muut julkiset resurssit
 ```
 
 ## Kehitys
 
-### Mock-data
-
-Sovellus käyttää tällä hetkellä mock-dataa testausta varten. Oikean n8n-integraation lisäämiseksi:
-
-1. Kommentoi pois mock-data käyttö `App.jsx`:ssä
-2. Poista kommentit API-kutsuista `api.js`:ssä
-3. Aseta oikea n8n webhook URL
-
-### Uusien ominaisuuksien lisääminen
-
-1. Lisää uusi API-funktio `api.js`:ssä
-2. Päivitä `App.jsx` käyttämään uutta dataa
-3. Lisää tarvittavat CSS-tyylit `App.css`:ssä
+- Sovellus käyttää mock-dataa, jos ulkoista APIa ei ole määritelty.
+- Kirjautuminen avautuu modaalina etusivulla (ei erillistä kirjautumissivua).
+- Ulkoasu ja brändi noudattavat Rascal AI -ilmettä.
 
 ## Skriptit
 
-- `npm run dev` - Käynnistä kehityspalvelin
-- `npm run build` - Rakenna tuotantoversio
-- `npm run preview` - Esikatsele tuotantoversio
-- `npm run lint` - Tarkista koodin laatu
+- `npm run dev` – Käynnistä kehityspalvelin
+- `npm run build` – Rakenna tuotantoversio
+- `npm run preview` – Esikatsele tuotantoversio
+- `npm run lint` – Tarkista koodin laatu
 
 ## Lisenssi
 

@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 const placeholderImages = [
   'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
@@ -11,16 +12,41 @@ const placeholderImages = [
 
 export default function LandingPage() {
   const navigate = useNavigate()
+  const [showLogin, setShowLogin] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
+    try {
+      const res = await axios.post('https://samikiias.app.n8n.cloud/webhook-test/06ae4c0b-1f13-4688-afad-9bf11d51fd0f', { email, password })
+      if (res.data.success) {
+        setShowLogin(false)
+        // Voit halutessasi tallentaa tokenin/localStorageen tms.
+      } else {
+        setError(res.data.message || 'Kirjautuminen epäonnistui')
+      }
+    } catch {
+      setError('Virhe palvelinyhteydessä')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div style={{minHeight: '100vh', minWidth: '100vw', background: 'var(--brand-dark)', display: 'flex', flexDirection: 'column'}}>
       {/* Ylänavigaatio */}
       <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 6vw 0 6vw'}}>
         <div style={{display: 'flex', alignItems: 'center', gap: 16}}>
           {/* Logo tai pelkkä nimi */}
-          <div style={{width: 44, height: 44, borderRadius: '50%', background: 'var(--brand-green)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 22, color: 'var(--brand-black)'}}>R</div>
+          <img src="/favicon.png" alt="Rascal AI logo" style={{width: 44, height: 44, borderRadius: '50%', objectFit: 'cover', background: 'var(--brand-green)'}} />
           <span style={{color: '#fff', fontWeight: 800, fontSize: 26, letterSpacing: 1}}>Rascal AI</span>
         </div>
-        <button onClick={() => navigate('/login')} style={{padding: '12px 32px', fontSize: 18, borderRadius: 8, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.10)'}}>Kirjaudu sisään</button>
+        <button onClick={() => setShowLogin(true)} style={{padding: '12px 32px', fontSize: 18, borderRadius: 8, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.10)'}}>Kirjaudu sisään</button>
       </div>
       {/* Hero-osio: vasemmalla tekstit ja laatikko allekkain, oikealla iso kuva */}
       <div style={{flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: '0 6vw', gap: 32, marginTop: 8}}>
@@ -98,6 +124,23 @@ export default function LandingPage() {
           </ul>
         </div>
       </div>
+      {/* Kirjautumismodaali */}
+      {showLogin && (
+        <div onClick={() => setShowLogin(false)} style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.25)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <div onClick={e => e.stopPropagation()} style={{background: '#fff', borderRadius: 20, boxShadow: '0 4px 32px rgba(0,0,0,0.18)', border: '1px solid #e1e8ed', padding: 48, maxWidth: 520, width: '95vw', position: 'relative', fontFamily: 'inherit'}}>
+            <button onClick={() => setShowLogin(false)} style={{position: 'absolute', top: 20, right: 20, background: '#f7fafc', border: '1px solid #e1e8ed', borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontWeight: 600, fontSize: 16}}>Sulje</button>
+            <form onSubmit={handleLogin} style={{display: 'flex', flexDirection: 'column', gap: 20}}>
+              <h1 style={{marginBottom: 8, color: 'var(--brand-dark)', fontWeight: 800, fontSize: 28}}>Kirjaudu sisään</h1>
+              <input type="email" placeholder="Sähköposti" value={email} onChange={e => setEmail(e.target.value)} required style={{width: '100%', marginBottom: 0, borderRadius: 12, border: '1px solid #e1e8ed', padding: '16px 18px', fontSize: 17, background: '#f7fafc', color: '#222', outline: 'none', fontFamily: 'inherit'}} />
+              <input type="password" placeholder="Salasana" value={password} onChange={e => setPassword(e.target.value)} required style={{width: '100%', marginBottom: 0, borderRadius: 12, border: '1px solid #e1e8ed', padding: '16px 18px', fontSize: 17, background: '#f7fafc', color: '#222', outline: 'none', fontFamily: 'inherit'}} />
+              <button type="submit" disabled={loading} style={{width: '100%', background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 10, padding: '14px 0', fontWeight: 700, fontSize: 19, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.10)', marginTop: 8}}>
+                {loading ? 'Kirjaudutaan...' : 'Kirjaudu'}
+              </button>
+              {error && <div style={{color: '#e53e3e', marginTop: 8, fontWeight: 600}}>{error}</div>}
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 } 

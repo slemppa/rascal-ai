@@ -30,7 +30,7 @@ export default function App() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetchDashboardData()
+    fetchDashboardData()
     }
   }, [isAuthenticated])
 

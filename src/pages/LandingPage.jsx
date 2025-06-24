@@ -10,25 +10,32 @@ const placeholderImages = [
   'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=400&q=80',
 ]
 
-export default function LandingPage() {
+export default function LandingPage({ onLogin }) {
   const navigate = useNavigate()
   const [showLogin, setShowLogin] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
+  const isAuthenticated = !!localStorage.getItem('token')
 
   const handleLogin = async (e) => {
     e.preventDefault()
     setError(null)
     setLoading(true)
     try {
-      const res = await axios.post('https://samikiias.app.n8n.cloud/webhook-test/06ae4c0b-1f13-4688-afad-9bf11d51fd0f', { email, password })
-      if (res.data.success) {
-        setShowLogin(false)
-        // Voit halutessasi tallentaa tokenin/localStorageen tms.
+      const res = await axios.post('https://samikiias.app.n8n.cloud/webhook/06ae4c0b-1f13-4688-afad-9bf11d51fd0f', { email, password })
+      // Oletetaan, että vastaus on taulukko, jossa on yksi objekti tai error-objekti
+      if (res.data && res.data.error) {
+        setError(res.data.error)
       } else {
-        setError(res.data.message || 'Kirjautuminen epäonnistui')
+        const data = Array.isArray(res.data) ? res.data[0] : res.data
+        if (data && data.token && data.user) {
+          setShowLogin(false)
+          if (onLogin) onLogin(data.token, data.user)
+        } else {
+          setError('Kirjautuminen epäonnistui')
+        }
       }
     } catch {
       setError('Virhe palvelinyhteydessä')
@@ -46,7 +53,9 @@ export default function LandingPage() {
           <img src="/favicon.png" alt="Rascal AI logo" style={{width: 44, height: 44, borderRadius: '50%', objectFit: 'cover', background: 'var(--brand-green)'}} />
           <span style={{color: '#fff', fontWeight: 800, fontSize: 26, letterSpacing: 1}}>Rascal AI</span>
         </div>
-        <button onClick={() => setShowLogin(true)} style={{padding: '12px 32px', fontSize: 18, borderRadius: 8, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.10)'}}>Kirjaudu sisään</button>
+        {!isAuthenticated && (
+          <button onClick={() => setShowLogin(true)} style={{padding: '12px 32px', fontSize: 18, borderRadius: 8, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.10)'}}>Kirjaudu sisään</button>
+        )}
       </div>
       {/* Hero-osio: vasemmalla tekstit ja laatikko allekkain, oikealla iso kuva */}
       <div style={{flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: '0 6vw', gap: 32, marginTop: 8}}>

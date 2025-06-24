@@ -58,7 +58,7 @@ export default function LandingPage({ onLogin }) {
         )}
       </div>
       {/* Hero-osio: vasemmalla tekstit ja laatikko allekkain, oikealla iso kuva */}
-      <div style={{flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: '0 6vw', gap: 32, marginTop: 8}}>
+      <div className="landing-hero" style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 6vw', gap: 32, marginTop: 8}}>
         {/* Vasemmalla: tekstit ja laatikko allekkain */}
         <div style={{maxWidth: 520, color: '#fff', textAlign: 'left', flex: 1, display: 'flex', flexDirection: 'column', gap: 24}}>
           <h1 style={{fontSize: 36, fontWeight: 800, marginBottom: 0}}>Näe markkinointisi yhdellä silmäyksellä 🧠</h1>
@@ -78,14 +78,14 @@ export default function LandingPage({ onLogin }) {
           </div>
         </div>
         {/* Oikealla: iso kuva */}
-        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <div className="hero-image" style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <div style={{width: 320, height: 400, borderRadius: 24, overflow: 'hidden', boxShadow: '0 2px 24px rgba(0,0,0,0.22)', background: '#222'}}>
             <img src={placeholderImages[0]} alt="placeholder" style={{width: '100%', height: '100%', objectFit: 'cover'}} />
           </div>
         </div>
       </div>
       {/* Kaikki laatikot riviin, mukaan lukien laatikko 6 */}
-      <div style={{display: 'flex', flexDirection: 'row', gap: 24, justifyContent: 'center', margin: '24px 0 0 0', flexWrap: 'wrap', paddingBottom: 64}}>
+      <div className="landing-feature-row" style={{display: 'flex', gap: 24, justifyContent: 'center', margin: '24px 0 0 0', flexWrap: 'wrap', paddingBottom: 64}}>
         {/* Laatikko 1 */}
         <div style={{background: '#23272f', borderRadius: 16, padding: '28px 32px', color: '#fff', fontWeight: 500, fontSize: 17, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', width: 320, minHeight: 260, display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
           <div style={{fontWeight: 700, fontSize: 18, marginBottom: 12}}>Säästä aikaa. Pysy kartalla. Tee parempia päätöksiä.</div>

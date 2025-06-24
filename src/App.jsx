@@ -27,6 +27,7 @@ export default function App() {
   const [error, setError] = useState(null)
   const location = useLocation()
   const navigate = useNavigate()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -133,6 +134,31 @@ export default function App() {
           <button onClick={handleLogout} style={{width: '100%', background: '#fff', color: 'var(--brand-dark)', border: 'none', borderRadius: 6, padding: '10px 0', fontWeight: 600, fontSize: 16, cursor: 'pointer'}}>Kirjaudu ulos</button>
         </div>
       </nav>
+
+      {/* Hampurilaisikoni mobiilissa */}
+      <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(open => !open)}>
+        <span style={{fontSize: 32, color: 'var(--brand-dark)'}}>☰</span>
+      </button>
+
+      {/* Mobiilivalikko overlay */}
+      {mobileMenuOpen && (
+        <div className="mobile-menu-overlay" onClick={() => setMobileMenuOpen(false)}>
+          <nav className="mobile-menu" onClick={e => e.stopPropagation()}>
+            <button className="mobile-menu-close" onClick={() => setMobileMenuOpen(false)}>&times;</button>
+            <h2 style={{margin: '0 0 1.5rem 0', color: 'var(--brand-dark)'}}>Rascal AI</h2>
+            <ul className="nav-menu">
+              <li className="nav-item"><Link to="/dashboard" className={`nav-link${location.pathname === '/dashboard' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">🏠</span>Dashboard</Link></li>
+              <li className="nav-item"><Link to="/posts" className={`nav-link${location.pathname === '/posts' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📝</span>Manage Posts</Link></li>
+              <li className="nav-item"><Link to="/strategy" className={`nav-link${location.pathname === '/strategy' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📊</span>Content Strategy</Link></li>
+              <li className="nav-item"><Link to="/email" className={`nav-link${location.pathname === '/email' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📧</span>Email Marketing</Link></li>
+              <li className="nav-item"><Link to="/reports" className={`nav-link${location.pathname === '/reports' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📈</span>Reports</Link></li>
+              <li className="nav-item"><Link to="/ai-chat" className={`nav-link${location.pathname === '/ai-chat' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">🤖</span>AI Chat</Link></li>
+              <li className="nav-item"><Link to="/settings" className={`nav-link${location.pathname === '/settings' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">⚙️</span>Settings</Link></li>
+            </ul>
+            <button onClick={() => { setMobileMenuOpen(false); handleLogout(); }} style={{width: '100%', background: 'var(--brand-dark)', color: '#fff', border: 'none', borderRadius: 6, padding: '12px 0', fontWeight: 600, fontSize: 18, cursor: 'pointer', marginTop: 24}}>Kirjaudu ulos</button>
+          </nav>
+        </div>
+      )}
 
       {/* Pääsisältö */}
       <main className="main-content">

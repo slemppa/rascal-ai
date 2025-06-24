@@ -512,3 +512,157 @@ body {
     gap: 0.75rem;
   }
 }
+
+@media (max-width: 600px) {
+  .sidebar {
+    display: none;
+  }
+  .main-content {
+    margin-left: 0;
+    padding: 1rem 0.5rem;
+  }
+  .app {
+    flex-direction: column;
+  }
+  .dashboard-grid,
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .dashboard-card,
+  .stat-card {
+    min-width: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+  .dashboard-section,
+  .section-list,
+  .section-card {
+    min-width: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+  .content-header h1 {
+    font-size: 1.2rem;
+  }
+  .nav-menu {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+  }
+  .nav-item {
+    margin: 0 0.5rem 0 0;
+    white-space: nowrap;
+  }
+  .mobile-menu-btn {
+    display: block;
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 1201;
+    background: #fff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    padding: 8px 14px;
+    cursor: pointer;
+  }
+  .mobile-menu-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.25);
+    z-index: 1200;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+  .mobile-menu {
+    background: #fff;
+    width: 80vw;
+    max-width: 320px;
+    min-height: 100vh;
+    box-shadow: -2px 0 16px rgba(0,0,0,0.10);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    animation: slideInMenu 0.2s;
+  }
+  .mobile-menu-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: #f7fafc;
+    border: 1px solid #e1e8ed;
+    border-radius: 8px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #222;
+    cursor: pointer;
+    padding: 2px 16px;
+  }
+  .mobile-menu .nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0;
+  }
+  .mobile-menu .nav-link {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--brand-dark);
+    padding: 1rem 0;
+    border: none;
+    background: none;
+    display: block;
+    text-align: left;
+  }
+  .mobile-menu .nav-link.active {
+    color: var(--brand-green);
+    background: none;
+    border-left: none;
+  }
+  .mobile-menu .nav-icon {
+    display: none;
+  }
+}
+@media (min-width: 601px) {
+  .mobile-menu-btn {
+    display: none;
+  }
+}
+@keyframes slideInMenu {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+/* LandingPage hero-osio ja laatikot mobiilissa */
+@media (max-width: 700px) {
+  .landing-hero {
+    flex-direction: column !important;
+    gap: 20px !important;
+    align-items: stretch !important;
+    padding: 0 2vw !important;
+  }
+  .landing-hero > div {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .landing-hero img,
+  .landing-hero .hero-image {
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  .landing-feature-row {
+    flex-direction: column !important;
+    gap: 16px !important;
+    align-items: stretch !important;
+    padding: 0 2vw !important;
+  }
+  .landing-feature-row > div {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}

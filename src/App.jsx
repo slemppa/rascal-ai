@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getMockDashboardData } from './services/api'
+import { getMockDashboardData, fetchDashboardData } from './services/api'
 import './App.css'
 import { Routes, Route, Link, useLocation, Navigate, useNavigate } from 'react-router-dom'
 import DashboardPage from './pages/DashboardPage'
@@ -31,16 +31,53 @@ export default function App() {
 
   useEffect(() => {
     if (isAuthenticated) {
-    fetchDashboardData()
+      fetchDashboardDataAndSet()
     }
   }, [isAuthenticated])
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardDataAndSet = async () => {
     try {
       setLoading(true)
       setError(null)
-      const mockData = getMockDashboardData()
-      setDashboardData(mockData)
+      let companyId = null
+      try {
+        const userObj = JSON.parse(localStorage.getItem('user') || '{}')
+        companyId = userObj.companyId
+      } catch (e) {}
+      const data = await fetchDashboardData(companyId)
+      // Suodatetaan tulevat postaukset (seuraavat 7 päivää)
+      const now = new Date()
+      const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+      const posts = Array.isArray(data) ? data : []
+      const upcomingPosts = posts
+        .map(post => {
+          // Etsi päivämäärä
+          const dateStr = post.date || post.createdTime || post.Created
+          const date = dateStr ? new Date(dateStr) : null
+          // Media
+          let media = null
+          if (Array.isArray(post.Media) && post.Media.length > 0) {
+            media = post.Media[0]
+          } else if (Array.isArray(post["Media (from Segments)"]) && post["Media (from Segments)"].length > 0) {
+            media = post["Media (from Segments)"][0]
+          }
+          return {
+            ...post,
+            date,
+            media,
+            desc: post.Caption || '',
+          }
+        })
+        .filter(post => post.date && post.date >= now && post.date <= weekFromNow)
+        .sort((a, b) => a.date - b.date)
+      setDashboardData(prev => ({
+        ...prev,
+        upcomingPosts,
+        stats: {
+          ...prev.stats,
+          totalUpcomingPosts: upcomingPosts.length,
+        },
+      }))
       setLoading(false)
     } catch (err) {
       setError('Virhe tietojen haussa: ' + err.message)
@@ -89,6 +126,12 @@ export default function App() {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     navigate('/')
+  }
+
+  // Kehitysympäristön automaattinen kirjautuminen
+  if (window.location.hostname === 'localhost' && !localStorage.getItem('token')) {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
   }
 
   if (!isAuthenticated) {

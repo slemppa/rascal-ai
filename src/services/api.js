@@ -13,9 +13,12 @@ const api = axios.create({
 })
 
 // Dashboard datan haku
-export const fetchDashboardData = async () => {
+export const fetchDashboardData = async (companyId) => {
   try {
-    const response = await api.get('/dashboard')
+    const url = companyId
+      ? `https://samikiias.app.n8n.cloud/webhook/get-rascalai-posts123890?companyId=${companyId}`
+      : 'https://samikiias.app.n8n.cloud/webhook/get-rascalai-posts123890'
+    const response = await axios.get(url)
     return response.data
   } catch (error) {
     console.error('Virhe dashboard datan haussa:', error)

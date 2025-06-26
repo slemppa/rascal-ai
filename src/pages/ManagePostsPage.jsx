@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+// import jwt_decode from 'jwt-decode' // poistettu
 import { useNavigate } from 'react-router-dom'
 
 function lyhenteleTeksti(teksti, max = 100) {
@@ -72,7 +73,19 @@ export default function ManagePostsPage() {
       try {
         setLoading(true)
         setError(null)
-        const response = await axios.get('https://samikiias.app.n8n.cloud/webhook/get-rascalai-posts123890')
+        // companyId user-objektista localStoragesta
+        let companyId = null
+        try {
+          const user = JSON.parse(localStorage.getItem('user') || '{}')
+          companyId = user.companyId
+        } catch (e) {
+          // Ei companyId:tä userissa
+        }
+        // Lisää companyId query-paramiksi jos löytyy
+        const url = companyId
+          ? `https://samikiias.app.n8n.cloud/webhook/get-rascalai-posts123890?companyId=${companyId}`
+          : 'https://samikiias.app.n8n.cloud/webhook/get-rascalai-posts123890'
+        const response = await axios.get(url)
         setPosts(response.data)
       } catch (err) {
         let msg = 'Virhe haettaessa dataa'
@@ -140,7 +153,12 @@ export default function ManagePostsPage() {
       )}
       {loading && <p>Ladataan...</p>}
       {error && <p style={{color: 'red'}}>{error}</p>}
-      {!loading && !error && (
+      {!loading && !error && filteredPosts.length === 0 && (
+        <div style={{textAlign: 'center', marginTop: '3rem', color: '#2563eb', fontWeight: 600, fontSize: 22, opacity: 0.85}}>
+          <span role="img" aria-label="valo">✨</span> Et ole vielä generoinut mitään julkaisuja
+        </div>
+      )}
+      {!loading && !error && filteredPosts.length > 0 && (
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(4, 1fr)',

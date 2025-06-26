@@ -63,34 +63,40 @@ export default function AIChatPage() {
   }
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', height: '100vh', width: '100%', flex: 1, background: '#f7fafc', padding: 0, margin: 0}}>
-      <div style={{flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'stretch', width: '100%', overflow: 'hidden'}}>
-        <div style={{width: '100%', height: '100%', background: '#fff', borderRadius: 0, boxShadow: 'none', border: 'none', padding: 32, minHeight: 120, maxHeight: '100%', overflowY: 'auto', flex: 1}}>
-          <h2 style={{marginTop: 0}}>{companyName} markkinointiassistentti</h2>
-          <div style={{marginBottom: 12, minHeight: 60, maxHeight: '70vh', overflowY: 'auto'}}>
-            {messages.map((msg, i) => (
-              <div key={i} style={{
-                background: msg.role === 'user' ? '#e6f0ff' : '#f5f5f5',
-                color: '#222',
-                borderRadius: 8,
-                padding: '8px 12px',
-                marginBottom: 8,
-                alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                maxWidth: '90%',
-                whiteSpace: 'pre-line',
-                fontSize: 16,
-              }}>
-                {msg.role === 'ai' ? <ReactMarkdown>{msg.text}</ReactMarkdown> : msg.text}
-              </div>
-            ))}
-            {loading && (
-              <div style={{color: '#888', fontStyle: 'italic', marginBottom: 8}}>AI kirjoittaa...</div>
-            )}
-            <div ref={messagesEndRef} />
+    <div style={{
+      height: '100%',
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      background: '#fff',
+      padding: 0,
+      margin: 0,
+      boxSizing: 'border-box',
+      flex: 1
+    }}>
+      <h2 style={{margin: '24px 0 0 0', paddingLeft: 24, paddingBottom: 16, flexShrink: 0}}>{companyName} markkinointiassistentti</h2>
+      <div style={{flex: 1, overflowY: 'auto', margin: 0, padding: '0 24px 32px 24px', display: 'flex', flexDirection: 'column', height: '100%'}}>
+        {messages.map((msg, i) => (
+          <div key={i} style={{
+            background: msg.role === 'user' ? '#e6f0ff' : '#f5f5f5',
+            color: '#222',
+            borderRadius: 8,
+            padding: '8px 12px',
+            marginBottom: 8,
+            alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
+            maxWidth: '90%',
+            whiteSpace: 'pre-line',
+            fontSize: 16,
+          }}>
+            {msg.role === 'ai' ? <ReactMarkdown>{msg.text}</ReactMarkdown> : msg.text}
           </div>
-        </div>
+        ))}
+        {loading && (
+          <div style={{color: '#888', fontStyle: 'italic', marginBottom: 8}}>AI kirjoittaa...</div>
+        )}
+        <div ref={messagesEndRef} />
       </div>
-      <form onSubmit={handleSend} style={{width: '100%', margin: '0', display: 'flex', gap: 8, padding: 32, background: '#fff', borderTop: '1px solid #e1e8ed'}}>
+      <form onSubmit={handleSend} style={{width: '100%', margin: 0, display: 'flex', gap: 8, padding: '0 24px 24px 24px', background: '#fff', borderTop: '1px solid #e1e8ed', boxSizing: 'border-box', flexShrink: 0}}>
         <input
           type="text"
           value={input}

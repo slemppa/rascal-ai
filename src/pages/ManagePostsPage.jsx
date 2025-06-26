@@ -8,53 +8,84 @@ function lyhenteleTeksti(teksti, max = 100) {
   return teksti.length > max ? teksti.slice(0, max) + '…' : teksti
 }
 
-function PostDetailsModal({ post, onClose }) {
+function EditPostModal({ post, onClose, onSave }) {
+  const [idea, setIdea] = useState(post.Idea || '')
+  const [caption, setCaption] = useState(post.Caption || '')
+  const [publishDate, setPublishDate] = useState(post["Publish Date"] ? post["Publish Date"].slice(0, 16) : '')
+  const [saving, setSaving] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState('')
+  const textareaRef = React.useRef(null)
+
   React.useEffect(() => {
-    function handleKeyDown(e) {
-      if (e.key === 'Escape') onClose()
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
     }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onClose])
-  if (!post) return null
+  }, [caption])
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setSaving(true)
+    setError('')
+    setSuccess(false)
+    try {
+      const payload = {
+        "Record ID": post["Record ID"] || post.id,
+        Idea: idea,
+        Caption: caption,
+        "Publish Date": publishDate
+      }
+      const res = await fetch('https://samikiias.app.n8n.cloud/webhook/update-post1233214', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      if (!res.ok) throw new Error('Tallennus epäonnistui')
+      setSuccess(true)
+      setTimeout(() => {
+        setSuccess(false)
+        onSave(payload)
+      }, 1200)
+    } catch (err) {
+      setError('Tallennus epäonnistui')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100vw',
-      height: '100vh',
-      background: 'rgba(0,0,0,0.25)',
-      zIndex: 1000,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
-      <div style={{
-        background: '#fff',
-        borderRadius: 12,
-        boxShadow: '0 2px 16px rgba(0,0,0,0.15)',
-        border: '1px solid #e1e8ed',
-        padding: 32,
-        maxWidth: 600,
-        width: '90vw',
-        maxHeight: '90vh',
-        overflowY: 'auto',
-        position: 'relative',
-      }}>
-        <button onClick={onClose} style={{position: 'absolute', top: 16, right: 16, background: '#f7fafc', border: '1px solid #e1e8ed', borderRadius: 6, padding: '6px 16px', cursor: 'pointer'}}>Sulje</button>
-        <h2 style={{marginBottom: 16}}>Postauksen tiedot</h2>
+    <div style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.25)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      <div style={{background: '#fff', borderRadius: 20, boxShadow: '0 4px 32px rgba(0,0,0,0.18)', border: '1px solid #e1e8ed', padding: 40, maxWidth: 700, width: '95vw', position: 'relative', minHeight: 420}}>
+        <button onClick={onClose} style={{position: 'absolute', top: 20, right: 20, background: '#f7fafc', border: '1px solid #e1e8ed', borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontWeight: 600, fontSize: 16}}>Sulje</button>
         {Array.isArray(post.Media) && post.Media.length > 0 && post.Media[0].thumbnails && post.Media[0].thumbnails.large ? (
-          <img src={post.Media[0].thumbnails.large.url} alt="media" style={{width: '100%', height: 240, objectFit: 'cover', borderRadius: 8, marginBottom: 16}} />
+          <div style={{width: '100%', height: 260, background: '#f7fafc', borderRadius: 12, marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <img src={post.Media[0].thumbnails.large.url} alt="media" style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: 12}} />
+          </div>
         ) : null}
-        <div style={{marginBottom: 12}}><b>ID:</b> {post.id}</div>
-        <div style={{marginBottom: 12}}><b>Idea:</b> {post.Idea}</div>
-        <div style={{marginBottom: 12}}><b>Kuvaus:</b> {post.Caption}</div>
-        <div style={{marginBottom: 12}}><b>Tyyppi:</b> {post.Type}</div>
-        <div style={{marginBottom: 12}}><b>Status:</b> {post.Status}</div>
-        <div style={{marginBottom: 12}}><b>Luotu:</b> {post.createdTime ? new Date(post.createdTime).toLocaleString('fi-FI') : '-'}</div>
-        {/* Lisää muita kenttiä tarpeen mukaan */}
-        <pre style={{background: '#f7fafc', padding: 12, borderRadius: 6, fontSize: 13, marginTop: 24}}>{JSON.stringify(post, null, 2)}</pre>
+        <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column', gap: 20}}>
+          <label style={{fontWeight: 600, fontSize: 17}}>
+            Idea:
+            <input type="text" value={idea} onChange={e => setIdea(e.target.value)} style={{width: '100%', borderRadius: 10, border: '1.5px solid #e1e8ed', padding: '14px 16px', marginTop: 6, fontSize: 17, background: '#f7fafc', transition: 'border 0.2s'}} />
+          </label>
+          <label style={{fontWeight: 600, fontSize: 17}}>
+            Julkaisu:
+            <textarea ref={textareaRef} value={caption} onChange={e => setCaption(e.target.value)} style={{width: '100%', borderRadius: 10, border: '1.5px solid #e1e8ed', padding: '14px 16px', marginTop: 6, minHeight: 90, fontSize: 16, background: '#f7fafc', transition: 'border 0.2s', resize: 'none', overflow: 'hidden'}} />
+          </label>
+          <label style={{fontWeight: 600, fontSize: 17}}>
+            Julkaisupäivä:
+            <input type="datetime-local" value={publishDate} onChange={e => setPublishDate(e.target.value)} style={{width: '100%', borderRadius: 10, border: '1.5px solid #e1e8ed', padding: '14px 16px', marginTop: 6, fontSize: 16, background: '#f7fafc', transition: 'border 0.2s'}} />
+          </label>
+          <div style={{display: 'flex', gap: 16, marginTop: 8}}>
+            <div style={{fontSize: 15, color: '#888'}}><b>Status:</b> {post.Status || '-'}</div>
+            <div style={{fontSize: 15, color: '#888'}}><b>Tyyppi:</b> {post.Type || '-'}</div>
+          </div>
+          <button type="submit" disabled={saving} style={{background: '#2563eb', color: '#fff', border: 'none', borderRadius: 10, padding: '14px 0', fontWeight: 700, fontSize: 18, cursor: saving ? 'not-allowed' : 'pointer', marginTop: 8}}>
+            {saving ? 'Tallennetaan...' : 'Tallenna'}
+          </button>
+          {success && <div style={{color: '#2e7d32', fontWeight: 600, fontSize: 16, marginTop: 8, textAlign: 'center'}}>Tallennus onnistui!</div>}
+          {error && <div style={{color: '#e53e3e', fontWeight: 600, fontSize: 16, marginTop: 8, textAlign: 'center'}}>{error}</div>}
+        </form>
       </div>
     </div>
   )
@@ -208,7 +239,7 @@ export default function ManagePostsPage() {
         </div>
       )}
       {/* Modaalin renderöinti */}
-      {selectedPost && <PostDetailsModal post={selectedPost} onClose={() => setSelectedPost(null)} />}
+      {selectedPost && <EditPostModal post={selectedPost} onClose={() => setSelectedPost(null)} onSave={() => setSelectedPost(null)} />}
     </div>
   )
 } 

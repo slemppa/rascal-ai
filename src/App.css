@@ -15,10 +15,17 @@ body {
   color: #333;
 }
 
+html, body, #root {
+  height: 100%;
+}
+
 /* Sovelluksen päärakenne */
 .app {
-  display: flex;
   min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  width: 100vw;
+  min-width: 0;
 }
 
 /* Vasen valikko */
@@ -82,9 +89,15 @@ body {
 
 /* Pääsisältö */
 .main-content {
-  flex: 1;
+  flex: 1 1 0;
+  width: 100%;
+  min-width: 0;
+  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   margin-left: 250px;
-  padding: 2rem;
+  padding: 0;
   background-color: #f5f7fa;
 }
 

@@ -51,8 +51,8 @@ export default function App() {
       const posts = Array.isArray(data) ? data : []
       const upcomingPosts = posts
         .map(post => {
-          // Etsi päivämäärä
-          const dateStr = post.date || post.createdTime || post.Created
+          // Etsi päivämäärä: käytä ensisijaisesti Publish Date
+          const dateStr = post["Publish Date"] || post.date || post.createdTime || post.Created
           const date = dateStr ? new Date(dateStr) : null
           // Media
           let media = null
@@ -147,30 +147,25 @@ export default function App() {
     <div className="app">
       {/* Vasen sivupalkki */}
       <nav className="sidebar">
-        <div className="sidebar-header">
-          <h2>Rascal AI</h2>
+        <div className="sidebar-header" style={{display: 'flex', alignItems: 'center', gap: 12}}>
+          <img src="/favicon.png" alt="favicon" style={{width: 32, height: 32, borderRadius: 8, background: '#fff'}} />
+          <h2 style={{margin: 0}}>Rascal AI</h2>
         </div>
         <ul className="nav-menu">
           <li className="nav-item">
-            <Link to="/dashboard" className={`nav-link${location.pathname === '/dashboard' ? ' active' : ''}`}><span className="nav-icon">🏠</span>Dashboard</Link>
+            <Link to="/dashboard" className={`nav-link${location.pathname === '/dashboard' ? ' active' : ''}`}><span className="nav-icon">🏠</span>Etusivu</Link>
           </li>
           <li className="nav-item">
-            <Link to="/posts" className={`nav-link${location.pathname === '/posts' ? ' active' : ''}`}><span className="nav-icon">📝</span>Manage Posts</Link>
+            <Link to="/posts" className={`nav-link${location.pathname === '/posts' ? ' active' : ''}`}><span className="nav-icon">📝</span>Julkaisut</Link>
           </li>
           <li className="nav-item">
-            <Link to="/strategy" className={`nav-link${location.pathname === '/strategy' ? ' active' : ''}`}><span className="nav-icon">📊</span>Content Strategy</Link>
+            <Link to="/strategy" className={`nav-link${location.pathname === '/strategy' ? ' active' : ''}`}><span className="nav-icon">📊</span>Sisältöstrategia</Link>
           </li>
           <li className="nav-item">
-            <Link to="/email" className={`nav-link${location.pathname === '/email' ? ' active' : ''}`}><span className="nav-icon">📧</span>Email Marketing</Link>
+            <Link to="/ai-chat" className={`nav-link${location.pathname === '/ai-chat' ? ' active' : ''}`}><span className="nav-icon">🤖</span>Assistentti</Link>
           </li>
           <li className="nav-item">
-            <Link to="/reports" className={`nav-link${location.pathname === '/reports' ? ' active' : ''}`}><span className="nav-icon">📈</span>Reports</Link>
-          </li>
-          <li className="nav-item">
-            <Link to="/ai-chat" className={`nav-link${location.pathname === '/ai-chat' ? ' active' : ''}`}><span className="nav-icon">🤖</span>AI Chat</Link>
-          </li>
-          <li className="nav-item">
-            <Link to="/settings" className={`nav-link${location.pathname === '/settings' ? ' active' : ''}`}><span className="nav-icon">⚙️</span>Settings</Link>
+            <Link to="/settings" className={`nav-link${location.pathname === '/settings' ? ' active' : ''}`}><span className="nav-icon">⚙️</span>Asetukset</Link>
           </li>
         </ul>
         <div style={{padding: 16, borderTop: '1px solid rgba(255,255,255,0.1)'}}>
@@ -190,13 +185,11 @@ export default function App() {
             <button className="mobile-menu-close" onClick={() => setMobileMenuOpen(false)}>&times;</button>
             <h2 style={{margin: '0 0 1.5rem 0', color: 'var(--brand-dark)'}}>Rascal AI</h2>
             <ul className="nav-menu">
-              <li className="nav-item"><Link to="/dashboard" className={`nav-link${location.pathname === '/dashboard' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">🏠</span>Dashboard</Link></li>
-              <li className="nav-item"><Link to="/posts" className={`nav-link${location.pathname === '/posts' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📝</span>Manage Posts</Link></li>
-              <li className="nav-item"><Link to="/strategy" className={`nav-link${location.pathname === '/strategy' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📊</span>Content Strategy</Link></li>
-              <li className="nav-item"><Link to="/email" className={`nav-link${location.pathname === '/email' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📧</span>Email Marketing</Link></li>
-              <li className="nav-item"><Link to="/reports" className={`nav-link${location.pathname === '/reports' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📈</span>Reports</Link></li>
-              <li className="nav-item"><Link to="/ai-chat" className={`nav-link${location.pathname === '/ai-chat' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">🤖</span>AI Chat</Link></li>
-              <li className="nav-item"><Link to="/settings" className={`nav-link${location.pathname === '/settings' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">⚙️</span>Settings</Link></li>
+              <li className="nav-item"><Link to="/dashboard" className={`nav-link${location.pathname === '/dashboard' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">🏠</span>Etusivu</Link></li>
+              <li className="nav-item"><Link to="/posts" className={`nav-link${location.pathname === '/posts' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📝</span>Julkaisut</Link></li>
+              <li className="nav-item"><Link to="/strategy" className={`nav-link${location.pathname === '/strategy' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📊</span>Sisältöstrategia</Link></li>
+              <li className="nav-item"><Link to="/ai-chat" className={`nav-link${location.pathname === '/ai-chat' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">🤖</span>Assistentti</Link></li>
+              <li className="nav-item"><Link to="/settings" className={`nav-link${location.pathname === '/settings' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">⚙️</span>Asetukset</Link></li>
             </ul>
             <button onClick={() => { setMobileMenuOpen(false); handleLogout(); }} style={{width: '100%', background: 'var(--brand-dark)', color: '#fff', border: 'none', borderRadius: 6, padding: '12px 0', fontWeight: 600, fontSize: 18, cursor: 'pointer', marginTop: 24}}>Kirjaudu ulos</button>
           </nav>
@@ -204,7 +197,7 @@ export default function App() {
       )}
 
       {/* Pääsisältö */}
-      <main className="main-content">
+      <main className="main-content" style={{padding: '0 32px'}}>
         <Routes>
           <Route path="/dashboard" element={<DashboardPage dashboardData={dashboardData} formatDate={formatDate} formatDateTime={formatDateTime} />} />
           <Route path="/posts" element={<ManagePostsPage />} />

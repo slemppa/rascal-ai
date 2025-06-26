@@ -27,7 +27,8 @@ function EditPostModal({ post, onClose, onSave }) {
         "Record ID": post["Record ID"] || post.id,
         Idea: idea,
         Caption: caption,
-        "Publish Date": publishDate
+        "Publish Date": publishDate,
+        updateType: 'postUpdate'
       }
       const res = await fetch('https://samikiias.app.n8n.cloud/webhook/update-post1233214', {
         method: 'POST',

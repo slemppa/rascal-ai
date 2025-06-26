@@ -18,6 +18,7 @@ export default function ContentStrategyPage() {
   const [error, setError] = useState(null)
   const [editId, setEditId] = useState(null)
   const [editText, setEditText] = useState('')
+  const textareaRef = React.useRef(null)
 
   useEffect(() => {
     const fetchStrategy = async () => {
@@ -36,6 +37,13 @@ export default function ContentStrategyPage() {
     fetchStrategy()
   }, [])
 
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
+    }
+  }, [editText, editId])
+
   const handleEdit = (item) => {
     setEditId(item.id)
     setEditText(item.Strategy)
@@ -43,8 +51,8 @@ export default function ContentStrategyPage() {
 
   const handleSave = async (item) => {
     try {
-      const updated = { ...item, Strategy: editText }
-      await axios.post('https://samikiias.app.n8n.cloud/webhook/strategy-89777321', updated)
+      const updated = { ...item, Strategy: editText, updateType: 'strategyUpdate' }
+      await axios.post('https://samikiias.app.n8n.cloud/webhook/update-post1233214', updated)
       setStrategy(strategy.map(s => s.id === item.id ? updated : s))
       setEditId(null)
     } catch (e) {
@@ -60,12 +68,41 @@ export default function ContentStrategyPage() {
       {error && <p style={{color: 'red'}}>{error}</p>}
       <div style={{display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: 32}}>
         {strategy.map(item => (
-          <div key={item.id} style={{background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', border: '1px solid #e1e8ed', padding: 24, minWidth: 320, maxWidth: 600, flex: '1 1 320px', position: 'relative'}}>
+          <div key={item.id} style={{
+            background: '#fff',
+            borderRadius: 12,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+            border: '1px solid #e1e8ed',
+            padding: 24,
+            minWidth: 320,
+            maxWidth: 600,
+            width: 'auto',
+            position: 'relative',
+            marginBottom: 24
+          }}>
             <div style={{fontWeight: 700, fontSize: 20, marginBottom: 8}}>{item.Month}</div>
             <div style={{marginBottom: 8, color: '#888', fontSize: 13}}>Yrityksiä: {item.Companies?.length || 0}</div>
             {editId === item.id ? (
               <>
-                <textarea value={editText} onChange={e => setEditText(e.target.value)} style={{width: '100%', minHeight: 120, marginBottom: 12}} />
+                <textarea
+                  ref={textareaRef}
+                  value={editText}
+                  onChange={e => setEditText(e.target.value)}
+                  style={{
+                    width: '100%',
+                    minHeight: 40,
+                    marginBottom: 12,
+                    resize: 'none',
+                    overflow: 'hidden',
+                    fontSize: 16,
+                    lineHeight: 1.5,
+                    borderRadius: 8,
+                    border: '1.5px solid #e1e8ed',
+                    background: '#f7fafc',
+                    padding: '12px 14px',
+                    boxSizing: 'border-box'
+                  }}
+                />
                 <button onClick={() => handleSave(item)} style={{marginRight: 8, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Tallenna</button>
                 <button onClick={() => setEditId(null)} style={{background: '#eee', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Peruuta</button>
               </>

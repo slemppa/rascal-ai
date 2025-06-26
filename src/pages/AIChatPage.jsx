@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react'
 import axios from 'axios'
+import ReactMarkdown from 'react-markdown'
 
 export default function AIChatPage() {
   const [messages, setMessages] = useState([])
@@ -79,7 +80,7 @@ export default function AIChatPage() {
                 whiteSpace: 'pre-line',
                 fontSize: 16,
               }}>
-                {msg.text}
+                {msg.role === 'ai' ? <ReactMarkdown>{msg.text}</ReactMarkdown> : msg.text}
               </div>
             ))}
             {loading && (

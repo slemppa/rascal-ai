@@ -87,8 +87,19 @@ function EditPostModal({ post, onClose, onSave }) {
         maxHeight: '95vh',
       }}>
         <button onClick={onClose} style={{position: 'absolute', top: isMobile ? 10 : 20, right: isMobile ? 10 : 20, background: '#f7fafc', border: '1px solid #e1e8ed', borderRadius: 8, padding: isMobile ? '6px 14px' : '8px 20px', cursor: 'pointer', fontWeight: 600, fontSize: isMobile ? 14 : 16}}>Sulje</button>
-        {post.media && post.media.thumbnails && post.media.thumbnails.large ? (
-          <img src={post.media.thumbnails.large.url} alt="media" style={{width: '100%', height: isMobile ? 140 : 260, objectFit: 'cover', borderRadius: 12, marginBottom: 24}} />
+        {Array.isArray(post.Media) && post.Media.length > 0 ? (
+          post.Media[0].type && post.Media[0].type.startsWith('video/') ? (
+            <video controls style={{width: '100%', maxHeight: isMobile ? 140 : 260, background: '#f7fafc', borderRadius: 12, marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <source src={post.Media[0].url} type={post.Media[0].type} />
+              Selaimesi ei tue videon toistoa.
+            </video>
+          ) : post.Media[0].type && post.Media[0].type.startsWith('image/') && post.Media[0].thumbnails && post.Media[0].thumbnails.large ? (
+            <div style={{width: '100%', height: isMobile ? 140 : 260, background: '#f7fafc', borderRadius: 12, marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <img src={post.Media[0].thumbnails.large.url} alt="media" style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: 12}} />
+            </div>
+          ) : (
+            <img src="/placeholder.png" alt="placeholder" style={{width: '100%', height: isMobile ? 140 : 260, objectFit: 'cover', borderRadius: 12, marginBottom: 24, background: '#f7fafc'}} />
+          )
         ) : null}
         <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column', gap: isMobile ? 12 : 20}}>
           <label style={{fontWeight: 600, fontSize: isMobile ? 15 : 17}}>
@@ -155,8 +166,18 @@ export default function DashboardPage({ dashboardData, formatDate, formatDateTim
           <div className="section-list">
             {dashboardData.upcomingPosts.map(post => (
               <div key={post.id} className="section-card post-card" style={{display: 'flex', alignItems: 'center', gap: 16, position: 'relative'}}>
-                {post.media && post.media.thumbnails && post.media.thumbnails.large ? (
-                  <img src={post.media.thumbnails.large.url} alt="media" style={{width: 64, height: 64, objectFit: 'cover', borderRadius: 8}} />
+                {/* Media: video, kuva tai placeholder */}
+                {Array.isArray(post.Media) && post.Media.length > 0 ? (
+                  post.Media[0].type && post.Media[0].type.startsWith('video/') ? (
+                    <video controls style={{width: 64, height: 64, objectFit: 'cover', borderRadius: 8}}>
+                      <source src={post.Media[0].url} type={post.Media[0].type} />
+                      Selaimesi ei tue videon toistoa.
+                    </video>
+                  ) : post.Media[0].type && post.Media[0].type.startsWith('image/') && post.Media[0].thumbnails && post.Media[0].thumbnails.large ? (
+                    <img src={post.Media[0].thumbnails.large.url} alt="media" style={{width: 64, height: 64, objectFit: 'cover', borderRadius: 8}} />
+                  ) : (
+                    <div style={{width: 64, height: 64, background: '#f7fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', borderRadius: 8}}>Ei kuvaa</div>
+                  )
                 ) : (
                   <div style={{width: 64, height: 64, background: '#f7fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', borderRadius: 8}}>Ei kuvaa</div>
                 )}

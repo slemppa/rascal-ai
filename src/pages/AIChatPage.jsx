@@ -11,6 +11,7 @@ export default function AIChatPage() {
   const [filesLoading, setFilesLoading] = useState(false)
   const [filesError, setFilesError] = useState('')
   const messagesEndRef = useRef(null)
+  const [threadId, setThreadId] = useState(() => localStorage.getItem('rascalai_threadId') || null)
 
   // Hae companyName ja companyId localStoragesta
   let companyName = 'Yrityksen';
@@ -46,6 +47,32 @@ export default function AIChatPage() {
       .finally(() => setFilesLoading(false))
   }, [tab, companyId])
 
+  // Hae viestihistoria kun threadId löytyy
+  useEffect(() => {
+    if (threadId) {
+      let assistantId = null
+      try {
+        const user = JSON.parse(localStorage.getItem('user') || '{}')
+        assistantId = user.assistantId || null
+      } catch (e) {}
+      if (!assistantId) {
+        try {
+          assistantId = localStorage.getItem('assistantId') || null
+        } catch (e) {}
+      }
+      axios.post('https://samikiias.app.n8n.cloud/webhook/ab7de54b-9f81-4b26-8421-c8de56f8e89e/chat', {
+        threadId,
+        action: 'getHistory',
+        companyId,
+        assistantId
+      }).then(res => {
+        if (Array.isArray(res.data.messages)) {
+          setMessages(res.data.messages)
+        }
+      })
+    }
+  }, [threadId, companyId])
+
   const handleSend = async (e) => {
     e.preventDefault()
     if (!input.trim()) return
@@ -54,7 +81,6 @@ export default function AIChatPage() {
     setInput('')
     setLoading(true)
     try {
-      // Hae companyId ja assistantId localStoragesta/user-objektista
       let assistantId = null
       try {
         const user = JSON.parse(localStorage.getItem('user') || '{}')
@@ -69,8 +95,14 @@ export default function AIChatPage() {
         message: input,
         companyId,
         assistantId,
+        threadId,
+        action: 'chat'
       })
-      // Ota AI:n vastaus oikeasta kentästä
+      // Tallenna mahdollinen uusi threadId
+      if (res.data?.threadId && res.data.threadId !== threadId) {
+        setThreadId(res.data.threadId)
+        localStorage.setItem('rascalai_threadId', res.data.threadId)
+      }
       const aiText = res.data?.reply || res.data?.message || res.data?.output || res.data?.response || res.data?.text || 'AI ei vastannut.'
       setMessages(msgs => [...msgs, { role: 'ai', text: aiText }])
     } catch (err) {
@@ -89,26 +121,29 @@ export default function AIChatPage() {
   return (
     <div style={{
       minHeight: '100vh',
+      height: '100%',
+      width: '100%',
       background: 'transparent',
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
+      alignItems: 'stretch',
       justifyContent: 'flex-start',
-      width: '100%',
       boxSizing: 'border-box',
+      flex: 1
     }}>
       <div style={{
         background: '#fff',
-        maxWidth: 700,
         width: '100%',
-        margin: '40px auto',
-        borderRadius: 16,
-        boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-        border: '1.5px solid #e1e8ed',
+        height: '100%',
+        margin: 0,
+        borderRadius: 0,
+        boxShadow: 'none',
+        border: 'none',
         padding: 0,
         display: 'flex',
         flexDirection: 'column',
-        minHeight: 500,
+        minHeight: 0,
+        flex: 1
       }}>
         <h2 style={{margin: '32px 0 0 0', paddingLeft: 36, paddingBottom: 0, flexShrink: 0, fontSize: 28, fontWeight: 800, color: '#222', letterSpacing: 0.2}}>{companyName} markkinointiassistentti</h2>
         <div style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
@@ -142,8 +177,8 @@ export default function AIChatPage() {
           </div>
           {/* Sisältö */}
           {tab === 'chat' && (
-            <>
-              <div style={{flex: 1, overflowY: 'auto', margin: 0, padding: '0 36px 32px 36px', display: 'flex', flexDirection: 'column', height: '100%'}}>
+            <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
+              <div style={{flex: 1, overflowY: 'auto', margin: 0, padding: '0 36px 12px 36px', display: 'flex', flexDirection: 'column', height: '100%'}}>
                 {messages.map((msg, i) => (
                   <div key={i} style={{
                     background: msg.role === 'user' ? '#e6f0ff' : '#f5f5f5',
@@ -164,7 +199,7 @@ export default function AIChatPage() {
                 )}
                 <div ref={messagesEndRef} />
               </div>
-              <form onSubmit={handleSend} style={{width: '100%', margin: 0, display: 'flex', gap: 8, padding: '0 36px 36px 36px', background: '#fff', borderTop: '1px solid #e1e8ed', boxSizing: 'border-box', flexShrink: 0}}>
+              <form onSubmit={handleSend} style={{width: '100%', margin: 0, display: 'flex', gap: 8, padding: '0 36px 12px 36px', background: '#fff', borderTop: '1px solid #e1e8ed', boxSizing: 'border-box', flexShrink: 0}}>
                 <input
                   type="text"
                   value={input}
@@ -177,7 +212,7 @@ export default function AIChatPage() {
                   Lähetä
                 </button>
               </form>
-            </>
+            </div>
           )}
           {tab === 'tietokanta' && (
             <div style={{display: 'flex', flexDirection: 'row', width: '100%', minHeight: 400, background: 'transparent', marginTop: 24}}>

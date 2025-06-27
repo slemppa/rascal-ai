@@ -94,10 +94,19 @@ function EditPostModal({ post, onClose, onSave }) {
         maxHeight: '95vh',
       }}>
         <button onClick={onClose} style={{position: 'absolute', top: isMobile ? 10 : 20, right: isMobile ? 10 : 20, background: '#f7fafc', border: '1px solid #e1e8ed', borderRadius: 8, padding: isMobile ? '6px 14px' : '8px 20px', cursor: 'pointer', fontWeight: 600, fontSize: isMobile ? 14 : 16}}>Sulje</button>
-        {Array.isArray(post.Media) && post.Media.length > 0 && post.Media[0].thumbnails && post.Media[0].thumbnails.large ? (
-          <div style={{width: '100%', height: isMobile ? 140 : 260, background: '#f7fafc', borderRadius: 12, marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <img src={post.Media[0].thumbnails.large.url} alt="media" style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: 12}} />
-          </div>
+        {Array.isArray(post.Media) && post.Media.length > 0 ? (
+          post.Media[0].type && post.Media[0].type.startsWith('video/') ? (
+            <video controls style={{width: '100%', maxHeight: isMobile ? 140 : 260, background: '#f7fafc', borderRadius: 12, marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <source src={post.Media[0].url} type={post.Media[0].type} />
+              Selaimesi ei tue videon toistoa.
+            </video>
+          ) : post.Media[0].type && post.Media[0].type.startsWith('image/') && post.Media[0].thumbnails && post.Media[0].thumbnails.large ? (
+            <div style={{width: '100%', height: isMobile ? 140 : 260, background: '#f7fafc', borderRadius: 12, marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <img src={post.Media[0].thumbnails.large.url} alt="media" style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: 12}} />
+            </div>
+          ) : (
+            <img src="/placeholder.png" alt="placeholder" style={{width: '100%', height: isMobile ? 140 : 260, objectFit: 'cover', borderRadius: 12, marginBottom: 24, background: '#f7fafc'}} />
+          )
         ) : null}
         <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column', gap: isMobile ? 12 : 20}}>
           <label style={{fontWeight: 600, fontSize: isMobile ? 15 : 17}}>
@@ -250,11 +259,20 @@ export default function ManagePostsPage() {
               onMouseOver={e => e.currentTarget.style.boxShadow = '0 4px 16px rgba(37,99,235,0.10)'}
               onMouseOut={e => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.07)'}
             >
-              {/* Kuva */}
-              {Array.isArray(post.Media) && post.Media.length > 0 && post.Media[0].thumbnails && post.Media[0].thumbnails.large ? (
-                <img src={post.Media[0].thumbnails.large.url} alt="media" style={{width: '100%', height: 180, objectFit: 'cover', borderTopLeftRadius: 12, borderTopRightRadius: 12}} />
+              {/* Kuva tai video */}
+              {Array.isArray(post.Media) && post.Media.length > 0 ? (
+                post.Media[0].type && post.Media[0].type.startsWith('video/') ? (
+                  <video controls style={{width: '100%', height: 180, objectFit: 'cover', borderTopLeftRadius: 12, borderTopRightRadius: 12}}>
+                    <source src={post.Media[0].url} type={post.Media[0].type} />
+                    Selaimesi ei tue videon toistoa.
+                  </video>
+                ) : post.Media[0].type && post.Media[0].type.startsWith('image/') && post.Media[0].thumbnails && post.Media[0].thumbnails.large ? (
+                  <img src={post.Media[0].thumbnails.large.url} alt="media" style={{width: '100%', height: 180, objectFit: 'cover', borderTopLeftRadius: 12, borderTopRightRadius: 12}} />
+                ) : (
+                  <img src="/placeholder.png" alt="placeholder" style={{width: '100%', height: 180, objectFit: 'cover', borderTopLeftRadius: 12, borderTopRightRadius: 12, background: '#f7fafc'}} />
+                )
               ) : (
-                <div style={{width: '100%', height: 180, background: '#f7fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb'}}>Ei kuvaa</div>
+                <img src="/placeholder.png" alt="placeholder" style={{width: '100%', height: 180, objectFit: 'cover', borderTopLeftRadius: 12, borderTopRightRadius: 12, background: '#f7fafc'}} />
               )}
               {/* Tagit */}
               <div style={{display: 'flex', gap: 8, margin: '12px 16px 0 16px', flexWrap: 'wrap'}}>

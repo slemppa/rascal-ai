@@ -24,7 +24,7 @@ export default function LandingPage({ onLogin }) {
     setError(null)
     setLoading(true)
     try {
-      const res = await axios.post('https://samikiias.app.n8n.cloud/webhook/06ae4c0b-1f13-4688-afad-9bf11d51fd0f', { email, password })
+      const res = await axios.post('/api/login', { email, password })
       // Oletetaan, että vastaus on taulukko, jossa on yksi objekti tai error-objekti
       if (res.data && res.data.error) {
         setError(res.data.error)

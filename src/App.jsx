@@ -12,6 +12,7 @@ import ReportsPage from './pages/ReportsPage'
 import AIChatPage from './pages/AIChatPage'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
+import CallPanel from './pages/CallPanel'
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem('token'))
@@ -162,6 +163,9 @@ export default function App() {
             <Link to="/strategy" className={`nav-link${location.pathname === '/strategy' ? ' active' : ''}`}><span className="nav-icon">📊</span>Sisältöstrategia</Link>
           </li>
           <li className="nav-item">
+            <Link to="/calls" className={`nav-link${location.pathname === '/calls' ? ' active' : ''}`}><span className="nav-icon">📞</span>Puhelut</Link>
+          </li>
+          <li className="nav-item">
             <Link to="/ai-chat" className={`nav-link${location.pathname === '/ai-chat' ? ' active' : ''}`}><span className="nav-icon">🤖</span>Assistentti</Link>
           </li>
           <li className="nav-item">
@@ -188,6 +192,7 @@ export default function App() {
               <li className="nav-item"><Link to="/dashboard" className={`nav-link${location.pathname === '/dashboard' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">🏠</span>Etusivu</Link></li>
               <li className="nav-item"><Link to="/posts" className={`nav-link${location.pathname === '/posts' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📝</span>Julkaisut</Link></li>
               <li className="nav-item"><Link to="/strategy" className={`nav-link${location.pathname === '/strategy' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📊</span>Sisältöstrategia</Link></li>
+              <li className="nav-item"><Link to="/calls" className={`nav-link${location.pathname === '/calls' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📞</span>Puhelut</Link></li>
               <li className="nav-item"><Link to="/ai-chat" className={`nav-link${location.pathname === '/ai-chat' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">🤖</span>Assistentti</Link></li>
               <li className="nav-item"><Link to="/settings" className={`nav-link${location.pathname === '/settings' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">⚙️</span>Asetukset</Link></li>
             </ul>
@@ -207,6 +212,7 @@ export default function App() {
           <Route path="/ai-chat" element={<AIChatPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/posts/:id" element={<PostDetailsPage />} />
+          <Route path="/calls" element={<CallPanel />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
       </main>

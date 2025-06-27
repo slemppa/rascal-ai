@@ -1,0 +1,13 @@
+.callpanel-root {
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.callpanel-root input[type="text"]:focus {
+  outline: 2px solid #2563eb;
+  border-color: #2563eb;
+}
+
+.callpanel-root button:active {
+  opacity: 0.92;
+} 

@@ -52,7 +52,7 @@ export default function ContentStrategyPage() {
   const handleSave = async (item) => {
     try {
       const updated = { ...item, Strategy: editText, updateType: 'strategyUpdate' }
-      await axios.post('https://samikiias.app.n8n.cloud/webhook/update-post1233214', updated)
+      await axios.post('/api/strategy', updated)
       setStrategy(strategy.map(s => s.id === item.id ? updated : s))
       setEditId(null)
     } catch (e) {

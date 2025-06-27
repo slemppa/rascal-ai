@@ -9,15 +9,14 @@ const api = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
+    'x-api-key': import.meta.env.VITE_API_KEY
   },
 })
 
 // Dashboard datan haku
 export const fetchDashboardData = async (companyId) => {
   try {
-    const url = companyId
-      ? `https://samikiias.app.n8n.cloud/webhook/get-rascalai-posts123890?companyId=${companyId}`
-      : 'https://samikiias.app.n8n.cloud/webhook/get-rascalai-posts123890'
+    const url = companyId ? `/api/get-posts?companyId=${companyId}` : '/api/get-posts'
     const response = await axios.get(url)
     return response.data
   } catch (error) {

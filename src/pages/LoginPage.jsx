@@ -12,7 +12,7 @@ export default function LoginPage({ onLogin }) {
     setError(null)
     setLoading(true)
     try {
-      const res = await axios.post('https://samikiias.app.n8n.cloud/webhook-test/06ae4c0b-1f13-4688-afad-9bf11d51fd0f', { email, password })
+      const res = await axios.post('/api/login', { email, password })
       if (res.data.success) {
         onLogin(res.data.token, res.data.user)
       } else {

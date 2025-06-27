@@ -8,6 +8,7 @@ function EditPostModal({ post, onClose, onSave }) {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
   const textareaRef = React.useRef(null)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600)
 
   // Autoresize textarea
   React.useEffect(() => {
@@ -16,6 +17,12 @@ function EditPostModal({ post, onClose, onSave }) {
       textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
     }
   }, [caption])
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 600)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -30,7 +37,7 @@ function EditPostModal({ post, onClose, onSave }) {
         "Publish Date": publishDate,
         updateType: 'postUpdate'
       }
-      const res = await fetch('https://samikiias.app.n8n.cloud/webhook/update-post1233214', {
+      const res = await fetch('/api/update-post', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -49,30 +56,58 @@ function EditPostModal({ post, onClose, onSave }) {
   }
 
   return (
-    <div style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.25)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-      <div style={{background: '#fff', borderRadius: 20, boxShadow: '0 4px 32px rgba(0,0,0,0.18)', border: '1px solid #e1e8ed', padding: 40, maxWidth: 700, width: '95vw', position: 'relative', minHeight: 420}}>
-        <button onClick={onClose} style={{position: 'absolute', top: 20, right: 20, background: '#f7fafc', border: '1px solid #e1e8ed', borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontWeight: 600, fontSize: 16}}>Sulje</button>
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      background: 'rgba(0,0,0,0.25)',
+      zIndex: 1000,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflowY: 'auto',
+      maxHeight: '100vh',
+    }}>
+      <div style={{
+        background: '#fff',
+        borderRadius: 20,
+        boxShadow: '0 4px 32px rgba(0,0,0,0.18)',
+        border: '1px solid #e1e8ed',
+        padding: isMobile ? 16 : 40,
+        maxWidth: 700,
+        width: '95vw',
+        minWidth: 0,
+        position: 'relative',
+        minHeight: 420,
+        fontSize: isMobile ? 15 : 17,
+        overflowY: 'auto',
+        boxSizing: 'border-box',
+        maxHeight: '95vh',
+      }}>
+        <button onClick={onClose} style={{position: 'absolute', top: isMobile ? 10 : 20, right: isMobile ? 10 : 20, background: '#f7fafc', border: '1px solid #e1e8ed', borderRadius: 8, padding: isMobile ? '6px 14px' : '8px 20px', cursor: 'pointer', fontWeight: 600, fontSize: isMobile ? 14 : 16}}>Sulje</button>
         {post.media && post.media.thumbnails && post.media.thumbnails.large ? (
-          <img src={post.media.thumbnails.large.url} alt="media" style={{width: '100%', height: 260, objectFit: 'cover', borderRadius: 12, marginBottom: 24}} />
+          <img src={post.media.thumbnails.large.url} alt="media" style={{width: '100%', height: isMobile ? 140 : 260, objectFit: 'cover', borderRadius: 12, marginBottom: 24}} />
         ) : null}
-        <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column', gap: 20}}>
-          <label style={{fontWeight: 600, fontSize: 17}}>
+        <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column', gap: isMobile ? 12 : 20}}>
+          <label style={{fontWeight: 600, fontSize: isMobile ? 15 : 17}}>
             Idea:
-            <input type="text" value={idea} onChange={e => setIdea(e.target.value)} style={{width: '100%', borderRadius: 10, border: '1.5px solid #e1e8ed', padding: '14px 16px', marginTop: 6, fontSize: 17, background: '#f7fafc', transition: 'border 0.2s'}} />
+            <input type="text" value={idea} onChange={e => setIdea(e.target.value)} style={{width: '100%', borderRadius: 10, border: '1.5px solid #e1e8ed', padding: isMobile ? '10px 12px' : '14px 16px', marginTop: 6, fontSize: isMobile ? 15 : 17, background: '#f7fafc', transition: 'border 0.2s'}} />
           </label>
-          <label style={{fontWeight: 600, fontSize: 17}}>
+          <label style={{fontWeight: 600, fontSize: isMobile ? 15 : 17}}>
             Julkaisu:
-            <textarea ref={textareaRef} value={caption} onChange={e => setCaption(e.target.value)} style={{width: '100%', borderRadius: 10, border: '1.5px solid #e1e8ed', padding: '14px 16px', marginTop: 6, minHeight: 90, fontSize: 16, background: '#f7fafc', transition: 'border 0.2s', resize: 'none', overflow: 'hidden'}} />
+            <textarea ref={textareaRef} value={caption} onChange={e => setCaption(e.target.value)} style={{width: '100%', borderRadius: 10, border: '1.5px solid #e1e8ed', padding: isMobile ? '10px 12px' : '14px 16px', marginTop: 6, minHeight: isMobile ? 60 : 90, fontSize: isMobile ? 14 : 16, background: '#f7fafc', transition: 'border 0.2s', resize: 'none', overflow: 'hidden'}} />
           </label>
-          <label style={{fontWeight: 600, fontSize: 17}}>
+          <label style={{fontWeight: 600, fontSize: isMobile ? 15 : 17}}>
             Julkaisupäivä:
-            <input type="datetime-local" value={publishDate} onChange={e => setPublishDate(e.target.value)} style={{width: '100%', borderRadius: 10, border: '1.5px solid #e1e8ed', padding: '14px 16px', marginTop: 6, fontSize: 16, background: '#f7fafc', transition: 'border 0.2s'}} />
+            <input type="datetime-local" value={publishDate} onChange={e => setPublishDate(e.target.value)} style={{width: '100%', borderRadius: 10, border: '1.5px solid #e1e8ed', padding: isMobile ? '10px 12px' : '14px 16px', marginTop: 6, fontSize: isMobile ? 15 : 16, background: '#f7fafc', transition: 'border 0.2s'}} />
           </label>
-          <button type="submit" disabled={saving} style={{background: '#2563eb', color: '#fff', border: 'none', borderRadius: 10, padding: '14px 0', fontWeight: 700, fontSize: 18, cursor: saving ? 'not-allowed' : 'pointer', marginTop: 8}}>
+          <button type="submit" disabled={saving} style={{background: '#2563eb', color: '#fff', border: 'none', borderRadius: 10, padding: isMobile ? '10px 0' : '14px 0', fontWeight: 700, fontSize: isMobile ? 15 : 18, cursor: saving ? 'not-allowed' : 'pointer', marginTop: 8}}>
             {saving ? 'Tallennetaan...' : 'Tallenna'}
           </button>
-          {success && <div style={{color: '#2e7d32', fontWeight: 600, fontSize: 16, marginTop: 8, textAlign: 'center'}}>Tallennus onnistui!</div>}
-          {error && <div style={{color: '#e53e3e', fontWeight: 600, fontSize: 16, marginTop: 8, textAlign: 'center'}}>{error}</div>}
+          {success && <div style={{color: '#2e7d32', fontWeight: 600, fontSize: isMobile ? 14 : 16, marginTop: 8, textAlign: 'center'}}>Tallennus onnistui!</div>}
+          {error && <div style={{color: '#e53e3e', fontWeight: 600, fontSize: isMobile ? 14 : 16, marginTop: 8, textAlign: 'center'}}>{error}</div>}
         </form>
       </div>
     </div>

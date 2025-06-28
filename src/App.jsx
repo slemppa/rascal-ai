@@ -15,6 +15,7 @@ import LoginPage from './pages/LoginPage'
 import CallPanel from './pages/CallPanel'
 import LanguageSelector from './components/LanguageSelector'
 import { Trans } from '@lingui/macro'
+import { Analytics } from '@vercel/analytics/react'
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem('token'))
@@ -221,6 +222,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
       </main>
+      <Analytics />
     </div>
   )
 }

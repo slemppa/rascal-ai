@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import PasswordStrengthChecker from './PasswordStrengthChecker'
 
 export default function SetPasswordForm() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const token = searchParams.get('token')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -175,7 +177,7 @@ export default function SetPasswordForm() {
           lineHeight: 1.5,
           textAlign: 'center'
         }}>
-          Kirjauduit sisään magic link -avulla. Aseta nyt salasanasi jatkaaksesi.
+          Kirjauduit sisään magic link -avulla. Aseta nyt salasanasi jatkaksesi.
         </p>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>

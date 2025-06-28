@@ -14,5 +14,8 @@ export default defineConfig({
   ],
   define: {
     'process.env': {}
+  },
+  server: {
+    historyApiFallback: true
   }
 })

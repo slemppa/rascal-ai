@@ -164,6 +164,7 @@ export default function App() {
         <Route path="/magic-link" element={<MagicLinkHandler />} />
         <Route path="/magic-authentication" element={<MagicLinkHandler />} />
         <Route path="/set-password" element={<SetPasswordForm />} />
+        <Route path="/setpasswordform" element={<SetPasswordForm />} />
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
         <Route path="*" element={<LandingPage onLogin={handleLogin} />} />
       </Routes>
@@ -243,6 +244,7 @@ export default function App() {
           <Route path="/posts/:id" element={<PostDetailsPage />} />
           <Route path="/calls" element={<CallPanel />} />
           <Route path="/set-password" element={<SetPasswordForm />} />
+          <Route path="/setpasswordform" element={<SetPasswordForm />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
       </main>

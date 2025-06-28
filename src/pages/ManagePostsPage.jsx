@@ -196,7 +196,7 @@ export default function ManagePostsPage() {
       }}>
         <h1 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}><Trans>Julkaisujen hallinta</Trans></h1>
       </div>
-      <div style={{maxWidth: 1100, padding: '0 8px'}}>
+      <div style={{width: '100%', padding: '0 8px', overflowX: 'auto', paddingBottom: 48}}>
         {/* Filtteripainikkeet */}
         {!loading && !error && types.length > 0 && (
           <div style={{display: 'flex', gap: 12, margin: '1.5rem 0'}}>
@@ -245,7 +245,7 @@ export default function ManagePostsPage() {
         {!loading && !error && filteredPosts.length > 0 && (
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
             gap: '2rem',
             marginTop: '2rem',
             width: '100%'
@@ -262,6 +262,7 @@ export default function ManagePostsPage() {
                   flexDirection: 'column',
                   overflow: 'hidden',
                   minWidth: 0,
+                  maxWidth: '100%',
                   cursor: 'pointer',
                   transition: 'box-shadow 0.15s',
                 }}

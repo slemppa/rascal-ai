@@ -15,6 +15,13 @@ const mockStrategy = [
 
 const STRATEGY_URL = import.meta.env.N8N_GET_STRATEGY_URL || 'https://samikiias.app.n8n.cloud/webhook/strategy-89777321'
 
+const getStrategy = async (companyId) => {
+  const url = companyId ? `/api/strategy?companyId=${companyId}` : '/api/strategy'
+  const res = await fetch(url)
+  if (!res.ok) throw new Error('Strategian haku epäonnistui')
+  return await res.json()
+}
+
 export default function ContentStrategyPage() {
   const [strategy, setStrategy] = useState([])
   const [loading, setLoading] = useState(true)
@@ -28,15 +35,12 @@ export default function ContentStrategyPage() {
       try {
         setLoading(true)
         setError(null)
-        const res = await axios.get(STRATEGY_URL, {
-          headers: {
-            'x-api-key': import.meta.env.N8N_GET_STRATEGY_KEY
-          }
-        })
-        setStrategy(Array.isArray(res.data) ? res.data : mockStrategy)
+        // Voit hakea companyId:n localStoragesta tai muualta, tässä esimerkissä ei käytetä
+        const data = await getStrategy()
+        setStrategy(Array.isArray(data) ? data : mockStrategy)
       } catch (e) {
         setStrategy(mockStrategy)
-        setError('Ei saatu yhteyttä webhookiin, näytetään mock-data')
+        setError('Ei saatu yhteyttä strategia-endpointiin, näytetään mock-data')
       } finally {
         setLoading(false)
       }

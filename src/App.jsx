@@ -14,6 +14,8 @@ import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import CallPanel from './pages/CallPanel'
 import LanguageSelector from './components/LanguageSelector'
+import MagicLinkHandler from './components/MagicLinkHandler'
+import SetPasswordForm from './components/SetPasswordForm'
 import { Trans } from '@lingui/macro'
 import { Analytics } from '@vercel/analytics/react'
 
@@ -38,6 +40,24 @@ export default function App() {
       fetchDashboardDataAndSet()
     }
   }, [isAuthenticated])
+
+  useEffect(() => {
+    const authToken = localStorage.getItem('auth-token')
+    const userEmail = localStorage.getItem('user-email')
+    
+    if (authToken && userEmail && !isAuthenticated) {
+      navigate('/set-password')
+    }
+  }, [isAuthenticated, navigate])
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const magicToken = urlParams.get('magic-token')
+    
+    if (magicToken && (window.location.pathname === '/magic-link' || window.location.pathname === '/magic-authentication')) {
+      return
+    }
+  }, [])
 
   const fetchDashboardDataAndSet = async () => {
     try {
@@ -141,6 +161,9 @@ export default function App() {
   if (!isAuthenticated) {
     return (
       <Routes>
+        <Route path="/magic-link" element={<MagicLinkHandler />} />
+        <Route path="/magic-authentication" element={<MagicLinkHandler />} />
+        <Route path="/set-password" element={<SetPasswordForm />} />
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
         <Route path="*" element={<LandingPage onLogin={handleLogin} />} />
       </Routes>
@@ -219,6 +242,7 @@ export default function App() {
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/posts/:id" element={<PostDetailsPage />} />
           <Route path="/calls" element={<CallPanel />} />
+          <Route path="/set-password" element={<SetPasswordForm />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
       </main>

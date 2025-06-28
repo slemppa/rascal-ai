@@ -1,34 +1,33 @@
 # Rascal AI Dashboard
 
-Moderni React-pohjainen dashboard-sovellus, joka kokoaa markkinoinnin olennaiset tiedot yhteen näkymään: julkaisut, uutiskirjeet, tilaajat ja sisällöntuotannon aikataulut. Tiedot haetaan ulkoisista API-rajapinnoista (esim. n8n-workflow, webhookit).
+Moderni React-pohjainen dashboard-sovellus markkinointitiimille. Sovellus tarjoaa keskitetyn näkymän markkinointitoimintojen seurantaan ja hallintaan.
 
 ## Ominaisuudet
 
 - 🎨 Moderni ja responsiivinen käyttöliittymä
 - 📊 Dashboard-näkymä keskeisille markkinointitiedoille
-- 📝 Tulevien julkaisujen ja sähköpostien seuranta
-- 👥 Tilaajien kasvu ja analytiikka
-- ⏰ Sisällöntuotannon sykli ja seuraavan julkaisun aikataulu
+- 📝 Sisällönhallinta ja aikataulutus
+- 👥 Tilaajien seuranta ja analytiikka
+- ⏰ Sisällöntuotannon sykli ja aikataulut
 - 🔄 Reaaliaikainen tietojen päivitys
 - 📱 Mobiiliystävällinen design
-- 🔐 Kirjautuminen modaalina etusivulla
-- 🖼️ Oma favicon ja brändi-ilme
+- 🔐 Turvallinen kirjautuminen
+- 🤖 AI-pohjainen chat-toiminto
+- 📁 Tiedostojen hallinta ja käsittely
 
 ## Teknologiat
 
 - **React** – Käyttöliittymä
 - **Vite** – Nopea kehitysympäristö
-- **Axios** – HTTP-kutsut
 - **CSS (Flexbox & Grid)** – Responsiivinen ulkoasu
-- **n8n** – Workflow-automaatio ja API-rajapinnat
-- **Ulkoiset backendit/webhookit** – Datan haku
+- **Lingui** – Monikielisyys
 
 ## Asennus ja käyttö
 
 1. Kloonaa projekti:
 ```bash
 git clone <repository-url>
-cd mak8d
+cd rascal-ai
 ```
 
 2. Asenna riippuvuudet:
@@ -36,36 +35,58 @@ cd mak8d
 npm install
 ```
 
-3. Käynnistä kehityspalvelin:
+3. Luo ympäristömuuttujatiedosto:
+```bash
+cp .env.example .env.local
+```
+
+4. Muokkaa `.env.local` tiedostoa ja lisää tarvittavat ympäristömuuttujat.
+
+5. Käynnistä kehityspalvelin:
 ```bash
 npm run dev
 ```
 
-4. Avaa selain osoitteeseen `http://localhost:5173`
+6. Avaa selain osoitteeseen `http://localhost:5173`
 
-## Konfiguraatio
+## Ympäristömuuttujat
 
-### API/Webhook URL
+### Frontend (.env.local)
 
-Muokkaa `src/services/api.js` tiedostoa ja aseta oikeat API- tai webhook-osoitteet:
+Luo `.env.local` tiedosto projektin juureen ja lisää tarvittavat ympäristömuuttujat:
 
-```javascript
-const API_URL = 'https://your-backend-or-n8n-instance.com/webhook/...' 
+```env
+# API-avain
+VITE_API_KEY=your_api_key_here
+
+# Chat-webhook URL (AI-chat-toimintoon)
+VITE_CHAT_WEBHOOK_URL=https://your-n8n-instance.com/webhook/your-chat-webhook-id
 ```
 
-### Datan rakenne
+### Backend API (.env.local)
 
-API:n palauttaman datan tulee olla muodossa:
+Backend API:t tarvitsevat seuraavat ympäristömuuttujat:
 
-```json
-{
-  "upcomingPosts": [ ... ],
-  "emails": [ ... ],
-  "subscribers": [ ... ],
-  "nextGenerationTime": "...",
-  "stats": { ... }
-}
+```env
+# N8N Webhook URL:t
+N8N_LOGIN_URL=https://your-n8n-instance.com/webhook/your-login-webhook-id
+N8N_GET_POSTS_URL=https://your-n8n-instance.com/webhook/your-get-posts-webhook-id
+N8N_UPDATE_POST_URL=https://your-n8n-instance.com/webhook/your-update-post-webhook-id
+N8N_STRATEGY_URL=https://your-n8n-instance.com/webhook/your-strategy-webhook-id
+N8N_VECTOR_STORE_FILES_URL=https://your-n8n-instance.com/webhook/your-vector-store-webhook-id
+N8N_KNOWLEDGE_WEBHOOK_URL=https://your-n8n-instance.com/webhook/your-knowledge-upload-webhook-id
 ```
+
+### Tarvittavat endpointit
+
+Sovellus käyttää seuraavia endpointteja:
+
+- **VITE_API_KEY**: API-avain autentikaatioon
+- **VITE_CHAT_WEBHOOK_URL**: Webhook-osoite AI-chat-toimintoon
+- **N8N_*_URL**: Backend API:n käyttämät N8N webhook-osoitteet
+- **Omat API-reitit**: Sovellus käyttää omia `/api/`-reittejä backend-toiminnoille
+
+Kaikki webhook-osoitteet tulee olla HTTPS-osoitteita ja vastata oikeaa data-formaattia.
 
 ## Projektin rakenne
 
@@ -73,19 +94,22 @@ API:n palauttaman datan tulee olla muodossa:
 src/
 ├── App.jsx              # Pääkomponentti
 ├── App.css              # Tyylit
-├── pages/               # Sivukomponentit (mm. LandingPage, DashboardPage)
-├── services/
-│   └── api.js           # API-kutsut ja mock-data
+├── pages/               # Sivukomponentit
+│   ├── DashboardPage.jsx
+│   ├── AIChatPage.jsx
+│   ├── ContentStrategyPage.jsx
+│   └── ...
+├── components/          # Yhteiset komponentit
+├── services/            # API-palvelut
+├── locales/             # Kielitiedostot
 └── assets/              # Kuvat ja muut resurssit
-public/
-└── favicon.png          # Favicon ja muut julkiset resurssit
 ```
 
 ## Kehitys
 
-- Sovellus käyttää mock-dataa, jos ulkoista APIa ei ole määritelty.
-- Kirjautuminen avautuu modaalina etusivulla (ei erillistä kirjautumissivua).
-- Ulkoasu ja brändi noudattavat Rascal AI -ilmettä.
+- Sovellus tukee monikielisyyttä (suomi/englanti)
+- Responsiivinen design toimii kaikilla laitteilla
+- Modulaarinen komponenttirakenne
 
 ## Skriptit
 
@@ -93,6 +117,16 @@ public/
 - `npm run build` – Rakenna tuotantoversio
 - `npm run preview` – Esikatsele tuotantoversio
 - `npm run lint` – Tarkista koodin laatu
+
+## Tuotantoversio
+
+Rakenna tuotantoversio:
+
+```bash
+npm run build
+```
+
+Tuotantoversio luodaan `dist/` kansioon.
 
 ## Lisenssi
 

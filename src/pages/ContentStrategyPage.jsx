@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import { Trans, t } from '@lingui/macro'
 
 // Mock-data oikealla rakenteella
 const mockStrategy = [
@@ -60,61 +61,71 @@ export default function ContentStrategyPage() {
     }
   }
 
-  if (loading) return <p>Ladataan...</p>
+  if (loading) return <p><Trans>Ladataan...</Trans></p>
 
   return (
-    <div>
-      <h1>Sisältöstrategia</h1>
-      {error && <p style={{color: 'red'}}>{error}</p>}
-      <div style={{display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: 32}}>
-        {strategy.map(item => (
-          <div key={item.id} style={{
-            background: '#fff',
-            borderRadius: 12,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-            border: '1px solid #e1e8ed',
-            padding: 24,
-            minWidth: 320,
-            maxWidth: 600,
-            width: 'auto',
-            position: 'relative',
-            marginBottom: 24
-          }}>
-            <div style={{fontWeight: 700, fontSize: 20, marginBottom: 8}}>{item.Month}</div>
-            <div style={{marginBottom: 8, color: '#888', fontSize: 13}}>Yrityksiä: {item.Companies?.length || 0}</div>
-            {editId === item.id ? (
-              <>
-                <textarea
-                  ref={textareaRef}
-                  value={editText}
-                  onChange={e => setEditText(e.target.value)}
-                  style={{
-                    width: '100%',
-                    minHeight: 40,
-                    marginBottom: 12,
-                    resize: 'none',
-                    overflow: 'hidden',
-                    fontSize: 16,
-                    lineHeight: 1.5,
-                    borderRadius: 8,
-                    border: '1.5px solid #e1e8ed',
-                    background: '#f7fafc',
-                    padding: '12px 14px',
-                    boxSizing: 'border-box'
-                  }}
-                />
-                <button onClick={() => handleSave(item)} style={{marginRight: 8, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Tallenna</button>
-                <button onClick={() => setEditId(null)} style={{background: '#eee', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Peruuta</button>
-              </>
-            ) : (
-              <>
-                <div style={{marginBottom: 12, whiteSpace: 'pre-line'}}>{item.Strategy}</div>
-                <button onClick={() => handleEdit(item)} style={{position: 'absolute', top: 16, right: 16, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Muokkaa</button>
-              </>
-            )}
-          </div>
-        ))}
+    <>
+      <div style={{
+        background: 'var(--brand-dark)',
+        color: '#fff',
+        borderBottom: '1px solid #e2e8f0',
+        paddingTop: 32,
+        paddingBottom: 24
+      }}>
+        <h1 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}><Trans>Sisältöstrategia</Trans></h1>
       </div>
-    </div>
+      <div style={{maxWidth: 1100, padding: '0 8px'}}>
+        {error && <p style={{color: 'red'}}>{error}</p>}
+        <div style={{display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: 32}}>
+          {strategy.map(item => (
+            <div key={item.id} style={{
+              background: '#fff',
+              borderRadius: 12,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+              border: '1px solid #e1e8ed',
+              padding: 24,
+              minWidth: 320,
+              maxWidth: 600,
+              width: 'auto',
+              position: 'relative',
+              marginBottom: 24
+            }}>
+              <div style={{fontWeight: 700, fontSize: 20, marginBottom: 8}}>{item.Month}</div>
+              <div style={{marginBottom: 8, color: '#888', fontSize: 13}}>Yrityksiä: {item.Companies?.length || 0}</div>
+              {editId === item.id ? (
+                <>
+                  <textarea
+                    ref={textareaRef}
+                    value={editText}
+                    onChange={e => setEditText(e.target.value)}
+                    style={{
+                      width: '100%',
+                      minHeight: 40,
+                      marginBottom: 12,
+                      resize: 'none',
+                      overflow: 'hidden',
+                      fontSize: 16,
+                      lineHeight: 1.5,
+                      borderRadius: 8,
+                      border: '1.5px solid #e1e8ed',
+                      background: '#f7fafc',
+                      padding: '12px 14px',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                  <button onClick={() => handleSave(item)} style={{marginRight: 8, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}><Trans>Tallenna</Trans></button>
+                  <button onClick={() => setEditId(null)} style={{background: '#eee', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}><Trans>Peruuta</Trans></button>
+                </>
+              ) : (
+                <>
+                  <div style={{marginBottom: 12, whiteSpace: 'pre-line'}}>{item.Strategy}</div>
+                  <button onClick={() => handleEdit(item)} style={{position: 'absolute', top: 16, right: 16, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Muokkaa</button>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
   )
 } 

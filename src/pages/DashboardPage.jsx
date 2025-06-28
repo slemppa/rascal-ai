@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Trans, t } from '@lingui/macro'
 
 function EditPostModal({ post, onClose, onSave }) {
   const [idea, setIdea] = useState(post.Idea || '')
@@ -134,90 +135,81 @@ export default function DashboardPage({ dashboardData, formatDate, formatDateTim
   }
   return (
     <>
-      <div className="dashboard-header" style={{padding: '32px 0 16px 0'}}>
-        <h1 style={{marginBottom: 12}}>Kojelauta</h1>
-        <p className="dashboard-welcome" style={{marginBottom: 0, fontSize: 18, color: '#444'}}>Tervetuloa takaisin! Tässä näet markkinointikampanjoidesi tilanteen.</p>
+      <div style={{
+        background: 'var(--brand-dark)',
+        color: '#fff',
+        borderBottom: '1px solid #e2e8f0',
+        paddingTop: 32,
+        paddingBottom: 24
+      }}>
+        <h1 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}><Trans>Kojelauta</Trans></h1>
+        <p style={{margin: '8px 0 0 0', fontSize: 16, color: '#cbd5e1', fontWeight: 400}}><Trans>Tervetuloa takaisin! Tässä näet markkinointikampanjoidesi tilanteen.</Trans></p>
       </div>
-      <div className="stats-row" style={{gap: 32, marginBottom: 32}}>
-        <div className="stat-card">
-          <div className="stat-number">{dashboardData.stats.totalUpcomingPosts}</div>
-          <div className="stat-label">Tulevat postaukset</div>
-          <div className="stat-desc">Seuraavat 7 päivää</div>
+      <div style={{maxWidth: 900, padding: '0 8px'}}>
+        <div className="stats-row" style={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '1.5rem',
+          margin: '32px 0 2rem 0',
+          width: 'auto',
+          justifyContent: 'flex-start',
+          alignItems: 'stretch'
+        }}>
+          <div className="stat-card" style={{flex: '0 0 180px', width: 180, height: 150, background: '#fff', border: '1px solid #e1e8ed', borderRadius: 12, padding: '1.5rem', textAlign: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minWidth: 0}}>
+            <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{dashboardData.stats.totalUpcomingPosts}</div>
+            <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}><Trans>Tulevat postaukset</Trans></div>
+            <div className="stat-desc" style={{fontSize: 13, color: '#888', marginTop: 4}}><Trans>Seuraavat 7 päivää</Trans></div>
+          </div>
+          <div className="stat-card" style={{flex: '0 0 180px', width: 180, height: 150, background: '#fff', border: '1px solid #e1e8ed', borderRadius: 12, padding: '1.5rem', textAlign: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minWidth: 0}}>
+            <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{dashboardData.nextGenerationTime ? formatDate(dashboardData.nextGenerationTime) : '-'}</div>
+            <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}><Trans>Seuraava generointi</Trans></div>
+            <div className="stat-desc" style={{fontSize: 13, color: '#888', marginTop: 4}}>{dashboardData.nextGenerationTime ? formatDateTime(dashboardData.nextGenerationTime).split(' ')[1] : ''}</div>
+          </div>
+          <div className="stat-card" style={{flex: '0 0 180px', width: 180, height: 150, background: '#fff', border: '1px solid #e1e8ed', borderRadius: 12, padding: '1.5rem', textAlign: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minWidth: 0}}>
+            <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{dashboardData.emails.length}</div>
+            <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}><Trans>Lähtevät sähköpostit</Trans></div>
+            <div className="stat-desc" style={{fontSize: 13, color: '#888', marginTop: 4}}><Trans>Odottaa lähetystä</Trans></div>
+          </div>
+          <div className="stat-card" style={{flex: '0 0 180px', width: 180, height: 150, background: '#fff', border: '1px solid #e1e8ed', borderRadius: 12, padding: '1.5rem', textAlign: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minWidth: 0}}>
+            <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{dashboardData.stats.averageOpenRate ? (dashboardData.stats.averageOpenRate * 100).toFixed(1) + '%' : '-'}</div>
+            <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}><Trans>Sitoutumisaste</Trans></div>
+            <div className="stat-desc" style={{fontSize: 13, color: '#888', marginTop: 4}}><Trans>+3% viime kuusta</Trans></div>
+          </div>
         </div>
-        <div className="stat-card">
-          <div className="stat-number">{dashboardData.nextGenerationTime ? formatDate(dashboardData.nextGenerationTime) : '-'}</div>
-          <div className="stat-label">Seuraava generointi</div>
-          <div className="stat-desc">{dashboardData.nextGenerationTime ? formatDateTime(dashboardData.nextGenerationTime).split(' ')[1] : ''}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-number">{dashboardData.emails.length}</div>
-          <div className="stat-label">Lähtevät sähköpostit</div>
-          <div className="stat-desc">Odottaa lähetystä</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-number">{dashboardData.stats.averageOpenRate ? (dashboardData.stats.averageOpenRate * 100).toFixed(1) + '%': '-'}</div>
-          <div className="stat-label">Sitoutumisaste</div>
-          <div className="stat-desc">+3% viime kuusta</div>
-        </div>
-      </div>
-      <div className="dashboard-columns">
-        <section className="dashboard-section">
-          <h2 className="section-title">Tulevat postaukset ja sähköpostit</h2>
-          <div className="section-list">
-            {dashboardData.upcomingPosts.map(post => (
-              <div key={post.id} className="section-card post-card" style={{display: 'flex', alignItems: 'center', gap: 16, position: 'relative'}}>
-                {/* Media: video, kuva tai placeholder */}
-                {Array.isArray(post.Media) && post.Media.length > 0 ? (
-                  post.Media[0].type && post.Media[0].type.startsWith('video/') ? (
-                    <video controls style={{width: 64, height: 64, objectFit: 'cover', borderRadius: 8}}>
-                      <source src={post.Media[0].url} type={post.Media[0].type} />
-                      Selaimesi ei tue videon toistoa.
-                    </video>
-                  ) : post.Media[0].type && post.Media[0].type.startsWith('image/') && post.Media[0].thumbnails && post.Media[0].thumbnails.large ? (
-                    <img src={post.Media[0].thumbnails.large.url} alt="media" style={{width: 64, height: 64, objectFit: 'cover', borderRadius: 8}} />
+        <div className="dashboard-columns">
+          <section className="dashboard-section" style={{width: 588, minWidth: 588, maxWidth: 588}}>
+            <h2 className="section-title">Tulevat postaukset</h2>
+            <div className="section-list">
+              {dashboardData.upcomingPosts.map(post => (
+                <div key={post.id} className="section-card post-card" style={{display: 'flex', alignItems: 'center', gap: 16, position: 'relative'}}>
+                  {/* Media: video, kuva tai placeholder */}
+                  {Array.isArray(post.Media) && post.Media.length > 0 ? (
+                    post.Media[0].type && post.Media[0].type.startsWith('video/') ? (
+                      <video controls style={{width: 64, height: 64, objectFit: 'cover', borderRadius: 8}}>
+                        <source src={post.Media[0].url} type={post.Media[0].type} />
+                        Selaimesi ei tue videon toistoa.
+                      </video>
+                    ) : post.Media[0].type && post.Media[0].type.startsWith('image/') && post.Media[0].thumbnails && post.Media[0].thumbnails.large ? (
+                      <img src={post.Media[0].thumbnails.large.url} alt="media" style={{width: 64, height: 64, objectFit: 'cover', borderRadius: 8}} />
+                    ) : (
+                      <div style={{width: 64, height: 64, background: '#f7fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', borderRadius: 8}}>Ei kuvaa</div>
+                    )
                   ) : (
                     <div style={{width: 64, height: 64, background: '#f7fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', borderRadius: 8}}>Ei kuvaa</div>
-                  )
-                ) : (
-                  <div style={{width: 64, height: 64, background: '#f7fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', borderRadius: 8}}>Ei kuvaa</div>
-                )}
-                <div style={{flex: 1}}>
-                  <div className="post-title" style={{fontWeight: 600, fontSize: 16, marginBottom: 4}}>{post.Idea || post.title}</div>
-                  <div className="post-desc" style={{fontSize: 14, color: '#444', marginBottom: 4}}>{post.desc.length > 120 ? post.desc.slice(0, 120) + '…' : post.desc}</div>
-                  <div className="post-time" style={{fontSize: 13, color: '#888', marginBottom: 4}}>{post.date ? formatDateTime(post.date) : '-'}</div>
+                  )}
+                  <div style={{flex: 1}}>
+                    <div className="post-title" style={{fontWeight: 600, fontSize: 16, marginBottom: 4}}>{post.Idea || post.title}</div>
+                    <div className="post-desc" style={{fontSize: 14, color: '#444', marginBottom: 4}}>{post.desc.length > 120 ? post.desc.slice(0, 120) + '…' : post.desc}</div>
+                    <div className="post-time" style={{fontSize: 13, color: '#888', marginBottom: 4}}>{post.date ? formatDateTime(post.date) : '-'}</div>
+                  </div>
+                  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
+                    <button onClick={() => setEditPost(post)} style={{background: '#2563eb', color: '#fff', border: 'none', borderRadius: 6, padding: '10px 18px', fontWeight: 600, cursor: 'pointer', margin: 0}}>Muokkaa</button>
+                  </div>
                 </div>
-                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
-                  <button onClick={() => setEditPost(post)} style={{background: '#2563eb', color: '#fff', border: 'none', borderRadius: 6, padding: '10px 18px', fontWeight: 600, cursor: 'pointer', margin: 0}}>Muokkaa</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-        <section className="dashboard-section">
-          <h2 className="section-title">Tulevat tehtävät</h2>
-          <div className="section-list">
-            <div className="section-card task-card">
-              <div className="task-title">Tarkista aikataulutetut postaukset</div>
-              <div className="task-time">Tänään, 15:00</div>
-              <div className="task-priority urgent">kiireellinen</div>
+              ))}
             </div>
-            <div className="section-card task-card">
-              <div className="task-title">Valmistele viikkolehti</div>
-              <div className="task-time">Huomenna, 10:00</div>
-              <div className="task-priority normal">normaali</div>
-            </div>
-            <div className="section-card task-card">
-              <div className="task-title">Päivitä sisältökalenteri</div>
-              <div className="task-time">20.6., 14:00</div>
-              <div className="task-priority low">matala</div>
-            </div>
-            <div className="section-card task-card">
-              <div className="task-title">Analysoi kampanjan suorituskyky</div>
-              <div className="task-time">22.6., 09:00</div>
-              <div className="task-priority normal">normaali</div>
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
       {editPost && <EditPostModal post={editPost} onClose={() => setEditPost(null)} onSave={handleSave} />}
     </>

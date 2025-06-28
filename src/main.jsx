@@ -1,13 +1,34 @@
-import React from 'react'
-import { createRoot } from 'react-dom/client'
+import React, { Suspense } from 'react'
+import ReactDOM from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
+import { I18nProvider } from '@lingui/react'
+import { i18n } from '@lingui/core'
+import { messages as fiMessages } from './locales/fi/messages.mjs'
+import { messages as enMessages } from './locales/en/messages.mjs'
 
-createRoot(document.getElementById('root')).render(
+const defaultLocale = 'fi'
+
+async function dynamicActivate(locale) {
+  let messages
+  if (locale === 'fi') messages = fiMessages
+  else if (locale === 'en') messages = enMessages
+  else messages = fiMessages
+  i18n.load(locale, messages)
+  i18n.activate(locale)
+}
+
+dynamicActivate(defaultLocale)
+
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-    <App />
+      <Suspense fallback={<div>Ladataan...</div>}>
+        <I18nProvider i18n={i18n} forceRenderOnLocaleChange={true}>
+          <App />
+        </I18nProvider>
+      </Suspense>
     </BrowserRouter>
   </React.StrictMode>
 )

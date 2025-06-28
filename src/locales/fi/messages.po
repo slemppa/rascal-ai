@@ -1,0 +1,415 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-06-27 20:25+0300\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: fi\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/pages/AIChatPage.jsx:150
+msgid "{companyName} markkinointiassistentti"
+msgstr ""
+
+#: src/pages/DashboardPage.jsx:161
+msgid "+3% viime kuusta"
+msgstr "+3% viime kuusta"
+
+#: src/pages/LandingPage.jsx:138
+msgid "⏱️ Säästät tunteja viikossa"
+msgstr "⏱️ Säästät tunteja viikossa"
+
+#: src/pages/LandingPage.jsx:106
+msgid "✅ Arvostat selkeyttä ja visuaalisuutta"
+msgstr "✅ Arvostat selkeyttä ja visuaalisuutta"
+
+#: src/pages/LandingPage.jsx:104
+msgid "✅ Haluat nähdä yhdellä silmäyksellä missä mennään"
+msgstr "✅ Haluat nähdä yhdellä silmäyksellä missä mennään"
+
+#: src/pages/LandingPage.jsx:103
+msgid "✅ Olet kyllästynyt etsimään tietoja eri työkaluista"
+msgstr "✅ Olet kyllästynyt etsimään tietoja eri työkaluista"
+
+#: src/pages/LandingPage.jsx:105
+msgid "✅ Tarvitset helpon tavan seurata markkinointisi tilaa ilman exceleitä"
+msgstr "✅ Tarvitset helpon tavan seurata markkinointisi tilaa ilman exceleitä"
+
+#: src/pages/LandingPage.jsx:123
+msgid "🎯 Yrittäjille, markkinoijille ja sisällöntuottajille, jotka haluavat nopeasti ymmärtää markkinointinsa tilan – ilman ylimääräistä säätöä.<0/>Ei koodia. Ei integraatiostressiä. Kaikki valmiina."
+msgstr "🎯 Yrittäjille, markkinoijille ja sisällöntuottajille, jotka haluavat nopeasti ymmärtää markkinointinsa tilan – ilman ylimääräistä säätöä.<0/>Ei koodia. Ei integraatiostressiä. Kaikki valmiina."
+
+#: src/pages/LandingPage.jsx:81
+msgid "👉 Pyydä demoa tai testaa itse.<0/>Dashboard voidaan räätälöidä juuri sinun yrityksesi tarpeisiin."
+msgstr "👉 Pyydä demoa tai testaa itse.<0/>Dashboard voidaan räätälöidä juuri sinun yrityksesi tarpeisiin."
+
+#: src/pages/LandingPage.jsx:137
+msgid "💡 Yksi näkymä, kaikki tärkeä"
+msgstr "💡 Yksi näkymä, kaikki tärkeä"
+
+#: src/pages/LandingPage.jsx:140
+msgid "📱 Toimii kaikkialla – myös puhelimella"
+msgstr "📱 Toimii kaikkialla – myös puhelimella"
+
+#: src/pages/LandingPage.jsx:139
+msgid "🔄 Päivittyy automaattisesti – ei manuaalista päivittelyä"
+msgstr "🔄 Päivittyy automaattisesti – ei manuaalista päivittelyä"
+
+#: src/pages/LandingPage.jsx:116
+msgid "🔸 Sisällöntuotannon sykli – Milloin seuraava juttu tulee ulos?"
+msgstr "🔸 Sisällöntuotannon sykli – Milloin seuraava juttu tulee ulos?"
+
+#: src/pages/LandingPage.jsx:115
+msgid "🔸 Tilaajien kasvu – Seuranta yhdellä silmäyksellä"
+msgstr "🔸 Tilaajien kasvu – Seuranta yhdellä silmäyksellä"
+
+#: src/pages/LandingPage.jsx:113
+msgid "🔸 Tulevat julkaisut – Mikä on työn alla ja milloin se julkaistaan"
+msgstr "🔸 Tulevat julkaisut – Mikä on työn alla ja milloin se julkaistaan"
+
+#: src/pages/LandingPage.jsx:114
+msgid "🔸 Uutiskirjeet & sähköpostit – Montako avasi? Kuka klikkasi?"
+msgstr "🔸 Uutiskirjeet & sähköpostit – Montako avasi? Kuka klikkasi?"
+
+#: src/pages/AIChatPage.jsx:107
+#: src/pages/AIChatPage.jsx:110
+msgid "AI ei vastannut."
+msgstr ""
+
+#: src/pages/AIChatPage.jsx:201
+msgid "AI kirjoittaa..."
+msgstr ""
+
+#: src/App.jsx:180
+#: src/App.jsx:205
+#: src/pages/SettingsPage.jsx:32
+msgid "Asetukset"
+msgstr "Asetukset"
+
+#: src/pages/SettingsPage.jsx:39
+msgid "Assistant ID:"
+msgstr "Assistant ID:"
+
+#: src/App.jsx:177
+#: src/App.jsx:204
+msgid "Assistentti"
+msgstr "Assistentti"
+
+#: src/pages/AIChatPage.jsx:118
+msgid "Chat"
+msgstr ""
+
+#: src/pages/AIChatPage.jsx:230
+msgid "Ei tiedostoja"
+msgstr ""
+
+#: src/pages/CallStats.jsx:125
+msgid "Epäonnistunut"
+msgstr "Epäonnistunut"
+
+#: src/pages/ManagePostsPage.jsx:233
+msgid "Et ole vielä generoinut mitään julkaisuja"
+msgstr "Et ole vielä generoinut mitään julkaisuja"
+
+#: src/App.jsx:165
+#: src/App.jsx:200
+msgid "Etusivu"
+msgstr "Etusivu"
+
+#: src/pages/CallPanel.jsx:72
+msgid "Google Sheets -linkki:"
+msgstr "Google Sheets -linkki:"
+
+#: src/pages/LandingPage.jsx:79
+msgid "Haluatko nähdä miten se toimii käytännössä?"
+msgstr "Haluatko nähdä miten se toimii käytännössä?"
+
+#: src/pages/PostDetailsPage.jsx:41
+msgid "ID:"
+msgstr "ID:"
+
+#: src/pages/PostDetailsPage.jsx:42
+msgid "Idea:"
+msgstr "Idea:"
+
+#: src/pages/ManagePostsPage.jsx:190
+msgid "Julkaisujen hallinta"
+msgstr "Julkaisujen hallinta"
+
+#: src/App.jsx:168
+#: src/App.jsx:201
+msgid "Julkaisut"
+msgstr "Julkaisut"
+
+#: src/pages/ManagePostsPage.jsx:207
+msgid "Kaikki"
+msgstr "Kaikki"
+
+#: src/pages/LandingPage.jsx:85
+msgid "Katso esittely"
+msgstr "Katso esittely"
+
+#: src/pages/CallPanel.jsx:99
+msgid "Käynnistä soitot"
+msgstr "Käynnistä soitot"
+
+#: src/pages/CallPanel.jsx:99
+msgid "Käynnistetään..."
+msgstr "Käynnistetään..."
+
+#: src/pages/SettingsPage.jsx:43
+msgid "Käyttäjätietoja ei löytynyt."
+msgstr "Käyttäjätietoja ei löytynyt."
+
+#: src/pages/LandingPage.jsx:121
+msgid "Kenelle tämä on tehty?"
+msgstr "Kenelle tämä on tehty?"
+
+#: src/pages/LoginPage.jsx:35
+#: src/pages/LandingPage.jsx:154
+msgid "Kirjaudu"
+msgstr "Kirjaudu"
+
+#: src/pages/LoginPage.jsx:31
+#: src/pages/LandingPage.jsx:66
+#: src/pages/LandingPage.jsx:150
+msgid "Kirjaudu sisään"
+msgstr "Kirjaudu sisään"
+
+#: src/App.jsx:184
+#: src/App.jsx:207
+msgid "Kirjaudu ulos"
+msgstr "Kirjaudu ulos"
+
+#: src/pages/LoginPage.jsx:35
+#: src/pages/LandingPage.jsx:154
+msgid "Kirjaudutaan..."
+msgstr "Kirjaudutaan..."
+
+#: src/pages/AIChatPage.jsx:210
+msgid "Kirjoita viesti..."
+msgstr ""
+
+#: src/pages/DashboardPage.jsx:139
+msgid "Kojelauta"
+msgstr "Kojelauta"
+
+#: src/pages/PostDetailsPage.jsx:43
+msgid "Kuvaus:"
+msgstr "Kuvaus:"
+
+#: src/pages/AIChatPage.jsx:228
+msgid "Ladataan tiedostoja..."
+msgstr ""
+
+#: src/pages/ManagePostsPage.jsx:229
+#: src/pages/ContentStrategyPage.jsx:64
+msgid "Ladataan..."
+msgstr "Ladataan..."
+
+#: src/pages/AIChatPage.jsx:215
+msgid "Lähetä"
+msgstr ""
+
+#: src/pages/DashboardPage.jsx:155
+msgid "Lähtevät sähköpostit"
+msgstr "Lähtevät sähköpostit"
+
+#: src/pages/PostDetailsPage.jsx:46
+msgid "Luotu:"
+msgstr "Luotu:"
+
+#: src/pages/LandingPage.jsx:135
+msgid "Miksi valita Rascal AI Dashboard?"
+msgstr "Miksi valita Rascal AI Dashboard?"
+
+#: src/pages/LandingPage.jsx:128
+msgid "Miltä se näyttää?"
+msgstr "Miltä se näyttää?"
+
+#: src/pages/LandingPage.jsx:111
+msgid "Mitä näet dashboardilla?"
+msgstr "Mitä näet dashboardilla?"
+
+#: src/pages/LandingPage.jsx:130
+msgid "Moderni ja mobiiliystävällinen käyttöliittymä näyttää asiat selkeästi. Pystyt käyttämään sitä tietokoneella, tabletilla tai puhelimella. Ei kikkailua – vain faktat, visuaalisesti."
+msgstr "Moderni ja mobiiliystävällinen käyttöliittymä näyttää asiat selkeästi. Pystyt käyttämään sitä tietokoneella, tabletilla tai puhelimella. Ei kikkailua – vain faktat, visuaalisesti."
+
+#: src/pages/LandingPage.jsx:74
+msgid "Näe markkinointisi yhdellä silmäyksellä 🧠"
+msgstr "Näe markkinointisi yhdellä silmäyksellä 🧠"
+
+#: src/pages/AIChatPage.jsx:235
+msgid "Nimetön tiedosto"
+msgstr ""
+
+#: src/pages/SettingsPage.jsx:35
+msgid "Nimi:"
+msgstr "Nimi:"
+
+#: src/pages/DashboardPage.jsx:156
+msgid "Odottaa lähetystä"
+msgstr "Odottaa lähetystä"
+
+#: src/pages/LandingPage.jsx:84
+msgid "Ota yhteyttä"
+msgstr "Ota yhteyttä"
+
+#: src/pages/ContentStrategyPage.jsx:108
+msgid "Peruuta"
+msgstr "Peruuta"
+
+#: src/pages/PostDetailsPage.jsx:37
+msgid "Postauksen tiedot"
+msgstr "Postauksen tiedot"
+
+#: src/pages/CallPanel.jsx:90
+msgid "Puhelinnumeroita löytyi:"
+msgstr "Puhelinnumeroita löytyi:"
+
+#: src/App.jsx:174
+#: src/App.jsx:203
+msgid "Puhelut"
+msgstr "Puhelut"
+
+#: src/pages/ReportsPage.jsx:7
+msgid "Raportit"
+msgstr "Raportit"
+
+#: src/pages/LandingPage.jsx:57
+msgid "Rascal AI"
+msgstr "Rascal AI"
+
+#: src/pages/LandingPage.jsx:76
+msgid "Rascal AI Dashboard kokoaa kaiken olennaisen yhteen näkymään – julkaisut, uutiskirjeet, tilaajat ja seuraavan sisällön aikataulun. Reaaliaikaisesti ja ilman taulukkohelvettiä."
+msgstr "Rascal AI Dashboard kokoaa kaiken olennaisen yhteen näkymään – julkaisut, uutiskirjeet, tilaajat ja seuraavan sisällön aikataulun. Reaaliaikaisesti ja ilman taulukkohelvettiä."
+
+#: src/pages/LandingPage.jsx:101
+msgid "Rascal AI Dashboard on sinulle, jos:"
+msgstr "Rascal AI Dashboard on sinulle, jos:"
+
+#: src/pages/LandingPage.jsx:100
+msgid "Säästä aikaa. Pysy kartalla. Tee parempia päätöksiä."
+msgstr "Säästä aikaa. Pysy kartalla. Tee parempia päätöksiä."
+
+#: src/pages/LoginPage.jsx:32
+#: src/pages/LandingPage.jsx:151
+msgid "Sähköposti"
+msgstr "Sähköposti"
+
+#: src/pages/SettingsPage.jsx:36
+msgid "Sähköposti:"
+msgstr "Sähköposti:"
+
+#: src/pages/EmailMarketingPage.jsx:5
+msgid "Sähköpostimarkkinointi"
+msgstr "Sähköpostimarkkinointi"
+
+#: src/pages/LoginPage.jsx:33
+#: src/pages/LandingPage.jsx:152
+msgid "Salasana"
+msgstr "Salasana"
+
+#: src/pages/DashboardPage.jsx:150
+msgid "Seuraava generointi"
+msgstr "Seuraava generointi"
+
+#: src/pages/DashboardPage.jsx:146
+msgid "Seuraavat 7 päivää"
+msgstr "Seuraavat 7 päivää"
+
+#: src/App.jsx:171
+#: src/App.jsx:202
+#: src/pages/ContentStrategyPage.jsx:68
+msgid "Sisältöstrategia"
+msgstr "Sisältöstrategia"
+
+#: src/pages/DashboardPage.jsx:160
+msgid "Sitoutumisaste"
+msgstr "Sitoutumisaste"
+
+#: src/pages/CallPanel.jsx:71
+msgid "Soita osallistujille"
+msgstr "Soita osallistujille"
+
+#: src/pages/CallStats.jsx:121
+msgid "Soitettu"
+msgstr "Soitettu"
+
+#: src/pages/PostDetailsPage.jsx:45
+msgid "Status:"
+msgstr "Status:"
+
+#: src/pages/LandingPage.jsx:148
+msgid "Sulje"
+msgstr "Sulje"
+
+#: src/pages/PostDetailsPage.jsx:36
+msgid "Takaisin"
+msgstr "Takaisin"
+
+#: src/pages/ContentStrategyPage.jsx:107
+msgid "Tallenna"
+msgstr "Tallenna"
+
+#: src/pages/ReportsPage.jsx:8
+msgid "Tämä on raporttisivu. Lisää raporttien toiminnallisuus myöhemmin."
+msgstr "Tämä on raporttisivu. Lisää raporttien toiminnallisuus myöhemmin."
+
+#: src/pages/CallPanel.jsx:85
+msgid "Tarkista osallistujat"
+msgstr "Tarkista osallistujat"
+
+#: src/pages/CallPanel.jsx:85
+msgid "Tarkistetaan..."
+msgstr "Tarkistetaan..."
+
+#: src/pages/DashboardPage.jsx:140
+msgid "Tervetuloa takaisin! Tässä näet markkinointikampanjoidesi tilanteen."
+msgstr "Tervetuloa takaisin! Tässä näet markkinointikampanjoidesi tilanteen."
+
+#: src/pages/AIChatPage.jsx:47
+msgid "Tiedostojen haku epäonnistui"
+msgstr ""
+
+#: src/pages/AIChatPage.jsx:227
+msgid "Tiedostot"
+msgstr ""
+
+#: src/pages/AIChatPage.jsx:119
+msgid "Tietokanta"
+msgstr ""
+
+#: src/pages/CallStats.jsx:65
+msgid "Todellinen laskutus tarkistetaan aina kauden lopussa"
+msgstr "Todellinen laskutus tarkistetaan aina kauden lopussa"
+
+#: src/pages/SettingsPage.jsx:40
+msgid "Tokenin vanhentumisaika (exp):"
+msgstr "Tokenin vanhentumisaika (exp):"
+
+#: src/pages/DashboardPage.jsx:145
+msgid "Tulevat postaukset"
+msgstr "Tulevat postaukset"
+
+#: src/pages/PostDetailsPage.jsx:44
+msgid "Tyyppi:"
+msgstr "Tyyppi:"
+
+#: src/pages/CallStats.jsx:117
+msgid "Yhteensä"
+msgstr "Yhteensä"
+
+#: src/pages/SettingsPage.jsx:38
+msgid "Yrityksen ID:"
+msgstr "Yrityksen ID:"
+
+#: src/pages/SettingsPage.jsx:37
+msgid "Yrityksen nimi:"
+msgstr "Yrityksen nimi:"

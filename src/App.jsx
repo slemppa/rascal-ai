@@ -13,6 +13,8 @@ import AIChatPage from './pages/AIChatPage'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import CallPanel from './pages/CallPanel'
+import LanguageSelector from './components/LanguageSelector'
+import { Trans } from '@lingui/macro'
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem('token'))
@@ -148,32 +150,35 @@ export default function App() {
     <div className="app">
       {/* Vasen sivupalkki */}
       <nav className="sidebar">
+        <div style={{padding: '16px 16px 0 16px'}}>
+          <LanguageSelector />
+        </div>
         <div className="sidebar-header" style={{display: 'flex', alignItems: 'center', gap: 12}}>
           <img src="/favicon.png" alt="favicon" style={{width: 32, height: 32, borderRadius: 8, background: '#fff'}} />
           <h2 style={{margin: 0}}>Rascal AI</h2>
         </div>
         <ul className="nav-menu">
           <li className="nav-item">
-            <Link to="/dashboard" className={`nav-link${location.pathname === '/dashboard' ? ' active' : ''}`}><span className="nav-icon">🏠</span>Etusivu</Link>
+            <Link to="/dashboard" className={`nav-link${location.pathname === '/dashboard' ? ' active' : ''}`}><span className="nav-icon">🏠</span><Trans>Etusivu</Trans></Link>
           </li>
           <li className="nav-item">
-            <Link to="/posts" className={`nav-link${location.pathname === '/posts' ? ' active' : ''}`}><span className="nav-icon">📝</span>Julkaisut</Link>
+            <Link to="/posts" className={`nav-link${location.pathname === '/posts' ? ' active' : ''}`}><span className="nav-icon">📝</span><Trans>Julkaisut</Trans></Link>
           </li>
           <li className="nav-item">
-            <Link to="/strategy" className={`nav-link${location.pathname === '/strategy' ? ' active' : ''}`}><span className="nav-icon">📊</span>Sisältöstrategia</Link>
+            <Link to="/strategy" className={`nav-link${location.pathname === '/strategy' ? ' active' : ''}`}><span className="nav-icon">📊</span><Trans>Sisältöstrategia</Trans></Link>
           </li>
           <li className="nav-item">
-            <Link to="/calls" className={`nav-link${location.pathname === '/calls' ? ' active' : ''}`}><span className="nav-icon">📞</span>Puhelut</Link>
+            <Link to="/calls" className={`nav-link${location.pathname === '/calls' ? ' active' : ''}`}><span className="nav-icon">📞</span><Trans>Puhelut</Trans></Link>
           </li>
           <li className="nav-item">
-            <Link to="/ai-chat" className={`nav-link${location.pathname === '/ai-chat' ? ' active' : ''}`}><span className="nav-icon">🤖</span>Assistentti</Link>
+            <Link to="/ai-chat" className={`nav-link${location.pathname === '/ai-chat' ? ' active' : ''}`}><span className="nav-icon">🤖</span><Trans>Assistentti</Trans></Link>
           </li>
           <li className="nav-item">
-            <Link to="/settings" className={`nav-link${location.pathname === '/settings' ? ' active' : ''}`}><span className="nav-icon">⚙️</span>Asetukset</Link>
+            <Link to="/settings" className={`nav-link${location.pathname === '/settings' ? ' active' : ''}`}><span className="nav-icon">⚙️</span><Trans>Asetukset</Trans></Link>
           </li>
         </ul>
         <div style={{padding: 16, borderTop: '1px solid rgba(255,255,255,0.1)'}}>
-          <button onClick={handleLogout} style={{width: '100%', background: '#fff', color: 'var(--brand-dark)', border: 'none', borderRadius: 6, padding: '10px 0', fontWeight: 600, fontSize: 16, cursor: 'pointer'}}>Kirjaudu ulos</button>
+          <button onClick={handleLogout} style={{width: '100%', background: '#fff', color: 'var(--brand-dark)', border: 'none', borderRadius: 6, padding: '10px 0', fontWeight: 600, fontSize: 16, cursor: 'pointer'}}><Trans>Kirjaudu ulos</Trans></button>
         </div>
       </nav>
 
@@ -189,20 +194,20 @@ export default function App() {
             <button className="mobile-menu-close" onClick={() => setMobileMenuOpen(false)}>&times;</button>
             <h2 style={{margin: '0 0 1.5rem 0', color: 'var(--brand-dark)'}}>Rascal AI</h2>
             <ul className="nav-menu">
-              <li className="nav-item"><Link to="/dashboard" className={`nav-link${location.pathname === '/dashboard' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">🏠</span>Etusivu</Link></li>
-              <li className="nav-item"><Link to="/posts" className={`nav-link${location.pathname === '/posts' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📝</span>Julkaisut</Link></li>
-              <li className="nav-item"><Link to="/strategy" className={`nav-link${location.pathname === '/strategy' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📊</span>Sisältöstrategia</Link></li>
-              <li className="nav-item"><Link to="/calls" className={`nav-link${location.pathname === '/calls' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📞</span>Puhelut</Link></li>
-              <li className="nav-item"><Link to="/ai-chat" className={`nav-link${location.pathname === '/ai-chat' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">🤖</span>Assistentti</Link></li>
-              <li className="nav-item"><Link to="/settings" className={`nav-link${location.pathname === '/settings' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">⚙️</span>Asetukset</Link></li>
+              <li className="nav-item"><Link to="/dashboard" className={`nav-link${location.pathname === '/dashboard' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">🏠</span><Trans>Etusivu</Trans></Link></li>
+              <li className="nav-item"><Link to="/posts" className={`nav-link${location.pathname === '/posts' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📝</span><Trans>Julkaisut</Trans></Link></li>
+              <li className="nav-item"><Link to="/strategy" className={`nav-link${location.pathname === '/strategy' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📊</span><Trans>Sisältöstrategia</Trans></Link></li>
+              <li className="nav-item"><Link to="/calls" className={`nav-link${location.pathname === '/calls' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">📞</span><Trans>Puhelut</Trans></Link></li>
+              <li className="nav-item"><Link to="/ai-chat" className={`nav-link${location.pathname === '/ai-chat' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">🤖</span><Trans>Assistentti</Trans></Link></li>
+              <li className="nav-item"><Link to="/settings" className={`nav-link${location.pathname === '/settings' ? ' active' : ''}`} onClick={() => setMobileMenuOpen(false)}><span className="nav-icon">⚙️</span><Trans>Asetukset</Trans></Link></li>
             </ul>
-            <button onClick={() => { setMobileMenuOpen(false); handleLogout(); }} style={{width: '100%', background: 'var(--brand-dark)', color: '#fff', border: 'none', borderRadius: 6, padding: '12px 0', fontWeight: 600, fontSize: 18, cursor: 'pointer', marginTop: 24}}>Kirjaudu ulos</button>
+            <button onClick={() => { setMobileMenuOpen(false); handleLogout(); }} style={{width: '100%', background: 'var(--brand-dark)', color: '#fff', border: 'none', borderRadius: 6, padding: '12px 0', fontWeight: 600, fontSize: 18, cursor: 'pointer', marginTop: 24}}><Trans>Kirjaudu ulos</Trans></button>
           </nav>
         </div>
       )}
 
       {/* Pääsisältö */}
-      <main className="main-content" style={{padding: '0 32px'}}>
+      <main className={`main-content${location.pathname === '/ai-chat' ? ' no-padding' : ''}`}>
         <Routes>
           <Route path="/dashboard" element={<DashboardPage dashboardData={dashboardData} formatDate={formatDate} formatDateTime={formatDateTime} />} />
           <Route path="/posts" element={<ManagePostsPage />} />

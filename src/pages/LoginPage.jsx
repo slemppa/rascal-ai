@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import { Trans, t } from '@lingui/macro'
 
 export default function LoginPage({ onLogin }) {
   const [email, setEmail] = useState('')
@@ -27,11 +28,11 @@ export default function LoginPage({ onLogin }) {
 
   return (
     <form onSubmit={handleSubmit} style={{maxWidth: 400, margin: '40px auto', background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32}}>
-      <h1>Kirjaudu sisään</h1>
-      <input type="email" placeholder="Sähköposti" value={email} onChange={e => setEmail(e.target.value)} required style={{width: '100%', marginBottom: 16}} />
-      <input type="password" placeholder="Salasana" value={password} onChange={e => setPassword(e.target.value)} required style={{width: '100%', marginBottom: 16}} />
+      <h1><Trans>Kirjaudu sisään</Trans></h1>
+      <input type="email" placeholder={t`Sähköposti`} value={email} onChange={e => setEmail(e.target.value)} required style={{width: '100%', marginBottom: 16}} />
+      <input type="password" placeholder={t`Salasana`} value={password} onChange={e => setPassword(e.target.value)} required style={{width: '100%', marginBottom: 16}} />
       <button type="submit" disabled={loading} style={{width: '100%', background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 6, padding: '12px 0', fontWeight: 600, fontSize: 18, cursor: 'pointer'}}>
-        {loading ? 'Kirjaudutaan...' : 'Kirjaudu'}
+        {loading ? <Trans>Kirjaudutaan...</Trans> : <Trans>Kirjaudu</Trans>}
       </button>
       {error && <div style={{color: 'red', marginTop: 16}}>{error}</div>}
     </form>

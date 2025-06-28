@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Trans } from '@lingui/macro'
 
 const STATUS_COLORS = {
   odottaa: '#a0aec0', // harmaa
@@ -61,7 +62,7 @@ function InfoIconWithTooltip() {
           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
           zIndex: 10,
         }}>
-          Todellinen laskutus tarkistetaan aina kauden lopussa
+          <Trans>Todellinen laskutus tarkistetaan aina kauden lopussa</Trans>
         </span>
       )}
     </span>
@@ -113,15 +114,15 @@ export default function CallStats({ stats }) {
     }}>
       <StatCard style={{flex: '0 0 180px', width: 180, height: 150, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
         <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{stats.totalCount}</div>
-        <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}>Yhteensä</div>
+        <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}><Trans>Yhteensä</Trans></div>
       </StatCard>
       <StatCard style={{flex: '0 0 180px', width: 180, height: 150, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
         <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{stats.calledCount}</div>
-        <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}>Soitettu</div>
+        <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}><Trans>Soitettu</Trans></div>
       </StatCard>
       <StatCard style={{flex: '0 0 180px', width: 180, height: 150, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
         <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{stats.failedCount}</div>
-        <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}>Epäonnistunut</div>
+        <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}><Trans>Epäonnistunut</Trans></div>
       </StatCard>
       <StatCard style={{flex: '0 0 180px', width: 180, height: 150, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
         <StatusBadge tila={tila} />

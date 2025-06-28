@@ -35,9 +35,8 @@ html, body, #root {
   color: white;
   padding: 0;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  position: fixed;
-  height: 100vh;
   overflow-y: auto;
+  flex-shrink: 0;
 }
 
 .sidebar-header {
@@ -96,9 +95,18 @@ html, body, #root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  margin-left: 250px;
-  padding: 0;
+  padding: 0 16px 0 0;
   background-color: #f5f7fa;
+  box-sizing: border-box;
+}
+
+.main-content.no-padding {
+  padding-left: 0 !important;
+}
+
+.main-content.no-gap {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
 }
 
 .content-header {
@@ -389,7 +397,6 @@ html, body, #root {
   }
   
   .main-content {
-    margin-left: 200px;
     padding: 1rem;
   }
   

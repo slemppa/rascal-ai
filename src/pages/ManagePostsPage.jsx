@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 // import jwt_decode from 'jwt-decode' // poistettu
 import { useNavigate } from 'react-router-dom'
+import { Trans, t } from '@lingui/macro'
 
 function lyhenteleTeksti(teksti, max = 100) {
   if (!teksti) return ''
@@ -185,113 +186,123 @@ export default function ManagePostsPage() {
   const filteredPosts = typeFilter ? posts.filter(p => p.Type === typeFilter) : posts
 
   return (
-    <div>
-      <h1>Julkaisujen hallinta</h1>
-      {/* Filtteripainikkeet */}
-      {!loading && !error && types.length > 0 && (
-        <div style={{display: 'flex', gap: 12, margin: '1.5rem 0'}}>
-          <button
-            onClick={() => setTypeFilter('')}
-            style={{
-              padding: '6px 16px',
-              borderRadius: 6,
-              border: '1px solid #e1e8ed',
-              background: typeFilter === '' ? '#2563eb' : '#f7fafc',
-              color: typeFilter === '' ? '#fff' : '#2563eb',
-              fontWeight: 500,
-              cursor: 'pointer',
-              transition: 'all 0.15s'
-            }}
-          >
-            Kaikki
-          </button>
-          {types.map(type => (
+    <>
+      <div style={{
+        background: 'var(--brand-dark)',
+        color: '#fff',
+        borderBottom: '1px solid #e2e8f0',
+        paddingTop: 32,
+        paddingBottom: 24
+      }}>
+        <h1 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}><Trans>Julkaisujen hallinta</Trans></h1>
+      </div>
+      <div style={{maxWidth: 1100, padding: '0 8px'}}>
+        {/* Filtteripainikkeet */}
+        {!loading && !error && types.length > 0 && (
+          <div style={{display: 'flex', gap: 12, margin: '1.5rem 0'}}>
             <button
-              key={type}
-              onClick={() => setTypeFilter(type)}
+              onClick={() => setTypeFilter('')}
               style={{
                 padding: '6px 16px',
                 borderRadius: 6,
                 border: '1px solid #e1e8ed',
-                background: typeFilter === type ? '#2563eb' : '#f7fafc',
-                color: typeFilter === type ? '#fff' : '#2563eb',
+                background: typeFilter === '' ? '#2563eb' : '#f7fafc',
+                color: typeFilter === '' ? '#fff' : '#2563eb',
                 fontWeight: 500,
                 cursor: 'pointer',
                 transition: 'all 0.15s'
               }}
             >
-              {type}
+              <Trans>Kaikki</Trans>
             </button>
-          ))}
-        </div>
-      )}
-      {loading && <p>Ladataan...</p>}
-      {error && <p style={{color: 'red'}}>{error}</p>}
-      {!loading && !error && filteredPosts.length === 0 && (
-        <div style={{textAlign: 'center', marginTop: '3rem', color: '#2563eb', fontWeight: 600, fontSize: 22, opacity: 0.85}}>
-          <span role="img" aria-label="valo">✨</span> Et ole vielä generoinut mitään julkaisuja
-        </div>
-      )}
-      {!loading && !error && filteredPosts.length > 0 && (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '2rem',
-          marginTop: '2rem',
-          width: '100%'
-        }}>
-          {Array.isArray(filteredPosts) && filteredPosts.map(post => (
-            <div
-              key={post.id}
-              style={{
-                background: '#fff',
-                borderRadius: 12,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-                border: '1px solid #e1e8ed',
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden',
-                minWidth: 0,
-                cursor: 'pointer',
-                transition: 'box-shadow 0.15s',
-              }}
-              onClick={() => setSelectedPost(post)}
-              onMouseOver={e => e.currentTarget.style.boxShadow = '0 4px 16px rgba(37,99,235,0.10)'}
-              onMouseOut={e => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.07)'}
-            >
-              {/* Kuva tai video */}
-              {Array.isArray(post.Media) && post.Media.length > 0 ? (
-                post.Media[0].type && post.Media[0].type.startsWith('video/') ? (
-                  <video controls style={{width: '100%', height: 180, objectFit: 'cover', borderTopLeftRadius: 12, borderTopRightRadius: 12}}>
-                    <source src={post.Media[0].url} type={post.Media[0].type} />
-                    Selaimesi ei tue videon toistoa.
-                  </video>
-                ) : post.Media[0].type && post.Media[0].type.startsWith('image/') && post.Media[0].thumbnails && post.Media[0].thumbnails.large ? (
-                  <img src={post.Media[0].thumbnails.large.url} alt="media" style={{width: '100%', height: 180, objectFit: 'cover', borderTopLeftRadius: 12, borderTopRightRadius: 12}} />
+            {types.map(type => (
+              <button
+                key={type}
+                onClick={() => setTypeFilter(type)}
+                style={{
+                  padding: '6px 16px',
+                  borderRadius: 6,
+                  border: '1px solid #e1e8ed',
+                  background: typeFilter === type ? '#2563eb' : '#f7fafc',
+                  color: typeFilter === type ? '#fff' : '#2563eb',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s'
+                }}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+        )}
+        {loading && <p><Trans>Ladataan...</Trans></p>}
+        {error && <p style={{color: 'red'}}>{error}</p>}
+        {!loading && !error && filteredPosts.length === 0 && (
+          <div style={{textAlign: 'center', marginTop: '3rem', color: '#2563eb', fontWeight: 600, fontSize: 22, opacity: 0.85}}>
+            <span role="img" aria-label="valo">✨</span> <Trans>Et ole vielä generoinut mitään julkaisuja</Trans>
+          </div>
+        )}
+        {!loading && !error && filteredPosts.length > 0 && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '2rem',
+            marginTop: '2rem',
+            width: '100%'
+          }}>
+            {Array.isArray(filteredPosts) && filteredPosts.map(post => (
+              <div
+                key={post.id}
+                style={{
+                  background: '#fff',
+                  borderRadius: 12,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                  border: '1px solid #e1e8ed',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                  minWidth: 0,
+                  cursor: 'pointer',
+                  transition: 'box-shadow 0.15s',
+                }}
+                onClick={() => setSelectedPost(post)}
+                onMouseOver={e => e.currentTarget.style.boxShadow = '0 4px 16px rgba(37,99,235,0.10)'}
+                onMouseOut={e => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.07)'}
+              >
+                {/* Kuva tai video */}
+                {Array.isArray(post.Media) && post.Media.length > 0 ? (
+                  post.Media[0].type && post.Media[0].type.startsWith('video/') ? (
+                    <video controls style={{width: '100%', height: 180, objectFit: 'cover', borderTopLeftRadius: 12, borderTopRightRadius: 12}}>
+                      <source src={post.Media[0].url} type={post.Media[0].type} />
+                      Selaimesi ei tue videon toistoa.
+                    </video>
+                  ) : post.Media[0].type && post.Media[0].type.startsWith('image/') && post.Media[0].thumbnails && post.Media[0].thumbnails.large ? (
+                    <img src={post.Media[0].thumbnails.large.url} alt="media" style={{width: '100%', height: 180, objectFit: 'cover', borderTopLeftRadius: 12, borderTopRightRadius: 12}} />
+                  ) : (
+                    <img src="/placeholder.png" alt="placeholder" style={{width: '100%', height: 180, objectFit: 'cover', borderTopLeftRadius: 12, borderTopRightRadius: 12, background: '#f7fafc'}} />
+                  )
                 ) : (
                   <img src="/placeholder.png" alt="placeholder" style={{width: '100%', height: 180, objectFit: 'cover', borderTopLeftRadius: 12, borderTopRightRadius: 12, background: '#f7fafc'}} />
-                )
-              ) : (
-                <img src="/placeholder.png" alt="placeholder" style={{width: '100%', height: 180, objectFit: 'cover', borderTopLeftRadius: 12, borderTopRightRadius: 12, background: '#f7fafc'}} />
-              )}
-              {/* Tagit */}
-              <div style={{display: 'flex', gap: 8, margin: '12px 16px 0 16px', flexWrap: 'wrap'}}>
-                {post.Type && (
-                  <span style={{background: '#e6f0fa', color: '#2563eb', fontSize: 12, borderRadius: 6, padding: '2px 8px', fontWeight: 500}}>{post.Type}</span>
                 )}
-                {/* Lisää kanavat tähän jos löytyy, esim. post.Channel */}
+                {/* Tagit */}
+                <div style={{display: 'flex', gap: 8, margin: '12px 16px 0 16px', flexWrap: 'wrap'}}>
+                  {post.Type && (
+                    <span style={{background: '#e6f0fa', color: '#2563eb', fontSize: 12, borderRadius: 6, padding: '2px 8px', fontWeight: 500}}>{post.Type}</span>
+                  )}
+                  {/* Lisää kanavat tähän jos löytyy, esim. post.Channel */}
+                </div>
+                {/* Postauksen sisältö */}
+                <div style={{padding: '12px 16px 16px 16px', flex: 1, display: 'flex', flexDirection: 'column'}}>
+                  <div style={{fontWeight: 600, fontSize: 16, marginBottom: 6}}>{post.Idea}</div>
+                  <div style={{fontSize: 14, color: '#444', marginBottom: 8}}>{lyhenteleTeksti(post.Caption, 200)}</div>
+                </div>
               </div>
-              {/* Postauksen sisältö */}
-              <div style={{padding: '12px 16px 16px 16px', flex: 1, display: 'flex', flexDirection: 'column'}}>
-                <div style={{fontWeight: 600, fontSize: 16, marginBottom: 6}}>{post.Idea}</div>
-                <div style={{fontSize: 14, color: '#444', marginBottom: 8}}>{lyhenteleTeksti(post.Caption, 200)}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
       {/* Modaalin renderöinti */}
       {selectedPost && <EditPostModal post={selectedPost} onClose={() => setSelectedPost(null)} onSave={() => setSelectedPost(null)} />}
-    </div>
+    </>
   )
 } 

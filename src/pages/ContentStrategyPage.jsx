@@ -13,6 +13,8 @@ const mockStrategy = [
   }
 ]
 
+const STRATEGY_URL = import.meta.env.N8N_GET_STRATEGY_URL || 'https://samikiias.app.n8n.cloud/webhook/strategy-89777321'
+
 export default function ContentStrategyPage() {
   const [strategy, setStrategy] = useState([])
   const [loading, setLoading] = useState(true)
@@ -26,7 +28,11 @@ export default function ContentStrategyPage() {
       try {
         setLoading(true)
         setError(null)
-        const res = await axios.get('https://samikiias.app.n8n.cloud/webhook/strategy-89777321')
+        const res = await axios.get(STRATEGY_URL, {
+          headers: {
+            'x-api-key': import.meta.env.N8N_GET_STRATEGY_KEY
+          }
+        })
         setStrategy(Array.isArray(res.data) ? res.data : mockStrategy)
       } catch (e) {
         setStrategy(mockStrategy)

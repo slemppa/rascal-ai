@@ -21,6 +21,7 @@ export default function LandingPage({ onLogin }) {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const isAuthenticated = !!localStorage.getItem('token')
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -149,7 +150,38 @@ export default function LandingPage({ onLogin }) {
             <form onSubmit={handleLogin} style={{display: 'flex', flexDirection: 'column', gap: 20}}>
               <h1 style={{marginBottom: 8, color: 'var(--brand-dark)', fontWeight: 800, fontSize: 28}}><Trans>Kirjaudu sisään</Trans></h1>
               <input type="email" placeholder={t`Sähköposti`} value={email} onChange={e => setEmail(e.target.value)} required style={{width: '100%', marginBottom: 0, borderRadius: 12, border: '1px solid #e1e8ed', padding: '16px 18px', fontSize: 17, background: '#f7fafc', color: '#222', outline: 'none', fontFamily: 'inherit'}} />
-              <input type="password" placeholder={t`Salasana`} value={password} onChange={e => setPassword(e.target.value)} required style={{width: '100%', marginBottom: 0, borderRadius: 12, border: '1px solid #e1e8ed', padding: '16px 18px', fontSize: 17, background: '#f7fafc', color: '#222', outline: 'none', fontFamily: 'inherit'}} />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder={t`Salasana`}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  style={{width: '100%', marginBottom: 0, borderRadius: 12, border: '1px solid #e1e8ed', padding: showPassword ? '16px 48px 16px 18px' : '16px 18px', fontSize: 17, background: '#f7fafc', color: '#222', outline: 'none', fontFamily: 'inherit'}}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: 12,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0
+                  }}
+                  tabIndex={-1}
+                  aria-label={showPassword ? 'Piilota salasana' : 'Näytä salasana'}
+                >
+                  {showPassword ? (
+                    <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="#2563eb" strokeWidth="2" d="M3 12s3.6-6 9-6 9 6 9 6-3.6 6-9 6-9-6-9-6Z"/><circle cx="12" cy="12" r="3" stroke="#2563eb" strokeWidth="2"/></svg>
+                  ) : (
+                    <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="#2563eb" strokeWidth="2" d="M3 12s3.6-6 9-6 9 6 9 6-3.6 6-9 6-9-6-9-6Z"/><circle cx="12" cy="12" r="3" stroke="#2563eb" strokeWidth="2"/><line x1="4" y1="20" x2="20" y2="4" stroke="#2563eb" strokeWidth="2"/></svg>
+                  )}
+                </button>
+              </div>
               <button type="submit" disabled={loading} style={{width: '100%', background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 10, padding: '14px 0', fontWeight: 700, fontSize: 19, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.10)', marginTop: 8}}>
                 {loading ? <Trans>Kirjaudutaan...</Trans> : <Trans>Kirjaudu</Trans>}
               </button>

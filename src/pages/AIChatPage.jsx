@@ -72,7 +72,7 @@ export default function AIChatPage() {
     setFilesLoading(true)
     setFilesError('')
     try {
-      const response = await axios.get(`/api/vector-store-files?companyId=${companyId}`)
+      const response = await axios.post('/api/vector-store-files', { companyId })
       // Tuki sekä files: [...], files: { data: [...] } että data: [...]
       let arr = []
       if (Array.isArray(response.data.files)) {
@@ -159,7 +159,7 @@ export default function AIChatPage() {
 
   const handleFileDeletion = async (fileId) => {
     try {
-      await axios.post('/api/vector-store-files', {
+      await axios.post('/api/delete-files', {
         action: 'delete',
         companyId,
         assistantId,
@@ -212,7 +212,7 @@ export default function AIChatPage() {
       formData.append('action', 'feed')
       formData.append('companyId', companyId)
       formData.append('assistantId', assistantId)
-      await axios.post('/api/vector-store-files', formData, {
+      await axios.post('/api/upload-knowledge', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       setUploadSuccess(`${pendingFiles.length} tiedosto(a) ladattu onnistuneesti!`)
@@ -232,14 +232,14 @@ export default function AIChatPage() {
     formData.append('action', 'feed')
     formData.append('companyId', companyId)
     formData.append('assistantId', assistantId)
-    return axios.post('/api/vector-store-files', formData, {
+    return axios.post('/api/upload-knowledge', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
   }
 
   // UUSI: Assistentin tiedoston poisto (POST + action)
   async function deleteAssistantKnowledgeFile({ fileId, assistantId, companyId }) {
-    return axios.post('/api/vector-store-files', {
+    return axios.post('/api/delete-files', {
       action: 'delete',
       companyId,
       assistantId,

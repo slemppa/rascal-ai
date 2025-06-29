@@ -17,15 +17,22 @@ export default async function handler(req, res) {
     if (err) {
       return res.status(400).json({ error: 'Tiedoston vastaanotto epäonnistui' });
     }
-    const file = files.file;
+    const file = files.file || files.files || Object.values(files)[0];
     if (!file) {
       return res.status(400).json({ error: 'Tiedosto puuttuu' });
     }
     try {
-      const webhookUrl = process.env.N8N_KNOWLEDGE_WEBHOOK_URL;
+      const webhookUrl = process.env.N8N_ASSISTANT_KNOWLEDGE_URL;
       const formData = new FormData();
-      formData.append('file', fs.createReadStream(file.filepath), file.originalFilename);
-      // Lisää halutessasi muita kenttiä: formData.append('companyId', fields.companyId)
+      // Tuki usealle tiedostolle
+      if (Array.isArray(file)) {
+        file.forEach(f => formData.append('files', fs.createReadStream(f.filepath), f.originalFilename));
+      } else {
+        formData.append('files', fs.createReadStream(file.filepath), file.originalFilename);
+      }
+      formData.append('companyId', fields.companyId);
+      formData.append('assistantId', fields.assistantId);
+      formData.append('action', 'feed');
       const response = await fetch(webhookUrl, {
         method: 'POST',
         body: formData,

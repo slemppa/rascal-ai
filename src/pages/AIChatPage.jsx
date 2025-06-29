@@ -21,17 +21,20 @@ export default function AIChatPage() {
   const [dragActive, setDragActive] = useState(false)
   const dropRef = useRef(null)
 
-  // Hae companyName ja companyId localStoragesta
+  // Hae companyName, companyId, assistantId localStoragesta
   let companyName = 'Yrityksen';
   let companyId = null;
+  let assistantId = null;
   try {
     const userRaw = JSON.parse(localStorage.getItem('user') || 'null')
     if (userRaw && userRaw.user && userRaw.user.companyName) {
       companyName = userRaw.user.companyName
       companyId = userRaw.user.companyId
+      assistantId = userRaw.user.assistantId
     } else if (userRaw && userRaw.companyName) {
       companyName = userRaw.companyName
       companyId = userRaw.companyId
+      assistantId = userRaw.assistantId
     }
   } catch (e) {}
 
@@ -156,7 +159,12 @@ export default function AIChatPage() {
 
   const handleFileDeletion = async (fileId) => {
     try {
-      await axios.delete(`/api/vector-store-files?fileId=${fileId}&companyId=${companyId}`)
+      await axios.post('/api/vector-store-files', {
+        action: 'delete',
+        companyId,
+        assistantId,
+        fileId
+      })
       setFiles(prev => prev.filter(file => file.id !== fileId))
       setSelectedFiles(prev => prev.filter(id => id !== fileId))
     } catch (error) {
@@ -201,8 +209,10 @@ export default function AIChatPage() {
     try {
       const formData = new FormData()
       pendingFiles.forEach(file => formData.append('files', file))
+      formData.append('action', 'feed')
       formData.append('companyId', companyId)
-      await axios.post('/api/upload-knowledge', formData, {
+      formData.append('assistantId', assistantId)
+      await axios.post('/api/vector-store-files', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       setUploadSuccess(`${pendingFiles.length} tiedosto(a) ladattu onnistuneesti!`)
@@ -213,6 +223,28 @@ export default function AIChatPage() {
     } finally {
       setUploadLoading(false)
     }
+  }
+
+  // UUSI: Assistentin tiedostojen lisäys (POST + action)
+  async function uploadAssistantKnowledgeFiles({ files, assistantId, companyId }) {
+    const formData = new FormData()
+    Array.from(files).forEach(file => formData.append('files', file))
+    formData.append('action', 'feed')
+    formData.append('companyId', companyId)
+    formData.append('assistantId', assistantId)
+    return axios.post('/api/vector-store-files', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+  }
+
+  // UUSI: Assistentin tiedoston poisto (POST + action)
+  async function deleteAssistantKnowledgeFile({ fileId, assistantId, companyId }) {
+    return axios.post('/api/vector-store-files', {
+      action: 'delete',
+      companyId,
+      assistantId,
+      fileId
+    })
   }
 
   return (

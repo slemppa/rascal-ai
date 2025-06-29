@@ -15,7 +15,7 @@ msgstr ""
 
 #: src/pages/AIChatPage.jsx
 msgid "{companyName} markkinointiassistentti"
-msgstr ""
+msgstr "{companyName} markkinointiassistentti"
 
 #: src/pages/DashboardPage.jsx
 msgid "+3% viime kuusta"
@@ -80,15 +80,15 @@ msgstr "🔸 Uutiskirjeet & sähköpostit – Montako avasi? Kuka klikkasi?"
 #: src/pages/AIChatPage.jsx
 #: src/pages/AIChatPage.jsx
 msgid "AI ei vastannut."
-msgstr ""
+msgstr "AI ei vastannut."
 
 #: src/pages/AIChatPage.jsx
 msgid "AI kirjoittaa..."
-msgstr ""
+msgstr "AI kirjoittaa..."
 
 #: src/pages/AIChatPage.jsx
 msgid "Aloita keskustelu kirjoittamalla viesti alle. Voin auttaa sinua markkinointiin liittyvissä kysymyksissä."
-msgstr ""
+msgstr "Aloita keskustelu kirjoittamalla viesti alle. Voin auttaa sinua markkinointiin liittyvissä kysymyksissä."
 
 #: src/App.jsx
 #: src/App.jsx
@@ -107,11 +107,11 @@ msgstr "Assistentti"
 
 #: src/pages/AIChatPage.jsx
 msgid "Chat"
-msgstr ""
+msgstr "Chat"
 
 #: src/pages/AIChatPage.jsx
 msgid "Ei tiedostoja"
-msgstr ""
+msgstr "Ei tiedostoja"
 
 #: src/pages/CallStats.jsx
 msgid "Epäonnistunut"
@@ -198,7 +198,7 @@ msgstr "Kirjaudutaan..."
 
 #: src/pages/AIChatPage.jsx
 msgid "Kirjoita viesti..."
-msgstr ""
+msgstr "Kirjoita viesti..."
 
 #: src/pages/DashboardPage.jsx
 msgid "Kojelauta"
@@ -210,7 +210,7 @@ msgstr "Kuvaus:"
 
 #: src/pages/AIChatPage.jsx
 msgid "Kysy mitä tahansa markkinointiin liittyvää"
-msgstr ""
+msgstr "Kysy mitä tahansa markkinointiin liittyvää"
 
 #: src/pages/AIChatPage.jsx
 #~ msgid "Ladataan tiedostoja..."

@@ -80,15 +80,15 @@ msgstr "🔸 Newsletters & emails – How many opened? Who clicked?"
 #: src/pages/AIChatPage.jsx
 #: src/pages/AIChatPage.jsx
 msgid "AI ei vastannut."
-msgstr "AI ei vastannut."
+msgstr "AI did not respond."
 
 #: src/pages/AIChatPage.jsx
 msgid "AI kirjoittaa..."
-msgstr "AI kirjoittaa..."
+msgstr "AI is writing..."
 
 #: src/pages/AIChatPage.jsx
 msgid "Aloita keskustelu kirjoittamalla viesti alle. Voin auttaa sinua markkinointiin liittyvissä kysymyksissä."
-msgstr "Aloita keskustelu kirjoittamalla viesti alle. Voin auttaa sinua markkinointiin liittyvissä kysymyksissä."
+msgstr "Start a conversation by writing a message below. I can help you with marketing-related questions."
 
 #: src/App.jsx
 #: src/App.jsx
@@ -111,7 +111,7 @@ msgstr "Chat"
 
 #: src/pages/AIChatPage.jsx
 msgid "Ei tiedostoja"
-msgstr "Ei tiedostoja"
+msgstr "No files"
 
 #: src/pages/CallStats.jsx
 msgid "Epäonnistunut"
@@ -201,7 +201,7 @@ msgstr "Logging in..."
 
 #: src/pages/AIChatPage.jsx
 msgid "Kirjoita viesti..."
-msgstr "Kirjoita viesti..."
+msgstr "Write a message..."
 
 #: src/pages/DashboardPage.jsx
 msgid "Kojelauta"
@@ -213,7 +213,7 @@ msgstr "Description:"
 
 #: src/pages/AIChatPage.jsx
 msgid "Kysy mitä tahansa markkinointiin liittyvää"
-msgstr "Kysy mitä tahansa markkinointiin liittyvää"
+msgstr "Ask anything related to marketing"
 
 #: src/pages/AIChatPage.jsx
 #~ msgid "Ladataan tiedostoja..."
@@ -226,7 +226,7 @@ msgstr "Loading..."
 
 #: src/pages/AIChatPage.jsx
 msgid "Lähetä"
-msgstr "Lähetä"
+msgstr "Send"
 
 #: src/pages/DashboardPage.jsx
 msgid "Lähtevät sähköpostit"
@@ -234,7 +234,7 @@ msgstr "Outgoing emails"
 
 #: src/pages/CallPanel.jsx
 msgid "Liitä Google Sheets -linkki..."
-msgstr "Liitä Google Sheets -linkki..."
+msgstr "Paste Google Sheets link..."
 
 #: src/pages/PostDetailsPage.jsx
 msgid "Luotu:"

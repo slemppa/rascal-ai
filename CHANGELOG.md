@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.14](https://github.com/slemppa/rascal-ai/compare/v1.1.13...v1.1.14) (2025-06-29)
+
+
+### 🔧 Chores
+
+* delete-files endpoint käyttää N8N_DELETE_FILES_URL env muuttujaa ([d974e60](https://github.com/slemppa/rascal-ai/commit/d974e600726552669c68d729c7280be90410f01c))
+
 ### [1.1.13](https://github.com/slemppa/rascal-ai/compare/v1.1.12...v1.1.13) (2025-06-29)
 
 

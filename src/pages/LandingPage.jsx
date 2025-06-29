@@ -60,25 +60,64 @@ export default function LandingPage({ onLogin }) {
           )}
         </div>
       </div>
-      {/* Hero-osio: vasemmalla tekstit ja laatikko allekkain, oikealla iso kuva */}
-      <div className="landing-hero" style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 6vw', gap: 32, marginTop: 8}}>
+      {/* Hero-osio: vasemmalla tekstit ja laatikko allekkain, oikealla kuva */}
+      <div className="landing-hero" style={{
+        width: '100%',
+        maxWidth: '1050px',
+        margin: '0 auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 40,
+        padding: '48px 6vw 32px 6vw',
+        minHeight: '60vh',
+      }}>
         {/* Vasemmalla: tekstit ja laatikko allekkain */}
-        <div style={{maxWidth: 520, color: '#fff', textAlign: 'left', flex: 1, display: 'flex', flexDirection: 'column', gap: 24}}>
+        <div style={{
+          flex: '0 1 55%',
+          maxWidth: '55%',
+          color: '#fff',
+          textAlign: 'left',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 24,
+        }}>
           <h1 style={{fontSize: 36, fontWeight: 800, marginBottom: 0}}>Näe markkinointisi yhdellä silmäyksellä 🧠</h1>
           <p style={{fontSize: 20, fontWeight: 500, marginBottom: 0}}>
             Rascal AI Dashboard kokoaa kaiken olennaisen yhteen näkymään – julkaisut, uutiskirjeet, tilaajat ja seuraavan sisällön aikataulun. Reaaliaikaisesti ja ilman taulukkohelvettiä.
           </p>
-          <div style={{background: '#23272f', borderRadius: 16, padding: '28px 32px', color: '#fff', fontWeight: 500, fontSize: 17, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', width: '100%', minHeight: 180, display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
+          <div style={{background: '#23272f', borderRadius: 16, padding: '28px 32px', color: '#fff', fontWeight: 500, fontSize: 17, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', width: '100%', minHeight: 120, display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
             <div style={{fontWeight: 700, fontSize: 18, marginBottom: 12}}>Haluatko nähdä miten se toimii käytännössä?</div>
             <div style={{fontSize: 15, marginBottom: 12}}>
               👉 Pyydä demoa tai testaa itse.<br/>Dashboard voidaan räätälöidä juuri sinun yrityksesi tarpeisiin.
             </div>
-            <button onClick={() => navigate('/dashboard')} style={{alignSelf: 'flex-start', padding: '12px 24px', fontSize: 16, borderRadius: 8, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.10)'}}>Katso demo</button>
+            <div style={{display: 'flex', gap: 12}}>
+              <button style={{padding: '12px 24px', fontSize: 16, borderRadius: 8, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.10)'}}>Ota yhteyttä</button>
+              <button onClick={() => navigate('/dashboard')} style={{padding: '12px 24px', fontSize: 16, borderRadius: 8, background: '#fff', color: 'var(--brand-dark)', border: 'none', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.10)'}}>Katso esittely</button>
+            </div>
           </div>
         </div>
-        {/* Oikealla: iso kuva */}
-        <div style={{flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-          <img src="/hero.png" alt="Dashboard preview" style={{maxWidth: '100%', height: 'auto', borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.15)'}} />
+        {/* Oikealla: kuva - pienempi koko ja pyöreät kulmat */}
+        <div style={{
+          flex: '0 1 45%',
+          maxWidth: '45%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <img 
+            src="/hero.png" 
+            alt="Dashboard preview" 
+            style={{
+              maxWidth: '340px',
+              width: '100%',
+              height: 'auto',
+              borderRadius: '20px',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+              objectFit: 'cover',
+              display: 'block',
+            }} 
+          />
         </div>
       </div>
       {/* Feature-osio: 5 laatikkoa allekkain */}

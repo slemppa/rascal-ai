@@ -173,9 +173,6 @@ export default function App() {
     <div className="app">
       {/* Vasen sivupalkki */}
       <nav className="sidebar">
-        <div style={{padding: '16px 16px 0 16px'}}>
-          <LanguageSelector />
-        </div>
         <div className="sidebar-header" style={{display: 'flex', alignItems: 'center', gap: 12}}>
           <img src="/favicon.png" alt="favicon" style={{width: 32, height: 32, borderRadius: 8, background: '#fff'}} />
           <h2 style={{margin: 0}}>Rascal AI</h2>

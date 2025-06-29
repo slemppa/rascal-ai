@@ -140,12 +140,18 @@ export default function AIChatPage() {
   }
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Välilehdet */}
+    <div style={{ 
+      height: '100vh', 
+      display: 'flex', 
+      flexDirection: 'column',
+      overflow: 'hidden' // Estää koko sivun scrollauksen
+    }}>
+      {/* Välilehdet - kiinteä korkeus */}
       <div style={{ 
         display: 'flex', 
         borderBottom: '1px solid #e5e7eb',
-        background: '#f9fafb'
+        background: '#f9fafb',
+        flexShrink: 0 // Estää kutistumisen
       }}>
         <button
           onClick={() => setTab('chat')}
@@ -179,16 +185,28 @@ export default function AIChatPage() {
         </button>
       </div>
 
-      {/* Sisältö */}
-      <div style={{ flex: 1, overflow: 'hidden' }}>
+      {/* Sisältö - täyttää loput tilasta */}
+      <div style={{ 
+        flex: 1, 
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
         {tab === 'chat' ? (
-          <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            {/* Viestit */}
+          <div style={{ 
+            height: '100%', 
+            display: 'flex', 
+            flexDirection: 'column',
+            overflow: 'hidden'
+          }}>
+            {/* Viestit - scrollattava alue */}
             <div style={{ 
               flex: 1, 
-              overflow: 'auto', 
+              overflowY: 'auto', 
+              overflowX: 'hidden',
               padding: '20px',
-              background: '#f9fafb'
+              background: '#f9fafb',
+              minHeight: 0 // Tärkeä flexbox-ominaisuus
             }}>
               {messages.length === 0 ? (
                 <div style={{ 
@@ -214,7 +232,9 @@ export default function AIChatPage() {
                       background: message.role === 'user' ? '#2563eb' : '#fff',
                       color: message.role === 'user' ? '#fff' : '#1f2937',
                       boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                      lineHeight: 1.5
+                      lineHeight: 1.5,
+                      wordWrap: 'break-word',
+                      overflowWrap: 'break-word'
                     }}>
                       {message.role === 'assistant' ? (
                         <ReactMarkdown>{message.content}</ReactMarkdown>
@@ -245,11 +265,12 @@ export default function AIChatPage() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Syöttökenttä */}
+            {/* Syöttökenttä - kiinteä korkeus */}
             <form onSubmit={handleSendMessage} style={{
               padding: '20px',
               borderTop: '1px solid #e5e7eb',
-              background: '#fff'
+              background: '#fff',
+              flexShrink: 0 // Estää kutistumisen
             }}>
               <div style={{ display: 'flex', gap: '12px' }}>
                 <input
@@ -286,7 +307,12 @@ export default function AIChatPage() {
             </form>
           </div>
         ) : (
-          <div style={{ padding: '20px', height: '100%', overflow: 'auto' }}>
+          <div style={{ 
+            padding: '20px', 
+            height: '100%', 
+            overflowY: 'auto',
+            overflowX: 'hidden'
+          }}>
             <div style={{ marginBottom: '20px' }}>
               <h2 style={{ margin: '0 0 16px 0', fontSize: '20px', fontWeight: 600 }}>
                 Tietokanta

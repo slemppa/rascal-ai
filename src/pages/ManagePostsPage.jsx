@@ -97,8 +97,8 @@ export default function ManagePostsPage() {
           <div style={{display: 'grid', gap: 16}}>
             {filteredPosts.map((post, index) => (
               <div key={post.id || index} style={{
-                background: '#fff',
-                borderRadius: 12,
+                  background: '#fff',
+                  borderRadius: 12,
                 padding: 20,
                 border: '1px solid #e5e7eb',
                 boxShadow: '0 1px 3px rgba(0,0,0,0.1)'

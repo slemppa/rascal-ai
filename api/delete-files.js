@@ -1,16 +1,36 @@
+const N8N_DELETE_FILES_URL = process.env.N8N_DELETE_FILES_URL
+const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Vain POST sallittu' });
   }
+
   const { assistantId, companyId, fileId } = req.body;
   if (!assistantId || !companyId || !fileId) {
     return res.status(400).json({ error: 'assistantId, companyId ja fileId vaaditaan' });
   }
+
   try {
-    const webhookUrl = process.env.N8N_DELETE_FILES_URL;
-    const response = await fetch(webhookUrl, {
+    if (!N8N_DELETE_FILES_URL) {
+      console.error('N8N_DELETE_FILES_URL puuttuu')
+      return res.status(500).json({ error: 'Webhook URL ei ole konfiguroitu' })
+    }
+
+    if (!N8N_SECRET_KEY) {
+      console.error('N8N_SECRET_KEY puuttuu')
+      return res.status(500).json({ error: 'API-avain ei ole konfiguroitu' })
+    }
+
+    console.log('Kutsu N8N delete-files webhookia:', N8N_DELETE_FILES_URL)
+    console.log('Delete payload:', { assistantId, companyId, fileId })
+
+    const response = await fetch(N8N_DELETE_FILES_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-api-key': N8N_SECRET_KEY
+       },
       body: JSON.stringify({
         action: 'delete',
         assistantId,
@@ -18,11 +38,21 @@ export default async function handler(req, res) {
         fileId
       })
     });
+
     if (!response.ok) {
-      throw new Error('Webhook epäonnistui');
+      console.error('N8N webhook vastasi virheellä:', response.status, response.statusText)
+      return res.status(response.status).json({ 
+        error: 'Webhook-virhe', 
+        status: response.status,
+        statusText: response.statusText
+      })
     }
-    return res.status(200).json({ success: true });
+
+    const data = await response.json()
+    console.log('N8N delete-files vastaus:', data)
+    return res.status(response.status).json(data)
   } catch (e) {
-    return res.status(500).json({ error: 'Tiedoston poisto epäonnistui' });
+    console.error('Virhe delete-files endpointissa:', e)
+    return res.status(500).json({ error: 'Tiedoston poisto epäonnistui', details: e.message });
   }
 } 

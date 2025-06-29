@@ -95,7 +95,7 @@ export default function CallStats({ status, stats, calls }) {
             {stats.failedCount}
           </div>
           <div style={{ fontSize: 14, color: '#6b7280' }}>Epäonnistui</div>
-        </div>
+    </div>
         
         <div style={{ textAlign: 'center', padding: '16px', background: '#f9fafb', borderRadius: 8 }}>
           <div style={{ fontSize: 24, fontWeight: 700, color: '#2563eb' }}>
@@ -113,7 +113,7 @@ export default function CallStats({ status, stats, calls }) {
           <div style={{ maxHeight: 300, overflow: 'auto' }}>
             {calls.map((call, index) => (
               <div key={index} style={{
-                display: 'flex',
+      display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '8px 0',

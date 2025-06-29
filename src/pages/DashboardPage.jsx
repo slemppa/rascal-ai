@@ -204,8 +204,8 @@ function EditPostModal({ post, onClose, onSave }) {
                 opacity: saving ? 0.7 : 1
               }}
             >
-              {saving ? 'Tallennetaan...' : 'Tallenna'}
-            </button>
+            {saving ? 'Tallennetaan...' : 'Tallenna'}
+          </button>
           </div>
         </form>
       </div>
@@ -272,7 +272,7 @@ export default function DashboardPage() {
                     onClick={() => setEditingPost(post)}
                     style={{
                       background: '#2563eb',
-                      color: '#fff',
+        color: '#fff',
                       border: 'none',
                       borderRadius: 6,
                       padding: '8px 16px',
@@ -291,9 +291,9 @@ export default function DashboardPage() {
                     Julkaistu: {new Date(post["Publish Date"]).toLocaleDateString('fi-FI')}
                   </p>
                 )}
-              </div>
-            ))}
-          </div>
+                </div>
+              ))}
+            </div>
         )}
       </div>
       

@@ -22,10 +22,10 @@ export default async function handler(req, res) {
 
     console.log('Kutsu N8N webhookia:', N8N_VECTOR_STORE_FILES_URL)
     console.log('Payload:', { companyId })
-
+    
     const response = await fetch(N8N_VECTOR_STORE_FILES_URL, {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
         'x-api-key': N8N_SECRET_KEY
       },

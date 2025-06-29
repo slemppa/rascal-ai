@@ -69,5 +69,5 @@ export default async function handler(req, res) {
   } catch (e) {
     console.error('Virhe upload-knowledge endpointissa:', e)
     res.status(500).json({ error: 'Virhe tiedostojen käsittelyssä', details: e.message })
-  }
+    }
 } 

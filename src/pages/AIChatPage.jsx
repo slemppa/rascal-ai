@@ -96,7 +96,7 @@ export default function AIChatPage() {
       setFilesError('Virhe haettaessa tiedostoja')
     } finally {
       setFilesLoading(false)
-    }
+        }
   }
 
   const handleSendMessage = async (e) => {
@@ -108,7 +108,7 @@ export default function AIChatPage() {
     setInput('')
     setLoading(true)
 
-    try {
+      try {
       const response = await axios.post('/api/strategy', {
         message: input,
         threadId: threadId,
@@ -309,8 +309,8 @@ export default function AIChatPage() {
             fontWeight: tab === 'files' ? 600 : 500,
             cursor: 'pointer',
             borderBottom: tab === 'files' ? '2px solid #2563eb' : 'none'
-          }}
-        >
+                }}
+              >
           Tietokanta ({files.length})
               </button>
           </div>
@@ -337,7 +337,7 @@ export default function AIChatPage() {
               padding: '20px',
               background: '#f9fafb',
               minHeight: 0 // Tärkeä flexbox-ominaisuus
-            }}>
+              }}>
               {messages.length === 0 ? (
                   <div style={{
                     textAlign: 'center',
@@ -416,8 +416,8 @@ export default function AIChatPage() {
                     borderRadius: '8px',
                     fontSize: '16px',
                     outline: 'none'
-                  }}
-                />
+                      }}
+                    />
                   <button 
                     type="submit" 
                     disabled={loading || !input.trim()}
@@ -429,8 +429,8 @@ export default function AIChatPage() {
                     borderRadius: '8px',
                     cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
                     opacity: loading || !input.trim() ? 0.6 : 1
-                  }}
-                >
+                    }}
+                  >
                   Lähetä
                   </button>
               </div>
@@ -450,7 +450,7 @@ export default function AIChatPage() {
             height: '100%',
             boxSizing: 'border-box',
             flex: 1
-          }}>
+            }}>
             {/* Lomakekortti 1/3 */}
               <div style={{
                 flex: 1,
@@ -497,7 +497,7 @@ export default function AIChatPage() {
                   style={{ display: 'none' }}
                   onChange={handleFileInput}
                   disabled={uploadLoading}
-                />
+                    />
               </div>
               {/* Valitut tiedostot */}
               {pendingFiles.length > 0 && (
@@ -606,7 +606,7 @@ export default function AIChatPage() {
               </div>
             </div>
           )}
-      </div>
+        </div>
     </div>
   )
 } 

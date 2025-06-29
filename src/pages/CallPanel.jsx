@@ -51,20 +51,20 @@ export default function CallPanel() {
   // Pollaa soittojen tilaa 5s välein
   useEffect(() => {
     if (polling) {
-      pollingRef.current = setInterval(async () => {
-        try {
+    pollingRef.current = setInterval(async () => {
+      try {
           const res = await axios.get('https://oma-n8n-url.fi/webhook/call-status')
-          setCallStatus(res.data)
+        setCallStatus(res.data)
           setStats(res.data.stats || stats)
           
           // Pysäytä polling jos kaikki soittot on tehty
           if (res.data.status === 'completed') {
             setPolling(false)
           }
-        } catch (e) {
+      } catch (e) {
           console.error('Polling error:', e)
-        }
-      }, 5000)
+      }
+    }, 5000)
     }
 
     return () => {
@@ -90,9 +90,9 @@ export default function CallPanel() {
             <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>
               Google Sheets URL
             </label>
-            <input
+          <input
               type="url"
-              value={sheetUrl}
+            value={sheetUrl}
               onChange={(e) => setSheetUrl(e.target.value)}
               placeholder="https://docs.google.com/spreadsheets/d/..."
               style={{
@@ -106,9 +106,9 @@ export default function CallPanel() {
           </div>
           
           <div style={{ display: 'flex', gap: 12 }}>
-            <button
-              onClick={handleValidate}
-              disabled={validating || !sheetUrl}
+          <button
+            onClick={handleValidate}
+            disabled={validating || !sheetUrl}
               style={{
                 padding: '12px 24px',
                 background: '#f3f4f6',
@@ -117,9 +117,9 @@ export default function CallPanel() {
                 cursor: validating || !sheetUrl ? 'not-allowed' : 'pointer',
                 opacity: validating || !sheetUrl ? 0.6 : 1
               }}
-            >
+          >
               {validating ? 'Validoitaan...' : 'Validoi'}
-            </button>
+          </button>
             
             <button
               onClick={handleStartCalls}

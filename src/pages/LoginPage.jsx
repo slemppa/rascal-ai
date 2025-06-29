@@ -157,7 +157,7 @@ export default function LoginPage({ onLogin }) {
             }}
           >
             {loading ? 'Kirjaudutaan...' : 'Kirjaudu'}
-          </button>
+      </button>
           {error && (
             <div style={{
               padding: '12px 16px',
@@ -171,7 +171,7 @@ export default function LoginPage({ onLogin }) {
               {error}
             </div>
           )}
-        </form>
+    </form>
       </div>
     </div>
   )

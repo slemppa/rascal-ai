@@ -83,6 +83,6 @@ export default function PostDetailsPage() {
           </div>
         )}
       </div>
-    </div>
+      </div>
   )
 } 

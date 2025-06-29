@@ -72,7 +72,9 @@ export default function AIChatPage() {
     setFilesLoading(true)
     setFilesError('')
     try {
-      const response = await axios.post('/api/vector-store-files', { companyId })
+      const response = await axios.post('/api/vector-store-files', { companyId }, {
+        headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
+      })
       // Tuki eri payload-rakenteille
       let arr = []
       if (Array.isArray(response.data.files)) {
@@ -111,6 +113,8 @@ export default function AIChatPage() {
         message: input,
         threadId: threadId,
         companyId: companyId
+      }, {
+        headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
       })
 
       if (response.data.threadId && !threadId) {
@@ -142,7 +146,10 @@ export default function AIChatPage() {
       formData.append('companyId', companyId)
 
       const response = await axios.post('/api/upload-knowledge', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          'x-api-key': import.meta.env.N8N_SECRET_KEY
+        }
       })
 
       setUploadSuccess(`${files.length} tiedosto ladattu onnistuneesti!`)
@@ -169,6 +176,8 @@ export default function AIChatPage() {
         companyId,
         assistantId,
         fileId
+      }, {
+        headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
       })
       setFiles(prev => prev.filter(file => file.id !== fileId))
       setSelectedFiles(prev => prev.filter(id => id !== fileId))
@@ -218,7 +227,10 @@ export default function AIChatPage() {
       formData.append('companyId', companyId)
       formData.append('assistantId', assistantId)
       await axios.post('/api/upload-knowledge', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          'x-api-key': import.meta.env.N8N_SECRET_KEY
+        }
       })
       setUploadSuccess(`${pendingFiles.length} tiedosto(a) ladattu onnistuneesti!`)
       setPendingFiles([])
@@ -238,7 +250,10 @@ export default function AIChatPage() {
     formData.append('companyId', companyId)
     formData.append('assistantId', assistantId)
     return axios.post('/api/upload-knowledge', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: { 
+        'Content-Type': 'multipart/form-data',
+        'x-api-key': import.meta.env.N8N_SECRET_KEY
+      }
     })
   }
 
@@ -249,6 +264,8 @@ export default function AIChatPage() {
       companyId,
       assistantId,
       fileId
+    }, {
+      headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
     })
   }
 

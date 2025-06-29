@@ -1,4 +1,4 @@
-const N8N_DELETE_FILES_URL = process.env.N8N_DELETE_FILES_URL
+const N8N_DELETE_FILES_URL = process.env.N8N_DELETE_FILES_URL || 'https://samikiias.app.n8n.cloud/webhook/ff033a1e-3a05-42dc-8079-dc3a1fb5ca53'
 const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY
 
 export default async function handler(req, res) {

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/slemppa/rascal-ai/compare/v1.3.0...v1.4.0) (2025-06-29)
+
+
+### ✨ Features
+
+* bento grid, muokattava modal, media, js clamp, datetime-local ([d6ceb4f](https://github.com/slemppa/rascal-ai/commit/d6ceb4f8cd5c09971a37e79843cfe523596d8aae))
+
 ## [1.3.0](https://github.com/slemppa/rascal-ai/compare/v1.2.1...v1.3.0) (2025-06-29)
 
 

@@ -224,7 +224,9 @@ export default function DashboardPage() {
     const fetchPosts = async () => {
       try {
         setLoading(true)
-        const response = await fetch('https://samikiias.app.n8n.cloud/webhook/get-rascalai-posts123890')
+        const companyId = JSON.parse(localStorage.getItem('user') || 'null')?.companyId
+        const url = `/api/get-posts${companyId ? `?companyId=${companyId}` : ''}`
+        const response = await fetch(url)
         const data = await response.json()
         setPosts(Array.isArray(data) ? data : [])
       } catch (err) {
@@ -253,8 +255,7 @@ export default function DashboardPage() {
   return (
     <>
       <PageHeader title="Dashboard" />
-      <div style={{ padding: 32 }}>
-        <h1 style={{ margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2, display: 'none' }}>Dashboard</h1>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 8px' }}>
         <div style={{ marginTop: 24 }}>
           {posts.length === 0 ? (
             <p style={{ color: '#9ca3af' }}>Ei julkaisuja saatavilla.</p>

@@ -45,16 +45,7 @@ export default function ManagePostsPage() {
   return (
     <>
       <PageHeader title="Julkaisut" />
-      <div style={{
-        background: 'var(--brand-dark)',
-        color: '#fff',
-        borderBottom: '1px solid #e2e8f0',
-        paddingTop: 32,
-        paddingBottom: 24
-      }}>
-        <h1 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}>Julkaisujen hallinta</h1>
-      </div>
-      <div style={{width: '100%', padding: '0 8px', overflowX: 'auto', paddingBottom: 48}}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 8px' }}>
         {/* Filtteripainikkeet */}
         {!loading && !error && types.length > 0 && (
           <div style={{display: 'flex', gap: 12, margin: '1.5rem 0'}}>

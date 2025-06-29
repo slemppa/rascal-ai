@@ -131,3 +131,12 @@ Tuotantoversio luodaan `dist/` kansioon.
 ## Lisenssi
 
 MIT License
+
+
+## 🤖 AI Assistant Rules
+
+When using AI tools (e.g., Cursor), follow these rules:
+
+- Do not perform large refactors unless explicitly asked.
+- Focus changes on the current file.
+- Keep all existing logic intact unless told otherwise.

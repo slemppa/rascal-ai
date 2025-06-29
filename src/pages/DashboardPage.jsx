@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import PageHeader from '../components/PageHeader'
 
 function EditPostModal({ post, onClose, onSave }) {
   const [idea, setIdea] = useState(post.Idea || '')
@@ -250,60 +251,63 @@ export default function DashboardPage() {
   if (error) return <div style={{ padding: 32, color: 'red' }}>{error}</div>
 
   return (
-    <div style={{ padding: 32 }}>
-      <h1 style={{ margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2 }}>Dashboard</h1>
-      <div style={{ marginTop: 24 }}>
-        {posts.length === 0 ? (
-          <p style={{ color: '#9ca3af' }}>Ei julkaisuja saatavilla.</p>
-        ) : (
-          <div style={{ display: 'grid', gap: 16 }}>
-            {posts.map((post, index) => (
-              <div key={post.id || index} style={{
-                background: '#1f2937',
-                borderRadius: 12,
-                padding: 20,
-                border: '1px solid #374151'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-                  <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#f9fafb' }}>
-                    {post.Idea || 'Ei otsikkoa'}
-                  </h3>
-                  <button
-                    onClick={() => setEditingPost(post)}
-                    style={{
-                      background: '#2563eb',
+    <>
+      <PageHeader title="Dashboard" />
+      <div style={{ padding: 32 }}>
+        <h1 style={{ margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2, display: 'none' }}>Dashboard</h1>
+        <div style={{ marginTop: 24 }}>
+          {posts.length === 0 ? (
+            <p style={{ color: '#9ca3af' }}>Ei julkaisuja saatavilla.</p>
+          ) : (
+            <div style={{ display: 'grid', gap: 16 }}>
+              {posts.map((post, index) => (
+                <div key={post.id || index} style={{
+                  background: '#1f2937',
+                  borderRadius: 12,
+                  padding: 20,
+                  border: '1px solid #374151'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                    <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#f9fafb' }}>
+                      {post.Idea || 'Ei otsikkoa'}
+                    </h3>
+                    <button
+                      onClick={() => setEditingPost(post)}
+                      style={{
+                        background: '#2563eb',
         color: '#fff',
-                      border: 'none',
-                      borderRadius: 6,
-                      padding: '8px 16px',
-                      fontSize: 14,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Muokkaa
-                  </button>
-                </div>
-                <p style={{ margin: '0 0 12px 0', color: '#d1d5db', fontSize: 14, lineHeight: 1.5 }}>
-                  {post.Caption || 'Ei kuvausta'}
-                </p>
-                {post["Publish Date"] && (
-                  <p style={{ margin: 0, color: '#9ca3af', fontSize: 12 }}>
-                    Julkaistu: {new Date(post["Publish Date"]).toLocaleDateString('fi-FI')}
+                        border: 'none',
+                        borderRadius: 6,
+                        padding: '8px 16px',
+                        fontSize: 14,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Muokkaa
+                    </button>
+                  </div>
+                  <p style={{ margin: '0 0 12px 0', color: '#d1d5db', fontSize: 14, lineHeight: 1.5 }}>
+                    {post.Caption || 'Ei kuvausta'}
                   </p>
-                )}
-                </div>
-              ))}
-            </div>
+                  {post["Publish Date"] && (
+                    <p style={{ margin: 0, color: '#9ca3af', fontSize: 12 }}>
+                      Julkaistu: {new Date(post["Publish Date"]).toLocaleDateString('fi-FI')}
+                    </p>
+                  )}
+                  </div>
+                ))}
+              </div>
+          )}
+        </div>
+        
+        {editingPost && (
+          <EditPostModal
+            post={editingPost}
+            onClose={() => setEditingPost(null)}
+            onSave={handleSavePost}
+          />
         )}
       </div>
-      
-      {editingPost && (
-        <EditPostModal
-          post={editingPost}
-          onClose={() => setEditingPost(null)}
-          onSave={handleSavePost}
-        />
-      )}
-    </div>
+    </>
   )
 } 

@@ -1,5 +1,6 @@
 import React from 'react'
 import VersionInfo from '../components/VersionInfo'
+import PageHeader from '../components/PageHeader'
 
 export default function SettingsPage() {
   let user = null
@@ -29,6 +30,7 @@ export default function SettingsPage() {
 
   return (
     <>
+      <PageHeader title="Asetukset" />
       <div style={{
         background: 'var(--brand-dark)',
         color: '#fff',

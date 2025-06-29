@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import PageHeader from '../components/PageHeader'
 
 // Mock-data oikealla rakenteella
 const mockStrategy = [
@@ -74,15 +75,7 @@ export default function ContentStrategyPage() {
 
   return (
     <>
-      <div style={{
-        background: 'var(--brand-dark)',
-        color: '#fff',
-        borderBottom: '1px solid #e2e8f0',
-        paddingTop: 32,
-        paddingBottom: 24
-      }}>
-        <h1 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}>Sisältöstrategia</h1>
-      </div>
+      <PageHeader title="Sisältöstrategia" />
       <div style={{maxWidth: 1100, padding: '0 8px'}}>
         {error && <p style={{color: 'red'}}>{error}</p>}
         <div style={{display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: 32}}>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import PageHeader from '../components/PageHeader'
 
 export default function ManagePostsPage() {
   const [posts, setPosts] = useState([])
@@ -43,6 +44,7 @@ export default function ManagePostsPage() {
 
   return (
     <>
+      <PageHeader title="Julkaisut" />
       <div style={{
         background: 'var(--brand-dark)',
         color: '#fff',

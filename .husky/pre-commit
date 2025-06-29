@@ -1,6 +1,3 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 # Tarkista että commit-viesti noudattaa conventional commits -muotoa
 # Huom: testit ajetaan vain jos ne on määritelty
 if npm run | grep -q "test"; then

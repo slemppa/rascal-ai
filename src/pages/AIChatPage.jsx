@@ -73,7 +73,7 @@ export default function AIChatPage() {
     setFilesError('')
     try {
       const response = await axios.post('/api/vector-store-files', { companyId })
-      // Tuki sekä files: [...], files: { data: [...] } että data: [...]
+      // Tuki eri payload-rakenteille
       let arr = []
       if (Array.isArray(response.data.files)) {
         arr = response.data.files
@@ -82,7 +82,12 @@ export default function AIChatPage() {
       } else if (Array.isArray(response.data.data)) {
         arr = response.data.data
       } else if (Array.isArray(response.data)) {
-        arr = response.data
+        // Jos response.data on array, tarkista onko siinä data-kenttiä
+        if (response.data.length > 0 && response.data[0].data && Array.isArray(response.data[0].data)) {
+          arr = response.data[0].data
+        } else {
+          arr = response.data
+        }
       }
       setFiles(arr)
     } catch (error) {

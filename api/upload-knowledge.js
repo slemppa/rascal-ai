@@ -29,6 +29,7 @@ export default async function handler(req, res) {
           host: undefined // Vercel/Node lisää tämän automaattisesti
         },
         body: req,
+        duplex: 'half',
       })
       
       if (!response.ok) {

@@ -49,17 +49,39 @@ export default function AIChatPage() {
     }
   }, [tab])
 
+  // Apufunktiot tiedostokoon ja päivämäärän muotoiluun
+  function formatBytes(bytes) {
+    if (!bytes) return '-'
+    if (bytes < 1024) return bytes + ' t'
+    return (bytes / 1024).toFixed(1).replace('.', ',') + ' kt'
+  }
+  function formatDate(ts) {
+    if (!ts) return '-'
+    const d = new Date(ts * 1000)
+    return d.toLocaleDateString('fi-FI')
+  }
+
   const fetchFiles = async () => {
     if (!companyId) {
       setFilesError('Yrityksen ID puuttuu')
       return
     }
-    
     setFilesLoading(true)
     setFilesError('')
     try {
       const response = await axios.get(`/api/vector-store-files?companyId=${companyId}`)
-      setFiles(response.data.files || [])
+      // Tuki sekä files: [...], files: { data: [...] } että data: [...]
+      let arr = []
+      if (Array.isArray(response.data.files)) {
+        arr = response.data.files
+      } else if (response.data.files && Array.isArray(response.data.files.data)) {
+        arr = response.data.files.data
+      } else if (Array.isArray(response.data.data)) {
+        arr = response.data.data
+      } else if (Array.isArray(response.data)) {
+        arr = response.data
+      }
+      setFiles(arr)
     } catch (error) {
       setFilesError('Virhe haettaessa tiedostoja')
     } finally {
@@ -363,16 +385,17 @@ export default function AIChatPage() {
         ) : (
           <div style={{
             width: '100%',
-            maxWidth: 1200,
+            maxWidth: 1400,
             margin: '0 auto',
             display: 'flex',
             gap: 32,
             justifyContent: 'center',
-            alignItems: 'flex-start',
+            alignItems: 'stretch',
             padding: '32px 0',
-            minHeight: 400,
+            minHeight: 0,
             height: '100%',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            flex: 1
           }}>
             {/* Lomakekortti 1/3 */}
             <div style={{
@@ -386,8 +409,8 @@ export default function AIChatPage() {
               display: 'flex',
               flexDirection: 'column',
               gap: 16,
-              height: 500,
-              minHeight: 400,
+              minHeight: 0,
+              height: '100%',
               overflow: 'hidden',
               justifyContent: 'flex-start'
             }}>
@@ -472,8 +495,8 @@ export default function AIChatPage() {
               borderRadius: 16,
               boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
               padding: 32,
-              height: 500,
-              minHeight: 400,
+              minHeight: 0,
+              height: '100%',
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column'
@@ -487,7 +510,7 @@ export default function AIChatPage() {
                 ) : files.length === 0 ? (
                   <div style={{textAlign: 'center', color: '#6b7280', marginTop: 32}}>
                     <img src="/placeholder.png" alt="Ei tiedostoja" style={{width: 64, opacity: 0.5, marginBottom: 8}} />
-                    <div>Ei tiedostoja</div>
+                    <div>Et ole vielä lisännyt tiedostoja</div>
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -504,7 +527,7 @@ export default function AIChatPage() {
                         <div>
                           <div style={{ fontWeight: 500 }}>{file.filename}</div>
                           <div style={{ fontSize: '14px', color: '#6b7280' }}>
-                            {file.size} tavua • {new Date(file.created_at).toLocaleDateString('fi-FI')}
+                            {formatBytes(file.bytes)} • {formatDate(file.created_at)}
                           </div>
                         </div>
                         <button

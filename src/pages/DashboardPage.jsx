@@ -252,62 +252,70 @@ export default function DashboardPage() {
   if (loading) return <div style={{ padding: 32, textAlign: 'center' }}>Ladataan...</div>
   if (error) return <div style={{ padding: 32, color: 'red' }}>{error}</div>
 
+  // Tulevat postaukset (Publish Date tulevaisuudessa)
+  const now = new Date()
+  const upcomingPosts = posts.filter(post => {
+    const date = post["Publish Date"] ? new Date(post["Publish Date"]) : null
+    return date && date > now
+  }).sort((a, b) => new Date(a["Publish Date"]) - new Date(b["Publish Date"]))
+
   return (
     <>
-      <PageHeader title="Dashboard" />
+      <PageHeader title="Kojelauta" />
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 8px' }}>
-        <div style={{ marginTop: 24 }}>
-          {posts.length === 0 ? (
-            <p style={{ color: '#9ca3af' }}>Ei julkaisuja saatavilla.</p>
+        {/* Ylärivin laatikot */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24, marginBottom: 32 }}>
+          {/* Tulevat postaukset */}
+          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minHeight: 110 }}>
+            <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Tulevat postaukset</div>
+            <div style={{ fontSize: 32, fontWeight: 800, color: '#2563eb', lineHeight: 1 }}>{upcomingPosts.length}</div>
+            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Seuraavat 7 päivää</div>
+          </div>
+          {/* Placeholder-laatikot */}
+          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 24, minHeight: 110 }}></div>
+          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 24, minHeight: 110 }}></div>
+          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 24, minHeight: 110 }}></div>
+        </div>
+
+        {/* Tulevat postaukset ja sähköpostit */}
+        <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32, marginBottom: 32 }}>
+          <div style={{ fontWeight: 700, fontSize: 20, color: '#1f2937', marginBottom: 20 }}>Tulevat postaukset ja sähköpostit</div>
+          {upcomingPosts.length === 0 ? (
+            <div style={{ color: '#9ca3af', textAlign: 'center', padding: 32 }}>Ei tulevia postauksia</div>
           ) : (
-            <div style={{ display: 'grid', gap: 16 }}>
-              {posts.map((post, index) => (
-                <div key={post.id || index} style={{
-                  background: '#1f2937',
-                  borderRadius: 12,
-                  padding: 20,
-                  border: '1px solid #374151'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-                    <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#f9fafb' }}>
-                      {post.Idea || 'Ei otsikkoa'}
-                    </h3>
-                    <button
-                      onClick={() => setEditingPost(post)}
-                      style={{
-                        background: '#2563eb',
-        color: '#fff',
-                        border: 'none',
-                        borderRadius: 6,
-                        padding: '8px 16px',
-                        fontSize: 14,
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Muokkaa
-                    </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {upcomingPosts.map((post, idx) => {
+                const date = post["Publish Date"] ? new Date(post["Publish Date"]) : null
+                const day = date ? date.toLocaleDateString('fi-FI', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '-'
+                const time = date ? date.toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : ''
+                return (
+                  <div key={post.id || idx} style={{
+                    background: '#f3f6fd',
+                    borderRadius: 12,
+                    padding: '16px 20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 16,
+                    borderLeft: '5px solid #2563eb',
+                    boxShadow: '0 1px 3px rgba(37,99,235,0.04)'
+                  }}>
+                    {/* Ikoni */}
+                    <div style={{ fontSize: 22, color: '#2563eb', marginRight: 8 }}>
+                      {post.Type === 'Sähköposti' ? '✉️' : '📄'}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 600, fontSize: 16, color: '#1f2937', marginBottom: 2 }}>{post.Idea || post.title || 'Ei otsikkoa'}</div>
+                      <div style={{ color: '#6b7280', fontSize: 14 }}>{post.Type || ''}{post.Type && post.Channel ? ' • ' : ''}{post.Channel || ''}</div>
+                    </div>
+                    <div style={{ color: '#6b7280', fontSize: 15, minWidth: 80, textAlign: 'right' }}>
+                      {day} <span style={{ color: '#2563eb', fontWeight: 700 }}>{time}</span>
+                    </div>
                   </div>
-                  <p style={{ margin: '0 0 12px 0', color: '#d1d5db', fontSize: 14, lineHeight: 1.5 }}>
-                    {post.Caption || 'Ei kuvausta'}
-                  </p>
-                  {post["Publish Date"] && (
-                    <p style={{ margin: 0, color: '#9ca3af', fontSize: 12 }}>
-                      Julkaistu: {new Date(post["Publish Date"]).toLocaleDateString('fi-FI')}
-                    </p>
-                  )}
-                  </div>
-                ))}
-              </div>
+                )
+              })}
+            </div>
           )}
         </div>
-        
-        {editingPost && (
-          <EditPostModal
-            post={editingPost}
-            onClose={() => setEditingPost(null)}
-            onSave={handleSavePost}
-          />
-        )}
       </div>
     </>
   )

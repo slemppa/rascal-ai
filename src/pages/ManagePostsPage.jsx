@@ -14,7 +14,9 @@ export default function ManagePostsPage() {
       try {
         setLoading(true)
         setError(null)
-        const response = await axios.get('https://samikiias.app.n8n.cloud/webhook/get-rascalai-posts123890')
+        const companyId = JSON.parse(localStorage.getItem('user') || 'null')?.companyId
+        const url = `/api/get-posts${companyId ? `?companyId=${companyId}` : ''}`
+        const response = await axios.get(url)
         setPosts(Array.isArray(response.data) ? response.data : [])
       } catch (err) {
         setError('Virhe haettaessa julkaisuja')
@@ -44,7 +46,7 @@ export default function ManagePostsPage() {
 
   return (
     <>
-      <PageHeader title="Julkaisut" />
+      <PageHeader title="Julkaisujen hallinta" />
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 8px' }}>
         {/* Filtteripainikkeet */}
         {!loading && !error && types.length > 0 && (
@@ -53,12 +55,14 @@ export default function ManagePostsPage() {
               onClick={() => setTypeFilter('')}
               style={{
                 padding: '6px 16px',
-                borderRadius: 6,
-                border: '1px solid #e1e8ed',
+                borderRadius: 8,
+                border: 'none',
                 background: typeFilter === '' ? '#2563eb' : '#f7fafc',
                 color: typeFilter === '' ? '#fff' : '#2563eb',
-                fontWeight: 500,
+                fontWeight: 600,
+                fontSize: 16,
                 cursor: 'pointer',
+                boxShadow: typeFilter === '' ? '0 2px 8px rgba(37,99,235,0.08)' : 'none',
                 transition: 'all 0.15s'
               }}
             >
@@ -70,12 +74,14 @@ export default function ManagePostsPage() {
                 onClick={() => setTypeFilter(type)}
                 style={{
                   padding: '6px 16px',
-                  borderRadius: 6,
-                  border: '1px solid #e1e8ed',
+                  borderRadius: 8,
+                  border: 'none',
                   background: typeFilter === type ? '#2563eb' : '#f7fafc',
                   color: typeFilter === type ? '#fff' : '#2563eb',
-                  fontWeight: 500,
+                  fontWeight: 600,
+                  fontSize: 16,
                   cursor: 'pointer',
+                  boxShadow: typeFilter === type ? '0 2px 8px rgba(37,99,235,0.08)' : 'none',
                   transition: 'all 0.15s'
                 }}
               >
@@ -87,43 +93,89 @@ export default function ManagePostsPage() {
         {loading && <p>Ladataan...</p>}
         {error && <p style={{color: 'red'}}>{error}</p>}
         {!loading && !error && (
-          <div style={{display: 'grid', gap: 16}}>
+          <div style={{display: 'grid', gap: 24, gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))'}}>
             {filteredPosts.map((post, index) => (
               <div key={post.id || index} style={{
-                  background: '#fff',
-                  borderRadius: 12,
-                padding: 20,
+                background: '#fff',
+                borderRadius: 16,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
                 border: '1px solid #e5e7eb',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                padding: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: 340,
+                overflow: 'hidden',
+                position: 'relative'
               }}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12}}>
-                  <div style={{flex: 1}}>
-                    <h3 style={{margin: '0 0 8px 0', fontSize: 18, fontWeight: 600, color: '#1f2937'}}>
-                      {post.Idea || post.title || 'Ei otsikkoa'}
-                    </h3>
-                    <p style={{margin: '0 0 8px 0', color: '#6b7280', fontSize: 14, lineHeight: 1.5}}>
-                      {post.Caption || post.desc || 'Ei kuvausta'}
-                    </p>
-                    <div style={{display: 'flex', gap: 16, fontSize: 12, color: '#9ca3af'}}>
-                      <span>Tyyppi: {post.Type || '-'}</span>
-                      <span>Tila: {post.Status || '-'}</span>
-                      <span>Julkaistu: {formatDate(post["Publish Date"])}</span>
-                    </div>
-                  </div>
-                  <Link 
-                    to={`/posts/${post.id}`}
+                {/* Media-kuva tai placeholder */}
+                {post.Media && Array.isArray(post.Media) && post.Media[0] && post.Media[0].url ? (
+                  <img
+                    src={post.Media[0].url}
+                    alt={post.Idea || post.title || 'Julkaisukuva'}
                     style={{
-                      padding: '8px 16px',
-                      background: '#2563eb',
-                      color: '#fff',
-                      textDecoration: 'none',
-                      borderRadius: 6,
-                      fontSize: 14,
-                      fontWeight: 500
+                      width: '100%',
+                      height: 120,
+                      objectFit: 'cover',
+                      background: '#f3f4f6',
+                      display: 'block'
                     }}
-                  >
-                    Katso tiedot
-                  </Link>
+                  />
+                ) : (
+                  <div style={{
+                    background: '#f3f4f6',
+                    color: '#b0b0b0',
+                    height: 120,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 20,
+                    fontWeight: 500
+                  }}>
+                    Ei kuvaa
+                  </div>
+                )}
+                <div style={{padding: 20, flex: 1, display: 'flex', flexDirection: 'column'}}>
+                  {/* Tyyppibadge */}
+                  {post.Type && (
+                    <span style={{
+                      display: 'inline-block',
+                      background: '#f1f5f9',
+                      color: '#2563eb',
+                      fontWeight: 600,
+                      fontSize: 14,
+                      borderRadius: 8,
+                      padding: '2px 12px',
+                      marginBottom: 10
+                    }}>{post.Type}</span>
+                  )}
+                  {/* Otsikko */}
+                  <div style={{fontWeight: 700, fontSize: 18, marginBottom: 8, color: '#1f2937'}}>
+                    {post.Idea || post.title || 'Ei otsikkoa'}
+                  </div>
+                  {/* Kuvaus */}
+                  <div style={{color: '#374151', fontSize: 15, marginBottom: 12, flex: 1}}>
+                    {post.Caption || post.desc || 'Ei kuvausta'}
+                  </div>
+                  {/* Julkaisupäivä ja linkki */}
+                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 'auto'}}>
+                    <span style={{fontSize: 13, color: '#9ca3af'}}>
+                      {post["Publish Date"] ? `Julkaistu: ${formatDate(post["Publish Date"])} ` : ''}
+                    </span>
+                    <Link 
+                      to={`/posts/${post.id}`}
+                      style={{
+                        padding: '8px 16px',
+                        background: '#2563eb',
+                        color: '#fff',
+                        textDecoration: 'none',
+                        borderRadius: 8,
+                        fontSize: 14,
+                        fontWeight: 600
+                      }}
+                    >
+                      Katso tiedot
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}

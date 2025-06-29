@@ -248,29 +248,29 @@ export default function AIChatPage() {
   }
 
   return (
-    <div style={{ 
+    <div style={{
       height: '100vh', 
-      display: 'flex', 
+      display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden' // Estää koko sivun scrollauksen
     }}>
       {/* Välilehdet - kiinteä korkeus */}
-      <div style={{ 
-        display: 'flex', 
+      <div style={{
+        display: 'flex',
         borderBottom: '1px solid #e5e7eb',
         background: '#f9fafb',
         flexShrink: 0 // Estää kutistumisen
       }}>
-        <button
+              <button
           onClick={() => setTab('chat')}
-          style={{
+                style={{
             flex: 1,
             padding: '16px',
-            border: 'none',
+                  border: 'none',
             background: tab === 'chat' ? '#fff' : 'transparent',
             color: tab === 'chat' ? '#1f2937' : '#6b7280',
             fontWeight: tab === 'chat' ? 600 : 500,
-            cursor: 'pointer',
+                  cursor: 'pointer',
             borderBottom: tab === 'chat' ? '2px solid #2563eb' : 'none'
           }}
         >
@@ -290,8 +290,8 @@ export default function AIChatPage() {
           }}
         >
           Tietokanta ({files.length})
-        </button>
-      </div>
+              </button>
+          </div>
 
       {/* Sisältö - täyttää loput tilasta */}
       <div style={{ 
@@ -301,31 +301,31 @@ export default function AIChatPage() {
         flexDirection: 'column'
       }}>
         {tab === 'chat' ? (
-          <div style={{ 
+            <div style={{
             height: '100%', 
-            display: 'flex', 
-            flexDirection: 'column',
+              display: 'flex', 
+              flexDirection: 'column', 
             overflow: 'hidden'
-          }}>
+            }}>
             {/* Viestit - scrollattava alue */}
-            <div style={{ 
-              flex: 1, 
-              overflowY: 'auto', 
+              <div style={{
+                flex: 1, 
+                overflowY: 'auto', 
               overflowX: 'hidden',
               padding: '20px',
               background: '#f9fafb',
               minHeight: 0 // Tärkeä flexbox-ominaisuus
             }}>
               {messages.length === 0 ? (
-                <div style={{ 
-                  textAlign: 'center', 
+                  <div style={{
+                    textAlign: 'center',
                   color: '#6b7280', 
                   marginTop: '20%',
                   fontSize: 16
                 }}>
                   <p>Tervetuloa {companyName} assistenttiin! 👋</p>
                   <p>Kysy mitä tahansa markkinointiin liittyvää.</p>
-                </div>
+                    </div>
               ) : (
                 messages.map((message, index) => (
                   <div key={index} style={{
@@ -354,7 +354,7 @@ export default function AIChatPage() {
                 ))
               )}
               {loading && (
-                <div style={{
+              <div style={{
                   display: 'flex',
                   justifyContent: 'flex-start',
                   marginBottom: '20px'
@@ -381,13 +381,13 @@ export default function AIChatPage() {
               flexShrink: 0 // Estää kutistumisen
             }}>
               <div style={{ display: 'flex', gap: '12px' }}>
-                <input
-                  type="text"
-                  value={input}
+                    <input
+                      type="text"
+                      value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Kirjoita viestisi..."
                   disabled={loading}
-                  style={{
+                      style={{
                     flex: 1,
                     padding: '12px 16px',
                     border: '1px solid #d1d5db',
@@ -396,33 +396,33 @@ export default function AIChatPage() {
                     outline: 'none'
                   }}
                 />
-                <button
-                  type="submit"
-                  disabled={loading || !input.trim()}
-                  style={{
+                  <button 
+                    type="submit" 
+                    disabled={loading || !input.trim()}
+                    style={{
                     padding: '12px 24px',
                     background: '#2563eb',
                     color: '#fff',
-                    border: 'none',
+                      border: 'none',
                     borderRadius: '8px',
                     cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
                     opacity: loading || !input.trim() ? 0.6 : 1
                   }}
                 >
                   Lähetä
-                </button>
+                  </button>
               </div>
             </form>
-          </div>
+            </div>
         ) : (
-          <div style={{
+            <div style={{
             width: '100%',
             maxWidth: 1400,
             margin: '0 auto',
-            display: 'flex',
+              display: 'flex',
             gap: 32,
-            justifyContent: 'center',
-            alignItems: 'stretch',
+              justifyContent: 'center',
+              alignItems: 'stretch',
             padding: '32px 0',
             minHeight: 0,
             height: '100%',
@@ -430,16 +430,16 @@ export default function AIChatPage() {
             flex: 1
           }}>
             {/* Lomakekortti 1/3 */}
-            <div style={{
-              flex: 1,
+              <div style={{
+                flex: 1,
               minWidth: 280,
               maxWidth: 380,
-              background: '#fff',
+                background: '#fff',
               borderRadius: 16,
               boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
-              padding: 32,
-              display: 'flex',
-              flexDirection: 'column',
+                padding: 32,
+                display: 'flex',
+                flexDirection: 'column',
               gap: 16,
               minHeight: 0,
               height: '100%',
@@ -461,17 +461,17 @@ export default function AIChatPage() {
                   padding: '32px 0',
                   textAlign: 'center',
                   color: '#6b7280',
-                  fontSize: 16,
-                  cursor: 'pointer',
+                    fontSize: 16,
+                    cursor: 'pointer',
                   transition: 'border 0.2s, background 0.2s',
                   marginBottom: 8
                 }}
                 onClick={() => dropRef.current && dropRef.current.querySelector('input[type=file]').click()}
               >
                 Vedä ja pudota tiedostoja tähän tai <span style={{color: '#2563eb', textDecoration: 'underline'}}>valitse tiedostot</span>
-                <input
-                  type="file"
-                  multiple
+                    <input
+                      type="file"
+                      multiple
                   style={{ display: 'none' }}
                   onChange={handleFileInput}
                   disabled={uploadLoading}
@@ -496,43 +496,43 @@ export default function AIChatPage() {
                   ))}
                 </div>
               )}
-              <button
+                          <button
                 onClick={handleUploadPending}
                 disabled={uploadLoading || pendingFiles.length === 0}
-                style={{
+                            style={{
                   padding: '12px 0',
                   background: '#2563eb',
-                  color: '#fff',
-                  border: 'none',
+                    color: '#fff',
+                    border: 'none',
                   borderRadius: 8,
-                  fontWeight: 700,
+                    fontWeight: 700,
                   fontSize: 16,
                   cursor: uploadLoading || pendingFiles.length === 0 ? 'not-allowed' : 'pointer',
                   opacity: uploadLoading || pendingFiles.length === 0 ? 0.7 : 1
                 }}
               >
                 Lähetä tiedostot
-              </button>
+                  </button>
               {uploadLoading && <p style={{ color: '#2563eb', margin: 0 }}>Ladataan...</p>}
               {uploadError && <p style={{ color: 'red', margin: 0 }}>{uploadError}</p>}
               {uploadSuccess && <p style={{ color: 'green', margin: 0 }}>{uploadSuccess}</p>}
               {/* Tyhjää tilaa tuleville featureille */}
               <div style={{flex: 1}} />
-            </div>
+              </div>
             {/* Tiedostokortti 2/3 */}
-            <div style={{
-              flex: 2,
+              <div style={{
+                flex: 2,
               minWidth: 320,
               background: '#fff',
-              borderRadius: 16,
+                borderRadius: 16,
               boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
               padding: 32,
-              minHeight: 0,
+                minHeight: 0,
               height: '100%',
               overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
               <h3 style={{margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Tiedostot</h3>
               <div style={{flex: 1, overflowY: 'auto', marginTop: 8}}>
                 {filesLoading ? (
@@ -560,7 +560,7 @@ export default function AIChatPage() {
                           <div style={{ fontWeight: 500 }}>{file.filename}</div>
                           <div style={{ fontSize: '14px', color: '#6b7280' }}>
                             {formatBytes(file.bytes)} • {formatDate(file.created_at)}
-                          </div>
+                        </div>
                         </div>
                         <button
                           onClick={() => handleFileDeletion(file.id)}
@@ -578,12 +578,12 @@ export default function AIChatPage() {
                         </button>
                       </div>
                     ))}
-                  </div>
+                </div>
                 )}
               </div>
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
     </div>
   )

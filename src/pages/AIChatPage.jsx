@@ -307,62 +307,89 @@ export default function AIChatPage() {
             </form>
           </div>
         ) : (
-          <div style={{ 
-            padding: '20px', 
-            height: '100%', 
-            overflowY: 'auto',
-            overflowX: 'hidden'
+          <div style={{
+            width: '100%',
+            maxWidth: 950,
+            margin: '0 auto',
+            display: 'flex',
+            gap: 32,
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            padding: '32px 0',
+            flexWrap: 'wrap',
+            minHeight: 400
           }}>
-            <div style={{ marginBottom: '20px' }}>
-              <h2 style={{ margin: '0 0 16px 0', fontSize: '20px', fontWeight: 600 }}>
-                Tietokanta
-              </h2>
-              <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>
-                Lataa tiedostoja, joita assistentti voi käyttää vastauksissaan.
-              </p>
-              
+            {/* Lomakekortti */}
+            <div style={{
+              flex: '1 1 320px',
+              maxWidth: 400,
+              background: '#fff',
+              borderRadius: 16,
+              boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
+              padding: 32,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 16,
+              minWidth: 280
+            }}>
+              <h3 style={{margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Lisää tiedosto tietokantaan</h3>
+              <p style={{margin: 0, color: '#6b7280', fontSize: 15}}>Voit liittää PDF-, Word- tai tekstimuotoisen tiedoston. Tiedosto tallennetaan yrityksesi tietokantaan.</p>
               <input
                 type="file"
                 multiple
                 onChange={handleFileUpload}
                 disabled={uploadLoading}
-                style={{ marginBottom: '16px' }}
+                style={{ margin: '12px 0' }}
               />
-              
-              {uploadLoading && <p>Ladataan...</p>}
-              {uploadError && <p style={{ color: 'red' }}>{uploadError}</p>}
-              {uploadSuccess && <p style={{ color: 'green' }}>{uploadSuccess}</p>}
+              <button
+                onClick={() => {}}
+                disabled={uploadLoading}
+                style={{
+                  padding: '12px 0',
+                  background: '#2563eb',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 8,
+                  fontWeight: 700,
+                  fontSize: 16,
+                  cursor: uploadLoading ? 'not-allowed' : 'pointer',
+                  opacity: uploadLoading ? 0.7 : 1
+                }}
+              >
+                Lähetä tiedosto
+              </button>
+              {uploadLoading && <p style={{ color: '#2563eb', margin: 0 }}>Ladataan...</p>}
+              {uploadError && <p style={{ color: 'red', margin: 0 }}>{uploadError}</p>}
+              {uploadSuccess && <p style={{ color: 'green', margin: 0 }}>{uploadSuccess}</p>}
             </div>
-
-            {filesLoading ? (
-              <p>Ladataan tiedostoja...</p>
-            ) : filesError ? (
-              <p style={{ color: 'red' }}>{filesError}</p>
-            ) : files.length === 0 ? (
-              <p style={{ color: '#6b7280' }}>Ei tiedostoja vielä.</p>
-            ) : (
-              <div>
-                <div style={{ marginBottom: '16px' }}>
-                  <button
-                    onClick={() => setShowAllFiles(!showAllFiles)}
-                    style={{
-                      padding: '8px 16px',
-                      background: '#f3f4f6',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {showAllFiles ? 'Piilota tiedostot' : 'Näytä kaikki tiedostot'}
-                  </button>
+            {/* Tiedostokortti */}
+            <div style={{
+              flex: '1 1 320px',
+              maxWidth: 400,
+              background: '#fff',
+              borderRadius: 16,
+              boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
+              padding: 32,
+              minWidth: 280
+            }}>
+              <h3 style={{margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Tiedostot</h3>
+              {filesLoading ? (
+                <p>Ladataan tiedostoja...</p>
+              ) : filesError ? (
+                <p style={{ color: 'red' }}>{filesError}</p>
+              ) : files.length === 0 ? (
+                <div style={{textAlign: 'center', color: '#6b7280', marginTop: 32}}>
+                  <img src="/placeholder.png" alt="Ei tiedostoja" style={{width: 64, opacity: 0.5, marginBottom: 8}} />
+                  <div>Ei tiedostoja</div>
                 </div>
-                <div style={{ display: 'grid', gap: '12px' }}>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 8 }}>
                   {files.slice(0, showAllFiles ? files.length : 5).map((file) => (
                     <div key={file.id} style={{
                       padding: '12px',
                       border: '1px solid #e5e7eb',
                       borderRadius: '8px',
-                      background: '#fff',
+                      background: '#f9fafb',
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center'
@@ -389,9 +416,25 @@ export default function AIChatPage() {
                       </button>
                     </div>
                   ))}
+                  {files.length > 5 && (
+                    <button
+                      onClick={() => setShowAllFiles(!showAllFiles)}
+                      style={{
+                        marginTop: 8,
+                        padding: '8px 16px',
+                        background: '#f3f4f6',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: 14
+                      }}
+                    >
+                      {showAllFiles ? 'Piilota tiedostot' : 'Näytä kaikki tiedostot'}
+                    </button>
+                  )}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
       </div>

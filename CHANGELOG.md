@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/slemppa/rascal-ai/compare/v1.2.0...v1.2.1) (2025-06-29)
+
+
+### 🐛 Bug Fixes
+
+* Dashboard käyttää nyt /api/get-posts endpointia ([d86e71a](https://github.com/slemppa/rascal-ai/commit/d86e71a2d8f6441a7c7aa9ee9d3f8342c27c12ef))
+
 ## [1.2.0](https://github.com/slemppa/rascal-ai/compare/v1.1.16...v1.2.0) (2025-06-29)
 
 

@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { Trans, t } from '@lingui/macro'
 
 export default function LoginPage({ onLogin }) {
   const [email, setEmail] = useState('')
@@ -59,45 +58,119 @@ export default function LoginPage({ onLogin }) {
           color: '#2563eb',
           textAlign: 'center',
           letterSpacing: -0.5
-        }}><Trans>Kirjaudu sisään</Trans></h1>
+        }}>Kirjaudu sisään</h1>
+        <p style={{
+          margin: '0 0 32px 0',
+          fontSize: 16,
+          color: '#64748b',
+          textAlign: 'center',
+          lineHeight: 1.5
+        }}>Kirjaudu sisään Rascal AI Dashboardiin</p>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <input type="email" placeholder={t`Sähköposti`} value={email} onChange={e => setEmail(e.target.value)} required style={{ width: '100%', padding: '12px 16px', borderRadius: 8, border: '1.5px solid #e0e7ef', fontSize: 16, background: '#f9fafb', fontWeight: 600 }} />
-          <div style={{ position: 'relative' }}>
+          <div>
+            <label style={{
+              display: 'block',
+              marginBottom: 8,
+              fontSize: 14,
+              fontWeight: 600,
+              color: '#374151'
+            }}>Sähköposti</label>
             <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder={t`Salasana`}
-              value={password}
-              onChange={e => setPassword(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
-              style={{ width: '100%', padding: showPassword ? '12px 40px 12px 16px' : '12px 16px', borderRadius: 8, border: '1.5px solid #e0e7ef', fontSize: 16, background: '#f9fafb', fontWeight: 600 }}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
               style={{
-                position: 'absolute',
-                right: 8,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: 0
+                width: '100%',
+                padding: '14px 16px',
+                fontSize: 16,
+                border: '1.5px solid #d1d5db',
+                borderRadius: 12,
+                outline: 'none',
+                transition: 'border-color 0.2s',
+                boxSizing: 'border-box'
               }}
-              tabIndex={-1}
-              aria-label={showPassword ? 'Piilota salasana' : 'Näytä salasana'}
-            >
-              {showPassword ? (
-                <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="#2563eb" strokeWidth="2" d="M3 12s3.6-6 9-6 9 6 9 6-3.6 6-9 6-9-6-9-6Z"/><circle cx="12" cy="12" r="3" stroke="#2563eb" strokeWidth="2"/></svg>
-              ) : (
-                <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="#2563eb" strokeWidth="2" d="M3 12s3.6-6 9-6 9 6 9 6-3.6 6-9 6-9-6-9-6Z"/><circle cx="12" cy="12" r="3" stroke="#2563eb" strokeWidth="2"/><line x1="4" y1="20" x2="20" y2="4" stroke="#2563eb" strokeWidth="2"/></svg>
-              )}
-            </button>
+              placeholder="sinun@email.com"
+            />
           </div>
-          <button type="submit" disabled={loading} style={{ background: loading ? '#9ca3af' : '#2563eb', color: '#fff', border: 'none', borderRadius: 10, padding: '16px 0', fontSize: 18, fontWeight: 800, cursor: loading ? 'not-allowed' : 'pointer', transition: 'background-color 0.2s', marginTop: 8, boxShadow: '0 2px 8px rgba(37,99,235,0.10)' }}>
-            {loading ? <Trans>Kirjaudutaan...</Trans> : <Trans>Kirjaudu</Trans>}
+          <div>
+            <label style={{
+              display: 'block',
+              marginBottom: 8,
+              fontSize: 14,
+              fontWeight: 600,
+              color: '#374151'
+            }}>Salasana</label>
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                style={{
+                  width: '100%',
+                  padding: '14px 16px',
+                  paddingRight: '50px',
+                  fontSize: 16,
+                  border: '1.5px solid #d1d5db',
+                  borderRadius: 12,
+                  outline: 'none',
+                  transition: 'border-color 0.2s',
+                  boxSizing: 'border-box'
+                }}
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 16,
+                  color: '#666'
+                }}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '16px',
+              fontSize: 16,
+              fontWeight: 700,
+              color: '#fff',
+              background: '#2563eb',
+              border: 'none',
+              borderRadius: 12,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'background-color 0.2s',
+              opacity: loading ? 0.7 : 1
+            }}
+          >
+            {loading ? 'Kirjaudutaan...' : 'Kirjaudu'}
           </button>
-          {error && <div style={{ background: '#fef2f2', border: '1.5px solid #dc2626', borderRadius: 8, padding: '12px 16px', color: '#dc2626', fontSize: 15, fontWeight: 600 }}>{error}</div>}
+          {error && (
+            <div style={{
+              padding: '12px 16px',
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
+              borderRadius: 8,
+              color: '#dc2626',
+              fontSize: 14,
+              textAlign: 'center'
+            }}>
+              {error}
+            </div>
+          )}
         </form>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Trans } from '@lingui/macro'
+import VersionInfo from '../components/VersionInfo'
 
 export default function SettingsPage() {
   let user = null
@@ -36,22 +36,48 @@ export default function SettingsPage() {
         paddingTop: 32,
         paddingBottom: 24
       }}>
-        <h1 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}><Trans>Asetukset</Trans></h1>
+        <h1 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}>Asetukset</h1>
       </div>
-      <div style={{maxWidth: 800, padding: '0 8px'}}>
-        <div style={{maxWidth: 500, margin: '2rem auto', background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', border: '1px solid #e1e8ed', padding: 32}}>
-          {user ? (
-            <div style={{fontSize: 17, color: '#222'}}>
-              <div style={{marginBottom: 12}}><b><Trans>Nimi:</Trans></b> {name || '-'}</div>
-              <div style={{marginBottom: 12}}><b><Trans>Sähköposti:</Trans></b> {email || '-'}</div>
-              <div style={{marginBottom: 12}}><b><Trans>Yrityksen nimi:</Trans></b> {companyName || '-'}</div>
-              <div style={{marginBottom: 12}}><b><Trans>Yrityksen ID:</Trans></b> {companyId || '-'}</div>
-              <div style={{marginBottom: 12}}><b><Trans>Assistant ID:</Trans></b> {assistantId || '-'}</div>
-              <div style={{marginBottom: 12}}><b><Trans>Tokenin vanhentumisaika (exp):</Trans></b> {exp || '-'}</div>
+      <div style={{padding: 32}}>
+        <div style={{background: '#fff', borderRadius: 12, padding: 24, marginBottom: 24}}>
+          <h2 style={{margin: '0 0 16px 0', fontSize: 20, fontWeight: 600}}>Käyttäjätiedot</h2>
+          <div style={{display: 'grid', gap: 16}}>
+            <div>
+              <label style={{display: 'block', marginBottom: 4, fontWeight: 500}}>Nimi</label>
+              <input type="text" value={name || ''} readOnly style={{width: '100%', padding: 8, border: '1px solid #d1d5db', borderRadius: 4}} />
             </div>
-          ) : (
-            <div style={{color: '#888'}}><Trans>Käyttäjätietoja ei löytynyt.</Trans></div>
-          )}
+            <div>
+              <label style={{display: 'block', marginBottom: 4, fontWeight: 500}}>Sähköposti</label>
+              <input type="email" value={email || ''} readOnly style={{width: '100%', padding: 8, border: '1px solid #d1d5db', borderRadius: 4}} />
+            </div>
+            <div>
+              <label style={{display: 'block', marginBottom: 4, fontWeight: 500}}>Yritys</label>
+              <input type="text" value={companyName || ''} readOnly style={{width: '100%', padding: 8, border: '1px solid #d1d5db', borderRadius: 4}} />
+            </div>
+          </div>
+        </div>
+        
+        <div style={{background: '#fff', borderRadius: 12, padding: 24, marginBottom: 24}}>
+          <h2 style={{margin: '0 0 16px 0', fontSize: 20, fontWeight: 600}}>Tekniset tiedot</h2>
+          <div style={{display: 'grid', gap: 16}}>
+            <div>
+              <label style={{display: 'block', marginBottom: 4, fontWeight: 500}}>Company ID</label>
+              <input type="text" value={companyId || ''} readOnly style={{width: '100%', padding: 8, border: '1px solid #d1d5db', borderRadius: 4}} />
+            </div>
+            <div>
+              <label style={{display: 'block', marginBottom: 4, fontWeight: 500}}>Assistant ID</label>
+              <input type="text" value={assistantId || ''} readOnly style={{width: '100%', padding: 8, border: '1px solid #d1d5db', borderRadius: 4}} />
+            </div>
+            <div>
+              <label style={{display: 'block', marginBottom: 4, fontWeight: 500}}>Token vanhenee</label>
+              <input type="text" value={exp ? new Date(exp * 1000).toLocaleString('fi-FI') : ''} readOnly style={{width: '100%', padding: 8, border: '1px solid #d1d5db', borderRadius: 4}} />
+            </div>
+          </div>
+        </div>
+
+        <div style={{background: '#fff', borderRadius: 12, padding: 24}}>
+          <h2 style={{margin: '0 0 16px 0', fontSize: 20, fontWeight: 600}}>Sovelluksen tiedot</h2>
+          <VersionInfo style={{marginTop: 16}} />
         </div>
       </div>
     </>

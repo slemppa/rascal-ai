@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Trans, t } from '@lingui/macro'
 
 // Mock-data oikealla rakenteella
 const mockStrategy = [
@@ -71,7 +70,7 @@ export default function ContentStrategyPage() {
     }
   }
 
-  if (loading) return <p><Trans>Ladataan...</Trans></p>
+  if (loading) return <p>Ladataan...</p>
 
   return (
     <>
@@ -82,7 +81,7 @@ export default function ContentStrategyPage() {
         paddingTop: 32,
         paddingBottom: 24
       }}>
-        <h1 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}><Trans>Sisältöstrategia</Trans></h1>
+        <h1 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}>Sisältöstrategia</h1>
       </div>
       <div style={{maxWidth: 1100, padding: '0 8px'}}>
         {error && <p style={{color: 'red'}}>{error}</p>}
@@ -123,8 +122,8 @@ export default function ContentStrategyPage() {
                       boxSizing: 'border-box'
                     }}
                   />
-                  <button onClick={() => handleSave(item)} style={{marginRight: 8, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}><Trans>Tallenna</Trans></button>
-                  <button onClick={() => setEditId(null)} style={{background: '#eee', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}><Trans>Peruuta</Trans></button>
+                  <button onClick={() => handleSave(item)} style={{marginRight: 8, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Tallenna</button>
+                  <button onClick={() => setEditId(null)} style={{background: '#eee', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Peruuta</button>
                 </>
               ) : (
                 <>

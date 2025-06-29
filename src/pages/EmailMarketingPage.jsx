@@ -1,5 +1,4 @@
 import React from 'react'
-import { Trans } from '@lingui/macro'
 
 export default function EmailMarketingPage() {
   return (
@@ -9,7 +8,7 @@ export default function EmailMarketingPage() {
         color: '#fff',
         borderBottom: '1px solid #e2e8f0'
       }}>
-        <h1 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}><Trans>Sähköpostimarkkinointi</Trans></h1>
+        <h1 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}>Sähköpostimarkkinointi</h1>
       </div>
       {/* ...sisältö... */}
     </>

@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Trans, t } from '@lingui/macro'
 
 function EditPostModal({ post, onClose, onSave }) {
   const [idea, setIdea] = useState(post.Idea || '')
@@ -63,155 +62,248 @@ function EditPostModal({ post, onClose, onSave }) {
       left: 0,
       width: '100vw',
       height: '100vh',
-      background: 'rgba(0,0,0,0.25)',
-      zIndex: 1000,
+      background: 'rgba(0,0,0,0.5)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      overflowY: 'auto',
-      maxHeight: '100vh',
+      zIndex: 1000,
+      padding: '20px'
     }}>
       <div style={{
         background: '#fff',
-        borderRadius: 20,
-        boxShadow: '0 4px 32px rgba(0,0,0,0.18)',
-        border: '1px solid #e1e8ed',
-        padding: isMobile ? 16 : 40,
-        maxWidth: 700,
-        width: '95vw',
-        minWidth: 0,
-        position: 'relative',
-        minHeight: 420,
-        fontSize: isMobile ? 15 : 17,
-        overflowY: 'auto',
-        boxSizing: 'border-box',
-        maxHeight: '95vh',
+        borderRadius: 16,
+        padding: isMobile ? 20 : 32,
+        maxWidth: isMobile ? '100%' : 600,
+        width: '100%',
+        maxHeight: '90vh',
+        overflow: 'auto',
+        boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
       }}>
-        <button onClick={onClose} style={{position: 'absolute', top: isMobile ? 10 : 20, right: isMobile ? 10 : 20, background: '#f7fafc', border: '1px solid #e1e8ed', borderRadius: 8, padding: isMobile ? '6px 14px' : '8px 20px', cursor: 'pointer', fontWeight: 600, fontSize: isMobile ? 14 : 16}}>Sulje</button>
-        {Array.isArray(post.Media) && post.Media.length > 0 ? (
-          post.Media[0].type && post.Media[0].type.startsWith('video/') ? (
-            <video controls style={{width: '100%', maxHeight: isMobile ? 140 : 260, background: '#f7fafc', borderRadius: 12, marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-              <source src={post.Media[0].url} type={post.Media[0].type} />
-              Selaimesi ei tue videon toistoa.
-            </video>
-          ) : post.Media[0].type && post.Media[0].type.startsWith('image/') && post.Media[0].thumbnails && post.Media[0].thumbnails.large ? (
-            <div style={{width: '100%', height: isMobile ? 140 : 260, background: '#f7fafc', borderRadius: 12, marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-              <img src={post.Media[0].thumbnails.large.url} alt="media" style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: 12}} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+          <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>Muokkaa julkaisua</h2>
+          <button onClick={onClose} style={{
+            background: 'none',
+            border: 'none',
+            fontSize: 24,
+            cursor: 'pointer',
+            color: '#6b7280'
+          }}>×</button>
+        </div>
+        
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151' }}>Idean kuvaus</label>
+            <textarea
+              ref={textareaRef}
+              value={idea}
+              onChange={(e) => setIdea(e.target.value)}
+              style={{
+                width: '100%',
+                minHeight: 80,
+                padding: 12,
+                border: '1px solid #d1d5db',
+                borderRadius: 8,
+                fontSize: 14,
+                resize: 'vertical',
+                fontFamily: 'inherit'
+              }}
+              placeholder="Kuvaile julkaisun idea..."
+            />
+          </div>
+          
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151' }}>Julkaisun teksti</label>
+            <textarea
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              style={{
+                width: '100%',
+                minHeight: 120,
+                padding: 12,
+                border: '1px solid #d1d5db',
+                borderRadius: 8,
+                fontSize: 14,
+                resize: 'vertical',
+                fontFamily: 'inherit'
+              }}
+              placeholder="Kirjoita julkaisun teksti..."
+            />
+          </div>
+          
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151' }}>Julkaisupäivä</label>
+            <input
+              type="datetime-local"
+              value={publishDate}
+              onChange={(e) => setPublishDate(e.target.value)}
+              style={{
+                width: '100%',
+                padding: 12,
+                border: '1px solid #d1d5db',
+                borderRadius: 8,
+                fontSize: 14
+              }}
+            />
+          </div>
+          
+          {error && (
+            <div style={{
+              padding: 12,
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
+              borderRadius: 8,
+              color: '#dc2626',
+              fontSize: 14
+            }}>
+              {error}
             </div>
-          ) : (
-            <img src="/placeholder.png" alt="placeholder" style={{width: '100%', height: isMobile ? 140 : 260, objectFit: 'cover', borderRadius: 12, marginBottom: 24, background: '#f7fafc'}} />
-          )
-        ) : null}
-        <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column', gap: isMobile ? 12 : 20}}>
-          <label style={{fontWeight: 600, fontSize: isMobile ? 15 : 17}}>
-            Idea:
-            <input type="text" value={idea} onChange={e => setIdea(e.target.value)} style={{width: '100%', borderRadius: 10, border: '1.5px solid #e1e8ed', padding: isMobile ? '10px 12px' : '14px 16px', marginTop: 6, fontSize: isMobile ? 15 : 17, background: '#f7fafc', transition: 'border 0.2s'}} />
-          </label>
-          <label style={{fontWeight: 600, fontSize: isMobile ? 15 : 17}}>
-            Julkaisu:
-            <textarea ref={textareaRef} value={caption} onChange={e => setCaption(e.target.value)} style={{width: '100%', borderRadius: 10, border: '1.5px solid #e1e8ed', padding: isMobile ? '10px 12px' : '14px 16px', marginTop: 6, minHeight: isMobile ? 60 : 90, fontSize: isMobile ? 14 : 16, background: '#f7fafc', transition: 'border 0.2s', resize: 'none', overflow: 'hidden'}} />
-          </label>
-          <label style={{fontWeight: 600, fontSize: isMobile ? 15 : 17}}>
-            Julkaisupäivä:
-            <input type="datetime-local" value={publishDate} onChange={e => setPublishDate(e.target.value)} style={{width: '100%', borderRadius: 10, border: '1.5px solid #e1e8ed', padding: isMobile ? '10px 12px' : '14px 16px', marginTop: 6, fontSize: isMobile ? 15 : 16, background: '#f7fafc', transition: 'border 0.2s'}} />
-          </label>
-          <button type="submit" disabled={saving} style={{background: '#2563eb', color: '#fff', border: 'none', borderRadius: 10, padding: isMobile ? '10px 0' : '14px 0', fontWeight: 700, fontSize: isMobile ? 15 : 18, cursor: saving ? 'not-allowed' : 'pointer', marginTop: 8}}>
-            {saving ? 'Tallennetaan...' : 'Tallenna'}
-          </button>
-          {success && <div style={{color: '#2e7d32', fontWeight: 600, fontSize: isMobile ? 14 : 16, marginTop: 8, textAlign: 'center'}}>Tallennus onnistui!</div>}
-          {error && <div style={{color: '#e53e3e', fontWeight: 600, fontSize: isMobile ? 14 : 16, marginTop: 8, textAlign: 'center'}}>{error}</div>}
+          )}
+          
+          {success && (
+            <div style={{
+              padding: 12,
+              background: '#f0fdf4',
+              border: '1px solid #bbf7d0',
+              borderRadius: 8,
+              color: '#16a34a',
+              fontSize: 14
+            }}>
+              Tallennettu onnistuneesti!
+            </div>
+          )}
+          
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              onClick={onClose}
+              style={{
+                padding: '12px 24px',
+                border: '1px solid #d1d5db',
+                borderRadius: 8,
+                background: '#fff',
+                color: '#374151',
+                cursor: 'pointer',
+                fontSize: 14,
+                fontWeight: 500
+              }}
+            >
+              Peruuta
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              style={{
+                padding: '12px 24px',
+                border: 'none',
+                borderRadius: 8,
+                background: '#2563eb',
+                color: '#fff',
+                cursor: saving ? 'not-allowed' : 'pointer',
+                fontSize: 14,
+                fontWeight: 500,
+                opacity: saving ? 0.7 : 1
+              }}
+            >
+              {saving ? 'Tallennetaan...' : 'Tallenna'}
+            </button>
+          </div>
         </form>
       </div>
     </div>
   )
 }
 
-export default function DashboardPage({ dashboardData, formatDate, formatDateTime }) {
-  const [editPost, setEditPost] = useState(null)
-  const handleSave = (updatedPost) => {
-    // TODO: Tallenna muutokset backendille
-    setEditPost(null)
-    // Voit päivittää dashboardDataa tässä jos haluat näyttää muutokset heti
+export default function DashboardPage() {
+  const [posts, setPosts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [editingPost, setEditingPost] = useState(null)
+
+  React.useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch('https://samikiias.app.n8n.cloud/webhook/get-rascalai-posts123890')
+        const data = await response.json()
+        setPosts(Array.isArray(data) ? data : [])
+      } catch (err) {
+        setError('Virhe haettaessa julkaisuja')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchPosts()
+  }, [])
+
+  const handleSavePost = (updatedPost) => {
+    setPosts(prevPosts => 
+      prevPosts.map(post => 
+        post.id === updatedPost["Record ID"] || post["Record ID"] === updatedPost["Record ID"]
+          ? { ...post, ...updatedPost }
+          : post
+      )
+    )
+    setEditingPost(null)
   }
+
+  if (loading) return <div style={{ padding: 32, textAlign: 'center' }}>Ladataan...</div>
+  if (error) return <div style={{ padding: 32, color: 'red' }}>{error}</div>
+
   return (
-    <>
-      <div style={{
-        background: 'var(--brand-dark)',
-        color: '#fff',
-        borderBottom: '1px solid #e2e8f0',
-        paddingTop: 32,
-        paddingBottom: 24
-      }}>
-        <h1 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}><Trans>Kojelauta</Trans></h1>
-        <p style={{margin: '8px 0 0 0', fontSize: 16, color: '#cbd5e1', fontWeight: 400}}><Trans>Tervetuloa takaisin! Tässä näet markkinointikampanjoidesi tilanteen.</Trans></p>
-      </div>
-      <div style={{maxWidth: 900, padding: '0 8px'}}>
-        <div className="stats-row" style={{
-          display: 'flex',
-          flexDirection: 'row',
-          gap: '1.5rem',
-          margin: '32px 0 2rem 0',
-          width: 'auto',
-          justifyContent: 'flex-start',
-          alignItems: 'stretch'
-        }}>
-          <div className="stat-card" style={{flex: '0 0 180px', width: 180, height: 150, background: '#fff', border: '1px solid #e1e8ed', borderRadius: 12, padding: '1.5rem', textAlign: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minWidth: 0}}>
-            <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{dashboardData.stats.totalUpcomingPosts}</div>
-            <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}><Trans>Tulevat postaukset</Trans></div>
-            <div className="stat-desc" style={{fontSize: 13, color: '#888', marginTop: 4}}><Trans>Seuraavat 7 päivää</Trans></div>
-          </div>
-          <div className="stat-card" style={{flex: '0 0 180px', width: 180, height: 150, background: '#fff', border: '1px solid #e1e8ed', borderRadius: 12, padding: '1.5rem', textAlign: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minWidth: 0}}>
-            <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{dashboardData.nextGenerationTime ? formatDate(dashboardData.nextGenerationTime) : '-'}</div>
-            <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}><Trans>Seuraava generointi</Trans></div>
-            <div className="stat-desc" style={{fontSize: 13, color: '#888', marginTop: 4}}>{dashboardData.nextGenerationTime ? formatDateTime(dashboardData.nextGenerationTime).split(' ')[1] : ''}</div>
-          </div>
-          <div className="stat-card" style={{flex: '0 0 180px', width: 180, height: 150, background: '#fff', border: '1px solid #e1e8ed', borderRadius: 12, padding: '1.5rem', textAlign: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minWidth: 0}}>
-            <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{dashboardData.emails.length}</div>
-            <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}><Trans>Lähtevät sähköpostit</Trans></div>
-            <div className="stat-desc" style={{fontSize: 13, color: '#888', marginTop: 4}}><Trans>Odottaa lähetystä</Trans></div>
-          </div>
-          <div className="stat-card" style={{flex: '0 0 180px', width: 180, height: 150, background: '#fff', border: '1px solid #e1e8ed', borderRadius: 12, padding: '1.5rem', textAlign: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minWidth: 0}}>
-            <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{dashboardData.stats.averageOpenRate ? (dashboardData.stats.averageOpenRate * 100).toFixed(1) + '%' : '-'}</div>
-            <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}><Trans>Sitoutumisaste</Trans></div>
-            <div className="stat-desc" style={{fontSize: 13, color: '#888', marginTop: 4}}><Trans>+3% viime kuusta</Trans></div>
-          </div>
-        </div>
-        <div className="dashboard-columns">
-          <section className="dashboard-section" style={{width: 588, minWidth: 588, maxWidth: 588}}>
-            <h2 className="section-title">Tulevat postaukset</h2>
-            <div className="section-list">
-              {dashboardData.upcomingPosts.map(post => (
-                <div key={post.id} className="section-card post-card" style={{display: 'flex', alignItems: 'center', gap: 16, position: 'relative'}}>
-                  {/* Media: video, kuva tai placeholder */}
-                  {Array.isArray(post.Media) && post.Media.length > 0 ? (
-                    post.Media[0].type && post.Media[0].type.startsWith('video/') ? (
-                      <video controls style={{width: 64, height: 64, objectFit: 'cover', borderRadius: 8}}>
-                        <source src={post.Media[0].url} type={post.Media[0].type} />
-                        Selaimesi ei tue videon toistoa.
-                      </video>
-                    ) : post.Media[0].type && post.Media[0].type.startsWith('image/') && post.Media[0].thumbnails && post.Media[0].thumbnails.large ? (
-                      <img src={post.Media[0].thumbnails.large.url} alt="media" style={{width: 64, height: 64, objectFit: 'cover', borderRadius: 8}} />
-                    ) : (
-                      <div style={{width: 64, height: 64, background: '#f7fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', borderRadius: 8}}>Ei kuvaa</div>
-                    )
-                  ) : (
-                    <div style={{width: 64, height: 64, background: '#f7fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', borderRadius: 8}}>Ei kuvaa</div>
-                  )}
-                  <div style={{flex: 1}}>
-                    <div className="post-title" style={{fontWeight: 600, fontSize: 16, marginBottom: 4}}>{post.Idea || post.title}</div>
-                    <div className="post-desc" style={{fontSize: 14, color: '#444', marginBottom: 4}}>{post.desc.length > 120 ? post.desc.slice(0, 120) + '…' : post.desc}</div>
-                    <div className="post-time" style={{fontSize: 13, color: '#888', marginBottom: 4}}>{post.date ? formatDateTime(post.date) : '-'}</div>
-                  </div>
-                  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
-                    <button onClick={() => setEditPost(post)} style={{background: '#2563eb', color: '#fff', border: 'none', borderRadius: 6, padding: '10px 18px', fontWeight: 600, cursor: 'pointer', margin: 0}}>Muokkaa</button>
-                  </div>
+    <div style={{ padding: 32 }}>
+      <h1 style={{ margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2 }}>Dashboard</h1>
+      <div style={{ marginTop: 24 }}>
+        {posts.length === 0 ? (
+          <p style={{ color: '#9ca3af' }}>Ei julkaisuja saatavilla.</p>
+        ) : (
+          <div style={{ display: 'grid', gap: 16 }}>
+            {posts.map((post, index) => (
+              <div key={post.id || index} style={{
+                background: '#1f2937',
+                borderRadius: 12,
+                padding: 20,
+                border: '1px solid #374151'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                  <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#f9fafb' }}>
+                    {post.Idea || 'Ei otsikkoa'}
+                  </h3>
+                  <button
+                    onClick={() => setEditingPost(post)}
+                    style={{
+                      background: '#2563eb',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 6,
+                      padding: '8px 16px',
+                      fontSize: 14,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Muokkaa
+                  </button>
                 </div>
-              ))}
-            </div>
-          </section>
-        </div>
+                <p style={{ margin: '0 0 12px 0', color: '#d1d5db', fontSize: 14, lineHeight: 1.5 }}>
+                  {post.Caption || 'Ei kuvausta'}
+                </p>
+                {post["Publish Date"] && (
+                  <p style={{ margin: 0, color: '#9ca3af', fontSize: 12 }}>
+                    Julkaistu: {new Date(post["Publish Date"]).toLocaleDateString('fi-FI')}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-      {editPost && <EditPostModal post={editPost} onClose={() => setEditPost(null)} onSave={handleSave} />}
-    </>
+      
+      {editingPost && (
+        <EditPostModal
+          post={editingPost}
+          onClose={() => setEditingPost(null)}
+          onSave={handleSavePost}
+        />
+      )}
+    </div>
   )
 } 

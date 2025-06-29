@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Trans } from '@lingui/macro'
 
 const STATUS_COLORS = {
   odottaa: '#a0aec0', // harmaa
@@ -62,77 +61,81 @@ function InfoIconWithTooltip() {
           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
           zIndex: 10,
         }}>
-          <Trans>Todellinen laskutus tarkistetaan aina kauden lopussa</Trans>
+          Todellinen laskutus tarkistetaan aina kauden lopussa
         </span>
       )}
     </span>
   )
 }
 
-function UsageBar({ used, total }) {
-  const percent = Math.min(100, Math.round((used / total) * 100))
-  const bars = Math.round((percent / 100) * 10)
+export default function CallStats({ status, stats, calls }) {
   return (
-    <span style={{marginLeft: 10, fontFamily: 'monospace', fontSize: 18, letterSpacing: 1}}>
-      {'|'.repeat(bars)}<span style={{color: '#e1e8ed'}}>{'|'.repeat(10 - bars)}</span>
-    </span>
-  )
-}
-
-function StatCard({ children, style }) {
-  return (
-    <div style={{
-      background: '#fff',
-      border: '1px solid #e1e8ed',
-      borderRadius: 12,
-      padding: '1.5rem',
-      textAlign: 'center',
-      boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-      transition: 'all 0.3s ease',
-      minWidth: 0,
-      ...style
-    }}>
-      {children}
-    </div>
-  )
-}
-
-export default function CallStats({ stats }) {
-  if (!stats) return null
-  const tila = stats.status || 'odottaa'
-  const arvioituHinta = stats.estimatedPrice || '–'
-
-  return (
-    <div className="stats-row" style={{
-      display: 'flex',
-      flexDirection: 'row',
-      gap: '1.5rem',
-      margin: '32px 0 2rem 32px',
-      width: 'auto',
-      justifyContent: 'flex-start',
-      alignItems: 'stretch'
-    }}>
-      <StatCard style={{flex: '0 0 180px', width: 180, height: 150, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-        <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{stats.totalCount}</div>
-        <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}><Trans>Yhteensä</Trans></div>
-      </StatCard>
-      <StatCard style={{flex: '0 0 180px', width: 180, height: 150, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-        <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{stats.calledCount}</div>
-        <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}><Trans>Soitettu</Trans></div>
-      </StatCard>
-      <StatCard style={{flex: '0 0 180px', width: 180, height: 150, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-        <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{stats.failedCount}</div>
-        <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500}}><Trans>Epäonnistunut</Trans></div>
-      </StatCard>
-      <StatCard style={{flex: '0 0 180px', width: 180, height: 150, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-        <StatusBadge tila={tila} />
-        <div className="stat-label" style={{fontSize: 16, fontWeight: 600, marginTop: 8}}>🔄 Soittotila</div>
-        <div style={{fontSize: 15, color: '#888', marginTop: 4}}>{tila.charAt(0).toUpperCase() + tila.slice(1)}</div>
-      </StatCard>
-      <StatCard style={{flex: '0 0 180px', width: 180, height: 150, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-        <div className="stat-number" style={{fontSize: '2rem', fontWeight: 700, color: '#667eea', marginBottom: '0.5rem'}}>{arvioituHinta} €</div>
-        <div className="stat-label" style={{fontSize: '0.9rem', color: '#718096', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Arvioitu hinta <InfoIconWithTooltip /></div>
-      </StatCard>
+    <div style={{ background: '#fff', borderRadius: 12, padding: 24 }}>
+      <h2 style={{ margin: '0 0 16px 0', fontSize: 20, fontWeight: 600 }}>
+        Soittojen tila
+      </h2>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 16, marginBottom: 24 }}>
+        <div style={{ textAlign: 'center', padding: '16px', background: '#f9fafb', borderRadius: 8 }}>
+          <div style={{ fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
+            {stats.totalCount}
+          </div>
+          <div style={{ fontSize: 14, color: '#6b7280' }}>Yhteensä</div>
+        </div>
+        
+        <div style={{ textAlign: 'center', padding: '16px', background: '#f9fafb', borderRadius: 8 }}>
+          <div style={{ fontSize: 24, fontWeight: 700, color: '#22c55e' }}>
+            {stats.calledCount}
+          </div>
+          <div style={{ fontSize: 14, color: '#6b7280' }}>Soitettu</div>
+        </div>
+        
+        <div style={{ textAlign: 'center', padding: '16px', background: '#f9fafb', borderRadius: 8 }}>
+          <div style={{ fontSize: 24, fontWeight: 700, color: '#ef4444' }}>
+            {stats.failedCount}
+          </div>
+          <div style={{ fontSize: 14, color: '#6b7280' }}>Epäonnistui</div>
+        </div>
+        
+        <div style={{ textAlign: 'center', padding: '16px', background: '#f9fafb', borderRadius: 8 }}>
+          <div style={{ fontSize: 24, fontWeight: 700, color: '#2563eb' }}>
+            {stats.totalCount - stats.calledCount - stats.failedCount}
+          </div>
+          <div style={{ fontSize: 14, color: '#6b7280' }}>Jäljellä</div>
+        </div>
+      </div>
+      
+      {calls && calls.length > 0 && (
+        <div>
+          <h3 style={{ margin: '0 0 12px 0', fontSize: 16, fontWeight: 600 }}>
+            Yksityiskohtaiset tiedot
+          </h3>
+          <div style={{ maxHeight: 300, overflow: 'auto' }}>
+            {calls.map((call, index) => (
+              <div key={index} style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '8px 0',
+                borderBottom: '1px solid #f3f4f6'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <StatusBadge tila={call.status} />
+                  <span style={{ fontSize: 14 }}>{call.name || call.phone}</span>
+                </div>
+                <div style={{ fontSize: 12, color: '#6b7280' }}>
+                  {call.duration ? `${call.duration}s` : '-'}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      <div style={{ marginTop: 16, padding: '12px', background: '#f0f9ff', borderRadius: 8, fontSize: 14, color: '#0369a1' }}>
+        <strong>Huomio:</strong> Soittojen laskutus perustuu onnistuneisiin puheluihin.
+        <InfoIconWithTooltip />
+      </div>
     </div>
   )
 } 

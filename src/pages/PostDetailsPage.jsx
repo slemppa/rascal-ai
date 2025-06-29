@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { Trans } from '@lingui/macro'
 
 export default function PostDetailsPage() {
   const { id } = useParams()
@@ -32,30 +31,58 @@ export default function PostDetailsPage() {
   if (!post) return <p>Postausta ei löytynyt.</p>
 
   return (
-    <>
-      <div style={{
-        background: 'var(--brand-dark)',
-        color: '#fff',
-        borderBottom: '1px solid #e2e8f0',
-        paddingTop: 32,
-        paddingBottom: 24
+    <div style={{padding: 32}}>
+      <button onClick={() => navigate(-1)} style={{
+        background: 'none',
+        border: 'none',
+        color: '#2563eb',
+        cursor: 'pointer',
+        fontSize: 16,
+        marginBottom: 24
       }}>
-        <h2 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}><Trans>Postauksen tiedot</Trans></h2>
+        ← Takaisin
+      </button>
+      
+      <div style={{background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.1)'}}>
+        <h1 style={{margin: '0 0 16px 0', fontSize: 24, fontWeight: 700}}>
+          {post.Idea || post.title || 'Ei otsikkoa'}
+        </h1>
+        
+        <div style={{marginBottom: 16}}>
+          <strong>Julkaisupäivä:</strong> {post["Publish Date"] ? new Date(post["Publish Date"]).toLocaleDateString('fi-FI') : 'Ei määritelty'}
+        </div>
+        
+        <div style={{marginBottom: 16}}>
+          <strong>Kuvaus:</strong>
+          <p style={{margin: '8px 0 0 0', lineHeight: 1.6}}>
+            {post.Caption || post.desc || 'Ei kuvausta'}
+          </p>
+        </div>
+        
+        {post.Media && post.Media.length > 0 && (
+          <div style={{marginBottom: 16}}>
+            <strong>Media:</strong>
+            <div style={{marginTop: 8}}>
+              {post.Media.map((media, index) => (
+                <div key={index} style={{marginBottom: 8}}>
+                  {media.type && media.type.startsWith('image/') ? (
+                    <img src={media.url} alt="media" style={{maxWidth: '100%', borderRadius: 8}} />
+                  ) : media.type && media.type.startsWith('video/') ? (
+                    <video controls style={{maxWidth: '100%', borderRadius: 8}}>
+                      <source src={media.url} type={media.type} />
+                      Selaimesi ei tue videon toistoa.
+                    </video>
+                  ) : (
+                    <a href={media.url} target="_blank" rel="noopener noreferrer" style={{color: '#2563eb'}}>
+                      Avaa media
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
-      <div style={{maxWidth: 800, padding: '0 8px'}}>
-        <button onClick={() => navigate(-1)} style={{marginBottom: 16, background: '#f7fafc', border: '1px solid #e1e8ed', borderRadius: 6, padding: '6px 16px', cursor: 'pointer'}}><Trans>Takaisin</Trans></button>
-        {Array.isArray(post.Media) && post.Media.length > 0 && post.Media[0].thumbnails && post.Media[0].thumbnails.large ? (
-          <img src={post.Media[0].thumbnails.large.url} alt="media" style={{width: '100%', height: 240, objectFit: 'cover', borderRadius: 8, marginBottom: 16}} />
-        ) : null}
-        <div style={{marginBottom: 12}}><b><Trans>ID:</Trans></b> {post.id}</div>
-        <div style={{marginBottom: 12}}><b><Trans>Idea:</Trans></b> {post.Idea}</div>
-        <div style={{marginBottom: 12}}><b><Trans>Kuvaus:</Trans></b> {post.Caption}</div>
-        <div style={{marginBottom: 12}}><b><Trans>Tyyppi:</Trans></b> {post.Type}</div>
-        <div style={{marginBottom: 12}}><b><Trans>Status:</Trans></b> {post.Status}</div>
-        <div style={{marginBottom: 12}}><b><Trans>Luotu:</Trans></b> {post.createdTime ? new Date(post.createdTime).toLocaleString('fi-FI') : '-'}</div>
-        {/* Lisää muita kenttiä tarpeen mukaan */}
-        <pre style={{background: '#f7fafc', padding: 12, borderRadius: 6, fontSize: 13, marginTop: 24}}>{JSON.stringify(post, null, 2)}</pre>
-      </div>
-    </>
+    </div>
   )
 } 

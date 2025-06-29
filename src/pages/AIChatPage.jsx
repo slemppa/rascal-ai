@@ -356,7 +356,6 @@ export default function AIChatPage() {
                     {showAllFiles ? 'Piilota tiedostot' : 'Näytä kaikki tiedostot'}
                   </button>
                 </div>
-                
                 <div style={{ display: 'grid', gap: '12px' }}>
                   {files.slice(0, showAllFiles ? files.length : 5).map((file) => (
                     <div key={file.id} style={{

@@ -1,6 +1,32 @@
 const N8N_VECTOR_STORE_FILES_URL = process.env.N8N_VECTOR_STORE_FILES_URL || 'https://samikiias.app.n8n.cloud/webhook/vector-store-files8989'
 
 export default async function handler(req, res) {
+  if (req.method === 'GET') {
+    // Hae tiedostot companyId-parametrilla
+    const { companyId } = req.query
+    if (!companyId) return res.status(400).json({ error: 'companyId puuttuu' })
+    try {
+      const response = await fetch(N8N_VECTOR_STORE_FILES_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.N8N_SECRET_KEY
+        },
+        body: JSON.stringify({ companyId })
+      })
+      const data = await response.json()
+      if (Array.isArray(data) && data.length > 0 && Array.isArray(data[0]?.data)) {
+        res.status(200).json({ files: data[0].data })
+      } else if (data && Array.isArray(data.data)) {
+        res.status(200).json({ files: data.data })
+      } else {
+        res.status(200).json({ files: data })
+      }
+    } catch (e) {
+      res.status(500).json({ error: 'Virhe tiedostojen haussa' })
+    }
+    return
+  }
   if (req.method !== 'POST') return res.status(405).end()
   try {
     console.log('vector-store-files: Lähetetään kutsu N8N:lle:', req.body)

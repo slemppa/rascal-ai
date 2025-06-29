@@ -1,4 +1,4 @@
-const N8N_DELETE_FILES_URL = process.env.N8N_DELETE_FILES_URL || 'https://samikiias.app.n8n.cloud/webhook/ff033a1e-3a05-42dc-8079-dc3a1fb5ca53'
+const N8N_DELETE_FILES_URL = process.env.N8N_DELETE_FILES_URL || 'https://samikiias.app.n8n.cloud/webhook/unfeed-assistant'
 const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY
 
 export default async function handler(req, res) {
@@ -24,6 +24,11 @@ export default async function handler(req, res) {
 
     console.log('Kutsu N8N delete-files webhookia:', N8N_DELETE_FILES_URL)
     console.log('Delete payload:', { assistantId, companyId, fileId })
+    console.log('Headers:', { 
+      'Content-Type': 'application/json',
+      'x-api-key': N8N_SECRET_KEY ? '***' : 'PUUTTUU'
+    })
+    console.log('Täydellinen URL:', N8N_DELETE_FILES_URL)
 
     const response = await fetch(N8N_DELETE_FILES_URL, {
       method: 'POST',
@@ -39,12 +44,21 @@ export default async function handler(req, res) {
       })
     });
 
+    console.log('N8N response status:', response.status)
+    console.log('N8N response statusText:', response.statusText)
+    console.log('N8N response headers:', Object.fromEntries(response.headers.entries()))
+
     if (!response.ok) {
       console.error('N8N webhook vastasi virheellä:', response.status, response.statusText)
+      const errorText = await response.text()
+      console.error('N8N error response body:', errorText)
+      console.error('Käytetty URL:', N8N_DELETE_FILES_URL)
       return res.status(response.status).json({ 
         error: 'Webhook-virhe', 
         status: response.status,
-        statusText: response.statusText
+        statusText: response.statusText,
+        details: errorText,
+        url: N8N_DELETE_FILES_URL
       })
     }
 

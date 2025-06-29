@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'assistantId, companyId ja fileId vaaditaan' });
   }
   try {
-    const webhookUrl = process.env.N8N_ASSISTANT_KNOWLEDGE_URL;
+    const webhookUrl = process.env.N8N_DELETE_FILES_URL;
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

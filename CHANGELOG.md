@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/slemppa/rascal-ai/compare/v1.1.16...v1.2.0) (2025-06-29)
+
+
+### 🐛 Bug Fixes
+
+* lisää fallback URL delete-files endpointtiin ([654ebbb](https://github.com/slemppa/rascal-ai/commit/654ebbbff4eb5ee11c911f775df0df61cfb7d1dc))
+* lisää parempi debuggausta delete-files endpointtiin ([175bf79](https://github.com/slemppa/rascal-ai/commit/175bf79c2907b0eb9f8e72987eb33c11222c1fb5))
+
+
+### ✨ Features
+
+* yhtenäinen tumma yläpalkki kaikille pääsivuille (PageHeader) ([f8ae6b5](https://github.com/slemppa/rascal-ai/commit/f8ae6b5bd6808f198ab815c69b7a2120f9d6a4fe))
+
 ### [1.1.16](https://github.com/slemppa/rascal-ai/compare/v1.1.15...v1.1.16) (2025-06-29)
 
 

@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.15](https://github.com/slemppa/rascal-ai/compare/v1.1.14...v1.1.15) (2025-06-29)
+
+
+### 🐛 Bug Fixes
+
+* paranna delete-files.js virheenkäsittelyä ja lokitusta ([3ef944f](https://github.com/slemppa/rascal-ai/commit/3ef944f39de72568aaf8532e154274a3b24ce03c))
+* poista deprekoituneet rivit Husky-tiedostoista ([6b3e1c1](https://github.com/slemppa/rascal-ai/commit/6b3e1c162a5b80da81d3ec2e1e6a5704c48bf7a9))
+
 ### [1.1.14](https://github.com/slemppa/rascal-ai/compare/v1.1.13...v1.1.14) (2025-06-29)
 
 

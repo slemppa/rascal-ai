@@ -19,7 +19,13 @@ async function dynamicActivate(locale) {
   i18n.activate(locale)
 }
 
+// Alustetaan oletuskieli
 dynamicActivate(defaultLocale)
+
+// Lisätään kuuntelija kielten vaihdolle
+i18n.on('activate', (locale) => {
+  dynamicActivate(locale)
+})
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

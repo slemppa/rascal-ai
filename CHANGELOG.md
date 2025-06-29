@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.16](https://github.com/slemppa/rascal-ai/compare/v1.1.15...v1.1.16) (2025-06-29)
+
+
+### 🐛 Bug Fixes
+
+* korjaa Vercel-konfiguraatio API-endpointtien toimimiseksi ([4db76ee](https://github.com/slemppa/rascal-ai/commit/4db76ee6186e6a97886ac114fddca28eaf5ad9d3))
+
 ### [1.1.15](https://github.com/slemppa/rascal-ai/compare/v1.1.14...v1.1.15) (2025-06-29)
 
 

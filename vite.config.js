@@ -10,6 +10,9 @@ export default defineConfig({
     'process.env': {}
   },
   server: {
+    proxy: {
+      '/api': 'http://localhost:3000'
+    },
     historyApiFallback: true
   }
 })

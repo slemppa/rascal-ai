@@ -172,7 +172,7 @@ export default function App() {
   return (
     <div className="app">
       {/* Vasen sivupalkki */}
-      <nav className="sidebar">
+      <nav className="sidebar" style={{position: 'fixed', left: 0, top: 0, width: 250, height: '100vh', zIndex: 20}}>
         <div className="sidebar-header" style={{display: 'flex', alignItems: 'center', gap: 12}}>
           <img src="/favicon.png" alt="favicon" style={{width: 32, height: 32, borderRadius: 8, background: '#fff'}} />
           <h2 style={{margin: 0}}>Rascal AI</h2>
@@ -226,23 +226,30 @@ export default function App() {
         </div>
       )}
 
-      {/* Pääsisältö */}
-      <main className={`main-content${location.pathname === '/ai-chat' ? ' no-padding' : ''}`}>
-        <Routes>
-          <Route path="/dashboard" element={<DashboardPage dashboardData={dashboardData} formatDate={formatDate} formatDateTime={formatDateTime} />} />
-          <Route path="/posts" element={<ManagePostsPage />} />
-          <Route path="/strategy" element={<ContentStrategyPage />} />
-          <Route path="/email" element={<EmailMarketingPage />} />
-          <Route path="/reports" element={<ReportsPage />} />
-          <Route path="/ai-chat" element={<AIChatPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/posts/:id" element={<PostDetailsPage />} />
-          <Route path="/calls" element={<CallPanel />} />
-          <Route path="/set-password" element={<SetPasswordForm />} />
-          <Route path="/setpasswordform" element={<SetPasswordForm />} />
-          <Route path="*" element={<Navigate to="/dashboard" />} />
-        </Routes>
-      </main>
+      {/* Main content wrapper */}
+      <div className="main-content" style={{marginLeft: 250, width: 'calc(100vw - 250px)', minHeight: '100vh', background: '#f5f7fa', position: 'relative'}}>
+        {/* Header (PageHeader) kiinteänä */}
+        <div style={{position: 'fixed', left: 250, top: 0, right: 0, height: 72, zIndex: 10, background: 'var(--brand-dark)', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', paddingLeft: 32}}>
+          {/* PageHeader renderöidään täällä, esim. props.children tai routekohtaisesti */}
+        </div>
+        {/* Sisältö alkaa headerin alta */}
+        <div style={{marginTop: 72, padding: 0}}>
+          <Routes>
+            <Route path="/dashboard" element={<DashboardPage dashboardData={dashboardData} formatDate={formatDate} formatDateTime={formatDateTime} />} />
+            <Route path="/posts" element={<ManagePostsPage />} />
+            <Route path="/strategy" element={<ContentStrategyPage />} />
+            <Route path="/email" element={<EmailMarketingPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/ai-chat" element={<AIChatPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/posts/:id" element={<PostDetailsPage />} />
+            <Route path="/calls" element={<CallPanel />} />
+            <Route path="/set-password" element={<SetPasswordForm />} />
+            <Route path="/setpasswordform" element={<SetPasswordForm />} />
+            <Route path="*" element={<Navigate to="/dashboard" />} />
+          </Routes>
+        </div>
+      </div>
       <Analytics />
     </div>
   )

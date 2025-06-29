@@ -1,13 +1,194 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import axios from 'axios'
 import PageHeader from '../components/PageHeader'
+import styles from './ManagePostsPage.module.css'
+
+// Päivitetty media-logiikka korttiin
+const getMediaElement = (mediaArr, alt, isLarge) => {
+  if (!mediaArr || !Array.isArray(mediaArr) || !mediaArr[0] || !mediaArr[0].url) {
+    return (
+      <div className={styles.bentoMediaWrapper}>
+        <img src={process.env.BASE_URL ? process.env.BASE_URL + '/placeholder.png' : '/placeholder.png'} alt="Ei mediaa" className={styles.bentoMedia} />
+      </div>
+    )
+  }
+  const media = mediaArr[0]
+  const url = media.url
+  const type = media.type || ''
+
+  if (type.startsWith('video/')) {
+    return (
+      <div className={styles.bentoMediaWrapper}>
+        <video
+          src={url}
+          controls
+          className={styles.bentoMedia}
+        />
+      </div>
+    )
+  }
+  if (type.startsWith('image/')) {
+    return (
+      <div className={styles.bentoMediaWrapper}>
+        <img src={url} alt={alt} className={styles.bentoMedia} />
+      </div>
+    )
+  }
+  // Fallback: päätteen mukaan
+  if (url.endsWith('.mp4') || url.endsWith('.webm')) {
+    return (
+      <div className={styles.bentoMediaWrapper}>
+        <video
+          src={url}
+          controls
+          className={styles.bentoMedia}
+        />
+      </div>
+    )
+  }
+  return (
+    <div className={styles.bentoMediaWrapper}>
+      <img src={url} alt={alt} className={styles.bentoMedia} />
+    </div>
+  )
+}
+
+// Helperit
+const getPostTitle = (post) => post.Idea || post.title || post.Title || '';
+const getPostDescription = (post) => post.Caption || post.Voiceover || post.desc || post.Description || '';
+
+// Katkaise idea-teksti sanan jälkeen ja lisää '...' jos pitkä
+function truncateWords(text, maxWords = 8) {
+  if (!text) return '';
+  const words = text.split(' ');
+  if (words.length <= maxWords) return text;
+  return words.slice(0, maxWords).join(' ') + '...';
+}
+
+// Palauta span-luokka kuvasuhteen perusteella
+const getGridSpans = (media) => {
+  if (!media || !media[0]) return '';
+  const { width, height } = media[0];
+  if (!width || !height) return '';
+  const ratio = width / height;
+  // 16:9
+  if (Math.abs(ratio - 16/9) < 0.1) return styles.spanWide;
+  // 9:16
+  if (Math.abs(ratio - 9/16) < 0.1) return styles.spanTall;
+  // 3:4
+  if (Math.abs(ratio - 3/4) < 0.1) return styles.spanTall;
+  // 1:1
+  if (Math.abs(ratio - 1) < 0.1) return styles.spanSquare;
+  // fallback
+  return styles.spanSquare;
+};
+
+function PostModal({ post, onClose }) {
+  const [caption, setCaption] = useState(post.Caption || '');
+  // Alusta publishDate datetime-local -muodossa (esim. 2024-07-01T12:34)
+  const initialDate = post["Publish Date"] ? new Date(post["Publish Date"]).toISOString().slice(0, 16) : '';
+  const [publishDate, setPublishDate] = useState(initialDate);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    function handleEsc(e) {
+      if (e.key === 'Escape') onClose();
+    }
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleEsc);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [onClose]);
+
+  if (!post) return null;
+
+  const media = post.Media && Array.isArray(post.Media) && post.Media[0] && post.Media[0].url ? post.Media[0].url : null;
+  const isVideo = media && (media.endsWith('.mp4') || media.endsWith('.webm'));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+    try {
+      await axios.post('/api/update-post.js', {
+        id: post["Record ID"] || post.id,
+        Caption: caption,
+        "Publish Date": publishDate,
+        updateType: 'postUpdate'
+      });
+      setSuccess(true);
+      setTimeout(() => onClose(), 1000);
+    } catch (err) {
+      setError('Tallennus epäonnistui');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className={styles.modalOverlay}>
+      <div className={styles.modal}>
+        <button onClick={onClose} className={styles.modalClose}>×</button>
+        <div className={styles.modalMedia} style={{marginBottom: 24}}>
+          {media ? (
+            isVideo ? (
+              <video src={media} controls className={styles.modalMediaContent} />
+            ) : (
+              <img src={media} alt={getPostTitle(post) || 'Julkaisukuva'} className={styles.modalMediaContent} />
+            )
+          ) : (
+            <div className={styles.modalMediaPlaceholder}>Ei mediaa</div>
+          )}
+        </div>
+        {/* Type ja Status badge Captionin yhteyteen */}
+        <form className={styles.modalContent} onSubmit={handleSubmit}>
+          <div style={{display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8}}>
+            {post.Type && <span className={styles.typeBadge}>{post.Type}</span>}
+            {post.Status && <span className={styles.statusBadge}>{post.Status}</span>}
+          </div>
+          <label className={styles.modalLabel} style={{marginBottom: 10}}>
+            <span style={{fontWeight: 600, fontSize: 15}}>Caption</span>
+            <textarea
+              value={caption}
+              onChange={e => setCaption(e.target.value)}
+              rows={6}
+              className={styles.modalTextarea}
+              style={{width: '100%', marginTop: 6, marginBottom: 18}}
+            />
+          </label>
+          <label className={styles.modalLabel} style={{marginBottom: 18}}>
+            <span style={{fontWeight: 600, fontSize: 15}}>Publish Date</span>
+            <input
+              type="datetime-local"
+              value={publishDate}
+              onChange={e => setPublishDate(e.target.value)}
+              className={styles.modalInput}
+              style={{marginTop: 6}}
+            />
+          </label>
+          {error && <div className={styles.modalError}>{error}</div>}
+          {success && <div className={styles.modalSuccess}>Tallennettu!</div>}
+          <div style={{display: 'flex', gap: 12, marginTop: 18}}>
+            <button type="button" onClick={onClose} className={styles.secondaryButton} disabled={loading}>Peruuta</button>
+            <button type="submit" className={styles.viewButton} disabled={loading}>Tallenna</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
 
 export default function ManagePostsPage() {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [typeFilter, setTypeFilter] = useState('')
+  const [selectedPost, setSelectedPost] = useState(null)
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -47,24 +228,13 @@ export default function ManagePostsPage() {
   return (
     <>
       <PageHeader title="Julkaisujen hallinta" />
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 8px' }}>
+      <div className={styles.container}>
         {/* Filtteripainikkeet */}
         {!loading && !error && types.length > 0 && (
-          <div style={{display: 'flex', gap: 12, margin: '1.5rem 0'}}>
+          <div className={styles.filters}>
             <button
               onClick={() => setTypeFilter('')}
-              style={{
-                padding: '6px 16px',
-                borderRadius: 8,
-                border: 'none',
-                background: typeFilter === '' ? '#2563eb' : '#f7fafc',
-                color: typeFilter === '' ? '#fff' : '#2563eb',
-                fontWeight: 600,
-                fontSize: 16,
-                cursor: 'pointer',
-                boxShadow: typeFilter === '' ? '0 2px 8px rgba(37,99,235,0.08)' : 'none',
-                transition: 'all 0.15s'
-              }}
+              className={`${styles.filterButton} ${typeFilter === '' ? styles.filterButtonActive : styles.filterButtonInactive}`}
             >
               Kaikki
             </button>
@@ -72,109 +242,63 @@ export default function ManagePostsPage() {
               <button
                 key={type}
                 onClick={() => setTypeFilter(type)}
-                style={{
-                  padding: '6px 16px',
-                  borderRadius: 8,
-                  border: 'none',
-                  background: typeFilter === type ? '#2563eb' : '#f7fafc',
-                  color: typeFilter === type ? '#fff' : '#2563eb',
-                  fontWeight: 600,
-                  fontSize: 16,
-                  cursor: 'pointer',
-                  boxShadow: typeFilter === type ? '0 2px 8px rgba(37,99,235,0.08)' : 'none',
-                  transition: 'all 0.15s'
-                }}
+                className={`${styles.filterButton} ${typeFilter === type ? styles.filterButtonActive : styles.filterButtonInactive}`}
               >
                 {type}
               </button>
             ))}
           </div>
         )}
-        {loading && <p>Ladataan...</p>}
-        {error && <p style={{color: 'red'}}>{error}</p>}
+        
+        {loading && <p className={styles.loading}>Ladataan...</p>}
+        {error && <p className={styles.error}>{error}</p>}
+        
+        {/* Grid */}
         {!loading && !error && (
-          <div style={{display: 'grid', gap: 24, gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))'}}>
+          <div className={styles.bentoGrid}>
             {filteredPosts.map((post, index) => (
-              <div key={post.id || index} style={{
-                background: '#fff',
-                borderRadius: 16,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-                border: '1px solid #e5e7eb',
-                padding: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                minHeight: 340,
-                overflow: 'hidden',
-                position: 'relative'
-              }}>
-                {/* Media-kuva tai placeholder */}
-                {post.Media && Array.isArray(post.Media) && post.Media[0] && post.Media[0].url ? (
-                  <img
-                    src={post.Media[0].url}
-                    alt={post.Idea || post.title || 'Julkaisukuva'}
-                    style={{
-                      width: '100%',
-                      height: 120,
-                      objectFit: 'cover',
-                      background: '#f3f4f6',
-                      display: 'block'
-                    }}
-                  />
-                ) : (
-                  <div style={{
-                    background: '#f3f4f6',
-                    color: '#b0b0b0',
-                    height: 120,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 20,
-                    fontWeight: 500
-                  }}>
-                    Ei kuvaa
+              <div
+                key={post["Record ID"] || post.id || index}
+                className={
+                  [
+                    styles.bentoItem,
+                    getGridSpans(post.Media)
+                  ].join(' ')
+                }
+              >
+                {/* Media-kuva, video tai placeholder */}
+                {getMediaElement(post.Media, getPostTitle(post))}
+                <div className={styles.bentoCardContent}>
+                  {/* Tyyppibadge ja Status badge */}
+                  <div style={{display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4}}>
+                    {post.Type && (
+                      <span className={styles.typeBadge}>{post.Type}</span>
+                    )}
+                    {post.Status && (
+                      <span className={styles.statusBadge}>{post.Status}</span>
+                    )}
                   </div>
-                )}
-                <div style={{padding: 20, flex: 1, display: 'flex', flexDirection: 'column'}}>
-                  {/* Tyyppibadge */}
-                  {post.Type && (
-                    <span style={{
-                      display: 'inline-block',
-                      background: '#f1f5f9',
-                      color: '#2563eb',
-                      fontWeight: 600,
-                      fontSize: 14,
-                      borderRadius: 8,
-                      padding: '2px 12px',
-                      marginBottom: 10
-                    }}>{post.Type}</span>
+                  {/* Idea näkyvästi */}
+                  {getPostTitle(post) && (
+                    <div className={styles.ideaDisplay}>
+                      <span style={{fontWeight: 700, marginLeft: 0}}>{truncateWords(getPostTitle(post), 8)}</span>
+                    </div>
                   )}
-                  {/* Otsikko */}
-                  <div style={{fontWeight: 700, fontSize: 18, marginBottom: 8, color: '#1f2937'}}>
-                    {post.Idea || post.title || 'Ei otsikkoa'}
-                  </div>
                   {/* Kuvaus */}
-                  <div style={{color: '#374151', fontSize: 15, marginBottom: 12, flex: 1}}>
-                    {post.Caption || post.desc || 'Ei kuvausta'}
-                  </div>
-                  {/* Julkaisupäivä ja linkki */}
-                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 'auto'}}>
-                    <span style={{fontSize: 13, color: '#9ca3af'}}>
+                  {getPostDescription(post) && (
+                    <div className={styles.description}>{getPostDescription(post)}</div>
+                  )}
+                  {/* Alareuna */}
+                  <div className={styles.cardFooter}>
+                    <span className={styles.date}>
                       {post["Publish Date"] ? `Julkaistu: ${formatDate(post["Publish Date"])} ` : ''}
                     </span>
-                    <Link 
-                      to={`/posts/${post.id}`}
-                      style={{
-                        padding: '8px 16px',
-                        background: '#2563eb',
-                        color: '#fff',
-                        textDecoration: 'none',
-                        borderRadius: 8,
-                        fontSize: 14,
-                        fontWeight: 600
-                      }}
+                    <button
+                      onClick={() => setSelectedPost(post)}
+                      className={styles.viewButton}
                     >
-                      Katso tiedot
-                    </Link>
+                      Muokkaa
+                    </button>
                   </div>
                 </div>
               </div>
@@ -182,6 +306,7 @@ export default function ManagePostsPage() {
           </div>
         )}
       </div>
+      {selectedPost && <PostModal post={selectedPost} onClose={() => setSelectedPost(null)} />}
     </>
   )
-} 
+}

@@ -663,7 +663,6 @@ export default function AIChatPage() {
                 minHeight: 320,
                 maxHeight: '70vh',
                 height: 'auto',
-                minHeight: 0,
                 overflowY: 'auto',
                 display: 'flex',
                 flexDirection: 'column'

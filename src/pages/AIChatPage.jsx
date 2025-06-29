@@ -17,6 +17,9 @@ export default function AIChatPage() {
   const [uploadSuccess, setUploadSuccess] = useState('')
   const [showAllFiles, setShowAllFiles] = useState(false)
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [pendingFiles, setPendingFiles] = useState([])
+  const [dragActive, setDragActive] = useState(false)
+  const dropRef = useRef(null)
 
   // Hae companyName ja companyId localStoragesta
   let companyName = 'Yrityksen';
@@ -136,6 +139,57 @@ export default function AIChatPage() {
       setSelectedFiles(prev => prev.filter(id => id !== fileId))
     } catch (error) {
       console.error('Virhe tiedoston poistamisessa:', error)
+    }
+  }
+
+  // Drag & drop event handlers
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(true)
+  }
+  const handleDragLeave = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+  }
+  const handleDrop = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+    const files = Array.from(e.dataTransfer.files)
+    if (files.length > 0) {
+      setPendingFiles(prev => [...prev, ...files.filter(f => !prev.some(p => p.name === f.name && p.size === f.size))])
+    }
+  }
+  const handleFileInput = (e) => {
+    const files = Array.from(e.target.files)
+    if (files.length > 0) {
+      setPendingFiles(prev => [...prev, ...files.filter(f => !prev.some(p => p.name === f.name && p.size === f.size))])
+    }
+  }
+  const handleRemovePending = (name, size) => {
+    setPendingFiles(prev => prev.filter(f => !(f.name === name && f.size === size)))
+  }
+  const handleUploadPending = async () => {
+    if (pendingFiles.length === 0) return
+    setUploadLoading(true)
+    setUploadError('')
+    setUploadSuccess('')
+    try {
+      const formData = new FormData()
+      pendingFiles.forEach(file => formData.append('files', file))
+      formData.append('companyId', companyId)
+      await axios.post('/api/upload-knowledge', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      setUploadSuccess(`${pendingFiles.length} tiedosto(a) ladattu onnistuneesti!`)
+      setPendingFiles([])
+      fetchFiles()
+    } catch (error) {
+      setUploadError('Virhe tiedostojen lataamisessa')
+    } finally {
+      setUploadLoading(false)
     }
   }
 
@@ -309,20 +363,22 @@ export default function AIChatPage() {
         ) : (
           <div style={{
             width: '100%',
-            maxWidth: 950,
+            maxWidth: 1200,
             margin: '0 auto',
             display: 'flex',
             gap: 32,
             justifyContent: 'center',
             alignItems: 'flex-start',
             padding: '32px 0',
-            flexWrap: 'wrap',
-            minHeight: 400
+            minHeight: 400,
+            height: '100%',
+            boxSizing: 'border-box'
           }}>
-            {/* Lomakekortti */}
+            {/* Lomakekortti 1/3 */}
             <div style={{
-              flex: '1 1 320px',
-              maxWidth: 400,
+              flex: 1,
+              minWidth: 280,
+              maxWidth: 380,
               background: '#fff',
               borderRadius: 16,
               boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
@@ -330,20 +386,64 @@ export default function AIChatPage() {
               display: 'flex',
               flexDirection: 'column',
               gap: 16,
-              minWidth: 280
+              height: 500,
+              minHeight: 400,
+              overflow: 'hidden',
+              justifyContent: 'flex-start'
             }}>
               <h3 style={{margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Lisää tiedosto tietokantaan</h3>
               <p style={{margin: 0, color: '#6b7280', fontSize: 15}}>Voit liittää PDF-, Word- tai tekstimuotoisen tiedoston. Tiedosto tallennetaan yrityksesi tietokantaan.</p>
-              <input
-                type="file"
-                multiple
-                onChange={handleFileUpload}
-                disabled={uploadLoading}
-                style={{ margin: '12px 0' }}
-              />
+              {/* Drag & drop -alue */}
+              <div
+                ref={dropRef}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                style={{
+                  border: dragActive ? '2px solid #2563eb' : '2px dashed #d1d5db',
+                  borderRadius: 12,
+                  background: dragActive ? '#f0f6ff' : '#f9fafb',
+                  padding: '32px 0',
+                  textAlign: 'center',
+                  color: '#6b7280',
+                  fontSize: 16,
+                  cursor: 'pointer',
+                  transition: 'border 0.2s, background 0.2s',
+                  marginBottom: 8
+                }}
+                onClick={() => dropRef.current && dropRef.current.querySelector('input[type=file]').click()}
+              >
+                Vedä ja pudota tiedostoja tähän tai <span style={{color: '#2563eb', textDecoration: 'underline'}}>valitse tiedostot</span>
+                <input
+                  type="file"
+                  multiple
+                  style={{ display: 'none' }}
+                  onChange={handleFileInput}
+                  disabled={uploadLoading}
+                />
+              </div>
+              {/* Valitut tiedostot */}
+              {pendingFiles.length > 0 && (
+                <div style={{
+                  background: '#f9fafb',
+                  borderRadius: 8,
+                  padding: '8px 12px',
+                  marginBottom: 8,
+                  maxHeight: 120,
+                  overflowY: 'auto',
+                  fontSize: 15
+                }}>
+                  {pendingFiles.map(f => (
+                    <div key={f.name + f.size} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 4}}>
+                      <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 180}}>{f.name}</span>
+                      <span style={{color: '#ef4444', cursor: 'pointer', fontSize: 18, marginLeft: 8}} onClick={() => handleRemovePending(f.name, f.size)}>❌</span>
+                    </div>
+                  ))}
+                </div>
+              )}
               <button
-                onClick={() => {}}
-                disabled={uploadLoading}
+                onClick={handleUploadPending}
+                disabled={uploadLoading || pendingFiles.length === 0}
                 style={{
                   padding: '12px 0',
                   background: '#2563eb',
@@ -352,88 +452,80 @@ export default function AIChatPage() {
                   borderRadius: 8,
                   fontWeight: 700,
                   fontSize: 16,
-                  cursor: uploadLoading ? 'not-allowed' : 'pointer',
-                  opacity: uploadLoading ? 0.7 : 1
+                  cursor: uploadLoading || pendingFiles.length === 0 ? 'not-allowed' : 'pointer',
+                  opacity: uploadLoading || pendingFiles.length === 0 ? 0.7 : 1
                 }}
               >
-                Lähetä tiedosto
+                Lähetä tiedostot
               </button>
               {uploadLoading && <p style={{ color: '#2563eb', margin: 0 }}>Ladataan...</p>}
               {uploadError && <p style={{ color: 'red', margin: 0 }}>{uploadError}</p>}
               {uploadSuccess && <p style={{ color: 'green', margin: 0 }}>{uploadSuccess}</p>}
+              {/* Tyhjää tilaa tuleville featureille */}
+              <div style={{flex: 1}} />
             </div>
-            {/* Tiedostokortti */}
+            {/* Tiedostokortti 2/3 */}
             <div style={{
-              flex: '1 1 320px',
-              maxWidth: 400,
+              flex: 2,
+              minWidth: 320,
               background: '#fff',
               borderRadius: 16,
               boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
               padding: 32,
-              minWidth: 280
+              height: 500,
+              minHeight: 400,
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column'
             }}>
               <h3 style={{margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Tiedostot</h3>
-              {filesLoading ? (
-                <p>Ladataan tiedostoja...</p>
-              ) : filesError ? (
-                <p style={{ color: 'red' }}>{filesError}</p>
-              ) : files.length === 0 ? (
-                <div style={{textAlign: 'center', color: '#6b7280', marginTop: 32}}>
-                  <img src="/placeholder.png" alt="Ei tiedostoja" style={{width: 64, opacity: 0.5, marginBottom: 8}} />
-                  <div>Ei tiedostoja</div>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 8 }}>
-                  {files.slice(0, showAllFiles ? files.length : 5).map((file) => (
-                    <div key={file.id} style={{
-                      padding: '12px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      background: '#f9fafb',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
-                      <div>
-                        <div style={{ fontWeight: 500 }}>{file.filename}</div>
-                        <div style={{ fontSize: '14px', color: '#6b7280' }}>
-                          {file.size} tavua • {new Date(file.created_at).toLocaleDateString('fi-FI')}
+              <div style={{flex: 1, overflowY: 'auto', marginTop: 8}}>
+                {filesLoading ? (
+                  <p>Ladataan tiedostoja...</p>
+                ) : filesError ? (
+                  <p style={{ color: 'red' }}>{filesError}</p>
+                ) : files.length === 0 ? (
+                  <div style={{textAlign: 'center', color: '#6b7280', marginTop: 32}}>
+                    <img src="/placeholder.png" alt="Ei tiedostoja" style={{width: 64, opacity: 0.5, marginBottom: 8}} />
+                    <div>Ei tiedostoja</div>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {files.map((file) => (
+                      <div key={file.id} style={{
+                        padding: '12px',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        background: '#f9fafb',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                      }}>
+                        <div>
+                          <div style={{ fontWeight: 500 }}>{file.filename}</div>
+                          <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                            {file.size} tavua • {new Date(file.created_at).toLocaleDateString('fi-FI')}
+                          </div>
                         </div>
+                        <button
+                          onClick={() => handleFileDeletion(file.id)}
+                          style={{
+                            padding: '6px 12px',
+                            background: '#ef4444',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '14px'
+                          }}
+                        >
+                          Poista
+                        </button>
                       </div>
-                      <button
-                        onClick={() => handleFileDeletion(file.id)}
-                        style={{
-                          padding: '6px 12px',
-                          background: '#ef4444',
-                          color: '#fff',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontSize: '14px'
-                        }}
-                      >
-                        Poista
-                      </button>
-                    </div>
-                  ))}
-                  {files.length > 5 && (
-                    <button
-                      onClick={() => setShowAllFiles(!showAllFiles)}
-                      style={{
-                        marginTop: 8,
-                        padding: '8px 16px',
-                        background: '#f3f4f6',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontSize: 14
-                      }}
-                    >
-                      {showAllFiles ? 'Piilota tiedostot' : 'Näytä kaikki tiedostot'}
-                    </button>
-                  )}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}

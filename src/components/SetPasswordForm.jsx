@@ -220,25 +220,25 @@ export default function SetPasswordForm() {
               Uusi salasana
             </label>
             <div style={{ position: 'relative' }}>
-              <input
+            <input
                 type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Vähintään 8 merkkiä"
-                required
-                style={{
-                  width: '100%',
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Vähintään 8 merkkiä"
+              required
+              style={{
+                width: '100%',
                   padding: showPassword ? '12px 40px 12px 16px' : '12px 16px',
-                  borderRadius: 8,
-                  border: '1.5px solid #2563eb',
-                  fontSize: 16,
-                  boxSizing: 'border-box',
-                  transition: 'border-color 0.2s',
-                  fontWeight: 600
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#1e293b'}
-                onBlur={(e) => e.target.style.borderColor = '#2563eb'}
-              />
+                borderRadius: 8,
+                border: '1.5px solid #2563eb',
+                fontSize: 16,
+                boxSizing: 'border-box',
+                transition: 'border-color 0.2s',
+                fontWeight: 600
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#1e293b'}
+              onBlur={(e) => e.target.style.borderColor = '#2563eb'}
+            />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}

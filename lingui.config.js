@@ -6,6 +6,5 @@ module.exports = {
       path: "src/locales/{locale}/messages",
       include: ["src"],
     },
-  ],
-  compileNamespace: "es"
+  ]
 }; 

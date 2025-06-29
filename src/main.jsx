@@ -5,8 +5,8 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { I18nProvider } from '@lingui/react'
 import { i18n } from '@lingui/core'
-import { messages as fiMessages } from './locales/fi/messages.mjs'
-import { messages as enMessages } from './locales/en/messages.mjs'
+import { messages as fiMessages } from './locales/fi/messages.js'
+import { messages as enMessages } from './locales/en/messages.js'
 
 const defaultLocale = 'fi'
 

@@ -1,11 +1,5 @@
 import { handleUpload } from '@vercel/blob/client'
 
-export const config = {
-  api: {
-    bodyParser: false, // käsittele raakadata streaminä
-  },
-}
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })

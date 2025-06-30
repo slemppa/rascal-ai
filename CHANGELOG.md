@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.1](https://github.com/slemppa/rascal-ai/compare/v1.4.0...v1.4.1) (2025-06-30)
+
+
+### 🐛 Bug Fixes
+
+* use @vercel/blob put in avatar-upload route (resolves 500) ([76aabf0](https://github.com/slemppa/rascal-ai/commit/76aabf0d6dd398f52b0b193dc5180a3f6f286bb2))
+
 ## [1.4.0](https://github.com/slemppa/rascal-ai/compare/v1.3.0...v1.4.0) (2025-06-29)
 
 

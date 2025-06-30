@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.7](https://github.com/slemppa/rascal-ai/compare/v1.4.6...v1.4.7) (2025-06-30)
+
+
+### 🐛 Bug Fixes
+
+* use FormData for file uploads ([c5f6e8f](https://github.com/slemppa/rascal-ai/commit/c5f6e8fee0a4f9d5bc46a2eaf4a0be4a10a55691))
+
 ### [1.4.6](https://github.com/slemppa/rascal-ai/compare/v1.4.5...v1.4.6) (2025-06-30)
 
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.3](https://github.com/slemppa/rascal-ai/compare/v1.4.2...v1.4.3) (2025-06-30)
+
+
+### ✨ Features
+
+* switch to client upload for avatar files ([8cbc061](https://github.com/slemppa/rascal-ai/commit/8cbc061fe9d7b84561b7bc30175ded850403df7c))
+
 ### [1.4.2](https://github.com/slemppa/rascal-ai/compare/v1.4.1...v1.4.2) (2025-06-30)
 
 

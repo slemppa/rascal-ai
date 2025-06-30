@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.9](https://github.com/slemppa/rascal-ai/compare/v1.4.8...v1.4.9) (2025-06-30)
+
+
+### ✨ Features
+
+* add N8N webhook after avatar upload ([dbf3395](https://github.com/slemppa/rascal-ai/commit/dbf3395b92bd236239a040af573b1d84ebed3683))
+
 ### [1.4.8](https://github.com/slemppa/rascal-ai/compare/v1.4.7...v1.4.8) (2025-06-30)
 
 

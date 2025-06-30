@@ -24,7 +24,7 @@ html, body, #root {
   min-height: 100vh;
   height: 100vh;
   display: flex;
-  width: 100vw;
+  width: 100%;
   min-width: 0;
 }
 
@@ -89,10 +89,10 @@ html, body, #root {
 /* Pääsisältö */
 .main-content {
   flex: 1 1 0;
-  width: 100%;
   min-width: 0;
-  height: 100vh;
+  height: auto;
   min-height: 100vh;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   padding: 0 16px 0 0;
@@ -684,5 +684,51 @@ html, body, #root {
   .landing-feature-row > div {
     width: 100% !important;
     max-width: 100% !important;
+  }
+}
+
+.ai-chat-wrapper {
+  /* height removed to avoid double header offset */
+  display: flex;
+  flex-direction: column;
+  background: #f9fafb;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Dashboard bentogrid responsiivisuus */
+@media (max-width: 1400px) {
+  .dashboard-bentogrid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  .dashboard-bentogrid > div[style*="gridColumn: '1 / 4'"] {
+    grid-column: 1 / 4 !important;
+  }
+  .dashboard-bentogrid > div[style*="gridColumn: '4 / 6'"] {
+    grid-column: 1 / 4 !important;
+  }
+}
+
+@media (max-width: 1000px) {
+  .dashboard-bentogrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .dashboard-bentogrid > div[style*="gridColumn: '1 / 4'"] {
+    grid-column: 1 / 3 !important;
+  }
+  .dashboard-bentogrid > div[style*="gridColumn: '4 / 6'"] {
+    grid-column: 1 / 3 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-bentogrid {
+    grid-template-columns: 1fr !important;
+  }
+  .dashboard-bentogrid > div {
+    grid-column: 1 !important;
   }
 }

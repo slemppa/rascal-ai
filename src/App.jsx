@@ -15,6 +15,8 @@ import LoginPage from './pages/LoginPage'
 import CallPanel from './pages/CallPanel'
 import MagicLinkHandler from './components/MagicLinkHandler'
 import SetPasswordForm from './components/SetPasswordForm'
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
+import TermsOfServicePage from './pages/TermsOfServicePage'
 import { Analytics } from '@vercel/analytics/react'
 
 export default function App() {
@@ -164,6 +166,8 @@ export default function App() {
         <Route path="/set-password" element={<SetPasswordForm />} />
         <Route path="/setpasswordform" element={<SetPasswordForm />} />
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms" element={<TermsOfServicePage />} />
         <Route path="*" element={<LandingPage onLogin={handleLogin} />} />
       </Routes>
     )
@@ -233,7 +237,7 @@ export default function App() {
           {/* PageHeader renderöidään täällä, esim. props.children tai routekohtaisesti */}
         </div>
         {/* Sisältö alkaa headerin alta */}
-        <div style={{marginTop: 72, padding: 0}}>
+        <div style={{marginTop: 72, padding: 0, display: 'flex', flex: 1, minHeight: 0}}>
           <Routes>
             <Route path="/dashboard" element={<DashboardPage dashboardData={dashboardData} formatDate={formatDate} formatDateTime={formatDateTime} />} />
             <Route path="/posts" element={<ManagePostsPage />} />
@@ -246,6 +250,8 @@ export default function App() {
             <Route path="/calls" element={<CallPanel />} />
             <Route path="/set-password" element={<SetPasswordForm />} />
             <Route path="/setpasswordform" element={<SetPasswordForm />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsOfServicePage />} />
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>
         </div>

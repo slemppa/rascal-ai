@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
@@ -19,6 +19,32 @@ export default function LandingPage({ onLogin }) {
   const [loading, setLoading] = useState(false)
   const isAuthenticated = !!localStorage.getItem('token')
   const [showPassword, setShowPassword] = useState(false)
+  const [showCookieBanner, setShowCookieBanner] = useState(false)
+
+  useEffect(() => {
+    // Tarkista onko evästeiden suostumus jo annettu
+    const consent = localStorage.getItem('cookie-consent')
+    if (!consent) {
+      setShowCookieBanner(true)
+    }
+  }, [])
+
+  const handleCookieAccept = () => {
+    localStorage.setItem('cookie-consent', 'accepted')
+    localStorage.setItem('cookie-consent-date', new Date().toISOString())
+    setShowCookieBanner(false)
+  }
+
+  const handleCookieDecline = () => {
+    localStorage.setItem('cookie-consent', 'declined')
+    localStorage.setItem('cookie-consent-date', new Date().toISOString())
+    setShowCookieBanner(false)
+  }
+
+  const handleCookieSettings = () => {
+    navigate('/privacy')
+    setShowCookieBanner(false)
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -168,6 +194,65 @@ export default function LandingPage({ onLogin }) {
           </ul>
         </div>
       </div>
+
+      {/* Footer */}
+      <div style={{
+        background: '#1a1d23', 
+        padding: '32px 6vw', 
+        marginTop: 'auto',
+        borderTop: '1px solid #333'
+      }}>
+        <div style={{
+          maxWidth: '1200px', 
+          margin: '0 auto', 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 24
+        }}>
+          <div style={{display: 'flex', alignItems: 'center', gap: 16}}>
+            <img src="/favicon.png" alt="Rascal AI logo" style={{width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', background: 'var(--brand-green)'}} />
+            <span style={{color: '#fff', fontWeight: 700, fontSize: 20, letterSpacing: 1}}>Rascal AI</span>
+          </div>
+          
+          <div style={{display: 'flex', gap: 32, flexWrap: 'wrap'}}>
+            <button 
+              onClick={() => navigate('/privacy')} 
+              style={{
+                background: 'none', 
+                border: 'none', 
+                color: '#ccc', 
+                fontSize: 14, 
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                padding: 0
+              }}
+            >
+              Tietosuojaseloste
+            </button>
+            <button 
+              onClick={() => navigate('/terms')} 
+              style={{
+                background: 'none', 
+                border: 'none', 
+                color: '#ccc', 
+                fontSize: 14, 
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                padding: 0
+              }}
+            >
+              Käyttöehdot
+            </button>
+          </div>
+          
+          <div style={{color: '#999', fontSize: 14}}>
+            © {new Date().getFullYear()} Rascal AI. Kaikki oikeudet pidätetään.
+          </div>
+        </div>
+      </div>
+
       {/* Kirjautumismodaali */}
       {showLogin && (
         <div onClick={() => setShowLogin(false)} style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.25)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
@@ -208,6 +293,92 @@ export default function LandingPage({ onLogin }) {
               </button>
               {error && <div style={{color: '#e53e3e', marginTop: 8, fontWeight: 600}}>{error}</div>}
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Evästeiden suostumusbanneri */}
+      {showCookieBanner && (
+        <div style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          background: 'rgba(0, 0, 0, 0.95)',
+          color: '#fff',
+          padding: '20px 6vw',
+          zIndex: 9999,
+          borderTop: '1px solid #333'
+        }}>
+          <div style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 24,
+            flexWrap: 'wrap'
+          }}>
+            <div style={{flex: 1, minWidth: '300px'}}>
+              <h3 style={{margin: '0 0 8px 0', fontSize: 18, fontWeight: 700}}>🍪 Evästeet ja tietosuoja</h3>
+              <p style={{margin: 0, fontSize: 14, lineHeight: 1.5, color: '#ccc'}}>
+                Käytämme evästeitä parantaaksemme sivuston toimintaa ja käyttökokemusta. 
+                Jatkamalla sivuston käyttöä hyväksyt evästeiden käytön. 
+                <button 
+                  onClick={handleCookieSettings}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#4ade80',
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    padding: 0,
+                    marginLeft: 8,
+                    fontSize: 14
+                  }}
+                >
+                  Lue lisää
+                </button>
+              </p>
+            </div>
+            
+            <div style={{
+              display: 'flex',
+              gap: 12,
+              flexWrap: 'wrap',
+              alignItems: 'center'
+            }}>
+              <button
+                onClick={handleCookieDecline}
+                style={{
+                  background: 'none',
+                  border: '1px solid #666',
+                  color: '#ccc',
+                  padding: '10px 20px',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  fontWeight: 600
+                }}
+              >
+                Hylkää
+              </button>
+              <button
+                onClick={handleCookieAccept}
+                style={{
+                  background: 'var(--brand-green)',
+                  border: 'none',
+                  color: 'var(--brand-black)',
+                  padding: '10px 20px',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  fontWeight: 700
+                }}
+              >
+                Hyväksy kaikki
+              </button>
+            </div>
           </div>
         </div>
       )}

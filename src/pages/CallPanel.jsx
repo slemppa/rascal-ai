@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
 import './CallPanel.css'
 import CallStats from './CallStats'
+import PageHeader from '../components/PageHeader'
 
 export default function CallPanel() {
   const [sheetUrl, setSheetUrl] = useState('')
@@ -75,105 +76,104 @@ export default function CallPanel() {
   }, [polling])
 
   return (
-    <div style={{ padding: 32 }}>
-      <h1 style={{ margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2 }}>
-        Puhelut
-      </h1>
-      
-      <div style={{ marginTop: 24, maxWidth: 600 }}>
-        <div style={{ background: '#fff', borderRadius: 12, padding: 24, marginBottom: 24 }}>
-          <h2 style={{ margin: '0 0 16px 0', fontSize: 20, fontWeight: 600 }}>
-            Aloita puhelut
-          </h2>
-          
-          <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>
-              Google Sheets URL
-            </label>
-          <input
-              type="url"
-            value={sheetUrl}
-              onChange={(e) => setSheetUrl(e.target.value)}
-              placeholder="https://docs.google.com/spreadsheets/d/..."
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
-                fontSize: '16px'
-              }}
-            />
-          </div>
-          
-          <div style={{ display: 'flex', gap: 12 }}>
-          <button
-            onClick={handleValidate}
-            disabled={validating || !sheetUrl}
-              style={{
-                padding: '12px 24px',
-                background: '#f3f4f6',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
-                cursor: validating || !sheetUrl ? 'not-allowed' : 'pointer',
-                opacity: validating || !sheetUrl ? 0.6 : 1
-              }}
-          >
-              {validating ? 'Validoitaan...' : 'Validoi'}
-          </button>
+    <>
+      <PageHeader title="Puhelut" />
+      <div style={{ padding: 32 }}>
+        <div style={{ marginTop: 24, maxWidth: 600 }}>
+          <div style={{ background: '#fff', borderRadius: 12, padding: 24, marginBottom: 24 }}>
+            <h2 style={{ margin: '0 0 16px 0', fontSize: 20, fontWeight: 600 }}>
+              Aloita puhelut
+            </h2>
             
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>
+                Google Sheets URL
+              </label>
+            <input
+                type="url"
+              value={sheetUrl}
+                onChange={(e) => setSheetUrl(e.target.value)}
+                placeholder="https://docs.google.com/spreadsheets/d/..."
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  fontSize: '16px'
+                }}
+              />
+            </div>
+            
+            <div style={{ display: 'flex', gap: 12 }}>
             <button
-              onClick={handleStartCalls}
-              disabled={starting || !validationResult}
-              style={{
-                padding: '12px 24px',
-                background: '#2563eb',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: starting || !validationResult ? 'not-allowed' : 'pointer',
-                opacity: starting || !validationResult ? 0.6 : 1
-              }}
+              onClick={handleValidate}
+              disabled={validating || !sheetUrl}
+                style={{
+                  padding: '12px 24px',
+                  background: '#f3f4f6',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  cursor: validating || !sheetUrl ? 'not-allowed' : 'pointer',
+                  opacity: validating || !sheetUrl ? 0.6 : 1
+                }}
             >
-              {starting ? 'Käynnistetään...' : 'Aloita soittot'}
+                {validating ? 'Validoitaan...' : 'Validoi'}
             </button>
+              
+              <button
+                onClick={handleStartCalls}
+                disabled={starting || !validationResult}
+                style={{
+                  padding: '12px 24px',
+                  background: '#2563eb',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: starting || !validationResult ? 'not-allowed' : 'pointer',
+                  opacity: starting || !validationResult ? 0.6 : 1
+                }}
+              >
+                {starting ? 'Käynnistetään...' : 'Aloita soittot'}
+              </button>
+            </div>
+            
+            {error && (
+              <div style={{
+                marginTop: 16,
+                padding: '12px',
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
+                borderRadius: '8px',
+                color: '#dc2626'
+              }}>
+                {error}
+              </div>
+            )}
+            
+            {validationResult && (
+              <div style={{
+                marginTop: 16,
+                padding: '12px',
+                background: '#f0fdf4',
+                border: '1px solid #bbf7d0',
+                borderRadius: '8px',
+                color: '#16a34a'
+              }}>
+                <strong>Validointi onnistui!</strong><br/>
+                Löydetty {validationResult.phoneCount} puhelinnumeroa.
+              </div>
+            )}
           </div>
           
-          {error && (
-            <div style={{
-              marginTop: 16,
-              padding: '12px',
-              background: '#fef2f2',
-              border: '1px solid #fecaca',
-              borderRadius: '8px',
-              color: '#dc2626'
-            }}>
-              {error}
-            </div>
-          )}
-          
-          {validationResult && (
-            <div style={{
-              marginTop: 16,
-              padding: '12px',
-              background: '#f0fdf4',
-              border: '1px solid #bbf7d0',
-              borderRadius: '8px',
-              color: '#16a34a'
-            }}>
-              <strong>Validointi onnistui!</strong><br/>
-              Löydetty {validationResult.phoneCount} puhelinnumeroa.
-            </div>
+          {callStatus && (
+            <CallStats 
+              status={callStatus.status}
+              stats={stats}
+              calls={callStatus.calls || []}
+            />
           )}
         </div>
-        
-        {callStatus && (
-          <CallStats 
-            status={callStatus.status}
-            stats={stats}
-            calls={callStatus.calls || []}
-          />
-        )}
       </div>
-    </div>
+    </>
   )
 } 

@@ -389,9 +389,16 @@ export default function DashboardPage() {
     setAvatarError('')
 
     try {
+      // Hae companyId localStoragesta
+      const userRaw = localStorage.getItem('user')
+      const companyId = userRaw ? JSON.parse(userRaw)?.companyId || JSON.parse(userRaw)?.user?.companyId : null
+      
       const uploads = await Promise.all(selectedImages.map(async (file) => {
         const formData = new FormData()
         formData.append('file', file)
+        if (companyId) {
+          formData.append('companyId', companyId)
+        }
         
         const res = await fetch('/api/avatar-upload', {
           method: 'POST',
@@ -417,8 +424,15 @@ export default function DashboardPage() {
     setAvatarError('')
 
     try {
+      // Hae companyId localStoragesta
+      const userRaw = localStorage.getItem('user')
+      const companyId = userRaw ? JSON.parse(userRaw)?.companyId || JSON.parse(userRaw)?.user?.companyId : null
+      
       const formData = new FormData()
       formData.append('file', selectedAudio)
+      if (companyId) {
+        formData.append('companyId', companyId)
+      }
       
       const res = await fetch('/api/avatar-upload', {
         method: 'POST',

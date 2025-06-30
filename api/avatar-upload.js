@@ -20,6 +20,7 @@ export default async function handler(req, res) {
 
     const [fields, files] = await form.parse(req)
     const file = files.file?.[0]
+    const companyId = fields.companyId?.[0] // Hae companyId FormDatasta
     
     if (!file) {
       return res.status(400).json({ error: 'No file provided' })
@@ -40,20 +41,30 @@ export default async function handler(req, res) {
     // Lähetä webhook N8N:ään
     try {
       const N8N_AVATAR_UPLOAD_URL = process.env.N8N_AVATAR_UPLOAD_URL
+      const N8N_API_KEY = process.env.N8N_API_KEY
+      
       if (N8N_AVATAR_UPLOAD_URL) {
         console.log('Sending webhook to N8N:', N8N_AVATAR_UPLOAD_URL)
         
+        const webhookHeaders = {
+          'Content-Type': 'application/json',
+        }
+        
+        // Lisää x-api-key header jos saatavilla
+        if (N8N_API_KEY) {
+          webhookHeaders['x-api-key'] = N8N_API_KEY
+        }
+        
         const webhookResponse = await fetch(N8N_AVATAR_UPLOAD_URL, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            type: 'avatar-upload',
-            blob: blob,
-            filename: file.originalFilename || file.newFilename,
-            uploadedAt: new Date().toISOString(),
-          }),
+          headers: webhookHeaders,
+                      body: JSON.stringify({
+              type: 'avatar-upload',
+              blob: blob,
+              filename: file.originalFilename || file.newFilename,
+              uploadedAt: new Date().toISOString(),
+              companyId: companyId || null,
+            }),
         })
         
         if (webhookResponse.ok) {

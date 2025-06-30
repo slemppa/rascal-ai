@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.8](https://github.com/slemppa/rascal-ai/compare/v1.4.7...v1.4.8) (2025-06-30)
+
+
+### 🐛 Bug Fixes
+
+* use formidable for multipart form parsing ([988aaad](https://github.com/slemppa/rascal-ai/commit/988aaad4ac96c7b0d77ae2c8d833e34c5e300110))
+
 ### [1.4.7](https://github.com/slemppa/rascal-ai/compare/v1.4.6...v1.4.7) (2025-06-30)
 
 

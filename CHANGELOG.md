@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.6](https://github.com/slemppa/rascal-ai/compare/v1.4.5...v1.4.6) (2025-06-30)
+
+
+### 🐛 Bug Fixes
+
+* add debug logging for filename parameter ([be2a9c9](https://github.com/slemppa/rascal-ai/commit/be2a9c9dff7749223fae491065332496a237de8c))
+
 ### [1.4.5](https://github.com/slemppa/rascal-ai/compare/v1.4.4...v1.4.5) (2025-06-30)
 
 

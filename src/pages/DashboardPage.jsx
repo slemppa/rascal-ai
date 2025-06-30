@@ -390,9 +390,12 @@ export default function DashboardPage() {
 
     try {
       const uploads = await Promise.all(selectedImages.map(async (file) => {
-        const res = await fetch(`/api/avatar-upload?filename=${encodeURIComponent(file.name)}`, {
+        const formData = new FormData()
+        formData.append('file', file)
+        
+        const res = await fetch('/api/avatar-upload', {
           method: 'POST',
-          body: file,
+          body: formData,
         })
         if (!res.ok) throw new Error('upload failed')
         return res.json()
@@ -414,9 +417,12 @@ export default function DashboardPage() {
     setAvatarError('')
 
     try {
-      const res = await fetch(`/api/avatar-upload?filename=${encodeURIComponent(selectedAudio.name)}`, {
+      const formData = new FormData()
+      formData.append('file', selectedAudio)
+      
+      const res = await fetch('/api/avatar-upload', {
         method: 'POST',
-        body: selectedAudio,
+        body: formData,
       })
       if (!res.ok) throw new Error('upload failed')
       const data = await res.json()

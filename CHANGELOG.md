@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.4](https://github.com/slemppa/rascal-ai/compare/v1.4.3...v1.4.4) (2025-06-30)
+
+
+### 🐛 Bug Fixes
+
+* remove bodyParser: false for client upload ([d3655b5](https://github.com/slemppa/rascal-ai/commit/d3655b5654e9d9a0eee4451d4913a306b2d708da))
+
 ### [1.4.3](https://github.com/slemppa/rascal-ai/compare/v1.4.2...v1.4.3) (2025-06-30)
 
 

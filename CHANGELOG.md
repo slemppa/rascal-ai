@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.11](https://github.com/slemppa/rascal-ai/compare/v1.4.10...v1.4.11) (2025-06-30)
+
+
+### 🐛 Bug Fixes
+
+* korjaa avatar-upload webhook-ongelmat ([8195fda](https://github.com/slemppa/rascal-ai/commit/8195fda7df4b611e1099563645e59fb06bd8a660))
+
 ### [1.4.10](https://github.com/slemppa/rascal-ai/compare/v1.4.9...v1.4.10) (2025-06-30)
 
 

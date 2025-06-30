@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import PageHeader from '../components/PageHeader'
-import { upload } from '@vercel/blob/client'
 
 function EditPostModal({ post, onClose, onSave }) {
   const [idea, setIdea] = useState(post.Idea || '')
@@ -391,11 +390,12 @@ export default function DashboardPage() {
 
     try {
       const uploads = await Promise.all(selectedImages.map(async (file) => {
-        const blob = await upload(file.name, file, {
-          access: 'public',
-          handleUploadUrl: '/api/avatar-upload',
+        const res = await fetch(`/api/avatar-upload?filename=${encodeURIComponent(file.name)}`, {
+          method: 'POST',
+          body: file,
         })
-        return blob
+        if (!res.ok) throw new Error('upload failed')
+        return res.json()
       }))
 
       console.log('Kuvat ladattu', uploads)
@@ -414,12 +414,13 @@ export default function DashboardPage() {
     setAvatarError('')
 
     try {
-      const blob = await upload(selectedAudio.name, selectedAudio, {
-        access: 'public',
-        handleUploadUrl: '/api/avatar-upload',
+      const res = await fetch(`/api/avatar-upload?filename=${encodeURIComponent(selectedAudio.name)}`, {
+        method: 'POST',
+        body: selectedAudio,
       })
-      
-      console.log('Audio ladattu', blob)
+      if (!res.ok) throw new Error('upload failed')
+      const data = await res.json()
+      console.log('Audio ladattu', data)
       setAudioUploaded(true)
     } catch (err) {
       console.error(err)

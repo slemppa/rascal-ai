@@ -393,11 +393,18 @@ export default function DashboardPage() {
       const userRaw = localStorage.getItem('user')
       const companyId = userRaw ? JSON.parse(userRaw)?.companyId || JSON.parse(userRaw)?.user?.companyId : null
       
+      console.log('Image upload debug:')
+      console.log('- UserRaw:', userRaw)
+      console.log('- CompanyId:', companyId)
+      
       const uploads = await Promise.all(selectedImages.map(async (file) => {
         const formData = new FormData()
         formData.append('file', file)
         if (companyId) {
           formData.append('companyId', companyId)
+          console.log('- Added companyId to FormData:', companyId)
+        } else {
+          console.log('- No companyId to add')
         }
         
         const res = await fetch('/api/avatar-upload', {
@@ -428,10 +435,17 @@ export default function DashboardPage() {
       const userRaw = localStorage.getItem('user')
       const companyId = userRaw ? JSON.parse(userRaw)?.companyId || JSON.parse(userRaw)?.user?.companyId : null
       
+      console.log('Audio upload debug:')
+      console.log('- UserRaw:', userRaw)
+      console.log('- CompanyId:', companyId)
+      
       const formData = new FormData()
       formData.append('file', selectedAudio)
       if (companyId) {
         formData.append('companyId', companyId)
+        console.log('- Added companyId to FormData:', companyId)
+      } else {
+        console.log('- No companyId to add')
       }
       
       const res = await fetch('/api/avatar-upload', {

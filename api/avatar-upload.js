@@ -22,6 +22,12 @@ export default async function handler(req, res) {
     const file = files.file?.[0]
     const companyId = fields.companyId?.[0] // Hae companyId FormDatasta
     
+    console.log('Avatar upload debug:')
+    console.log('- Fields:', Object.keys(fields))
+    console.log('- Files:', Object.keys(files))
+    console.log('- CompanyId:', companyId)
+    console.log('- File:', file ? file.originalFilename : 'No file')
+    
     if (!file) {
       return res.status(400).json({ error: 'No file provided' })
     }
@@ -39,41 +45,31 @@ export default async function handler(req, res) {
     fs.unlinkSync(file.filepath)
 
     // Lähetä webhook N8N:ään
+    const N8N_AVATAR_UPLOAD_URL = process.env.N8N_AVATAR_UPLOAD_URL || 'https://samikiias.app.n8n.cloud/webhook/avatar-upload'
+    const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY
+    
     try {
-      const N8N_AVATAR_UPLOAD_URL = process.env.N8N_AVATAR_UPLOAD_URL
-      const N8N_API_KEY = process.env.N8N_API_KEY
+      console.log('Sending webhook to N8N:', N8N_AVATAR_UPLOAD_URL)
       
-      if (N8N_AVATAR_UPLOAD_URL) {
-        console.log('Sending webhook to N8N:', N8N_AVATAR_UPLOAD_URL)
-        
-        const webhookHeaders = {
+      const webhookResponse = await fetch(N8N_AVATAR_UPLOAD_URL, {
+        method: 'POST',
+        headers: {
           'Content-Type': 'application/json',
-        }
-        
-        // Lisää x-api-key header jos saatavilla
-        if (N8N_API_KEY) {
-          webhookHeaders['x-api-key'] = N8N_API_KEY
-        }
-        
-        const webhookResponse = await fetch(N8N_AVATAR_UPLOAD_URL, {
-          method: 'POST',
-          headers: webhookHeaders,
-                      body: JSON.stringify({
-              type: 'avatar-upload',
-              blob: blob,
-              filename: file.originalFilename || file.newFilename,
-              uploadedAt: new Date().toISOString(),
-              companyId: companyId || null,
-            }),
-        })
-        
-        if (webhookResponse.ok) {
-          console.log('N8N webhook sent successfully')
-        } else {
-          console.error('N8N webhook failed:', webhookResponse.status, webhookResponse.statusText)
-        }
+          'x-api-key': N8N_SECRET_KEY
+        },
+        body: JSON.stringify({
+          type: 'avatar-upload',
+          blob: blob,
+          filename: file.originalFilename || file.newFilename,
+          uploadedAt: new Date().toISOString(),
+          companyId: companyId || null,
+        }),
+      })
+      
+      if (webhookResponse.ok) {
+        console.log('N8N webhook sent successfully')
       } else {
-        console.log('N8N_AVATAR_UPLOAD_URL not configured, skipping webhook')
+        console.error('N8N webhook failed:', webhookResponse.status, webhookResponse.statusText)
       }
     } catch (webhookError) {
       console.error('Webhook processing failed:', webhookError)

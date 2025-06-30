@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.10](https://github.com/slemppa/rascal-ai/compare/v1.4.9...v1.4.10) (2025-06-30)
+
+
+### 🐛 Bug Fixes
+
+* Get companyId from FormData and include in webhook payload ([bae460c](https://github.com/slemppa/rascal-ai/commit/bae460ca5f91ca9a0e4fc8d444c6bc706438cf40))
+
 ### [1.4.9](https://github.com/slemppa/rascal-ai/compare/v1.4.8...v1.4.9) (2025-06-30)
 
 

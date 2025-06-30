@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.2](https://github.com/slemppa/rascal-ai/compare/v1.4.1...v1.4.2) (2025-06-30)
+
+
+### 🔧 Chores
+
+* trigger redeploy after plan upgrade ([a0080a7](https://github.com/slemppa/rascal-ai/commit/a0080a706adf8d55f0ae3cc79f42f10b3fce1ee4))
+
 ### [1.4.1](https://github.com/slemppa/rascal-ai/compare/v1.4.0...v1.4.1) (2025-06-30)
 
 

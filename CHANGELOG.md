@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.1](https://github.com/slemppa/rascal-ai/compare/v1.6.0...v1.6.1) (2025-07-01)
+
+
+### 💄 Styles
+
+* modernisoi karusellin napit ja pisteet brändin väreillä ([18a4af7](https://github.com/slemppa/rascal-ai/commit/18a4af7e9ca02db2230d3beb4219f55e617a6fcb))
+
 ## [1.6.0](https://github.com/slemppa/rascal-ai/compare/v1.5.1...v1.6.0) (2025-07-01)
 
 

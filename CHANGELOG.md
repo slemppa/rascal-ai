@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.2](https://github.com/slemppa/rascal-ai/compare/v1.6.1...v1.6.2) (2025-07-01)
+
+
+### 🔧 Chores
+
+* aloitettu supabase-migraatio omassa branchissa ([4e4b0c2](https://github.com/slemppa/rascal-ai/commit/4e4b0c2a63c0b2e5d100e28abf62c4086b6a15f8))
+
 ### [1.6.1](https://github.com/slemppa/rascal-ai/compare/v1.6.0...v1.6.1) (2025-07-01)
 
 

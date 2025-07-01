@@ -92,6 +92,18 @@ function PostModal({ post, onClose }) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
+  // Tarkista onko julkaisupäivä asetettu
+  const hasPublishDate = publishDate && publishDate.trim() !== '';
+  
+  // Tarkista onko valittu päivämäärä menneisyydessä
+  const isPastDate = publishDate && new Date(publishDate) < new Date();
+  
+  // Hae nykyinen päivämäärä datetime-local -muodossa
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    return now.toISOString().slice(0, 16);
+  };
+
   useEffect(() => {
     function handleEsc(e) {
       if (e.key === 'Escape') onClose();
@@ -111,6 +123,13 @@ function PostModal({ post, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Tarkista ettei julkaisupäivä ole menneisyydessä
+    if (publishDate && new Date(publishDate) < new Date()) {
+      setError('Julkaisupäivä ei voi olla menneisyydessä');
+      return;
+    }
+    
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -119,12 +138,63 @@ function PostModal({ post, onClose }) {
         id: post["Record ID"] || post.id,
         Caption: caption,
         "Publish Date": publishDate,
-        updateType: 'postUpdate'
+        updateType: 'postUpdate',
+        action: 'save'
       });
       setSuccess(true);
       setTimeout(() => onClose(), 1000);
     } catch (err) {
       setError('Tallennus epäonnistui');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSchedule = async () => {
+    // Tarkista ettei julkaisupäivä ole menneisyydessä
+    if (publishDate && new Date(publishDate) < new Date()) {
+      setError('Julkaisupäivä ei voi olla menneisyydessä');
+      return;
+    }
+    
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+    try {
+      await axios.post('/api/update-post.js', {
+        id: post["Record ID"] || post.id,
+        Caption: caption,
+        "Publish Date": publishDate,
+        updateType: 'postUpdate',
+        action: 'schedule'
+      });
+      setSuccess(true);
+      setTimeout(() => onClose(), 1000);
+    } catch (err) {
+      setError('Ajastus epäonnistui');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('Haluatko varmasti poistaa tämän julkaisun? Tätä toimintoa ei voi perua.')) {
+      return;
+    }
+    
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+    try {
+      await axios.post('/api/update-post.js', {
+        id: post["Record ID"] || post.id,
+        updateType: 'postUpdate',
+        action: 'delete'
+      });
+      setSuccess(true);
+      setTimeout(() => onClose(), 1000);
+    } catch (err) {
+      setError('Poisto epäonnistui');
     } finally {
       setLoading(false);
     }
@@ -142,7 +212,11 @@ function PostModal({ post, onClose }) {
               <img src={media} alt={getPostTitle(post) || 'Julkaisukuva'} className={styles.modalMediaContent} />
             )
           ) : (
-            <div className={styles.modalMediaPlaceholder}>Ei mediaa</div>
+            <img 
+              src={process.env.BASE_URL ? process.env.BASE_URL + '/placeholder.png' : '/placeholder.png'} 
+              alt="Ei mediaa" 
+              className={styles.modalMediaContent} 
+            />
           )}
         </div>
         {/* Type ja Status badge Captionin yhteyteen */}
@@ -152,30 +226,53 @@ function PostModal({ post, onClose }) {
             {post.Status && <span className={styles.statusBadge}>{post.Status}</span>}
           </div>
           <label className={styles.modalLabel} style={{marginBottom: 10}}>
-            <span style={{fontWeight: 600, fontSize: 15}}>Caption</span>
+            <span style={{fontWeight: 600, fontSize: 15}}>Kuvaus</span>
             <textarea
               value={caption}
               onChange={e => setCaption(e.target.value)}
               rows={6}
               className={styles.modalTextarea}
               style={{width: '100%', marginTop: 6, marginBottom: 18}}
+              placeholder="Kirjoita julkaisun kuvaus..."
             />
           </label>
           <label className={styles.modalLabel} style={{marginBottom: 18}}>
-            <span style={{fontWeight: 600, fontSize: 15}}>Publish Date</span>
+            <span style={{fontWeight: 600, fontSize: 15}}>Julkaisupäivä</span>
             <input
               type="datetime-local"
               value={publishDate}
               onChange={e => setPublishDate(e.target.value)}
+              min={getCurrentDateTime()}
               className={styles.modalInput}
               style={{marginTop: 6}}
             />
+            {isPastDate && (
+              <div className={styles.dateError}>
+                ⚠️ Julkaisupäivä ei voi olla menneisyydessä
+              </div>
+            )}
           </label>
+          {/* Ajasta-nappi */}
+          {hasPublishDate && (
+            <div style={{marginBottom: 18}}>
+              <button
+                type="button"
+                className={styles.scheduleButton}
+                onClick={handleSchedule}
+                disabled={loading}
+              >
+                ⏰ Ajasta julkaisu
+              </button>
+            </div>
+          )}
           {error && <div className={styles.modalError}>{error}</div>}
           {success && <div className={styles.modalSuccess}>Tallennettu!</div>}
           <div style={{display: 'flex', gap: 12, marginTop: 18}}>
             <button type="button" onClick={onClose} className={styles.secondaryButton} disabled={loading}>Peruuta</button>
             <button type="submit" className={styles.viewButton} disabled={loading}>Tallenna</button>
+            <button type="button" onClick={handleDelete} className={styles.deleteButton} disabled={loading}>
+              🗑️ Poista
+            </button>
           </div>
         </form>
       </div>

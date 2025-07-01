@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/slemppa/rascal-ai/compare/v1.5.1...v1.6.0) (2025-07-01)
+
+
+### ✨ Features
+
+* **layout:** responsiivisuus ja grid dashboardiin & postit ([615dd1b](https://github.com/slemppa/rascal-ai/commit/615dd1b403a977402b0e263161c30549aecb39de))
+* parannettu julkaisujen hallinta modaalia ([2d6e088](https://github.com/slemppa/rascal-ai/commit/2d6e088e51d6846afa6769e159fba266594fbf5e))
+
 ### [1.5.1](https://github.com/slemppa/rascal-ai/compare/v1.5.0...v1.5.1) (2025-07-01)
 
 

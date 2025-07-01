@@ -512,11 +512,24 @@ export default function DashboardPage() {
             boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
             padding: 24,
             gridColumn: '2',
-            gridRow: '1'
+            gridRow: '1',
+            position: 'relative'
           }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Julkaisut kuukaudessa</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: '#10b981', lineHeight: 1 }}>24</div>
-            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Keskimäärin</div>
+            <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
+            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tulossa pian</div>
+            <div style={{ 
+              position: 'absolute', 
+              top: 8, 
+              right: 8, 
+              fontSize: 12, 
+              color: '#9ca3af',
+              background: '#f3f4f6',
+              padding: '2px 6px',
+              borderRadius: 4
+            }}>
+              🚧 Dev
+            </div>
           </div>
 
           <div style={{ 
@@ -525,11 +538,24 @@ export default function DashboardPage() {
             boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
             padding: 24,
             gridColumn: '3',
-            gridRow: '1'
+            gridRow: '1',
+            position: 'relative'
           }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Käytetty aika</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: '#f59e0b', lineHeight: 1 }}>2.5h</div>
-            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tällä viikolla</div>
+            <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
+            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tulossa pian</div>
+            <div style={{ 
+              position: 'absolute', 
+              top: 8, 
+              right: 8, 
+              fontSize: 12, 
+              color: '#9ca3af',
+              background: '#f3f4f6',
+              padding: '2px 6px',
+              borderRadius: 4
+            }}>
+              🚧 Dev
+            </div>
           </div>
 
           <div style={{ 
@@ -538,11 +564,24 @@ export default function DashboardPage() {
             boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
             padding: 24,
             gridColumn: '4',
-            gridRow: '1'
+            gridRow: '1',
+            position: 'relative'
           }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Tavoitteet</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: '#8b5cf6', lineHeight: 1 }}>5/7</div>
-            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Viikon tavoite</div>
+            <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
+            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tulossa pian</div>
+            <div style={{ 
+              position: 'absolute', 
+              top: 8, 
+              right: 8, 
+              fontSize: 12, 
+              color: '#9ca3af',
+              background: '#f3f4f6',
+              padding: '2px 6px',
+              borderRadius: 4
+            }}>
+              🚧 Dev
+            </div>
           </div>
 
           <div style={{ 
@@ -551,11 +590,24 @@ export default function DashboardPage() {
             boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
             padding: 24,
             gridColumn: '5',
-            gridRow: '1'
+            gridRow: '1',
+            position: 'relative'
           }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>AI käyttö</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: '#ec4899', lineHeight: 1 }}>89%</div>
-            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tehokkuus</div>
+            <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
+            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tulossa pian</div>
+            <div style={{ 
+              position: 'absolute', 
+              top: 8, 
+              right: 8, 
+              fontSize: 12, 
+              color: '#9ca3af',
+              background: '#f3f4f6',
+              padding: '2px 6px',
+              borderRadius: 4
+            }}>
+              🚧 Dev
+            </div>
           </div>
 
           {/* Tulevat postaukset lista */}

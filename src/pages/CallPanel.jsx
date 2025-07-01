@@ -79,6 +79,23 @@ export default function CallPanel() {
     <>
       <PageHeader title="Puhelut" />
       <div style={{ padding: 32 }}>
+        {/* Kehitysvaroitus */}
+        <div style={{
+          background: '#fef3c7',
+          border: '1px solid #f59e0b',
+          borderRadius: 12,
+          padding: 20,
+          marginBottom: 24,
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: 18, fontWeight: 600, color: '#92400e', marginBottom: 8 }}>
+            🚧 Tätä työstetään
+          </div>
+          <div style={{ color: '#a16207', fontSize: 14 }}>
+            Puheluominaisuus on kehityksessä. Toiminnot eivät ole vielä käytettävissä.
+          </div>
+        </div>
+        
         <div style={{ marginTop: 24, maxWidth: 600 }}>
           <div style={{ background: '#fff', borderRadius: 12, padding: 24, marginBottom: 24 }}>
             <h2 style={{ margin: '0 0 16px 0', fontSize: 20, fontWeight: 600 }}>

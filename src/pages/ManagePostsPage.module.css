@@ -177,14 +177,149 @@
 }
 
 .viewButton {
-  padding: 8px 16px;
-  background: rgb(37, 99, 235);
-  color: rgb(255, 255, 255);
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
+  padding: 12px 22px !important;
+  background: var(--brand-color) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
   cursor: pointer;
+  transition: background 0.15s;
+}
+
+.viewButton:hover {
+  background: var(--brand-color-dark) !important;
+}
+
+/* KARUSELLI KOMPONENTTI */
+.carouselContainer {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.carouselWrapper {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(243, 244, 246);
+}
+
+.carouselButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  width: 40px;
+  height: 40px;
+  font-size: 28px !important;
+  font-weight: bold;
+  color: var(--brand-color) !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+  z-index: 10;
+  box-shadow: none !important;
+}
+
+.carouselButton:hover {
+  background: #f3f4f6 !important;
+  color: var(--brand-color-dark) !important;
+}
+
+.carouselContent {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.carouselImageContainer {
+  width: 100%;
+  height: 280px;
+  background: rgb(243, 244, 246);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.carouselImage {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+}
+
+.carouselInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.slideNumber {
+  font-weight: 700;
+  font-size: 18px;
+  color: rgb(37, 99, 235);
+  background: rgba(37, 99, 235, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.slideText {
+  font-size: 16px;
+  color: rgb(55, 65, 81);
+  line-height: 1.4;
+  max-width: 500px;
+  word-break: break-word;
+}
+
+.carouselDots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: #fff;
+}
+
+.carouselDot {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 4px !important;
+  border: none !important;
+  background: #e5e7eb !important;
+  cursor: pointer;
+  transition: background 0.15s;
+  box-shadow: none !important;
+}
+
+.carouselDotActive {
+  background: var(--brand-color) !important;
 }
 
 /* Modaali */
@@ -199,349 +334,370 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .modal {
   background: #fff;
-  border-radius: 18px;
-  max-width: 600px;
+  border-radius: 16px;
+  max-width: 800px;
   width: 100%;
-  max-height: 95vh;
-  overflow: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.13);
+  max-height: 90vh;
+  overflow-y: auto;
   position: relative;
-  padding-bottom: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .modalClose {
   position: absolute;
-  top: 14px;
-  right: 18px;
-  background: none;
-  border: none;
-  font-size: 28px;
-  color: #6b7280;
+  top: 16px;
+  right: 16px;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  width: 40px;
+  height: 40px;
+  font-size: 28px !important;
+  color: #6b7280 !important;
   cursor: pointer;
-  z-index: 2;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: color 0.15s;
+  box-shadow: none !important;
+}
+
+.modalClose:hover {
+  color: #111 !important;
+  background: transparent !important;
 }
 
 .modalMedia {
   width: 100%;
-  max-height: 260px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(243, 244, 246);
+  border-radius: 12px 12px 0 0;
   overflow: hidden;
-  border-radius: 18px 18px 0 0;
 }
 
 .modalMediaContent {
-  width: 100%;
-  max-height: 260px;
-  object-fit: cover;
-  background: #f3f4f6;
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 12px 12px 0 0;
 }
 
-
-
 .modalContent {
-  padding: 28px 28px 0 28px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
 .modalTitle {
-  margin: 10px 0 6px 0;
+  font-size: 24px;
   font-weight: 700;
-  font-size: 22px;
-  color: #1f2937;
-}
-
-.modalDescription {
-  color: #374151;
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-
-.modalDate {
-  color: #9ca3af;
-  font-size: 14px;
+  color: rgb(31, 41, 55);
   margin-bottom: 8px;
 }
 
-.modalLink {
-  color: #2563eb;
-  text-decoration: underline;
-  font-size: 15px;
+.modalDescription {
+  color: rgb(55, 65, 81);
+  line-height: 1.6;
+  margin-bottom: 16px;
 }
 
-/* Loading ja error */
+.modalDate {
+  color: rgb(156, 163, 175);
+  font-size: 14px;
+}
+
+.modalLink {
+  color: rgb(37, 99, 235);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.modalLink:hover {
+  text-decoration: underline;
+}
+
 .loading, .error {
   text-align: center;
-  padding: 20px;
+  padding: 40px;
+  color: rgb(156, 163, 175);
 }
 
 .error {
-  color: red;
+  color: rgb(239, 68, 68);
 }
 
-/* Idea display in cards */
 .ideaDisplay {
-  margin: 4px 0;
-  font-size: 16px;
-  color: #111;
   font-weight: 700;
-  padding: 4px 0;
+  font-size: 16px;
+  color: rgb(31, 41, 55);
+  margin-bottom: 8px;
+  line-height: 1.3;
+  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .ideaLabel {
-  font-size: 16px;
-  color: #111;
   font-weight: 600;
+  font-size: 14px;
+  color: rgb(107, 114, 128);
+  margin-bottom: 4px;
   text-transform: uppercase;
-  margin-right: 8px;
-  overflow: visible;
-  display: inline;
+  letter-spacing: 0.5px;
 }
 
-/* Status badge */
 .statusBadge { 
-  background: rgb(254, 243, 199); 
-  color: rgb(146, 64, 14); 
-  font-size: 14px;
+  display: inline-block;
+  background: rgb(254, 243, 199);
+  color: rgb(217, 119, 6);
   font-weight: 600;
+  font-size: 14px;
   border-radius: 8px;
   padding: 2px 12px;
-  margin-left: 8px;
-  display: inline-block;
+  margin-bottom: 10px;
 }
 
-/* Modal idea section */
 .ideaSection { margin: 10px 0; }
 
-/* Voiceover section */
 .voiceoverSection { 
-  background: rgb(248, 250, 252); 
-  padding: 16px; 
-  border-radius: 12px; 
-  margin: 18px 0 10px 0;
+  margin: 10px 0;
+  padding: 12px;
+  background: rgb(249, 250, 251);
+  border-radius: 8px;
 }
+
 .voiceoverLabel { font-weight: 600; }
 .voiceoverText { font-style: italic; }
 
-/* Metadata section */
 .metadataSection { 
-  border-top: 1px solid rgb(229, 231, 235); 
-  padding-top: 12px; 
-  margin-top: 18px;
-  color: #6b7280;
+  margin: 10px 0;
+  padding: 12px;
+  background: rgb(243, 244, 246);
+  border-radius: 8px;
   font-size: 14px;
 }
 
 .spanWide {
   grid-column: span 2;
-  grid-row: span 1;
 }
+
 .spanTall {
-  grid-column: span 1;
   grid-row: span 2;
 }
+
 .spanSquare {
   grid-column: span 1;
   grid-row: span 1;
 }
 
 .secondaryButton {
-  padding: 8px 16px;
-  background: #fff;
-  color: #2563eb;
-  border: 1.5px solid #2563eb;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
+  padding: 12px 22px !important;
+  background: #fff !important;
+  color: #374151 !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 8px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
   cursor: pointer;
-  margin-right: 8px;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, border 0.15s;
 }
+
 .secondaryButton:hover {
-  background: #2563eb;
-  color: #fff;
+  background: #f3f4f6 !important;
+  border: 1px solid #cbd5e1 !important;
 }
 
 .modalLabel {
-  font-weight: 600;
-  font-size: 15px;
-  margin-bottom: 4px;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: rgb(55, 65, 81);
 }
 
 .modalTextarea {
-  width: 100%;
-  min-height: 90px;
-  font-size: 15px;
-  font-family: inherit;
+  padding: 12px;
+  border: 1px solid rgb(209, 213, 219);
   border-radius: 8px;
-  border: 1px solid #d1d5db;
-  padding: 10px;
+  font-size: 14px;
+  font-family: inherit;
   resize: vertical;
-  margin-top: 4px;
+  min-height: 100px;
+  transition: border-color 0.2s;
+}
+
+.modalTextarea:focus {
+  outline: none;
+  border-color: rgb(37, 99, 235);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .modalInput {
-  width: 100%;
-  font-size: 15px;
-  font-family: inherit;
+  padding: 12px;
+  border: 1px solid rgb(209, 213, 219);
   border-radius: 8px;
-  border: 1px solid #d1d5db;
-  padding: 8px 10px;
-  margin-top: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.modalInput:focus {
+  outline: none;
+  border-color: rgb(37, 99, 235);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .modalError {
-  color: #b91c1c;
-  background: #fee2e2;
+  background: rgb(254, 242, 242);
+  color: rgb(185, 28, 28);
+  padding: 12px;
   border-radius: 8px;
-  padding: 8px 12px;
-  margin-top: 12px;
-  font-size: 15px;
+  font-size: 14px;
+  border: 1px solid rgb(252, 165, 165);
 }
 
 .modalSuccess {
-  color: #166534;
-  background: #dcfce7;
+  background: rgb(240, 253, 244);
+  color: rgb(21, 128, 61);
+  padding: 12px;
   border-radius: 8px;
-  padding: 8px 12px;
-  margin-top: 12px;
-  font-size: 15px;
+  font-size: 14px;
+  border: 1px solid rgb(134, 239, 172);
 }
 
 .scheduleButton {
-  width: 100%;
-  padding: 12px 16px;
-  background: #fef3c7;
-  color: #92400e;
-  border: 1.5px solid #f59e0b;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
+  padding: 12px 22px !important;
+  background: var(--brand-accent) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
   cursor: pointer;
-  transition: all 0.15s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  transition: background 0.15s;
 }
 
 .scheduleButton:hover {
-  background: #f59e0b;
-  color: #fff;
-  border-color: #f59e0b;
+  background: var(--brand-accent-dark) !important;
 }
 
 .scheduleButton:disabled {
-  background: #f3f4f6;
-  color: #9ca3af;
-  border-color: #d1d5db;
-  cursor: not-allowed;
-}
-
-.scheduleButton:disabled:hover {
-  background: #f3f4f6;
-  color: #9ca3af;
-  border-color: #d1d5db;
+  background: #e5e7eb !important;
+  color: #9ca3af !important;
+  cursor: not-allowed !important;
 }
 
 .deleteButton {
-  padding: 8px 16px;
-  background: #fff;
-  color: #dc2626;
-  border: 1.5px solid #dc2626;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
+  padding: 12px 22px !important;
+  background: #ef4444 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  transition: background 0.15s;
 }
 
 .deleteButton:hover {
-  background: #dc2626;
-  color: #fff;
+  background: #dc2626 !important;
 }
 
 .deleteButton:disabled {
-  background: #f3f4f6;
-  color: #9ca3af;
-  border-color: #d1d5db;
-  cursor: not-allowed;
-}
-
-.deleteButton:disabled:hover {
-  background: #f3f4f6;
-  color: #9ca3af;
-  border-color: #d1d5db;
+  background: #e5e7eb !important;
+  color: #9ca3af !important;
+  cursor: not-allowed !important;
 }
 
 .dateError {
-  color: #dc2626;
-  font-size: 13px;
+  color: rgb(239, 68, 68);
+  font-size: 12px;
   margin-top: 4px;
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-/* Mobiiliyhteensopivuus */
 @media (max-width: 768px) {
   .container {
     padding: 16px 12px 0px;
-    height: calc(100vh - 72px);
+    height: calc(100vh - 60px);
   }
-  
+
   .filters {
     gap: 8px;
     margin: 1rem 0px;
   }
-  
+
   .filterButton {
-    padding: 8px 12px;
+    padding: 4px 12px;
     font-size: 14px;
   }
-  
+
   .bentoGrid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 16px;
     padding: 16px;
   }
-  
+
   .bentoMediaWrapper {
-    height: 200px;
-    min-height: 150px;
-    max-height: 200px;
+    height: 160px;
+    min-height: 140px;
   }
-  
+
   .title {
     font-size: 16px;
   }
-  
+
   .description {
     font-size: 14px;
     -webkit-line-clamp: 3;
   }
-  
+
   .modal {
-    max-width: 95vw;
-    margin: 16px;
+    margin: 10px;
+    max-height: 95vh;
   }
-  
+
   .modalContent {
-    padding: 20px 20px 0 20px;
+    padding: 16px;
   }
-  
+
   .modalTitle {
     font-size: 20px;
+  }
+
+  /* Karuselli mobiili */
+  .carouselWrapper {
+    height: 300px;
+  }
+
+  .carouselImageContainer {
+    height: 200px;
+  }
+
+  .carouselButton {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  .slideText {
+    font-size: 14px;
+    max-width: 300px;
   }
 }
 
@@ -549,42 +705,63 @@
   .container {
     padding: 12px 8px 0px;
   }
-  
+
   .bentoGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 12px;
     padding: 12px;
   }
-  
+
   .bentoItem.large {
     grid-column: span 1;
     grid-row: span 1;
   }
-  
+
   .spanWide,
   .spanTall {
     grid-column: span 1;
     grid-row: span 1;
   }
-  
+
   .filters {
     justify-content: center;
   }
-  
+
   .modal {
-    max-width: 100vw;
-    margin: 8px;
+    margin: 5px;
     border-radius: 12px;
   }
-  
+
   .modalContent {
-    padding: 16px 16px 0 16px;
+    padding: 12px;
   }
-  
+
   .modalClose {
-    top: 12px;
-    right: 16px;
-    font-size: 24px;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+  }
+
+  /* Karuselli pieni mobiili */
+  .carouselWrapper {
+    height: 250px;
+  }
+
+  .carouselImageContainer {
+    height: 160px;
+  }
+
+  .carouselButton {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+
+  .slideText {
+    font-size: 13px;
+    max-width: 250px;
   }
 }
 
@@ -592,57 +769,88 @@
   .container {
     padding: 8px 4px 0px;
   }
-  
+
   .bentoGrid {
-    padding: 8px;
+    grid-template-columns: 1fr;
     gap: 8px;
+    padding: 8px;
   }
-  
+
   .bentoCardContent {
     padding: 8px;
   }
-  
+
   .title {
     font-size: 15px;
   }
-  
+
   .description {
     font-size: 13px;
-    -webkit-line-clamp: 2;
   }
-  
+
   .viewButton {
     padding: 6px 12px;
     font-size: 12px;
   }
-  
+
   .modal {
-    margin: 4px;
+    margin: 0;
+    border-radius: 0;
+    max-height: 100vh;
   }
-  
+
   .modalContent {
-    padding: 12px 12px 0 12px;
+    padding: 8px;
   }
-  
+
   .modalTitle {
     font-size: 18px;
   }
-  
+
   .modalTextarea {
-    font-size: 14px;
+    padding: 8px;
+    font-size: 13px;
   }
-  
+
   .modalInput {
-    font-size: 14px;
+    padding: 8px;
+    font-size: 13px;
   }
-  
+
   .scheduleButton {
-    padding: 10px 14px;
-    font-size: 14px;
+    padding: 10px 16px;
+    font-size: 13px;
   }
-  
+
   .deleteButton {
-    padding: 6px 12px;
-    font-size: 12px;
+    padding: 8px 16px;
+    font-size: 13px;
   }
+
+  /* Karuselli erittäin pieni mobiili */
+  .carouselWrapper {
+    height: 200px;
+  }
+
+  .carouselImageContainer {
+    height: 120px;
+  }
+
+  .carouselButton {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .slideText {
+    font-size: 12px;
+    max-width: 200px;
+  }
+}
+
+:root {
+  --brand-color: #2563eb;
+  --brand-color-dark: #1d4ed8;
+  --brand-accent: #bd67ee;
+  --brand-accent-dark: #a24ed6;
 } 

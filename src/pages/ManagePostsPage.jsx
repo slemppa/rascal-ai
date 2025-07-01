@@ -4,7 +4,35 @@ import PageHeader from '../components/PageHeader'
 import styles from './ManagePostsPage.module.css'
 
 // Päivitetty media-logiikka korttiin
-const getMediaElement = (mediaArr, alt, isLarge) => {
+const getMediaElement = (mediaArr, alt, isLarge, post, segments) => {
+  // Jos Carousel, näytä ensimmäisen sliden media/teksti
+  if (post && post.Type === 'Carousel' && Array.isArray(segments)) {
+    const firstSlide = segments
+      .filter(seg => Array.isArray(seg.Content) && (seg.Content.includes(post["Record ID"]) || seg.Content.includes(post.id)))
+      .sort((a, b) => parseInt(a["Slide No."]) - parseInt(b["Slide No."]))[0];
+    if (firstSlide) {
+      if (firstSlide.Media && Array.isArray(firstSlide.Media) && firstSlide.Media[0] && firstSlide.Media[0].url) {
+        return (
+          <div className={styles.bentoMediaWrapper}>
+            <img src={firstSlide.Media[0].url} alt={alt} className={styles.bentoMedia} />
+          </div>
+        );
+      } else if (firstSlide.Text) {
+        return (
+          <div className={styles.bentoMediaWrapper} style={{display:'flex',alignItems:'center',justifyContent:'center',background:'#f3f4f6'}}>
+            <span style={{fontSize:22,fontWeight:600,textAlign:'center',color:'#222',padding:16}}>{firstSlide.Text}</span>
+          </div>
+        );
+      }
+    }
+    // Jos ei slideja, näytä placeholder
+    return (
+      <div className={styles.bentoMediaWrapper}>
+        <img src={process.env.BASE_URL ? process.env.BASE_URL + '/placeholder.png' : '/placeholder.png'} alt="Ei mediaa" className={styles.bentoMedia} />
+      </div>
+    );
+  }
+  // Muut post-tyypit kuten ennen
   if (!mediaArr || !Array.isArray(mediaArr) || !mediaArr[0] || !mediaArr[0].url) {
     return (
       <div className={styles.bentoMediaWrapper}>
@@ -83,7 +111,101 @@ const getGridSpans = (media) => {
   return styles.spanSquare;
 };
 
-function PostModal({ post, onClose }) {
+// Karuselli-komponentti Carousel-tyypin tietueille
+function CarouselMedia({ post, segments }) {
+  // Hae kaikki segmentit, joiden Content sisältää tämän Carouselin Record ID:n
+  const relatedSlides = segments
+    .filter(seg => Array.isArray(seg.Content) && (seg.Content.includes(post["Record ID"]) || seg.Content.includes(post.id)))
+    .sort((a, b) => parseInt(a["Slide No."]) - parseInt(b["Slide No."]));
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  if (relatedSlides.length === 0) {
+    return (
+      <div className={styles.carouselContainer}>
+        <div style={{padding: 16, color: 'red', fontSize: 14}}>
+          <b>DEBUG:</b> Ei löytynyt yhtään slide-tietuetta!<br/>
+          Content: {post["Record ID"] || post.id}<br/>
+          Segments: {JSON.stringify(segments.map(s => ({id: s.id, Content: s.Content})))}
+        </div>
+        <img
+          src={process.env.BASE_URL ? process.env.BASE_URL + '/placeholder.png' : '/placeholder.png'}
+          alt="Ei slideja"
+          className={styles.carouselImage}
+        />
+      </div>
+    );
+  }
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % relatedSlides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + relatedSlides.length) % relatedSlides.length);
+  };
+
+  const currentPost = relatedSlides[currentSlide];
+  let imageUrl = null;
+  if (currentPost.Media && Array.isArray(currentPost.Media) && currentPost.Media[0] && currentPost.Media[0].url) {
+    imageUrl = currentPost.Media[0].url;
+  }
+
+  return (
+    <div className={styles.carouselContainer}>
+      <div className={styles.carouselWrapper}>
+        <button
+          onClick={prevSlide}
+          className={styles.carouselButton}
+          style={{ left: 10 }}
+          aria-label="Edellinen kuva"
+        >
+          ‹
+        </button>
+
+        <div className={styles.carouselContent}>
+          <div className={styles.carouselImageContainer}>
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt={`Slide ${currentPost["Slide No."]}`}
+                className={styles.carouselImage}
+              />
+            ) : (
+              <span style={{fontSize:28,fontWeight:600,textAlign:'center',color:'#222',padding:16,display:'block',width:'100%'}}>{currentPost.Text}</span>
+            )}
+          </div>
+          <div className={styles.carouselInfo}>
+            <div className={styles.slideNumber}>Slide {currentPost["Slide No."]}</div>
+            <div className={styles.slideText}>{currentPost.Text}</div>
+          </div>
+        </div>
+
+        <button
+          onClick={nextSlide}
+          className={styles.carouselButton}
+          style={{ right: 10 }}
+          aria-label="Seuraava kuva"
+        >
+          ›
+        </button>
+      </div>
+
+      <div className={styles.carouselDots}>
+        {relatedSlides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={`${styles.carouselDot} ${index === currentSlide ? styles.carouselDotActive : ''}`}
+            aria-label={`Siirry kuvaan ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PostModal({ post, onClose, allPosts, segments }) {
   const [caption, setCaption] = useState(post.Caption || '');
   // Alusta publishDate datetime-local -muodossa (esim. 2024-07-01T12:34)
   const initialDate = post["Publish Date"] ? new Date(post["Publish Date"]).toISOString().slice(0, 16) : '';
@@ -120,6 +242,7 @@ function PostModal({ post, onClose }) {
 
   const media = post.Media && Array.isArray(post.Media) && post.Media[0] && post.Media[0].url ? post.Media[0].url : null;
   const isVideo = media && (media.endsWith('.mp4') || media.endsWith('.webm'));
+  const isCarousel = post.Type === 'Carousel';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -205,7 +328,9 @@ function PostModal({ post, onClose }) {
       <div className={styles.modal}>
         <button onClick={onClose} className={styles.modalClose}>×</button>
         <div className={styles.modalMedia} style={{marginBottom: 24}}>
-          {media ? (
+          {isCarousel ? (
+            <CarouselMedia post={post} segments={segments} />
+          ) : media ? (
             isVideo ? (
               <video src={media} controls className={styles.modalMediaContent} />
             ) : (
@@ -286,6 +411,7 @@ export default function ManagePostsPage() {
   const [error, setError] = useState(null)
   const [typeFilter, setTypeFilter] = useState('')
   const [selectedPost, setSelectedPost] = useState(null)
+  const [segments, setSegments] = useState([])
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -295,7 +421,10 @@ export default function ManagePostsPage() {
         const companyId = JSON.parse(localStorage.getItem('user') || 'null')?.companyId
         const url = `/api/get-posts${companyId ? `?companyId=${companyId}` : ''}`
         const response = await axios.get(url)
-        setPosts(Array.isArray(response.data) ? response.data : [])
+        // Oikea datan purku
+        const all = Array.isArray(response.data?.[0]?.data) ? response.data[0].data : [];
+        setPosts(all.filter(p => !p["Slide No."]));
+        setSegments(all.filter(p => p["Slide No."]));
       } catch (err) {
         setError('Virhe haettaessa julkaisuja')
       } finally {
@@ -364,7 +493,7 @@ export default function ManagePostsPage() {
                 }
               >
                 {/* Media-kuva, video tai placeholder */}
-                {getMediaElement(post.Media, getPostTitle(post))}
+                {getMediaElement(post.Media, getPostTitle(post), false, post, segments)}
                 <div className={styles.bentoCardContent}>
                   {/* Tyyppibadge ja Status badge */}
                   <div style={{display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4}}>
@@ -389,6 +518,7 @@ export default function ManagePostsPage() {
                   <div className={styles.cardFooter}>
                     <span className={styles.date}>
                       {post["Publish Date"] ? `Julkaistu: ${formatDate(post["Publish Date"])} ` : ''}
+                      {post["Slide No."] && `Slide ${post["Slide No."]}`}
                     </span>
                     <button
                       onClick={() => setSelectedPost(post)}
@@ -403,7 +533,7 @@ export default function ManagePostsPage() {
           </div>
         )}
       </div>
-      {selectedPost && <PostModal post={selectedPost} onClose={() => setSelectedPost(null)} />}
+      {selectedPost && <PostModal post={selectedPost} onClose={() => setSelectedPost(null)} allPosts={posts} segments={segments} />}
     </>
   )
 }

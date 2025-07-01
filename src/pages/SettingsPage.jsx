@@ -31,55 +31,96 @@ export default function SettingsPage() {
   return (
     <>
       <PageHeader title="Asetukset" />
-      <div style={{
-        background: 'var(--brand-dark)',
-        color: '#fff',
-        borderBottom: '1px solid #e2e8f0',
-        paddingTop: 32,
-        paddingBottom: 24
-      }}>
-        <h1 style={{margin: 0, fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: -0.5, lineHeight: 1.2}}>Asetukset</h1>
-      </div>
       <div style={{padding: 32}}>
-        <div style={{background: '#fff', borderRadius: 12, padding: 24, marginBottom: 24}}>
-          <h2 style={{margin: '0 0 16px 0', fontSize: 20, fontWeight: 600}}>Käyttäjätiedot</h2>
-          <div style={{display: 'grid', gap: 16}}>
+        <div style={{background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32, marginBottom: 24}}>
+          <h2 style={{margin: '0 0 24px 0', fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Käyttäjätiedot</h2>
+          <div style={{display: 'grid', gap: 20}}>
             <div>
-              <label style={{display: 'block', marginBottom: 4, fontWeight: 500}}>Nimi</label>
-              <input type="text" value={name || ''} readOnly style={{width: '100%', padding: 8, border: '1px solid #d1d5db', borderRadius: 4}} />
+              <label style={{display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14}}>Nimi</label>
+              <input type="text" value={name || ''} readOnly style={{
+                width: '100%', 
+                padding: '12px 16px', 
+                border: '1px solid #d1d5db', 
+                borderRadius: 8, 
+                fontSize: 14,
+                background: '#f9fafb',
+                color: '#6b7280'
+              }} />
             </div>
             <div>
-              <label style={{display: 'block', marginBottom: 4, fontWeight: 500}}>Sähköposti</label>
-              <input type="email" value={email || ''} readOnly style={{width: '100%', padding: 8, border: '1px solid #d1d5db', borderRadius: 4}} />
+              <label style={{display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14}}>Sähköposti</label>
+              <input type="email" value={email || ''} readOnly style={{
+                width: '100%', 
+                padding: '12px 16px', 
+                border: '1px solid #d1d5db', 
+                borderRadius: 8, 
+                fontSize: 14,
+                background: '#f9fafb',
+                color: '#6b7280'
+              }} />
             </div>
             <div>
-              <label style={{display: 'block', marginBottom: 4, fontWeight: 500}}>Yritys</label>
-              <input type="text" value={companyName || ''} readOnly style={{width: '100%', padding: 8, border: '1px solid #d1d5db', borderRadius: 4}} />
+              <label style={{display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14}}>Yritys</label>
+              <input type="text" value={companyName || ''} readOnly style={{
+                width: '100%', 
+                padding: '12px 16px', 
+                border: '1px solid #d1d5db', 
+                borderRadius: 8, 
+                fontSize: 14,
+                background: '#f9fafb',
+                color: '#6b7280'
+              }} />
             </div>
           </div>
         </div>
         
-        <div style={{background: '#fff', borderRadius: 12, padding: 24, marginBottom: 24}}>
-          <h2 style={{margin: '0 0 16px 0', fontSize: 20, fontWeight: 600}}>Tekniset tiedot</h2>
-          <div style={{display: 'grid', gap: 16}}>
+        <div style={{background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32, marginBottom: 24}}>
+          <h2 style={{margin: '0 0 24px 0', fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Tekniset tiedot</h2>
+          <div style={{display: 'grid', gap: 20}}>
             <div>
-              <label style={{display: 'block', marginBottom: 4, fontWeight: 500}}>Company ID</label>
-              <input type="text" value={companyId || ''} readOnly style={{width: '100%', padding: 8, border: '1px solid #d1d5db', borderRadius: 4}} />
+              <label style={{display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14}}>Company ID</label>
+              <input type="text" value={companyId || ''} readOnly style={{
+                width: '100%', 
+                padding: '12px 16px', 
+                border: '1px solid #d1d5db', 
+                borderRadius: 8, 
+                fontSize: 14,
+                background: '#f9fafb',
+                color: '#6b7280',
+                fontFamily: 'monospace'
+              }} />
             </div>
             <div>
-              <label style={{display: 'block', marginBottom: 4, fontWeight: 500}}>Assistant ID</label>
-              <input type="text" value={assistantId || ''} readOnly style={{width: '100%', padding: 8, border: '1px solid #d1d5db', borderRadius: 4}} />
+              <label style={{display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14}}>Assistant ID</label>
+              <input type="text" value={assistantId || ''} readOnly style={{
+                width: '100%', 
+                padding: '12px 16px', 
+                border: '1px solid #d1d5db', 
+                borderRadius: 8, 
+                fontSize: 14,
+                background: '#f9fafb',
+                color: '#6b7280',
+                fontFamily: 'monospace'
+              }} />
             </div>
             <div>
-              <label style={{display: 'block', marginBottom: 4, fontWeight: 500}}>Token vanhenee</label>
-              <input type="text" value={exp ? new Date(exp * 1000).toLocaleString('fi-FI') : ''} readOnly style={{width: '100%', padding: 8, border: '1px solid #d1d5db', borderRadius: 4}} />
+              <label style={{display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14}}>Token vanhenee</label>
+              <input type="text" value={exp ? new Date(exp * 1000).toLocaleString('fi-FI') : ''} readOnly style={{
+                width: '100%', 
+                padding: '12px 16px', 
+                border: '1px solid #d1d5db', 
+                borderRadius: 8, 
+                fontSize: 14,
+                background: '#f9fafb',
+                color: '#6b7280'
+              }} />
             </div>
           </div>
         </div>
 
-        <div style={{background: '#fff', borderRadius: 12, padding: 24}}>
-          <h2 style={{margin: '0 0 16px 0', fontSize: 20, fontWeight: 600}}>Sovelluksen tiedot</h2>
-          <VersionInfo style={{marginTop: 16}} />
+        <div style={{background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32}}>
+          <h2 style={{margin: '0 0 24px 0', fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Sovelluksen tiedot</h2>
+          <VersionInfo style={{marginTop: 0}} />
         </div>
       </div>
     </>

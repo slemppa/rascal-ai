@@ -395,7 +395,7 @@ export default function AIChatPage() {
                         justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
                       }}>
                         <div style={{
-                          maxWidth: '70%',
+                          maxWidth: '85%',
                           padding: '12px 16px',
                           borderRadius: 8,
                           background: message.role === 'user' ? '#2563eb' : '#fff',
@@ -420,15 +420,17 @@ export default function AIChatPage() {
               </div>
               {/* Syöttökenttä ja uusi keskustelu -ikoni */}
               <form onSubmit={handleSendMessage} style={{
-                height: 56,
+                height: 'auto',
+                minHeight: 56,
                 borderTop: '1.5px solid #e5e7eb',
                 background: '#fff',
                 flexShrink: 0,
                 display: 'flex',
                 gap: 8,
                 alignItems: 'center',
-                padding: '0 24px',
-                margin: 0
+                padding: '12px 24px',
+                margin: 0,
+                flexWrap: 'wrap'
               }}>
                 <input
                   type="text"
@@ -438,6 +440,7 @@ export default function AIChatPage() {
                   disabled={loading}
                   style={{
                     flex: 1,
+                    minWidth: '200px',
                     padding: '12px 16px',
                     border: '1px solid #d1d5db',
                     borderRadius: 8,
@@ -459,7 +462,8 @@ export default function AIChatPage() {
                     opacity: loading || !input.trim() ? 0.6 : 1,
                     fontWeight: 600,
                     fontSize: 16,
-                    margin: 0
+                    margin: 0,
+                    whiteSpace: 'nowrap'
                   }}
                 >
                   Lähetä
@@ -478,7 +482,8 @@ export default function AIChatPage() {
                     display: 'flex',
                     alignItems: 'center',
                     fontSize: 20,
-                    margin: 0
+                    margin: 0,
+                    whiteSpace: 'nowrap'
                   }}
                 >
                   <span role="img" aria-label="Uusi keskustelu">➕</span>

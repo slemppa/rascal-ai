@@ -230,6 +230,9 @@ export default function DashboardPage() {
   const imagesDropRef = React.useRef(null)
   const audioDropRef = React.useRef(null)
 
+  // Responsiivinen apu
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   React.useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -481,8 +484,8 @@ export default function DashboardPage() {
         {/* Bentogrid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(5, 1fr)',
-          gridTemplateRows: 'auto auto auto',
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(5, 1fr)',
+          gridTemplateRows: isMobile ? 'auto' : 'auto auto auto',
           gap: 24,
           maxWidth: '1400px'
         }}
@@ -497,8 +500,7 @@ export default function DashboardPage() {
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'flex-start',
-            gridColumn: '1',
-            gridRow: '1'
+            ...(isMobile ? {} : {gridColumn: '1', gridRow: '1'})
           }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Tulevat postaukset</div>
             <div style={{ fontSize: 32, fontWeight: 800, color: '#2563eb', lineHeight: 1 }}>{upcomingPosts.length}</div>
@@ -511,9 +513,8 @@ export default function DashboardPage() {
             borderRadius: 16, 
             boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
             padding: 24,
-            gridColumn: '2',
-            gridRow: '1',
-            position: 'relative'
+            position: 'relative',
+            ...(isMobile ? {} : {gridColumn: '2', gridRow: '1'})
           }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Julkaisut kuukaudessa</div>
             <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
@@ -537,9 +538,8 @@ export default function DashboardPage() {
             borderRadius: 16, 
             boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
             padding: 24,
-            gridColumn: '3',
-            gridRow: '1',
-            position: 'relative'
+            position: 'relative',
+            ...(isMobile ? {} : {gridColumn: '3', gridRow: '1'})
           }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Käytetty aika</div>
             <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
@@ -563,9 +563,8 @@ export default function DashboardPage() {
             borderRadius: 16, 
             boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
             padding: 24,
-            gridColumn: '4',
-            gridRow: '1',
-            position: 'relative'
+            position: 'relative',
+            ...(isMobile ? {} : {gridColumn: '4', gridRow: '1'})
           }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Tavoitteet</div>
             <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
@@ -589,9 +588,8 @@ export default function DashboardPage() {
             borderRadius: 16, 
             boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
             padding: 24,
-            gridColumn: '5',
-            gridRow: '1',
-            position: 'relative'
+            position: 'relative',
+            ...(isMobile ? {} : {gridColumn: '5', gridRow: '1'})
           }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>AI käyttö</div>
             <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
@@ -616,8 +614,7 @@ export default function DashboardPage() {
             borderRadius: 16, 
             boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
             padding: 32,
-            gridColumn: '1 / 4',
-            gridRow: '2'
+            ...(isMobile ? {} : {gridColumn: '1 / 4', gridRow: '2'})
           }}>
             <div style={{ fontWeight: 700, fontSize: 20, color: '#1f2937', marginBottom: 20 }}>Tulevat postaukset</div>
           {upcomingPosts.length === 0 ? (
@@ -663,8 +660,7 @@ export default function DashboardPage() {
             borderRadius: 16, 
             boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
             padding: 32,
-            gridColumn: '4 / 6',
-            gridRow: '2'
+            ...(isMobile ? {} : {gridColumn: '4 / 6', gridRow: '2'})
           }}>
             <div style={{ fontWeight: 700, fontSize: 20, color: '#1f2937', marginBottom: 20 }}>Avatar-videot</div>
             

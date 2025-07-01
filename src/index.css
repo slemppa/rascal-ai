@@ -1,9 +1,18 @@
 :root {
-  --brand-green: #3bb77e;
+  --brand-green: #4ade80;
   --brand-beige: #f5eee6;
   --brand-light: #f7fafc;
-  --brand-dark: #222831;
-  --brand-black: #111111;
+  --brand-dark: #1a1d23;
+  --brand-black: #000;
+  --brand-accent: #7c3aed;
+  
+  /* Mobiiliyhteensopivuutta varten */
+  --mobile-padding: 16px;
+  --mobile-padding-small: 12px;
+  --mobile-padding-xs: 8px;
+  --mobile-font-size: 16px;
+  --mobile-font-size-small: 14px;
+  --mobile-font-size-xs: 12px;
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -16,6 +25,10 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 a {
@@ -34,6 +47,11 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1 {
@@ -70,5 +88,42 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+/* Mobiiliyhteensopivuuden perustyylit */
+@media (max-width: 768px) {
+  body {
+    font-size: var(--mobile-font-size);
+  }
+  
+  input, textarea, select {
+    font-size: var(--mobile-font-size) !important; /* Estää iOS:n zoomauksen */
+  }
+  
+  button {
+    min-height: 44px; /* Touch-friendly koko */
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: var(--mobile-font-size-small);
+  }
+  
+  input, textarea, select {
+    font-size: var(--mobile-font-size-small) !important;
+  }
+}
+
+/* Touch-friendly elementit */
+@media (hover: none) and (pointer: coarse) {
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  input, textarea, select {
+    min-height: 44px;
   }
 }

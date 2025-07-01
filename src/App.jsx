@@ -176,7 +176,7 @@ export default function App() {
   return (
     <div className="app">
       {/* Vasen sivupalkki */}
-      <nav className="sidebar" style={{position: 'fixed', left: 0, top: 0, width: 250, height: '100vh', zIndex: 20}}>
+      <nav className="sidebar" style={{position: 'fixed', left: 0, top: 0, width: '250px', height: '100vh', zIndex: 20}}>
         <div className="sidebar-header" style={{display: 'flex', alignItems: 'center', gap: 12}}>
           <img src="/favicon.png" alt="favicon" style={{width: 32, height: 32, borderRadius: 8, background: '#fff'}} />
           <h2 style={{margin: 0}}>Rascal AI</h2>
@@ -231,13 +231,13 @@ export default function App() {
       )}
 
       {/* Main content wrapper */}
-      <div className="main-content" style={{marginLeft: 250, width: 'calc(100vw - 250px)', minHeight: '100vh', background: '#f5f7fa', position: 'relative'}}>
+      <div className="main-content">
         {/* Header (PageHeader) kiinteänä */}
-        <div style={{position: 'fixed', left: 250, top: 0, right: 0, height: 72, zIndex: 10, background: 'var(--brand-dark)', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', paddingLeft: 32}}>
+        <div className="main-header">
           {/* PageHeader renderöidään täällä, esim. props.children tai routekohtaisesti */}
         </div>
         {/* Sisältö alkaa headerin alta */}
-        <div style={{marginTop: 72, padding: 0, display: 'flex', flex: 1, minHeight: 0}}>
+        <div className="main-content-inner">
           <Routes>
             <Route path="/dashboard" element={<DashboardPage dashboardData={dashboardData} formatDate={formatDate} formatDateTime={formatDateTime} />} />
             <Route path="/posts" element={<ManagePostsPage />} />

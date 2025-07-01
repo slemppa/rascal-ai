@@ -14,6 +14,32 @@ export default function CallPanel() {
   const [polling, setPolling] = useState(false)
   const pollingRef = useRef(null)
   const [stats, setStats] = useState({ totalCount: 0, calledCount: 0, failedCount: 0 })
+  
+  // Uudet state-muuttujat
+  const [callType, setCallType] = useState('myynti')
+  const [script, setScript] = useState('Hei! Soitan [Yritys] puolesta. Meillä on kiinnostava tarjous teille...')
+  const [selectedVoice, setSelectedVoice] = useState('nova')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [calling, setCalling] = useState(false)
+  const [inboundVoice, setInboundVoice] = useState('nova')
+  const [inboundScript, setInboundScript] = useState('Kiitos soitostasi! Olen AI-assistentti ja autan sinua mielellään...')
+  
+  const callTypes = [
+    { value: 'myynti', label: 'Myyntipuhelu' },
+    { value: 'asiakaspalvelu', label: 'Asiakaspalvelu' },
+    { value: 'kartoitus', label: 'Tarpeiden kartoitus' },
+    { value: 'seuranta', label: 'Seurantapuhelu' },
+    { value: 'kiitos', label: 'Kiitospuhelu' }
+  ]
+
+  const voiceOptions = [
+    { value: 'nova', label: 'Nova (Nainen, Neutraali)' },
+    { value: 'alloy', label: 'Alloy (Miestä muistuttava, Neutraali)' },
+    { value: 'echo', label: 'Echo (Mies, Brittiläinen)' },
+    { value: 'fable', label: 'Fable (Nainen, Brittiläinen)' },
+    { value: 'onyx', label: 'Onyx (Mies, Amerikkalainen)' },
+    { value: 'shimmer', label: 'Shimmer (Nainen, Lämmin)' }
+  ]
 
   const handleValidate = async () => {
     setValidating(true)
@@ -49,6 +75,39 @@ export default function CallPanel() {
     }
   }
 
+  const handleSingleCall = async () => {
+    setCalling(true)
+    setError('')
+    try {
+      // Placeholder URL
+      await axios.post('https://oma-n8n-url.fi/webhook/single-call', { 
+        phoneNumber,
+        callType,
+        script,
+        voice: selectedVoice
+      })
+      alert(`Soitto numerolle ${phoneNumber} aloitettu!`)
+      setPhoneNumber('') // Tyhjennä kenttä onnistuneen soiton jälkeen
+    } catch (e) {
+      setError('Yksittäisen puhelun aloitus epäonnistui')
+    } finally {
+      setCalling(false)
+    }
+  }
+
+  const handleSaveInboundSettings = async () => {
+    setError('')
+    try {
+      await axios.post('https://oma-n8n-url.fi/webhook/save-inbound-settings', {
+        voice: inboundVoice,
+        script: inboundScript
+      })
+      alert('Inbound-asetukset tallennettu!')
+    } catch (e) {
+      setError('Inbound-asetusten tallennus epäonnistui')
+    }
+  }
+
   // Pollaa soittojen tilaa 5s välein
   useEffect(() => {
     if (polling) {
@@ -75,6 +134,13 @@ export default function CallPanel() {
     }
   }, [polling])
 
+  // Responsiivinen apu
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 600;
+  const isTablet = typeof window !== 'undefined' && window.innerWidth >= 600 && window.innerWidth < 1024;
+  let gridCols = '1fr';
+  if (isTablet) gridCols = '1fr 1fr';
+  if (!isMobile && !isTablet) gridCols = '1fr 1fr 1fr';
+
   return (
     <>
       <PageHeader title="Puhelut" />
@@ -96,9 +162,16 @@ export default function CallPanel() {
           </div>
         </div>
         
-        <div style={{ marginTop: 24, maxWidth: 600 }}>
-          <div style={{ background: '#fff', borderRadius: 12, padding: 24, marginBottom: 24 }}>
-            <h2 style={{ margin: '0 0 16px 0', fontSize: 20, fontWeight: 600 }}>
+        <div className="callpanel-root" style={{ 
+          display: 'grid', 
+          gridTemplateColumns: gridCols, 
+          gap: 24, 
+          marginTop: 24 
+        }}>
+          {/* Vasemman puolen laatikko */}
+          <div>
+            <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32, marginBottom: 24 }}>
+            <h2 style={{ margin: '0 0 24px 0', fontSize: 20, fontWeight: 700, color: '#1f2937' }}>
               Aloita puhelut
             </h2>
             
@@ -180,17 +253,278 @@ export default function CallPanel() {
                 Löydetty {validationResult.phoneCount} puhelinnumeroa.
               </div>
             )}
+            </div>
+
+            {/* Yksittäinen puhelu -laatikko */}
+            <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32, marginBottom: 24 }}>
+              <h2 style={{ margin: '0 0 24px 0', fontSize: 20, fontWeight: 700, color: '#1f2937' }}>
+                Tee puhelu
+              </h2>
+              
+              <div style={{ marginBottom: 20 }}>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14 }}>
+                  Puhelinnumero
+                </label>
+                <input
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder="+358 40 123 4567"
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: 8,
+                    fontSize: 14,
+                    fontFamily: 'inherit'
+                  }}
+                />
+              </div>
+
+              <button
+                onClick={handleSingleCall}
+                disabled={calling || !phoneNumber.trim()}
+                style={{
+                  padding: '12px 24px',
+                  background: calling || !phoneNumber.trim() ? '#9ca3af' : '#16a34a',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 8,
+                  cursor: calling || !phoneNumber.trim() ? 'not-allowed' : 'pointer',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8
+                }}
+              >
+                {calling ? '📞 Soittaa...' : '📞 Soita'}
+              </button>
+
+              <div style={{ marginTop: 12, fontSize: 12, color: '#6b7280' }}>
+                Käyttää oikealla valittuja asetuksia (tyyppi, ääni, skripti)
+              </div>
+            </div>
+            
+            {callStatus && (
+              <CallStats 
+                status={callStatus.status}
+                stats={stats}
+                calls={callStatus.calls || []}
+              />
+            )}
           </div>
-          
-          {callStatus && (
-            <CallStats 
-              status={callStatus.status}
-              stats={stats}
-              calls={callStatus.calls || []}
-            />
-          )}
+
+          {/* Oikean puolen laatikko */}
+          <div>
+            <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32, marginBottom: 24 }}>
+              <h2 style={{ margin: '0 0 24px 0', fontSize: 20, fontWeight: 700, color: '#1f2937' }}>
+                Toiminnot
+              </h2>
+              
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14 }}>
+                  Puhelun tyyppi
+                </label>
+                <select
+                  value={callType}
+                  onChange={(e) => setCallType(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: 8,
+                    fontSize: 14,
+                    background: '#fff',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {callTypes.map(type => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14 }}>
+                  Ääni
+                </label>
+                <select
+                  value={selectedVoice}
+                  onChange={(e) => setSelectedVoice(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: 8,
+                    fontSize: 14,
+                    background: '#fff',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {voiceOptions.map(voice => (
+                    <option key={voice.value} value={voice.value}>
+                      {voice.label}
+                    </option>
+                  ))}
+                </select>
+                <div style={{ marginTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontSize: 12, color: '#6b7280' }}>
+                    Valitse puheluissa käytettävä ääni
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // Placeholder toiminnallisuus
+                      alert(`Testattaisiin ${voiceOptions.find(v => v.value === selectedVoice)?.label} ääntä`)
+                    }}
+                    style={{
+                      padding: '4px 12px',
+                      fontSize: 12,
+                      background: '#f3f4f6',
+                      border: '1px solid #d1d5db',
+                      borderRadius: 6,
+                      cursor: 'pointer',
+                      color: '#374151'
+                    }}
+                  >
+                    🔊 Testaa ääni
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14 }}>
+                  Skripti
+                </label>
+                <textarea
+                  value={script}
+                  onChange={(e) => setScript(e.target.value)}
+                  placeholder="Kirjoita puheluskripti..."
+                  rows={8}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: 8,
+                    fontSize: 14,
+                    fontFamily: 'inherit',
+                    resize: 'vertical',
+                    minHeight: 120
+                  }}
+                />
+                <div style={{ marginTop: 8, fontSize: 12, color: '#6b7280' }}>
+                  Käytä [Yritys], [Nimi], [Tuote] yms. paikkamerkkejä personointiin
+                </div>
+                             </div>
+             </div>
+           </div>
+
+           {/* Inbound-puhelut laatikko */}
+           <div>
+             <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32 }}>
+               <h2 style={{ margin: '0 0 24px 0', fontSize: 20, fontWeight: 700, color: '#1f2937' }}>
+                 Inbound-asetukset
+               </h2>
+               
+               <div style={{ marginBottom: 24 }}>
+                 <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14 }}>
+                   Ääni
+                 </label>
+                 <select
+                   value={inboundVoice}
+                   onChange={(e) => setInboundVoice(e.target.value)}
+                   style={{
+                     width: '100%',
+                     padding: '12px 16px',
+                     border: '1px solid #d1d5db',
+                     borderRadius: 8,
+                     fontSize: 14,
+                     background: '#fff',
+                     cursor: 'pointer'
+                   }}
+                 >
+                   {voiceOptions.map(voice => (
+                     <option key={voice.value} value={voice.value}>
+                       {voice.label}
+                     </option>
+                   ))}
+                 </select>
+                 <div style={{ marginTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                   <div style={{ fontSize: 12, color: '#6b7280' }}>
+                     Ääni inbound-puheluille
+                   </div>
+                   <button
+                     type="button"
+                     onClick={() => {
+                       alert(`Testattaisiin ${voiceOptions.find(v => v.value === inboundVoice)?.label} ääntä`)
+                     }}
+                     style={{
+                       padding: '4px 12px',
+                       fontSize: 12,
+                       background: '#f3f4f6',
+                       border: '1px solid #d1d5db',
+                       borderRadius: 6,
+                       cursor: 'pointer',
+                       color: '#374151'
+                     }}
+                   >
+                     🔊 Testaa
+                   </button>
+                 </div>
+               </div>
+
+               <div style={{ marginBottom: 24 }}>
+                 <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14 }}>
+                   Inbound-skripti
+                 </label>
+                 <textarea
+                   value={inboundScript}
+                   onChange={(e) => setInboundScript(e.target.value)}
+                   placeholder="Kirjoita inbound-puhelujen skripti..."
+                   rows={6}
+                   style={{
+                     width: '100%',
+                     padding: '12px 16px',
+                     border: '1px solid #d1d5db',
+                     borderRadius: 8,
+                     fontSize: 14,
+                     fontFamily: 'inherit',
+                     resize: 'vertical',
+                     minHeight: 100
+                   }}
+                 />
+                 <div style={{ marginTop: 8, fontSize: 12, color: '#6b7280' }}>
+                   Tervehdys ja ohjeistus asiakkaille jotka soittavat sinulle
+                 </div>
+               </div>
+
+               <button
+                 onClick={handleSaveInboundSettings}
+                 style={{
+                   width: '100%',
+                   padding: '12px 24px',
+                   background: '#2563eb',
+                   color: '#fff',
+                   border: 'none',
+                   borderRadius: 8,
+                   cursor: 'pointer',
+                   fontSize: 14,
+                   fontWeight: 600,
+                   display: 'flex',
+                   alignItems: 'center',
+                   justifyContent: 'center',
+                   gap: 8
+                 }}
+               >
+                 💾 Tallenna asetukset
+               </button>
+             </div>
+           </div>
+         </div>
         </div>
-      </div>
-    </>
-  )
-} 
+      </>
+    )
+  } 

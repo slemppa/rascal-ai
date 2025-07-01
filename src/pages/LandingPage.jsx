@@ -255,12 +255,12 @@ export default function LandingPage({ onLogin }) {
 
       {/* Kirjautumismodaali */}
       {showLogin && (
-        <div onClick={() => setShowLogin(false)} style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.25)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <div onClick={e => e.stopPropagation()} style={{background: '#fff', borderRadius: 20, boxShadow: '0 4px 32px rgba(0,0,0,0.18)', border: '1px solid #e1e8ed', padding: 48, maxWidth: 520, width: '95vw', position: 'relative', fontFamily: 'inherit'}}>
-            <button onClick={() => setShowLogin(false)} style={{position: 'absolute', top: 20, right: 20, background: '#f7fafc', border: '1px solid #e1e8ed', borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontWeight: 600, fontSize: 16}}>Sulje</button>
+        <div onClick={() => setShowLogin(false)} style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.25)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px'}}>
+          <div onClick={e => e.stopPropagation()} style={{background: '#fff', borderRadius: 20, boxShadow: '0 4px 32px rgba(0,0,0,0.18)', border: '1px solid #e1e8ed', padding: '32px 24px', maxWidth: 520, width: '100%', position: 'relative', fontFamily: 'inherit'}}>
+            <button onClick={() => setShowLogin(false)} style={{position: 'absolute', top: 16, right: 16, background: '#f7fafc', border: '1px solid #e1e8ed', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontWeight: 600, fontSize: 14}}>Sulje</button>
             <form onSubmit={handleLogin} style={{display: 'flex', flexDirection: 'column', gap: 20}}>
-              <h1 style={{marginBottom: 8, color: 'var(--brand-dark)', fontWeight: 800, fontSize: 28}}>Kirjaudu sisään</h1>
-              <input type="email" placeholder="Sähköposti" value={email} onChange={e => setEmail(e.target.value)} required style={{width: '100%', marginBottom: 0, borderRadius: 12, border: '1px solid #e1e8ed', padding: '16px 18px', fontSize: 17, background: '#f7fafc', color: '#222', outline: 'none', fontFamily: 'inherit'}} />
+              <h1 style={{marginBottom: 8, color: 'var(--brand-dark)', fontWeight: 800, fontSize: 24}}>Kirjaudu sisään</h1>
+              <input type="email" placeholder="Sähköposti" value={email} onChange={e => setEmail(e.target.value)} required style={{width: '100%', marginBottom: 0, borderRadius: 12, border: '1px solid #e1e8ed', padding: '16px 18px', fontSize: 16, background: '#f7fafc', color: '#222', outline: 'none', fontFamily: 'inherit'}} />
               <div style={{position: 'relative'}}>
                 <input 
                   type={showPassword ? 'text' : 'password'} 
@@ -268,7 +268,7 @@ export default function LandingPage({ onLogin }) {
                   value={password} 
                   onChange={e => setPassword(e.target.value)} 
                   required 
-                  style={{width: '100%', marginBottom: 0, borderRadius: 12, border: '1px solid #e1e8ed', padding: '16px 18px', fontSize: 17, background: '#f7fafc', color: '#222', outline: 'none', fontFamily: 'inherit', paddingRight: '50px'}} 
+                  style={{width: '100%', marginBottom: 0, borderRadius: 12, border: '1px solid #e1e8ed', padding: '16px 18px', fontSize: 16, background: '#f7fafc', color: '#222', outline: 'none', fontFamily: 'inherit', paddingRight: '50px'}} 
                 />
                 <button 
                   type="button" 
@@ -288,7 +288,7 @@ export default function LandingPage({ onLogin }) {
                   {showPassword ? '🙈' : '👁️'}
                 </button>
               </div>
-              <button type="submit" disabled={loading} style={{width: '100%', background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 10, padding: '14px 0', fontWeight: 700, fontSize: 19, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.10)', marginTop: 8}}>
+              <button type="submit" disabled={loading} style={{width: '100%', background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 10, padding: '14px 0', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.10)', marginTop: 8}}>
                 {loading ? 'Kirjaudutaan...' : 'Kirjaudu'}
               </button>
               {error && <div style={{color: '#e53e3e', marginTop: 8, fontWeight: 600}}>{error}</div>}
@@ -319,7 +319,7 @@ export default function LandingPage({ onLogin }) {
             gap: 24,
             flexWrap: 'wrap'
           }}>
-            <div style={{flex: 1, minWidth: '300px'}}>
+            <div style={{flex: 1, minWidth: '250px'}}>
               <h3 style={{margin: '0 0 8px 0', fontSize: 18, fontWeight: 700}}>🍪 Evästeet ja tietosuoja</h3>
               <p style={{margin: 0, fontSize: 14, lineHeight: 1.5, color: '#ccc'}}>
                 Käytämme evästeitä parantaaksemme sivuston toimintaa ja käyttökokemusta. 

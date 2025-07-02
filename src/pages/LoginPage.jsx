@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+import supabase from '../../utils/supabase'
 
 export default function LoginPage({ onLogin }) {
   const [email, setEmail] = useState('')
@@ -13,12 +13,16 @@ export default function LoginPage({ onLogin }) {
     setError(null)
     setLoading(true)
     try {
-      const res = await axios.post('/api/login', { email, password })
-      const data = Array.isArray(res.data) ? res.data[0] : res.data
-      if (data && data.token && data.user) {
-        onLogin(data.token, data.user)
+      const { data, error: supaError } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+      if (supaError) {
+        setError(supaError.message || 'Kirjautuminen epäonnistui')
+      } else if (data && data.session && data.user) {
+        onLogin(data.session, data.user)
       } else {
-        setError(data.message || 'Kirjautuminen epäonnistui')
+        setError('Kirjautuminen epäonnistui')
       }
     } catch {
       setError('Virhe palvelinyhteydessä')

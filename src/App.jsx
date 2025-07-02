@@ -14,10 +14,10 @@ import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import CallPanel from './pages/CallPanel'
 import MagicLinkHandler from './components/MagicLinkHandler'
-import SetPasswordForm from './components/SetPasswordForm'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 import TermsOfServicePage from './pages/TermsOfServicePage'
 import { Analytics } from '@vercel/analytics/react'
+import supabase from '../utils/supabase'
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem('token'))
@@ -42,15 +42,6 @@ export default function App() {
   }, [isAuthenticated])
 
   useEffect(() => {
-    const authToken = localStorage.getItem('auth-token')
-    const userEmail = localStorage.getItem('user-email')
-    
-    if (authToken && userEmail && !isAuthenticated) {
-      navigate('/set-password')
-    }
-  }, [isAuthenticated, navigate])
-
-  useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const magicToken = urlParams.get('magic-token')
     
@@ -58,6 +49,32 @@ export default function App() {
       return
     }
   }, [])
+
+  // Kuuntele MagicLinkHandlerin lähettämää login-eventtiä
+  useEffect(() => {
+    const handleSupabaseLogin = () => {
+      setIsAuthenticated(true)
+      const usr = JSON.parse(localStorage.getItem('user') || 'null')
+      setUser(usr)
+      navigate('/dashboard', { replace: true })
+    }
+    window.addEventListener('supabase-login', handleSupabaseLogin)
+    return () => {
+      window.removeEventListener('supabase-login', handleSupabaseLogin)
+    }
+  }, [navigate])
+
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+      setIsAuthenticated(!!s)
+      setUser(s?.user ?? null)
+
+      if (s) {
+        navigate('/dashboard', { replace: true })
+      }
+    })
+    return () => sub.subscription.unsubscribe()
+  }, [navigate])
 
   const fetchDashboardDataAndSet = async () => {
     try {
@@ -161,10 +178,9 @@ export default function App() {
   if (!isAuthenticated) {
     return (
       <Routes>
+        <Route path="/magic" element={<MagicLinkHandler />} />
         <Route path="/magic-link" element={<MagicLinkHandler />} />
         <Route path="/magic-authentication" element={<MagicLinkHandler />} />
-        <Route path="/set-password" element={<SetPasswordForm />} />
-        <Route path="/setpasswordform" element={<SetPasswordForm />} />
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
         <Route path="/terms" element={<TermsOfServicePage />} />
@@ -248,8 +264,6 @@ export default function App() {
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/posts/:id" element={<PostDetailsPage />} />
             <Route path="/calls" element={<CallPanel />} />
-            <Route path="/set-password" element={<SetPasswordForm />} />
-            <Route path="/setpasswordform" element={<SetPasswordForm />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsOfServicePage />} />
             <Route path="*" element={<Navigate to="/dashboard" />} />

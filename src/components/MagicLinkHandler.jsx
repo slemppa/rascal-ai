@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import supabase from '../../utils/supabase'
 
 export default function MagicLinkHandler() {
   const [searchParams] = useSearchParams()
@@ -8,114 +9,39 @@ export default function MagicLinkHandler() {
   const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
-    const handleMagicLink = () => {
-      console.log('MagicLinkHandler: Aloitetaan käsittely')
-      console.log('URL search params:', searchParams.toString())
-      
+    const handleMagicLink = async () => {
       try {
-        // 1. Lue magic-token URL-parametrista
-        const magicToken = searchParams.get('magic-token')
-        console.log('Magic token:', magicToken)
-        
-        if (!magicToken) {
-          console.log('Magic token puuttuu')
+        // Supabasen virallinen OTP-exchange
+        const { data, error } = await supabase.auth.exchangeCodeForSession()
+
+        if (error) {
+          console.error('Supabase exchange error:', error)
           setStatus('error')
-          setErrorMessage('Magic link -token puuttuu')
+          setErrorMessage(error.message)
           return
         }
 
-        // 2. Dekoodaa base64-muodosta
-        let decodedToken
-        try {
-          decodedToken = atob(magicToken)
-          console.log('Dekoodattu token:', decodedToken)
-        } catch (error) {
-          console.log('Base64 dekoodaus epäonnistui:', error)
+        if (!data || !data.session || !data.user) {
           setStatus('error')
-          setErrorMessage('Virheellinen token-muoto')
+          setErrorMessage('Session-tietoja ei saatu magic linkistä')
           return
         }
 
-        // 3. Jaa email ja timestamp
-        let email, timestamp, companyId, assistantId
-        
-        try {
-          // Kokeile ensin JSON-muotoa
-          const tokenData = JSON.parse(decodedToken)
-          email = tokenData.email
-          timestamp = tokenData.exp
-          companyId = tokenData.companyId
-          assistantId = tokenData.assistantId
-          console.log('JSON token käsitelty:', { email, timestamp, companyId, assistantId })
-        } catch (jsonError) {
-          // Jos JSON ei onnistu, kokeile vanhaa muotoa (email|timestamp)
-          const parts = decodedToken.split('|')
-          console.log('Token osat:', parts)
-          
-          if (parts.length !== 2) {
-            console.log('Virheellinen token-rakenne, osia:', parts.length)
-            setStatus('error')
-            setErrorMessage('Virheellinen token-rakenne')
-            return
-          }
-          
-          email = parts[0]
-          timestamp = parseInt(parts[1], 10)
-          console.log('Vanha muoto käsitelty:', { email, timestamp })
-        }
+        // Tallennetaan käyttäjän tiedot localStorageen
+        localStorage.setItem('token', data.session.access_token)
+        localStorage.setItem('user', JSON.stringify({
+          email: data.user.email,
+          id: data.user.id
+        }))
 
-        // Tarkista että email on olemassa
-        if (!email) {
-          console.log('Email puuttuu tokenista')
-          setStatus('error')
-          setErrorMessage('Email puuttuu tokenista')
-          return
-        }
+        // Ilmoita sovellukselle, että login onnistui
+        window.dispatchEvent(new CustomEvent('supabase-login'))
 
-        // Tarkista että timestamp on numero
-        if (isNaN(timestamp)) {
-          console.log('Virheellinen aikaleima:', timestamp)
-          setStatus('error')
-          setErrorMessage('Virheellinen aikaleima')
-          return
-        }
-
-        // 4. Tarkista että timestamp ei ole yli 1 tuntia vanha
-        const now = Date.now()
-        const oneHourInMs = 60 * 60 * 1000 // 1 tunti millisekunteina
-        const timeDiff = now - timestamp
-        console.log('Aikaero:', timeDiff, 'ms, vanhentunut:', timeDiff > oneHourInMs)
-        
-        if (timeDiff > oneHourInMs) {
-          setStatus('error')
-          setErrorMessage('Magic link on vanhentunut (yli 1 tunti vanha)')
-          return
-        }
-
-        // 5. Jos validi, tallenna tiedot localStorageen
-        console.log('Token validi, tallennetaan localStorageen')
-        localStorage.setItem('auth-token', magicToken)
-        localStorage.setItem('user-email', email)
-        
-        // Tallennetaan myös companyId ja assistantId jos ne ovat saatavilla
-        if (companyId) {
-          localStorage.setItem('company-id', companyId)
-        }
-        if (assistantId) {
-          localStorage.setItem('assistant-id', assistantId)
-        }
-        
-        // Aseta status success ja ohjaa salasanan asettamissivulle
         setStatus('success')
-        
-        // Pieni viive ennen ohjaamista, jotta käyttäjä näkee onnistumisviestin
-        setTimeout(() => {
-          console.log('Ohjataan salasanan asettamissivulle')
-          navigate('/set-password')
-        }, 1500)
 
-      } catch (error) {
-        console.error('Odottamaton virhe:', error)
+        // App.jsx huolehtii ohjauksesta onAuthStateChange-kuuntelijalla
+      } catch (err) {
+        console.error('Exchange-käsittelyssä virhe:', err)
         setStatus('error')
         setErrorMessage('Odottamaton virhe magic link -käsittelyssä')
       }
@@ -279,7 +205,7 @@ export default function MagicLinkHandler() {
             fontSize: 17,
             color: '#16a34a',
             lineHeight: 1.5
-          }}>Sinut ohjataan salasanan asettamissivulle...</p>
+          }}>Sinut ohjataan dashboard-sivulle...</p>
         </div>
       </div>
     )

@@ -20,7 +20,22 @@ export default function LoginPage({ onLogin }) {
       if (supaError) {
         setError(supaError.message || 'Kirjautuminen epäonnistui')
       } else if (data && data.session && data.user) {
-        onLogin(data.session, data.user)
+        // Haetaan käyttäjäprofiili users-taulusta
+        const { data: userProfile, error: userProfileError } = await supabase
+          .from('users')
+          .select('id, company_name, assistant_id')
+          .eq('auth_user_id', data.user.id)
+          .single()
+        let userObj = {
+          email: data.user.email,
+          id: data.user.id
+        }
+        if (userProfile && !userProfileError) {
+          userObj.companyId = userProfile.id
+          userObj.companyName = userProfile.company_name
+          userObj.assistantId = userProfile.assistant_id
+        }
+        onLogin(data.session, userObj)
       } else {
         setError('Kirjautuminen epäonnistui')
       }

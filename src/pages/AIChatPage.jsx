@@ -23,6 +23,8 @@ export default function AIChatPage() {
   const [pendingFiles, setPendingFiles] = useState([])
   const [dragActive, setDragActive] = useState(false)
   const dropRef = useRef(null)
+  const [monthlyLimitReached, setMonthlyLimitReached] = useState(false)
+  const [postsThisMonth, setPostsThisMonth] = useState(0)
 
   // Hae companyName, companyId, assistantId localStoragesta
   let companyName = 'Yrityksen';
@@ -50,6 +52,42 @@ export default function AIChatPage() {
       fetchFiles()
     }
   }, [tab])
+
+  // Tarkista kuukausirajoitus
+  useEffect(() => {
+    const checkMonthlyLimit = async () => {
+      try {
+        const companyId = JSON.parse(localStorage.getItem('user') || 'null')?.companyId
+        if (!companyId) return
+
+        const url = `/api/get-posts${companyId ? `?companyId=${companyId}` : ''}`
+        const response = await fetch(url)
+        const data = await response.json()
+        
+        // Oikea datan purku - sama logiikka kuin muissa sivuissa
+        const all = Array.isArray(data?.[0]?.data) ? data[0].data : [];
+        const now = new Date()
+        const currentMonth = now.getMonth()
+        const currentYear = now.getFullYear()
+        
+        const postsThisMonth = all.filter(post => {
+          // Suodata pois slide-tiedostot (joilla on "Slide No." -kenttä)
+          if (post["Slide No."]) return false
+          
+          const date = post["createdTime"] ? new Date(post["createdTime"]) : null
+          return date && date.getMonth() === currentMonth && date.getFullYear() === currentYear
+        }).length
+        
+        const monthlyLimit = 30
+        setPostsThisMonth(postsThisMonth)
+        setMonthlyLimitReached(postsThisMonth >= monthlyLimit)
+      } catch (error) {
+        console.error('Virhe kuukausirajoituksen tarkistuksessa:', error)
+      }
+    }
+    
+    checkMonthlyLimit()
+  }, [])
 
   // Apufunktiot tiedostokoon ja päivämäärän muotoiluun
   function formatBytes(bytes) {
@@ -100,7 +138,7 @@ export default function AIChatPage() {
 
   const handleSendMessage = async (e) => {
     e.preventDefault()
-    if (!input.trim() || loading) return
+    if (!input.trim() || loading || monthlyLimitReached) return
 
     const userMessage = { role: 'user', content: input }
     setMessages(prev => [...prev, userMessage])
@@ -418,6 +456,25 @@ export default function AIChatPage() {
                   })()}
                 </div>
               </div>
+              {/* Kuukausirajoituksen varoitus */}
+              {monthlyLimitReached && (
+                <div style={{
+                  background: '#fef2f2',
+                  border: '1px solid #fecaca',
+                  borderRadius: 8,
+                  padding: '12px 16px',
+                  margin: '0 24px 12px 24px',
+                  color: '#dc2626',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8
+                }}>
+                  ⚠️ Kuukausirajoitus saavutettu ({postsThisMonth}/30). Et voi luoda uusia julkaisuja tässä kuussa.
+                </div>
+              )}
+              
               {/* Syöttökenttä ja uusi keskustelu -ikoni */}
               <form onSubmit={handleSendMessage} style={{
                 height: 'auto',
@@ -436,8 +493,8 @@ export default function AIChatPage() {
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Kirjoita viestisi..."
-                  disabled={loading}
+                  placeholder={monthlyLimitReached ? "Kuukausirajoitus saavutettu" : "Kirjoita viestisi..."}
+                  disabled={loading || monthlyLimitReached}
                   style={{
                     flex: 1,
                     minWidth: '200px',
@@ -446,27 +503,28 @@ export default function AIChatPage() {
                     borderRadius: 8,
                     fontSize: 16,
                     outline: 'none',
-                    margin: 0
+                    margin: 0,
+                    opacity: monthlyLimitReached ? 0.6 : 1
                   }}
                 />
                 <button
                   type="submit"
-                  disabled={loading || !input.trim()}
+                  disabled={loading || !input.trim() || monthlyLimitReached}
                   style={{
                     padding: '12px 24px',
-                    background: '#2563eb',
+                    background: monthlyLimitReached ? '#9ca3af' : '#2563eb',
                     color: '#fff',
                     border: 'none',
                     borderRadius: 8,
-                    cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
-                    opacity: loading || !input.trim() ? 0.6 : 1,
+                    cursor: (loading || !input.trim() || monthlyLimitReached) ? 'not-allowed' : 'pointer',
+                    opacity: (loading || !input.trim() || monthlyLimitReached) ? 0.6 : 1,
                     fontWeight: 600,
                     fontSize: 16,
                     margin: 0,
                     whiteSpace: 'nowrap'
                   }}
                 >
-                  Lähetä
+                  {monthlyLimitReached ? 'Rajoitettu' : 'Lähetä'}
                 </button>
                 <button
                   type="button"

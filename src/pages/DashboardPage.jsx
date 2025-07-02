@@ -227,6 +227,7 @@ export default function DashboardPage() {
   const [dragActiveAudio, setDragActiveAudio] = useState(false)
   const [uploadingAvatar, setUploadingAvatar] = useState(false) // Loading state
   const [avatarError, setAvatarError] = useState('') // Error state
+  const [monthlyLimitData, setMonthlyLimitData] = useState([]) // Kuukausirajoituksen data
   const imagesDropRef = React.useRef(null)
   const audioDropRef = React.useRef(null)
 
@@ -241,7 +242,9 @@ export default function DashboardPage() {
         const url = `/api/get-posts${companyId ? `?companyId=${companyId}` : ''}`
         const response = await fetch(url)
         const data = await response.json()
-        setPosts(Array.isArray(data) ? data : [])
+        // Oikea datan purku - sama logiikka kuin ManagePostsPage:ssä
+        const all = Array.isArray(data?.[0]?.data) ? data[0].data : [];
+        setPosts(all.filter(p => !p["Slide No."]));
       } catch (err) {
         setError('Virhe haettaessa julkaisuja')
       } finally {
@@ -310,6 +313,24 @@ export default function DashboardPage() {
     }
     
     checkAvatarStatus()
+  }, [])
+
+  // Kuukausirajoituksen laskenta - käytetään samaa dataa kuin posts-tilassa
+  React.useEffect(() => {
+    const fetchMonthlyLimitData = async () => {
+      try {
+        const companyId = JSON.parse(localStorage.getItem('user') || 'null')?.companyId
+        const url = `/api/get-posts${companyId ? `?companyId=${companyId}` : ''}`
+        const response = await fetch(url)
+        const data = await response.json()
+        const all = Array.isArray(data?.[0]?.data) ? data[0].data : [];
+        // Suodata pois slide-tiedostot samalla tavalla kuin posts-tilassa
+        setMonthlyLimitData(all.filter(p => !p["Slide No."]))
+      } catch (error) {
+        console.error('Virhe kuukausirajoituksen datan haussa:', error)
+      }
+    }
+    fetchMonthlyLimitData()
   }, [])
 
   const handleSavePost = (updatedPost) => {
@@ -477,6 +498,21 @@ export default function DashboardPage() {
     return date && date > now
   }).sort((a, b) => new Date(a["Publish Date"]) - new Date(b["Publish Date"]))
 
+  // Kuukausirajoituksen laskenta
+  const postsThisMonth = monthlyLimitData.filter(post => {
+    if (!post["createdTime"]) return false
+    
+    const createdDate = new Date(post["createdTime"])
+    const currentDate = new Date()
+    
+    // Vertaa kuukausia ja vuosia paikallisen ajan mukaan
+    return createdDate.getMonth() === currentDate.getMonth() && 
+           createdDate.getFullYear() === currentDate.getFullYear()
+  }).length
+  
+  const monthlyLimit = 30
+  const isMonthlyLimitReached = postsThisMonth >= monthlyLimit
+
   return (
     <>
       <PageHeader title="Kojelauta" />
@@ -507,7 +543,7 @@ export default function DashboardPage() {
             <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Seuraavat 7 päivää</div>
           </div>
 
-          {/* Placeholder-laatikot */}
+          {/* Kuukausirajoitus-kortti */}
           <div style={{ 
             background: '#fff', 
             borderRadius: 16, 
@@ -517,20 +553,37 @@ export default function DashboardPage() {
             ...(isMobile ? {} : {gridColumn: '2', gridRow: '1'})
           }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Julkaisut kuukaudessa</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
-            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tulossa pian</div>
             <div style={{ 
-              position: 'absolute', 
-              top: 8, 
-              right: 8, 
-              fontSize: 12, 
-              color: '#9ca3af',
-              background: '#f3f4f6',
-              padding: '2px 6px',
-              borderRadius: 4
+              fontSize: 32, 
+              fontWeight: 800, 
+              color: isMonthlyLimitReached ? '#dc2626' : '#2563eb', 
+              lineHeight: 1 
             }}>
-              🚧 Dev
+              {postsThisMonth}/{monthlyLimit}
             </div>
+            <div style={{ 
+              color: isMonthlyLimitReached ? '#dc2626' : '#6b7280', 
+              fontSize: 14, 
+              marginTop: 4,
+              fontWeight: isMonthlyLimitReached ? 600 : 400
+            }}>
+              {isMonthlyLimitReached ? 'Raja saavutettu' : `${monthlyLimit - postsThisMonth} jäljellä`}
+            </div>
+            {isMonthlyLimitReached && (
+              <div style={{ 
+                position: 'absolute', 
+                top: 8, 
+                right: 8, 
+                fontSize: 12, 
+                color: '#dc2626',
+                background: '#fef2f2',
+                padding: '2px 6px',
+                borderRadius: 4,
+                fontWeight: 600
+              }}>
+                ⚠️ Raja
+              </div>
+            )}
           </div>
 
           <div style={{ 

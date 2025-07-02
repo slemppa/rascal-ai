@@ -412,6 +412,8 @@ export default function ManagePostsPage() {
   const [typeFilter, setTypeFilter] = useState('')
   const [selectedPost, setSelectedPost] = useState(null)
   const [segments, setSegments] = useState([])
+  const [monthlyLimitReached, setMonthlyLimitReached] = useState(false)
+  const [postsThisMonth, setPostsThisMonth] = useState(0)
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -423,8 +425,26 @@ export default function ManagePostsPage() {
         const response = await axios.get(url)
         // Oikea datan purku
         const all = Array.isArray(response.data?.[0]?.data) ? response.data[0].data : [];
-        setPosts(all.filter(p => !p["Slide No."]));
+        // Suodata vain halutut statukset: Under Review, Scheduled, Done
+        const allowedStatuses = ['Under Review', 'Scheduled', 'Done'];
+        setPosts(all.filter(p => !p["Slide No."] && allowedStatuses.includes(p.Status)));
         setSegments(all.filter(p => p["Slide No."]));
+        
+        // Laske kuukausirajoitus
+        const now = new Date()
+        const currentMonth = now.getMonth()
+        const currentYear = now.getFullYear()
+        const postsThisMonth = all.filter(post => {
+          // Suodata pois slide-tiedostot (joilla on "Slide No." -kenttä)
+          if (post["Slide No."]) return false
+          
+          const date = post["createdTime"] ? new Date(post["createdTime"]) : null
+          return date && date.getMonth() === currentMonth && date.getFullYear() === currentYear
+        }).length
+        
+        const monthlyLimit = 30
+        setPostsThisMonth(postsThisMonth)
+        setMonthlyLimitReached(postsThisMonth >= monthlyLimit)
       } catch (err) {
         setError('Virhe haettaessa julkaisuja')
       } finally {
@@ -454,6 +474,26 @@ export default function ManagePostsPage() {
   return (
     <>
       <PageHeader title="Julkaisujen hallinta" />
+      
+      {/* Kuukausirajoituksen varoitus */}
+      {monthlyLimitReached && (
+        <div style={{
+          background: '#fef2f2',
+          border: '1px solid #fecaca',
+          borderRadius: 8,
+          padding: '16px 20px',
+          margin: '0 32px 24px 32px',
+          color: '#dc2626',
+          fontSize: 14,
+          fontWeight: 500,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8
+        }}>
+          ⚠️ Kuukausirajoitus saavutettu ({postsThisMonth}/30). Et voi luoda uusia julkaisuja tässä kuussa.
+        </div>
+      )}
+      
       <div className={styles.container}>
         {/* Filtteripainikkeet */}
         {!loading && !error && types.length > 0 && (
@@ -520,12 +560,22 @@ export default function ManagePostsPage() {
                       {post["Publish Date"] ? `Julkaistu: ${formatDate(post["Publish Date"])} ` : ''}
                       {post["Slide No."] && `Slide ${post["Slide No."]}`}
                     </span>
-                    <button
-                      onClick={() => setSelectedPost(post)}
-                      className={styles.viewButton}
-                    >
-                      Muokkaa
-                    </button>
+                    {post.Status === 'Scheduled' || post.Status === 'Done' ? (
+                      <span style={{
+                        fontSize: 12,
+                        color: '#6b7280',
+                        fontStyle: 'italic'
+                      }}>
+                        Ei muokattavissa
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => setSelectedPost(post)}
+                        className={styles.viewButton}
+                      >
+                        Muokkaa
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

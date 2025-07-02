@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/slemppa/rascal-ai/compare/v1.6.1...v1.7.0) (2025-07-02)
+
+
+### 🐛 Bug Fixes
+
+* korjattu kuukausirajoituksen laskenta ja ManagePostsPage suodatus ([ea06352](https://github.com/slemppa/rascal-ai/commit/ea06352bfcc6d0eff9e9daa55da71ac0225168ad))
+
+
+### ✨ Features
+
+* Lisätty karusellin ulkoasun valinta asetukset-sivulle ([3344ed7](https://github.com/slemppa/rascal-ai/commit/3344ed72c38ae7a0d836e5b8b37b67d534ff92cf))
+
 ### [1.6.1](https://github.com/slemppa/rascal-ai/compare/v1.6.0...v1.6.1) (2025-07-01)
 
 

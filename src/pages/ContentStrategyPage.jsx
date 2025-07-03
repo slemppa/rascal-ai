@@ -53,6 +53,10 @@ const getStrategy = async (companyId) => {
   return await res.json()
 }
 
+function icpToText(data) {
+  return `Demografia: ${data.demographics.age}\nSijainti: ${data.demographics.location}\nKieli: ${data.demographics.language}\nKoulutus: ${data.demographics.education}\n\nYritys: ${data.business.companySize}\nToimiala: ${data.business.industry}\nLiikevaihto: ${data.business.revenue}\nVaihe: ${data.business.stage}\n\nHaasteet: ${data.painPoints.filter(Boolean).join(', ')}\nTavoitteet: ${data.goals.filter(Boolean).join(', ')}\n\nKäyttäytyminen:\n  Kanavat: ${Array.isArray(data.behavior.channels) ? data.behavior.channels.join(', ') : data.behavior.channels}\n  Sisältö: ${data.behavior.content}\n  Päätöksenteko: ${data.behavior.decision}`.trim();
+}
+
 export default function ContentStrategyPage() {
   const [strategy, setStrategy] = useState([])
   const [loading, setLoading] = useState(true)
@@ -219,7 +223,7 @@ export default function ContentStrategyPage() {
         updateData = editText
         updateType = 'strategy'
       } else if (editType === 'icp') {
-        // Muunnetaan lomaketiedot JSON-muotoon
+        // Muunnetaan lomaketiedot tekstiksi
         const icpData = {
           demographics: icpFormData.demographics,
           business: icpFormData.business,
@@ -230,7 +234,7 @@ export default function ContentStrategyPage() {
             channels: icpFormData.behavior.channels.split(',').map(channel => channel.trim()).filter(channel => channel !== '')
           }
         }
-        updateData = icpData
+        updateData = icpToText(icpData)
         updateType = 'icp'
       } else {
         alert('Virheellinen päivitystyyppi')

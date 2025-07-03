@@ -57,9 +57,10 @@ export default function ContentStrategyPage() {
   const [strategy, setStrategy] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [editId, setEditId] = useState(null)
   const [editText, setEditText] = useState('')
   const [editType, setEditType] = useState('strategy') // 'strategy' tai 'icp'
+  const [showModal, setShowModal] = useState(false)
+  const [editingItem, setEditingItem] = useState(null)
   const textareaRef = React.useRef(null)
 
   useEffect(() => {
@@ -94,53 +95,100 @@ export default function ContentStrategyPage() {
       textareaRef.current.style.height = 'auto'
       textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
     }
-  }, [editText, editId])
+  }, [editText])
+
+  // ESC-näppäimellä modaalin sulkeminen
+  useEffect(() => {
+    const handleEsc = (event) => {
+      if (event.keyCode === 27) {
+        setShowModal(false)
+        setEditingItem(null)
+        setEditText('')
+      }
+    }
+    window.addEventListener('keydown', handleEsc)
+    return () => {
+      window.removeEventListener('keydown', handleEsc)
+    }
+  }, [])
 
   const handleEdit = (item, type = 'strategy') => {
-    setEditId(item.id)
+    setEditingItem(item)
     setEditType(type)
     if (type === 'strategy') {
       setEditText(item.Strategy)
     } else if (type === 'icp') {
       setEditText(JSON.stringify(item.ICP, null, 2))
     }
+    setShowModal(true)
   }
 
   const handleSave = async (item) => {
     try {
-      let updated = { ...item }
+      if (!item.recordId) {
+        alert('Record ID puuttuu - ei voi päivittää')
+        return
+      }
+
+      let updateData
+      let updateType
+
       if (editType === 'strategy') {
-        updated = { ...item, Strategy: editText, updateType: 'strategyUpdate' }
+        updateData = editText
+        updateType = 'strategy'
       } else if (editType === 'icp') {
         try {
           const icpData = JSON.parse(editText)
-          updated = { ...item, ICP: icpData, updateType: 'icpUpdate' }
+          updateData = icpData.summary || editText // Lähetä summary tai koko JSON
+          updateType = 'icp'
         } catch (e) {
           alert('ICP JSON on virheellinen')
           return
         }
+      } else {
+        alert('Virheellinen päivitystyyppi')
+        return
       }
-      
-      // Hae companyId localStoragesta
-      let companyId = null
-      try {
-        const userRaw = JSON.parse(localStorage.getItem('user') || 'null')
-        companyId = userRaw?.companyId || userRaw?.user?.companyId || null
-      } catch (e) {
-        console.warn('Could not parse user from localStorage:', e)
+
+      // Päivitä Airtableen
+      const response = await axios.post('/api/airtable-update', {
+        recordId: item.recordId,
+        type: updateType,
+        data: updateData
+      })
+
+      if (response.data.success) {
+        // Päivitä paikallinen tila
+        let updated = { ...item }
+        if (editType === 'strategy') {
+          updated = { ...item, Strategy: editText }
+        } else if (editType === 'icp') {
+          try {
+            const icpData = JSON.parse(editText)
+            updated = { ...item, ICP: icpData }
+          } catch (e) {
+            // Jos JSON parsing epäonnistui, päivitä vain summary
+            updated = { 
+              ...item, 
+              ICP: { 
+                ...item.ICP, 
+                summary: editText 
+              } 
+            }
+          }
+        }
+        
+        setStrategy(strategy.map(s => s.id === item.id ? updated : s))
+        setShowModal(false)
+        setEditingItem(null)
+        setEditText('')
+        alert('Päivitys onnistui!')
+      } else {
+        alert('Päivitys epäonnistui: ' + response.data.error)
       }
-      
-      // Lisää companyId payloadiin
-      const payload = {
-        ...updated,
-        companyId: companyId
-      }
-      
-      await axios.post('/api/strategy', payload)
-      setStrategy(strategy.map(s => s.id === item.id ? updated : s))
-      setEditId(null)
     } catch (e) {
-      alert('Tallennus epäonnistui')
+      console.error('Päivitysvirhe:', e)
+      alert('Päivitys epäonnistui: ' + (e.response?.data?.error || e.message))
     }
   }
 
@@ -180,131 +228,202 @@ export default function ContentStrategyPage() {
               {/* Strategia-osio - näytetään vain jos on strategia */}
               {item.Strategy && (
                 <div style={{marginBottom: 24}}>
-                  {editId === item.id && editType === 'strategy' ? (
-                    <>
-                      <textarea
-                        ref={textareaRef}
-                        value={editText}
-                        onChange={e => setEditText(e.target.value)}
-                        style={{
-                          width: '100%',
-                          minHeight: 120,
-                          marginBottom: 12,
-                          resize: 'none',
-                          overflow: 'hidden',
-                          fontSize: 14,
-                          lineHeight: 1.5,
-                          borderRadius: 8,
-                          border: '1.5px solid #e1e8ed',
-                          background: '#f7fafc',
-                          padding: '12px 14px',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                      <button onClick={() => handleSave(item)} style={{marginRight: 8, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Tallenna</button>
-                      <button onClick={() => setEditId(null)} style={{background: '#eee', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Peruuta</button>
-                    </>
-                  ) : (
-                    <>
-                      <div style={{marginBottom: 12, whiteSpace: 'pre-line', fontSize: 14, lineHeight: 1.6}}>{item.Strategy}</div>
-                      <button onClick={() => handleEdit(item, 'strategy')} style={{background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Muokkaa strategiaa (ei toiminnassa)</button>
-                    </>
-                  )}
+                  <div style={{marginBottom: 12, whiteSpace: 'pre-line', fontSize: 14, lineHeight: 1.6}}>{item.Strategy}</div>
+                  <button onClick={() => handleEdit(item, 'strategy')} style={{background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 8, padding: '12px 24px', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.10)'}}>Muokkaa strategiaa</button>
                 </div>
               )}
 
-              {/* ICP-osio - näytetään vain jos on ICP */}
+                            {/* ICP-osio - näytetään vain jos on ICP */}
               {item.ICP && (
                 <div>
-                {editId === item.id && editType === 'icp' ? (
-                  <>
-                    <textarea
-                      ref={textareaRef}
-                      value={editText}
-                      onChange={e => setEditText(e.target.value)}
-                      style={{
-                        width: '100%',
-                        minHeight: 200,
-                        marginBottom: 12,
-                        resize: 'none',
-                        overflow: 'hidden',
-                        fontSize: 12,
-                        lineHeight: 1.4,
-                        borderRadius: 8,
-                        border: '1.5px solid #e1e8ed',
-                        background: '#f7fafc',
-                        padding: '12px 14px',
-                        boxSizing: 'border-box',
-                        fontFamily: 'monospace'
-                      }}
-                      placeholder="Syötä ICP JSON-muodossa..."
-                    />
-                    <button onClick={() => handleSave(item)} style={{marginRight: 8, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Tallenna</button>
-                    <button onClick={() => setEditId(null)} style={{background: '#eee', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Peruuta</button>
-                  </>
-                ) : (
-                  <>
-                    {item.ICP ? (
-                      <div style={{fontSize: 14, lineHeight: 1.6}}>
-                        <div style={{marginBottom: 16}}>
-                          <strong>Demografia:</strong>
-                          <div style={{marginLeft: 16, marginTop: 4}}>
-                            <div>• Ikä: {item.ICP.demographics?.age}</div>
-                            <div>• Sijainti: {item.ICP.demographics?.location}</div>
-                            <div>• Kieli: {item.ICP.demographics?.language}</div>
-                            <div>• Koulutus: {item.ICP.demographics?.education}</div>
-                          </div>
-                        </div>
-                        
-                        <div style={{marginBottom: 16}}>
-                          <strong>Yritys:</strong>
-                          <div style={{marginLeft: 16, marginTop: 4}}>
-                            <div>• Koko: {item.ICP.business?.companySize}</div>
-                            <div>• Toimiala: {item.ICP.business?.industry}</div>
-                            <div>• Liikevaihto: {item.ICP.business?.revenue}</div>
-                            <div>• Vaihe: {item.ICP.business?.stage}</div>
-                          </div>
-                        </div>
-                        
-                        <div style={{marginBottom: 16}}>
-                          <strong>Haasteet:</strong>
-                          <div style={{marginLeft: 16, marginTop: 4}}>
-                            {item.ICP.painPoints?.map((point, index) => (
-                              <div key={index}>• {point}</div>
-                            ))}
-                          </div>
-                        </div>
-                        
-                        <div style={{marginBottom: 16}}>
-                          <strong>Tavoitteet:</strong>
-                          <div style={{marginLeft: 16, marginTop: 4}}>
-                            {item.ICP.goals?.map((goal, index) => (
-                              <div key={index}>• {goal}</div>
-                            ))}
-                          </div>
-                        </div>
-                        
-                        <div style={{marginBottom: 16}}>
-                          <strong>Käyttäytyminen:</strong>
-                          <div style={{marginLeft: 16, marginTop: 4}}>
-                            <div>• Kanavat: {item.ICP.behavior?.channels?.join(', ')}</div>
-                            <div>• Sisältö: {item.ICP.behavior?.content}</div>
-                            <div>• Päätöksenteko: {item.ICP.behavior?.decision}</div>
-                          </div>
+                  {item.ICP ? (
+                    <div style={{fontSize: 14, lineHeight: 1.6}}>
+                      <div style={{marginBottom: 16}}>
+                        <strong>Demografia:</strong>
+                        <div style={{marginLeft: 16, marginTop: 4}}>
+                          <div>• Ikä: {item.ICP.demographics?.age}</div>
+                          <div>• Sijainti: {item.ICP.demographics?.location}</div>
+                          <div>• Kieli: {item.ICP.demographics?.language}</div>
+                          <div>• Koulutus: {item.ICP.demographics?.education}</div>
                         </div>
                       </div>
-                    ) : (
-                      <div style={{color: '#6b7280', fontStyle: 'italic'}}>ICP-tietoja ei ole vielä määritelty</div>
-                    )}
-                    <button onClick={() => handleEdit(item, 'icp')} style={{background: '#059669', color: 'white', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Muokkaa ICP:tä (ei toiminnassa)</button>
-                  </>
-                )}
+                      
+                      <div style={{marginBottom: 16}}>
+                        <strong>Yritys:</strong>
+                        <div style={{marginLeft: 16, marginTop: 4}}>
+                          <div>• Koko: {item.ICP.business?.companySize}</div>
+                          <div>• Toimiala: {item.ICP.business?.industry}</div>
+                          <div>• Liikevaihto: {item.ICP.business?.revenue}</div>
+                          <div>• Vaihe: {item.ICP.business?.stage}</div>
+                        </div>
+                      </div>
+                      
+                      <div style={{marginBottom: 16}}>
+                        <strong>Haasteet:</strong>
+                        <div style={{marginLeft: 16, marginTop: 4}}>
+                          {item.ICP.painPoints?.map((point, index) => (
+                            <div key={index}>• {point}</div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div style={{marginBottom: 16}}>
+                        <strong>Tavoitteet:</strong>
+                        <div style={{marginLeft: 16, marginTop: 4}}>
+                          {item.ICP.goals?.map((goal, index) => (
+                            <div key={index}>• {goal}</div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div style={{marginBottom: 16}}>
+                        <strong>Käyttäytyminen:</strong>
+                        <div style={{marginLeft: 16, marginTop: 4}}>
+                          <div>• Kanavat: {item.ICP.behavior?.channels?.join(', ')}</div>
+                          <div>• Sisältö: {item.ICP.behavior?.content}</div>
+                          <div>• Päätöksenteko: {item.ICP.behavior?.decision}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{color: '#6b7280', fontStyle: 'italic'}}>ICP-tietoja ei ole vielä määritelty</div>
+                  )}
+                  <button onClick={() => handleEdit(item, 'icp')} style={{background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 8, padding: '12px 24px', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.10)'}}>Muokkaa ICP:tä</button>
                 </div>
               )}
             </div>
           ))}
         </div>
       </div>
+
+      {/* Muokkausmodaali */}
+      {showModal && editingItem && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}
+          onClick={() => {
+            setShowModal(false)
+            setEditingItem(null)
+            setEditText('')
+          }}
+        >
+          <div 
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 12,
+              padding: 24,
+              maxWidth: '80%',
+              maxHeight: '80%',
+              width: '600px',
+              overflow: 'auto',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 20,
+              borderBottom: '1px solid #e5e7eb',
+              paddingBottom: 16
+            }}>
+              <h3 style={{margin: 0, fontSize: 18, fontWeight: 600}}>
+                Muokkaa {editType === 'strategy' ? 'strategiaa' : 'ICP:tä'}
+              </h3>
+              <button 
+                onClick={() => {
+                  setShowModal(false)
+                  setEditingItem(null)
+                  setEditText('')
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: 24,
+                  cursor: 'pointer',
+                  color: '#6b7280'
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{marginBottom: 20}}>
+              <textarea
+                ref={textareaRef}
+                value={editText}
+                onChange={e => setEditText(e.target.value)}
+                style={{
+                  width: '100%',
+                  minHeight: editType === 'strategy' ? 200 : 300,
+                  resize: 'vertical',
+                  fontSize: editType === 'strategy' ? 14 : 12,
+                  lineHeight: 1.5,
+                  borderRadius: 8,
+                  border: '1.5px solid #e1e8ed',
+                  background: '#f7fafc',
+                  padding: '12px 14px',
+                  boxSizing: 'border-box',
+                  fontFamily: editType === 'strategy' ? 'inherit' : 'monospace'
+                }}
+                placeholder={editType === 'strategy' ? 'Syötä strategia...' : 'Syötä ICP JSON-muodossa...'}
+              />
+            </div>
+
+            <div style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: 12
+            }}>
+              <button 
+                onClick={() => {
+                  setShowModal(false)
+                  setEditingItem(null)
+                  setEditText('')
+                }}
+                style={{
+                  background: '#f3f4f6',
+                  color: '#374151',
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '12px 24px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.10)'
+                }}
+              >
+                Peruuta
+              </button>
+              <button 
+                onClick={() => handleSave(editingItem)}
+                style={{
+                  background: 'var(--brand-green)',
+                  color: 'var(--brand-black)',
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '12px 24px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.10)'
+                }}
+              >
+                Tallenna
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 } 

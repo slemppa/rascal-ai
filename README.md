@@ -75,6 +75,7 @@ N8N_UPDATE_POST_URL=https://your-n8n-instance.com/webhook/your-update-post-webho
 N8N_STRATEGY_URL=https://your-n8n-instance.com/webhook/your-strategy-webhook-id
 N8N_VECTOR_STORE_FILES_URL=https://your-n8n-instance.com/webhook/your-vector-store-webhook-id
 N8N_KNOWLEDGE_WEBHOOK_URL=https://your-n8n-instance.com/webhook/your-knowledge-upload-webhook-id
+AIRTABLE_API_KEY=your-airtable-api-key-here
 ```
 
 ### Tarvittavat endpointit

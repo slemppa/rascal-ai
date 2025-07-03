@@ -40,17 +40,18 @@ export default async function handler(req, res) {
       const transformedData = []
       
       webhookData.forEach((item, index) => {
-        const strategy = item.Strategies?.[0] || {}
-        const icpSummary = item.ICP_Summary?.[0] || ''
-        const month = strategy.month || 'Kesäkuu'
+        const body = item.body?.[0] || {}
+        const icp = body.icp || {}
+        const strategies = body.strategies || []
         const timestamp = Date.now()
         
         // ICP-kortti
-        if (icpSummary) {
+        if (icp.summary) {
           transformedData.push({
-            id: `icp_${timestamp}_${index}`,
+            id: icp.companyId || `icp_${timestamp}_${index}`, // Käytä alkuperäistä recordId:tä
+            recordId: icp.companyId, // Säilytä recordId päivitystä varten
             createdTime: new Date().toISOString(),
-            Month: month,
+            Month: strategies[0]?.month || 'Kesäkuu',
             Companies: companyId ? [companyId] : [],
             Strategy: '', // Tyhjä strategia ICP-kortissa
             ICP: {
@@ -83,22 +84,25 @@ export default async function handler(req, res) {
                 content: 'Käytännölliset oppaat ja case studyt',
                 decision: 'Todisteet ja tulokset ovat tärkeitä'
               },
-              summary: icpSummary
+              summary: icp.summary
             }
           })
         }
         
         // Strategy-kortti
-        if (strategy.text) {
-          transformedData.push({
-            id: `strategy_${timestamp}_${index}`,
-            createdTime: new Date().toISOString(),
-            Month: month,
-            Companies: companyId ? [companyId] : [],
-            Strategy: strategy.text,
-            ICP: null // Ei ICP:tä strategy-kortissa
-          })
-        }
+        strategies.forEach(strategy => {
+          if (strategy.text) {
+            transformedData.push({
+              id: strategy.id || `strategy_${timestamp}_${index}`, // Käytä alkuperäistä recordId:tä
+              recordId: strategy.id, // Säilytä recordId päivitystä varten
+              createdTime: new Date().toISOString(),
+              Month: strategy.month || 'Kesäkuu',
+              Companies: companyId ? [companyId] : [],
+              Strategy: strategy.text,
+              ICP: null // Ei ICP:tä strategy-kortissa
+            })
+          }
+        })
       })
       
       console.log('Transformed data:', transformedData)

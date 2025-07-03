@@ -54,7 +54,13 @@ const getStrategy = async (companyId) => {
 }
 
 function icpToText(data) {
-  return `Demografia: ${data.demographics.age}\nSijainti: ${data.demographics.location}\nKieli: ${data.demographics.language}\nKoulutus: ${data.demographics.education}\n\nYritys: ${data.business.companySize}\nToimiala: ${data.business.industry}\nLiikevaihto: ${data.business.revenue}\nVaihe: ${data.business.stage}\n\nHaasteet: ${data.painPoints.filter(Boolean).join(', ')}\nTavoitteet: ${data.goals.filter(Boolean).join(', ')}\n\nKäyttäytyminen:\n  Kanavat: ${Array.isArray(data.behavior.channels) ? data.behavior.channels.join(', ') : data.behavior.channels}\n  Sisältö: ${data.behavior.content}\n  Päätöksenteko: ${data.behavior.decision}`.trim();
+  const demographics = `Ikä: ${data.demographics.age}, Sijainti: ${data.demographics.location}, Kieli: ${data.demographics.language}, Koulutus: ${data.demographics.education}`;
+  const business = `Yrityksen koko: ${data.business.companySize}, Toimiala: ${data.business.industry}, Liikevaihto: ${data.business.revenue}, Vaihe: ${data.business.stage}`;
+  const painPoints = data.painPoints.filter(Boolean).join(', ');
+  const goals = data.goals.filter(Boolean).join(', ');
+  const behavior = `Kanavat: ${Array.isArray(data.behavior.channels) ? data.behavior.channels.join(', ') : data.behavior.channels}, Sisältö: ${data.behavior.content}, Päätöksenteko: ${data.behavior.decision}`;
+  
+  return `Demografia: ${demographics}. Yritys: ${business}. Haasteet: ${painPoints}. Tavoitteet: ${goals}. Käyttäytyminen: ${behavior}`;
 }
 
 export default function ContentStrategyPage() {

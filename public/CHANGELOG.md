@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.0](https://github.com/slemppa/rascal-ai/compare/v1.10.0...v1.13.0) (2025-07-03)
+
+
+### ✨ Features
+
+* muunna ICP-lomakkeen data tekstiksi ennen Airtableen tallennusta ([089ea3f](https://github.com/slemppa/rascal-ai/commit/089ea3f91cd5e4db2da854a8f9cbf3854dc1ff49))
+* täydennetty changelog kaikilla puuttuvilla versioilla ([293c340](https://github.com/slemppa/rascal-ai/commit/293c34094f1914e6f76be22c89979f36b304cdb4))
+
+
+### 🐛 Bug Fixes
+
+* yksinkertaista ICP-datan muotoilu yhdeksi stringiksi ([4d9388e](https://github.com/slemppa/rascal-ai/commit/4d9388e9dc6c3fccb1b699ea484ee820e59e1bb4))
+
 ## [1.12.0] - 2025-07-03
 
 ### ✨ Features

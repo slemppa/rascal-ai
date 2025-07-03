@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/slemppa/rascal-ai/compare/v1.7.0...v1.8.0) (2025-07-03)
+
+
+### ✨ Features
+
+* korjattu strategy API ja bento grid ContentStrategyPage ([e64b698](https://github.com/slemppa/rascal-ai/commit/e64b698b8eb1e7e36711eb89bd60472b165c9ae7))
+
 ## [1.7.0](https://github.com/slemppa/rascal-ai/compare/v1.6.1...v1.7.0) (2025-07-02)
 
 

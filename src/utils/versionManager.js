@@ -1,5 +1,5 @@
 // Versionhallinta-utility
-const CURRENT_VERSION = '1.7.0' // Tämä päivittyy automaattisesti package.json:sta
+const CURRENT_VERSION = '1.9.0' // Tämä päivittyy automaattisesti package.json:sta
 
 // Testausta varten - poista tämä tuotannossa
 const FORCE_SHOW_UPDATE = true // Aseta true:ksi testataksesi popupia

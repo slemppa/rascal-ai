@@ -1,5 +1,4 @@
 import React from 'react'
-import VersionInfo from '../components/VersionInfo'
 import PageHeader from '../components/PageHeader'
 import CarouselTemplateSelector from '../components/CarouselTemplateSelector'
 
@@ -32,108 +31,148 @@ export default function SettingsPage() {
   return (
     <>
       <PageHeader title="Asetukset" />
-      <div style={{padding: 32}}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 32,
-          marginBottom: 32,
-          alignItems: 'start'
-        }}>
-          <div>
-            <div style={{background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32, marginBottom: 24}}>
-              <h2 style={{margin: '0 0 24px 0', fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Käyttäjätiedot</h2>
-              <div style={{display: 'grid', gap: 20}}>
-                <div>
-                  <label style={{display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14}}>Nimi</label>
-                  <input type="text" value={name || ''} readOnly style={{
-                    width: '100%', 
-                    padding: '12px 16px', 
-                    border: '1px solid #d1d5db', 
-                    borderRadius: 8, 
-                    fontSize: 14,
-                    background: '#f9fafb',
-                    color: '#6b7280'
-                  }} />
-                </div>
-                <div>
-                  <label style={{display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14}}>Sähköposti</label>
-                  <input type="email" value={email || ''} readOnly style={{
-                    width: '100%', 
-                    padding: '12px 16px', 
-                    border: '1px solid #d1d5db', 
-                    borderRadius: 8, 
-                    fontSize: 14,
-                    background: '#f9fafb',
-                    color: '#6b7280'
-                  }} />
-                </div>
-                <div>
-                  <label style={{display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14}}>Yritys</label>
-                  <input type="text" value={companyName || ''} readOnly style={{
-                    width: '100%', 
-                    padding: '12px 16px', 
-                    border: '1px solid #d1d5db', 
-                    borderRadius: 8, 
-                    fontSize: 14,
-                    background: '#f9fafb',
-                    color: '#6b7280'
-                  }} />
-                </div>
+      <div className="bento-container">
+        <div className="bento-grid">
+          {/* Vasen sarake - 1/3 */}
+          <div className="bento-column-left">
+            <div className="bento-card">
+              <h2>Käyttäjätiedot</h2>
+              <div className="form-group">
+                <label>Nimi</label>
+                <input type="text" value={name || ''} readOnly className="form-input readonly" />
+              </div>
+              <div className="form-group">
+                <label>Sähköposti</label>
+                <input type="email" value={email || ''} readOnly className="form-input readonly" />
+              </div>
+              <div className="form-group">
+                <label>Yritys</label>
+                <input type="text" value={companyName || ''} readOnly className="form-input readonly" />
               </div>
             </div>
-            <div style={{background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32, marginBottom: 24}}>
-              <h2 style={{margin: '0 0 24px 0', fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Tekniset tiedot</h2>
-              <div style={{display: 'grid', gap: 20}}>
-                <div>
-                  <label style={{display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14}}>Company ID</label>
-                  <input type="text" value={companyId || ''} readOnly style={{
-                    width: '100%', 
-                    padding: '12px 16px', 
-                    border: '1px solid #d1d5db', 
-                    borderRadius: 8, 
-                    fontSize: 14,
-                    background: '#f9fafb',
-                    color: '#6b7280',
-                    fontFamily: 'monospace'
-                  }} />
-                </div>
-                <div>
-                  <label style={{display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14}}>Assistant ID</label>
-                  <input type="text" value={assistantId || ''} readOnly style={{
-                    width: '100%', 
-                    padding: '12px 16px', 
-                    border: '1px solid #d1d5db', 
-                    borderRadius: 8, 
-                    fontSize: 14,
-                    background: '#f9fafb',
-                    color: '#6b7280',
-                    fontFamily: 'monospace'
-                  }} />
-                </div>
-                <div>
-                  <label style={{display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14}}>Token vanhenee</label>
-                  <input type="text" value={exp ? new Date(exp * 1000).toLocaleString('fi-FI') : ''} readOnly style={{
-                    width: '100%', 
-                    padding: '12px 16px', 
-                    border: '1px solid #d1d5db', 
-                    borderRadius: 8, 
-                    fontSize: 14,
-                    background: '#f9fafb',
-                    color: '#6b7280'
-                  }} />
-                </div>
+            
+            <div className="bento-card">
+              <h2>Tekniset tiedot</h2>
+              <div className="form-group">
+                <label>Company ID</label>
+                <input type="text" value={companyId || ''} readOnly className="form-input readonly" style={{fontFamily: 'monospace'}} />
+              </div>
+              <div className="form-group">
+                <label>Assistant ID</label>
+                <input type="text" value={assistantId || ''} readOnly className="form-input readonly" style={{fontFamily: 'monospace'}} />
+              </div>
+              <div className="form-group">
+                <label>Token vanhenee</label>
+                <input type="text" value={exp ? new Date(exp * 1000).toLocaleString('fi-FI') : ''} readOnly className="form-input readonly" />
               </div>
             </div>
-            <div style={{background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32}}>
-              <VersionInfo />
-            </div>
+            
+            
           </div>
-          <div style={{background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32}}>
-            <CarouselTemplateSelector />
+          
+          {/* Oikea sarake - 2/3 */}
+          <div className="bento-column-right">
+            <div className="bento-card">
+              <CarouselTemplateSelector />
+            </div>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .bento-container {
+          padding: 32px;
+          max-width: 1400px;
+          margin: 0 auto;
+        }
+
+        .bento-grid {
+          display: grid;
+          grid-template-columns: 1fr 2fr;
+          gap: 32px;
+          align-items: start;
+        }
+
+        .bento-column-left {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+
+        .bento-column-right {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+
+        .bento-card {
+          background: #fff;
+          border-radius: 16px;
+          padding: 24px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+          border: 1px solid #e5e7eb;
+        }
+
+        .bento-card h2 {
+          margin: 0 0 20px 0;
+          font-size: 18px;
+          font-weight: 600;
+          color: #1f2937;
+        }
+
+        .form-group {
+          margin-bottom: 16px;
+        }
+
+        .form-group:last-child {
+          margin-bottom: 0;
+        }
+
+        .form-group label {
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 600;
+          color: #374151;
+          font-size: 14px;
+        }
+
+        .form-input {
+          width: 100%;
+          padding: 12px 16px;
+          border: 1px solid #d1d5db;
+          border-radius: 8px;
+          font-size: 14px;
+          box-sizing: border-box;
+        }
+
+        .form-input.readonly {
+          background: #f9fafb;
+          color: #6b7280;
+        }
+
+
+
+        @media (max-width: 1024px) {
+          .bento-grid {
+            grid-template-columns: 1fr;
+            gap: 24px;
+          }
+          
+          .bento-container {
+            padding: 24px;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .bento-container {
+            padding: 16px;
+          }
+          
+          .bento-card {
+            padding: 20px;
+          }
+        }
+      `}</style>
     </>
   )
 } 

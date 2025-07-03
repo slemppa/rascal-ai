@@ -47,7 +47,7 @@ export default function CarouselTemplateSelector() {
     }
   };
 
-  return (
+    return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: 24 }}>
       <h2 style={{ marginBottom: 24 }}>Valitse karusellin ulkoasu</h2>
       <div style={{ display: 'flex', gap: 32, marginBottom: 32, justifyContent: 'center', flexWrap: 'wrap' }}>

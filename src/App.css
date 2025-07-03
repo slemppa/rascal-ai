@@ -93,6 +93,47 @@ html, body, #root {
   font-size: 1.1rem;
 }
 
+/* Sidebar footer styles */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-menu {
+  flex: 1;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 16px;
+}
+
+.logout-section {
+  margin-bottom: 12px;
+}
+
+.logout-button {
+  width: 100%;
+  background: #fff;
+  color: var(--brand-dark);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 0;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+  background: #f8fafc;
+}
+
+.version-section {
+  text-align: center;
+}
+
 /* Pääsisältö */
 .main-content {
   flex: 1 1 0;

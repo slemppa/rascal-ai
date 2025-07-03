@@ -17,7 +17,10 @@ import MagicLinkHandler from './components/MagicLinkHandler'
 import SetPasswordForm from './components/SetPasswordForm'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 import TermsOfServicePage from './pages/TermsOfServicePage'
+import VersionUpdateModal from './components/VersionUpdateModal'
+import VersionInfo from './components/VersionInfo'
 import { Analytics } from '@vercel/analytics/react'
+import { parseChangelog, shouldShowVersionUpdate, markVersionAsShown } from './utils/versionManager'
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem('token'))
@@ -34,6 +37,10 @@ export default function App() {
   const location = useLocation()
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  
+  // Versionhallinta-tilat
+  const [showVersionUpdate, setShowVersionUpdate] = useState(false)
+  const [versionData, setVersionData] = useState({ version: '', changes: [] })
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -141,7 +148,30 @@ export default function App() {
     setUser(user)
     localStorage.setItem('token', token)
     localStorage.setItem('user', JSON.stringify(user))
+    
+    // Tarkista version päivitys sisäänkirjautumisen jälkeen
+    checkVersionUpdate()
+    
     navigate('/dashboard')
+  }
+
+  // Tarkistaa onko näytettävä version päivitys
+  const checkVersionUpdate = async () => {
+    if (shouldShowVersionUpdate()) {
+      try {
+        const data = await parseChangelog()
+        setVersionData(data)
+        setShowVersionUpdate(true)
+      } catch (error) {
+        console.warn('Version update check failed:', error)
+      }
+    }
+  }
+
+  // Sulkee version päivitys popupin
+  const handleVersionUpdateClose = () => {
+    setShowVersionUpdate(false)
+    markVersionAsShown()
   }
 
   const handleLogout = () => {
@@ -174,7 +204,8 @@ export default function App() {
   }
 
   return (
-    <div className="app">
+    <>
+      <div className="app">
       {/* Vasen sivupalkki */}
       <nav className="sidebar" style={{position: 'fixed', left: 0, top: 0, width: '250px', height: '100vh', zIndex: 20}}>
         <div className="sidebar-header" style={{display: 'flex', alignItems: 'center', gap: 12}}>
@@ -201,8 +232,15 @@ export default function App() {
             <Link to="/settings" className={`nav-link${location.pathname === '/settings' ? ' active' : ''}`}><span className="nav-icon">⚙️</span>Asetukset</Link>
           </li>
         </ul>
-        <div style={{padding: 16, borderTop: '1px solid rgba(255,255,255,0.1)'}}>
-          <button onClick={handleLogout} style={{width: '100%', background: '#fff', color: 'var(--brand-dark)', border: 'none', borderRadius: 6, padding: '10px 0', fontWeight: 600, fontSize: 16, cursor: 'pointer'}}>Kirjaudu ulos</button>
+        
+        {/* Sidebar footer */}
+        <div className="sidebar-footer">
+          <div className="logout-section">
+            <button onClick={handleLogout} className="logout-button">Kirjaudu ulos</button>
+          </div>
+          <div className="version-section">
+            <VersionInfo />
+          </div>
         </div>
       </nav>
 
@@ -256,7 +294,17 @@ export default function App() {
           </Routes>
         </div>
       </div>
+      
+      {/* Version päivitys popup */}
+      <VersionUpdateModal
+        isOpen={showVersionUpdate}
+        onClose={handleVersionUpdateClose}
+        version={versionData.version}
+        changes={versionData.changes}
+      />
+      
       <Analytics />
     </div>
+    </>
   )
 }

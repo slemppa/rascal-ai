@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/slemppa/rascal-ai/compare/v1.99.0...v1.10.0) (2025-07-03)
+
+
+### ✨ Features
+
+* muutettu ICP-muokkaus käyttäjäystävälliseksi lomakkeeksi ([8bee331](https://github.com/slemppa/rascal-ai/commit/8bee33121ef5984c4d453b52de57a2645428cac2))
+
 ## [1.105.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.105.0) (2025-07-03)
 
 

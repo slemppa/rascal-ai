@@ -2,6 +2,5994 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.105.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.105.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+## [1.104.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.104.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.100.0 ([f64a442](https://github.com/slemppa/rascal-ai/commit/f64a442e8f15eb2ff795ae237bbda87a731c0d9b))
+* **release:** 1.101.0 ([8a328bf](https://github.com/slemppa/rascal-ai/commit/8a328bf6356bb8b3e042efc5fc89ee7a3d0fb73c))
+* **release:** 1.102.0 ([e382cb1](https://github.com/slemppa/rascal-ai/commit/e382cb1e4468cfb351cdb065e4abba262378f53d))
+* **release:** 1.103.0 ([478b68a](https://github.com/slemppa/rascal-ai/commit/478b68a930528cdd12b3a4000d9465349cf56fa8))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+* **release:** 1.90.0 ([4732eb1](https://github.com/slemppa/rascal-ai/commit/4732eb132fc00b0e59fbcbbdf4fbf3f214008024))
+* **release:** 1.91.0 ([4eab854](https://github.com/slemppa/rascal-ai/commit/4eab854553fc59ad72ba075a10c20f538d0ae259))
+* **release:** 1.92.0 ([c4470d0](https://github.com/slemppa/rascal-ai/commit/c4470d0aefc45d48607acdbcd2c982787d230b3b))
+* **release:** 1.93.0 ([33fe20f](https://github.com/slemppa/rascal-ai/commit/33fe20fc4e1e47d6afb8c900ef9ff4bd7e2c150e))
+* **release:** 1.94.0 ([a0948c8](https://github.com/slemppa/rascal-ai/commit/a0948c87d06b41c72819d99c9695abd1a6068894))
+* **release:** 1.95.0 ([a43842e](https://github.com/slemppa/rascal-ai/commit/a43842ecc746c7d2841965591263dfde9c3389ac))
+* **release:** 1.96.0 ([819107e](https://github.com/slemppa/rascal-ai/commit/819107efa01910bb8da79d59ed929c0816d2b6a6))
+* **release:** 1.97.0 ([e2e8262](https://github.com/slemppa/rascal-ai/commit/e2e826295024bdb7d418331c2cb233853eeb803a))
+* **release:** 1.98.0 ([2e22e8e](https://github.com/slemppa/rascal-ai/commit/2e22e8e9e23c4943e3941519ca2bc325fcc78d03))
+* **release:** 1.99.0 ([0f57483](https://github.com/slemppa/rascal-ai/commit/0f5748351d25696fb3011f9562fe244e99fa0d30))
+
+## [1.103.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.103.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.100.0 ([f64a442](https://github.com/slemppa/rascal-ai/commit/f64a442e8f15eb2ff795ae237bbda87a731c0d9b))
+* **release:** 1.101.0 ([8a328bf](https://github.com/slemppa/rascal-ai/commit/8a328bf6356bb8b3e042efc5fc89ee7a3d0fb73c))
+* **release:** 1.102.0 ([e382cb1](https://github.com/slemppa/rascal-ai/commit/e382cb1e4468cfb351cdb065e4abba262378f53d))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+* **release:** 1.90.0 ([4732eb1](https://github.com/slemppa/rascal-ai/commit/4732eb132fc00b0e59fbcbbdf4fbf3f214008024))
+* **release:** 1.91.0 ([4eab854](https://github.com/slemppa/rascal-ai/commit/4eab854553fc59ad72ba075a10c20f538d0ae259))
+* **release:** 1.92.0 ([c4470d0](https://github.com/slemppa/rascal-ai/commit/c4470d0aefc45d48607acdbcd2c982787d230b3b))
+* **release:** 1.93.0 ([33fe20f](https://github.com/slemppa/rascal-ai/commit/33fe20fc4e1e47d6afb8c900ef9ff4bd7e2c150e))
+* **release:** 1.94.0 ([a0948c8](https://github.com/slemppa/rascal-ai/commit/a0948c87d06b41c72819d99c9695abd1a6068894))
+* **release:** 1.95.0 ([a43842e](https://github.com/slemppa/rascal-ai/commit/a43842ecc746c7d2841965591263dfde9c3389ac))
+* **release:** 1.96.0 ([819107e](https://github.com/slemppa/rascal-ai/commit/819107efa01910bb8da79d59ed929c0816d2b6a6))
+* **release:** 1.97.0 ([e2e8262](https://github.com/slemppa/rascal-ai/commit/e2e826295024bdb7d418331c2cb233853eeb803a))
+* **release:** 1.98.0 ([2e22e8e](https://github.com/slemppa/rascal-ai/commit/2e22e8e9e23c4943e3941519ca2bc325fcc78d03))
+* **release:** 1.99.0 ([0f57483](https://github.com/slemppa/rascal-ai/commit/0f5748351d25696fb3011f9562fe244e99fa0d30))
+
+## [1.102.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.102.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.100.0 ([f64a442](https://github.com/slemppa/rascal-ai/commit/f64a442e8f15eb2ff795ae237bbda87a731c0d9b))
+* **release:** 1.101.0 ([8a328bf](https://github.com/slemppa/rascal-ai/commit/8a328bf6356bb8b3e042efc5fc89ee7a3d0fb73c))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+* **release:** 1.90.0 ([4732eb1](https://github.com/slemppa/rascal-ai/commit/4732eb132fc00b0e59fbcbbdf4fbf3f214008024))
+* **release:** 1.91.0 ([4eab854](https://github.com/slemppa/rascal-ai/commit/4eab854553fc59ad72ba075a10c20f538d0ae259))
+* **release:** 1.92.0 ([c4470d0](https://github.com/slemppa/rascal-ai/commit/c4470d0aefc45d48607acdbcd2c982787d230b3b))
+* **release:** 1.93.0 ([33fe20f](https://github.com/slemppa/rascal-ai/commit/33fe20fc4e1e47d6afb8c900ef9ff4bd7e2c150e))
+* **release:** 1.94.0 ([a0948c8](https://github.com/slemppa/rascal-ai/commit/a0948c87d06b41c72819d99c9695abd1a6068894))
+* **release:** 1.95.0 ([a43842e](https://github.com/slemppa/rascal-ai/commit/a43842ecc746c7d2841965591263dfde9c3389ac))
+* **release:** 1.96.0 ([819107e](https://github.com/slemppa/rascal-ai/commit/819107efa01910bb8da79d59ed929c0816d2b6a6))
+* **release:** 1.97.0 ([e2e8262](https://github.com/slemppa/rascal-ai/commit/e2e826295024bdb7d418331c2cb233853eeb803a))
+* **release:** 1.98.0 ([2e22e8e](https://github.com/slemppa/rascal-ai/commit/2e22e8e9e23c4943e3941519ca2bc325fcc78d03))
+* **release:** 1.99.0 ([0f57483](https://github.com/slemppa/rascal-ai/commit/0f5748351d25696fb3011f9562fe244e99fa0d30))
+
+## [1.101.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.101.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.100.0 ([f64a442](https://github.com/slemppa/rascal-ai/commit/f64a442e8f15eb2ff795ae237bbda87a731c0d9b))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+* **release:** 1.90.0 ([4732eb1](https://github.com/slemppa/rascal-ai/commit/4732eb132fc00b0e59fbcbbdf4fbf3f214008024))
+* **release:** 1.91.0 ([4eab854](https://github.com/slemppa/rascal-ai/commit/4eab854553fc59ad72ba075a10c20f538d0ae259))
+* **release:** 1.92.0 ([c4470d0](https://github.com/slemppa/rascal-ai/commit/c4470d0aefc45d48607acdbcd2c982787d230b3b))
+* **release:** 1.93.0 ([33fe20f](https://github.com/slemppa/rascal-ai/commit/33fe20fc4e1e47d6afb8c900ef9ff4bd7e2c150e))
+* **release:** 1.94.0 ([a0948c8](https://github.com/slemppa/rascal-ai/commit/a0948c87d06b41c72819d99c9695abd1a6068894))
+* **release:** 1.95.0 ([a43842e](https://github.com/slemppa/rascal-ai/commit/a43842ecc746c7d2841965591263dfde9c3389ac))
+* **release:** 1.96.0 ([819107e](https://github.com/slemppa/rascal-ai/commit/819107efa01910bb8da79d59ed929c0816d2b6a6))
+* **release:** 1.97.0 ([e2e8262](https://github.com/slemppa/rascal-ai/commit/e2e826295024bdb7d418331c2cb233853eeb803a))
+* **release:** 1.98.0 ([2e22e8e](https://github.com/slemppa/rascal-ai/commit/2e22e8e9e23c4943e3941519ca2bc325fcc78d03))
+* **release:** 1.99.0 ([0f57483](https://github.com/slemppa/rascal-ai/commit/0f5748351d25696fb3011f9562fe244e99fa0d30))
+
+## [1.100.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.100.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+* **release:** 1.90.0 ([4732eb1](https://github.com/slemppa/rascal-ai/commit/4732eb132fc00b0e59fbcbbdf4fbf3f214008024))
+* **release:** 1.91.0 ([4eab854](https://github.com/slemppa/rascal-ai/commit/4eab854553fc59ad72ba075a10c20f538d0ae259))
+* **release:** 1.92.0 ([c4470d0](https://github.com/slemppa/rascal-ai/commit/c4470d0aefc45d48607acdbcd2c982787d230b3b))
+* **release:** 1.93.0 ([33fe20f](https://github.com/slemppa/rascal-ai/commit/33fe20fc4e1e47d6afb8c900ef9ff4bd7e2c150e))
+* **release:** 1.94.0 ([a0948c8](https://github.com/slemppa/rascal-ai/commit/a0948c87d06b41c72819d99c9695abd1a6068894))
+* **release:** 1.95.0 ([a43842e](https://github.com/slemppa/rascal-ai/commit/a43842ecc746c7d2841965591263dfde9c3389ac))
+* **release:** 1.96.0 ([819107e](https://github.com/slemppa/rascal-ai/commit/819107efa01910bb8da79d59ed929c0816d2b6a6))
+* **release:** 1.97.0 ([e2e8262](https://github.com/slemppa/rascal-ai/commit/e2e826295024bdb7d418331c2cb233853eeb803a))
+* **release:** 1.98.0 ([2e22e8e](https://github.com/slemppa/rascal-ai/commit/2e22e8e9e23c4943e3941519ca2bc325fcc78d03))
+* **release:** 1.99.0 ([0f57483](https://github.com/slemppa/rascal-ai/commit/0f5748351d25696fb3011f9562fe244e99fa0d30))
+
+## [1.99.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.99.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+* **release:** 1.90.0 ([4732eb1](https://github.com/slemppa/rascal-ai/commit/4732eb132fc00b0e59fbcbbdf4fbf3f214008024))
+* **release:** 1.91.0 ([4eab854](https://github.com/slemppa/rascal-ai/commit/4eab854553fc59ad72ba075a10c20f538d0ae259))
+* **release:** 1.92.0 ([c4470d0](https://github.com/slemppa/rascal-ai/commit/c4470d0aefc45d48607acdbcd2c982787d230b3b))
+* **release:** 1.93.0 ([33fe20f](https://github.com/slemppa/rascal-ai/commit/33fe20fc4e1e47d6afb8c900ef9ff4bd7e2c150e))
+* **release:** 1.94.0 ([a0948c8](https://github.com/slemppa/rascal-ai/commit/a0948c87d06b41c72819d99c9695abd1a6068894))
+* **release:** 1.95.0 ([a43842e](https://github.com/slemppa/rascal-ai/commit/a43842ecc746c7d2841965591263dfde9c3389ac))
+* **release:** 1.96.0 ([819107e](https://github.com/slemppa/rascal-ai/commit/819107efa01910bb8da79d59ed929c0816d2b6a6))
+* **release:** 1.97.0 ([e2e8262](https://github.com/slemppa/rascal-ai/commit/e2e826295024bdb7d418331c2cb233853eeb803a))
+* **release:** 1.98.0 ([2e22e8e](https://github.com/slemppa/rascal-ai/commit/2e22e8e9e23c4943e3941519ca2bc325fcc78d03))
+
+## [1.98.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.98.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+* **release:** 1.90.0 ([4732eb1](https://github.com/slemppa/rascal-ai/commit/4732eb132fc00b0e59fbcbbdf4fbf3f214008024))
+* **release:** 1.91.0 ([4eab854](https://github.com/slemppa/rascal-ai/commit/4eab854553fc59ad72ba075a10c20f538d0ae259))
+* **release:** 1.92.0 ([c4470d0](https://github.com/slemppa/rascal-ai/commit/c4470d0aefc45d48607acdbcd2c982787d230b3b))
+* **release:** 1.93.0 ([33fe20f](https://github.com/slemppa/rascal-ai/commit/33fe20fc4e1e47d6afb8c900ef9ff4bd7e2c150e))
+* **release:** 1.94.0 ([a0948c8](https://github.com/slemppa/rascal-ai/commit/a0948c87d06b41c72819d99c9695abd1a6068894))
+* **release:** 1.95.0 ([a43842e](https://github.com/slemppa/rascal-ai/commit/a43842ecc746c7d2841965591263dfde9c3389ac))
+* **release:** 1.96.0 ([819107e](https://github.com/slemppa/rascal-ai/commit/819107efa01910bb8da79d59ed929c0816d2b6a6))
+* **release:** 1.97.0 ([e2e8262](https://github.com/slemppa/rascal-ai/commit/e2e826295024bdb7d418331c2cb233853eeb803a))
+
+## [1.97.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.97.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+* **release:** 1.90.0 ([4732eb1](https://github.com/slemppa/rascal-ai/commit/4732eb132fc00b0e59fbcbbdf4fbf3f214008024))
+* **release:** 1.91.0 ([4eab854](https://github.com/slemppa/rascal-ai/commit/4eab854553fc59ad72ba075a10c20f538d0ae259))
+* **release:** 1.92.0 ([c4470d0](https://github.com/slemppa/rascal-ai/commit/c4470d0aefc45d48607acdbcd2c982787d230b3b))
+* **release:** 1.93.0 ([33fe20f](https://github.com/slemppa/rascal-ai/commit/33fe20fc4e1e47d6afb8c900ef9ff4bd7e2c150e))
+* **release:** 1.94.0 ([a0948c8](https://github.com/slemppa/rascal-ai/commit/a0948c87d06b41c72819d99c9695abd1a6068894))
+* **release:** 1.95.0 ([a43842e](https://github.com/slemppa/rascal-ai/commit/a43842ecc746c7d2841965591263dfde9c3389ac))
+* **release:** 1.96.0 ([819107e](https://github.com/slemppa/rascal-ai/commit/819107efa01910bb8da79d59ed929c0816d2b6a6))
+
+## [1.96.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.96.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+* **release:** 1.90.0 ([4732eb1](https://github.com/slemppa/rascal-ai/commit/4732eb132fc00b0e59fbcbbdf4fbf3f214008024))
+* **release:** 1.91.0 ([4eab854](https://github.com/slemppa/rascal-ai/commit/4eab854553fc59ad72ba075a10c20f538d0ae259))
+* **release:** 1.92.0 ([c4470d0](https://github.com/slemppa/rascal-ai/commit/c4470d0aefc45d48607acdbcd2c982787d230b3b))
+* **release:** 1.93.0 ([33fe20f](https://github.com/slemppa/rascal-ai/commit/33fe20fc4e1e47d6afb8c900ef9ff4bd7e2c150e))
+* **release:** 1.94.0 ([a0948c8](https://github.com/slemppa/rascal-ai/commit/a0948c87d06b41c72819d99c9695abd1a6068894))
+* **release:** 1.95.0 ([a43842e](https://github.com/slemppa/rascal-ai/commit/a43842ecc746c7d2841965591263dfde9c3389ac))
+
+## [1.95.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.95.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+* **release:** 1.90.0 ([4732eb1](https://github.com/slemppa/rascal-ai/commit/4732eb132fc00b0e59fbcbbdf4fbf3f214008024))
+* **release:** 1.91.0 ([4eab854](https://github.com/slemppa/rascal-ai/commit/4eab854553fc59ad72ba075a10c20f538d0ae259))
+* **release:** 1.92.0 ([c4470d0](https://github.com/slemppa/rascal-ai/commit/c4470d0aefc45d48607acdbcd2c982787d230b3b))
+* **release:** 1.93.0 ([33fe20f](https://github.com/slemppa/rascal-ai/commit/33fe20fc4e1e47d6afb8c900ef9ff4bd7e2c150e))
+* **release:** 1.94.0 ([a0948c8](https://github.com/slemppa/rascal-ai/commit/a0948c87d06b41c72819d99c9695abd1a6068894))
+
+## [1.94.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.94.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+* **release:** 1.90.0 ([4732eb1](https://github.com/slemppa/rascal-ai/commit/4732eb132fc00b0e59fbcbbdf4fbf3f214008024))
+* **release:** 1.91.0 ([4eab854](https://github.com/slemppa/rascal-ai/commit/4eab854553fc59ad72ba075a10c20f538d0ae259))
+* **release:** 1.92.0 ([c4470d0](https://github.com/slemppa/rascal-ai/commit/c4470d0aefc45d48607acdbcd2c982787d230b3b))
+* **release:** 1.93.0 ([33fe20f](https://github.com/slemppa/rascal-ai/commit/33fe20fc4e1e47d6afb8c900ef9ff4bd7e2c150e))
+
+## [1.93.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.93.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+* **release:** 1.90.0 ([4732eb1](https://github.com/slemppa/rascal-ai/commit/4732eb132fc00b0e59fbcbbdf4fbf3f214008024))
+* **release:** 1.91.0 ([4eab854](https://github.com/slemppa/rascal-ai/commit/4eab854553fc59ad72ba075a10c20f538d0ae259))
+* **release:** 1.92.0 ([c4470d0](https://github.com/slemppa/rascal-ai/commit/c4470d0aefc45d48607acdbcd2c982787d230b3b))
+
+## [1.92.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.92.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+* **release:** 1.90.0 ([4732eb1](https://github.com/slemppa/rascal-ai/commit/4732eb132fc00b0e59fbcbbdf4fbf3f214008024))
+* **release:** 1.91.0 ([4eab854](https://github.com/slemppa/rascal-ai/commit/4eab854553fc59ad72ba075a10c20f538d0ae259))
+
+## [1.91.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.91.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+* **release:** 1.90.0 ([4732eb1](https://github.com/slemppa/rascal-ai/commit/4732eb132fc00b0e59fbcbbdf4fbf3f214008024))
+
+## [1.90.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.90.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+* **release:** 1.89.0 ([6e7a69a](https://github.com/slemppa/rascal-ai/commit/6e7a69a45997ccbdc81fcfe8f0d2a710073f5145))
+
+## [1.89.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.89.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+* **release:** 1.88.0 ([66acf05](https://github.com/slemppa/rascal-ai/commit/66acf05133645a91fb8230e37465d9b536115fed))
+
+## [1.88.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.88.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+* **release:** 1.87.0 ([3ab4f34](https://github.com/slemppa/rascal-ai/commit/3ab4f34f98525ad43afedd788f17966da6373ed4))
+
+## [1.87.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.87.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+* **release:** 1.86.0 ([ec92b9a](https://github.com/slemppa/rascal-ai/commit/ec92b9a4b9b3369991810327e646a61e2c9e5bc8))
+
+## [1.86.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.86.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+* **release:** 1.85.0 ([7c238f8](https://github.com/slemppa/rascal-ai/commit/7c238f85f6095246f298ae429b6292f11bfe7ef6))
+
+## [1.85.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.85.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+* **release:** 1.84.0 ([8549909](https://github.com/slemppa/rascal-ai/commit/8549909d4688cd089169a77f648021915c72cec7))
+
+## [1.84.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.84.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+* **release:** 1.83.0 ([62347e4](https://github.com/slemppa/rascal-ai/commit/62347e452f9589da5c4681e55b9e29959c9ba016))
+
+## [1.83.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.83.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+* **release:** 1.82.0 ([52fbf1f](https://github.com/slemppa/rascal-ai/commit/52fbf1fb10f59bd544583a3acf847c0ea84a1764))
+
+## [1.82.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.82.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+* **release:** 1.81.0 ([06bb081](https://github.com/slemppa/rascal-ai/commit/06bb081502439b24d972e3ed2b972c17136d04fd))
+
+## [1.81.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.81.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+* **release:** 1.80.0 ([da949b1](https://github.com/slemppa/rascal-ai/commit/da949b1ccaaabbc60e4d3a55ecfae47d3d930fbc))
+
+## [1.80.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.80.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+* **release:** 1.79.0 ([895f5f2](https://github.com/slemppa/rascal-ai/commit/895f5f219db8b4d54fc475a63efe3fdd6f60e481))
+
+## [1.79.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.79.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+* **release:** 1.78.0 ([2c07b06](https://github.com/slemppa/rascal-ai/commit/2c07b061d8224f53c34ef24aaea538c5ae2f4f95))
+
+## [1.78.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.78.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+* **release:** 1.77.0 ([73e493b](https://github.com/slemppa/rascal-ai/commit/73e493b4d0be99438d72fd3a21ec498471dbb8be))
+
+## [1.77.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.77.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+* **release:** 1.76.0 ([2955568](https://github.com/slemppa/rascal-ai/commit/2955568f79730d1f2d95c319f536d249bf462d00))
+
+## [1.76.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.76.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+* **release:** 1.75.0 ([949de4f](https://github.com/slemppa/rascal-ai/commit/949de4fb883876eb2e574cb87a052a2c6b85ed04))
+
+## [1.75.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.75.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+* **release:** 1.74.0 ([7d1399e](https://github.com/slemppa/rascal-ai/commit/7d1399ec3b219ae5e4240397df72f1f4254f73f4))
+
+## [1.74.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.74.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+* **release:** 1.73.0 ([d285d5c](https://github.com/slemppa/rascal-ai/commit/d285d5cefdea9f26deb0410fd09a657749094934))
+
+## [1.73.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.73.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+* **release:** 1.72.0 ([3a30af2](https://github.com/slemppa/rascal-ai/commit/3a30af2ed9ec585a5c8db58ae08790fab4f9494e))
+
+## [1.72.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.72.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+* **release:** 1.71.0 ([7d28fb2](https://github.com/slemppa/rascal-ai/commit/7d28fb28395aa17eef74d48738e82b7ced5a5b60))
+
+## [1.71.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.71.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+* **release:** 1.70.0 ([c5d0512](https://github.com/slemppa/rascal-ai/commit/c5d05129915b04d7dfa046b23cfe05b03a2702f1))
+
+## [1.70.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.70.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+* **release:** 1.69.0 ([00f05d6](https://github.com/slemppa/rascal-ai/commit/00f05d63896cef165781da583516592e84c40de5))
+
+## [1.69.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.69.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+* **release:** 1.68.0 ([d8c6a60](https://github.com/slemppa/rascal-ai/commit/d8c6a6073c141317601fca41af4e439e301a3e46))
+
+## [1.68.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.68.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+* **release:** 1.67.0 ([92964be](https://github.com/slemppa/rascal-ai/commit/92964be07e458987241b1792796180a49d77e5f8))
+
+## [1.67.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.67.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+* **release:** 1.66.0 ([8ab9633](https://github.com/slemppa/rascal-ai/commit/8ab9633df145cf8d434254b733fca90ab7fcc9bc))
+
+## [1.66.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.66.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+* **release:** 1.65.0 ([a0d0816](https://github.com/slemppa/rascal-ai/commit/a0d0816c920aafdf2ac249040ff160264d2dc72b))
+
+## [1.65.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.65.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+* **release:** 1.64.0 ([17b1aec](https://github.com/slemppa/rascal-ai/commit/17b1aec2bfced5bc167f702e615fe37fc2049d80))
+
+## [1.64.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.64.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+* **release:** 1.63.0 ([1b17711](https://github.com/slemppa/rascal-ai/commit/1b17711ea81af9c09081a5f142378d4e65557243))
+
+## [1.63.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.63.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+* **release:** 1.62.0 ([40d1de2](https://github.com/slemppa/rascal-ai/commit/40d1de2fab7eec0aaf0e00613b98cf9abdc24838))
+
+## [1.62.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.62.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+* **release:** 1.61.0 ([f119b0f](https://github.com/slemppa/rascal-ai/commit/f119b0f8140bc0b3e931b8f7e0b21358a9de8dcb))
+
+## [1.61.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.61.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+* **release:** 1.60.0 ([df5d449](https://github.com/slemppa/rascal-ai/commit/df5d449b5ef436a614a26355d64440aad2dcfd18))
+
+## [1.60.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.60.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+* **release:** 1.59.0 ([23f828e](https://github.com/slemppa/rascal-ai/commit/23f828e61af90b17d39be1f354a096f8f0e6d61c))
+
+## [1.59.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.59.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+* **release:** 1.58.0 ([a0153cc](https://github.com/slemppa/rascal-ai/commit/a0153cc59fa5ef8c21474bc78b056da54b150243))
+
+## [1.58.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.58.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+* **release:** 1.57.0 ([b0563ce](https://github.com/slemppa/rascal-ai/commit/b0563ceffb3e27b498042e8550c7ca257f8fcf27))
+
+## [1.57.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.57.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+* **release:** 1.56.0 ([45bf9cf](https://github.com/slemppa/rascal-ai/commit/45bf9cfe00a08aeb326667d70558d0861854b487))
+
+## [1.56.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.56.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+* **release:** 1.55.0 ([713a287](https://github.com/slemppa/rascal-ai/commit/713a28721261a8d308b60a9cfcdde2aa1aec005f))
+
+## [1.55.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.55.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+* **release:** 1.54.0 ([076205a](https://github.com/slemppa/rascal-ai/commit/076205ac4243331981ddd5010fece43b24c9806f))
+
+## [1.54.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.54.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+* **release:** 1.53.0 ([d361a27](https://github.com/slemppa/rascal-ai/commit/d361a27a73e398a9b3cdaf922a3a4be06ea7a794))
+
+## [1.53.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.53.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+* **release:** 1.52.0 ([8aa319f](https://github.com/slemppa/rascal-ai/commit/8aa319f4b03da4b74fd779a6c5909db6bcf608f1))
+
+## [1.52.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.52.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+* **release:** 1.51.0 ([4c4245c](https://github.com/slemppa/rascal-ai/commit/4c4245cf26ac1637ff66761ec73f4037aff9bfb7))
+
+## [1.51.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.51.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+* **release:** 1.50.0 ([98e4a28](https://github.com/slemppa/rascal-ai/commit/98e4a2856e9314a7b2df9ac234cbbfc8840af937))
+
+## [1.50.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.50.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+* **release:** 1.49.0 ([0e3cb96](https://github.com/slemppa/rascal-ai/commit/0e3cb967a0418da5eb361b38d3171b957dbd8f5d))
+
+## [1.49.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.49.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+* **release:** 1.48.0 ([3e6ca24](https://github.com/slemppa/rascal-ai/commit/3e6ca245151ee319f44a06172d4ac9ab255d547c))
+
+## [1.48.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.48.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+* **release:** 1.47.0 ([de0192e](https://github.com/slemppa/rascal-ai/commit/de0192e00e4abb8003081d1e6f5541c117aeca32))
+
+## [1.47.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.47.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+* **release:** 1.46.0 ([7f0a787](https://github.com/slemppa/rascal-ai/commit/7f0a787f164dcad7a952a7f4ff7f1c09aa1f3fcc))
+
+## [1.46.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.46.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+* **release:** 1.45.0 ([31ac110](https://github.com/slemppa/rascal-ai/commit/31ac1107c098bac27113dc197ed4d03081934f22))
+
+## [1.45.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.45.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+* **release:** 1.44.0 ([72f1b89](https://github.com/slemppa/rascal-ai/commit/72f1b892916e70217cbd031f91fc6121d4c45e93))
+
+## [1.44.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.44.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+* **release:** 1.43.0 ([ec1c191](https://github.com/slemppa/rascal-ai/commit/ec1c1917384d928f80219b48cba8d0b0f87bfd0d))
+
+## [1.43.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.43.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+* **release:** 1.42.0 ([5d7fe2a](https://github.com/slemppa/rascal-ai/commit/5d7fe2ac9160e90b3df6b3929bcbe12cf71520c6))
+
+## [1.42.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.42.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+* **release:** 1.41.0 ([cea410d](https://github.com/slemppa/rascal-ai/commit/cea410dca63e22a77b5caf241fe473706dfe15c7))
+
+## [1.41.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.41.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+* **release:** 1.40.0 ([ea369db](https://github.com/slemppa/rascal-ai/commit/ea369dbdebd56066dbe8aac5b1771f81de8f8060))
+
+## [1.40.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.40.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+* **release:** 1.39.0 ([2add6e6](https://github.com/slemppa/rascal-ai/commit/2add6e612c02644adf3816fb0212c37226e77443))
+
+## [1.39.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.39.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+* **release:** 1.38.0 ([ae49c7b](https://github.com/slemppa/rascal-ai/commit/ae49c7bb2d8752e50d6109525c45d2422e1bcb44))
+
+## [1.38.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.38.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+* **release:** 1.37.0 ([44d7222](https://github.com/slemppa/rascal-ai/commit/44d7222f3b96050511b951b6febf08599ebbd00c))
+
+## [1.37.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.37.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+* **release:** 1.36.0 ([5e9740e](https://github.com/slemppa/rascal-ai/commit/5e9740e656f864e83df5183402534be1008db270))
+
+## [1.36.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.36.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+* **release:** 1.35.0 ([84598c3](https://github.com/slemppa/rascal-ai/commit/84598c3178c990df037ee146b81f238030160608))
+
+## [1.35.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.35.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+* **release:** 1.34.0 ([2c21525](https://github.com/slemppa/rascal-ai/commit/2c21525843eae46183b9a726dff7e2fbc19558bb))
+
+## [1.34.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.34.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+* **release:** 1.33.0 ([667341e](https://github.com/slemppa/rascal-ai/commit/667341e9b07ab222b81fd2d307c2daa5687e3d3d))
+
+## [1.33.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.33.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+* **release:** 1.32.0 ([dd4789e](https://github.com/slemppa/rascal-ai/commit/dd4789e3c359ccc0cce3ffd4feb5f78f7d67f4c5))
+
+## [1.32.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.32.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+* **release:** 1.31.0 ([339e37b](https://github.com/slemppa/rascal-ai/commit/339e37b00d6c935a4ce99eb97c9e04843e871758))
+
+## [1.31.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.31.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+* **release:** 1.30.0 ([92c67eb](https://github.com/slemppa/rascal-ai/commit/92c67ebdaa5301d22e004dab70876db1e118932a))
+
+## [1.30.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.30.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+* **release:** 1.29.0 ([483b533](https://github.com/slemppa/rascal-ai/commit/483b53395237e44a731b9e9ad943701cb671c1aa))
+
+## [1.29.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.29.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+* **release:** 1.28.0 ([d4fddf5](https://github.com/slemppa/rascal-ai/commit/d4fddf5adc948aeb4aa5dbecae39a8b09f05f5c0))
+
+## [1.28.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.28.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+* **release:** 1.27.0 ([29bb4e8](https://github.com/slemppa/rascal-ai/commit/29bb4e8837bbcef43725ccb8b19693a256d486df))
+
+## [1.27.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.27.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+* **release:** 1.26.0 ([091eda6](https://github.com/slemppa/rascal-ai/commit/091eda641ee12859f1905f4b82d354eee740cc9c))
+
+## [1.26.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.26.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+* **release:** 1.25.0 ([bde2c38](https://github.com/slemppa/rascal-ai/commit/bde2c38cbff4aaae504e05cefa511bd67af7478c))
+
+## [1.25.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.25.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+* **release:** 1.24.0 ([c7d313d](https://github.com/slemppa/rascal-ai/commit/c7d313d06a21a3f3bbab32a0c945e244f925e5d3))
+
+## [1.24.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.24.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+* **release:** 1.23.0 ([d835ec5](https://github.com/slemppa/rascal-ai/commit/d835ec5fc8add59ce85f1698b01d47090dd2ebc3))
+
+## [1.23.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.23.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+* **release:** 1.22.0 ([7cddea3](https://github.com/slemppa/rascal-ai/commit/7cddea3a6885a7a96e6910b8a30cc94df45ec258))
+
+## [1.22.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.22.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+* **release:** 1.21.0 ([10e4d1c](https://github.com/slemppa/rascal-ai/commit/10e4d1cf68505e57a026e4b090abcbc22839d132))
+
+## [1.21.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.21.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+* **release:** 1.20.0 ([5fb0e79](https://github.com/slemppa/rascal-ai/commit/5fb0e793a4315211ea9e55fba8082e7cab9e492d))
+
+## [1.20.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.20.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+* **release:** 1.19.0 ([52a4ce3](https://github.com/slemppa/rascal-ai/commit/52a4ce34ff84eda27cc8525c8fa716ac5ed968ea))
+
+## [1.19.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.19.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+* **release:** 1.18.0 ([17bc705](https://github.com/slemppa/rascal-ai/commit/17bc7054b9bbd645e3c65c8a38608949174135e5))
+
+## [1.18.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.18.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+* **release:** 1.17.0 ([158fe3c](https://github.com/slemppa/rascal-ai/commit/158fe3cb5566c1192886831aac83464ef25866e9))
+
+## [1.17.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.17.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+* **release:** 1.16.0 ([77fcb16](https://github.com/slemppa/rascal-ai/commit/77fcb16ff49a88d561780a24199cfd46bea38905))
+
+## [1.16.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.16.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+* **release:** 1.15.0 ([3d753d0](https://github.com/slemppa/rascal-ai/commit/3d753d0cbacd8b70303375863feb2a3e3244ba07))
+
+## [1.15.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.15.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+* **release:** 1.14.0 ([38044c1](https://github.com/slemppa/rascal-ai/commit/38044c170b506c3a536da3eeb1da9d9a37b4d898))
+
+## [1.14.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.14.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+* **release:** 1.13.0 ([065e88d](https://github.com/slemppa/rascal-ai/commit/065e88de9427d5aa7819823944b292d8900606ad))
+
+## [1.13.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.13.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+* **release:** 1.12.0 ([4ebb925](https://github.com/slemppa/rascal-ai/commit/4ebb925930eb3dcb05329981e99c59fc411cf5af))
+
+## [1.12.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.12.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+* **release:** 1.11.0 ([9ee6114](https://github.com/slemppa/rascal-ai/commit/9ee6114c474ad183cf1a8f2a0d454ed44d80226c))
+
+## [1.11.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.11.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([242df89](https://github.com/slemppa/rascal-ai/commit/242df89ef11b89b5ceb756505c3ca6b055044345))
+
+## [1.10.0](https://github.com/slemppa/rascal-ai/compare/v1.9.0...v1.10.0) (2025-07-03)
+
+
+### 🐛 Bug Fixes
+
+* päivitetty versionhallinta ja changelog ([3ceadd5](https://github.com/slemppa/rascal-ai/commit/3ceadd5b3ca79f0bd1cf85977d2e65cf2e5109a6))
+
+
+### ✨ Features
+
+* lisätty automaattinen versionhallinta pre-push-hookilla ([888505a](https://github.com/slemppa/rascal-ai/commit/888505ab945e1236e3a89387348b96b605388bdb))
+
 ## [1.9.0](https://github.com/slemppa/rascal-ai/compare/v1.8.0...v1.9.0) (2025-07-03)
 
 

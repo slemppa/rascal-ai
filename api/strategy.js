@@ -40,65 +40,36 @@ export default async function handler(req, res) {
       const transformedData = []
       
       webhookData.forEach((item, index) => {
-        const body = item.body?.[0] || {}
-        const icp = body.icp || {}
-        const strategies = body.strategies || []
+        // Uusi webhook-formaatti: {icpSummary: [...], strategyAndMonth: [...]}
+        const icpSummary = item.icpSummary?.[0] || ''
+        const strategies = item.strategyAndMonth || []
         const timestamp = Date.now()
         
         // ICP-kortti
-        if (icp.summary) {
+        if (icpSummary) {
           transformedData.push({
-            id: icp.companyId || `icp_${timestamp}_${index}`, // Käytä alkuperäistä recordId:tä
-            recordId: icp.companyId, // Säilytä recordId päivitystä varten
+            id: companyId || `icp_${timestamp}_${index}`,
+            recordId: companyId,
             createdTime: new Date().toISOString(),
-            Month: strategies[0]?.month || 'Kesäkuu',
+            Month: strategies[0]?.Month || 'Kesäkuu',
             Companies: companyId ? [companyId] : [],
             Strategy: '', // Tyhjä strategia ICP-kortissa
             ICP: {
-              demographics: {
-                age: '30-50',
-                location: 'Suomi',
-                language: 'Suomi',
-                education: 'Korkeakoulututkinto tai vastaava'
-              },
-              business: {
-                companySize: '5-50 työntekijää',
-                industry: 'Teknologia, palvelut, kauppa',
-                revenue: '500k - 5M €/vuosi',
-                stage: 'Kasvuvaiheessa oleva yritys'
-              },
-              painPoints: [
-                'Rajoitettu markkinointibudjetti',
-                'Kilpailu digitaalisessa markkinoinnissa',
-                'Asiakkaiden löytäminen ja säilyttäminen',
-                'ROI:n mittaaminen markkinointitoimista'
-              ],
-              goals: [
-                'Kasvattaa digitaalista läsnäoloa',
-                'Parantaa asiakkaiden hankintaa',
-                'Optimoida markkinointibudjettia',
-                'Rakentaa brändiä'
-              ],
-              behavior: {
-                channels: ['LinkedIn', 'Google', 'Suosittelut'],
-                content: 'Käytännölliset oppaat ja case studyt',
-                decision: 'Todisteet ja tulokset ovat tärkeitä'
-              },
-              summary: icp.summary
+              summary: icpSummary
             }
           })
         }
         
-        // Strategy-kortti
-        strategies.forEach(strategy => {
-          if (strategy.text) {
+        // Strategy-kortit
+        strategies.forEach((strategy, strategyIndex) => {
+          if (strategy.Strategy) {
             transformedData.push({
-              id: strategy.id || `strategy_${timestamp}_${index}`, // Käytä alkuperäistä recordId:tä
-              recordId: strategy.id, // Säilytä recordId päivitystä varten
+              id: `strategy_${timestamp}_${index}_${strategyIndex}`,
+              recordId: `strategy_${timestamp}_${index}_${strategyIndex}`,
               createdTime: new Date().toISOString(),
-              Month: strategy.month || 'Kesäkuu',
+              Month: strategy.Month || 'Kesäkuu',
               Companies: companyId ? [companyId] : [],
-              Strategy: strategy.text,
+              Strategy: strategy.Strategy,
               ICP: null // Ei ICP:tä strategy-kortissa
             })
           }

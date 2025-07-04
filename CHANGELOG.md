@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.14.0](https://github.com/slemppa/rascal-ai/compare/v1.13.0...v1.14.0) (2025-07-04)
+
+
+### 📚 Documentation
+
+* päivitä public changelog versioon 1.13.0 ([8e51490](https://github.com/slemppa/rascal-ai/commit/8e51490fce7225b8fa8359e72fb3b31822e1b0b7))
+
+
+### ✨ Features
+
+* improve content strategy page styling and ICP handling ([c9d3cfe](https://github.com/slemppa/rascal-ai/commit/c9d3cfeb04ccaad1b88309bc54da9431a7f56f86))
+
 ## [1.13.0](https://github.com/slemppa/rascal-ai/compare/v1.10.0...v1.13.0) (2025-07-03)
 
 

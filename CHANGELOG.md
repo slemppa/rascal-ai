@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file. See [standa
 
 * implement single call functionality with N8N integration ([5b9d1f9](https://github.com/slemppa/rascal-ai/commit/5b9d1f958f7c01e4a8eb99b624a1bf4b24c21c1a))
 
+### 🐛 Bug Fixes
+
+* poista debug-lokit ja korjaa companyId haku ([b573b39](https://github.com/slemppa/rascal-ai/commit/b573b39))
+
 ### [1.14.1](https://github.com/slemppa/rascal-ai/compare/v1.14.0...v1.14.1) (2025-07-08)
 
 

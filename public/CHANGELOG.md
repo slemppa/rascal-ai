@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/slemppa/rascal-ai/compare/v1.14.1...v1.15.0) (2025-07-08)
+
+### ✨ Features
+* implement single call functionality with N8N integration
+
+## [1.14.1](https://github.com/slemppa/rascal-ai/compare/v1.14.0...v1.14.1) (2025-07-08)
+
+### 🐛 Bug Fixes
+* korjaa AIChatPage tiedostojen lähetys ja lisää MP3-tiedostot
+
+## [1.14.0](https://github.com/slemppa/rascal-ai/compare/v1.13.0...v1.14.0) (2025-07-04)
+
+### 📚 Documentation
+* päivitä public changelog versioon 1.13.0
+
+### ✨ Features
+* improve content strategy page styling and ICP handling
+
 ## [1.13.0](https://github.com/slemppa/rascal-ai/compare/v1.10.0...v1.13.0) (2025-07-03)
 
 

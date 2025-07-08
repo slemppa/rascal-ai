@@ -221,6 +221,7 @@ export default function DashboardPage() {
   const [editingPost, setEditingPost] = useState(null)
   const [imagesUploaded, setImagesUploaded] = useState(false) // Status kuvien lähettämisestä
   const [audioUploaded, setAudioUploaded] = useState(false) // Status äänen lähettämisestä
+  const [existingImagesCount, setExistingImagesCount] = useState(0) // Jo lähetettyjä kuvia
   const [selectedImages, setSelectedImages] = useState([]) // Valitut kuvat
   const [selectedAudio, setSelectedAudio] = useState(null) // Valittu äänitiedosto
   const [dragActiveImages, setDragActiveImages] = useState(false)
@@ -291,19 +292,34 @@ export default function DashboardPage() {
             Webhook palauttaa taulukon objekteja. Merkkaamme materiaalit ladatuiksi näin:
             • imagesUploaded  = löytyy vähintään yksi objekti, jossa on "Avatar IDs"-kenttä tai Media-taulukossa on vähintään yksi kuva.
             • audioUploaded   = löytyy vähintään yksi objekti, jossa on "Voice ID"-kenttä (truthy).
+            • existingImagesCount = lasketaan kuvien määrä Media-taulukoista.
           */
-          const hasImages = Array.isArray(data) && data.some(rec => {
-            const avatarIds = rec["Avatar IDs"] || rec["Avatar IDs (from something)"]
-            const mediaArr  = Array.isArray(rec.Media) ? rec.Media : []
-            return (avatarIds && avatarIds.toString().trim() !== '') || mediaArr.length > 0
-          })
-          const hasAudio = Array.isArray(data) && data.some(rec => {
-            const voiceId = rec["Voice ID"]
-            return voiceId && voiceId.toString().trim() !== ''
-          })
+          let totalImageCount = 0
+          let hasImages = false
+          let hasAudio = false
+
+          if (Array.isArray(data)) {
+            data.forEach(rec => {
+              // Kuvien laskenta
+              const avatarIds = rec["Avatar IDs"] || rec["Avatar IDs (from something)"]
+              const mediaArr = Array.isArray(rec.Media) ? rec.Media : []
+              
+              if ((avatarIds && avatarIds.toString().trim() !== '') || mediaArr.length > 0) {
+                hasImages = true
+                totalImageCount += mediaArr.length
+              }
+
+              // Äänen tarkistus
+              const voiceId = rec["Voice ID"]
+              if (voiceId && voiceId.toString().trim() !== '') {
+                hasAudio = true
+              }
+            })
+          }
 
           setImagesUploaded(hasImages)
           setAudioUploaded(hasAudio)
+          setExistingImagesCount(totalImageCount)
         } else {
           console.error('Avatar status response not ok:', await response.text())
         }
@@ -361,15 +377,17 @@ export default function DashboardPage() {
     setDragActiveImages(false)
     const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'))
     if (files.length > 0) {
-      const newImages = files.slice(0, 4 - selectedImages.length) // Max 4 kuvaa yhteensä
-      setSelectedImages(prev => [...prev, ...newImages].slice(0, 4))
+      const maxNewImages = 4 - existingImagesCount - selectedImages.length
+      const newImages = files.slice(0, Math.max(0, maxNewImages))
+      setSelectedImages(prev => [...prev, ...newImages])
     }
   }
   const handleImagesInput = (e) => {
     const files = Array.from(e.target.files).filter(file => file.type.startsWith('image/'))
     if (files.length > 0) {
-      const newImages = files.slice(0, 4 - selectedImages.length)
-      setSelectedImages(prev => [...prev, ...newImages].slice(0, 4))
+      const maxNewImages = 4 - existingImagesCount - selectedImages.length
+      const newImages = files.slice(0, Math.max(0, maxNewImages))
+      setSelectedImages(prev => [...prev, ...newImages])
     }
   }
   const handleRemoveImage = (index) => {
@@ -391,13 +409,13 @@ export default function DashboardPage() {
     e.preventDefault()
     e.stopPropagation()
     setDragActiveAudio(false)
-    const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('audio/'))
+    const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('audio/') || file.type.startsWith('video/'))
     if (files.length > 0) {
       setSelectedAudio(files[0])
     }
   }
   const handleAudioInput = (e) => {
-    const files = Array.from(e.target.files).filter(file => file.type.startsWith('audio/'))
+    const files = Array.from(e.target.files).filter(file => file.type.startsWith('audio/') || file.type.startsWith('video/'))
     if (files.length > 0) {
       setSelectedAudio(files[0])
     }
@@ -441,6 +459,8 @@ export default function DashboardPage() {
 
       console.log('Kuvat ladattu', uploads)
       setImagesUploaded(true)
+      setExistingImagesCount(prev => prev + selectedImages.length)
+      setSelectedImages([]) // Tyhjennä valitut kuvat
     } catch (err) {
       console.error(err)
       setAvatarError('Virhe kuvien lähettämisessä')
@@ -459,7 +479,7 @@ export default function DashboardPage() {
       const userRaw = localStorage.getItem('user')
       const companyId = userRaw ? JSON.parse(userRaw)?.companyId || JSON.parse(userRaw)?.user?.companyId : null
       
-      console.log('Audio upload debug:')
+      console.log('Video/Audio upload debug:')
       console.log('- UserRaw:', userRaw)
       console.log('- CompanyId:', companyId)
       
@@ -478,11 +498,11 @@ export default function DashboardPage() {
       })
       if (!res.ok) throw new Error('upload failed')
       const data = await res.json()
-      console.log('Audio ladattu', data)
+      console.log('Video/Audio ladattu', data)
       setAudioUploaded(true)
     } catch (err) {
       console.error(err)
-      setAvatarError('Virhe äänen lähettämisessä')
+      setAvatarError('Virhe video/äänen lähettämisessä')
     } finally {
       setUploadingAvatar(false)
     }
@@ -738,11 +758,16 @@ export default function DashboardPage() {
                 {/* Kuvien drag & drop */}
                 <div style={{ marginBottom: 24 }}>
                   <div style={{ fontWeight: 600, fontSize: 16, color: '#374151', marginBottom: 12 }}>
-                    Kuvat (max 4kpl) {selectedImages.length > 0 && `- ${selectedImages.length}/4 valittu`}
+                    Kuvat (max 4kpl) {existingImagesCount > 0 && `- ${existingImagesCount} jo lähetetty`} {selectedImages.length > 0 && `- ${selectedImages.length} uutta valittu`}
+                    {!imagesUploaded && (existingImagesCount + selectedImages.length < 4) && (
+                      <div style={{ fontSize: 14, color: '#6b7280', fontWeight: 400, marginTop: 4 }}>
+                        Voit lähettää vielä {4 - existingImagesCount - selectedImages.length} kuvaa
+                      </div>
+                    )}
                   </div>
                   
                   {/* Drag & drop alue */}
-                  {!imagesUploaded && (
+                  {!imagesUploaded && (existingImagesCount + selectedImages.length < 4) && (
                     <div
                       ref={imagesDropRef}
                       onDragOver={handleImagesDragOver}
@@ -770,6 +795,27 @@ export default function DashboardPage() {
                         style={{ display: 'none' }}
                         onChange={handleImagesInput}
                       />
+                    </div>
+                  )}
+
+                  {/* Maksimi saavutettu viesti */}
+                  {!imagesUploaded && (existingImagesCount + selectedImages.length >= 4) && (
+                    <div style={{
+                      padding: 16,
+                      background: '#f3f4f6',
+                      border: '2px solid #9ca3af',
+                      borderRadius: 12,
+                      textAlign: 'center',
+                      marginBottom: 12
+                    }}>
+                      <div style={{ fontSize: 16, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
+                        📸 Maksimi kuvamäärä saavutettu (4/4)
+                      </div>
+                      <div style={{ fontSize: 14, color: '#6b7280' }}>
+                        {existingImagesCount > 0 && `${existingImagesCount} aiemmin lähetettyä`}
+                        {existingImagesCount > 0 && selectedImages.length > 0 && " + "}
+                        {selectedImages.length > 0 && `${selectedImages.length} uutta valittua`}
+                      </div>
                     </div>
                   )}
 
@@ -839,10 +885,10 @@ export default function DashboardPage() {
 
                 </div>
 
-                {/* Äänen drag & drop */}
+                {/* Video/Äänen drag & drop */}
                 <div style={{ marginBottom: 24 }}>
                   <div style={{ fontWeight: 600, fontSize: 16, color: '#374151', marginBottom: 12 }}>
-                    Ääni (max 5min) {selectedAudio && `- ${selectedAudio.name}`}
+                    Video tai Ääni (max 5min) {selectedAudio && `- ${selectedAudio.name}`}
                   </div>
                   
                   {/* Drag & drop alue */}
@@ -866,10 +912,10 @@ export default function DashboardPage() {
                       }}
                       onClick={() => audioDropRef.current?.querySelector('input[type=file]').click()}
                     >
-                      🎵 Vedä ja pudota äänitiedosto tähän tai <span style={{color: '#2563eb', textDecoration: 'underline'}}>valitse tiedosto</span>
+                      🎬🎵 Vedä ja pudota video- tai äänitiedosto tähän tai <span style={{color: '#2563eb', textDecoration: 'underline'}}>valitse tiedosto</span>
                       <input
                         type="file"
-                        accept="audio/*"
+                        accept="audio/*,video/*"
                         style={{ display: 'none' }}
                         onChange={handleAudioInput}
                       />
@@ -886,10 +932,10 @@ export default function DashboardPage() {
                       marginBottom: 12
                     }}>
                       <div style={{ fontSize: 16, fontWeight: 600, color: '#16a34a', marginBottom: 4 }}>
-                        ✅ Ääni lähetetty onnistuneesti
+                        ✅ Video/Ääni lähetetty onnistuneesti
                       </div>
                       <div style={{ fontSize: 14, color: '#15803d' }}>
-                        {selectedAudio ? selectedAudio.name : 'Äänitiedosto'} on käsitelty
+                        {selectedAudio ? selectedAudio.name : 'Mediatiedosto'} on käsitelty
                       </div>
                     </div>
                   )}
@@ -917,7 +963,7 @@ export default function DashboardPage() {
                           textOverflow: 'ellipsis',
                           maxWidth: 200
                         }}>
-                          🎵 {selectedAudio.name}
+                          {selectedAudio.type.startsWith('video/') ? '🎬' : '🎵'} {selectedAudio.name}
                         </span>
                         <span
                           style={{
@@ -942,24 +988,32 @@ export default function DashboardPage() {
                   <div style={{ marginBottom: 24 }}>
                     <button
                       onClick={async () => {
-                        await handleUploadImages()
-                        await handleUploadAudio()
+                        if (selectedImages.length > 0) {
+                          await handleUploadImages()
+                        }
+                        if (selectedAudio) {
+                          await handleUploadAudio()
+                        }
                       }}
-                      disabled={selectedImages.length === 0 || !selectedAudio || uploadingAvatar}
+                      disabled={(selectedImages.length === 0 && !selectedAudio) || uploadingAvatar}
                       style={{
                         padding: '12px 24px',
-                        background: (selectedImages.length > 0 && selectedAudio && !uploadingAvatar) ? '#7c3aed' : '#d1d5db',
-                        color: (selectedImages.length > 0 && selectedAudio && !uploadingAvatar) ? '#fff' : '#9ca3af',
+                        background: ((selectedImages.length > 0 || selectedAudio) && !uploadingAvatar) ? '#7c3aed' : '#d1d5db',
+                        color: ((selectedImages.length > 0 || selectedAudio) && !uploadingAvatar) ? '#fff' : '#9ca3af',
                         border: 'none',
                         borderRadius: 8,
-                        cursor: (selectedImages.length > 0 && selectedAudio && !uploadingAvatar) ? 'pointer' : 'not-allowed',
+                        cursor: ((selectedImages.length > 0 || selectedAudio) && !uploadingAvatar) ? 'pointer' : 'not-allowed',
                         fontSize: 16,
                         fontWeight: 600,
                         width: '100%',
                         opacity: uploadingAvatar ? 0.7 : 1
                       }}
                     >
-                      {uploadingAvatar ? '⏳ Lähetetään...' : '🚀 Lähetä Avatar materiaalit'}
+                      {uploadingAvatar ? '⏳ Lähetetään...' : 
+                        selectedImages.length > 0 && selectedAudio ? '🚀 Lähetä kuvat ja video/ääni' :
+                        selectedImages.length > 0 ? '🚀 Lähetä kuvat' :
+                        selectedAudio ? '🚀 Lähetä video/ääni' : '🚀 Lähetä Avatar materiaalit'
+                      }
                     </button>
                   </div>
                 )}
@@ -981,7 +1035,7 @@ export default function DashboardPage() {
                 )}
 
                 {/* Progress indicator */}
-                {(imagesUploaded || audioUploaded) && (
+                {(imagesUploaded || audioUploaded || selectedImages.length > 0 || selectedAudio) && (
                   <div style={{
                     background: '#f3f4f6',
                     borderRadius: 8,
@@ -989,11 +1043,19 @@ export default function DashboardPage() {
                     border: '1px solid #e5e7eb'
                   }}>
                     <div style={{ fontWeight: 600, fontSize: 14, color: '#374151', marginBottom: 8 }}>
-                      Edistyminen ({(imagesUploaded ? 1 : 0) + (audioUploaded ? 1 : 0)}/2)
+                      Avatar-materiaalien tila
                     </div>
                     <div style={{ fontSize: 13, color: '#6b7280' }}>
-                      {imagesUploaded ? '✓ Kuvat lähetetty' : '○ Kuvat odottaa'}<br/>
-                      {audioUploaded ? '✓ Ääni lähetetty' : '○ Ääni odottaa'}
+                      {(existingImagesCount > 0 || selectedImages.length > 0) && (
+                        <>
+                          {imagesUploaded || existingImagesCount > 0 ? 
+                            `✓ Kuvat: ${existingImagesCount + (imagesUploaded && selectedImages.length > 0 ? selectedImages.length : 0)}/4` : 
+                            `○ Kuvat odottaa: ${selectedImages.length}/4`
+                          }
+                        </>
+                      )}
+                      {(existingImagesCount > 0 || selectedImages.length > 0) && selectedAudio && <br/>}
+                      {selectedAudio && (audioUploaded ? '✓ Video/Ääni lähetetty' : '○ Video/Ääni odottaa')}
                     </div>
                   </div>
                 )}

@@ -18,11 +18,14 @@ export default function CallPanel() {
   // Uudet state-muuttujat
   const [callType, setCallType] = useState('myynti')
   const [script, setScript] = useState('Hei! Soitan [Yritys] puolesta. Meillä on kiinnostava tarjous teille...')
-  const [selectedVoice, setSelectedVoice] = useState('nova')
+  const [selectedVoice, setSelectedVoice] = useState('aurora')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [calling, setCalling] = useState(false)
-  const [inboundVoice, setInboundVoice] = useState('nova')
+  const [inboundVoice, setInboundVoice] = useState('aurora')
   const [inboundScript, setInboundScript] = useState('Kiitos soitostasi! Olen AI-assistentti ja autan sinua mielellään...')
+  const [currentAudio, setCurrentAudio] = useState(null)
+  const [audioInfo, setAudioInfo] = useState('')
+  const audioElementsRef = useRef([])
   
   const callTypes = [
     { value: 'myynti', label: 'Myyntipuhelu' },
@@ -33,13 +36,104 @@ export default function CallPanel() {
   ]
 
   const voiceOptions = [
-    { value: 'nova', label: 'Nova (Nainen, Neutraali)' },
-    { value: 'alloy', label: 'Alloy (Miestä muistuttava, Neutraali)' },
-    { value: 'echo', label: 'Echo (Mies, Brittiläinen)' },
-    { value: 'fable', label: 'Fable (Nainen, Brittiläinen)' },
-    { value: 'onyx', label: 'Onyx (Mies, Amerikkalainen)' },
-    { value: 'shimmer', label: 'Shimmer (Nainen, Lämmin)' }
+    { value: 'aurora', label: 'Aurora (Nainen, Lämmin ja Ammattimainen)' },
+    { value: 'lumi', label: 'Lumi (Nainen, Positiivinen ja Ilmeikäs)' },
+    { value: 'kai', label: 'Kai (Mies, Rauhallinen ja Luottamusta herättävä)' },
+    { value: 'veeti', label: 'Veeti (Mies, Nuorekas ja Energinen)' }
   ]
+
+  // Pysäytä kaikki äänielementit
+  const stopAllAudio = () => {
+    // Pysäytä nykyinen ääni
+    if (currentAudio) {
+      currentAudio.pause()
+      currentAudio.currentTime = 0
+    }
+    
+    // Pysäytä kaikki äänielementit
+    audioElementsRef.current.forEach(audio => {
+      if (audio && !audio.paused) {
+        audio.pause()
+        audio.currentTime = 0
+      }
+    })
+    
+    // Tyhjennä lista
+    audioElementsRef.current = []
+    setCurrentAudio(null)
+  }
+
+  // Ääninäytteen toisto
+  const playVoiceSample = (voiceValue) => {
+    // Pysäytä kaikki äänielementit ensin
+    stopAllAudio()
+
+    const audioFileMap = {
+      'aurora': 'rascal-nainen-1',
+      'lumi': 'rascal-nainen-2', 
+      'kai': 'rascal-mies-1',
+      'veeti': 'rascal-mies-2'
+    }
+
+    const voiceName = voiceOptions.find(v => v.value === voiceValue)?.label || voiceValue
+    const fileName = audioFileMap[voiceValue]
+    
+    if (!fileName) {
+      setAudioInfo('❌ Ääninäyte ei ole saatavilla')
+      return
+    }
+
+    setAudioInfo(`🔄 Ladataan ${voiceName}...`)
+
+    // Kokeile eri tiedostoformaatteja
+    const tryFormats = ['mp3', 'wav', 'ogg']
+    let audio = null
+
+    const tryNextFormat = (formatIndex = 0) => {
+      if (formatIndex >= tryFormats.length) {
+        setAudioInfo('❌ Ääninäytettä ei voitu toistaa')
+        return
+      }
+
+      const format = tryFormats[formatIndex]
+      audio = new Audio(`/${fileName}.${format}`)
+      
+      // Lisää äänielementti seurantaan
+      audioElementsRef.current.push(audio)
+      
+      audio.onloadedmetadata = () => {
+        const duration = Math.round(audio.duration)
+        setAudioInfo(`📀 ${voiceName} (${duration}s)`)
+      }
+      
+      audio.oncanplaythrough = () => {
+        setCurrentAudio(audio)
+        audio.play().then(() => {
+          setAudioInfo(`▶️ Soittaa: ${voiceName}`)
+        }).catch(e => {
+          console.error('Äänen toisto epäonnistui:', e)
+          setAudioInfo('❌ Äänen toisto epäonnistui')
+        })
+      }
+      
+      audio.onended = () => {
+        setAudioInfo(`✅ Valmis: ${voiceName}`)
+        setCurrentAudio(null)
+        // Poista äänielementti seurannasta
+        audioElementsRef.current = audioElementsRef.current.filter(a => a !== audio)
+        // Nollaa tieto 3 sekunnin kuluttua
+        setTimeout(() => setAudioInfo(''), 3000)
+      }
+      
+      audio.onerror = () => {
+        // Poista äänielementti seurannasta
+        audioElementsRef.current = audioElementsRef.current.filter(a => a !== audio)
+        tryNextFormat(formatIndex + 1)
+      }
+    }
+
+    tryNextFormat()
+  }
 
   const handleValidate = async () => {
     setValidating(true)
@@ -133,6 +227,24 @@ export default function CallPanel() {
       }
     }
   }, [polling])
+
+  // Cleanup äänet komponentin purkautuessa
+  useEffect(() => {
+    return () => {
+      // Pysäytä kaikki äänielementit cleanup-vaiheessa
+      if (currentAudio) {
+        currentAudio.pause()
+        currentAudio.currentTime = 0
+      }
+      audioElementsRef.current.forEach(audio => {
+        if (audio && !audio.paused) {
+          audio.pause()
+          audio.currentTime = 0
+        }
+      })
+      audioElementsRef.current = []
+    }
+  }, [])
 
   // Responsiivinen apu
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 600;
@@ -376,10 +488,7 @@ export default function CallPanel() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      // Placeholder toiminnallisuus
-                      alert(`Testattaisiin ${voiceOptions.find(v => v.value === selectedVoice)?.label} ääntä`)
-                    }}
+                    onClick={() => playVoiceSample(selectedVoice)}
                     style={{
                       padding: '4px 12px',
                       fontSize: 12,
@@ -393,6 +502,20 @@ export default function CallPanel() {
                     🔊 Testaa ääni
                   </button>
                 </div>
+                {audioInfo && (
+                  <div style={{
+                    marginTop: 8,
+                    padding: '8px 12px',
+                    background: '#f8fafc',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: 6,
+                    fontSize: 12,
+                    color: '#475569',
+                    fontFamily: 'monospace'
+                  }}>
+                    {audioInfo}
+                  </div>
+                )}
               </div>
 
               <div>
@@ -458,9 +581,7 @@ export default function CallPanel() {
                    </div>
                    <button
                      type="button"
-                     onClick={() => {
-                       alert(`Testattaisiin ${voiceOptions.find(v => v.value === inboundVoice)?.label} ääntä`)
-                     }}
+                     onClick={() => playVoiceSample(inboundVoice)}
                      style={{
                        padding: '4px 12px',
                        fontSize: 12,

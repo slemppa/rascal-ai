@@ -181,6 +181,7 @@ export default function AIChatPage() {
       const formData = new FormData()
       files.forEach(file => formData.append('files', file))
       formData.append('companyId', companyId)
+      formData.append('assistantId', assistantId)
 
       const response = await axios.post('/api/upload-knowledge', formData, {
         headers: { 

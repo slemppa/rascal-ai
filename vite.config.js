@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
+import { resolve } from 'path'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -20,6 +21,11 @@ export default defineConfig(({ mode }) => {
         '/api': 'http://localhost:3000'
       },
       historyApiFallback: true
+    },
+    resolve: {
+      alias: {
+        '@': resolve(__dirname, 'src')
+      }
     }
   }
 })

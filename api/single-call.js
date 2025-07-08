@@ -49,13 +49,7 @@ export default async function handler(req, res) {
       source: 'rascal-ai-dashboard'
     }
 
-    console.log('Lähetetään yksittäinen puhelu N8N:ään:', {
-      url: webhookUrl,
-      phoneNumber: phoneNumber.trim(),
-      callType,
-      voice,
-      companyId
-    })
+
 
     const headers = {
       'Content-Type': 'application/json',
@@ -78,7 +72,6 @@ export default async function handler(req, res) {
     }
 
     const result = await response.json()
-    console.log('N8N webhook onnistui:', result)
 
     // Palauta onnistumisviesti
     res.status(200).json({

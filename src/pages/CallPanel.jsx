@@ -170,7 +170,15 @@ export default function CallPanel() {
     setCalling(true)
     setSingleCallError('')
     try {
-      const companyId = localStorage.getItem('companyId')
+      // Hae companyId samalla tavalla kuin App.jsx:ssä
+      let companyId = null
+      try {
+        const userObj = JSON.parse(localStorage.getItem('user') || '{}')
+        companyId = userObj.companyId
+      } catch (e) {
+        console.error('Virhe user-objektin parsimisessa:', e)
+      }
+      
       const response = await axios.post('/api/single-call', { 
         phoneNumber,
         callType,

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.14.1](https://github.com/slemppa/rascal-ai/compare/v1.14.0...v1.14.1) (2025-07-08)
+
+
+### 🐛 Bug Fixes
+
+* korjaa AIChatPage tiedostojen lähetys ja lisää MP3-tiedostot ([236622d](https://github.com/slemppa/rascal-ai/commit/236622d10c923894de83325006bfb06924a08d4a))
+
 ## [1.14.0](https://github.com/slemppa/rascal-ai/compare/v1.13.0...v1.14.0) (2025-07-04)
 
 

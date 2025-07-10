@@ -1,4 +1,4 @@
-const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID || 'appeVatHuDQHlYuyX'
+const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID
 const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY
 
 export default async function handler(req, res) {
@@ -6,15 +6,16 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Vain POST sallittu' })
   }
 
+  // Tarkista että ympäristömuuttujat on asetettu
+  if (!AIRTABLE_BASE_ID || !AIRTABLE_API_KEY) {
+    console.error('Missing Airtable environment variables')
+    return res.status(500).json({ error: 'Server configuration error' })
+  }
+
   const { recordId, type, data } = req.body
 
   if (!recordId || !type || !data) {
     return res.status(400).json({ error: 'recordId, type ja data vaaditaan' })
-  }
-
-  if (!AIRTABLE_API_KEY) {
-    console.error('AIRTABLE_API_KEY puuttuu')
-    return res.status(500).json({ error: 'Airtable API-avain ei ole konfiguroitu' })
   }
 
   console.log('Airtable update debug:')

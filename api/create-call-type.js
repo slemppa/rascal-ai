@@ -1,10 +1,16 @@
-const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID || 'appeVatHuDQHlYuyX'
-const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY || 'patVf4zHcio3aIeiy.5a7cbd1d2334d16e965010c852499c3e3d8e0a8e2262011aa1b8b5fac50691ce'
+const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID
+const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY
 const AIRTABLE_TABLE_ID = 'tblSPKx9gGepqdF40'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  // Tarkista että ympäristömuuttujat on asetettu
+  if (!AIRTABLE_BASE_ID || !AIRTABLE_API_KEY) {
+    console.error('Missing Airtable environment variables')
+    return res.status(500).json({ error: 'Server configuration error' })
   }
 
   try {

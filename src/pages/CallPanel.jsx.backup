@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
-import AddCallTypeModal from '../components/AddCallTypeModal'
-import EditCallTypeModal from '../components/EditCallTypeModal'
 import './CallPanel.css'
 import CallStats from './CallStats'
 import PageHeader from '../components/PageHeader'
@@ -300,7 +298,7 @@ export default function CallPanel() {
       // Hae puhelutyypit Airtablesta
       const response = await axios.get(`/api/call-types?companyId=${companyId}`)
       
-      if (response.data.callTypes) {
+      if (response.data.success && response.data.callTypes) {
         // Muunna Airtable data frontend-ystävälliseen muotoon
         const formattedCallTypes = response.data.callTypes.map(callType => ({
           value: callType.callType || callType.id,
@@ -1198,31 +1196,438 @@ export default function CallPanel() {
                 </div>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
       
-      {/* Modaalit */}
-      <AddCallTypeModal
-        showModal={showAddModal}
-        onClose={closeModals}
-        newCallType={newCallType}
-        setNewCallType={setNewCallType}
-        onAdd={handleAddCallType}
-        loading={addTypeLoading}
-        error={addTypeError}
-        success={addTypeSuccess}
-      />
-      <EditCallTypeModal
-        showModal={showEditModal}
-        onClose={closeModals}
-        editingCallType={editingCallType}
-        setEditingCallType={setEditingCallType}
-        onSave={() => {
-          // TODO: Toteuta muokkaus
-          alert('Muokkaus toteutetaan seuraavaksi!')
-        }}
-      />
+      {/* Lisää uusi tyyppi -modaali */}
+      {showAddModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: '#fff',
+            borderRadius: 16,
+            padding: 32,
+            maxWidth: 800,
+            width: '90%',
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+              <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
+                Lisää uusi puhelun tyyppi
+              </h2>
+              <button
+                onClick={closeModals}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: 24,
+                  cursor: 'pointer',
+                  color: '#6b7280'
+                }}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Nimi (Name) *
+                </label>
+                <input
+                  type="text"
+                  value={newCallType.callType}
+                  onChange={e => setNewCallType({ ...newCallType, callType: e.target.value })}
+                  placeholder="esim. myynti, asiakaspalvelu"
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Status
+                </label>
+                <select
+                  value={newCallType.status || 'Active'}
+                  onChange={e => setNewCallType({ ...newCallType, status: e.target.value })}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                >
+                  <option value="Active">Active</option>
+                  <option value="Draft">Draft</option>
+                  <option value="Archived">Archived</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Identity
+                </label>
+                <input
+                  type="text"
+                  value={newCallType.identity || ''}
+                  onChange={e => setNewCallType({ ...newCallType, identity: e.target.value })}
+                  placeholder="Kuvaus AI-roolista"
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Style
+                </label>
+                <input
+                  type="text"
+                  value={newCallType.style || ''}
+                  onChange={e => setNewCallType({ ...newCallType, style: e.target.value })}
+                  placeholder="Tyyli, esim. inhimillinen, napakka..."
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Guidelines
+                </label>
+                <input
+                  type="text"
+                  value={newCallType.guidelines || ''}
+                  onChange={e => setNewCallType({ ...newCallType, guidelines: e.target.value })}
+                  placeholder="Ohjeet, esim. yksi kysymys kerrallaan..."
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Goals
+                </label>
+                <input
+                  type="text"
+                  value={newCallType.goals || ''}
+                  onChange={e => setNewCallType({ ...newCallType, goals: e.target.value })}
+                  placeholder="Tavoitteet, esim. tunnistaa asiakas..."
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Intro
+                </label>
+                <input
+                  type="text"
+                  value={newCallType.intro || ''}
+                  onChange={e => setNewCallType({ ...newCallType, intro: e.target.value })}
+                  placeholder="Aloitusrepliikki"
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Questions
+                </label>
+                <input
+                  type="text"
+                  value={newCallType.questions || ''}
+                  onChange={e => setNewCallType({ ...newCallType, questions: e.target.value })}
+                  placeholder="Kysymykset"
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Outro
+                </label>
+                <input
+                  type="text"
+                  value={newCallType.outro || ''}
+                  onChange={e => setNewCallType({ ...newCallType, outro: e.target.value })}
+                  placeholder="Lopetusrepliikki"
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Notes
+                </label>
+                <input
+                  type="text"
+                  value={newCallType.notes || ''}
+                  onChange={e => setNewCallType({ ...newCallType, notes: e.target.value })}
+                  placeholder="Muistiinpanot"
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Version
+                </label>
+                <input
+                  type="text"
+                  value={newCallType.version || 'v1.0'}
+                  onChange={e => setNewCallType({ ...newCallType, version: e.target.value })}
+                  placeholder="v1.0"
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={closeModals}
+                style={{
+                  padding: '12px 24px',
+                  fontSize: 14,
+                  background: '#f3f4f6',
+                  border: '1px solid #d1d5db',
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                  color: '#374151',
+                  fontWeight: 500
+                }}
+              >
+                Peruuta
+              </button>
+              <button
+                type="button"
+                onClick={handleAddCallType}
+                disabled={addTypeLoading || !newCallType.callType}
+                style={{
+                  padding: '12px 24px',
+                  fontSize: 14,
+                  background: addTypeLoading ? '#d1d5db' : '#3b82f6',
+                  border: 'none',
+                  borderRadius: 8,
+                  cursor: addTypeLoading ? 'not-allowed' : 'pointer',
+                  color: '#fff',
+                  fontWeight: 600
+                }}
+              >
+                {addTypeLoading ? 'Lisätään...' : 'Lisää puhelutyyppi'}
+              </button>
+            </div>
+            
+            {addTypeError && <div style={{ color: '#dc2626', marginTop: 12 }}>{addTypeError}</div>}
+            {addTypeSuccess && <div style={{ color: '#16a34a', marginTop: 12 }}>{addTypeSuccess}</div>}
+          </div>
+        </div>
+      )}
+      
+      {/* Muokkaa tyyppi -modaali */}
+      {showEditModal && editingCallType && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: '#fff',
+            borderRadius: 16,
+            padding: 32,
+            maxWidth: 800,
+            width: '90%',
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+              <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
+                Muokkaa puhelun tyyppiä
+              </h2>
+              <button
+                onClick={closeModals}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: 24,
+                  cursor: 'pointer',
+                  color: '#6b7280'
+                }}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Nimi (Name)
+                </label>
+                <input
+                  type="text"
+                  value={editingCallType.callType || editingCallType.label || ''}
+                  onChange={e => setEditingCallType({ ...editingCallType, callType: e.target.value })}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Status
+                </label>
+                <select
+                  value={editingCallType.status || 'Active'}
+                  onChange={e => setEditingCallType({ ...editingCallType, status: e.target.value })}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                >
+                  <option value="Active">Active</option>
+                  <option value="Draft">Draft</option>
+                  <option value="Archived">Archived</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Identity
+                </label>
+                <input
+                  type="text"
+                  value={editingCallType.identity || ''}
+                  onChange={e => setEditingCallType({ ...editingCallType, identity: e.target.value })}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Style
+                </label>
+                <input
+                  type="text"
+                  value={editingCallType.style || ''}
+                  onChange={e => setEditingCallType({ ...editingCallType, style: e.target.value })}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Guidelines
+                </label>
+                <input
+                  type="text"
+                  value={editingCallType.guidelines || ''}
+                  onChange={e => setEditingCallType({ ...editingCallType, guidelines: e.target.value })}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Goals
+                </label>
+                <input
+                  type="text"
+                  value={editingCallType.goals || ''}
+                  onChange={e => setEditingCallType({ ...editingCallType, goals: e.target.value })}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Intro
+                </label>
+                <input
+                  type="text"
+                  value={editingCallType.intro || ''}
+                  onChange={e => setEditingCallType({ ...editingCallType, intro: e.target.value })}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Questions
+                </label>
+                <input
+                  type="text"
+                  value={editingCallType.questions || ''}
+                  onChange={e => setEditingCallType({ ...editingCallType, questions: e.target.value })}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Outro
+                </label>
+                <input
+                  type="text"
+                  value={editingCallType.outro || ''}
+                  onChange={e => setEditingCallType({ ...editingCallType, outro: e.target.value })}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Notes
+                </label>
+                <input
+                  type="text"
+                  value={editingCallType.notes || ''}
+                  onChange={e => setEditingCallType({ ...editingCallType, notes: e.target.value })}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                  Version
+                </label>
+                <input
+                  type="text"
+                  value={editingCallType.version || 'v1.0'}
+                  onChange={e => setEditingCallType({ ...editingCallType, version: e.target.value })}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={closeModals}
+                style={{
+                  padding: '12px 24px',
+                  fontSize: 14,
+                  background: '#f3f4f6',
+                  border: '1px solid #d1d5db',
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                  color: '#374151',
+                  fontWeight: 500
+                }}
+              >
+                Peruuta
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  // TODO: Toteuta muokkaus
+                  alert('Muokkaus toteutetaan seuraavaksi!')
+                }}
+                style={{
+                  padding: '12px 24px',
+                  fontSize: 14,
+                  background: '#3b82f6',
+                  border: 'none',
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                  color: '#fff',
+                  fontWeight: 600
+                }}
+              >
+                Tallenna muutokset
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

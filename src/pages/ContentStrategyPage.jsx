@@ -52,6 +52,11 @@ function getMonthOrder(month) {
   return monthOrder[month?.toLowerCase()] || 0
 }
 
+const MONTHS = [
+  'Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu',
+  'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu'
+]
+
 export default function ContentStrategyPage() {
   const [strategy, setStrategy] = useState([])
   const [loading, setLoading] = useState(true)
@@ -82,6 +87,10 @@ export default function ContentStrategyPage() {
     }
   })
   const textareaRef = React.useRef(null)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [newMonth, setNewMonth] = useState('Tammikuu')
+  const [newStrategy, setNewStrategy] = useState('')
+  const [adding, setAdding] = useState(false)
 
   useEffect(() => {
     const fetchStrategy = async () => {
@@ -101,32 +110,28 @@ export default function ContentStrategyPage() {
         
         const data = await getStrategy(companyId)
         
-        // Käsittele API:n palauttama transformoitu data
+        // --- MUUNNOS UUSI -> VANHA FORMAATTI ---
         let processedData = mockStrategy
         if (Array.isArray(data) && data.length > 0) {
-          // Erota ICP ja strategiat
-          const icpItem = data.find(item => item.ICP && item.ICP.summary)
-          const strategyItems = data.filter(item => item.Strategy && item.Strategy.trim() !== '')
-          
-          // Muunna strategiat oikeaan formaattiin
-          const strategies = strategyItems.map(item => ({
-            text: item.Strategy,
-            month: item.Month,
-            id: item.id || item.recordId
-          }))
-          
-          // Ota ICP
-          let icpData = null
-          if (icpItem && icpItem.ICP) {
-            icpData = icpItem.ICP
-          }
-          
+          const item = data[0]
+          // ICP
+          const icpData = item.icpSummary && item.icpSummary.length > 0
+            ? { summary: item.icpSummary[0] }
+            : null
+          // Strategiat
+          const strategies = Array.isArray(item.strategyAndMonth)
+            ? item.strategyAndMonth.map((s, idx) => ({
+                text: s.Strategy,
+                month: s.Month,
+                id: `${s.Month}_${idx}`
+              }))
+            : []
           processedData = [{
             ICP: icpData,
             strategies: strategies
           }]
-          
         }
+        // --- MUUNNOS LOPPUU ---
         
         setStrategy(processedData)
       } catch (e) {
@@ -288,6 +293,39 @@ export default function ContentStrategyPage() {
     }
   }
 
+  const handleAddStrategy = async () => {
+    setAdding(true)
+    try {
+      // Hae companyId localStoragesta
+      let companyId = null
+      try {
+        const userRaw = JSON.parse(localStorage.getItem('user') || 'null')
+        companyId = userRaw?.companyId || userRaw?.user?.companyId || null
+      } catch (e) {
+        console.warn('Could not parse user from localStorage:', e)
+      }
+      const payload = {
+        month: newMonth,
+        strategy: newStrategy,
+        companies: companyId ? [companyId] : []
+      }
+      const res = await axios.post('/api/create-strategy', payload)
+      if (res.data.success) {
+        setShowAddModal(false)
+        setNewMonth('Tammikuu')
+        setNewStrategy('')
+        // Hae strategiat uudestaan
+        window.location.reload() // helpoin tapa, voit korvata fetchStrategy() jos haluat ilman reloadia
+      } else {
+        alert('Strategian lisääminen epäonnistui: ' + (res.data.error || 'Tuntematon virhe'))
+      }
+    } catch (e) {
+      alert('Strategian lisääminen epäonnistui: ' + (e.response?.data?.error || e.message))
+    } finally {
+      setAdding(false)
+    }
+  }
+
   if (loading) return <p>Ladataan...</p>
 
   // Ota vain ensimmäinen item strategia-arraysta
@@ -299,6 +337,16 @@ export default function ContentStrategyPage() {
     <>
       <PageHeader title="Sisältöstrategia" />
       <div style={{maxWidth: 1400, padding: '0 8px', margin: '0 auto'}}>
+        {/* Lisää strategia -painike */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+          <button
+            className="strategy-button strategy-button--brand"
+            onClick={() => setShowAddModal(true)}
+          >
+            <span style={{fontSize: 20, lineHeight: 1}}>➕</span>
+            Lisää strategia
+          </button>
+        </div>
         {error && <p style={{color: 'red'}}>{error}</p>}
         {mainItem && (
           <div className="content-strategy-grid">
@@ -350,6 +398,76 @@ export default function ContentStrategyPage() {
           </div>
         )}
       </div>
+
+      {/* Uuden strategian lisäysmodaali */}
+      {showAddModal && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}
+          onClick={() => setShowAddModal(false)}
+        >
+          <div 
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 12,
+              padding: 24,
+              maxWidth: 400,
+              width: '100%',
+              overflow: 'auto',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 style={{marginTop: 0}}>Lisää uusi strategia</h3>
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ fontWeight: 500, marginBottom: 4, display: 'block' }}>Kuukausi</label>
+              <select
+                value={newMonth}
+                onChange={e => setNewMonth(e.target.value)}
+                style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #d1d5db' }}
+              >
+                {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ fontWeight: 500, marginBottom: 4, display: 'block' }}>Strategiateksti</label>
+              <textarea
+                value={newStrategy}
+                onChange={e => setNewStrategy(e.target.value)}
+                rows={6}
+                style={{ width: '100%', borderRadius: 6, border: '1px solid #d1d5db', padding: 8 }}
+                placeholder="Kirjoita strategia tähän..."
+              />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+              <button
+                onClick={() => setShowAddModal(false)}
+                style={{ padding: '10px 20px', background: '#f3f4f6', border: 'none', borderRadius: 8, fontWeight: 500, cursor: 'pointer' }}
+                disabled={adding}
+              >
+                Peruuta
+              </button>
+              <button
+                onClick={handleAddStrategy}
+                style={{ padding: '10px 20px', background: '#10b981', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}
+                disabled={adding || !newStrategy}
+              >
+                {adding ? 'Tallennetaan...' : 'Tallenna'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Muokkausmodaali */}
       {showModal && editingItem && (

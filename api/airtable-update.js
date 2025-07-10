@@ -1,4 +1,4 @@
-const AIRTABLE_BASE_ID = 'appeVatHuDQHlYuyX'
+const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID || 'appeVatHuDQHlYuyX'
 const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY
 
 export default async function handler(req, res) {
@@ -17,6 +17,11 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Airtable API-avain ei ole konfiguroitu' })
   }
 
+  console.log('Airtable update debug:')
+  console.log('AIRTABLE_BASE_ID:', AIRTABLE_BASE_ID)
+  console.log('AIRTABLE_API_KEY available:', !!AIRTABLE_API_KEY)
+  console.log('All env vars:', Object.keys(process.env).filter(key => key.includes('AIRTABLE')))
+
   try {
     let tableName, fieldName, updateData
 
@@ -32,7 +37,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Virheellinen type. Käytä "icp" tai "strategy"' })
     }
 
-    console.log(`Päivitetään ${type}:`, { recordId, tableName, fieldName })
+    console.log(`Päivitetään ${type}:`, { recordId, tableName, fieldName, baseId: AIRTABLE_BASE_ID })
 
     const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${tableName}/${recordId}`, {
       method: 'PATCH',

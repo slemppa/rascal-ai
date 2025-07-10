@@ -2,26 +2,64 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [1.15.0](https://github.com/slemppa/rascal-ai/compare/v1.14.1...v1.15.0) (2025-07-08)
+## [1.17.0](https://github.com/slemppa/rascal-ai/compare/v1.16.0...v1.17.0) (2025-07-10)
+
+
+### ♻️ Code Refactoring
+
+* poista Airtable-kutsut CallPanel-sivulta ([de5d671](https://github.com/slemppa/rascal-ai/commit/de5d6714a1f213342f0b31a7421ab13d8503889a))
+
 
 ### ✨ Features
-* implement single call functionality with N8N integration
+
+* add call type management with modal forms ([6ecf8a7](https://github.com/slemppa/rascal-ai/commit/6ecf8a77d098ec6ee199ee114585a86fc88390c3))
+
+## [1.16.0](https://github.com/slemppa/rascal-ai/compare/v1.15.0...v1.16.0) (2025-07-08)
+
+
+### ✨ Features
+
+* päivitä public changelog versioon 1.15.0 ([e473f4c](https://github.com/slemppa/rascal-ai/commit/e473f4ce813101288c2cb9d44841b3e71565ab71))
+
 
 ### 🐛 Bug Fixes
-* poista debug-lokit ja korjaa companyId haku
 
-## [1.14.1](https://github.com/slemppa/rascal-ai/compare/v1.14.0...v1.14.1) (2025-07-08)
+* poista debug-lokit ja korjaa companyId haku ([b573b39](https://github.com/slemppa/rascal-ai/commit/b573b390cde5c9a8b4b9680f19320c4a216eec3f))
+
+
+### 📚 Documentation
+
+* päivitä changelog versioon 1.15.0 ([34b3d86](https://github.com/slemppa/rascal-ai/commit/34b3d86b4c03ed31833411e1fc596e8915124d90))
+
+## [1.15.0](https://github.com/slemppa/rascal-ai/compare/v1.14.1...v1.15.0) (2025-07-08)
+
+
+### ✨ Features
+
+* implement single call functionality with N8N integration ([5b9d1f9](https://github.com/slemppa/rascal-ai/commit/5b9d1f958f7c01e4a8eb99b624a1bf4b24c21c1a))
 
 ### 🐛 Bug Fixes
-* korjaa AIChatPage tiedostojen lähetys ja lisää MP3-tiedostot
+
+* poista debug-lokit ja korjaa companyId haku ([b573b39](https://github.com/slemppa/rascal-ai/commit/b573b39))
+
+### [1.14.1](https://github.com/slemppa/rascal-ai/compare/v1.14.0...v1.14.1) (2025-07-08)
+
+
+### 🐛 Bug Fixes
+
+* korjaa AIChatPage tiedostojen lähetys ja lisää MP3-tiedostot ([236622d](https://github.com/slemppa/rascal-ai/commit/236622d10c923894de83325006bfb06924a08d4a))
 
 ## [1.14.0](https://github.com/slemppa/rascal-ai/compare/v1.13.0...v1.14.0) (2025-07-04)
 
+
 ### 📚 Documentation
-* päivitä public changelog versioon 1.13.0
+
+* päivitä public changelog versioon 1.13.0 ([8e51490](https://github.com/slemppa/rascal-ai/commit/8e51490fce7225b8fa8359e72fb3b31822e1b0b7))
+
 
 ### ✨ Features
-* improve content strategy page styling and ICP handling
+
+* improve content strategy page styling and ICP handling ([c9d3cfe](https://github.com/slemppa/rascal-ai/commit/c9d3cfeb04ccaad1b88309bc54da9431a7f56f86))
 
 ## [1.13.0](https://github.com/slemppa/rascal-ai/compare/v1.10.0...v1.13.0) (2025-07-03)
 

@@ -28,14 +28,10 @@ export default function CallPanel() {
   const [audioInfo, setAudioInfo] = useState('')
   const audioElementsRef = useRef([])
   const [activeTab, setActiveTab] = useState('calls')
-  
-  const callTypes = [
-    { value: 'myynti', label: 'Myyntipuhelu' },
-    { value: 'asiakaspalvelu', label: 'Asiakaspalvelu' },
-    { value: 'kartoitus', label: 'Tarpeiden kartoitus' },
-    { value: 'seuranta', label: 'Seurantapuhelu' },
-    { value: 'kiitos', label: 'Kiitospuhelu' }
-  ]
+  const [editingCallType, setEditingCallType] = useState(null)
+  const [newCallType, setNewCallType] = useState({ callType: '', label: '', description: '' })
+  const [callTypes, setCallTypes] = useState([])
+  const [loadingCallTypes, setLoadingCallTypes] = useState(true)
 
   const voiceOptions = [
     { value: 'aurora', label: 'Aurora (Nainen, Lämmin ja Ammattimainen)' },
@@ -215,7 +211,89 @@ export default function CallPanel() {
     }
   }
 
-  // Pollaa soittojen tilaa 5s välein
+  // Puhelun tyyppien hallinta - mock-toteutus
+  const handleSaveCallType = async () => {
+    try {
+      if (editingCallType) {
+        // Päivitä olemassa oleva mock-dataa
+        const updatedCallTypes = callTypes.map(ct => 
+          ct.value === editingCallType.value 
+            ? { ...ct, label: editingCallType.label, description: editingCallType.description }
+            : ct
+        )
+        setCallTypes(updatedCallTypes)
+        alert('Puhelun tyyppi päivitetty!')
+      } else {
+        // Lisää uusi mock-dataan
+        const newType = {
+          value: newCallType.callType,
+          label: newCallType.label,
+          description: newCallType.description
+        }
+        setCallTypes([...callTypes, newType])
+        alert('Uusi puhelun tyyppi lisätty!')
+        setNewCallType({ callType: '', label: '', description: '' })
+      }
+      
+      setEditingCallType(null)
+    } catch (error) {
+      console.error('Puhelun tyypin tallennus epäonnistui:', error)
+      alert('Puhelun tyypin tallennus epäonnistui')
+    }
+  }
+
+  const handleDeleteCallType = async (recordId) => {
+    if (!confirm('Haluatko varmasti poistaa tämän puhelun tyypin?')) {
+      return
+    }
+
+    try {
+      // Poista mock-datasta
+      const updatedCallTypes = callTypes.filter(ct => ct.value !== recordId)
+      setCallTypes(updatedCallTypes)
+      alert('Puhelun tyyppi poistettu!')
+    } catch (error) {
+      console.error('Puhelun tyypin poisto epäonnistui:', error)
+      alert('Puhelun tyypin poisto epäonnistui')
+    }
+  }
+
+  // Hae puhelun tyypit komponentin latauksen yhteydessä
+  const fetchCallTypes = async () => {
+    try {
+      setLoadingCallTypes(true)
+      
+      // Käytä mock-dataa Airtable-kutsun sijaan
+      const mockCallTypes = [
+        { value: 'myynti', label: 'Myyntipuhelu' },
+        { value: 'asiakaspalvelu', label: 'Asiakaspalvelu' },
+        { value: 'kartoitus', label: 'Tarpeiden kartoitus' },
+        { value: 'seuranta', label: 'Seurantapuhelu' },
+        { value: 'kiitos', label: 'Kiitospuhelu' }
+      ]
+      
+      setCallTypes(mockCallTypes)
+      // Aseta ensimmäinen tyyppi oletukseksi jos ei ole valittu
+      if (mockCallTypes.length > 0 && !callType) {
+        setCallType(mockCallTypes[0].value)
+      }
+    } catch (error) {
+      console.error('Puhelun tyyppien haku epäonnistui:', error)
+      // Fallback oletustyypeille
+      setCallTypes([
+        { value: 'myynti', label: 'Myyntipuhelu' },
+        { value: 'asiakaspalvelu', label: 'Asiakaspalvelu' }
+      ])
+    } finally {
+      setLoadingCallTypes(false)
+    }
+  }
+
+    useEffect(() => {
+      fetchCallTypes()
+    }, []) // Tyhjä riippuvuuslista - suoritetaan vain kerran
+
+  // Pollaa soittojen tilaa 5s välein - korjattu turvallisuus
   useEffect(() => {
     if (polling) {
       pollingRef.current = setInterval(async () => {
@@ -331,6 +409,32 @@ export default function CallPanel() {
           >
             📊 Lokit
           </button>
+          
+          <button
+            onClick={() => setActiveTab('manage')}
+            style={{
+              flex: 1,
+              height: '100%',
+              border: 'none',
+              background: activeTab === 'manage' ? '#fff' : 'transparent',
+              color: activeTab === 'manage' ? 'var(--brand-dark, #1f2937)' : '#6b7280',
+              fontWeight: activeTab === 'manage' ? 700 : 500,
+              cursor: 'pointer',
+              borderBottom: activeTab === 'manage' ? '3px solid var(--brand-accent, #7c3aed)' : '3px solid transparent',
+              fontSize: 18,
+              letterSpacing: 0.5,
+              transition: 'background 0.15s, color 0.15s',
+              borderRadius: 0,
+              outline: 'none',
+              boxShadow: 'none',
+              margin: 0,
+              padding: 0
+            }}
+            onMouseOver={e => { if(activeTab !== 'manage') e.currentTarget.style.background = '#f3f4f6' }}
+            onMouseOut={e => { if(activeTab !== 'manage') e.currentTarget.style.background = 'transparent' }}
+          >
+            ⚙️ Hallinta
+          </button>
         </div>
 
         {/* Sisältö */}
@@ -369,9 +473,27 @@ export default function CallPanel() {
                     </h2>
                     
                     <div style={{ marginBottom: 16 }}>
-                      <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>
-                        Google Sheets URL
-                      </label>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                        <label style={{ fontWeight: 500 }}>
+                          Google Sheets URL
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setActiveTab('manage')}
+                          style={{
+                            padding: '6px 12px',
+                            fontSize: 12,
+                            background: '#f3f4f6',
+                            border: '1px solid #d1d5db',
+                            borderRadius: 6,
+                            cursor: 'pointer',
+                            color: '#374151',
+                            fontWeight: 500
+                          }}
+                        >
+                          ➕ Lisää puhelun tyyppi
+                        </button>
+                      </div>
                       <input
                         type="url"
                         value={sheetUrl}
@@ -540,27 +662,53 @@ export default function CallPanel() {
                     </div>
                     
                     <div style={{ marginBottom: 24 }}>
-                      <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151', fontSize: 14 }}>
-                        Puhelun tyyppi
-                      </label>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                        <label style={{ fontWeight: 600, color: '#374151', fontSize: 14 }}>
+                          Puhelun tyyppi
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setActiveTab('manage')}
+                          style={{
+                            padding: '6px 12px',
+                            fontSize: 12,
+                            background: '#f3f4f6',
+                            border: '1px solid #d1d5db',
+                            borderRadius: 6,
+                            cursor: 'pointer',
+                            color: '#374151',
+                            fontWeight: 500
+                          }}
+                        >
+                          ➕ Lisää uusi
+                        </button>
+                      </div>
                       <select
                         value={callType}
                         onChange={(e) => setCallType(e.target.value)}
+                        disabled={loadingCallTypes}
                         style={{
                           width: '100%',
                           padding: '12px 16px',
                           border: '1px solid #d1d5db',
                           borderRadius: 8,
                           fontSize: 14,
-                          background: '#fff',
-                          cursor: 'pointer'
+                          background: loadingCallTypes ? '#f9fafb' : '#fff',
+                          cursor: loadingCallTypes ? 'not-allowed' : 'pointer',
+                          opacity: loadingCallTypes ? 0.6 : 1
                         }}
                       >
-                        {callTypes.map(type => (
-                          <option key={type.value} value={type.value}>
-                            {type.label}
-                          </option>
-                        ))}
+                        {loadingCallTypes ? (
+                          <option>Ladataan puhelun tyyppejä...</option>
+                        ) : callTypes.length === 0 ? (
+                          <option>Ei puhelun tyyppejä saatavilla</option>
+                        ) : (
+                          callTypes.map(type => (
+                            <option key={type.value} value={type.value}>
+                              {type.label}
+                            </option>
+                          ))
+                        )}
                       </select>
                     </div>
 
@@ -832,6 +980,310 @@ export default function CallPanel() {
                     <li>Keskimääräiset puhelun kestot</li>
                     <li>Aikasarjakaaviot puheluista</li>
                   </ul>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {activeTab === 'manage' && (
+            <div>
+              <div style={{
+                background: '#fff',
+                borderRadius: 16,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                padding: 32
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                  <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
+                    ⚙️ Puhelun tyyppien hallinta
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingCallType(null)
+                      setNewCallType({ callType: '', label: '', description: '' })
+                    }}
+                    style={{
+                      padding: '8px 16px',
+                      fontSize: 14,
+                      background: '#3b82f6',
+                      border: 'none',
+                      borderRadius: 8,
+                      cursor: 'pointer',
+                      color: '#fff',
+                      fontWeight: 500
+                    }}
+                  >
+                    ➕ Lisää uusi tyyppi
+                  </button>
+                </div>
+                
+                <p style={{ margin: '0 0 24px 0', color: '#6b7280', fontSize: 14 }}>
+                  Hallitse puhelun tyyppejä Airtable-tietokannassa. Vain Active-status olevat tyypit näkyvät puheluissa.
+                </p>
+                
+                {/* Uuden puhelun tyypin lisäys */}
+                <div style={{ marginBottom: 32, padding: 24, background: '#f8fafc', borderRadius: 12 }}>
+                  <h3 style={{ margin: '0 0 16px 0', fontSize: 18, fontWeight: 600, color: '#374151' }}>
+                    {editingCallType ? 'Muokkaa puhelun tyyppiä' : 'Lisää uusi puhelun tyyppi'}
+                  </h3>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                        Tunniste (value)
+                      </label>
+                      <input
+                        type="text"
+                        value={editingCallType ? editingCallType.value : newCallType.callType}
+                        onChange={(e) => {
+                          if (editingCallType) {
+                            setEditingCallType({ ...editingCallType, value: e.target.value })
+                          } else {
+                            setNewCallType({ ...newCallType, callType: e.target.value })
+                          }
+                        }}
+                        placeholder="esim. myynti, asiakaspalvelu"
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: 8,
+                          fontSize: 14
+                        }}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                        Näyttönimi (label)
+                      </label>
+                      <input
+                        type="text"
+                        value={editingCallType ? editingCallType.label : newCallType.label}
+                        onChange={(e) => {
+                          if (editingCallType) {
+                            setEditingCallType({ ...editingCallType, label: e.target.value })
+                          } else {
+                            setNewCallType({ ...newCallType, label: e.target.value })
+                          }
+                        }}
+                        placeholder="esim. Myyntipuhelu"
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: 8,
+                          fontSize: 14
+                        }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                        Status
+                      </label>
+                      <select
+                        value={editingCallType ? editingCallType.status : 'Active'}
+                        onChange={(e) => {
+                          if (editingCallType) {
+                            setEditingCallType({ ...editingCallType, status: e.target.value })
+                          }
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: 8,
+                          fontSize: 14,
+                          background: '#fff'
+                        }}
+                      >
+                        <option value="Draft">Draft</option>
+                        <option value="Active">Active</option>
+                        <option value="Archived">Archived</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                        Järjestys (Sort Order)
+                      </label>
+                      <input
+                        type="number"
+                        value={editingCallType ? editingCallType.sortOrder : 0}
+                        onChange={(e) => {
+                          if (editingCallType) {
+                            setEditingCallType({ ...editingCallType, sortOrder: parseInt(e.target.value) || 0 })
+                          }
+                        }}
+                        placeholder="0"
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: 8,
+                          fontSize: 14
+                        }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                      Kuvaus (vapaaehtoinen)
+                    </label>
+                    <textarea
+                      value={editingCallType ? editingCallType.description : newCallType.description}
+                      onChange={(e) => {
+                        if (editingCallType) {
+                          setEditingCallType({ ...editingCallType, description: e.target.value })
+                        } else {
+                          setNewCallType({ ...newCallType, description: e.target.value })
+                        }
+                      }}
+                      placeholder="Lyhyt kuvaus puhelun tyypistä..."
+                      rows={3}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: 8,
+                        fontSize: 14,
+                        resize: 'vertical'
+                      }}
+                    />
+                  </div>
+                  
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    <button
+                      onClick={handleSaveCallType}
+                      disabled={!((editingCallType && editingCallType.value && editingCallType.label) || 
+                                (!editingCallType && newCallType.callType && newCallType.label))}
+                      style={{
+                        padding: '12px 24px',
+                        background: '#2563eb',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 8,
+                        cursor: 'pointer',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        opacity: ((editingCallType && editingCallType.value && editingCallType.label) || 
+                                  (!editingCallType && newCallType.callType && newCallType.label)) ? 1 : 0.6
+                      }}
+                    >
+                      {editingCallType ? '💾 Päivitä' : '➕ Lisää'}
+                    </button>
+                    
+                    {editingCallType && (
+                      <button
+                        onClick={() => setEditingCallType(null)}
+                        style={{
+                          padding: '12px 24px',
+                          background: '#f3f4f6',
+                          color: '#374151',
+                          border: '1px solid #d1d5db',
+                          borderRadius: 8,
+                          cursor: 'pointer',
+                          fontSize: 14,
+                          fontWeight: 600
+                        }}
+                      >
+                        ❌ Peruuta
+                      </button>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Olemassa olevat puhelun tyypit */}
+                <div>
+                  <h3 style={{ margin: '0 0 16px 0', fontSize: 18, fontWeight: 600, color: '#374151' }}>
+                    Olemassa olevat puhelun tyypit
+                  </h3>
+                  
+                  {loadingCallTypes ? (
+                    <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
+                      Ladataan puhelun tyyppejä...
+                    </div>
+                  ) : callTypes.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
+                      Ei puhelun tyyppejä vielä lisätty
+                    </div>
+                  ) : (
+                    <div style={{ display: 'grid', gap: 12 }}>
+                      {callTypes.map((type, index) => (
+                        <div
+                          key={type.id || index}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '16px',
+                            background: '#f9fafb',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: 8
+                          }}
+                        >
+                          <div>
+                            <div style={{ fontWeight: 600, color: '#374151', marginBottom: 4 }}>
+                              {type.label}
+                            </div>
+                            <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
+                              Tunniste: <code style={{ background: '#f3f4f6', padding: '2px 4px', borderRadius: 4 }}>{type.value}</code>
+                              <span style={{ marginLeft: 12, padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 500, 
+                                background: type.status === 'Active' ? '#dcfce7' : type.status === 'Draft' ? '#fef3c7' : '#f3f4f6',
+                                color: type.status === 'Active' ? '#166534' : type.status === 'Draft' ? '#92400e' : '#6b7280'
+                              }}>
+                                {type.status}
+                              </span>
+                            </div>
+                            {type.description && (
+                              <div style={{ fontSize: 12, color: '#6b7280' }}>
+                                {type.description}
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div style={{ display: 'flex', gap: 8 }}>
+                            <button
+                              onClick={() => setEditingCallType(type)}
+                              style={{
+                                padding: '8px 12px',
+                                background: '#f3f4f6',
+                                color: '#374151',
+                                border: '1px solid #d1d5db',
+                                borderRadius: 6,
+                                cursor: 'pointer',
+                                fontSize: 12,
+                                fontWeight: 500
+                              }}
+                            >
+                              ✏️ Muokkaa
+                            </button>
+                            
+                            <button
+                              onClick={() => handleDeleteCallType(type.id)}
+                              style={{
+                                padding: '8px 12px',
+                                background: '#fef2f2',
+                                color: '#dc2626',
+                                border: '1px solid #fecaca',
+                                borderRadius: 6,
+                                cursor: 'pointer',
+                                fontSize: 12,
+                                fontWeight: 500
+                              }}
+                            >
+                              🗑️ Poista
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

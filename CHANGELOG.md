@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.17.0](https://github.com/slemppa/rascal-ai/compare/v1.16.0...v1.17.0) (2025-07-10)
+
+
+### ♻️ Code Refactoring
+
+* poista Airtable-kutsut CallPanel-sivulta ([de5d671](https://github.com/slemppa/rascal-ai/commit/de5d6714a1f213342f0b31a7421ab13d8503889a))
+
+
+### ✨ Features
+
+* add call type management with modal forms ([6ecf8a7](https://github.com/slemppa/rascal-ai/commit/6ecf8a77d098ec6ee199ee114585a86fc88390c3))
+
 ## [1.16.0](https://github.com/slemppa/rascal-ai/compare/v1.15.0...v1.16.0) (2025-07-08)
 
 

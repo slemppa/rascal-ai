@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.17.1](https://github.com/slemppa/rascal-ai/compare/v1.17.0...v1.17.1) (2025-07-10)
+
+
+### 📚 Documentation
+
+* update public changelog to version 1.17.0 ([5e9d356](https://github.com/slemppa/rascal-ai/commit/5e9d356bc873938561ba4bd27c28a3970ee4f546))
+
+
+### 🐛 Bug Fixes
+
+* remove hardcoded API keys and use environment variables only ([ce23af4](https://github.com/slemppa/rascal-ai/commit/ce23af442cc1d0e8d63f0d2b4d4ad8bb9a6d48b4))
+
 ## [1.17.0](https://github.com/slemppa/rascal-ai/compare/v1.16.0...v1.17.0) (2025-07-10)
 
 

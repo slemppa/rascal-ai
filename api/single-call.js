@@ -5,15 +5,23 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { phoneNumber, callType, script, voice, companyId } = req.body
+    const { phoneNumber, name, callType, recordId, script, voice, companyId } = req.body
 
     // Validointi
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: 'Nimi on pakollinen' })
+    }
+
     if (!phoneNumber || !phoneNumber.trim()) {
       return res.status(400).json({ error: 'Puhelinnumero on pakollinen' })
     }
 
     if (!callType) {
       return res.status(400).json({ error: 'Puhelun tyyppi on pakollinen' })
+    }
+
+    if (!recordId) {
+      return res.status(400).json({ error: 'Puhelun tyypin tunniste on pakollinen' })
     }
 
     if (!script || !script.trim()) {
@@ -40,8 +48,10 @@ export default async function handler(req, res) {
 
     // Lähetä data N8N:ään
     const payload = {
+      name: name.trim(),
       phoneNumber: phoneNumber.trim(),
       callType,
+      recordId,
       script: script.trim(),
       voice,
       companyId,
@@ -76,10 +86,12 @@ export default async function handler(req, res) {
     // Palauta onnistumisviesti
     res.status(200).json({
       success: true,
-      message: `Puhelu numerolle ${phoneNumber.trim()} käynnistetty onnistuneesti`,
+      message: `Puhelu henkilölle ${name.trim()} (${phoneNumber.trim()}) käynnistetty onnistuneesti`,
       callId: result.callId || null,
+      name: name.trim(),
       phoneNumber: phoneNumber.trim(),
       callType,
+      recordId,
       voice,
       timestamp: payload.timestamp
     })

@@ -18,33 +18,26 @@ export default async function handler(req, res) {
     const { 
       companyId, 
       sheetUrl, 
-      page = 1, 
-      limit = 25, 
       search = '', 
       status = '', 
       callType = '', 
       dateFrom = '', 
-      dateTo = '' 
+      dateTo = '',
+      format = 'csv'
     } = req.query
     
     if (!companyId) {
       return res.status(400).json({ error: 'companyId parameter is required' })
     }
 
-    console.log('Fetching call logs for company:', companyId, 'with filters:', { page, limit, search, status, callType, dateFrom, dateTo })
+    console.log('Exporting call logs for company:', companyId, 'format:', format)
 
-    // Lähetä kutsu N8N webhookiin kaikilla parametreilla
+    // Lähetä kutsu N8N webhookiin (ilman filttereitä, koska filtteröinti tehdään backendissä)
     const response = await axios.get(N8N_CALL_LOGS_URL, {
       params: { 
         companyId,
         sheetUrl,
-        page: parseInt(page),
-        limit: parseInt(limit),
-        search,
-        status,
-        callType,
-        dateFrom,
-        dateTo
+        limit: 1000 // Hae kaikki dataa
       },
       headers: {
         'Content-Type': 'application/json',
@@ -54,37 +47,32 @@ export default async function handler(req, res) {
 
     // N8N palauttaa dataa items array:ssa tai suoraan
     const n8nData = response.data
-    console.log('N8N call logs response structure:', Object.keys(n8nData))
-    
-    // Etsi items array N8N:n vastauksesta
     let items = []
-    let totalCount = 0
-    let totalPages = 0
     
     if (Array.isArray(n8nData)) {
-      // Jos data on array, etsi items ensimmäisestä elementistä
       items = n8nData[0]?.items || n8nData
     } else if (n8nData.items) {
-      // Jos data on objekti ja sisältää items
       items = n8nData.items
     } else {
-      // Fallback: kokeile suoraan dataa
       items = Array.isArray(n8nData) ? n8nData : []
     }
 
-    // BACKEND-FILTTERÖINTI
+    console.log('Export - Original items count:', items.length)
+    console.log('Export - Search parameters:', { search, status, callType, dateFrom, dateTo })
+
+    // BACKEND-FILTTERÖINTI (sama kuin call-logs.js:ssä)
     let filteredItems = [...items]
     
-    // Tekstihaku - etsi kaikista kentistä
+    // Tekstihaku
     if (search && search.trim()) {
-      // Korvaa + merkit välilyönneillä ja dekoodaa URL-encoding
       const searchLower = decodeURIComponent(search.replace(/\+/g, ' ')).toLowerCase().trim()
-      
+      console.log('Export - Searching for:', searchLower)
       filteredItems = filteredItems.filter(item => {
         return Object.values(item).some(value => 
           value && value.toString().toLowerCase().includes(searchLower)
         )
       })
+      console.log('Export - After search filter:', filteredItems.length, 'items')
     }
     
     // Status-filtteri
@@ -96,13 +84,11 @@ export default async function handler(req, res) {
         const statusLower = status.toLowerCase()
         const itemStatusLower = itemStatus.toString().toLowerCase()
         
-        // Mappaa suomenkieliset statukset englanninkielisiin
         if (statusLower === 'onnistuneet' || statusLower === 'onnistui') {
           return itemStatusLower === 'kyllä' || itemStatusLower === 'kyllä' || itemStatusLower === '1' || itemStatusLower === 'true'
         } else if (statusLower === 'epäonnistuneet' || statusLower === 'epäonnistui') {
           return itemStatusLower === 'ei' || itemStatusLower === 'ei' || itemStatusLower === '0' || itemStatusLower === 'false'
         } else {
-          // Suora vertailu jos ei ole suomenkielinen status
           return itemStatusLower === statusLower
         }
       })
@@ -133,55 +119,57 @@ export default async function handler(req, res) {
       })
     }
 
-    // Pagination backend-logiikalla
-    const totalFilteredCount = filteredItems.length
-    const itemsPerPage = parseInt(limit)
-    const currentPageNum = parseInt(page)
-    const startIndex = (currentPageNum - 1) * itemsPerPage
-    const endIndex = startIndex + itemsPerPage
-    
-    // Hae vain nykyisen sivun rivit
-    const paginatedItems = filteredItems.slice(startIndex, endIndex)
-    
-    totalCount = totalFilteredCount
-    totalPages = Math.ceil(totalCount / itemsPerPage)
+    console.log('Export filtered items:', filteredItems.length, 'records')
 
-    console.log('Call logs filtered and paginated:', paginatedItems.length, 'records, total:', totalCount, 'pages:', totalPages)
-
-    // Laske tilastot Google Sheets datasta
-    const stats = {
-      totalCount: totalCount,
-      successfulCount: paginatedItems.filter(item => item.Onnistunut === 'Kyllä' || item.Onnistunut === 'kyllä' || item.Onnistunut === '1').length,
-      failedCount: paginatedItems.filter(item => item.Onnistunut === 'Ei' || item.Onnistunut === 'ei' || item.Onnistunut === '0').length,
-      averageDuration: 0 // Google Sheets ei sisällä kestoja vielä
+    const exportData = filteredItems
+    
+    // Jos N8N palauttaa suoraan CSV-dataa
+    if (format === 'csv' && typeof exportData === 'string') {
+      res.setHeader('Content-Type', 'text/csv')
+      res.setHeader('Content-Disposition', `attachment; filename="puheluloki_${new Date().toISOString().split('T')[0]}.csv"`)
+      return res.status(200).send(exportData)
+    }
+    
+    // Jos N8N palauttaa JSON-dataa, muunna se CSV:ksi
+    if (format === 'csv' && Array.isArray(exportData)) {
+      console.log('Export - Creating CSV with', exportData.length, 'items')
+      console.log('Export - Sample item:', exportData[0])
+      
+      const csvHeaders = ['Nimi', 'Puhelinnumero', 'Yhteenveto', 'Hinta', 'Puhelun tyyppi', 'Päivämäärä', 'Vastattu', 'Kesto']
+      const csvRows = exportData.map(item => [
+        item.Nimi || '',
+        item.Puhelinnumero || '',
+        item.Summary || item.Huomiot || '',
+        item.Price || '',
+        item['Call Type'] || item.PuhelunTyyppi || item.CallType || '',
+        item.Date || '',
+        item.Answered || '',
+        item.Duration || ''
+      ])
+      
+      const csvContent = [csvHeaders, ...csvRows]
+        .map(row => row.map(field => `"${field}"`).join(','))
+        .join('\n')
+      
+      console.log('Export - CSV content length:', csvContent.length)
+      console.log('Export - CSV preview:', csvContent.substring(0, 200))
+      
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8')
+      res.setHeader('Content-Disposition', `attachment; filename="puheluloki_${new Date().toISOString().split('T')[0]}.csv"`)
+      return res.status(200).send(csvContent)
     }
 
+    // Palauta JSON-dataa
     res.status(200).json({ 
-      logs: paginatedItems,
-      stats: stats,
-      pagination: {
-        currentPage: parseInt(page),
-        totalPages: totalPages,
-        totalCount: totalCount,
-        limit: parseInt(limit),
-        hasNextPage: parseInt(page) < totalPages,
-        hasPrevPage: parseInt(page) > 1
-      },
-      filters: {
-        search,
-        status,
-        callType,
-        dateFrom,
-        dateTo
-      },
-      message: 'Puheluloki haettu onnistuneesti'
+      data: exportData,
+      message: 'Puheluloki exportattu onnistuneesti'
     })
   } catch (error) {
-    console.error('N8N webhook error:', error.response?.status, error.response?.statusText)
+    console.error('N8N export webhook error:', error.response?.status, error.response?.statusText)
     console.error('Error details:', error.response?.data || error.message)
     
     res.status(error.response?.status || 500).json({ 
-      error: `N8N webhook failed: ${error.response?.status || 500} ${error.response?.statusText || 'Internal Server Error'}`,
+      error: `N8N export webhook failed: ${error.response?.status || 500} ${error.response?.statusText || 'Internal Server Error'}`,
       details: error.response?.data || error.message
     })
   }

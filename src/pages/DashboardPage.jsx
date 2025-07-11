@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import PageHeader from '../components/PageHeader'
+import axios from 'axios'
 
 function EditPostModal({ post, onClose, onSave }) {
   const [idea, setIdea] = useState(post.Idea || '')
@@ -231,6 +232,12 @@ export default function DashboardPage() {
   const [monthlyLimitData, setMonthlyLimitData] = useState([]) // Kuukausirajoituksen data
   const imagesDropRef = React.useRef(null)
   const audioDropRef = React.useRef(null)
+  
+  // PUHELULOKIEN HAKU JA PRICE-SUMMA
+  const [callPriceSum, setCallPriceSum] = useState(null)
+  const [callPriceLoading, setCallPriceLoading] = useState(true)
+  const [callPriceError, setCallPriceError] = useState(null)
+  const [user, setUser] = useState(null)
 
   // Responsiivinen apu
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -347,6 +354,50 @@ export default function DashboardPage() {
       }
     }
     fetchMonthlyLimitData()
+  }, [])
+
+  // PUHELULOKIEN HAKU JA PRICE-SUMMA
+  React.useEffect(() => {
+    const fetchCallLogsForPrice = async () => {
+      setCallPriceLoading(true)
+      setCallPriceError(null)
+      try {
+        const companyId = JSON.parse(localStorage.getItem('user') || 'null')?.companyId
+        if (!companyId) {
+          setCallPriceError('Yrityksen tunniste puuttuu')
+          setCallPriceLoading(false)
+          return
+        }
+        
+        // Hae kaikki puhelulokit (ilman päivämääräfiltteriä, koska dataa ei ole vielä päivämääriä)
+        const response = await axios.get(`/api/call-logs?companyId=${companyId}&limit=1000`)
+        const logs = response.data?.logs || []
+        
+        // Lasketaan Price-summa (vain numerot, pilkku- ja piste-erot sallitaan)
+        let sum = 0
+        logs.forEach((log, index) => {
+          let price = log.Price
+          if (typeof price === 'string') {
+            price = price.replace(',', '.').replace(/[^0-9.\-]/g, '')
+          }
+          price = parseFloat(price)
+          if (!isNaN(price)) {
+            sum += price
+          }
+        })
+        
+        setCallPriceSum(sum)
+      } catch (e) {
+        setCallPriceError('Puhelulokien haku epäonnistui')
+      } finally {
+        setCallPriceLoading(false)
+      }
+    }
+
+    // Odota hetki että käyttäjä on kirjautunut sisään
+    setTimeout(() => {
+      fetchCallLogsForPrice()
+    }, 1000)
   }, [])
 
   const handleSavePost = (updatedPost) => {
@@ -606,6 +657,7 @@ export default function DashboardPage() {
             )}
           </div>
 
+          {/* Puheluiden kokonaishinta */}
           <div style={{ 
             background: '#fff', 
             borderRadius: 16, 
@@ -614,71 +666,24 @@ export default function DashboardPage() {
             position: 'relative',
             ...(isMobile ? {} : {gridColumn: '3', gridRow: '1'})
           }}>
-            <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Käytetty aika</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
-            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tulossa pian</div>
-            <div style={{ 
-              position: 'absolute', 
-              top: 8, 
-              right: 8, 
-              fontSize: 12, 
-              color: '#9ca3af',
-              background: '#f3f4f6',
-              padding: '2px 6px',
-              borderRadius: 4
-            }}>
-              🚧 Dev
+            <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Puheluiden kokonaishinta</div>
+            <div style={{ fontSize: 32, fontWeight: 800, color: '#2563eb', lineHeight: 1 }}>
+              {callPriceLoading ? '...' : callPriceError ? '—' : `${callPriceSum?.toLocaleString('fi-FI', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`}
             </div>
-          </div>
-
-          <div style={{ 
-            background: '#fff', 
-            borderRadius: 16, 
-            boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
-            padding: 24,
-            position: 'relative',
-            ...(isMobile ? {} : {gridColumn: '4', gridRow: '1'})
-          }}>
-            <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Tavoitteet</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
-            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tulossa pian</div>
-            <div style={{ 
-              position: 'absolute', 
-              top: 8, 
-              right: 8, 
-              fontSize: 12, 
-              color: '#9ca3af',
-              background: '#f3f4f6',
-              padding: '2px 6px',
-              borderRadius: 4
-            }}>
-              🚧 Dev
-            </div>
-          </div>
-
-          <div style={{ 
-            background: '#fff', 
-            borderRadius: 16, 
-            boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
-            padding: 24,
-            position: 'relative',
-            ...(isMobile ? {} : {gridColumn: '5', gridRow: '1'})
-          }}>
-            <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>AI käyttö</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
-            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tulossa pian</div>
-            <div style={{ 
-              position: 'absolute', 
-              top: 8, 
-              right: 8, 
-              fontSize: 12, 
-              color: '#9ca3af',
-              background: '#f3f4f6',
-              padding: '2px 6px',
-              borderRadius: 4
-            }}>
-              🚧 Dev
-            </div>
+            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tämän kuun puhelut</div>
+            {callPriceError && (
+              <div style={{ 
+                position: 'absolute', 
+                top: 8, 
+                right: 8, 
+                fontSize: 12, 
+                color: '#dc2626',
+                background: '#fef2f2',
+                padding: '2px 6px',
+                borderRadius: 4,
+                fontWeight: 600
+              }}>{callPriceError}</div>
+            )}
           </div>
 
           {/* Tulevat postaukset lista */}

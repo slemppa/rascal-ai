@@ -28,15 +28,9 @@ const getStrategy = async (companyId) => {
   return await res.json()
 }
 
-function icpToText(data) {
-  const demographics = `Ikä: ${data.demographics.age}, Sijainti: ${data.demographics.location}, Kieli: ${data.demographics.language}, Koulutus: ${data.demographics.education}`;
-  const business = `Yrityksen koko: ${data.business.companySize}, Toimiala: ${data.business.industry}, Liikevaihto: ${data.business.revenue}, Vaihe: ${data.business.stage}`;
-  const painPoints = data.painPoints.filter(Boolean).join(', ');
-  const goals = data.goals.filter(Boolean).join(', ');
-  const behavior = `Kanavat: ${Array.isArray(data.behavior.channels) ? data.behavior.channels.join(', ') : data.behavior.channels}, Sisältö: ${data.behavior.content}, Päätöksenteko: ${data.behavior.decision}`;
-  
-  return `Demografia: ${demographics}. Yritys: ${business}. Haasteet: ${painPoints}. Tavoitteet: ${goals}. Käyttäytyminen: ${behavior}`;
-}
+
+
+
 
 function capitalize(str) {
   if (!str) return '';
@@ -65,27 +59,7 @@ export default function ContentStrategyPage() {
   const [editType, setEditType] = useState('strategy') // 'strategy' tai 'icp'
   const [showModal, setShowModal] = useState(false)
   const [editingItem, setEditingItem] = useState(null)
-  const [icpFormData, setIcpFormData] = useState({
-    demographics: {
-      age: '',
-      location: '',
-      language: '',
-      education: ''
-    },
-    business: {
-      companySize: '',
-      industry: '',
-      revenue: '',
-      stage: ''
-    },
-    painPoints: [''],
-    goals: [''],
-    behavior: {
-      channels: '',
-      content: '',
-      decision: ''
-    }
-  })
+  const [icpText, setIcpText] = useState('')
   const textareaRef = React.useRef(null)
   const [showAddModal, setShowAddModal] = useState(false)
   const [newMonth, setNewMonth] = useState('Tammikuu')
@@ -116,19 +90,24 @@ export default function ContentStrategyPage() {
           const item = data[0]
           // ICP
           const icpData = item.icpSummary && item.icpSummary.length > 0
-            ? { summary: item.icpSummary[0] }
+            ? { 
+                summary: item.icpSummary[0],
+                recordId: item.icpSummaryRecordId || null // Säilytä recordId
+              }
             : null
           // Strategiat
           const strategies = Array.isArray(item.strategyAndMonth)
             ? item.strategyAndMonth.map((s, idx) => ({
                 text: s.Strategy,
                 month: s.Month,
-                id: `${s.Month}_${idx}`
+                id: s.recordId || `${s.Month}_${idx}`, // Käytä recordId:tä jos saatavilla
+                recordId: s.recordId || null // Säilytä recordId
               }))
             : []
           processedData = [{
             ICP: icpData,
-            strategies: strategies
+            strategies: strategies,
+            recordId: item.recordId || null // Säilytä päärecordId
           }]
         }
         // --- MUUNNOS LOPPUU ---
@@ -158,13 +137,7 @@ export default function ContentStrategyPage() {
         setShowModal(false)
         setEditingItem(null)
         setEditText('')
-        setIcpFormData({
-          demographics: { age: '', location: '', language: '', education: '' },
-          business: { companySize: '', industry: '', revenue: '', stage: '' },
-          painPoints: [''],
-          goals: [''],
-          behavior: { channels: '', content: '', decision: '' }
-        })
+        setIcpText('')
       }
     }
     window.addEventListener('keydown', handleEsc)
@@ -173,36 +146,7 @@ export default function ContentStrategyPage() {
     }
   }, [])
 
-  const handleIcpFieldChange = (section, field, value) => {
-    setIcpFormData(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value
-      }
-    }))
-  }
 
-  const handleIcpArrayChange = (field, index, value) => {
-    setIcpFormData(prev => ({
-      ...prev,
-      [field]: prev[field].map((item, i) => i === index ? value : item)
-    }))
-  }
-
-  const addIcpArrayItem = (field) => {
-    setIcpFormData(prev => ({
-      ...prev,
-      [field]: [...prev[field], '']
-    }))
-  }
-
-  const removeIcpArrayItem = (field, index) => {
-    setIcpFormData(prev => ({
-      ...prev,
-      [field]: prev[field].filter((_, i) => i !== index)
-    }))
-  }
 
   const handleEdit = (item, type = 'strategy') => {
     setEditingItem(item)
@@ -210,29 +154,15 @@ export default function ContentStrategyPage() {
     if (type === 'strategy') {
     setEditText(item.Strategy)
     } else if (type === 'icp') {
-      // Täytetään lomake olemassa olevilla tiedoilla
-      if (item.ICP) {
-        setIcpFormData({
-          demographics: {
-            age: item.ICP.demographics?.age || '',
-            location: item.ICP.demographics?.location || '',
-            language: item.ICP.demographics?.language || '',
-            education: item.ICP.demographics?.education || ''
-          },
-          business: {
-            companySize: item.ICP.business?.companySize || '',
-            industry: item.ICP.business?.industry || '',
-            revenue: item.ICP.business?.revenue || '',
-            stage: item.ICP.business?.stage || ''
-          },
-          painPoints: item.ICP.painPoints?.length > 0 ? [...item.ICP.painPoints] : [''],
-          goals: item.ICP.goals?.length > 0 ? [...item.ICP.goals] : [''],
-          behavior: {
-            channels: item.ICP.behavior?.channels?.join(', ') || '',
-            content: item.ICP.behavior?.content || '',
-            decision: item.ICP.behavior?.decision || ''
-          }
-        })
+      // Täytetään tekstikenttä olemassa olevalla tekstillä
+      console.log('ICP edit - item:', item)
+      console.log('ICP edit - item.ICP:', item.ICP)
+      console.log('ICP edit - raw summary text:', item.ICP?.summary)
+      
+      if (item.ICP && item.ICP.summary) {
+        setIcpText(item.ICP.summary)
+      } else {
+        setIcpText('')
       }
     }
     setShowModal(true)
@@ -240,52 +170,57 @@ export default function ContentStrategyPage() {
 
   const handleSave = async (item) => {
     try {
-      if (!item.recordId) {
-        alert('Record ID puuttuu - ei voi päivittää')
-        return
-      }
-
       let updateData
       let updateType
+      let action = 'update'
 
       if (editType === 'strategy') {
+        if (!item.recordId) {
+          alert('Record ID puuttuu - ei voi päivittää strategiaa')
+          return
+        }
         updateData = editText
         updateType = 'strategy'
       } else if (editType === 'icp') {
-        // Muunnetaan lomaketiedot tekstiksi
-        const icpData = {
-          demographics: icpFormData.demographics,
-          business: icpFormData.business,
-          painPoints: icpFormData.painPoints.filter(point => point.trim() !== ''),
-          goals: icpFormData.goals.filter(goal => goal.trim() !== ''),
-          behavior: {
-            ...icpFormData.behavior,
-            channels: icpFormData.behavior.channels.split(',').map(channel => channel.trim()).filter(channel => channel !== '')
-          }
-        }
-        updateData = icpToText(icpData)
+        // Käytä tekstikentän sisältöä suoraan
+        updateData = icpText
         updateType = 'icp'
+        
+        // ICP:n recordId on companyId, joten aina käytetään 'update' actionia
+        if (!item.recordId) {
+          alert('Company ID puuttuu - ei voi päivittää ICP:tä')
+          return
+        }
       } else {
         alert('Virheellinen päivitystyyppi')
         return
       }
 
-      // Päivitä Airtableen
-      const response = await axios.post('/api/airtable-update', {
-        recordId: item.recordId,
+      // Päivitä N8N webhookin kautta
+      const payload = {
+        updateType: 'strategyUpdate',
+        action: action,
         type: updateType,
         data: updateData
-      })
+      }
+      
+      // Lisää id vain jos se on olemassa
+      if (item.recordId) {
+        payload.id = item.recordId
+      }
+      
+      console.log('Lähetetään payload:', payload)
+      const response = await axios.post('/api/update-post.js', payload)
 
-              if (response.data.success) {
-          // Hae uusimmat tiedot webhookista
-          await fetchStrategy()
+      if (response.data.success) {
+        // Hae uusimmat tiedot webhookista
+        window.location.reload() // Lataa sivu uudestaan päivittääksesi datan
         setShowModal(false)
         setEditingItem(null)
         setEditText('')
         alert('Päivitys onnistui!')
       } else {
-        alert('Päivitys epäonnistui: ' + response.data.error)
+        alert('Päivitys epäonnistui: ' + (response.data.error || 'Tuntematon virhe'))
       }
     } catch (e) {
       console.error('Päivitysvirhe:', e)
@@ -305,11 +240,13 @@ export default function ContentStrategyPage() {
         console.warn('Could not parse user from localStorage:', e)
       }
       const payload = {
+        updateType: 'strategyUpdate',
+        action: 'create',
         month: newMonth,
         strategy: newStrategy,
         companies: companyId ? [companyId] : []
       }
-      const res = await axios.post('/api/create-strategy', payload)
+      const res = await axios.post('/api/update-post.js', payload)
       if (res.data.success) {
         setShowAddModal(false)
         setNewMonth('Tammikuu')
@@ -357,7 +294,21 @@ export default function ContentStrategyPage() {
                 <div className={`content ${!mainItem.ICP.summary ? 'empty' : ''}`}>
                   {mainItem.ICP.summary || 'Ei kuvausta. Lisää ihanneasiakkaan kuvaus.'}
                 </div>
-                <button className="strategy-button" onClick={() => handleEdit(mainItem, 'icp')}>
+                <button className="strategy-button" onClick={() => {
+                  // Hae companyId localStoragesta ICP:n recordId:ksi
+                  let companyId = null
+                  try {
+                    const userRaw = JSON.parse(localStorage.getItem('user') || 'null')
+                    companyId = userRaw?.companyId || userRaw?.user?.companyId || null
+                  } catch (e) {
+                    console.warn('Could not parse user from localStorage:', e)
+                  }
+                  
+                  handleEdit({
+                    ...mainItem,
+                    recordId: companyId
+                  }, 'icp')
+                }}>
                   Muokkaa ICP:tä
                 </button>
               </div>
@@ -379,7 +330,7 @@ export default function ContentStrategyPage() {
                       ...mainItem, 
                       Strategy: strategy.text, 
                       Month: strategy.month, 
-                      recordId: strategy.id
+                      recordId: strategy.recordId || strategy.id
                     }, 'strategy')}
                   >
                     Muokkaa strategiaa
@@ -526,13 +477,7 @@ export default function ContentStrategyPage() {
                   setShowModal(false)
                   setEditingItem(null)
                   setEditText('')
-                  setIcpFormData({
-                    demographics: { age: '', location: '', language: '', education: '' },
-                    business: { companySize: '', industry: '', revenue: '', stage: '' },
-                    painPoints: [''],
-                    goals: [''],
-                    behavior: { channels: '', content: '', decision: '' }
-                  })
+                  setIcpText('')
                 }}
                 style={{
                   background: 'none',
@@ -568,259 +513,23 @@ export default function ContentStrategyPage() {
                 />
               ) : (
                 <div style={{maxHeight: 400, overflow: 'auto'}}>
-                  {/* Demografia */}
-                  <div style={{marginBottom: 24}}>
-                    <h4 style={{margin: '0 0 12px 0', fontSize: 16, fontWeight: 600, color: '#374151'}}>Demografia</h4>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12}}>
-                      <input
-                        type="text"
-                        placeholder="Ikä (esim. 30-50)"
-                        value={icpFormData.demographics.age}
-                        onChange={e => handleIcpFieldChange('demographics', 'age', e.target.value)}
-                        style={{
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Sijainti (esim. Suomi)"
-                        value={icpFormData.demographics.location}
-                        onChange={e => handleIcpFieldChange('demographics', 'location', e.target.value)}
-                        style={{
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Kieli (esim. Suomi)"
-                        value={icpFormData.demographics.language}
-                        onChange={e => handleIcpFieldChange('demographics', 'language', e.target.value)}
-                        style={{
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Koulutus (esim. Korkeakoulututkinto)"
-                        value={icpFormData.demographics.education}
-                        onChange={e => handleIcpFieldChange('demographics', 'education', e.target.value)}
-                        style={{
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Yritys */}
-                  <div style={{marginBottom: 24}}>
-                    <h4 style={{margin: '0 0 12px 0', fontSize: 16, fontWeight: 600, color: '#374151'}}>Yritys</h4>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12}}>
-                      <input
-                        type="text"
-                        placeholder="Yrityksen koko (esim. 5-50 työntekijää)"
-                        value={icpFormData.business.companySize}
-                        onChange={e => handleIcpFieldChange('business', 'companySize', e.target.value)}
-                        style={{
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Toimiala (esim. Teknologia, palvelut)"
-                        value={icpFormData.business.industry}
-                        onChange={e => handleIcpFieldChange('business', 'industry', e.target.value)}
-                        style={{
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Liikevaihto (esim. 500k - 5M €/vuosi)"
-                        value={icpFormData.business.revenue}
-                        onChange={e => handleIcpFieldChange('business', 'revenue', e.target.value)}
-                        style={{
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Vaihe (esim. Kasvuvaiheessa)"
-                        value={icpFormData.business.stage}
-                        onChange={e => handleIcpFieldChange('business', 'stage', e.target.value)}
-                        style={{
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Haasteet */}
-                  <div style={{marginBottom: 24}}>
-                    <h4 style={{margin: '0 0 12px 0', fontSize: 16, fontWeight: 600, color: '#374151'}}>Haasteet</h4>
-                    {icpFormData.painPoints.map((point, index) => (
-                      <div key={index} style={{display: 'flex', gap: 8, marginBottom: 8}}>
-                        <input
-                          type="text"
-                          placeholder="Haaste (esim. Rajoitettu markkinointibudjetti)"
-                          value={point}
-                          onChange={e => handleIcpArrayChange('painPoints', index, e.target.value)}
-                          style={{
-                            flex: 1,
-                            padding: '8px 12px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: 6,
-                            fontSize: 14
-                          }}
-                        />
-                        {icpFormData.painPoints.length > 1 && (
-                          <button
-                            onClick={() => removeIcpArrayItem('painPoints', index)}
-                            style={{
-                              padding: '8px 12px',
-                              background: '#ef4444',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: 6,
-                              cursor: 'pointer'
-                            }}
-                          >
-                            Poista
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                    <button
-                      onClick={() => addIcpArrayItem('painPoints')}
+                  <div>
+                    <h4 style={{margin: '0 0 12px 0', fontSize: 16, fontWeight: 600, color: '#374151'}}>ICP kuvaus</h4>
+                    <textarea
+                      value={icpText}
+                      onChange={e => setIcpText(e.target.value)}
+                      rows={12}
                       style={{
-                        padding: '8px 16px',
-                        background: '#10b981',
-                        color: 'white',
-                        border: 'none',
+                        width: '100%',
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
                         borderRadius: 6,
-                        cursor: 'pointer',
-                        fontSize: 14
+                        fontSize: 14,
+                        lineHeight: 1.5,
+                        resize: 'vertical'
                       }}
-                    >
-                      + Lisää haaste
-                    </button>
-                  </div>
-
-                  {/* Tavoitteet */}
-                  <div style={{marginBottom: 24}}>
-                    <h4 style={{margin: '0 0 12px 0', fontSize: 16, fontWeight: 600, color: '#374151'}}>Tavoitteet</h4>
-                    {icpFormData.goals.map((goal, index) => (
-                      <div key={index} style={{display: 'flex', gap: 8, marginBottom: 8}}>
-                        <input
-                          type="text"
-                          placeholder="Tavoite (esim. Kasvattaa digitaalista läsnäoloa)"
-                          value={goal}
-                          onChange={e => handleIcpArrayChange('goals', index, e.target.value)}
-                          style={{
-                            flex: 1,
-                            padding: '8px 12px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: 6,
-                            fontSize: 14
-                          }}
-                        />
-                        {icpFormData.goals.length > 1 && (
-                          <button
-                            onClick={() => removeIcpArrayItem('goals', index)}
-                            style={{
-                              padding: '8px 12px',
-                              background: '#ef4444',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: 6,
-                              cursor: 'pointer'
-                            }}
-                          >
-                            Poista
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                    <button
-                      onClick={() => addIcpArrayItem('goals')}
-                      style={{
-                        padding: '8px 16px',
-                        background: '#10b981',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: 6,
-                        cursor: 'pointer',
-                        fontSize: 14
-                      }}
-                    >
-                      + Lisää tavoite
-                    </button>
-                  </div>
-
-                  {/* Käyttäytyminen */}
-                  <div style={{marginBottom: 24}}>
-                    <h4 style={{margin: '0 0 12px 0', fontSize: 16, fontWeight: 600, color: '#374151'}}>Käyttäytyminen</h4>
-                    <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
-                      <input
-                        type="text"
-                        placeholder="Kanavat (esim. LinkedIn, Google, Suosittelut)"
-                        value={icpFormData.behavior.channels}
-                        onChange={e => handleIcpFieldChange('behavior', 'channels', e.target.value)}
-                        style={{
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Sisältö (esim. Käytännölliset oppaat ja case studyt)"
-                        value={icpFormData.behavior.content}
-                        onChange={e => handleIcpFieldChange('behavior', 'content', e.target.value)}
-                        style={{
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Päätöksenteko (esim. Todisteet ja tulokset ovat tärkeitä)"
-                        value={icpFormData.behavior.decision}
-                        onChange={e => handleIcpFieldChange('behavior', 'decision', e.target.value)}
-                        style={{
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      />
-                    </div>
+                      placeholder="Kirjoita ihanneasiakkaan kuvaus tähän..."
+                    />
                   </div>
                 </div>
               )}
@@ -836,13 +545,7 @@ export default function ContentStrategyPage() {
                   setShowModal(false)
                   setEditingItem(null)
                   setEditText('')
-                  setIcpFormData({
-                    demographics: { age: '', location: '', language: '', education: '' },
-                    business: { companySize: '', industry: '', revenue: '', stage: '' },
-                    painPoints: [''],
-                    goals: [''],
-                    behavior: { channels: '', content: '', decision: '' }
-                  })
+                  setIcpText('')
                 }}
                 style={{
                   background: '#f3f4f6',

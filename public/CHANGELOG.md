@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.19.0](https://github.com/slemppa/rascal-ai/compare/v1.18.0...v1.19.0) (2025-07-11)
+
+
+### ✨ Features
+
+* add call logs system with backend filtering and export ([7a62420](https://github.com/slemppa/rascal-ai/commit/7a624209a91078c5a048e1e380038e7c2cf05174))
+
+## [1.18.0](https://github.com/slemppa/rascal-ai/compare/v1.17.1...v1.18.0) (2025-07-11)
+
+
+### 📚 Documentation
+
+* update public changelog to version 1.17.1 ([dfe02e2](https://github.com/slemppa/rascal-ai/commit/dfe02e21ff0ad3d4bb161a095f7241a21c9dc0b4))
+
+
+### ✨ Features
+
+* **call:** lisää nimi- ja recordId-tuki yksittäiseen puheluun ([cfd63c7](https://github.com/slemppa/rascal-ai/commit/cfd63c7a6b2cd3595aab1526903131b1df45fb8c))
+
 ### [1.17.1](https://github.com/slemppa/rascal-ai/compare/v1.17.0...v1.17.1) (2025-07-10)
 
 

@@ -37,9 +37,10 @@ function EditPostModal({ post, onClose, onSave }) {
         Idea: idea,
         Caption: caption,
         "Publish Date": publishDate,
-        updateType: 'postUpdate'
+        updateType: 'postUpdate',
+        action: 'update'
       }
-      const res = await fetch('/api/update-post', {
+      const res = await fetch('/api/update-post.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

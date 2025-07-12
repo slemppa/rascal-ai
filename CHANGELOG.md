@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.19.1](https://github.com/slemppa/rascal-ai/compare/v1.19.0...v1.19.1) (2025-07-12)
+
+
+### 🐛 Bug Fixes
+
+* korjaa ICP:n muokkaus yksinkertaiseksi tekstikentäksi ([ac9cd70](https://github.com/slemppa/rascal-ai/commit/ac9cd70d7c385a9bd2ec99ba0d3db9be709fdc4a))
+
 ## [1.19.0](https://github.com/slemppa/rascal-ai/compare/v1.18.0...v1.19.0) (2025-07-11)
 
 

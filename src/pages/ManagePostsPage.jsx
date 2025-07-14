@@ -114,8 +114,23 @@ const getGridSpans = (media) => {
 // Karuselli-komponentti Carousel-tyypin tietueille
 function CarouselMedia({ post, segments }) {
   // Hae kaikki segmentit, joiden Content sisältää tämän Carouselin Record ID:n
+  const postId = post["Record ID"] || post.id;
   const relatedSlides = segments
-    .filter(seg => Array.isArray(seg.Content) && (seg.Content.includes(post["Record ID"]) || seg.Content.includes(post.id)))
+    .filter(seg => {
+      // Tarkista onko segmentillä Slide No. (eli se on slide)
+      if (!seg["Slide No."]) return false;
+      
+      // Tarkista onko Content-kentässä tämän postin ID
+      if (Array.isArray(seg.Content)) {
+        return seg.Content.some(content => 
+          content === postId || 
+          content.includes(postId) ||
+          (typeof content === 'string' && content.includes(postId))
+        );
+      }
+      
+      return false;
+    })
     .sort((a, b) => parseInt(a["Slide No."]) - parseInt(b["Slide No."]));
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -123,10 +138,8 @@ function CarouselMedia({ post, segments }) {
   if (relatedSlides.length === 0) {
     return (
       <div className={styles.carouselContainer}>
-        <div style={{padding: 16, color: 'red', fontSize: 14}}>
-          <b>DEBUG:</b> Ei löytynyt yhtään slide-tietuetta!<br/>
-          Content: {post["Record ID"] || post.id}<br/>
-          Segments: {JSON.stringify(segments.map(s => ({id: s.id, Content: s.Content})))}
+        <div style={{padding: 16, color: '#666', fontSize: 14, textAlign: 'center'}}>
+          Ei slideja saatavilla
         </div>
         <img
           src={process.env.BASE_URL ? process.env.BASE_URL + '/placeholder.png' : '/placeholder.png'}
@@ -147,9 +160,14 @@ function CarouselMedia({ post, segments }) {
 
   const currentPost = relatedSlides[currentSlide];
   let imageUrl = null;
+  
+
+  
   if (currentPost.Media && Array.isArray(currentPost.Media) && currentPost.Media[0] && currentPost.Media[0].url) {
     imageUrl = currentPost.Media[0].url;
   }
+  
+
 
   return (
     <div className={styles.carouselContainer}>
@@ -167,6 +185,7 @@ function CarouselMedia({ post, segments }) {
           <div className={styles.carouselImageContainer}>
             {imageUrl ? (
               <img
+                key={`${currentPost["Slide No."]}-${imageUrl}`}
                 src={imageUrl}
                 alt={`Slide ${currentPost["Slide No."]}`}
                 className={styles.carouselImage}
@@ -241,8 +260,17 @@ function PostModal({ post, onClose, allPosts, segments }) {
   if (!post) return null;
 
   const media = post.Media && Array.isArray(post.Media) && post.Media[0] && post.Media[0].url ? post.Media[0].url : null;
-  const isVideo = media && (media.endsWith('.mp4') || media.endsWith('.webm'));
+  const mediaType = post.Media && Array.isArray(post.Media) && post.Media[0] ? post.Media[0].type : null;
+  const isVideo = media && (
+    mediaType?.startsWith('video/') || 
+    media.endsWith('.mp4') || 
+    media.endsWith('.webm') || 
+    media.endsWith('.mov') ||
+    media.endsWith('.avi')
+  );
   const isCarousel = post.Type === 'Carousel';
+  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

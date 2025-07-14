@@ -68,4 +68,6 @@ export const markVersionAsShown = () => {
 }
 
 // Palauttaa nykyisen version
-export const getCurrentVersion = () => CURRENT_VERSION 
+export const getCurrentVersion = () => CURRENT_VERSION
+
+ 

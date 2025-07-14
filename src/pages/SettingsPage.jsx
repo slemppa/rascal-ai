@@ -66,8 +66,8 @@ export default function SettingsPage() {
                 <input type="text" value={exp ? new Date(exp * 1000).toLocaleString('fi-FI') : ''} readOnly className="form-input readonly" />
               </div>
             </div>
-            
-            
+
+
           </div>
           
           {/* Oikea sarake - 2/3 */}
@@ -160,16 +160,6 @@ export default function SettingsPage() {
           
           .bento-container {
             padding: 24px;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .bento-container {
-            padding: 16px;
-          }
-          
-          .bento-card {
-            padding: 20px;
           }
         }
       `}</style>

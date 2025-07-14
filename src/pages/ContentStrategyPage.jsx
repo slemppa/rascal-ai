@@ -88,6 +88,7 @@ export default function ContentStrategyPage() {
         let processedData = mockStrategy
         if (Array.isArray(data) && data.length > 0) {
           const item = data[0]
+          
           // ICP
           const icpData = item.icpSummary && item.icpSummary.length > 0
             ? { 
@@ -97,12 +98,17 @@ export default function ContentStrategyPage() {
             : null
           // Strategiat
           const strategies = Array.isArray(item.strategyAndMonth)
-            ? item.strategyAndMonth.map((s, idx) => ({
-                text: s.Strategy,
-                month: s.Month,
-                id: s.recordId || `${s.Month}_${idx}`, // Käytä recordId:tä jos saatavilla
-                recordId: s.recordId || null // Säilytä recordId
-              }))
+            ? item.strategyAndMonth.map((s, idx) => {
+                // N8N palauttaa recordId:n oikeassa muodossa, käytä sitä suoraan
+                const recordId = s.recordId || s.id || s.record_id || null
+                
+                return {
+                  text: s.Strategy,
+                  month: s.Month,
+                  id: recordId || `${s.Month}_${idx}`, // Käytä recordId:tä jos saatavilla
+                  recordId: recordId // Säilytä recordId
+                }
+              })
             : []
           processedData = [{
             ICP: icpData,
@@ -155,10 +161,6 @@ export default function ContentStrategyPage() {
     setEditText(item.Strategy)
     } else if (type === 'icp') {
       // Täytetään tekstikenttä olemassa olevalla tekstillä
-      console.log('ICP edit - item:', item)
-      console.log('ICP edit - item.ICP:', item.ICP)
-      console.log('ICP edit - raw summary text:', item.ICP?.summary)
-      
       if (item.ICP && item.ICP.summary) {
         setIcpText(item.ICP.summary)
       } else {
@@ -204,12 +206,11 @@ export default function ContentStrategyPage() {
         data: updateData
       }
       
-      // Lisää id vain jos se on olemassa
+      // Lisää id suoraan payload:iin, ei payload.id:hen
       if (item.recordId) {
         payload.id = item.recordId
       }
       
-      console.log('Lähetetään payload:', payload)
       const response = await axios.post('/api/update-post.js', payload)
 
       if (response.data.success) {

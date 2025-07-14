@@ -211,10 +211,12 @@ export default function ContentStrategyPage() {
         payload.id = item.recordId
       }
       
+      console.log('Lähetetään strategy payload:', payload)
       const response = await axios.post('/api/update-post.js', payload)
+      console.log('Strategy response:', response.data)
 
-      if (response.data.success) {
-        // Hae uusimmat tiedot webhookista
+      // Hyväksy onnistuneeksi jos ei erroria ja status 200
+      if ((response.data.success || (response.status === 200 && !response.data.error))) {
         window.location.reload() // Lataa sivu uudestaan päivittääksesi datan
         setShowModal(false)
         setEditingItem(null)
@@ -440,13 +442,7 @@ export default function ContentStrategyPage() {
             setShowModal(false)
             setEditingItem(null)
             setEditText('')
-            setIcpFormData({
-              demographics: { age: '', location: '', language: '', education: '' },
-              business: { companySize: '', industry: '', revenue: '', stage: '' },
-              painPoints: [''],
-              goals: [''],
-              behavior: { channels: '', content: '', decision: '' }
-            })
+            setIcpText('')
           }}
         >
           <div 

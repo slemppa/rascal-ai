@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.19.2](https://github.com/slemppa/rascal-ai/compare/v1.19.1...v1.19.2) (2025-07-14)
+
+
+### 📚 Documentation
+
+* päivitä public changelog käyttäjäystävälliseksi ([be8c73e](https://github.com/slemppa/rascal-ai/commit/be8c73eaf7a9895affe46b4ea135f0045667e883))
+
+
+### 🐛 Bug Fixes
+
+* korjattu strategian päivitys ID-ongelma ja carousel/video modaalit ([85a78b0](https://github.com/slemppa/rascal-ai/commit/85a78b0b0360c3076af1e48500c4a6afcd06dd31))
+
 ### [1.19.1](https://github.com/slemppa/rascal-ai/compare/v1.19.0...v1.19.1) (2025-07-12)
 
 

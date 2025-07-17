@@ -85,6 +85,26 @@ const getMediaElement = (mediaArr, alt, isLarge, post, segments) => {
 const getPostTitle = (post) => post.Idea || post.title || post.Title || '';
 const getPostDescription = (post) => post.Caption || post.Voiceover || post.desc || post.Description || '';
 
+// Status-värit
+const getStatusColor = (status) => {
+  switch (status) {
+    case 'Under Review':
+      return { background: '#fef3c7', text: '#d97706' }; // Keltainen
+    case 'Scheduled':
+      return { background: '#dbeafe', text: '#2563eb' }; // Sininen
+    case 'Done':
+      return { background: '#dcfce7', text: '#16a34a' }; // Vihreä
+    case 'Draft':
+      return { background: '#f3f4f6', text: '#6b7280' }; // Harmaa
+    case 'Rejected':
+      return { background: '#fee2e2', text: '#dc2626' }; // Punainen
+    case 'Archived':
+      return { background: '#f3e8ff', text: '#9333ea' }; // Violetti
+    default:
+      return { background: '#f3f4f6', text: '#6b7280' }; // Oletus harmaa
+  }
+};
+
 // Katkaise idea-teksti sanan jälkeen ja lisää '...' jos pitkä
 function truncateWords(text, maxWords = 8) {
   if (!text) return '';
@@ -226,6 +246,7 @@ function CarouselMedia({ post, segments }) {
 
 function PostModal({ post, onClose, allPosts, segments }) {
   const [caption, setCaption] = useState(post.Caption || '');
+  const [voiceover, setVoiceover] = useState(post.Voiceover || '');
   // Alusta publishDate datetime-local -muodossa (esim. 2024-07-01T12:34)
   const initialDate = post["Publish Date"] ? new Date(post["Publish Date"]).toISOString().slice(0, 16) : '';
   const [publishDate, setPublishDate] = useState(initialDate);
@@ -288,6 +309,7 @@ function PostModal({ post, onClose, allPosts, segments }) {
       await axios.post('/api/update-post.js', {
         id: post["Record ID"] || post.id,
         Caption: caption,
+        Voiceover: voiceover,
         "Publish Date": publishDate,
         updateType: 'postUpdate',
         action: 'save'
@@ -315,6 +337,7 @@ function PostModal({ post, onClose, allPosts, segments }) {
       await axios.post('/api/update-post.js', {
         id: post["Record ID"] || post.id,
         Caption: caption,
+        Voiceover: voiceover,
         "Publish Date": publishDate,
         updateType: 'postUpdate',
         action: 'schedule'
@@ -389,6 +412,22 @@ function PostModal({ post, onClose, allPosts, segments }) {
               placeholder="Kirjoita julkaisun kuvaus..."
             />
           </label>
+          {/* Voiceover Reels-postauksille */}
+          {post.Type === 'Reels' && (
+            <div style={{marginBottom: 18}}>
+              <label className={styles.modalLabel}>
+                <span style={{fontWeight: 600, fontSize: 15}}>Voiceover</span>
+                <textarea
+                  value={voiceover}
+                  onChange={e => setVoiceover(e.target.value)}
+                  rows={4}
+                  className={styles.modalTextarea}
+                  style={{width: '100%', marginTop: 6}}
+                  placeholder="Kirjoita voiceover-teksti..."
+                />
+              </label>
+            </div>
+          )}
           <label className={styles.modalLabel} style={{marginBottom: 18}}>
             <span style={{fontWeight: 600, fontSize: 15}}>Julkaisupäivä</span>
             <input
@@ -438,6 +477,7 @@ export default function ManagePostsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [typeFilter, setTypeFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
   const [selectedPost, setSelectedPost] = useState(null)
   const [segments, setSegments] = useState([])
   const [monthlyLimitReached, setMonthlyLimitReached] = useState(false)
@@ -453,9 +493,8 @@ export default function ManagePostsPage() {
         const response = await axios.get(url)
         // Oikea datan purku
         const all = Array.isArray(response.data?.[0]?.data) ? response.data[0].data : [];
-        // Suodata vain halutut statukset: Under Review, Scheduled, Done
-        const allowedStatuses = ['Under Review', 'Scheduled', 'Done'];
-        setPosts(all.filter(p => !p["Slide No."] && allowedStatuses.includes(p.Status)));
+        // Näytä kaikki postaukset, ei vain tiettyjä statuksia
+        setPosts(all.filter(p => !p["Slide No."])); // Suodata pois vain slide-tiedostot
         setSegments(all.filter(p => p["Slide No."]));
         
         // Laske kuukausirajoitus
@@ -482,13 +521,16 @@ export default function ManagePostsPage() {
     fetchPosts()
   }, [])
 
-  // Hae uniikit tyypit
+  // Hae uniikit tyypit ja statukset
   const types = [...new Set(posts.map(post => post.Type).filter(Boolean))]
+  const statuses = [...new Set(posts.map(post => post.Status).filter(Boolean))]
 
-  // Suodata julkaisut tyypin mukaan
-  const filteredPosts = typeFilter 
-    ? posts.filter(post => post.Type === typeFilter)
-    : posts
+  // Suodata julkaisut tyypin ja statusin mukaan
+  const filteredPosts = posts.filter(post => {
+    const typeMatch = !typeFilter || post.Type === typeFilter
+    const statusMatch = !statusFilter || post.Status === statusFilter
+    return typeMatch && statusMatch
+  })
 
   const formatDate = (dateString) => {
     if (!dateString) return '-'
@@ -524,24 +566,56 @@ export default function ManagePostsPage() {
       
       <div className={styles.container}>
         {/* Filtteripainikkeet */}
-        {!loading && !error && types.length > 0 && (
-          <div className={styles.filters}>
-            <button
-              onClick={() => setTypeFilter('')}
-              className={`${styles.filterButton} ${typeFilter === '' ? styles.filterButtonActive : styles.filterButtonInactive}`}
-            >
-              Kaikki
-            </button>
-            {types.map(type => (
-              <button
-                key={type}
-                onClick={() => setTypeFilter(type)}
-                className={`${styles.filterButton} ${typeFilter === type ? styles.filterButtonActive : styles.filterButtonInactive}`}
-              >
-                {type}
-              </button>
-            ))}
-          </div>
+        {!loading && !error && (types.length > 0 || statuses.length > 0) && (
+          <>
+            {/* Type-filtteri */}
+            <div className={styles.filters}>
+              <div className={styles.filterLabel}>
+                Tyyppi
+              </div>
+              <div className={styles.filterButtonGroup}>
+                <button
+                  onClick={() => setTypeFilter('')}
+                  className={`${styles.filterButton} ${typeFilter === '' ? styles.filterButtonActive : styles.filterButtonInactive}`}
+                >
+                  Kaikki
+                </button>
+                {types.map(type => (
+                  <button
+                    key={type}
+                    onClick={() => setTypeFilter(type)}
+                    className={`${styles.filterButton} ${typeFilter === type ? styles.filterButtonActive : styles.filterButtonInactive}`}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Status-filtteri */}
+            <div className={styles.filters}>
+              <div className={styles.filterLabel}>
+                Status
+              </div>
+              <div className={styles.filterButtonGroup}>
+                <button
+                  onClick={() => setStatusFilter('')}
+                  className={`${styles.filterButton} ${statusFilter === '' ? styles.filterButtonActive : styles.filterButtonInactive}`}
+                >
+                  Kaikki
+                </button>
+                {statuses.map(status => (
+                  <button
+                    key={status}
+                    onClick={() => setStatusFilter(status)}
+                    className={`${styles.filterButton} ${statusFilter === status ? styles.filterButtonActive : styles.filterButtonInactive}`}
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
         )}
         
         {loading && <p className={styles.loading}>Ladataan...</p>}
@@ -569,7 +643,18 @@ export default function ManagePostsPage() {
                       <span className={styles.typeBadge}>{post.Type}</span>
                     )}
                     {post.Status && (
-                      <span className={styles.statusBadge}>{post.Status}</span>
+                      <span style={{
+                        display: 'inline-block',
+                        background: getStatusColor(post.Status).background,
+                        color: getStatusColor(post.Status).text,
+                        fontWeight: 600,
+                        fontSize: 14,
+                        borderRadius: 8,
+                        padding: '2px 12px',
+                        marginBottom: 10
+                      }}>
+                        {post.Status}
+                      </span>
                     )}
                   </div>
                   {/* Idea näkyvästi */}
@@ -582,6 +667,7 @@ export default function ManagePostsPage() {
                   {getPostDescription(post) && (
                     <div className={styles.description}>{getPostDescription(post)}</div>
                   )}
+
                   {/* Alareuna */}
                   <div className={styles.cardFooter}>
                     <span className={styles.date}>

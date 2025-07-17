@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.20.0](https://github.com/slemppa/rascal-ai/compare/v1.19.3...v1.20.0) (2025-07-17)
+
+
+### 📚 Documentation
+
+* päivitä public changelog ([d2907c8](https://github.com/slemppa/rascal-ai/commit/d2907c87d86a3779c7ff145b83b03fb3b0bf6c68))
+
+
+### ✨ Features
+
+* parannettu ManagePosts-sivun filttereiden ulkoasua ([33f1adc](https://github.com/slemppa/rascal-ai/commit/33f1adce71b9ecab26fa3838866d013cf86d0544))
+
 ### [1.19.3](https://github.com/slemppa/rascal-ai/compare/v1.19.2...v1.19.3) (2025-07-14)
 
 

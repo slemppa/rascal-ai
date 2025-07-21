@@ -1,12 +1,111 @@
 /* Pääkontti - kaikki sisältö keskitettynä */
 .container {
   width: 100%;
-  padding: 32px 24px 0px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   height: calc(100vh - 72px); /* Näytön korkeus miinus header */
   /* overflow: hidden; */
+}
+
+
+
+/* GENEROINTI-VÄLILEHTI */
+.generationTab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.generationContent {
+  flex: 1;
+  padding: 24px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.generationContent h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.generationContent p {
+  color: #6b7280;
+  font-size: 16px;
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+
+.generationGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.generationCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.generationCard:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.generationIcon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.generationCard h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.generationCard p {
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+}
+
+.generationButton {
+  padding: 12px 24px;
+  background: var(--brand-color);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  width: 100%;
+  max-width: 200px;
+}
+
+.generationButton:hover {
+  background: var(--brand-color-dark);
 }
 
 /* Filtteripainikkeet */
@@ -665,10 +764,61 @@
   gap: 4px;
 }
 
+.voiceoverCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-top: 8px;
+  transition: all 0.15s ease;
+}
+
+.voiceoverCheckbox:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.voiceoverCheckbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+
+.voiceoverCheckbox label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 16px 12px 0px;
     height: calc(100vh - 60px);
+  }
+
+
+
+  .generationContent {
+    padding: 16px;
+  }
+
+  .generationContent h2 {
+    font-size: 20px;
+  }
+
+  .generationGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .generationCard {
+    padding: 20px;
   }
 
   .filters {
@@ -759,6 +909,24 @@
     padding: 12px 8px 0px;
   }
 
+
+
+  .generationContent {
+    padding: 12px;
+  }
+
+  .generationContent h2 {
+    font-size: 18px;
+  }
+
+  .generationCard {
+    padding: 16px;
+  }
+
+  .generationIcon {
+    font-size: 36px;
+  }
+
   .bentoGrid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 12px;
@@ -823,11 +991,42 @@
     font-size: 13px;
     max-width: 250px;
   }
+
+  .voiceoverCheckbox {
+    padding: 10px 12px;
+  }
+
+  .voiceoverCheckbox label {
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 480px) {
   .container {
     padding: 8px 4px 0px;
+  }
+
+
+
+  .generationContent {
+    padding: 8px;
+  }
+
+  .generationContent h2 {
+    font-size: 16px;
+  }
+
+  .generationCard {
+    padding: 12px;
+  }
+
+  .generationIcon {
+    font-size: 32px;
+  }
+
+  .generationButton {
+    padding: 10px 16px;
+    font-size: 13px;
   }
 
   .bentoGrid {

@@ -158,15 +158,34 @@ export default function CallPanel() {
     setError('')
     setValidationResult(null)
     try {
-      const res = await axios.post('https://oma-n8n-url.fi/webhook/validate-sheet', { sheetUrl })
-      setValidationResult(res.data)
-      setStats({
-        totalCount: res.data.phoneCount || 0,
-        calledCount: 0,
-        failedCount: 0
+      // Hae companyId
+      let companyId = null
+      try {
+        const userObj = JSON.parse(localStorage.getItem('user') || '{}')
+        companyId = userObj.companyId
+      } catch (e) {
+        console.error('Virhe user-objektin parsimisessa:', e)
+      }
+
+      const res = await axios.post('/api/validate-sheet', { 
+        sheetUrl,
+        companyId
       })
+      
+      if (res.data.success) {
+        setValidationResult(res.data)
+        setStats({
+          totalCount: res.data.phoneCount || 0,
+          calledCount: 0,
+          failedCount: 0
+        })
+      } else {
+        setError(res.data.error || 'Validointi epäonnistui')
+      }
     } catch (e) {
-      setError('Validointi epäonnistui')
+      console.error('Validate error:', e)
+      const errorMessage = e.response?.data?.error || 'Validointi epäonnistui'
+      setError(errorMessage)
     } finally {
       setValidating(false)
     }
@@ -176,16 +195,39 @@ export default function CallPanel() {
     setStarting(true)
     setError('')
     try {
+      // Hae companyId
+      let companyId = null
+      try {
+        const userObj = JSON.parse(localStorage.getItem('user') || '{}')
+        companyId = userObj.companyId
+      } catch (e) {
+        console.error('Virhe user-objektin parsimisessa:', e)
+      }
+
       // Lähetä sekä sheetUrl että Toiminnot-moduulin asetukset
-      await axios.post('https://oma-n8n-url.fi/webhook/start-calls', { 
+      const requestData = { 
         sheetUrl,
         callType,
         script,
-        voice: selectedVoice
-      })
-      setPolling(true)
+        voice: selectedVoice,
+        companyId
+      }
+      
+      console.log('🔍 Frontend lähettää mass-call:', requestData)
+      
+      const res = await axios.post('/api/mass-call', requestData)
+      
+      if (res.data.success) {
+        setPolling(true)
+        // Näytä onnistumisviesti
+        alert(`✅ ${res.data.message}\n\nAloitettu: ${res.data.startedCalls} puhelua\nEpäonnistui: ${res.data.failedCalls} puhelua`)
+      } else {
+        setError(res.data.error || 'Soittojen käynnistys epäonnistui')
+      }
     } catch (e) {
-      setError('Soittojen käynnistys epäonnistui')
+      console.error('Start calls error:', e)
+      const errorMessage = e.response?.data?.error || 'Soittojen käynnistys epäonnistui'
+      setError(errorMessage)
     } finally {
       setStarting(false)
     }
@@ -214,7 +256,7 @@ export default function CallPanel() {
         return
       }
       
-      const response = await axios.post('/api/single-call', { 
+      const response = await axios.post('/api/start-calls', { 
         phoneNumber,
         name,
         callType,
@@ -890,27 +932,60 @@ export default function CallPanel() {
                     {error && (
                       <div style={{
                         marginTop: 16,
-                        padding: '12px',
+                        padding: '16px',
                         background: '#fef2f2',
                         border: '1px solid #fecaca',
                         borderRadius: '8px',
                         color: '#dc2626'
                       }}>
-                        {error}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                          <span style={{ fontSize: 18 }}>❌</span>
+                          <strong>Virhe</strong>
+                        </div>
+                        <div style={{ fontSize: 14, lineHeight: 1.4 }}>
+                          {error}
+                        </div>
+                        {(error.includes('Google Sheets URL') || error.includes('CSV-haku')) && (
+                          <div style={{ 
+                            marginTop: 8, 
+                            padding: '8px 12px', 
+                            background: '#fef3c7', 
+                            border: '1px solid #fde68a', 
+                            borderRadius: 4,
+                            fontSize: 12,
+                            color: '#92400e'
+                          }}>
+                            💡 <strong>Vinkki:</strong> Varmista että Google Sheets -tiedosto on julkinen ja sisältää puhelinnumeroita.
+                          </div>
+                        )}
                       </div>
                     )}
                     
                     {validationResult && (
                       <div style={{
                         marginTop: 16,
-                        padding: '12px',
+                        padding: '16px',
                         background: '#f0fdf4',
                         border: '1px solid #bbf7d0',
                         borderRadius: '8px',
                         color: '#16a34a'
                       }}>
-                        <strong>Validointi onnistui!</strong><br/>
-                        Löydetty {validationResult.phoneCount} puhelinnumeroa.
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                          <span style={{ fontSize: 18 }}>✅</span>
+                          <strong>Validointi onnistui!</strong>
+                        </div>
+                        <div style={{ fontSize: 14, lineHeight: 1.4 }}>
+                          <div>📊 <strong>Löydetty {validationResult.phoneCount} puhelinnumeroa</strong></div>
+                          {validationResult.totalRows > 0 && (
+                            <div>📋 Yhteensä {validationResult.totalRows} riviä</div>
+                          )}
+                          {validationResult.phoneColumns && validationResult.phoneColumns.length > 0 && (
+                            <div>📞 Puhelinnumerosarakkeet: {validationResult.phoneColumns.join(', ')}</div>
+                          )}
+                          {validationResult.columns && validationResult.columns.length > 0 && (
+                            <div>📝 Kaikki sarakkeet: {validationResult.columns.join(', ')}</div>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>

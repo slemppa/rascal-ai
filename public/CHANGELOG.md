@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.21.0](https://github.com/slemppa/rascal-ai/compare/v1.20.0...v1.21.0) (2025-07-21)
+
+
+### ✨ Features
+
+* **calls:** lisää Google Sheets -integraatio mass-soitoille
+  - Uusi `/api/mass-call` endpoint Google Sheets -tiedostojen parsintaan
+  - CSV-parsinta puhelinnumeroille ja nimille
+  - Batch-soitot N8N-webhookiin `action: 'mass-call'` kentällä
+  - Tuki sarakkeille: phone, puhelin, numero, tel, name, nimi, etunimi, sukunimi
+
+* **posts:** lisää voiceover-vahvistus Reels-tyyppisille posteille
+  - Checkbox voiceover-vahvistukseen post-modaalissa
+  - Vahvistus vaaditaan tallennukseen/ajoitukseen
+  - Voiceover-vahvistus lähetetään backendille
+
+* **ui:** parannettu ManagePosts-sivun filter-UI
+  - Kompaktimpi ja ammattimaisempi filter-asettelu
+  - Poistettu ikonit filttereistä
+  - Parannettu responsiivisuutta
+
+
+### 🔧 Configuration
+
+* **env:** korjattu `.env.local` tiedosto N8N_MASS_CALL ympäristömuuttujalle
+* **vite:** lisätty N8N_MASS_CALL ympäristömuuttuja Vite-konfiguraatioon
+
+
+### 🐛 Bug Fixes
+
+* **api:** korjattu webhook action-kentät single-call ja mass-call erottamiseen
+* **calls:** korjattu CallPanel mass-soittojen endpoint kutsu
+
 ## [1.20.0](https://github.com/slemppa/rascal-ai/compare/v1.19.3...v1.20.0) (2025-07-17)
 
 

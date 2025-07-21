@@ -247,6 +247,7 @@ function CarouselMedia({ post, segments }) {
 function PostModal({ post, onClose, allPosts, segments }) {
   const [caption, setCaption] = useState(post.Caption || '');
   const [voiceover, setVoiceover] = useState(post.Voiceover || '');
+  const [voiceoverConfirmed, setVoiceoverConfirmed] = useState(post.VoiceoverConfirmed || false);
   // Alusta publishDate datetime-local -muodossa (esim. 2024-07-01T12:34)
   const initialDate = post["Publish Date"] ? new Date(post["Publish Date"]).toISOString().slice(0, 16) : '';
   const [publishDate, setPublishDate] = useState(initialDate);
@@ -302,6 +303,12 @@ function PostModal({ post, onClose, allPosts, segments }) {
       return;
     }
     
+    // Tarkista voiceover vahvistus Reels-tyyppisille
+    if (post.Type === 'Reels' && voiceover.trim() && !voiceoverConfirmed) {
+      setError('Vahvista voiceover ennen tallennusta');
+      return;
+    }
+    
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -310,6 +317,7 @@ function PostModal({ post, onClose, allPosts, segments }) {
         id: post["Record ID"] || post.id,
         Caption: caption,
         Voiceover: voiceover,
+        VoiceoverConfirmed: voiceoverConfirmed,
         "Publish Date": publishDate,
         updateType: 'postUpdate',
         action: 'save'
@@ -330,6 +338,12 @@ function PostModal({ post, onClose, allPosts, segments }) {
       return;
     }
     
+    // Tarkista voiceover vahvistus Reels-tyyppisille
+    if (post.Type === 'Reels' && voiceover.trim() && !voiceoverConfirmed) {
+      setError('Vahvista voiceover ennen ajastusta');
+      return;
+    }
+    
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -338,6 +352,7 @@ function PostModal({ post, onClose, allPosts, segments }) {
         id: post["Record ID"] || post.id,
         Caption: caption,
         Voiceover: voiceover,
+        VoiceoverConfirmed: voiceoverConfirmed,
         "Publish Date": publishDate,
         updateType: 'postUpdate',
         action: 'schedule'
@@ -422,10 +437,22 @@ function PostModal({ post, onClose, allPosts, segments }) {
                   onChange={e => setVoiceover(e.target.value)}
                   rows={4}
                   className={styles.modalTextarea}
-                  style={{width: '100%', marginTop: 6}}
+                  style={{width: '100%', marginTop: 6, marginBottom: 12}}
                   placeholder="Kirjoita voiceover-teksti..."
                 />
               </label>
+              {/* Voiceover vahvistus checkbox */}
+              <div className={styles.voiceoverCheckbox}>
+                <input
+                  type="checkbox"
+                  id="voiceover-confirm"
+                  checked={voiceoverConfirmed}
+                  onChange={e => setVoiceoverConfirmed(e.target.checked)}
+                />
+                <label htmlFor="voiceover-confirm">
+                  Vahvistan että voiceover on valmis ja tarkistettu
+                </label>
+              </div>
             </div>
           )}
           <label className={styles.modalLabel} style={{marginBottom: 18}}>
@@ -482,6 +509,15 @@ export default function ManagePostsPage() {
   const [segments, setSegments] = useState([])
   const [monthlyLimitReached, setMonthlyLimitReached] = useState(false)
   const [postsThisMonth, setPostsThisMonth] = useState(0)
+  const [activeTab, setActiveTab] = useState('julkaisut') // Lisätty välilehti-tila
+  
+  // Generointimodaalien state-muuttujat
+  const [showGenerationModal, setShowGenerationModal] = useState(false)
+  const [generationType, setGenerationType] = useState('')
+  const [generationIdea, setGenerationIdea] = useState('')
+  const [generationLoading, setGenerationLoading] = useState(false)
+  const [generationError, setGenerationError] = useState('')
+  const [generationSuccess, setGenerationSuccess] = useState('')
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -541,6 +577,80 @@ export default function ManagePostsPage() {
     }
   }
 
+  // Generointimodaalin avaaminen
+  const openGenerationModal = (type) => {
+    setGenerationType(type)
+    setGenerationIdea('')
+    setGenerationError('')
+    setGenerationSuccess('')
+    setShowGenerationModal(true)
+  }
+
+  // Generointimodaalin sulkeminen
+  const closeGenerationModal = () => {
+    setShowGenerationModal(false)
+    setGenerationType('')
+    setGenerationIdea('')
+    setGenerationError('')
+    setGenerationSuccess('')
+  }
+
+  // Idean lähettäminen
+  const handleIdeaGeneration = async (e) => {
+    e.preventDefault()
+    
+    if (!generationIdea.trim()) {
+      setGenerationError('Syötä idea ennen lähettämistä')
+      return
+    }
+    
+    setGenerationLoading(true)
+    setGenerationError('')
+    setGenerationSuccess('')
+    
+    try {
+      // Hae käyttäjätiedot localStoragesta
+      const user = JSON.parse(localStorage.getItem('user') || 'null')
+      const companyId = user?.companyId || user?.user?.companyId
+      
+      console.log('Debug - Käyttäjätiedot:', { 
+        user: user, 
+        companyId: companyId, 
+        generationType: generationType,
+        generationIdea: generationIdea
+      })
+      
+      if (!companyId) {
+        throw new Error('Käyttäjätiedot puuttuvat')
+      }
+      
+      const requestData = {
+        idea: generationIdea,
+        type: generationType,
+        companyId: companyId
+        // x-api-key käsitellään backend-puolella N8N_SECRET_KEY ympäristömuuttujasta
+      }
+      
+      console.log('Debug - Lähetetään data:', requestData)
+      
+      const response = await axios.post('/api/idea-generation.js', requestData)
+      
+      console.log('Debug - Vastaus:', response.data)
+      
+      setGenerationSuccess('Idea lähetetty onnistuneesti!')
+      setTimeout(() => {
+        closeGenerationModal()
+      }, 2000)
+      
+    } catch (err) {
+      console.error('Debug - Virhe:', err)
+      console.error('Debug - Virhe response:', err.response?.data)
+      setGenerationError(err.response?.data?.error || 'Virhe idean lähettämisessä')
+    } finally {
+      setGenerationLoading(false)
+    }
+  }
+
   return (
     <>
       <PageHeader title="Julkaisujen hallinta" />
@@ -564,140 +674,344 @@ export default function ManagePostsPage() {
         </div>
       )}
       
-      <div className={styles.container}>
-        {/* Filtteripainikkeet */}
-        {!loading && !error && (types.length > 0 || statuses.length > 0) && (
-          <>
-            {/* Type-filtteri */}
-            <div className={styles.filters}>
-              <div className={styles.filterLabel}>
-                Tyyppi
-              </div>
-              <div className={styles.filterButtonGroup}>
-                <button
-                  onClick={() => setTypeFilter('')}
-                  className={`${styles.filterButton} ${typeFilter === '' ? styles.filterButtonActive : styles.filterButtonInactive}`}
-                >
-                  Kaikki
-                </button>
-                {types.map(type => (
-                  <button
-                    key={type}
-                    onClick={() => setTypeFilter(type)}
-                    className={`${styles.filterButton} ${typeFilter === type ? styles.filterButtonActive : styles.filterButtonInactive}`}
-                  >
-                    {type}
-                  </button>
-                ))}
-              </div>
-            </div>
-            
-            {/* Status-filtteri */}
-            <div className={styles.filters}>
-              <div className={styles.filterLabel}>
-                Status
-              </div>
-              <div className={styles.filterButtonGroup}>
-                <button
-                  onClick={() => setStatusFilter('')}
-                  className={`${styles.filterButton} ${statusFilter === '' ? styles.filterButtonActive : styles.filterButtonInactive}`}
-                >
-                  Kaikki
-                </button>
-                {statuses.map(status => (
-                  <button
-                    key={status}
-                    onClick={() => setStatusFilter(status)}
-                    className={`${styles.filterButton} ${statusFilter === status ? styles.filterButtonActive : styles.filterButtonInactive}`}
-                  >
-                    {status}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-        
-        {loading && <p className={styles.loading}>Ladataan...</p>}
-        {error && <p className={styles.error}>{error}</p>}
-        
-        {/* Grid */}
-        {!loading && !error && (
-          <div className={styles.bentoGrid}>
-            {filteredPosts.map((post, index) => (
-              <div
-                key={post["Record ID"] || post.id || index}
-                className={
-                  [
-                    styles.bentoItem,
-                    getGridSpans(post.Media)
-                  ].join(' ')
-                }
-              >
-                {/* Media-kuva, video tai placeholder */}
-                {getMediaElement(post.Media, getPostTitle(post), false, post, segments)}
-                <div className={styles.bentoCardContent}>
-                  {/* Tyyppibadge ja Status badge */}
-                  <div style={{display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4}}>
-                    {post.Type && (
-                      <span className={styles.typeBadge}>{post.Type}</span>
-                    )}
-                    {post.Status && (
-                      <span style={{
-                        display: 'inline-block',
-                        background: getStatusColor(post.Status).background,
-                        color: getStatusColor(post.Status).text,
-                        fontWeight: 600,
-                        fontSize: 14,
-                        borderRadius: 8,
-                        padding: '2px 12px',
-                        marginBottom: 10
-                      }}>
-                        {post.Status}
-                      </span>
-                    )}
-                  </div>
-                  {/* Idea näkyvästi */}
-                  {getPostTitle(post) && (
-                    <div className={styles.ideaDisplay}>
-                      <span style={{fontWeight: 700, marginLeft: 0}}>{truncateWords(getPostTitle(post), 8)}</span>
-                    </div>
-                  )}
-                  {/* Kuvaus */}
-                  {getPostDescription(post) && (
-                    <div className={styles.description}>{getPostDescription(post)}</div>
-                  )}
+      <div className={styles.container} style={{ padding: 0 }}>
+        {/* Wrapper-elementti välilehdille ja sisällölle */}
+        <div style={{ flex: 1, minHeight: 0 }}>
+          {/* Välilehdet - samalla tyylillä kuin /calls ja /assistant */}
+          <div style={{
+            display: 'flex',
+            borderBottom: '2px solid #e5e7eb',
+            background: '#f9fafb',
+            flexShrink: 0,
+            padding: '0 32px',
+            gap: 0,
+            height: 48,
+            margin: 0,
+            width: '100%'
+          }}>
+            <button
+              onClick={() => setActiveTab('julkaisut')}
+              style={{
+                flex: 1,
+                height: '100%',
+                border: 'none',
+                background: activeTab === 'julkaisut' ? '#fff' : 'transparent',
+                color: activeTab === 'julkaisut' ? 'var(--brand-dark, #1f2937)' : '#6b7280',
+                fontWeight: activeTab === 'julkaisut' ? 700 : 500,
+                cursor: 'pointer',
+                borderBottom: activeTab === 'julkaisut' ? '3px solid var(--brand-accent, #7c3aed)' : '3px solid transparent',
+                fontSize: 18,
+                letterSpacing: 0.5,
+                transition: 'background 0.15s, color 0.15s',
+                borderRadius: 0,
+                outline: 'none',
+                boxShadow: 'none',
+                margin: 0,
+                padding: 0
+              }}
+              onMouseOver={e => { if(activeTab !== 'julkaisut') e.currentTarget.style.background = '#f3f4f6' }}
+              onMouseOut={e => { if(activeTab !== 'julkaisut') e.currentTarget.style.background = 'transparent' }}
+            >
+              📝 Julkaisut
+            </button>
+            <button
+              onClick={() => setActiveTab('generointi')}
+              style={{
+                flex: 1,
+                height: '100%',
+                border: 'none',
+                background: activeTab === 'generointi' ? '#fff' : 'transparent',
+                color: activeTab === 'generointi' ? 'var(--brand-dark, #1f2937)' : '#6b7280',
+                fontWeight: activeTab === 'generointi' ? 700 : 500,
+                cursor: 'pointer',
+                borderBottom: activeTab === 'generointi' ? '3px solid var(--brand-accent, #7c3aed)' : '3px solid transparent',
+                fontSize: 18,
+                letterSpacing: 0.5,
+                transition: 'background 0.15s, color 0.15s',
+                borderRadius: 0,
+                outline: 'none',
+                boxShadow: 'none',
+                margin: 0,
+                padding: 0
+              }}
+              onMouseOver={e => { if(activeTab !== 'generointi') e.currentTarget.style.background = '#f3f4f6' }}
+              onMouseOut={e => { if(activeTab !== 'generointi') e.currentTarget.style.background = 'transparent' }}
+            >
+              🤖 Generointi
+            </button>
+          </div>
 
-                  {/* Alareuna */}
-                  <div className={styles.cardFooter}>
-                    <span className={styles.date}>
-                      {post["Publish Date"] ? `Julkaistu: ${formatDate(post["Publish Date"])} ` : ''}
-                      {post["Slide No."] && `Slide ${post["Slide No."]}`}
-                    </span>
-                    {post.Status === 'Scheduled' || post.Status === 'Done' ? (
-                      <span style={{
-                        fontSize: 12,
-                        color: '#6b7280',
-                        fontStyle: 'italic'
-                      }}>
-                        Ei muokattavissa
-                      </span>
-                    ) : (
-                      <button
-                        onClick={() => setSelectedPost(post)}
-                        className={styles.viewButton}
+          {/* Sisältö */}
+          <div style={{ padding: 0 }}>
+            {/* Julkaisut-välilehti */}
+            {activeTab === 'julkaisut' && (
+              <div style={{ padding: 32 }}>
+                {/* Filtteripainikkeet */}
+                {!loading && !error && (types.length > 0 || statuses.length > 0) && (
+                  <>
+                    {/* Type-filtteri */}
+                    <div className={styles.filters}>
+                      <div className={styles.filterLabel}>
+                        Tyyppi
+                      </div>
+                      <div className={styles.filterButtonGroup}>
+                        <button
+                          onClick={() => setTypeFilter('')}
+                          className={`${styles.filterButton} ${typeFilter === '' ? styles.filterButtonActive : styles.filterButtonInactive}`}
+                        >
+                          Kaikki
+                        </button>
+                        {types.map(type => (
+                          <button
+                            key={type}
+                            onClick={() => setTypeFilter(type)}
+                            className={`${styles.filterButton} ${typeFilter === type ? styles.filterButtonActive : styles.filterButtonInactive}`}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Status-filtteri */}
+                    <div className={styles.filters}>
+                      <div className={styles.filterLabel}>
+                        Status
+                      </div>
+                      <div className={styles.filterButtonGroup}>
+                        <button
+                          onClick={() => setStatusFilter('')}
+                          className={`${styles.filterButton} ${statusFilter === '' ? styles.filterButtonActive : styles.filterButtonInactive}`}
+                        >
+                          Kaikki
+                        </button>
+                        {statuses.map(status => (
+                          <button
+                            key={status}
+                            onClick={() => setStatusFilter(status)}
+                            className={`${styles.filterButton} ${statusFilter === status ? styles.filterButtonActive : styles.filterButtonInactive}`}
+                          >
+                            {status}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+                
+                {loading && <p className={styles.loading}>Ladataan...</p>}
+                {error && <p className={styles.error}>{error}</p>}
+                
+                {/* Grid */}
+                {!loading && !error && (
+                  <div className={styles.bentoGrid}>
+                    {filteredPosts.map((post, index) => (
+                      <div
+                        key={post["Record ID"] || post.id || index}
+                        className={
+                          [
+                            styles.bentoItem,
+                            getGridSpans(post.Media)
+                          ].join(' ')
+                        }
                       >
-                        Muokkaa
-                      </button>
-                    )}
+                        {/* Media-kuva, video tai placeholder */}
+                        {getMediaElement(post.Media, getPostTitle(post), false, post, segments)}
+                        <div className={styles.bentoCardContent}>
+                          {/* Tyyppibadge ja Status badge */}
+                          <div style={{display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4}}>
+                            {post.Type && (
+                              <span className={styles.typeBadge}>{post.Type}</span>
+                            )}
+                            {post.Status && (
+                              <span style={{
+                                display: 'inline-block',
+                                background: getStatusColor(post.Status).background,
+                                color: getStatusColor(post.Status).text,
+                                fontWeight: 600,
+                                fontSize: 14,
+                                borderRadius: 8,
+                                padding: '2px 12px',
+                                marginBottom: 10
+                              }}>
+                                {post.Status}
+                              </span>
+                            )}
+                          </div>
+                          {/* Idea näkyvästi */}
+                          {getPostTitle(post) && (
+                            <div className={styles.ideaDisplay}>
+                              <span style={{fontWeight: 700, marginLeft: 0}}>{truncateWords(getPostTitle(post), 8)}</span>
+                            </div>
+                          )}
+                          {/* Kuvaus */}
+                          {getPostDescription(post) && (
+                            <div className={styles.description}>{getPostDescription(post)}</div>
+                          )}
+
+                          {/* Alareuna */}
+                          <div className={styles.cardFooter}>
+                            <span className={styles.date}>
+                              {post["Publish Date"] ? `Julkaistu: ${formatDate(post["Publish Date"])} ` : ''}
+                              {post["Slide No."] && `Slide ${post["Slide No."]}`}
+                            </span>
+                            {post.Status === 'Scheduled' || post.Status === 'Done' ? (
+                              <span style={{
+                                fontSize: 12,
+                                color: '#6b7280',
+                                fontStyle: 'italic'
+                              }}>
+                                Ei muokattavissa
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => setSelectedPost(post)}
+                                className={styles.viewButton}
+                              >
+                                Muokkaa
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Generointi-välilehti */}
+            {activeTab === 'generointi' && (
+              <div style={{ padding: 32 }}>
+                <div className={styles.generationTab}>
+                  <div className={styles.generationContent}>
+                    <h2>🤖 Sisällön generointi</h2>
+                    <p>Tässä voit generoida uutta sisältöä AI:n avulla.</p>
+                    
+                    <div className={styles.generationGrid}>
+                      <div className={styles.generationCard}>
+                        <div className={styles.generationIcon}>📝</div>
+                        <h3>Blogin generointi</h3>
+                        <p>Generoi blogitekstejä, artikkeleita ja pitkää sisältöä AI:n avulla</p>
+                        <button 
+                          className={styles.generationButton}
+                          onClick={() => openGenerationModal('blog')}
+                        >
+                          Luo blogi
+                        </button>
+                      </div>
+                      
+                      <div className={styles.generationCard}>
+                        <div className={styles.generationIcon}>🖼️</div>
+                        <h3>Kuva julkaisu</h3>
+                        <p>Luo kuvapostauksia ja visuaalista sisältöä julkaisuillesi</p>
+                        <button 
+                          className={styles.generationButton}
+                          onClick={() => openGenerationModal('image')}
+                        >
+                          Luo kuva
+                        </button>
+                      </div>
+                      
+                      <div className={styles.generationCard}>
+                        <div className={styles.generationIcon}>🎠</div>
+                        <h3>Karusellin generointi</h3>
+                        <p>Generoi karusellipostauksia useilla slideilla ja sisällöllä</p>
+                        <button 
+                          className={styles.generationButton}
+                          onClick={() => openGenerationModal('carousel')}
+                        >
+                          Luo karuselli
+                        </button>
+                      </div>
+                      
+                      <div className={styles.generationCard}>
+                        <div className={styles.generationIcon}>🤖</div>
+                        <h3>Avatar generointi</h3>
+                        <p>Luo avatar-videoita ja animoituja sisältöjä AI:n avulla</p>
+                        <button 
+                          className={styles.generationButton}
+                          onClick={() => openGenerationModal('avatar')}
+                        >
+                          Luo avatar video
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            ))}
+            )}
           </div>
-        )}
+        </div>
       </div>
       {selectedPost && <PostModal post={selectedPost} onClose={() => setSelectedPost(null)} allPosts={posts} segments={segments} />}
+      
+      {/* Generointimodaali */}
+      {showGenerationModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <button onClick={closeGenerationModal} className={styles.modalClose}>×</button>
+            
+            <div className={styles.modalContent}>
+              <h2 style={{ margin: '0 0 16px 0', fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
+                {generationType === 'blog' && '📝 Blogin generointi'}
+                {generationType === 'image' && '🖼️ Kuva julkaisu'}
+                {generationType === 'carousel' && '🎠 Karusellin generointi'}
+                {generationType === 'avatar' && '🤖 Avatar generointi'}
+              </h2>
+              
+              <p style={{ margin: '0 0 24px 0', color: '#6b7280', fontSize: 16, lineHeight: 1.5 }}>
+                {generationType === 'blog' && 'Syötä avainsana tai idea blogitekstin generointiin.'}
+                {generationType === 'image' && 'Syötä idea kuvapostauksen luomiseen.'}
+                {generationType === 'carousel' && 'Syötä idea karusellipostauksen generointiin.'}
+                {generationType === 'avatar' && 'Syötä idea avatar-videon luomiseen.'}
+              </p>
+              
+              <form onSubmit={handleIdeaGeneration}>
+                <label className={styles.modalLabel} style={{ marginBottom: 18 }}>
+                  <span style={{ fontWeight: 600, fontSize: 15 }}>
+                    {generationType === 'blog' ? 'Avainsana / idea' : 'Idea'}
+                  </span>
+                  <textarea
+                    value={generationIdea}
+                    onChange={e => setGenerationIdea(e.target.value)}
+                    rows={4}
+                    className={styles.modalTextarea}
+                    style={{ width: '100%', marginTop: 6 }}
+                    placeholder={
+                      generationType === 'blog' 
+                        ? 'Esim. "digitaalinen markkinointi", "sosiaalisen median strategiat"...'
+                        : 'Kuvaile mitä haluat generoida...'
+                    }
+                    disabled={generationLoading}
+                  />
+                </label>
+                
+                {generationError && <div className={styles.modalError}>{generationError}</div>}
+                {generationSuccess && <div className={styles.modalSuccess}>{generationSuccess}</div>}
+                
+                <div style={{ display: 'flex', gap: 12, marginTop: 18 }}>
+                  <button 
+                    type="button" 
+                    onClick={closeGenerationModal} 
+                    className={styles.secondaryButton} 
+                    disabled={generationLoading}
+                  >
+                    Peruuta
+                  </button>
+                  <button 
+                    type="submit" 
+                    className={styles.viewButton} 
+                    disabled={generationLoading}
+                  >
+                    {generationLoading ? 'Lähetetään...' : 'Lähetä idea'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

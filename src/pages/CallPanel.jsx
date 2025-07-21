@@ -206,13 +206,13 @@ export default function CallPanel() {
 
       // Hae valitun puhelun tyypin recordId
       const selectedCallType = callTypes.find(type => type.value === callType)
-      const recordId = selectedCallType?.recordId || selectedCallType?.id
+      const recordId = selectedCallType?.['Call ID'] || selectedCallType?.id
 
       // Lähetä sekä sheetUrl että Toiminnot-moduulin asetukset
       const requestData = { 
         sheetUrl,
         callType,
-        recordId, // Lisätty mukaan
+        recordId, // Käytetään Call ID:tä ensisijaisesti
         script,
         voice: selectedVoice,
         companyId

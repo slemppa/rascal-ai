@@ -204,15 +204,15 @@ export default function CallPanel() {
         console.error('Virhe user-objektin parsimisessa:', e)
       }
 
-      // Hae valitun puhelun tyypin recordId
+      // Hae valitun puhelun tyypin Call ID
       const selectedCallType = callTypes.find(type => type.value === callType)
-      const recordId = selectedCallType?.['Call ID'] || selectedCallType?.id
+      const recordId = selectedCallType?.['Call ID']
 
       // Lähetä sekä sheetUrl että Toiminnot-moduulin asetukset
       const requestData = { 
         sheetUrl,
         callType,
-        recordId, // Käytetään Call ID:tä ensisijaisesti
+        recordId, // Käytetään Call ID:tä
         script,
         voice: selectedVoice,
         companyId
@@ -224,7 +224,6 @@ export default function CallPanel() {
       
       if (res.data.success) {
         setPolling(true)
-        // Näytä onnistumisviesti
         alert(`✅ ${res.data.message}\n\nAloitettu: ${res.data.startedCalls} puhelua\nEpäonnistui: ${res.data.failedCalls} puhelua`)
       } else {
         setError(res.data.error || 'Soittojen käynnistys epäonnistui')
@@ -390,51 +389,32 @@ export default function CallPanel() {
       }
       
       if (!companyId) {
-        console.warn('CompanyId ei löytynyt, käytetään fallback-tyyppejä')
-        // Fallback oletustyypeille
-        setCallTypes([
-          { value: 'myynti', label: 'Myyntipuhelu' },
-          { value: 'asiakaspalvelu', label: 'Asiakaspalvelu' }
-        ])
+        setCallTypes([])
         return
       }
       
-      // Hae puhelutyypit Airtablesta
+      // Hae puhelutyypit backendistä
       const response = await axios.get(`/api/call-types?companyId=${companyId}`)
       
       if (response.data.records) {
-        // Muunna Airtable data frontend-ystävälliseen muotoon
+        // Muunna data frontend-ystävälliseen muotoon
         const formattedCallTypes = response.data.records.map(record => ({
-          value: record.fields.Name || record.id,
-          label: record.fields.Name || 'Nimeämätön puhelutyyppi',
-          description: record.fields.Identity || '',
-          recordId: record.id,
+          value: record.fields.Name, // käytetään aina Name-arvoa valintana
+          label: record.fields.Name,
           id: record.id,
-          // Tallenna kaikki alkuperäiset tiedot
           ...record.fields
         }))
-        
         setCallTypes(formattedCallTypes)
-        
         // Aseta ensimmäinen tyyppi oletukseksi jos ei ole valittu
         if (formattedCallTypes.length > 0 && !callType) {
           const firstType = formattedCallTypes[0].value
           setCallType(firstType)
-          // Päivitä skripti ensimmäiselle tyypille
           setTimeout(() => updateScriptFromCallType(firstType), 100)
         }
-        
         console.log('Puhelutyypit haettu:', formattedCallTypes.length)
       } else {
-        throw new Error('Puhelutyyppien haku epäonnistui')
+        setCallTypes([])
       }
-    } catch (error) {
-      console.error('Puhelun tyyppien haku epäonnistui:', error)
-      // Fallback oletustyypeille
-      setCallTypes([
-        { value: 'myynti', label: 'Myyntipuhelu' },
-        { value: 'asiakaspalvelu', label: 'Asiakaspalvelu' }
-      ])
     } finally {
       setLoadingCallTypes(false)
     }

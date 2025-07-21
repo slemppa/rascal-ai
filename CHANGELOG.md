@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file. See [standa
 ## [1.21.0](https://github.com/slemppa/rascal-ai/compare/v1.20.0...v1.21.0) (2025-07-21)
 
 
+### 📚 Documentation
+
+* päivitä public changelog ([e1ce738](https://github.com/slemppa/rascal-ai/commit/e1ce7389c8ae94ff78b919440d81f3f16828f090))
+
+
+### ✨ Features
+
+* lisää generointi-välilehti ja idea-generation API ([e8e5813](https://github.com/slemppa/rascal-ai/commit/e8e5813ba948f88179f264ff8aa36b7fb505b643))
+
+## [1.21.0](https://github.com/slemppa/rascal-ai/compare/v1.20.0...v1.21.0) (2025-07-21)
+
+
 ### ✨ Features
 
 * **calls:** lisää Google Sheets -integraatio mass-soitoille ([mass-call-integration](https://github.com/slemppa/rascal-ai/commit/mass-call-integration))

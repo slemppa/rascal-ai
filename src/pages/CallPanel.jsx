@@ -204,10 +204,15 @@ export default function CallPanel() {
         console.error('Virhe user-objektin parsimisessa:', e)
       }
 
+      // Hae valitun puhelun tyypin recordId
+      const selectedCallType = callTypes.find(type => type.value === callType)
+      const recordId = selectedCallType?.recordId || selectedCallType?.id
+
       // Lähetä sekä sheetUrl että Toiminnot-moduulin asetukset
       const requestData = { 
         sheetUrl,
         callType,
+        recordId, // Lisätty mukaan
         script,
         voice: selectedVoice,
         companyId

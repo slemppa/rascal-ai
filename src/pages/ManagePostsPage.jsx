@@ -508,6 +508,38 @@ function PostModal({ post, onClose, allPosts, segments }) {
             <button type="button" onClick={handleDelete} className={styles.deleteButton} disabled={loading}>
               🗑️ Poista
             </button>
+            {/* Julkaise nyt -nappi vain jos status on "Valmis" */}
+            {post.Status === 'Valmis' && (
+              <button
+                type="button"
+                className={styles.scheduleButton}
+                style={{background: '#16a34a'}} // vihreä
+                disabled={loading}
+                onClick={async () => {
+                  if (!window.confirm('Haluatko varmasti julkaista tämän nyt?')) return;
+                  try {
+                    setLoading(true);
+                    setError(null);
+                    setSuccess(false);
+                    await axios.post('/api/update-post.js', {
+                      id: post["Record ID"] || post.id,
+                      "Publish Date": new Date().toISOString(),
+                      Status: 'Done',
+                      updateType: 'postUpdate',
+                      action: 'publishNow'
+                    });
+                    setSuccess(true);
+                    setTimeout(() => onClose(), 1000);
+                  } catch (err) {
+                    setError('Julkaisu epäonnistui');
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+              >
+                🚀 Julkaise nyt
+              </button>
+            )}
           </div>
         </form>
       </div>
@@ -730,58 +762,35 @@ export default function ManagePostsPage() {
             {/* Julkaisut-välilehti */}
             {activeTab === 'julkaisut' && (
               <div style={{ padding: 32 }}>
-                {/* Filtteripainikkeet */}
-                {!loading && !error && (types.length > 0 || statuses.length > 0) && (
-                  <>
-                    {/* Type-filtteri */}
-                    <div className={styles.filters}>
-                      <div className={styles.filterLabel}>
-                        Tyyppi
-                      </div>
-                      <div className={styles.filterButtonGroup}>
-                        <button
-                          onClick={() => setTypeFilter('')}
-                          className={`${styles.filterButton} ${typeFilter === '' ? styles.filterButtonActive : styles.filterButtonInactive}`}
-                        >
-                          Kaikki
-                        </button>
-                        {types.map(type => (
-                          <button
-                            key={type}
-                            onClick={() => setTypeFilter(type)}
-                            className={`${styles.filterButton} ${typeFilter === type ? styles.filterButtonActive : styles.filterButtonInactive}`}
-                          >
-                            {type}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    {/* Status-filtteri */}
-                    <div className={styles.filters}>
-                      <div className={styles.filterLabel}>
-                        Status
-                      </div>
-                      <div className={styles.filterButtonGroup}>
-                        <button
-                          onClick={() => setStatusFilter('')}
-                          className={`${styles.filterButton} ${statusFilter === '' ? styles.filterButtonActive : styles.filterButtonInactive}`}
-                        >
-                          Kaikki
-                        </button>
-                        {statuses.map(status => (
-                          <button
-                            key={status}
-                            onClick={() => setStatusFilter(status)}
-                            className={`${styles.filterButton} ${statusFilter === status ? styles.filterButtonActive : styles.filterButtonInactive}`}
-                          >
-                            {status}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
+                {/* Filtterit vierekkäin */}
+                <div className={styles.filtersRow}>
+                  <div className={styles.filters} style={{marginRight: 0, marginBottom: 0, padding: 0}}>
+                    <div className={styles.filterLabel}>Tyyppi</div>
+                    <select
+                      value={typeFilter}
+                      onChange={e => setTypeFilter(e.target.value)}
+                      className={styles.filterDropdown}
+                    >
+                      <option value="">Kaikki</option>
+                      {types.map(type => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className={styles.filters} style={{marginRight: 0, marginBottom: 0, padding: 0}}>
+                    <div className={styles.filterLabel}>Status</div>
+                    <select
+                      value={statusFilter}
+                      onChange={e => setStatusFilter(e.target.value)}
+                      className={styles.filterDropdown}
+                    >
+                      <option value="">Kaikki</option>
+                      {statuses.map(status => (
+                        <option key={status} value={status}>{status}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
                 
                 {loading && <p className={styles.loading}>Ladataan...</p>}
                 {error && <p className={styles.error}>{error}</p>}

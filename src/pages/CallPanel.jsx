@@ -5,6 +5,7 @@ import EditCallTypeModal from '../components/EditCallTypeModal'
 import './CallPanel.css'
 import CallStats from './CallStats'
 import PageHeader from '../components/PageHeader'
+import Button from '../components/Button'
 
 export default function CallPanel() {
   const [sheetUrl, setSheetUrl] = useState('')
@@ -878,36 +879,21 @@ export default function CallPanel() {
                     </div>
                     
                     <div style={{ display: 'flex', gap: 12 }}>
-                      <button
+                      <Button
                         onClick={handleValidate}
                         disabled={validating || !sheetUrl}
-                        style={{
-                          padding: '12px 24px',
-                          background: '#f3f4f6',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '8px',
-                          cursor: validating || !sheetUrl ? 'not-allowed' : 'pointer',
-                          opacity: validating || !sheetUrl ? 0.6 : 1
-                        }}
+                        variant="secondary"
+                        style={{ marginRight: 8 }}
                       >
                         {validating ? 'Validoitaan...' : 'Validoi'}
-                      </button>
-                      
-                      <button
+                      </Button>
+                      <Button
                         onClick={handleStartCalls}
                         disabled={starting || !validationResult || !callType || !script.trim() || !selectedVoice}
-                        style={{
-                          padding: '12px 24px',
-                          background: starting || !validationResult || !callType || !script.trim() || !selectedVoice ? '#9ca3af' : '#2563eb',
-                          color: '#fff',
-                          border: 'none',
-                          borderRadius: '8px',
-                          cursor: starting || !validationResult || !callType || !script.trim() || !selectedVoice ? 'not-allowed' : 'pointer',
-                          opacity: starting || !validationResult || !callType || !script.trim() || !selectedVoice ? 0.6 : 1
-                        }}
+                        style={{ marginRight: 8 }}
                       >
                         {starting ? 'Käynnistetään...' : 'Aloita soittot'}
-                      </button>
+                      </Button>
                     </div>
                     
                     <div style={{ marginTop: 12, fontSize: 12, color: '#6b7280' }}>
@@ -1021,25 +1007,13 @@ export default function CallPanel() {
                       />
                     </div>
 
-                    <button
+                    <Button
                       onClick={handleSingleCall}
                       disabled={calling || !name.trim() || !phoneNumber.trim() || !callType || !script.trim() || !selectedVoice}
-                      style={{
-                        padding: '12px 24px',
-                        background: calling || !name.trim() || !phoneNumber.trim() || !callType || !script.trim() || !selectedVoice ? '#9ca3af' : '#16a34a',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: 8,
-                        cursor: calling || !name.trim() || !phoneNumber.trim() || !callType || !script.trim() || !selectedVoice ? 'not-allowed' : 'pointer',
-                        fontSize: 14,
-                        fontWeight: 600,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 8
-                      }}
+                      style={{ fontSize: 14, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}
                     >
                       {calling ? '📞 Soittaa...' : '📞 Soita'}
-                    </button>
+                    </Button>
 
                     <div style={{ marginTop: 12, fontSize: 12, color: '#6b7280' }}>
                       Käyttää Toiminnot-moduulin asetuksia (tyyppi, ääni, skripti)
@@ -1318,7 +1292,7 @@ export default function CallPanel() {
                       </div>
                     </div>
 
-                    <button
+                    <Button
                       onClick={handleSaveInboundSettings}
                       style={{
                         width: '100%',
@@ -1337,7 +1311,7 @@ export default function CallPanel() {
                       }}
                     >
                       💾 Tallenna asetukset
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -1511,37 +1485,20 @@ export default function CallPanel() {
                   </div>
                   
                   <div style={{ display: 'flex', gap: 12 }}>
-                    <button
+                    <Button
                       onClick={handleSearch}
                       disabled={loadingCallLogs}
-                      style={{
-                        padding: '8px 16px',
-                        fontSize: 14,
-                        background: '#3b82f6',
-                        border: 'none',
-                        borderRadius: 6,
-                        cursor: loadingCallLogs ? 'not-allowed' : 'pointer',
-                        color: '#fff',
-                        fontWeight: 500
-                      }}
+                      style={{ fontSize: 14, fontWeight: 500, marginRight: 8 }}
                     >
                       🔍 Hae
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={clearFilters}
-                      style={{
-                        padding: '8px 16px',
-                        fontSize: 14,
-                        background: '#6b7280',
-                        border: 'none',
-                        borderRadius: 6,
-                        cursor: 'pointer',
-                        color: '#fff',
-                        fontWeight: 500
-                      }}
+                      style={{ fontSize: 14, fontWeight: 500 }}
+                      variant="secondary"
                     >
                       🗑️ Tyhjennä filtterit
-                    </button>
+                    </Button>
                   </div>
                 </div>
                 

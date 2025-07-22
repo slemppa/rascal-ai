@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
 import ReactMarkdown from 'react-markdown'
 import PageHeader from '../components/PageHeader'
+import Button from '../components/Button'
 
 export default function AIChatPage() {
   const [messages, setMessages] = useState(() => {
@@ -334,56 +335,36 @@ export default function AIChatPage() {
           height: 48,
           margin: 0
         }}>
-          <button
+          <Button
             onClick={() => setTab('chat')}
             style={{
               flex: 1,
               height: '100%',
-              border: 'none',
-              background: tab === 'chat' ? '#fff' : 'transparent',
-              color: tab === 'chat' ? 'var(--brand-dark, #1f2937)' : '#6b7280',
-              fontWeight: tab === 'chat' ? 700 : 500,
-              cursor: 'pointer',
-              borderBottom: tab === 'chat' ? '3px solid var(--brand-accent, #7c3aed)' : '3px solid transparent',
-              fontSize: 18,
-              letterSpacing: 0.5,
-              transition: 'background 0.15s, color 0.15s',
               borderRadius: 0,
               outline: 'none',
               boxShadow: 'none',
               margin: 0,
               padding: 0
             }}
-            onMouseOver={e => { if(tab !== 'chat') e.currentTarget.style.background = '#f3f4f6' }}
-            onMouseOut={e => { if(tab !== 'chat') e.currentTarget.style.background = 'transparent' }}
+            variant={tab === 'chat' ? 'primary' : 'secondary'}
           >
             Keskustelu
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setTab('files')}
             style={{
               flex: 1,
               height: '100%',
-              border: 'none',
-              background: tab === 'files' ? '#fff' : 'transparent',
-              color: tab === 'files' ? 'var(--brand-dark, #1f2937)' : '#6b7280',
-              fontWeight: tab === 'files' ? 700 : 500,
-              cursor: 'pointer',
-              borderBottom: tab === 'files' ? '3px solid var(--brand-accent, #7c3aed)' : '3px solid transparent',
-              fontSize: 18,
-              letterSpacing: 0.5,
-              transition: 'background 0.15s, color 0.15s',
               borderRadius: 0,
               outline: 'none',
               boxShadow: 'none',
               margin: 0,
               padding: 0
             }}
-            onMouseOver={e => { if(tab !== 'files') e.currentTarget.style.background = '#f3f4f6' }}
-            onMouseOut={e => { if(tab !== 'files') e.currentTarget.style.background = 'transparent' }}
+            variant={tab === 'files' ? 'primary' : 'secondary'}
           >
             Tietokanta ({files.length})
-          </button>
+          </Button>
         </div>
         {/* Sisältö */}
         <div style={{
@@ -508,45 +489,22 @@ export default function AIChatPage() {
                     opacity: monthlyLimitReached ? 0.6 : 1
                   }}
                 />
-                <button
+                <Button
                   type="submit"
                   disabled={loading || !input.trim() || monthlyLimitReached}
-                  style={{
-                    padding: '12px 24px',
-                    background: monthlyLimitReached ? '#9ca3af' : '#2563eb',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 8,
-                    cursor: (loading || !input.trim() || monthlyLimitReached) ? 'not-allowed' : 'pointer',
-                    opacity: (loading || !input.trim() || monthlyLimitReached) ? 0.6 : 1,
-                    fontWeight: 600,
-                    fontSize: 16,
-                    margin: 0,
-                    whiteSpace: 'nowrap'
-                  }}
+                  style={{ margin: 0, whiteSpace: 'nowrap' }}
                 >
                   {monthlyLimitReached ? 'Rajoitettu' : 'Lähetä'}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={handleNewChat}
                   title="Aloita uusi keskustelu"
-                  style={{
-                    padding: '10px 14px',
-                    background: '#e5e7eb',
-                    color: '#2563eb',
-                    border: 'none',
-                    borderRadius: 8,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    fontSize: 20,
-                    margin: 0,
-                    whiteSpace: 'nowrap'
-                  }}
+                  style={{ margin: 0, whiteSpace: 'nowrap', padding: '10px 14px', background: '#e5e7eb', color: '#2563eb', fontSize: 20 }}
+                  variant="secondary"
                 >
                   <span role="img" aria-label="Uusi keskustelu">➕</span>
-                </button>
+                </Button>
               </form>
             </div>
           ) : (
@@ -630,23 +588,13 @@ export default function AIChatPage() {
                     ))}
                   </div>
                 )}
-                <button
+                <Button
                   onClick={handleUploadPending}
                   disabled={uploadLoading || pendingFiles.length === 0}
-                  style={{
-                    padding: '12px 0',
-                    background: '#2563eb',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 8,
-                    fontWeight: 700,
-                    fontSize: 16,
-                    cursor: uploadLoading || pendingFiles.length === 0 ? 'not-allowed' : 'pointer',
-                    opacity: uploadLoading || pendingFiles.length === 0 ? 0.7 : 1
-                  }}
+                  style={{ padding: '12px 0', fontWeight: 700, fontSize: 16, marginTop: 8 }}
                 >
                   Lähetä tiedostot
-                </button>
+                </Button>
                 {uploadLoading && <p style={{ color: '#2563eb', margin: 0 }}>Ladataan...</p>}
                 {uploadError && <p style={{ color: 'red', margin: 0 }}>{uploadError}</p>}
                 {uploadSuccess && <p style={{ color: 'green', margin: 0 }}>{uploadSuccess}</p>}

@@ -280,6 +280,10 @@ function PostModal({ post, onClose, allPosts, segments }) {
     };
   }, [onClose]);
 
+  useEffect(() => {
+    setVoiceoverConfirmed(post.VoiceoverConfirmed || false);
+  }, [post]);
+
   if (!post) return null;
 
   const media = post.Media && Array.isArray(post.Media) && post.Media[0] && post.Media[0].url ? post.Media[0].url : null;

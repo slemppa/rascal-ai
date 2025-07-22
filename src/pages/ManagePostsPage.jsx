@@ -440,6 +440,7 @@ function PostModal({ post, onClose, allPosts, segments }) {
                   className={styles.modalTextarea}
                   style={{width: '100%', marginTop: 6, marginBottom: 12}}
                   placeholder="Kirjoita voiceover-teksti..."
+                  disabled={post.VoiceoverConfirmed || voiceoverConfirmed}
                 />
               </label>
               {/* Voiceover vahvistus checkbox */}
@@ -449,6 +450,7 @@ function PostModal({ post, onClose, allPosts, segments }) {
                   id="voiceover-confirm"
                   checked={voiceoverConfirmed}
                   onChange={e => setVoiceoverConfirmed(e.target.checked)}
+                  disabled={post.VoiceoverConfirmed || voiceoverConfirmed}
                 />
                 <label htmlFor="voiceover-confirm">
                   Vahvistan että voiceover on valmis ja tarkistettu

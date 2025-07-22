@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import Button from './Button'
 
 export default function MagicLinkHandler() {
   const [searchParams] = useSearchParams()
@@ -215,26 +216,12 @@ export default function MagicLinkHandler() {
             color: '#dc2626',
             lineHeight: 1.5
           }}>{errorMessage}</p>
-          <button
+          <Button
             onClick={() => navigate('/')}
-            style={{
-              background: '#2563eb',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 10,
-              padding: '14px 32px',
-              fontSize: 17,
-              fontWeight: 700,
-              cursor: 'pointer',
-              transition: 'background-color 0.2s',
-              marginTop: 8,
-              boxShadow: '0 2px 8px rgba(37,99,235,0.10)'
-            }}
-            onMouseOver={e => e.target.style.background = '#1e293b'}
-            onMouseOut={e => e.target.style.background = '#2563eb'}
+            style={{ marginTop: 8 }}
           >
             Siirry etusivulle
-          </button>
+          </Button>
         </div>
       </div>
     )

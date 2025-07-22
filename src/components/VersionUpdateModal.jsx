@@ -1,4 +1,5 @@
 import React from 'react'
+import Button from './Button'
 
 export default function VersionUpdateModal({ isOpen, onClose, version, changes }) {
   if (!isOpen) return null
@@ -189,24 +190,12 @@ export default function VersionUpdateModal({ isOpen, onClose, version, changes }
           display: 'flex',
           justifyContent: 'flex-end'
         }}>
-          <button
+          <Button
             onClick={onClose}
-            style={{
-              padding: '12px 24px',
-              background: '#2563eb',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 8,
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseEnter={(e) => e.target.style.background = '#1d4ed8'}
-            onMouseLeave={(e) => e.target.style.background = '#2563eb'}
+            style={{ marginLeft: 8 }}
           >
             Selvä!
-          </button>
+          </Button>
         </div>
       </div>
     </div>

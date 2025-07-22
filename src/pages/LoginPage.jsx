@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import Button from '../components/Button'
 
 export default function LoginPage({ onLogin }) {
   const [email, setEmail] = useState('')
@@ -139,25 +140,13 @@ export default function LoginPage({ onLogin }) {
               </button>
             </div>
           </div>
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            style={{
-              width: '100%',
-              padding: '16px',
-              fontSize: 16,
-              fontWeight: 700,
-              color: '#fff',
-              background: '#2563eb',
-              border: 'none',
-              borderRadius: 12,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              transition: 'background-color 0.2s',
-              opacity: loading ? 0.7 : 1
-            }}
+            style={{ width: '100%', marginTop: 8 }}
           >
             {loading ? 'Kirjaudutaan...' : 'Kirjaudu'}
-      </button>
+          </Button>
           {error && (
             <div style={{
               padding: '12px 16px',

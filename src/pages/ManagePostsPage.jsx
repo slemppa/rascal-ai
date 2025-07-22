@@ -456,14 +456,14 @@ function PostModal({ post, onClose, allPosts, segments }) {
             </div>
           )}
           {/* Blog/Newsletter URL */}
-          {(post.Type === 'Blog' || post.Type === 'Newsletter') && post["Blog URL"] && (
+          {/* (post.Type === 'Blog' || post.Type === 'Newsletter') && post["Blog URL"] && (
             <div className={styles.modalLabel} style={{marginBottom: 18}}>
               <span style={{fontWeight: 600, fontSize: 15}}>Blog URL</span>
               <a href={post["Blog URL"]} target="_blank" rel="noopener noreferrer" style={{color: '#2563eb', wordBreak: 'break-all', textDecoration: 'underline', fontSize: 15}}>
                 {post["Blog URL"]}
               </a>
             </div>
-          )}
+          )*/}
           <label className={styles.modalLabel} style={{marginBottom: 18}}>
             <span style={{fontWeight: 600, fontSize: 15}}>Julkaisupäivä</span>
             <input

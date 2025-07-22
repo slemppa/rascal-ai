@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Button from './Button'
 
 const AddCallTypeModal = ({ 
   showModal, 
@@ -65,18 +66,13 @@ const AddCallTypeModal = ({
           <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
             Lisää uusi puhelun tyyppi
           </h2>
-          <button
+          <Button
             onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: 24,
-              cursor: 'pointer',
-              color: '#6b7280'
-            }}
+            variant="secondary"
+            style={{ fontSize: 24, color: '#6b7280', background: 'none', border: 'none' }}
           >
             ×
-          </button>
+          </Button>
         </div>
 
         {/* Vaiheindikaattori */}
@@ -279,79 +275,45 @@ const AddCallTypeModal = ({
         
         <div style={{ display: 'flex', gap: 12, justifyContent: 'space-between', marginTop: 24, paddingTop: 16, borderTop: '1px solid #e5e7eb' }}>
           <div style={{ display: 'flex', gap: 12 }}>
-            <button
+            <Button
               type="button"
               onClick={onClose}
-              style={{
-                padding: '12px 24px',
-                fontSize: 14,
-                background: '#f3f4f6',
-                border: '1px solid #d1d5db',
-                borderRadius: 8,
-                cursor: 'pointer',
-                color: '#374151',
-                fontWeight: 500
-              }}
+              variant="secondary"
+              style={{ fontSize: 14 }}
             >
               Peruuta
-            </button>
+            </Button>
             {currentStep > 1 && (
-              <button
+              <Button
                 type="button"
                 onClick={handlePrevious}
-                style={{
-                  padding: '12px 24px',
-                  fontSize: 14,
-                  background: '#f3f4f6',
-                  border: '1px solid #d1d5db',
-                  borderRadius: 8,
-                  cursor: 'pointer',
-                  color: '#374151',
-                  fontWeight: 500
-                }}
+                variant="secondary"
+                style={{ fontSize: 14 }}
               >
                 Edellinen
-              </button>
+              </Button>
             )}
           </div>
           
           <div>
             {currentStep < totalSteps ? (
-              <button
+              <Button
                 type="button"
                 onClick={handleNext}
                 disabled={!newCallType.callType}
-                style={{
-                  padding: '12px 24px',
-                  fontSize: 14,
-                  background: !newCallType.callType ? '#d1d5db' : '#3b82f6',
-                  border: 'none',
-                  borderRadius: 8,
-                  cursor: !newCallType.callType ? 'not-allowed' : 'pointer',
-                  color: '#fff',
-                  fontWeight: 600
-                }}
+                style={{ fontSize: 14 }}
               >
                 Seuraava
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading || !newCallType.callType}
-                style={{
-                  padding: '12px 24px',
-                  fontSize: 14,
-                  background: loading ? '#d1d5db' : '#3b82f6',
-                  border: 'none',
-                  borderRadius: 8,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  color: '#fff',
-                  fontWeight: 600
-                }}
+                style={{ fontSize: 14 }}
               >
                 {loading ? 'Lisätään...' : 'Lisää puhelutyyppi'}
-              </button>
+              </Button>
             )}
           </div>
         </div>

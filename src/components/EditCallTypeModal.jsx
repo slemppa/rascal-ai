@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Button from './Button'
 
 const EditCallTypeModal = ({ 
   showModal, 
@@ -62,18 +63,13 @@ const EditCallTypeModal = ({
           <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
             Muokkaa puhelun tyyppiä
           </h2>
-          <button
+          <Button
             onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: 24,
-              cursor: 'pointer',
-              color: '#6b7280'
-            }}
+            variant="secondary"
+            style={{ fontSize: 24, color: '#6b7280', background: 'none', border: 'none' }}
           >
             ×
-          </button>
+          </Button>
         </div>
 
         {/* Vaiheindikaattori */}
@@ -274,77 +270,43 @@ const EditCallTypeModal = ({
         
         <div style={{ display: 'flex', gap: 12, justifyContent: 'space-between', marginTop: 24, paddingTop: 16, borderTop: '1px solid #e5e7eb' }}>
           <div style={{ display: 'flex', gap: 12 }}>
-            <button
+            <Button
               type="button"
               onClick={onClose}
-              style={{
-                padding: '12px 24px',
-                fontSize: 14,
-                background: '#f3f4f6',
-                border: '1px solid #d1d5db',
-                borderRadius: 8,
-                cursor: 'pointer',
-                color: '#374151',
-                fontWeight: 500
-              }}
+              variant="secondary"
+              style={{ fontSize: 14 }}
             >
               Peruuta
-            </button>
+            </Button>
             {currentStep > 1 && (
-              <button
+              <Button
                 type="button"
                 onClick={handlePrevious}
-                style={{
-                  padding: '12px 24px',
-                  fontSize: 14,
-                  background: '#f3f4f6',
-                  border: '1px solid #d1d5db',
-                  borderRadius: 8,
-                  cursor: 'pointer',
-                  color: '#374151',
-                  fontWeight: 500
-                }}
+                variant="secondary"
+                style={{ fontSize: 14 }}
               >
                 Edellinen
-              </button>
+              </Button>
             )}
           </div>
           
           <div>
             {currentStep < totalSteps ? (
-              <button
+              <Button
                 type="button"
                 onClick={handleNext}
-                style={{
-                  padding: '12px 24px',
-                  fontSize: 14,
-                  background: '#3b82f6',
-                  border: 'none',
-                  borderRadius: 8,
-                  cursor: 'pointer',
-                  color: '#fff',
-                  fontWeight: 600
-                }}
+                style={{ fontSize: 14 }}
               >
                 Seuraava
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
                 type="button"
                 onClick={handleSubmit}
-                style={{
-                  padding: '12px 24px',
-                  fontSize: 14,
-                  background: '#3b82f6',
-                  border: 'none',
-                  borderRadius: 8,
-                  cursor: 'pointer',
-                  color: '#fff',
-                  fontWeight: 600
-                }}
+                style={{ fontSize: 14 }}
               >
                 Tallenna muutokset
-              </button>
+              </Button>
             )}
           </div>
         </div>

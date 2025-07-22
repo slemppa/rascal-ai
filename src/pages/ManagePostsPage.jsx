@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import PageHeader from '../components/PageHeader'
 import styles from './ManagePostsPage.module.css'
+import { usePosts } from '../contexts/PostsContext';
 
 // Päivitetty media-logiikka korttiin
 const getMediaElement = (mediaArr, alt, isLarge, post, segments) => {
@@ -509,13 +510,9 @@ function PostModal({ post, onClose, allPosts, segments }) {
 }
 
 export default function ManagePostsPage() {
-  const [posts, setPosts] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
   const [typeFilter, setTypeFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [selectedPost, setSelectedPost] = useState(null)
-  const [segments, setSegments] = useState([])
   const [monthlyLimitReached, setMonthlyLimitReached] = useState(false)
   const [postsThisMonth, setPostsThisMonth] = useState(0)
   const [activeTab, setActiveTab] = useState('julkaisut') // Lisätty välilehti-tila
@@ -527,6 +524,8 @@ export default function ManagePostsPage() {
   const [generationLoading, setGenerationLoading] = useState(false)
   const [generationError, setGenerationError] = useState('')
   const [generationSuccess, setGenerationSuccess] = useState('')
+
+  const { posts, segments, loading, error } = usePosts();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -570,18 +569,18 @@ export default function ManagePostsPage() {
   const types = [...new Set(posts.map(post => post.Type).filter(Boolean))]
   const statuses = [...new Set(posts.map(post => post.Status).filter(Boolean))]
 
-  // Suodata julkaisut tyypin ja statusin mukaan
-  const filteredPosts = posts.filter(post => {
-    const typeMatch = !typeFilter || post.Type === typeFilter
-    const statusMatch = !statusFilter || post.Status === statusFilter
-    return typeMatch && statusMatch
-  })
-  // Järjestä uusimmasta vanhimpaan createdTime:n mukaan
-  .sort((a, b) => {
-    const aTime = a.createdTime ? new Date(a.createdTime).getTime() : 0;
-    const bTime = b.createdTime ? new Date(b.createdTime).getTime() : 0;
-    return bTime - aTime;
-  });
+  // Suodata ja järjestä julkaisut
+  const filteredPosts = posts
+    .filter(post => {
+      const typeMatch = !typeFilter || post.Type === typeFilter;
+      const statusMatch = !statusFilter || post.Status === statusFilter;
+      return typeMatch && statusMatch;
+    })
+    .sort((a, b) => {
+      const aTime = a.createdTime ? new Date(a.createdTime).getTime() : 0;
+      const bTime = b.createdTime ? new Date(b.createdTime).getTime() : 0;
+      return bTime - aTime;
+    });
 
   const formatDate = (dateString) => {
     if (!dateString) return '-'

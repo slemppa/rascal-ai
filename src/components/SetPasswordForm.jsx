@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import PasswordStrengthChecker from './PasswordStrengthChecker'
+import Button from './Button'
 
 export default function SetPasswordForm() {
   const navigate = useNavigate()
@@ -239,7 +240,7 @@ export default function SetPasswordForm() {
               onFocus={(e) => e.target.style.borderColor = '#1e293b'}
               onBlur={(e) => e.target.style.borderColor = '#2563eb'}
             />
-              <button
+              <Button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 style={{
@@ -254,13 +255,14 @@ export default function SetPasswordForm() {
                 }}
                 tabIndex={-1}
                 aria-label={showPassword ? 'Piilota salasana' : 'Näytä salasana'}
+                variant="secondary"
               >
                 {showPassword ? (
                   <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="#2563eb" strokeWidth="2" d="M3 12s3.6-6 9-6 9 6 9 6-3.6 6-9 6-9-6-9-6Z"/><circle cx="12" cy="12" r="3" stroke="#2563eb" strokeWidth="2"/></svg>
                 ) : (
                   <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="#2563eb" strokeWidth="2" d="M3 12s3.6-6 9-6 9 6 9 6-3.6 6-9 6-9-6-9-6Z"/><circle cx="12" cy="12" r="3" stroke="#2563eb" strokeWidth="2"/><line x1="4" y1="20" x2="20" y2="4" stroke="#2563eb" strokeWidth="2"/></svg>
                 )}
-              </button>
+              </Button>
             </div>
             <PasswordStrengthChecker password={password} />
           </div>
@@ -310,31 +312,15 @@ export default function SetPasswordForm() {
             </div>
           )}
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
             style={{
-              background: loading ? '#9ca3af' : '#2563eb',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 10,
-              padding: '16px 0',
-              fontSize: 18,
-              fontWeight: 800,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              transition: 'background-color 0.2s',
-              marginTop: 8,
-              boxShadow: '0 2px 8px rgba(37,99,235,0.10)'
-            }}
-            onMouseOver={e => {
-              if (!loading) e.target.style.background = '#1e293b'
-            }}
-            onMouseOut={e => {
-              if (!loading) e.target.style.background = '#2563eb'
+              marginTop: 8
             }}
           >
             {loading ? 'Asetetaan...' : 'Aseta salasana'}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

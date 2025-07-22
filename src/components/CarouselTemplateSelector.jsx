@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Button from './Button'
 
 const templates = [
   { id: 'template1', name: 'Moderni', image: '/carousel1.jpg', placidId: 'xpnx52obc7b5r' },
@@ -74,23 +75,15 @@ export default function CarouselTemplateSelector() {
           </div>
         ))}
       </div>
-      <button
+      <Button
         onClick={handleSubmit}
         disabled={loading}
         style={{
-          padding: '14px 36px',
-          borderRadius: 8,
-          border: 'none',
-          background: '#3b82f6',
-          color: '#fff',
-          fontWeight: 600,
-          fontSize: 18,
-          cursor: loading ? 'not-allowed' : 'pointer',
           marginBottom: 16
         }}
       >
         {loading ? 'Lähetetään...' : 'Valitse'}
-      </button>
+      </Button>
       {success && <div style={{ color: 'green', marginTop: 8 }}>Valinta lähetetty!</div>}
       {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
     </div>

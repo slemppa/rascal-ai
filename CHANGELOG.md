@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.21.2](https://github.com/slemppa/rascal-ai/compare/v1.21.1...v1.21.2) (2025-07-22)
+
+
+### 🐛 Bug Fixes
+
+* käytä Voiceover OK -kenttää Reels-modaalin disabled-logiikassa ([10b37b4](https://github.com/slemppa/rascal-ai/commit/10b37b4f6bd2f9c708d47a0c6dd8b81ba4e22f1b))
+
+
+### ✨ Features
+
+* modernit vierekkäiset dropdown-filtterit ManagePostsPage:lle ([574c1b5](https://github.com/slemppa/rascal-ai/commit/574c1b53f72f9ee65b99abc765875a2bafc23ff0))
+
 ### [1.21.1](https://github.com/slemppa/rascal-ai/compare/v1.21.0...v1.21.1) (2025-07-22)
 
 

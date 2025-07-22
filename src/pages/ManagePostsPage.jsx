@@ -455,6 +455,15 @@ function PostModal({ post, onClose, allPosts, segments }) {
               </div>
             </div>
           )}
+          {/* Blog/Newsletter URL */}
+          {(post.Type === 'Blog' || post.Type === 'Newsletter') && post["Blog URL"] && (
+            <div className={styles.modalLabel} style={{marginBottom: 18}}>
+              <span style={{fontWeight: 600, fontSize: 15}}>Blog URL</span>
+              <a href={post["Blog URL"]} target="_blank" rel="noopener noreferrer" style={{color: '#2563eb', wordBreak: 'break-all', textDecoration: 'underline', fontSize: 15}}>
+                {post["Blog URL"]}
+              </a>
+            </div>
+          )}
           <label className={styles.modalLabel} style={{marginBottom: 18}}>
             <span style={{fontWeight: 600, fontSize: 15}}>Julkaisupäivä</span>
             <input
@@ -567,6 +576,12 @@ export default function ManagePostsPage() {
     const statusMatch = !statusFilter || post.Status === statusFilter
     return typeMatch && statusMatch
   })
+  // Järjestä uusimmasta vanhimpaan createdTime:n mukaan
+  .sort((a, b) => {
+    const aTime = a.createdTime ? new Date(a.createdTime).getTime() : 0;
+    const bTime = b.createdTime ? new Date(b.createdTime).getTime() : 0;
+    return bTime - aTime;
+  });
 
   const formatDate = (dateString) => {
     if (!dateString) return '-'
@@ -848,6 +863,13 @@ export default function ManagePostsPage() {
                           {getPostDescription(post) && (
                             <div className={styles.description}>{getPostDescription(post)}</div>
                           )}
+
+                          {/* Created Time näkyvästi */}
+                          <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 4 }}>
+                            {post.createdTime && (
+                              <>Luotu: {formatDate(post.createdTime)}</>
+                            )}
+                          </div>
 
                           {/* Alareuna */}
                           <div className={styles.cardFooter}>

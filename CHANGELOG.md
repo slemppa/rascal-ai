@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.21.1](https://github.com/slemppa/rascal-ai/compare/v1.21.0...v1.21.1) (2025-07-22)
+
+
+### ✨ Features
+
+* lisää PostsContext postauksien keskitettyyn hakuun ([65fb6dc](https://github.com/slemppa/rascal-ai/commit/65fb6dc29ceeba08998e7b8bc1c1b2ee816bc096))
+* näytä Blog URL kenttä modaalissa Blog ja Newsletter postauksille ([2f088d6](https://github.com/slemppa/rascal-ai/commit/2f088d6082e1476a540bcb31b7740373756f3e55))
+
+
+### 🐛 Bug Fixes
+
+* disable voiceover-kenttä ja checkbox kun vahvistus on tehty (Reels) ([3c47830](https://github.com/slemppa/rascal-ai/commit/3c478302113e15081ac61dc65d3f22b410299cf3))
+* kääri PostsProvider koko sovelluksen ympärille App.jsx:ssä ([010c166](https://github.com/slemppa/rascal-ai/commit/010c1668e3bbe4d8093255a7c8bbe10adea312bd))
+* käytä aina Call ID:tä mass-callissa, poista mock-data ([bffa260](https://github.com/slemppa/rascal-ai/commit/bffa2606a81ab6900ced3f9931180403d9959482))
+* käytä mass-callissa ensisijaisesti Call ID:tä, fallback id ([a2865c9](https://github.com/slemppa/rascal-ai/commit/a2865c9aa7bea7a3d311943e8587b6e82e03dc98))
+* käytä posts-contextia ja järjestä postaukset createdTime mukaan ([c6b06ad](https://github.com/slemppa/rascal-ai/commit/c6b06ad26adb58e5d5304a9f3fd988f6a6fa20d4))
+* lisää recordId mass-call kutsuun valitun puhelun tyypin perusteella ([652434b](https://github.com/slemppa/rascal-ai/commit/652434b91fb9708cdfbd6dc9f8194e3d63b691ca))
+* voiceoverConfirmed päivittyy postin vaihtuessa (Reels) ([5e3e4b9](https://github.com/slemppa/rascal-ai/commit/5e3e4b96fea26a4b3ad7b7f7ff4d9a3e31936183))
+
 ## [1.21.0](https://github.com/slemppa/rascal-ai/compare/v1.20.0...v1.21.0) (2025-07-21)
 
 

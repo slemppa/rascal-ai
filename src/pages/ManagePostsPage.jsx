@@ -248,7 +248,7 @@ function CarouselMedia({ post, segments }) {
 function PostModal({ post, onClose, allPosts, segments }) {
   const [caption, setCaption] = useState(post.Caption || '');
   const [voiceover, setVoiceover] = useState(post.Voiceover || '');
-  const [voiceoverConfirmed, setVoiceoverConfirmed] = useState(post.VoiceoverConfirmed || false);
+  const [voiceoverConfirmed, setVoiceoverConfirmed] = useState(post["Voiceover OK"] || false);
   // Alusta publishDate datetime-local -muodossa (esim. 2024-07-01T12:34)
   const initialDate = post["Publish Date"] ? new Date(post["Publish Date"]).toISOString().slice(0, 16) : '';
   const [publishDate, setPublishDate] = useState(initialDate);
@@ -281,7 +281,7 @@ function PostModal({ post, onClose, allPosts, segments }) {
   }, [onClose]);
 
   useEffect(() => {
-    setVoiceoverConfirmed(post.VoiceoverConfirmed || false);
+    setVoiceoverConfirmed(post["Voiceover OK"] || false);
   }, [post]);
 
   if (!post) return null;
@@ -444,7 +444,7 @@ function PostModal({ post, onClose, allPosts, segments }) {
                   className={styles.modalTextarea}
                   style={{width: '100%', marginTop: 6, marginBottom: 12}}
                   placeholder="Kirjoita voiceover-teksti..."
-                  disabled={post.VoiceoverConfirmed || voiceoverConfirmed}
+                  disabled={post["Voiceover OK"]}
                 />
               </label>
               {/* Voiceover vahvistus checkbox */}
@@ -454,7 +454,7 @@ function PostModal({ post, onClose, allPosts, segments }) {
                   id="voiceover-confirm"
                   checked={voiceoverConfirmed}
                   onChange={e => setVoiceoverConfirmed(e.target.checked)}
-                  disabled={post.VoiceoverConfirmed || voiceoverConfirmed}
+                  disabled={post["Voiceover OK"]}
                 />
                 <label htmlFor="voiceover-confirm">
                   Vahvistan että voiceover on valmis ja tarkistettu

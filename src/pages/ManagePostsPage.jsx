@@ -525,46 +525,10 @@ export default function ManagePostsPage() {
   const [generationError, setGenerationError] = useState('')
   const [generationSuccess, setGenerationSuccess] = useState('')
 
+  // Käytetään contextia:
   const { posts, segments, loading, error } = usePosts();
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const companyId = JSON.parse(localStorage.getItem('user') || 'null')?.companyId
-        const url = `/api/get-posts${companyId ? `?companyId=${companyId}` : ''}`
-        const response = await axios.get(url)
-        // Oikea datan purku
-        const all = Array.isArray(response.data?.[0]?.data) ? response.data[0].data : [];
-        // Näytä kaikki postaukset, ei vain tiettyjä statuksia
-        setPosts(all.filter(p => !p["Slide No."])); // Suodata pois vain slide-tiedostot
-        setSegments(all.filter(p => p["Slide No."]));
-        
-        // Laske kuukausirajoitus
-        const now = new Date()
-        const currentMonth = now.getMonth()
-        const currentYear = now.getFullYear()
-        const postsThisMonth = all.filter(post => {
-          // Suodata pois slide-tiedostot (joilla on "Slide No." -kenttä)
-          if (post["Slide No."]) return false
-          
-          const date = post["createdTime"] ? new Date(post["createdTime"]) : null
-          return date && date.getMonth() === currentMonth && date.getFullYear() === currentYear
-        }).length
-        
-        const monthlyLimit = 30
-        setPostsThisMonth(postsThisMonth)
-        setMonthlyLimitReached(postsThisMonth >= monthlyLimit)
-      } catch (err) {
-        setError('Virhe haettaessa julkaisuja')
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchPosts()
-  }, [])
-
+  // Kaikki viittaukset posts ja segments ovat contextista
   // Hae uniikit tyypit ja statukset
   const types = [...new Set(posts.map(post => post.Type).filter(Boolean))]
   const statuses = [...new Set(posts.map(post => post.Status).filter(Boolean))]

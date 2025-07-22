@@ -21,6 +21,7 @@ import VersionUpdateModal from './components/VersionUpdateModal'
 import VersionInfo from './components/VersionInfo'
 import { Analytics } from '@vercel/analytics/react'
 import { parseChangelog, shouldShowVersionUpdate, markVersionAsShown } from './utils/versionManager'
+import { PostsProvider } from './contexts/PostsContext';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem('token'))
@@ -269,31 +270,33 @@ export default function App() {
       )}
 
       {/* Main content wrapper */}
-      <div className="main-content">
-        {/* Header (PageHeader) kiinteänä */}
-        <div className="main-header">
-          {/* PageHeader renderöidään täällä, esim. props.children tai routekohtaisesti */}
+      <PostsProvider>
+        <div className="main-content">
+          {/* Header (PageHeader) kiinteänä */}
+          <div className="main-header">
+            {/* PageHeader renderöidään täällä, esim. props.children tai routekohtaisesti */}
+          </div>
+          {/* Sisältö alkaa headerin alta */}
+          <div className="main-content-inner">
+            <Routes>
+              <Route path="/dashboard" element={<DashboardPage dashboardData={dashboardData} formatDate={formatDate} formatDateTime={formatDateTime} />} />
+              <Route path="/posts" element={<ManagePostsPage />} />
+              <Route path="/strategy" element={<ContentStrategyPage />} />
+              <Route path="/email" element={<EmailMarketingPage />} />
+              <Route path="/reports" element={<ReportsPage />} />
+              <Route path="/ai-chat" element={<AIChatPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/posts/:id" element={<PostDetailsPage />} />
+              <Route path="/calls" element={<CallPanel />} />
+              <Route path="/set-password" element={<SetPasswordForm />} />
+              <Route path="/setpasswordform" element={<SetPasswordForm />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms" element={<TermsOfServicePage />} />
+              <Route path="*" element={<Navigate to="/dashboard" />} />
+            </Routes>
+          </div>
         </div>
-        {/* Sisältö alkaa headerin alta */}
-        <div className="main-content-inner">
-          <Routes>
-            <Route path="/dashboard" element={<DashboardPage dashboardData={dashboardData} formatDate={formatDate} formatDateTime={formatDateTime} />} />
-            <Route path="/posts" element={<ManagePostsPage />} />
-            <Route path="/strategy" element={<ContentStrategyPage />} />
-            <Route path="/email" element={<EmailMarketingPage />} />
-            <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/ai-chat" element={<AIChatPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/posts/:id" element={<PostDetailsPage />} />
-            <Route path="/calls" element={<CallPanel />} />
-            <Route path="/set-password" element={<SetPasswordForm />} />
-            <Route path="/setpasswordform" element={<SetPasswordForm />} />
-            <Route path="/privacy" element={<PrivacyPolicyPage />} />
-            <Route path="/terms" element={<TermsOfServicePage />} />
-            <Route path="*" element={<Navigate to="/dashboard" />} />
-          </Routes>
-        </div>
-      </div>
+      </PostsProvider>
       
       {/* Version päivitys popup */}
       <VersionUpdateModal

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import PageHeader from '../components/PageHeader'
+import supabase from '../../utils/supabase'
 
 function EditPostModal({ post, onClose, onSave }) {
   const [idea, setIdea] = useState(post.Idea || '')
@@ -467,6 +468,14 @@ export default function DashboardPage() {
     }
   }
 
+  // Kirjaudu ulos -handler
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    localStorage.clear()
+    sessionStorage.clear()
+    window.location.reload()
+  }
+
   if (loading) return <div style={{ padding: 32, textAlign: 'center' }}>Ladataan...</div>
   if (error) return <div style={{ padding: 32, color: 'red' }}>{error}</div>
 
@@ -479,8 +488,26 @@ export default function DashboardPage() {
 
   return (
     <>
-      <PageHeader title="Kojelauta" />
-      <div style={{ padding: '32px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '32px 32px 0 32px' }}>
+        <PageHeader title="Kojelauta" />
+        <button
+          onClick={handleLogout}
+          style={{
+            padding: '10px 20px',
+            background: '#2563eb',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 8,
+            fontWeight: 600,
+            fontSize: 15,
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(37,99,235,0.10)'
+          }}
+        >
+          Kirjaudu ulos
+        </button>
+      </div>
+      <div style={{ padding: '0 32px 32px 32px' }}>
         {/* Bentogrid */}
         <div style={{
           display: 'grid',

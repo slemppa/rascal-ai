@@ -1,8 +1,22 @@
-import supabase from '../utils/supabase.js'
+import { createClient } from '@supabase/supabase-js'
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end()
   const { companyId } = req.query
+
+  // Ota access token headerista
+  const access_token = req.headers['authorization']?.replace('Bearer ', '')
+  if (!access_token) {
+    return res.status(401).json({ error: 'Unauthorized: access token puuttuu' })
+  }
+
+  // Luo Supabase-yhteys käyttäjän tokenilla
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY,
+    { global: { headers: { Authorization: `Bearer ${access_token}` } } }
+  )
+
   try {
     let query = supabase
       .from('content')

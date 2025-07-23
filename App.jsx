@@ -1,28 +1,32 @@
 import { useState, useEffect } from 'react'
-import supabase from '../utils/supabase'
+import supabase from './utils/supabase'
+import LoginPage from './src/pages/LoginPage'
+import DashboardPage from './src/pages/DashboardPage'
 
-function Page() {
-  const [todos, setTodos] = useState([])
+export default function App() {
+  const [session, setSession] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    async function getTodos() {
-      const { data: todos, error } = await supabase.from('todos').select()
-      if (error) {
-        console.error('Virhe Supabase-haussa:', error)
-      }
-      if (todos && todos.length > 0) {
-        setTodos(todos)
-      }
+    // Hae session Supabaselta
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      setSession(session)
+      setLoading(false)
     }
-    getTodos()
+    getSession()
+    // Kuuntele kirjautumisen muutoksia
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+    return () => {
+      listener?.unsubscribe()
+    }
   }, [])
 
-  return (
-    <div>
-      {todos.map((todo, idx) => (
-        <li key={idx}>{JSON.stringify(todo)}</li>
-      ))}
-    </div>
-  )
-}
-export default Page 
+  if (loading) return null
+  if (!session) {
+    return <LoginPage onLogin={(sess) => setSession(sess)} />
+  }
+  return <DashboardPage />
+} 

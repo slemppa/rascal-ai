@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.22.0](https://github.com/slemppa/rascal-ai/compare/v1.21.2...v1.22.0) (2025-07-23)
+
+
+### ✨ Features
+
+* lisää uutiskirjeen generointi ja tuki newsletter-tyypille ([4fad827](https://github.com/slemppa/rascal-ai/commit/4fad82791e8d765e215ff46a731b3236af3da182))
+
 ### [1.21.2](https://github.com/slemppa/rascal-ai/compare/v1.21.1...v1.21.2) (2025-07-22)
 
 

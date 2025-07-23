@@ -202,6 +202,29 @@ function AvatarSectionMulti({ companyId }) {
     e.target.value = "";
   };
 
+  // Poista kuva backendistä (avatar-delete)
+  const handleDeleteAvatar = async (avatarId) => {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch('/api/avatar-delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ companyId, avatarId })
+      })
+      const data = await res.json()
+      if (data.success) {
+        setImages((prev) => prev.filter(img => img.id !== avatarId))
+      } else {
+        setError(data.error || 'Poisto epäonnistui')
+      }
+    } catch (e) {
+      setError('Poisto epäonnistui')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   // Poista kuva (vain local stateesta)
   const handleRemoveImage = (idx) => {
     setImages((prev) => {
@@ -238,17 +261,19 @@ function AvatarSectionMulti({ companyId }) {
                 />
                 <button
                   type="button"
-                  className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700 transition opacity-0 group-hover:opacity-100 focus:opacity-100"
-                  onClick={() => handleRemoveImage(slot)}
+                  className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700 transition opacity-100 z-20 shadow"
+                  onClick={() => handleDeleteAvatar(img.id)}
                   aria-label="Poista kuva"
                   tabIndex={-1}
                 >
+                  {/* Selkeä punainen raksi */}
                   <svg
-                    className="w-4 h-4"
+                    className="w-5 h-5"
                     fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
+                    stroke="#fff"
+                    strokeWidth={2.5}
                     viewBox="0 0 24 24"
+                    style={{ filter: 'drop-shadow(0 0 2px #b91c1c)' }}
                   >
                     <path
                       strokeLinecap="round"

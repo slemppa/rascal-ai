@@ -3,7 +3,7 @@
   background: #F8F9FB;
   min-height: 100vh;
   box-sizing: border-box;
-  padding: 24px 0 0 0;
+  padding: 24px 24px 0 24px;
 }
 
 .callpanel-tabs {
@@ -40,12 +40,12 @@
 
 .callpanel-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 20px;
 }
 @media (max-width: 900px) {
-  .callpanel-grid {
-    grid-template-columns: 1fr;
+  .callpanel-root {
+    padding: 10px 4px 0 4px;
   }
 }
 

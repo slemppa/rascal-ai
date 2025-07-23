@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.23.2](https://github.com/slemppa/rascal-ai/compare/v1.23.1...v1.23.2) (2025-07-23)
+
+
+### 🐛 Bug Fixes
+
+* avatar-kuvan poisto käyttää Variable ID:tä (rec...) ([e49d564](https://github.com/slemppa/rascal-ai/commit/e49d5648c195143e1b0bf2ef1adf1e265e696f90))
+
 ### [1.23.1](https://github.com/slemppa/rascal-ai/compare/v1.23.0...v1.23.1) (2025-07-23)
 
 

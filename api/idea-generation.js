@@ -26,11 +26,11 @@ export default async function handler(req, res) {
     }
 
     // Validoi idea-tyyppi
-    const validTypes = ['blog', 'image', 'carousel', 'avatar']
+    const validTypes = ['blog', 'image', 'carousel', 'avatar', 'newsletter']
     if (!validTypes.includes(type)) {
       console.log('Virheellinen idea-tyyppi:', type)
       return res.status(400).json({ 
-        error: 'Virheellinen idea-tyyppi. Sallitut tyypit: blog, image, carousel, avatar' 
+        error: 'Virheellinen idea-tyyppi. Sallitut tyypit: blog, image, carousel, avatar, newsletter' 
       })
     }
 

@@ -936,6 +936,18 @@ export default function ManagePostsPage() {
                           Luo avatar video
                         </button>
                       </div>
+                      {/* UUSI: Uutiskirjeen generointi */}
+                      <div className={styles.generationCard}>
+                        <div className={styles.generationIcon}>📧</div>
+                        <h3>Tee uutiskirje</h3>
+                        <p>Generoi uutiskirjeitä ja sähköpostisisältöä AI:n avulla</p>
+                        <button 
+                          className={styles.generationButton}
+                          onClick={() => openGenerationModal('newsletter')}
+                        >
+                          Luo uutiskirje
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -958,6 +970,7 @@ export default function ManagePostsPage() {
                 {generationType === 'image' && '🖼️ Kuva julkaisu'}
                 {generationType === 'carousel' && '🎠 Karusellin generointi'}
                 {generationType === 'avatar' && '🤖 Avatar generointi'}
+                {generationType === 'newsletter' && '📧 Uutiskirjeen generointi'}
               </h2>
               
               <p style={{ margin: '0 0 24px 0', color: '#6b7280', fontSize: 16, lineHeight: 1.5 }}>
@@ -965,6 +978,7 @@ export default function ManagePostsPage() {
                 {generationType === 'image' && 'Syötä idea kuvapostauksen luomiseen.'}
                 {generationType === 'carousel' && 'Syötä idea karusellipostauksen generointiin.'}
                 {generationType === 'avatar' && 'Syötä idea avatar-videon luomiseen.'}
+                {generationType === 'newsletter' && 'Syötä idea uutiskirjeen tai sähköpostin generointiin.'}
               </p>
               
               <form onSubmit={handleIdeaGeneration}>
@@ -981,7 +995,9 @@ export default function ManagePostsPage() {
                     placeholder={
                       generationType === 'blog' 
                         ? 'Esim. "digitaalinen markkinointi", "sosiaalisen median strategiat"...'
-                        : 'Kuvaile mitä haluat generoida...'
+                        : generationType === 'newsletter'
+                          ? 'Esim. "Asiakastiedote kesäkuulle", "Uutiskirjeen teema..."'
+                          : 'Kuvaile mitä haluat generoida...'
                     }
                     disabled={generationLoading}
                   />

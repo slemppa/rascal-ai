@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import PageHeader from '../components/PageHeader'
 import axios from 'axios'
+import { Link } from 'react-router-dom'
 
 function EditPostModal({ post, onClose, onSave }) {
   const [idea, setIdea] = useState(post.Idea || '')
@@ -755,8 +756,11 @@ export default function DashboardPage() {
                 <div style={{ fontSize: 18, fontWeight: 600, color: '#16a34a', marginBottom: 8 }}>
                   ✅ Avatarit ovat valmiit tuotantoon
                 </div>
-                <div style={{ fontSize: 14, color: '#15803d' }}>
+                <div style={{ fontSize: 14, color: '#15803d', marginBottom: 12 }}>
                   Kuvat ja ääni on lähetetty onnistuneesti
+                </div>
+                <div style={{ fontSize: 14, color: '#2563eb' }}>
+                  Voit muuttaa asetuksia <Link to="/settings" style={{ color: '#2563eb', textDecoration: 'underline', fontWeight: 600 }}>Asetukset</Link>-sivulla
                 </div>
               </div>
             ) : (

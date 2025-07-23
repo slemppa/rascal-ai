@@ -1,57 +1,191 @@
 .callpanel-root {
-  font-family: inherit;
+  font-family: 'Inter', 'Roboto', 'Poppins', Arial, sans-serif;
+  background: #F8F9FB;
+  min-height: 100vh;
   box-sizing: border-box;
+  padding: 24px 0 0 0;
 }
 
-.callpanel-root input[type="text"]:focus {
-  outline: 2px solid #2563eb;
+.callpanel-tabs {
+  display: flex;
+  border-bottom: 1.5px solid #e5e7eb;
+  background: transparent;
+  margin-bottom: 32px;
+  gap: 0;
+  height: 44px;
+}
+.callpanel-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  color: #6b7280;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: color 0.15s, border 0.15s, background 0.15s;
+  outline: none;
+  padding: 0 0 8px 0;
+}
+.callpanel-tab.active {
+  color: #2563eb;
+  border-bottom: 2.5px solid #2563eb;
+  background: none;
+}
+.callpanel-tab:not(.active):hover {
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+.callpanel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 900px) {
+  .callpanel-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1.5px 8px rgba(40,60,120,0.07);
+  padding: 28px 28px 22px 28px;
+  margin-bottom: 0;
+  transition: box-shadow 0.18s, transform 0.18s;
+}
+.card:hover {
+  box-shadow: 0 4px 18px rgba(40,60,120,0.13);
+  transform: translateY(-1px) scale(1.01);
+}
+
+.section-title {
+  font-size: 21px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 18px;
+  letter-spacing: 0.01em;
+}
+
+.label {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: #23272f;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.input, .select, .textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 7px;
+  font-size: 15px;
+  font-family: inherit;
+  background: #fff;
+  margin-bottom: 14px;
+  transition: border 0.18s, box-shadow 0.18s;
+}
+.input:focus, .select:focus, .textarea:focus {
+  outline: none;
   border-color: #2563eb;
+  box-shadow: 0 0 0 2px #2563eb22;
 }
 
-.callpanel-root button:active {
-  opacity: 0.92;
+.button-primary {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 11px 22px;
+  font-size: 15.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+  box-shadow: 0 1px 2px rgba(40,60,120,0.07);
+  margin-bottom: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.button-primary:hover:not(:disabled) {
+  background: #1746b3;
+  box-shadow: 0 2px 8px rgba(40,60,120,0.13);
+}
+.button-primary:disabled {
+  background: #bcd0fa;
+  cursor: not-allowed;
 }
 
-/* Mobiiliyhteensopivuus */
-@media (max-width: 768px) {
+.button-secondary {
+  background: #fff;
+  color: #2563eb;
+  border: 1.5px solid #2563eb;
+  border-radius: 7px;
+  padding: 11px 18px;
+  font-size: 15.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+  margin-bottom: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.button-secondary:hover:not(:disabled) {
+  background: #f0f6ff;
+  color: #1746b3;
+  border-color: #1746b3;
+}
+
+.status-success {
+  background: #e6fbe8;
+  color: #1a7f37;
+  border: 1px solid #b7e4c7;
+  border-radius: 7px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  font-size: 15px;
+}
+.status-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 7px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  font-size: 15px;
+}
+
+.card .textarea {
+  min-height: 90px;
+  resize: vertical;
+  margin-bottom: 8px;
+}
+
+/* Microinteraktiot */
+.card, .button-primary, .button-secondary {
+  transition: box-shadow 0.15s, background 0.15s, color 0.15s, border 0.15s, transform 0.15s;
+}
+
+@media (max-width: 900px) {
   .callpanel-root {
-    padding: 16px !important;
+    padding: 10px 0 0 0;
   }
-  
-  .callpanel-root > div {
-    grid-template-columns: 1fr !important;
-    gap: 16px !important;
+  .card {
+    padding: 14px 10px 10px 10px;
   }
-  
-  .callpanel-root input,
-  .callpanel-root textarea,
-  .callpanel-root select {
-    font-size: 16px !important; /* Estää iOS:n zoomauksen */
+  .section-title {
+    font-size: 17px;
   }
-  
-  .callpanel-root button {
-    padding: 12px 16px !important;
-    font-size: 16px !important;
-    width: 100% !important;
-    margin-bottom: 8px !important;
+  .label {
+    font-size: 14px;
   }
-  
-  .callpanel-root .flex {
-    flex-direction: column !important;
-    gap: 8px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .callpanel-root {
-    padding: 12px !important;
-  }
-  
-  .callpanel-root h2 {
-    font-size: 18px !important;
-  }
-  
-  .callpanel-root label {
-    font-size: 14px !important;
+  .button-primary, .button-secondary {
+    font-size: 14px;
+    padding: 10px 10px;
   }
 } 

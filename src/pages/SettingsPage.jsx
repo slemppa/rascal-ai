@@ -165,7 +165,7 @@ function AvatarSectionMulti({ companyId }) {
           else if (media.thumbnails?.large?.url) url = media.thumbnails.large.url;
           else if (media.url) url = media.url;
           if (url) {
-            images.push({ url, id: media.id || url });
+            images.push({ url, id: media.id || url, variableId: record["Variable ID"] || record.id });
           }
         }
       }
@@ -262,7 +262,7 @@ function AvatarSectionMulti({ companyId }) {
                 <button
                   type="button"
                   className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700 transition opacity-100 z-20 shadow"
-                  onClick={() => handleDeleteAvatar(img.id)}
+                  onClick={() => handleDeleteAvatar(img.variableId)}
                   aria-label="Poista kuva"
                   tabIndex={-1}
                 >

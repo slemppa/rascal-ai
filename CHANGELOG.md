@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.23.1](https://github.com/slemppa/rascal-ai/compare/v1.23.0...v1.23.1) (2025-07-23)
+
+
+### 🐛 Bug Fixes
+
+* avatar-delete endpoint lähettää Variable ID N8N:lle ([4b6f665](https://github.com/slemppa/rascal-ai/commit/4b6f66527c2445aba1f934c26a29049b2635f57c))
+
 ## [1.23.0](https://github.com/slemppa/rascal-ai/compare/v1.22.0...v1.23.0) (2025-07-23)
 
 

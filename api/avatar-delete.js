@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Palvelimen asetukset puuttuvat (N8N_AVATAR_DELETE tai N8N_SECRET_KEY)'} )
   }
   try {
-    const response = await axios.post(n8nUrl, { companyId, avatarId }, {
+    const response = await axios.post(n8nUrl, { companyId, 'Variable ID': avatarId }, {
       headers: {
         'x-api-key': apiKey,
         'Content-Type': 'application/json'
@@ -22,6 +22,7 @@ export default async function handler(req, res) {
     })
     return res.status(200).json({ success: true, data: response.data })
   } catch (err) {
+    console.error('Avatar delete error:', err?.response?.data || err.message)
     return res.status(500).json({ error: 'Avatarin poisto epäonnistui', details: err?.response?.data || err.message })
   }
 } 

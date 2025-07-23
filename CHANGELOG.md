@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.23.0](https://github.com/slemppa/rascal-ai/compare/v1.22.0...v1.23.0) (2025-07-23)
+
+
+### 🐛 Bug Fixes
+
+* **callpanel:** callType valitaan automaattisesti ([5b66dfc](https://github.com/slemppa/rascal-ai/commit/5b66dfc639debf130e2c0cc27c562362cd2c1671))
+
+
+### ✨ Features
+
+* lisää avatar-kuvan poisto N8N:n kautta ([4fd12e1](https://github.com/slemppa/rascal-ai/commit/4fd12e1a1f8d809d296ef701a7b2bbbf8eff0296))
+
 ## [1.22.0](https://github.com/slemppa/rascal-ai/compare/v1.21.2...v1.22.0) (2025-07-23)
 
 

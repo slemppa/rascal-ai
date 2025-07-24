@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import supabase from './utils/supabase'
+import { supabase } from './src/lib/supabase'
 import LoginPage from './src/pages/LoginPage'
 import DashboardPage from './src/pages/DashboardPage'
 

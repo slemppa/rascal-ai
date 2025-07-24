@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import PageHeader from '../components/PageHeader'
-import supabase from '../../utils/supabase'
+import { supabase } from '../lib/supabase'
+import styles from './DashboardPage.module.css'
 
 function EditPostModal({ post, onClose, onSave }) {
   const [idea, setIdea] = useState(post.Idea || '')
@@ -230,44 +231,59 @@ export default function DashboardPage() {
   const [avatarError, setAvatarError] = useState('') // Error state
   const imagesDropRef = React.useRef(null)
   const audioDropRef = React.useRef(null)
+  const [totalCallPrice, setTotalCallPrice] = useState(0)
 
   // Responsiivinen apu
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchPosts = async () => {
-      try {
-        setLoading(true)
-        const companyId = JSON.parse(localStorage.getItem('user') || 'null')?.companyId
-        const url = `/api/get-posts${companyId ? `?companyId=${companyId}` : ''}`
-        const response = await fetch(url)
-        const data = await response.json()
-        setPosts(Array.isArray(data) ? data : [])
-      } catch (err) {
-        setError('Virhe haettaessa julkaisuja')
-      } finally {
-        setLoading(false)
-      }
+      setLoading(true)
+      setError(null)
+      // Hakee kirjautuneen käyttäjän postaukset RLS:n turvin
+      const { data, error } = await supabase
+        .from('content')
+        .select('*')
+        .order('publish_date', { ascending: false })
+      if (error) setError('Virhe haettaessa julkaisuja')
+      setPosts(data || [])
+      setLoading(false)
     }
     fetchPosts()
   }, [])
 
+  useEffect(() => {
+    const fetchCallPrice = async () => {
+      // Hae kuluvan kuukauden puheluiden kokonaishinta
+      const now = new Date()
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+      const { data, error } = await supabase
+        .from('call_logs')
+        .select('price')
+        .gte('call_date', firstDay.toISOString())
+        .lte('call_date', lastDay.toISOString())
+      if (!error && data) {
+        const sum = data.reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
+        setTotalCallPrice(sum)
+      } else {
+        setTotalCallPrice(0)
+      }
+    }
+    fetchCallPrice()
+  }, [])
+
   // Tarkista Avatar-materiaalien status
-  React.useEffect(() => {
+  useEffect(() => {
     const checkAvatarStatus = async () => {
       try {
         const userRaw = JSON.parse(localStorage.getItem('user') || 'null')
         const companyId = userRaw?.companyId || userRaw?.user?.companyId
         
-        console.log('Avatar status check - userRaw:', userRaw)
-        console.log('Avatar status check - companyId:', companyId)
-        
         if (!companyId) {
-          console.log('Avatar status check skipped - no companyId')
           return
         }
 
-        console.log('Sending avatar status request...')
         const response = await fetch('/api/avatar-status', {
           method: 'POST',
           headers: {
@@ -279,11 +295,8 @@ export default function DashboardPage() {
           })
         })
 
-        console.log('Avatar status response:', response.status, response.statusText)
-        
         if (response.ok) {
           const data = await response.json()
-          console.log('Avatar status data:', data)
 
           /*
             Webhook palauttaa taulukon objekteja. Merkkaamme materiaalit ladatuiksi näin:
@@ -397,18 +410,11 @@ export default function DashboardPage() {
       const userRaw = localStorage.getItem('user')
       const companyId = userRaw ? JSON.parse(userRaw)?.companyId || JSON.parse(userRaw)?.user?.companyId : null
       
-      console.log('Image upload debug:')
-      console.log('- UserRaw:', userRaw)
-      console.log('- CompanyId:', companyId)
-      
       const uploads = await Promise.all(selectedImages.map(async (file) => {
         const formData = new FormData()
         formData.append('file', file)
         if (companyId) {
           formData.append('companyId', companyId)
-          console.log('- Added companyId to FormData:', companyId)
-        } else {
-          console.log('- No companyId to add')
         }
         
         const res = await fetch('/api/avatar-upload', {
@@ -419,7 +425,6 @@ export default function DashboardPage() {
         return res.json()
       }))
 
-      console.log('Kuvat ladattu', uploads)
       setImagesUploaded(true)
     } catch (err) {
       console.error(err)
@@ -439,17 +444,10 @@ export default function DashboardPage() {
       const userRaw = localStorage.getItem('user')
       const companyId = userRaw ? JSON.parse(userRaw)?.companyId || JSON.parse(userRaw)?.user?.companyId : null
       
-      console.log('Audio upload debug:')
-      console.log('- UserRaw:', userRaw)
-      console.log('- CompanyId:', companyId)
-      
       const formData = new FormData()
       formData.append('file', selectedAudio)
       if (companyId) {
         formData.append('companyId', companyId)
-        console.log('- Added companyId to FormData:', companyId)
-      } else {
-        console.log('- No companyId to add')
       }
       
       const res = await fetch('/api/avatar-upload', {
@@ -458,7 +456,6 @@ export default function DashboardPage() {
       })
       if (!res.ok) throw new Error('upload failed')
       const data = await res.json()
-      console.log('Audio ladattu', data)
       setAudioUploaded(true)
     } catch (err) {
       console.error(err)
@@ -476,503 +473,79 @@ export default function DashboardPage() {
     window.location.reload()
   }
 
-  if (loading) return <div style={{ padding: 32, textAlign: 'center' }}>Ladataan...</div>
-  if (error) return <div style={{ padding: 32, color: 'red' }}>{error}</div>
-
-  // Tulevat postaukset (Publish Date tulevaisuudessa)
+  // Laske tulevat postaukset (seuraavat 7 päivää)
   const now = new Date()
-  const upcomingPosts = posts.filter(post => {
-    const date = post["Publish Date"] ? new Date(post["Publish Date"]) : null
-    return date && date > now
-  }).sort((a, b) => new Date(a["Publish Date"]) - new Date(b["Publish Date"]))
+  const weekFromNow = new Date()
+  weekFromNow.setDate(now.getDate() + 7)
+  const upcomingCount = posts.filter(post => {
+    const date = post.publish_date ? new Date(post.publish_date) : null
+    return date && date > now && date < weekFromNow
+  }).length
+
+  // Laske julkaisut kuluvassa kuukaudessa (created_at mukaan)
+  const thisMonth = now.getMonth()
+  const thisYear = now.getFullYear()
+  const monthlyCount = posts.filter(post => {
+    const date = post.created_at ? new Date(post.created_at) : null
+    return date && date.getMonth() === thisMonth && date.getFullYear() === thisYear
+  }).length
+
+  const stats = [
+    { label: 'Tulevat postaukset', value: upcomingCount, sub: 'Seuraavat 7 päivää', color: '#22c55e' },
+    { label: 'Julkaisut kuukaudessa', value: monthlyCount, sub: 'Tämä kuukausi', color: '#2563eb' },
+    { label: 'Puheluiden kokonaishinta', value: totalCallPrice.toLocaleString('fi-FI', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }), sub: 'Tämä kuukausi', color: '#f59e42' },
+    { label: 'Tavoitteet', value: '--', sub: 'Tulossa pian', color: '#fbbf24' },
+    { label: 'AI käyttö', value: '--', sub: 'Tulossa pian', color: '#7c3aed' },
+  ]
 
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '32px 32px 0 32px' }}>
-        <PageHeader title="Kojelauta" />
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: '10px 20px',
-            background: '#2563eb',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 8,
-            fontWeight: 600,
-            fontSize: 15,
-            cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(37,99,235,0.10)'
-          }}
-        >
-          Kirjaudu ulos
-        </button>
-      </div>
-      <div style={{ padding: '0 32px 32px 32px' }}>
-        {/* Bentogrid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : 'repeat(5, 1fr)',
-          gridTemplateRows: isMobile ? 'auto' : 'auto auto auto',
-          gap: 24,
-          maxWidth: '1400px'
-        }}
-        className="dashboard-bentogrid"
-        >
-          {/* Tulevat postaukset - yhteenveto */}
-          <div style={{ 
-            background: '#fff', 
-            borderRadius: 16, 
-            boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
-            padding: 24, 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'flex-start',
-            ...(isMobile ? {} : {gridColumn: '1', gridRow: '1'})
-          }}>
-            <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Tulevat postaukset</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: '#2563eb', lineHeight: 1 }}>{upcomingPosts.length}</div>
-            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Seuraavat 7 päivää</div>
-          </div>
-
-          {/* Placeholder-laatikot */}
-          <div style={{ 
-            background: '#fff', 
-            borderRadius: 16, 
-            boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
-            padding: 24,
-            position: 'relative',
-            ...(isMobile ? {} : {gridColumn: '2', gridRow: '1'})
-          }}>
-            <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Julkaisut kuukaudessa</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
-            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tulossa pian</div>
-            <div style={{ 
-              position: 'absolute', 
-              top: 8, 
-              right: 8, 
-              fontSize: 12, 
-              color: '#9ca3af',
-              background: '#f3f4f6',
-              padding: '2px 6px',
-              borderRadius: 4
-            }}>
-              🚧 Dev
+      <div className={styles['dashboard-container']}>
+        <div className={styles['dashboard-header']}>
+          <h2 style={{ fontSize: 32, fontWeight: 800, color: '#1f2937', margin: 0 }}>Kojelauta</h2>
+        </div>
+        <div className={styles['dashboard-bentogrid']}>
+          {stats.map((stat, i) => (
+            <div key={i} className={styles.card}>
+              <div className={styles['stat-label']}>{stat.label}</div>
+              <div className={styles['stat-number']} style={{ color: stat.color }}>{stat.value}</div>
+              <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>{stat.sub}</div>
             </div>
-          </div>
-
-          <div style={{ 
-            background: '#fff', 
-            borderRadius: 16, 
-            boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
-            padding: 24,
-            position: 'relative',
-            ...(isMobile ? {} : {gridColumn: '3', gridRow: '1'})
-          }}>
-            <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Käytetty aika</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
-            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tulossa pian</div>
-            <div style={{ 
-              position: 'absolute', 
-              top: 8, 
-              right: 8, 
-              fontSize: 12, 
-              color: '#9ca3af',
-              background: '#f3f4f6',
-              padding: '2px 6px',
-              borderRadius: 4
-            }}>
-              🚧 Dev
+          ))}
+          {/* Dummy chart-kortti */}
+          <div className={styles.card} style={{ gridColumn: 'span 2', minHeight: 220, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>Engagement Analytics</div>
+            <div style={{ width: '100%', height: 120, background: 'linear-gradient(90deg,#22c55e22,#2563eb22)', borderRadius: 12, display: 'flex', alignItems: 'flex-end', gap: 8, padding: 16 }}>
+              {[40, 60, 80, 50, 90, 70, 100, 60, 80, 50, 70, 90].map((v, i) => (
+                <div key={i} style={{ flex: 1, height: v, background: '#22c55e', borderRadius: 6, minWidth: 8 }}></div>
+              ))}
             </div>
+            <div style={{ color: '#6b7280', fontSize: 13, marginTop: 8 }}>Dummy chart – korvaa oikealla myöhemmin</div>
           </div>
-
-          <div style={{ 
-            background: '#fff', 
-            borderRadius: 16, 
-            boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
-            padding: 24,
-            position: 'relative',
-            ...(isMobile ? {} : {gridColumn: '4', gridRow: '1'})
-          }}>
-            <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>Tavoitteet</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
-            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tulossa pian</div>
-            <div style={{ 
-              position: 'absolute', 
-              top: 8, 
-              right: 8, 
-              fontSize: 12, 
-              color: '#9ca3af',
-              background: '#f3f4f6',
-              padding: '2px 6px',
-              borderRadius: 4
-            }}>
-              🚧 Dev
-            </div>
-          </div>
-
-          <div style={{ 
-            background: '#fff', 
-            borderRadius: 16, 
-            boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
-            padding: 24,
-            position: 'relative',
-            ...(isMobile ? {} : {gridColumn: '5', gridRow: '1'})
-          }}>
-            <div style={{ fontWeight: 700, fontSize: 16, color: '#374151', marginBottom: 8 }}>AI käyttö</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: '#9ca3af', lineHeight: 1 }}>--</div>
-            <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>Tulossa pian</div>
-            <div style={{ 
-              position: 'absolute', 
-              top: 8, 
-              right: 8, 
-              fontSize: 12, 
-              color: '#9ca3af',
-              background: '#f3f4f6',
-              padding: '2px 6px',
-              borderRadius: 4
-            }}>
-              🚧 Dev
-            </div>
-          </div>
-
-          {/* Tulevat postaukset lista */}
-          <div style={{ 
-            background: '#fff', 
-            borderRadius: 16, 
-            boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
-            padding: 32,
-            ...(isMobile ? {} : {gridColumn: '1 / 4', gridRow: '2'})
-          }}>
-            <div style={{ fontWeight: 700, fontSize: 20, color: '#1f2937', marginBottom: 20 }}>Tulevat postaukset</div>
-          {upcomingPosts.length === 0 ? (
-            <div style={{ color: '#9ca3af', textAlign: 'center', padding: 32 }}>Ei tulevia postauksia</div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {upcomingPosts.map((post, idx) => {
-                const date = post["Publish Date"] ? new Date(post["Publish Date"]) : null
-                const day = date ? date.toLocaleDateString('fi-FI', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '-'
-                const time = date ? date.toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : ''
-                return (
-                  <div key={post.id || idx} style={{
-                    background: '#f3f6fd',
-                    borderRadius: 12,
-                    padding: '16px 20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 16,
-                    borderLeft: '5px solid #2563eb',
-                    boxShadow: '0 1px 3px rgba(37,99,235,0.04)'
-                  }}>
-                    {/* Ikoni */}
-                    <div style={{ fontSize: 22, color: '#2563eb', marginRight: 8 }}>
-                      {post.Type === 'Sähköposti' ? '✉️' : '📄'}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600, fontSize: 16, color: '#1f2937', marginBottom: 2 }}>{post.Idea || post.title || 'Ei otsikkoa'}</div>
-                      <div style={{ color: '#6b7280', fontSize: 14 }}>{post.Type || ''}{post.Type && post.Channel ? ' • ' : ''}{post.Channel || ''}</div>
-                    </div>
-                    <div style={{ color: '#6b7280', fontSize: 15, minWidth: 80, textAlign: 'right' }}>
-                      {day} <span style={{ color: '#2563eb', fontWeight: 700 }}>{time}</span>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          )}
-          </div>
-
-          {/* Avatar-videoiden hallinta */}
-          <div style={{ 
-            background: '#fff', 
-            borderRadius: 16, 
-            boxShadow: '0 2px 8px rgba(0,0,0,0.07)', 
-            padding: 32,
-            ...(isMobile ? {} : {gridColumn: '4 / 6', gridRow: '2'})
-          }}>
-            <div style={{ fontWeight: 700, fontSize: 20, color: '#1f2937', marginBottom: 20 }}>Avatar-videot</div>
-            
-            {/* Jos molemmat valmiit, näytä vain valmis-viesti */}
-            {imagesUploaded && audioUploaded ? (
-              <div style={{
-                background: '#f0fdf4',
-                borderRadius: 12,
-                padding: 24,
-                border: '2px solid #16a34a',
-                textAlign: 'center'
-              }}>
-                <div style={{ fontSize: 18, fontWeight: 600, color: '#16a34a', marginBottom: 8 }}>
-                  ✅ Avatarit ovat valmiit tuotantoon
-                </div>
-                <div style={{ fontSize: 14, color: '#15803d' }}>
-                  Kuvat ja ääni on lähetetty onnistuneesti
-                </div>
-              </div>
-            ) : (
-              <>
-                {/* Kuvien drag & drop */}
-                <div style={{ marginBottom: 24 }}>
-                  <div style={{ fontWeight: 600, fontSize: 16, color: '#374151', marginBottom: 12 }}>
-                    Kuvat (max 4kpl) {selectedImages.length > 0 && `- ${selectedImages.length}/4 valittu`}
-                  </div>
-                  
-                  {/* Drag & drop alue */}
-                  {!imagesUploaded && (
-                    <div
-                      ref={imagesDropRef}
-                      onDragOver={handleImagesDragOver}
-                      onDragLeave={handleImagesDragLeave}
-                      onDrop={handleImagesDrop}
-                      style={{
-                        border: dragActiveImages ? '2px solid #2563eb' : '2px dashed #d1d5db',
-                        borderRadius: 12,
-                        background: dragActiveImages ? '#f0f6ff' : '#f9fafb',
-                        padding: '24px 16px',
-                        textAlign: 'center',
-                        color: '#6b7280',
-                        fontSize: 14,
-                        cursor: 'pointer',
-                        transition: 'border 0.2s, background 0.2s',
-                        marginBottom: 12
-                      }}
-                      onClick={() => imagesDropRef.current?.querySelector('input[type=file]').click()}
-                    >
-                      📸 Vedä ja pudota kuvia tähän tai <span style={{color: '#2563eb', textDecoration: 'underline'}}>valitse tiedostot</span>
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        onChange={handleImagesInput}
-                      />
-                    </div>
-                  )}
-
-                  {imagesUploaded && (
-                    <div style={{
-                      padding: 16,
-                      background: '#f0fdf4',
-                      border: '2px solid #16a34a',
-                      borderRadius: 12,
-                      textAlign: 'center',
-                      marginBottom: 12
-                    }}>
-                      <div style={{ fontSize: 16, fontWeight: 600, color: '#16a34a', marginBottom: 4 }}>
-                        ✅ Kuvat lähetetty onnistuneesti
-                      </div>
-                      <div style={{ fontSize: 14, color: '#15803d' }}>
-                        {selectedImages.length > 0 ? `${selectedImages.length} kuvaa` : 'Materiaalit'} on käsitelty
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Valitut kuvat */}
-                  {selectedImages.length > 0 && !imagesUploaded && (
-                    <div style={{
-                      background: '#f3f4f6',
-                      borderRadius: 8,
-                      padding: 12,
-                      marginBottom: 12,
-                      maxHeight: 120,
-                      overflowY: 'auto'
-                    }}>
-                      {selectedImages.map((file, index) => (
-                        <div key={index} style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '6px 8px',
-                          marginBottom: 4,
-                          background: '#fff',
-                          borderRadius: 6,
-                          fontSize: 13
-                        }}>
-                          <span style={{
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            maxWidth: 200
-                          }}>
-                            📷 {file.name}
-                          </span>
-                          <span
-                            style={{
-                              color: '#ef4444',
-                              cursor: 'pointer',
-                              fontSize: 16,
-                              marginLeft: 8
-                            }}
-                            onClick={() => handleRemoveImage(index)}
-                          >
-                            ❌
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-
-                </div>
-
-                {/* Äänen drag & drop */}
-                <div style={{ marginBottom: 24 }}>
-                  <div style={{ fontWeight: 600, fontSize: 16, color: '#374151', marginBottom: 12 }}>
-                    Ääni (max 5min) {selectedAudio && `- ${selectedAudio.name}`}
-                  </div>
-                  
-                  {/* Drag & drop alue */}
-                  {!audioUploaded && (
-                    <div
-                      ref={audioDropRef}
-                      onDragOver={handleAudioDragOver}
-                      onDragLeave={handleAudioDragLeave}
-                      onDrop={handleAudioDrop}
-                      style={{
-                        border: dragActiveAudio ? '2px solid #2563eb' : '2px dashed #d1d5db',
-                        borderRadius: 12,
-                        background: dragActiveAudio ? '#f0f6ff' : '#f9fafb',
-                        padding: '24px 16px',
-                        textAlign: 'center',
-                        color: '#6b7280',
-                        fontSize: 14,
-                        cursor: 'pointer',
-                        transition: 'border 0.2s, background 0.2s',
-                        marginBottom: 12
-                      }}
-                      onClick={() => audioDropRef.current?.querySelector('input[type=file]').click()}
-                    >
-                      🎵 Vedä ja pudota äänitiedosto tähän tai <span style={{color: '#2563eb', textDecoration: 'underline'}}>valitse tiedosto</span>
-                      <input
-                        type="file"
-                        accept="audio/*"
-                        style={{ display: 'none' }}
-                        onChange={handleAudioInput}
-                      />
-                    </div>
-                  )}
-
-                  {audioUploaded && (
-                    <div style={{
-                      padding: 16,
-                      background: '#f0fdf4',
-                      border: '2px solid #16a34a',
-                      borderRadius: 12,
-                      textAlign: 'center',
-                      marginBottom: 12
-                    }}>
-                      <div style={{ fontSize: 16, fontWeight: 600, color: '#16a34a', marginBottom: 4 }}>
-                        ✅ Ääni lähetetty onnistuneesti
-                      </div>
-                      <div style={{ fontSize: 14, color: '#15803d' }}>
-                        {selectedAudio ? selectedAudio.name : 'Äänitiedosto'} on käsitelty
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Valittu ääni */}
-                  {selectedAudio && !audioUploaded && (
-                    <div style={{
-                      background: '#f3f4f6',
-                      borderRadius: 8,
-                      padding: 12,
-                      marginBottom: 12
-                    }}>
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '6px 8px',
-                        background: '#fff',
-                        borderRadius: 6,
-                        fontSize: 13
-                      }}>
-                        <span style={{
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          maxWidth: 200
-                        }}>
-                          🎵 {selectedAudio.name}
-                        </span>
-                        <span
-                          style={{
-                            color: '#ef4444',
-                            cursor: 'pointer',
-                            fontSize: 16,
-                            marginLeft: 8
-                          }}
-                          onClick={handleRemoveAudio}
-                        >
-                          ❌
-                        </span>
-                      </div>
-                    </div>
-                  )}
-
-
-                </div>
-
-                {/* Lähetä Avatar materiaalit nappi */}
-                {!imagesUploaded && !audioUploaded && (
-                  <div style={{ marginBottom: 24 }}>
-                    <button
-                      onClick={async () => {
-                        await handleUploadImages()
-                        await handleUploadAudio()
-                      }}
-                      disabled={selectedImages.length === 0 || !selectedAudio || uploadingAvatar}
-                      style={{
-                        padding: '12px 24px',
-                        background: (selectedImages.length > 0 && selectedAudio && !uploadingAvatar) ? '#7c3aed' : '#d1d5db',
-                        color: (selectedImages.length > 0 && selectedAudio && !uploadingAvatar) ? '#fff' : '#9ca3af',
-                        border: 'none',
-                        borderRadius: 8,
-                        cursor: (selectedImages.length > 0 && selectedAudio && !uploadingAvatar) ? 'pointer' : 'not-allowed',
-                        fontSize: 16,
-                        fontWeight: 600,
-                        width: '100%',
-                        opacity: uploadingAvatar ? 0.7 : 1
-                      }}
-                    >
-                      {uploadingAvatar ? '⏳ Lähetetään...' : '🚀 Lähetä Avatar materiaalit'}
-                    </button>
-                  </div>
-                )}
-
-                {/* Virheviesti */}
-                {avatarError && (
-                  <div style={{
-                    padding: 12,
-                    background: '#fef2f2',
-                    border: '1px solid #fecaca',
-                    borderRadius: 8,
-                    color: '#dc2626',
-                    fontSize: 14,
-                    marginBottom: 16,
-                    textAlign: 'center'
-                  }}>
-                    {avatarError}
-                  </div>
-                )}
-
-                {/* Progress indicator */}
-                {(imagesUploaded || audioUploaded) && (
-                  <div style={{
-                    background: '#f3f4f6',
-                    borderRadius: 8,
-                    padding: 16,
-                    border: '1px solid #e5e7eb'
-                  }}>
-                    <div style={{ fontWeight: 600, fontSize: 14, color: '#374151', marginBottom: 8 }}>
-                      Edistyminen ({(imagesUploaded ? 1 : 0) + (audioUploaded ? 1 : 0)}/2)
-                    </div>
-                    <div style={{ fontSize: 13, color: '#6b7280' }}>
-                      {imagesUploaded ? '✓ Kuvat lähetetty' : '○ Kuvat odottaa'}<br/>
-                      {audioUploaded ? '✓ Ääni lähetetty' : '○ Ääni odottaa'}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
+          {/* Dummy taulukko-kortti */}
+          <div className={styles.card} style={{ gridColumn: 'span 2', minHeight: 220, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>Aikataulu</div>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 15 }}>
+              <thead>
+                <tr style={{ color: '#6b7280', fontWeight: 600, background: '#f7f8fc' }}>
+                  <th style={{ textAlign: 'left', padding: '8px 0' }}>#</th>
+                  <th style={{ textAlign: 'left', padding: '8px 0' }}>Tyyppi</th>
+                  <th style={{ textAlign: 'left', padding: '8px 0' }}>Status</th>
+                  <th style={{ textAlign: 'left', padding: '8px 0' }}>Pvm</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td><td>Postaus</td><td>Valmis</td><td>2024-07-25</td>
+                </tr>
+                <tr>
+                  <td>2</td><td>Puhelu</td><td>Odottaa</td><td>2024-07-26</td>
+                </tr>
+                <tr>
+                  <td>3</td><td>AI</td><td>Valmis</td><td>2024-07-27</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

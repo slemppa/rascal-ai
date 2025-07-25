@@ -1,5 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 import heroImg from '/public/hero.png' // Placeholder, vaihda oikeaan kuvaan
+import { useState } from 'react'
+import SignIn from '../components/auth/SignIn'
+import ForgotPassword from '../components/auth/ForgotPassword'
+import MagicLink from '../components/auth/MagicLink'
 
 const features = [
   {
@@ -78,6 +82,15 @@ const features = [
 
 export default function LandingPage() {
   const navigate = useNavigate()
+  const [showSignInModal, setShowSignInModal] = useState(false)
+  const [showForgotModal, setShowForgotModal] = useState(false)
+  const [showMagicModal, setShowMagicModal] = useState(false)
+
+  const handleSignInSuccess = () => {
+    setShowSignInModal(false)
+    navigate('/dashboard')
+  }
+
   return (
     <div style={{ background: '#181B20', minHeight: '100vh', width: '100vw', overflowX: 'hidden', color: '#fff', fontFamily: 'system-ui, -apple-system, sans-serif', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
@@ -88,11 +101,107 @@ export default function LandingPage() {
         </div>
         <button
           style={{ background: '#4ADE80', color: '#181B20', fontWeight: 700, fontSize: 18, border: 'none', borderRadius: 8, padding: '12px 32px', cursor: 'pointer' }}
-          onClick={() => navigate('/signin')}
+          onClick={() => setShowSignInModal(true)}
         >
           Kirjaudu sisään
         </button>
       </header>
+
+      {/* SignIn Modal */}
+      {showSignInModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(24,27,32,0.85)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px',
+          backdropFilter: 'blur(2px)'
+        }}>
+          <div style={{
+            background: '#23262B',
+            borderRadius: 16,
+            padding: 0,
+            maxWidth: 400,
+            width: '100%',
+            maxHeight: '90vh',
+            overflow: 'auto',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.25)'
+          }}>
+            <SignIn 
+              onSuccess={handleSignInSuccess} 
+              onClose={() => setShowSignInModal(false)}
+              onForgotClick={() => { setShowSignInModal(false); setShowForgotModal(true); }}
+              onMagicLinkClick={() => { setShowSignInModal(false); setShowMagicModal(true); }}
+            />
+          </div>
+        </div>
+      )}
+      {/* ForgotPassword Modal */}
+      {showForgotModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(24,27,32,0.85)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px',
+          backdropFilter: 'blur(2px)'
+        }}>
+          <div style={{
+            background: '#23262B',
+            borderRadius: 16,
+            padding: 0,
+            maxWidth: 400,
+            width: '100%',
+            maxHeight: '90vh',
+            overflow: 'auto',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.25)'
+          }}>
+            <ForgotPassword onClose={() => { setShowForgotModal(false); setShowSignInModal(true); }} />
+          </div>
+        </div>
+      )}
+      {/* MagicLink Modal */}
+      {showMagicModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(24,27,32,0.85)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px',
+          backdropFilter: 'blur(2px)'
+        }}>
+          <div style={{
+            background: '#23262B',
+            borderRadius: 16,
+            padding: 0,
+            maxWidth: 400,
+            width: '100%',
+            maxHeight: '90vh',
+            overflow: 'auto',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.25)'
+          }}>
+            <MagicLink onClose={() => { setShowMagicModal(false); setShowSignInModal(true); }} />
+          </div>
+        </div>
+      )}
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* Hero */}

@@ -127,3 +127,119 @@ button:focus-visible {
     min-height: 44px;
   }
 }
+
+/* Dark-mode tuki bentogrid-komponenteille */
+@media (prefers-color-scheme: dark) {
+  /* Bentogrid-komponenttien dark-mode tyylit */
+  .bento-grid {
+    background-color: #1a1a1a;
+  }
+  
+  .bento-item {
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    color: #ffffff;
+  }
+  
+  .bento-item:hover {
+    background-color: #3a3a3a;
+    border-color: #606060;
+  }
+  
+  /* Tekstien dark-mode tyylit */
+  .bento-item h1,
+  .bento-item h2,
+  .bento-item h3,
+  .bento-item h4,
+  .bento-item h5,
+  .bento-item h6 {
+    color: #ffffff;
+  }
+  
+  .bento-item p,
+  .bento-item span,
+  .bento-item div {
+    color: #e0e0e0;
+  }
+  
+  /* Modal dark-mode tyylit */
+  .modal-overlay {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .modal-content {
+    background-color: #2a2a2a;
+    color: #ffffff;
+    border: 1px solid #404040;
+  }
+  
+  /* Input-kenttien dark-mode tyylit */
+  .modal-content input,
+  .modal-content textarea,
+  .modal-content select {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #404040;
+  }
+  
+  .modal-content input:focus,
+  .modal-content textarea:focus,
+  .modal-content select:focus {
+    border-color: #646cff;
+    outline: none;
+  }
+  
+  /* Button dark-mode tyylit */
+  .modal-content button {
+    background-color: #404040;
+    color: #ffffff;
+    border: 1px solid #606060;
+  }
+  
+  .modal-content button:hover {
+    background-color: #505050;
+    border-color: #646cff;
+  }
+  
+  /* Kanban board dark-mode tyylit */
+  .kanban-column {
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+  }
+  
+  .kanban-column h3 {
+    color: #ffffff;
+  }
+  
+  .post-card {
+    background-color: #1a1a1a;
+    border: 1px solid #404040;
+    color: #ffffff;
+  }
+  
+  .post-card:hover {
+    background-color: #2a2a2a;
+    border-color: #606060;
+  }
+  
+  .post-card h4,
+  .post-card p {
+    color: #e0e0e0;
+  }
+  
+  /* Sidebar dark-mode tyylit */
+  .sidebar {
+    background-color: #1a1a1a;
+    border-right: 1px solid #404040;
+  }
+  
+  .sidebar a {
+    color: #e0e0e0;
+  }
+  
+  .sidebar a:hover,
+  .sidebar a.active {
+    background-color: #2a2a2a;
+    color: #ffffff;
+  }
+}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import PageHeader from '../components/PageHeader'
 import { supabase } from '../lib/supabase'
 import styles from './DashboardPage.module.css'
+import { useAuth } from '../contexts/AuthContext'
 
 function EditPostModal({ post, onClose, onSave }) {
   const [idea, setIdea] = useState(post.Idea || '')
@@ -232,6 +233,27 @@ export default function DashboardPage() {
   const imagesDropRef = React.useRef(null)
   const audioDropRef = React.useRef(null)
   const [totalCallPrice, setTotalCallPrice] = useState(0)
+  const [statsLoading, setStatsLoading] = useState(true)
+  const [statsData, setStatsData] = useState({
+    upcomingCount: 0,
+    monthlyCount: 0,
+    totalCallPrice: 0,
+    features: [],
+    aiUsage: 0
+  })
+  const [schedule, setSchedule] = useState([])
+  const [scheduleLoading, setScheduleLoading] = useState(true)
+  const { user } = useAuth()
+  const [imageModalUrl, setImageModalUrl] = useState(null)
+
+  useEffect(() => {
+    if (!imageModalUrl) return
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setImageModalUrl(null)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [imageModalUrl])
 
   // Responsiivinen apu
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -272,6 +294,119 @@ export default function DashboardPage() {
     }
     fetchCallPrice()
   }, [])
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      setStatsLoading(true)
+      try {
+        // Tulevat postaukset (status = 'Scheduled')
+        const { count: upcomingCount } = await supabase
+          .from('content')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'Scheduled')
+
+        // Julkaisut tässä kuussa
+        const now = new Date()
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
+        const { count: monthlyCount } = await supabase
+          .from('content')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', firstDay.toISOString())
+
+        // Puheluiden kokonaishinta tässä kuussa
+        const { data: callData } = await supabase
+          .from('call_logs')
+          .select('price')
+          .gte('call_date', firstDay.toISOString())
+        const totalCallPrice = (callData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
+
+        // Käyttäjän features
+        let features = []
+        if (user) {
+          const { data: userProfile } = await supabase
+            .from('users')
+            .select('features')
+            .eq('auth_user_id', user.id)
+            .single()
+          features = userProfile?.features || []
+        }
+
+        // AI käyttö (content-määrä tässä kuussa)
+        const { count: aiUsage } = await supabase
+          .from('content')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', firstDay.toISOString())
+
+        setStatsData({
+          upcomingCount: upcomingCount || 0,
+          monthlyCount: monthlyCount || 0,
+          totalCallPrice: totalCallPrice || 0,
+          features,
+          aiUsage: aiUsage || 0
+        })
+      } catch (e) {
+        // Voit halutessasi näyttää virheen
+      }
+      setStatsLoading(false)
+    }
+    fetchStats()
+  }, [user])
+
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      setScheduleLoading(true)
+      try {
+        let userId = null
+        if (user) {
+          const { data: userRow } = await supabase
+            .from('users')
+            .select('id')
+            .eq('auth_user_id', user.id)
+            .single()
+          userId = userRow?.id
+        }
+        if (!userId) {
+          setSchedule([])
+          setScheduleLoading(false)
+          return
+        }
+        const { data } = await supabase
+          .from('content')
+          .select('id, type, idea, status, publish_date, created_at, media_urls, caption')
+          .eq('user_id', userId)
+          .order('publish_date', { ascending: true, nullsFirst: true })
+          .limit(10)
+        setSchedule(data || [])
+      } catch (e) {
+        setSchedule([])
+      }
+      setScheduleLoading(false)
+    }
+    fetchSchedule()
+  }, [user])
+
+  // Reaaliaikainen päivitys
+  useEffect(() => {
+    if (!user) return
+    const channel = supabase
+      .channel('dashboard-updates')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'content' }, () => {
+        // Päivitä tilastot ja aikataulu
+        fetchStats()
+        fetchSchedule()
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'call_logs' }, () => {
+        fetchStats()
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'message_logs' }, () => {
+        // Voit halutessasi päivittää viestit tai tilastot
+        fetchStats()
+      })
+      .subscribe()
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [user])
 
   // Tarkista Avatar-materiaalien status
   useEffect(() => {
@@ -467,10 +602,15 @@ export default function DashboardPage() {
 
   // Kirjaudu ulos -handler
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    console.log('=== DASHBOARD LOGOUT START ===')
+    console.log('Calling AuthContext signOut...')
+    await signOut()
+    console.log('AuthContext signOut completed, clearing storage...')
     localStorage.clear()
     sessionStorage.clear()
+    console.log('Storage cleared, reloading page...')
     window.location.reload()
+    console.log('=== DASHBOARD LOGOUT END ===')
   }
 
   // Laske tulevat postaukset (seuraavat 7 päivää)
@@ -490,13 +630,65 @@ export default function DashboardPage() {
     return date && date.getMonth() === thisMonth && date.getFullYear() === thisYear
   }).length
 
+  const statusMap = {
+    'Draft': 'Luonnos',
+    'In Progress': 'Työn alla',
+    'Under Review': 'Tarkastuksessa',
+    'Scheduled': 'Aikataulutettu',
+    'Done': 'Valmis',
+    'Deleted': 'Poistettu',
+    'Odottaa': 'Odottaa',
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '--'
+    const d = new Date(dateStr)
+    return d.toLocaleDateString('fi-FI', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+  }
+
   const stats = [
-    { label: 'Tulevat postaukset', value: upcomingCount, sub: 'Seuraavat 7 päivää', color: '#22c55e' },
-    { label: 'Julkaisut kuukaudessa', value: monthlyCount, sub: 'Tämä kuukausi', color: '#2563eb' },
-    { label: 'Puheluiden kokonaishinta', value: totalCallPrice.toLocaleString('fi-FI', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }), sub: 'Tämä kuukausi', color: '#f59e42' },
-    { label: 'Tavoitteet', value: '--', sub: 'Tulossa pian', color: '#fbbf24' },
-    { label: 'AI käyttö', value: '--', sub: 'Tulossa pian', color: '#7c3aed' },
+    { label: 'Tulevat postaukset', value: statsData.upcomingCount, sub: 'Status: Scheduled', color: '#22c55e' },
+    { label: 'Julkaisut kuukaudessa', value: `${statsData.monthlyCount} / 30`, sub: 'Tämä kuukausi', color: '#2563eb' },
+    { label: 'Puheluiden kokonaishinta', value: statsData.totalCallPrice.toLocaleString('fi-FI', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }), sub: 'Tämä kuukausi', color: '#f59e42' },
   ]
+
+  // Aikataulu-kortin data: näytetään vain tulevat julkaisut (publish_date >= nyt)
+  const nowDate = new Date()
+  // Tulevat julkaisut -kortin data: media_urls ja caption mukaan
+  const upcomingPosts = (schedule || []).filter(row => {
+    if (!row.publish_date) return false
+    return new Date(row.publish_date) >= nowDate
+  }).sort((a, b) => new Date(a.publish_date) - new Date(b.publish_date))
+
+  function renderMediaCell(row) {
+    const urls = row.media_urls || []
+    const url = Array.isArray(urls) ? urls[0] : (typeof urls === 'string' ? urls : null)
+    if (url) {
+      return (
+        <img
+          src={url}
+          alt="media"
+          style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 8, background: '#eee', cursor: 'pointer' }}
+          onClick={() => setImageModalUrl(url)}
+        />
+      )
+    }
+    return <div style={{ width: 48, height: 48, borderRadius: 8, background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#aaa', fontSize: 24 }}>–</div>
+  }
+
+  function formatUpcomingDate(dateStr) {
+    if (!dateStr) return '--'
+    const d = new Date(dateStr)
+    const now = new Date()
+    if (
+      d.getDate() === now.getDate() &&
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear()
+    ) {
+      return 'Tänään'
+    }
+    return d.toLocaleDateString('fi-FI', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+  }
 
   return (
     <>
@@ -505,14 +697,25 @@ export default function DashboardPage() {
           <h2 style={{ fontSize: 32, fontWeight: 800, color: '#1f2937', margin: 0 }}>Kojelauta</h2>
         </div>
         <div className={styles['dashboard-bentogrid']}>
-          {stats.map((stat, i) => (
-            <div key={i} className={styles.card}>
-              <div className={styles['stat-label']}>{stat.label}</div>
-              <div className={styles['stat-number']} style={{ color: stat.color }}>{stat.value}</div>
-              <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>{stat.sub}</div>
-            </div>
-          ))}
-          {/* Dummy chart-kortti */}
+          {statsLoading ? (
+            Array(3).fill(0).map((_, i) => (
+              <div key={i} className={styles.card}>
+                <div className={styles['stat-label']} style={{ background: '#eee', height: 18, width: 120, borderRadius: 6 }}></div>
+                <div className={styles['stat-number']} style={{ background: '#eee', height: 32, width: 60, borderRadius: 8, margin: '16px 0' }}></div>
+                <div style={{ background: '#eee', height: 14, width: 80, borderRadius: 6 }}></div>
+              </div>
+            ))
+          ) : (
+            stats.map((stat, i) => (
+              <div key={i} className={styles.card}>
+                <div className={styles['stat-label']}>{stat.label}</div>
+                <div className={styles['stat-number']} style={{ color: stat.color }}>{stat.value}</div>
+                <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>{stat.sub}</div>
+              </div>
+            ))
+          )}
+          {/* Poistetaan Engagement Analytics -kortti kokonaan */}
+          {/*
           <div className={styles.card} style={{ gridColumn: 'span 2', minHeight: 220, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>Engagement Analytics</div>
             <div style={{ width: '100%', height: 120, background: 'linear-gradient(90deg,#22c55e22,#2563eb22)', borderRadius: 12, display: 'flex', alignItems: 'flex-end', gap: 8, padding: 16 }}>
@@ -522,33 +725,59 @@ export default function DashboardPage() {
             </div>
             <div style={{ color: '#6b7280', fontSize: 13, marginTop: 8 }}>Dummy chart – korvaa oikealla myöhemmin</div>
           </div>
-          {/* Dummy taulukko-kortti */}
-          <div className={styles.card} style={{ gridColumn: 'span 2', minHeight: 220, display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>Aikataulu</div>
+          */}
+          {/* Tulevat julkaisut -kortti: nyt kolmen sarakkeen levyinen */}
+          <div className={styles.card} style={{ gridColumn: 'span 3', minHeight: 180, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>Tulevat julkaisut</div>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 15 }}>
               <thead>
                 <tr style={{ color: '#6b7280', fontWeight: 600, background: '#f7f8fc' }}>
-                  <th style={{ textAlign: 'left', padding: '8px 0' }}>#</th>
-                  <th style={{ textAlign: 'left', padding: '8px 0' }}>Tyyppi</th>
+                  <th style={{ textAlign: 'left', padding: '8px 0' }}>Media</th>
+                  <th style={{ textAlign: 'left', padding: '8px 0' }}>Caption</th>
                   <th style={{ textAlign: 'left', padding: '8px 0' }}>Status</th>
                   <th style={{ textAlign: 'left', padding: '8px 0' }}>Pvm</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1</td><td>Postaus</td><td>Valmis</td><td>2024-07-25</td>
-                </tr>
-                <tr>
-                  <td>2</td><td>Puhelu</td><td>Odottaa</td><td>2024-07-26</td>
-                </tr>
-                <tr>
-                  <td>3</td><td>AI</td><td>Valmis</td><td>2024-07-27</td>
-                </tr>
+                {scheduleLoading ? (
+                  Array(5).fill(0).map((_, i) => (
+                    <tr key={i}>
+                      <td colSpan={4} style={{ background: '#eee', height: 48, borderRadius: 6 }}></td>
+                    </tr>
+                  ))
+                ) : upcomingPosts.length === 0 ? (
+                  <tr><td colSpan={4} style={{ color: '#888', padding: 16 }}>Ei tulevia julkaisuja</td></tr>
+                ) : (
+                  upcomingPosts.map((row, i) => (
+                    <tr key={row.id}>
+                      <td>{renderMediaCell(row)}</td>
+                      <td>{row.caption || '--'}</td>
+                      <td>{statusMap[row.status] || row.status || '--'}</td>
+                      <td>{formatUpcomingDate(row.publish_date)}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
         </div>
       </div>
+      {imageModalUrl && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(0,0,0,0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 2000
+        }} onClick={() => setImageModalUrl(null)}>
+          <img src={imageModalUrl} alt="media" style={{ maxWidth: '90vw', maxHeight: '80vh', borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.25)' }} />
+        </div>
+      )}
     </>
   )
 } 

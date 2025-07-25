@@ -7,29 +7,29 @@
 
 body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  background: #f7f8fc;
+  background: #e0c3fc !important;
   color: #1f2937;
 }
 
 html, body, #root {
-  width: 100vw;
-  min-width: 100vw;
+  width: 100%;
+  min-width: 100%;
   height: 100%;
   min-height: 100vh;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   overflow-x: hidden;
+  background: #b2f7ef !important;
 }
 
 /* Sovelluksen päärakenne */
 .app {
-  min-height: 100vh;
-  height: 100vh;
-  display: flex;
   width: 100%;
-  min-width: 0;
-  position: relative;
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
 }
 
 /* Vasen valikko */
@@ -134,15 +134,9 @@ html, body, #root {
 
 /* Pääsisältö */
 .main-content {
-  display: block;
   flex: 1;
-  width: 100%;
-  min-height: 100vh;
+  min-width: 0;
   background: #f7f8fc;
-  margin-left: 250px;
-  color: #1f2937;
-  z-index: 1;
-  /* Poistettu padding-left */
 }
 
 .main-header {
@@ -773,8 +767,10 @@ html, body, #root {
   padding: 0;
   margin: 0;
   width: 100%;
+  height: 100%;
   flex: 1;
   min-height: 0;
+  overflow: hidden;
 }
 
 /* Dashboard bentogrid responsiivisuus */

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
 const featureMap = {
@@ -9,17 +9,33 @@ const featureMap = {
   '/ai-chat': 'Marketing assistant',
 }
 
-export default function ProtectedRoute({ children }) {
-  const { user } = useAuth()
-  const features = user?.features || []
-  const location = useLocation()
+const ProtectedRoute = ({ children, requiredFeatures = [] }) => {
+  const auth = useAuth()
+  const { user, loading } = auth
+  const navigate = useNavigate()
 
-  // Selvitä vaadittu feature polun perusteella
-  const requiredFeature = Object.entries(featureMap).find(([path]) => location.pathname.startsWith(path))?.[1]
+  if (loading) {
+    return <div>Ladataan...</div>
+  }
 
-  if (requiredFeature && !features.includes(requiredFeature)) {
-    return <Navigate to="/dashboard" replace />
+  if (!user) {
+    navigate('/signin')
+    return null
+  }
+
+  // Tarkista features
+  if (requiredFeatures.length > 0) {
+    const userFeatures = user.features || []
+    const hasRequiredFeatures = requiredFeatures.every(feature => 
+      userFeatures.includes(feature)
+    )
+
+    if (!hasRequiredFeatures) {
+      return <div>Sinulla ei ole tarvittavia oikeuksia tälle sivulle.</div>
+    }
   }
 
   return children
 }
+
+export default ProtectedRoute

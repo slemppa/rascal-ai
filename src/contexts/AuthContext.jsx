@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 const AuthContext = createContext({})
@@ -14,59 +15,96 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+
+  const fetchUserProfile = useCallback(async (sessionUser) => {
+    
+    // Käytä suoraan session useria features-tiedoilla - ei users-taulun hakua
+    const userWithFeatures = {
+      ...sessionUser,
+      features: ['Social Media', 'Phone Calls', 'Email marketing integration', 'Marketing assistant']
+    }
+    
+    return userWithFeatures
+  }, [])
 
   useEffect(() => {
-    // Get initial session
-    const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) {
-        // Hae profiilitiedot users-taulusta
-        const { data: profile } = await supabase
-          .from('users')
-          .select('features, name, avatar')
-          .eq('id', session.user.id)
-          .single()
-        setUser({ ...session.user, ...profile })
-      } else {
-        setUser(null)
+    // Tarkistetaan localStorage nähdäksemme onko session-tietoja
+    const sessionKey = Object.keys(localStorage).find(key => key.startsWith('sb-') && key.includes('auth-token'))
+    
+    if (sessionKey) {
+      try {
+        const sessionData = JSON.parse(localStorage.getItem(sessionKey))
+        
+        if (sessionData?.user) {
+          const userWithProfile = {
+            ...sessionData.user,
+            features: ['Social Media', 'Phone Calls', 'Email marketing integration', 'Marketing assistant']
+          }
+          setUser(userWithProfile)
+        }
+      } catch (error) {
+        console.error('Error parsing localStorage session:', error)
       }
-      setLoading(false)
     }
-
-    getInitialSession()
-
-    // Listen for auth changes
+    
+    // onAuthStateChange listener - dokumentaation mukainen toteutus
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth event:', event)
-        if (session?.user) {
-          const { data: profile } = await supabase
-            .from('users')
-            .select('features, name, avatar')
-            .eq('id', session.user.id)
-            .single()
-          setUser({ ...session.user, ...profile })
+        if (event === 'SIGNED_OUT') {
+          // Tyhjennetään storage dokumentaation mukaisesti
+          Object.keys(localStorage).forEach((key) => {
+            if (key.startsWith('sb-')) {
+              localStorage.removeItem(key)
+            }
+          })
+          setUser(null)
+          setLoading(false)
+          // Ohjaus landingpageen
+          navigate('/')
+        } else if (session?.user) {
+          const userWithProfile = await fetchUserProfile(session.user)
+          setUser(userWithProfile)
         } else {
           setUser(null)
         }
-        setLoading(false)
+        
+        if (event !== 'SIGNED_OUT') {
+          setLoading(false)
+        }
       }
     )
 
-    return () => subscription.unsubscribe()
-  }, [])
+    setLoading(false)
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [fetchUserProfile, navigate])
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) {
-      console.error('Error signing out:', error.message)
+    try {
+      // Lisätään timeout 3 sekuntiin
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('signOut timeout')), 3000)
+      )
+      
+      const signOutPromise = supabase.auth.signOut({ scope: 'global' })
+      const { error } = await Promise.race([signOutPromise, timeoutPromise])
+      
+      if (error) {
+        console.error('Error signing out:', error.message)
+      }
+    } catch (err) {
+      console.error('SignOut error:', err)
     }
   }
 
   const value = {
-    user,
-    loading,
-    signOut,
+    user: user,
+    loading: loading,
+    signOut: signOut,
+    fetchUserProfile: fetchUserProfile
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

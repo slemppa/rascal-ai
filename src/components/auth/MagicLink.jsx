@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Link } from 'react-router-dom'
 
-export default function MagicLink() {
+export default function MagicLink({ onClose }) {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -11,7 +11,6 @@ export default function MagicLink() {
     e.preventDefault()
     setLoading(true)
     setMessage('')
-
     try {
       const { data, error } = await supabase.auth.signInWithOtp({
         email,
@@ -20,11 +19,10 @@ export default function MagicLink() {
           shouldCreateUser: true,
         }
       })
-
       if (error) {
         setMessage(error.message)
       } else {
-        setMessage('Tarkista sähköpostisi taikaliinkin varalta!')
+        setMessage('Tarkista sähköpostisi taikalinkkiä varten!')
       }
     } catch (error) {
       setMessage('Odottamaton virhe tapahtui')
@@ -34,15 +32,25 @@ export default function MagicLink() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Taikaliinki</h2>
-      <p className="text-gray-600 text-center mb-6">
-        Syötä sähköpostiosoitteesi, niin lähetämme sinulle taikaliinkin kirjautumista varten.
+    <div style={{ background: '#23262B', color: '#fff', borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.25)', padding: 32, position: 'relative', maxWidth: 400, width: '100%' }}>
+      {onClose && (
+        <button
+          onClick={onClose}
+          style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', fontSize: 28, color: '#cbd5e1', cursor: 'pointer', transition: 'color 0.2s' }}
+          aria-label="Sulje"
+          onMouseOver={e => e.currentTarget.style.color = '#4ADE80'}
+          onMouseOut={e => e.currentTarget.style.color = '#cbd5e1'}
+        >
+          ×
+        </button>
+      )}
+      <h2 style={{ fontSize: 26, fontWeight: 700, marginBottom: 18, textAlign: 'center', color: '#fff' }}>Taikalinkki</h2>
+      <p style={{ color: '#cbd5e1', textAlign: 'center', marginBottom: 18, fontSize: 15 }}>
+        Syötä sähköpostiosoitteesi, niin lähetämme sinulle taikalinkin kirjautumista varten.
       </p>
-      
-      <form onSubmit={handleMagicLink} className="space-y-4">
+      <form onSubmit={handleMagicLink} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="email" style={{ display: 'block', marginBottom: 6, fontWeight: 500, color: '#cbd5e1' }}>
             Sähköposti
           </label>
           <input
@@ -51,36 +59,62 @@ export default function MagicLink() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+            style={{
+              width: '100%',
+              padding: '12px 14px',
+              border: '1px solid #374151',
+              borderRadius: 8,
+              background: '#181B20',
+              color: '#fff',
+              fontSize: 15,
+              outline: 'none',
+              marginBottom: 2
+            }}
             placeholder="sähköposti@esimerkki.fi"
+            autoComplete="email"
           />
         </div>
-        
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{
+            width: '100%',
+            padding: '12px 0',
+            border: 'none',
+            borderRadius: 8,
+            background: loading ? '#a78bfa99' : '#a78bfa',
+            color: '#181B20',
+            fontWeight: 700,
+            fontSize: 16,
+            cursor: loading ? 'not-allowed' : 'pointer',
+            transition: 'background 0.2s',
+            marginTop: 4
+          }}
         >
-          {loading ? 'Lähetetään taikaliinkkiä...' : 'Lähetä taikaliinki'}
+          {loading ? 'Lähetetään taikalinkkiä...' : 'Lähetä taikalinkki'}
         </button>
-        
         {message && (
-          <div className={`p-3 rounded-md text-sm ${
-            message.includes('virhe') || message.includes('Error') 
-              ? 'bg-red-50 text-red-800 border border-red-200' 
-              : 'bg-green-50 text-green-800 border border-green-200'
-          }`}>
+          <div style={{
+            padding: 10,
+            background: message.toLowerCase().includes('virhe') || message.toLowerCase().includes('error') ? '#3b1d1d' : '#1e3a1e',
+            border: message.toLowerCase().includes('virhe') || message.toLowerCase().includes('error') ? '1px solid #dc2626' : '1px solid #22c55e',
+            borderRadius: 8,
+            color: message.toLowerCase().includes('virhe') || message.toLowerCase().includes('error') ? '#f87171' : '#22c55e',
+            fontSize: 14,
+            marginTop: 2
+          }}>
             {message}
           </div>
         )}
       </form>
-      
-      <p className="mt-6 text-center text-sm text-gray-600">
-        Haluatko käyttää salasanaa?{' '}
-        <Link to="/signin" className="font-medium text-blue-600 hover:text-blue-500">
-          Kirjaudu salasanalla
-        </Link>
-      </p>
+      <div style={{ marginTop: 18, textAlign: 'center' }}>
+        <p style={{ fontSize: 15, color: '#cbd5e1' }}>
+          Haluatko käyttää salasanaa?{' '}
+          <a href="#" style={{ color: '#4ADE80', textDecoration: 'underline' }} onClick={onClose}>
+            Kirjaudu salasanalla
+          </a>
+        </p>
+      </div>
     </div>
   )
 }

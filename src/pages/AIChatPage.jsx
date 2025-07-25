@@ -283,7 +283,14 @@ export default function AIChatPage() {
   return (
     <>
       <PageHeader title={tab === 'chat' ? 'Keskustelu' : 'Tietokanta'} />
-      <div className="ai-chat-wrapper" style={{ flex: 1, minHeight: 0 }}>
+      <div className="ai-chat-wrapper" style={{ 
+        flex: 1, 
+        minHeight: 0, 
+        height: 'calc(100vh - 120px)', 
+        display: 'flex', 
+        flexDirection: 'column',
+        overflow: 'hidden'
+      }}>
         {/* Välilehdet */}
         <div style={{
           display: 'flex',
@@ -362,7 +369,8 @@ export default function AIChatPage() {
               display: 'flex',
               flexDirection: 'column',
               margin: 0,
-              padding: 0
+              padding: 0,
+              height: '100%'
             }}>
               {/* Viestit */}
               <div style={{
@@ -371,7 +379,8 @@ export default function AIChatPage() {
                 display: 'flex',
                 flexDirection: 'column',
                 margin: 0,
-                padding: 0
+                padding: 0,
+                overflow: 'hidden'
               }}>
                 <div style={{
                   flex: 1,
@@ -382,7 +391,8 @@ export default function AIChatPage() {
                   gap: 12,
                   margin: 0,
                   padding: 24,
-                  width: '100%'
+                  width: '100%',
+                  height: '100%'
                 }}>
                   {(() => {
                     const list = [...messages]

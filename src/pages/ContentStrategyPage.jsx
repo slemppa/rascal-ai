@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import PageHeader from '../components/PageHeader'
+import './ContentStrategyPage.css'
+import { supabase } from '../lib/supabase'
 
 // Mock-data oikealla rakenteella
 const mockStrategy = [
@@ -15,31 +16,102 @@ const mockStrategy = [
 
 const STRATEGY_URL = import.meta.env.N8N_GET_STRATEGY_URL || 'https://samikiias.app.n8n.cloud/webhook/strategy-89777321'
 
-const getStrategy = async (companyId) => {
-  const url = companyId ? `/api/strategy?companyId=${companyId}` : '/api/strategy'
+const getStrategy = async () => {
+  try {
+    // Haetaan käyttäjän company_id Supabase:sta
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) {
+      throw new Error('Käyttäjä ei ole kirjautunut')
+    }
+
+    const { data: userRecord, error: userError } = await supabase
+      .from('users')
+      .select('company_id')
+      .eq('auth_user_id', session.user.id)
+      .single()
+
+    if (userError || !userRecord?.company_id) {
+      throw new Error('Company ID ei löytynyt')
+    }
+
+    const companyId = userRecord.company_id
+    console.log('Company ID haettu:', companyId)
+
+    // Kutsu API endpointia company_id:llä
+    const url = `/api/strategy?companyId=${companyId}`
+    console.log('Haetaan strategiaa URL:sta:', url)
+    
   const res = await fetch(url)
+    console.log('Strategy API response status:', res.status)
   if (!res.ok) throw new Error('Strategian haku epäonnistui')
-  return await res.json()
+    const data = await res.json()
+    console.log('Strategy API response data:', data)
+    return data
+  } catch (error) {
+    console.error('Error in getStrategy:', error)
+    throw error
+  }
 }
 
 export default function ContentStrategyPage() {
   const [strategy, setStrategy] = useState([])
+  const [icpSummary, setIcpSummary] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [editId, setEditId] = useState(null)
   const [editText, setEditText] = useState('')
+  const [editingIcp, setEditingIcp] = useState(false)
+  const [icpEditText, setIcpEditText] = useState('')
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [newStrategy, setNewStrategy] = useState({ Month: '', Strategy: '' })
+  const [companyId, setCompanyId] = useState(null)
   const textareaRef = React.useRef(null)
+  const icpTextareaRef = React.useRef(null)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     const fetchStrategy = async () => {
       try {
         setLoading(true)
         setError(null)
-        // Voit hakea companyId:n localStoragesta tai muualta, tässä esimerkissä ei käytetä
+        
+        // Haetaan company_id ensin
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
+          const { data: userRecord } = await supabase
+            .from('users')
+            .select('company_id')
+            .eq('auth_user_id', session.user.id)
+            .single()
+          
+          if (userRecord?.company_id) {
+            setCompanyId(userRecord.company_id)
+          }
+        }
+        
         const data = await getStrategy()
-        setStrategy(Array.isArray(data) ? data : mockStrategy)
+        
+        // Käsittele uusi data-rakenne
+        if (data && typeof data === 'object' && data.strategies) {
+          setStrategy(data.strategies)
+          setIcpSummary(data.icpSummary || [])
+        } else if (Array.isArray(data)) {
+          // Vanha rakenne (array)
+          setStrategy(data)
+          setIcpSummary([])
+        } else {
+          setStrategy(mockStrategy)
+          setIcpSummary([])
+        }
       } catch (e) {
         setStrategy(mockStrategy)
+        setIcpSummary([])
         setError('Ei saatu yhteyttä strategia-endpointiin, näytetään mock-data')
       } finally {
         setLoading(false)
@@ -57,13 +129,37 @@ export default function ContentStrategyPage() {
 
   const handleEdit = (item) => {
     setEditId(item.id)
-    setEditText(item.Strategy)
+    setEditText(item.strategy || item.Strategy)
   }
 
   const handleSave = async (item) => {
     try {
-      const updated = { ...item, Strategy: editText, updateType: 'strategyUpdate' }
-      await axios.post('/api/strategy', updated)
+      // Haetaan company_id jos se puuttuu
+      let currentCompanyId = companyId
+      if (!currentCompanyId) {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
+          const { data: userRecord } = await supabase
+            .from('users')
+            .select('company_id')
+            .eq('auth_user_id', session.user.id)
+            .single()
+          
+          if (userRecord?.company_id) {
+            currentCompanyId = userRecord.company_id
+            setCompanyId(userRecord.company_id)
+          }
+        }
+      }
+      
+      const updated = { 
+        ...item, 
+        strategy: editText, 
+        Strategy: editText, // Säilytetään myös vanha kenttä yhteensopivuuden vuoksi
+        updateType: 'strategyUpdate',
+        company_id: currentCompanyId
+      }
+      await axios.post('/api/update-post', updated)
       setStrategy(strategy.map(s => s.id === item.id ? updated : s))
       setEditId(null)
     } catch (e) {
@@ -71,63 +167,493 @@ export default function ContentStrategyPage() {
     }
   }
 
-  if (loading) return <p>Ladataan...</p>
+  const handleCancel = () => {
+    setEditId(null)
+    setEditText('')
+  }
+
+  const handleEditIcp = () => {
+    setEditingIcp(true)
+    setIcpEditText(icpSummary.join('\n'))
+  }
+
+  const handleSaveIcp = async () => {
+    try {
+      const newIcpSummary = icpEditText.split('\n').filter(line => line.trim() !== '')
+      
+      // Haetaan company_id jos se puuttuu
+      let currentCompanyId = companyId
+      if (!currentCompanyId) {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
+          const { data: userRecord } = await supabase
+            .from('users')
+            .select('company_id')
+            .eq('auth_user_id', session.user.id)
+            .single()
+          
+          if (userRecord?.company_id) {
+            currentCompanyId = userRecord.company_id
+            setCompanyId(userRecord.company_id)
+          }
+        }
+      }
+      
+      // Lähetä ICP päivitys N8N:ään
+      await axios.post('/api/update-post', {
+        updateType: 'icpUpdate',
+        icpSummary: newIcpSummary,
+        company_id: currentCompanyId
+      })
+      
+      setIcpSummary(newIcpSummary)
+      setEditingIcp(false)
+      setIcpEditText('')
+    } catch (e) {
+      alert('ICP:n tallennus epäonnistui')
+    }
+  }
+
+  const handleCancelIcp = () => {
+    setEditingIcp(false)
+    setIcpEditText('')
+  }
+
+  // Funktio kuukauden kirjoittamiseen isolla alkukirjaimella
+  const formatMonth = (month) => {
+    if (!month) return ''
+    return month.charAt(0).toUpperCase() + month.slice(1).toLowerCase()
+  }
+
+  const getStrategyStatus = (month) => {
+    if (!month) return 'old'
+    
+    const currentDate = new Date()
+    const currentMonth = currentDate.getMonth() // 0-11
+    const currentYear = currentDate.getFullYear()
+    
+    // Kuukausien nimet suomeksi
+    const monthNames = [
+      'tammikuu', 'helmikuu', 'maaliskuu', 'huhtikuu', 'toukokuu', 'kesäkuu',
+      'heinäkuu', 'elokuu', 'syyskuu', 'lokakuu', 'marraskuu', 'joulukuu'
+    ]
+    
+    // Etsi kuukauden indeksi
+    const monthIndex = monthNames.findIndex(name => 
+      month.toLowerCase().includes(name.toLowerCase())
+    )
+    
+    if (monthIndex === -1) return 'old'
+    
+    // Jos kuukausi on tämä kuukausi
+    if (monthIndex === currentMonth) return 'current'
+    
+    // Jos kuukausi on tulevaisuudessa (tämä vuosi)
+    if (monthIndex > currentMonth) return 'upcoming'
+    
+    // Jos kuukausi on menneisyydessä
+    return 'old'
+  }
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'current': return '#22c55e' // Vihreä
+      case 'upcoming': return '#3b82f6' // Sininen
+      case 'old': return '#6b7280' // Harmaa
+      default: return '#6b7280'
+    }
+  }
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'current': return 'Current'
+      case 'upcoming': return 'Upcoming'
+      case 'old': return 'Old'
+      default: return 'Old'
+    }
+  }
+
+  const handleCreateStrategy = async () => {
+    try {
+      // Haetaan company_id jos se puuttuu
+      let currentCompanyId = companyId
+      if (!currentCompanyId) {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
+          const { data: userRecord } = await supabase
+            .from('users')
+            .select('company_id')
+            .eq('auth_user_id', session.user.id)
+            .single()
+          
+          if (userRecord?.company_id) {
+            currentCompanyId = userRecord.company_id
+            setCompanyId(userRecord.company_id)
+          }
+        }
+      }
+      
+      const strategyData = {
+        ...newStrategy,
+        id: `strategy-${Date.now()}`,
+        created_at: new Date().toISOString(),
+        createdTime: new Date().toISOString(), // Säilytetään myös vanha kenttä
+        updateType: 'strategyCreate',
+        company_id: currentCompanyId
+      }
+      
+      await axios.post('/api/update-post', strategyData)
+      setStrategy([...strategy, strategyData])
+      setShowCreateModal(false)
+      setNewStrategy({ Month: '', Strategy: '' })
+    } catch (e) {
+      alert('Strategian luonti epäonnistui')
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="strategy-loading">
+        <div className="loading-spinner"></div>
+        <p>Ladataan sisältöstrategiaa...</p>
+      </div>
+    )
+  }
 
   return (
     <>
-      <PageHeader title="Sisältöstrategia" />
-      <div style={{maxWidth: 1100, padding: '0 8px'}}>
-        {error && <p style={{color: 'red'}}>{error}</p>}
-        <div style={{display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: 32}}>
-          {strategy.map(item => (
-            <div key={item.id} style={{
-              background: '#fff',
-              borderRadius: 12,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-              border: '1px solid #e1e8ed',
-              padding: 24,
-              minWidth: 320,
-              maxWidth: 600,
-              width: 'auto',
-              position: 'relative',
-              marginBottom: 24
-            }}>
-              <div style={{fontWeight: 700, fontSize: 20, marginBottom: 8}}>{item.Month}</div>
-              <div style={{marginBottom: 8, color: '#888', fontSize: 13}}>Yrityksiä: {item.Companies?.length || 0}</div>
+      <div className="strategy-container">
+        <div className="strategy-header">
+          <h2 style={{ fontSize: 32, fontWeight: 800, color: '#1f2937', margin: 0 }}>Sisältöstrategia</h2>
+        </div>
+        
+        <div className="strategy-bentogrid">
+          {/* ICP Summary - normaali kortti */}
+          {icpSummary && icpSummary.length > 0 && (
+            <div className="strategy-card">
+              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>👥 Ihanneasiakas</div>
+              
+              {editingIcp ? (
+                <div style={{ flex: 1 }}>
+                  <textarea
+                    ref={icpTextareaRef}
+                    value={icpEditText}
+                    onChange={e => setIcpEditText(e.target.value)}
+                    style={{
+                      width: '100%',
+                      minHeight: 120,
+                      padding: 12,
+                      border: '2px solid #e5e7eb',
+                      borderRadius: 8,
+                      fontSize: 14,
+                      lineHeight: 1.6,
+                      fontFamily: 'inherit',
+                      resize: 'vertical',
+                      background: '#f9fafb',
+                      boxSizing: 'border-box'
+                    }}
+                    placeholder="Kirjoita ICP-kuvaukset tähän (yksi per rivi)..."
+                  />
+                  <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
+                    <button 
+                      style={{
+                        background: '#22c55e',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '8px 16px',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                      onClick={handleSaveIcp}
+                    >
+                      Tallenna
+                    </button>
+                    <button 
+                      style={{
+                        background: '#6b7280',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '8px 16px',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                      onClick={handleCancelIcp}
+                    >
+                      Peruuta
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ flex: 1 }}>
+                  {icpSummary.map((summary, index) => (
+                    <div key={index} style={{ 
+                      marginBottom: 12 
+                    }}>
+                      <p style={{ margin: 0, color: '#374151', lineHeight: 1.6, fontSize: 14 }}>{summary}</p>
+                    </div>
+                  ))}
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+                    <button 
+                      style={{
+                        background: '#22c55e',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '8px 16px',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                      onClick={handleEditIcp}
+                    >
+                      Muokkaa ICP
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+
+
+          {/* Strategiakortit */}
+          {strategy.map(item => {
+            const status = getStrategyStatus(item.month || item.Month)
+            return (
+            <div key={item.id} className="strategy-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                <div style={{ fontWeight: 700, fontSize: 18, color: '#374151' }}>
+                  {formatMonth(item.month || item.Month)}
+                </div>
+                <div style={{
+                  background: getStatusColor(status),
+                  color: '#ffffff',
+                  padding: '4px 8px',
+                  borderRadius: 6,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  textTransform: 'uppercase'
+                }}>
+                  {getStatusText(status)}
+                </div>
+              </div>
+              
               {editId === item.id ? (
-                <>
+                <div style={{ flex: 1 }}>
                   <textarea
                     ref={textareaRef}
                     value={editText}
                     onChange={e => setEditText(e.target.value)}
                     style={{
                       width: '100%',
-                      minHeight: 40,
-                      marginBottom: 12,
-                      resize: 'none',
-                      overflow: 'hidden',
-                      fontSize: 16,
-                      lineHeight: 1.5,
+                      minHeight: 120,
+                      padding: 12,
+                      border: '2px solid #e5e7eb',
                       borderRadius: 8,
-                      border: '1.5px solid #e1e8ed',
-                      background: '#f7fafc',
-                      padding: '12px 14px',
+                      fontSize: 14,
+                      lineHeight: 1.6,
+                      fontFamily: 'inherit',
+                      resize: 'vertical',
+                      background: '#f9fafb',
                       boxSizing: 'border-box'
                     }}
+                    placeholder="Kirjoita strategia tähän..."
                   />
-                  <button onClick={() => handleSave(item)} style={{marginRight: 8, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Tallenna</button>
-                  <button onClick={() => setEditId(null)} style={{background: '#eee', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Peruuta</button>
-                </>
+                  <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
+                    <button 
+                      style={{
+                        background: '#22c55e',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '8px 16px',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => handleSave(item)}
+                    >
+                      Tallenna
+                    </button>
+                    <button 
+                      style={{
+                        background: '#6b7280',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '8px 16px',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                      onClick={handleCancel}
+                    >
+                      Peruuta
+                    </button>
+                  </div>
+                </div>
               ) : (
-                <>
-                  <div style={{marginBottom: 12, whiteSpace: 'pre-line'}}>{item.Strategy}</div>
-                  <button onClick={() => handleEdit(item)} style={{position: 'absolute', top: 16, right: 16, background: 'var(--brand-green)', color: 'var(--brand-black)', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, cursor: 'pointer'}}>Muokkaa</button>
-                </>
+                <div style={{ flex: 1 }}>
+                  <div style={{ 
+                    fontSize: 15, 
+                    lineHeight: 1.6, 
+                    color: '#374151', 
+                    whiteSpace: 'pre-line',
+                    marginBottom: 16
+                  }}>
+                    {item.strategy || item.Strategy}
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 12, color: '#9ca3af' }}>
+                      {new Date(item.created_at || item.createdTime).toLocaleDateString('fi-FI')}
+                    </span>
+                    <button 
+                      style={{
+                        background: '#22c55e',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '8px 16px',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => handleEdit(item)}
+                    >
+                      Muokkaa
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
-          ))}
+          )
+        })}
         </div>
+
+        {/* Tyhjä tila jos ei strategioita */}
+        {strategy.length === 0 && (
+          <div className="strategy-card" style={{ gridColumn: 'span 3', textAlign: 'center', padding: 48 }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>📋</div>
+            <h3 style={{ margin: '0 0 8px 0', color: '#374151' }}>Ei strategioita vielä</h3>
+            <p style={{ margin: 0, color: '#6b7280' }}>Aloita luomalla ensimmäinen sisältöstrategia</p>
+          </div>
+        )}
+
+        {/* ICP Summary jos ei ole vielä olemassa */}
+        {(!icpSummary || icpSummary.length === 0) && (
+          <div className="strategy-card">
+            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>👥 Ihanneasiakas</div>
+            <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
+              <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Ei ICP-kuvausta vielä</p>
+              <button 
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '8px 16px',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+                onClick={handleEditIcp}
+              >
+                Luo ICP
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Luo uusi strategia -nappi */}
+        <div style={{ marginTop: 24 }}>
+          <button 
+            style={{
+              background: '#22c55e',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: 12,
+              padding: '12px 24px',
+              fontSize: 16,
+              fontWeight: 600,
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)'
+            }}
+            onClick={() => setShowCreateModal(true)}
+          >
+            + Luo uusi strategia
+          </button>
+        </div>
+
+        {error && (
+          <div style={{ 
+            background: '#fef2f2', 
+            border: '1px solid #fecaca', 
+            borderRadius: 8, 
+            padding: 16, 
+            marginTop: 16 
+          }}>
+            <p style={{ margin: 0, color: '#dc2626' }}>{error}</p>
+          </div>
+        )}
       </div>
+
+      {/* Luo uusi strategia -modaali */}
+      {showCreateModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>Luo uusi strategia</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setShowCreateModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="form-group">
+                <label>Kuukausi</label>
+                <input
+                  type="text"
+                  value={newStrategy.Month}
+                  onChange={(e) => setNewStrategy({...newStrategy, Month: e.target.value})}
+                  placeholder="esim. Heinäkuu 2024"
+                  className="form-input"
+                />
+              </div>
+              <div className="form-group">
+                <label>Strategia</label>
+                <textarea
+                  value={newStrategy.Strategy}
+                  onChange={(e) => setNewStrategy({...newStrategy, Strategy: e.target.value})}
+                  placeholder="Kirjoita strategia tähän..."
+                  className="form-textarea"
+                  rows={8}
+                />
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button 
+                className="save-button"
+                onClick={handleCreateStrategy}
+                disabled={!newStrategy.Month || !newStrategy.Strategy}
+              >
+                Luo strategia
+              </button>
+              <button 
+                className="cancel-button"
+                onClick={() => setShowCreateModal(false)}
+              >
+                Peruuta
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 } 

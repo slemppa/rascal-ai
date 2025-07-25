@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Link } from 'react-router-dom'
 
-export default function ForgotPassword() {
+export default function ForgotPassword({ onClose }) {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -11,12 +11,10 @@ export default function ForgotPassword() {
     e.preventDefault()
     setLoading(true)
     setMessage('')
-
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       })
-
       if (error) {
         setMessage(error.message)
       } else {
@@ -30,15 +28,25 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Palauta salasana</h2>
-      <p className="text-gray-600 text-center mb-6">
+    <div style={{ background: '#23262B', color: '#fff', borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.25)', padding: 32, position: 'relative', maxWidth: 400, width: '100%' }}>
+      {onClose && (
+        <button
+          onClick={onClose}
+          style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', fontSize: 28, color: '#cbd5e1', cursor: 'pointer', transition: 'color 0.2s' }}
+          aria-label="Sulje"
+          onMouseOver={e => e.currentTarget.style.color = '#4ADE80'}
+          onMouseOut={e => e.currentTarget.style.color = '#cbd5e1'}
+        >
+          ×
+        </button>
+      )}
+      <h2 style={{ fontSize: 26, fontWeight: 700, marginBottom: 18, textAlign: 'center', color: '#fff' }}>Palauta salasana</h2>
+      <p style={{ color: '#cbd5e1', textAlign: 'center', marginBottom: 18, fontSize: 15 }}>
         Syötä sähköpostiosoitteesi, niin lähetämme sinulle linkin salasanan palautusta varten.
       </p>
-      
-      <form onSubmit={handleResetPassword} className="space-y-4">
+      <form onSubmit={handleResetPassword} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="email" style={{ display: 'block', marginBottom: 6, fontWeight: 500, color: '#cbd5e1' }}>
             Sähköposti
           </label>
           <input
@@ -47,36 +55,62 @@ export default function ForgotPassword() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+            style={{
+              width: '100%',
+              padding: '12px 14px',
+              border: '1px solid #374151',
+              borderRadius: 8,
+              background: '#181B20',
+              color: '#fff',
+              fontSize: 15,
+              outline: 'none',
+              marginBottom: 2
+            }}
             placeholder="sähköposti@esimerkki.fi"
+            autoComplete="email"
           />
         </div>
-        
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{
+            width: '100%',
+            padding: '12px 0',
+            border: 'none',
+            borderRadius: 8,
+            background: loading ? '#fbbf24cc' : '#fbbf24',
+            color: '#181B20',
+            fontWeight: 700,
+            fontSize: 16,
+            cursor: loading ? 'not-allowed' : 'pointer',
+            transition: 'background 0.2s',
+            marginTop: 4
+          }}
         >
           {loading ? 'Lähetetään palautuslinkkiä...' : 'Lähetä palautuslinkki'}
         </button>
-        
         {message && (
-          <div className={`p-3 rounded-md text-sm ${
-            message.includes('virhe') || message.includes('Error') 
-              ? 'bg-red-50 text-red-800 border border-red-200' 
-              : 'bg-green-50 text-green-800 border border-green-200'
-          }`}>
+          <div style={{
+            padding: 10,
+            background: message.toLowerCase().includes('virhe') || message.toLowerCase().includes('error') ? '#3b1d1d' : '#1e3a1e',
+            border: message.toLowerCase().includes('virhe') || message.toLowerCase().includes('error') ? '1px solid #dc2626' : '1px solid #22c55e',
+            borderRadius: 8,
+            color: message.toLowerCase().includes('virhe') || message.toLowerCase().includes('error') ? '#f87171' : '#22c55e',
+            fontSize: 14,
+            marginTop: 2
+          }}>
             {message}
           </div>
         )}
       </form>
-      
-      <p className="mt-6 text-center text-sm text-gray-600">
-        Muistatko salasanasi?{' '}
-        <Link to="/signin" className="font-medium text-blue-600 hover:text-blue-500">
-          Kirjaudu sisään
-        </Link>
-      </p>
+      <div style={{ marginTop: 18, textAlign: 'center' }}>
+        <p style={{ fontSize: 15, color: '#cbd5e1' }}>
+          Muistatko salasanasi?{' '}
+          <a href="#" style={{ color: '#4ADE80', textDecoration: 'underline' }} onClick={onClose}>
+            Kirjaudu sisään
+          </a>
+        </p>
+      </div>
     </div>
   )
 }

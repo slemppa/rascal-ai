@@ -25,3 +25,6 @@ dist-ssr
 .vercel
 .ai-prompt.md
 .env*.local
+node_modules
+dist
+.env

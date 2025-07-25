@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import styles from './Sidebar.module.css'
@@ -10,6 +10,7 @@ const menuItems = [
   { label: 'Sisältöstrategia', path: '/strategy', feature: 'Social Media' },
   { label: 'Puhelut', path: '/calls', feature: 'Phone Calls' },
   { label: 'Assistentti', path: '/ai-chat', feature: 'Marketing assistant' },
+  { label: 'Admin', path: '/admin', feature: null, adminOnly: true },
 ]
 const bottomItems = [
   { label: 'Asetukset', path: '/settings' },
@@ -20,13 +21,40 @@ export default function Sidebar() {
   const navigate = useNavigate()
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 900;
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
   const features = user?.features || []
 
+  // Tarkista admin-oikeudet
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!user) return
+      
+      try {
+        const { data: userData, error } = await supabase
+          .from('users')
+          .select('role, company_id')
+          .eq('auth_user_id', user.id)
+          .single()
+
+        if (!error && userData) {
+          setIsAdmin(userData.role === 'admin' || userData.company_id === 1)
+        }
+      } catch (error) {
+        console.error('Error checking admin status:', error)
+      }
+    }
+
+    checkAdminStatus()
+  }, [user])
+
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    navigate('/signin')
+    try {
+      await signOut()
+    } catch (error) {
+      console.error('signOut error:', error)
+    }
   }
 
   const menu = (
@@ -38,6 +66,11 @@ export default function Sidebar() {
       <ul className={styles['nav-menu']}>
         {menuItems.map(item => {
           const disabled = item.feature && !features.includes(item.feature)
+          const adminOnly = item.adminOnly && !isAdmin
+          
+          // Piilota admin-välilehti jos ei ole admin-oikeuksia
+          if (adminOnly) return null
+          
           return (
             <li className={styles['nav-item']} key={item.path}>
               <button

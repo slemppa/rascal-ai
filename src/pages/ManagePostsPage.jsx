@@ -1,539 +1,1184 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import PageHeader from '../components/PageHeader'
-import styles from './ManagePostsPage.module.css'
+import React, { useState, useEffect, useRef } from 'react'
+import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
+import './ManagePostsPage.css'
 
-// Päivitetty media-logiikka korttiin
-const getMediaElement = (mediaArr, alt, isLarge, post, segments) => {
-  // Jos Carousel, näytä ensimmäisen sliden media/teksti
-  if (post && post.Type === 'Carousel' && Array.isArray(segments)) {
-    const firstSlide = segments
-      .filter(seg => Array.isArray(seg.Content) && (seg.Content.includes(post["Record ID"]) || seg.Content.includes(post.id)))
-      .sort((a, b) => parseInt(a["Slide No."]) - parseInt(b["Slide No."]))[0];
-    if (firstSlide) {
-      if (firstSlide.Media && Array.isArray(firstSlide.Media) && firstSlide.Media[0] && firstSlide.Media[0].url) {
-        return (
-          <div className={styles.bentoMediaWrapper}>
-            <img src={firstSlide.Media[0].url} alt={alt} className={styles.bentoMedia} />
-          </div>
-        );
-      } else if (firstSlide.Text) {
-        return (
-          <div className={styles.bentoMediaWrapper} style={{display:'flex',alignItems:'center',justifyContent:'center',background:'#f3f4f6'}}>
-            <span style={{fontSize:22,fontWeight:600,textAlign:'center',color:'#222',padding:16}}>{firstSlide.Text}</span>
-          </div>
-        );
-      }
+// Dummy data
+const initialPosts = [
+  {
+    id: 1,
+    title: 'Miten rakentaa menestyksekäs sosiaalisen median strategia',
+    status: 'Kesken',
+    thumbnail: '/placeholder.png',
+    caption: 'Opi tärkeimmät vaiheet tehokkaan sosiaalisen median strategian luomiseen.',
+    createdAt: '2024-01-15'
+  },
+  {
+    id: 2,
+    title: '10 vinkkiä parempaan sisältömarkkinointiin',
+    status: 'Valmis',
+    thumbnail: '/placeholder.png',
+    caption: 'Löydä todistetut strategiat sisältömarkkinoinnin parantamiseen.',
+    createdAt: '2024-01-16'
+  },
+  {
+    id: 3,
+    title: 'Digitaalisen markkinoinnin tulevaisuus 2024',
+    status: 'Ajastettu',
+    thumbnail: '/placeholder.png',
+    caption: 'Tutustu uusimpiin trendeihin ja teknologioihin.',
+    scheduledDate: '2024-01-20'
+  },
+  {
+    id: 4,
+    title: 'Bränditietoisuuden rakentaminen sosiaalisessa mediassa',
+    status: 'Julkaistu',
+    thumbnail: '/placeholder.png',
+    caption: 'Tehokkaat strategiat brändin näkyvyyden lisäämiseen.',
+    publishedAt: '2024-01-10'
+  }
+]
+
+const columns = [
+  { status: 'Kesken', title: 'Kesken', color: '#fef3c7' },
+  { status: 'Tarkistuksessa', title: 'Tarkistuksessa', color: '#dbeafe' },
+  { status: 'Aikataulutettu', title: 'Aikataulutettu', color: '#fce7f3' },
+  { status: 'Julkaistu', title: 'Julkaistu', color: '#dcfce7' }
+]
+
+// Data muunnos funktio Supabase datasta Kanban muotoon
+const transformSupabaseData = (supabaseData) => {
+  if (!supabaseData || !Array.isArray(supabaseData)) return []
+  
+  return supabaseData.map(item => {
+    // Muunnetaan Supabase status suomeksi
+    const statusMap = {
+      'Draft': 'Kesken',
+      'In Progress': 'Kesken', 
+      'Under Review': 'Tarkistuksessa',
+      'Scheduled': 'Aikataulutettu',
+      'Done': 'Tarkistuksessa',
+      'Published': 'Julkaistu',
+      'Deleted': 'Poistettu'
     }
-    // Jos ei slideja, näytä placeholder
-    return (
-      <div className={styles.bentoMediaWrapper}>
-        <img src={process.env.BASE_URL ? process.env.BASE_URL + '/placeholder.png' : '/placeholder.png'} alt="Ei mediaa" className={styles.bentoMedia} />
-      </div>
-    );
-  }
-  // Muut post-tyypit kuten ennen
-  if (!mediaArr || !Array.isArray(mediaArr) || !mediaArr[0] || !mediaArr[0].url) {
-    return (
-      <div className={styles.bentoMediaWrapper}>
-        <img src={process.env.BASE_URL ? process.env.BASE_URL + '/placeholder.png' : '/placeholder.png'} alt="Ei mediaa" className={styles.bentoMedia} />
-      </div>
-    )
-  }
-  const media = mediaArr[0]
-  const url = media.url
-  const type = media.type || ''
+    
+    let status = statusMap[item.status] || 'Kesken'
+    
 
-  if (type.startsWith('video/')) {
-    return (
-      <div className={styles.bentoMediaWrapper}>
-        <video
-          src={url}
-          controls
-          className={styles.bentoMedia}
-        />
-      </div>
-    )
-  }
-  if (type.startsWith('image/')) {
-    return (
-      <div className={styles.bentoMediaWrapper}>
-        <img src={url} alt={alt} className={styles.bentoMedia} />
-      </div>
-    )
-  }
-  // Fallback: päätteen mukaan
-  if (url.endsWith('.mp4') || url.endsWith('.webm')) {
-    return (
-      <div className={styles.bentoMediaWrapper}>
-        <video
-          src={url}
-          controls
-          className={styles.bentoMedia}
-        />
-      </div>
-    )
-  }
+    
+    // Jos status on "Done" mutta publish_date on tulevaisuudessa, se on "Ajastettu"
+    const now = new Date()
+    const publishDate = item.publish_date ? new Date(item.publish_date) : null
+    
+    if (publishDate && publishDate > now && status === 'Julkaistu') {
+      status = 'Aikataulutettu'
+    }
+    
+    return {
+      id: item.id,
+      title: item.idea || item.caption || 'Nimetön julkaisu',
+      status: status,
+      thumbnail: item.media_urls?.[0] || '/placeholder.png',
+      caption: item.caption || item.idea || 'Ei kuvausta',
+      type: item.type || 'Photo',
+      createdAt: item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : null,
+      scheduledDate: item.publish_date && publishDate > now ? new Date(item.publish_date).toISOString().split('T')[0] : null,
+      publishedAt: item.publish_date && publishDate <= now ? new Date(item.publish_date).toISOString().split('T')[0] : null,
+      publishDate: item.publish_date ? new Date(item.publish_date).toISOString().slice(0, 16) : null,
+      mediaUrls: item.media_urls || [],
+      hashtags: item.hashtags || [],
+      voiceover: item.voiceover || '',
+      voiceoverReady: item.voiceover_ready || false,
+      originalData: item, // Säilytetään alkuperäinen data
+      source: 'supabase'
+    }
+  })
+}
+
+// Transform Reels data to Kanban format
+const transformReelsData = (reelsData) => {
+  if (!reelsData || !Array.isArray(reelsData)) return []
+  return reelsData.map(item => {
+    const status = item.status || 'Kesken' // Status is forced to 'Kesken' by the API
+    return {
+      id: item.id,
+      title: item.title || 'Nimetön Reels',
+      status: status,
+      thumbnail: item.media_urls?.[0] || '/placeholder.png',
+      caption: item.caption || 'Ei kuvausta',
+      type: 'Reels',
+      createdAt: item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : null,
+      scheduledDate: null,
+      publishedAt: null,
+      mediaUrls: item.media_urls || [],
+      hashtags: item.hashtags || [],
+      voiceover: item.voiceover || '',
+      originalData: item,
+      source: 'reels'
+    }
+  })
+}
+
+function PostCard({ post, onEdit, onDelete, onPublish }) {
   return (
-    <div className={styles.bentoMediaWrapper}>
-      <img src={url} alt={alt} className={styles.bentoMedia} />
+    <div className="post-card">
+      <div className="post-card-content">
+        <img
+          src={post.thumbnail}
+          alt="thumbnail"
+          className="post-thumbnail"
+        />
+                  <div className="post-info">
+            <div className="post-header">
+              <h3 className="post-title">
+                {post.title.length > 50 ? post.title.slice(0, 50) + '…' : post.title}
+              </h3>
+              <div className="post-badges">
+                <span className="post-type">{post.type}</span>
+                <span className={`post-source ${post.source}`}>{post.source}</span>
+          </div>
+          </div>
+            <p className="post-caption">
+              {post.caption}
+            </p>
+          <div className="post-footer">
+            <span className="post-date">
+              {post.createdAt || post.scheduledDate || post.publishedAt}
+            </span>
+            <div className="post-actions">
+              <button className="action-button" onClick={() => onEdit(post)}>
+                ✏️ Muokkaa
+              </button>
+              {/* Julkaisu-nappi vain jos status on "Tarkistuksessa" tai "Aikataulutettu" */}
+              {(post.status === 'Tarkistuksessa' || post.status === 'Aikataulutettu') && (
+        <button
+                  className="action-button publish" 
+                  onClick={() => onPublish(post)}
+                  style={{
+                    backgroundColor: '#22c55e',
+                    color: 'white',
+                    border: 'none'
+                  }}
+                >
+                  📤 Julkaise
+                </button>
+              )}
+              <button className="action-button delete" onClick={() => onDelete(post)}>
+                🗑️ Poista
+        </button>
+      </div>
+      </div>
+    </div>
+      </div>
     </div>
   )
 }
 
-// Helperit
-const getPostTitle = (post) => post.Idea || post.title || post.Title || '';
-const getPostDescription = (post) => post.Caption || post.Voiceover || post.desc || post.Description || '';
+export default function ManagePostsPage() {
+  const { user } = useAuth()
+  const [posts, setPosts] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [reelsPosts, setReelsPosts] = useState([])
+  const [reelsLoading, setReelsLoading] = useState(false)
+  const [reelsError, setReelsError] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editingPost, setEditingPost] = useState(null)
+  const hasInitialized = useRef(false)
 
-// Katkaise idea-teksti sanan jälkeen ja lisää '...' jos pitkä
-function truncateWords(text, maxWords = 8) {
-  if (!text) return '';
-  const words = text.split(' ');
-  if (words.length <= maxWords) return text;
-  return words.slice(0, maxWords).join(' ') + '...';
-}
-
-// Palauta span-luokka kuvasuhteen perusteella
-const getGridSpans = (media) => {
-  if (!media || !media[0]) return '';
-  const { width, height } = media[0];
-  if (!width || !height) return '';
-  const ratio = width / height;
-  // 16:9
-  if (Math.abs(ratio - 16/9) < 0.1) return styles.spanWide;
-  // 9:16
-  if (Math.abs(ratio - 9/16) < 0.1) return styles.spanTall;
-  // 3:4
-  if (Math.abs(ratio - 3/4) < 0.1) return styles.spanTall;
-  // 1:1
-  if (Math.abs(ratio - 1) < 0.1) return styles.spanSquare;
-  // fallback
-  return styles.spanSquare;
-};
-
-// Karuselli-komponentti Carousel-tyypin tietueille
-function CarouselMedia({ post, segments }) {
-  // Hae kaikki segmentit, joiden Content sisältää tämän Carouselin Record ID:n
-  const relatedSlides = segments
-    .filter(seg => Array.isArray(seg.Content) && (seg.Content.includes(post["Record ID"]) || seg.Content.includes(post.id)))
-    .sort((a, b) => parseInt(a["Slide No."]) - parseInt(b["Slide No."]));
-
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  if (relatedSlides.length === 0) {
-    return (
-      <div className={styles.carouselContainer}>
-        <div style={{padding: 16, color: 'red', fontSize: 14}}>
-          <b>DEBUG:</b> Ei löytynyt yhtään slide-tietuetta!<br/>
-          Content: {post["Record ID"] || post.id}<br/>
-          Segments: {JSON.stringify(segments.map(s => ({id: s.id, Content: s.Content})))}
-        </div>
-        <img
-          src={process.env.BASE_URL ? process.env.BASE_URL + '/placeholder.png' : '/placeholder.png'}
-          alt="Ei slideja"
-          className={styles.carouselImage}
-        />
-      </div>
-    );
+  // Data haku Supabasesta
+  const fetchPosts = async () => {
+    if (!user) return
+    
+    try {
+      setLoading(true)
+      setError(null)
+      
+      // Haetaan käyttäjän user_id users taulusta
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (userError || !userData?.id) {
+        throw new Error('Käyttäjän ID ei löytynyt')
+      }
+      
+      // Haetaan käyttäjän julkaisut
+      const { data, error } = await supabase
+        .from('content')
+        .select('*')
+        .eq('user_id', userData.id)
+        .order('created_at', { ascending: false })
+      
+      if (error) {
+        throw error
+      }
+      
+      const transformedData = transformSupabaseData(data)
+      setPosts(transformedData || [])
+      
+    } catch (err) {
+      console.error('Virhe datan haussa:', err)
+      setError('Datan haku epäonnistui')
+    } finally {
+      setLoading(false)
+    }
   }
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % relatedSlides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + relatedSlides.length) % relatedSlides.length);
-  };
-
-  const currentPost = relatedSlides[currentSlide];
-  let imageUrl = null;
-  if (currentPost.Media && Array.isArray(currentPost.Media) && currentPost.Media[0] && currentPost.Media[0].url) {
-    imageUrl = currentPost.Media[0].url;
-  }
-
-  return (
-    <div className={styles.carouselContainer}>
-      <div className={styles.carouselWrapper}>
-        <button
-          onClick={prevSlide}
-          className={styles.carouselButton}
-          style={{ left: 10 }}
-          aria-label="Edellinen kuva"
-        >
-          ‹
-        </button>
-
-        <div className={styles.carouselContent}>
-          <div className={styles.carouselImageContainer}>
-            {imageUrl ? (
-              <img
-                src={imageUrl}
-                alt={`Slide ${currentPost["Slide No."]}`}
-                className={styles.carouselImage}
-              />
-            ) : (
-              <span style={{fontSize:28,fontWeight:600,textAlign:'center',color:'#222',padding:16,display:'block',width:'100%'}}>{currentPost.Text}</span>
-            )}
-          </div>
-          <div className={styles.carouselInfo}>
-            <div className={styles.slideNumber}>Slide {currentPost["Slide No."]}</div>
-            <div className={styles.slideText}>{currentPost.Text}</div>
-          </div>
-        </div>
-
-        <button
-          onClick={nextSlide}
-          className={styles.carouselButton}
-          style={{ right: 10 }}
-          aria-label="Seuraava kuva"
-        >
-          ›
-        </button>
-      </div>
-
-      <div className={styles.carouselDots}>
-        {relatedSlides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`${styles.carouselDot} ${index === currentSlide ? styles.carouselDotActive : ''}`}
-            aria-label={`Siirry kuvaan ${index + 1}`}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function PostModal({ post, onClose, allPosts, segments }) {
-  const [caption, setCaption] = useState(post.Caption || '');
-  // Alusta publishDate datetime-local -muodossa (esim. 2024-07-01T12:34)
-  const initialDate = post["Publish Date"] ? new Date(post["Publish Date"]).toISOString().slice(0, 16) : '';
-  const [publishDate, setPublishDate] = useState(initialDate);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
-
-  // Tarkista onko julkaisupäivä asetettu
-  const hasPublishDate = publishDate && publishDate.trim() !== '';
-  
-  // Tarkista onko valittu päivämäärä menneisyydessä
-  const isPastDate = publishDate && new Date(publishDate) < new Date();
-  
-  // Hae nykyinen päivämäärä datetime-local -muodossa
-  const getCurrentDateTime = () => {
-    const now = new Date();
-    return now.toISOString().slice(0, 16);
-  };
 
   useEffect(() => {
-    function handleEsc(e) {
-      if (e.key === 'Escape') onClose();
-    }
-    document.body.style.overflow = 'hidden';
-    window.addEventListener('keydown', handleEsc);
-    return () => {
-      document.body.style.overflow = '';
-      window.removeEventListener('keydown', handleEsc);
-    };
-  }, [onClose]);
-
-  if (!post) return null;
-
-  const media = post.Media && Array.isArray(post.Media) && post.Media[0] && post.Media[0].url ? post.Media[0].url : null;
-  const isVideo = media && (media.endsWith('.mp4') || media.endsWith('.webm'));
-  const isCarousel = post.Type === 'Carousel';
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (!user || hasInitialized.current) return
     
-    // Tarkista ettei julkaisupäivä ole menneisyydessä
-    if (publishDate && new Date(publishDate) < new Date()) {
-      setError('Julkaisupäivä ei voi olla menneisyydessä');
-      return;
+    hasInitialized.current = true
+    fetchPosts()
+    fetchReelsPosts() // Haetaan reels data automaattisesti
+  }, [user])
+
+  // Reels data haku
+  const fetchReelsPosts = async () => {
+    if (!user) {
+      return
     }
     
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
+    // Asetetaan heti dummy dataa näkyviin
+    const dummyData = [
+      {
+        id: 'reels-1',
+        title: 'Ladataan Reels dataa...',
+        caption: 'Haetaan dataa Airtablesta...',
+        media_urls: ['/placeholder.png'],
+        status: 'Kesken',
+        created_at: new Date().toISOString(),
+        hashtags: ['#ladataan'],
+        voiceover: 'Ladataan...',
+        source: 'reels'
+      }
+    ]
+    setReelsPosts(dummyData)
+    
     try {
-      await axios.post('/api/update-post.js', {
-        id: post["Record ID"] || post.id,
-        Caption: caption,
-        "Publish Date": publishDate,
-        updateType: 'postUpdate',
-        action: 'save'
-      });
-      setSuccess(true);
-      setTimeout(() => onClose(), 1000);
+      setReelsLoading(true)
+      setReelsError(null)
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('company_id')
+        .eq('auth_user_id', user.id)
+        .single()
+      if (userError || !userData?.company_id) {
+        return
+      }
+      const response = await fetch(`/api/get-reels?companyId=${userData.company_id}`)
+      if (!response.ok) {
+        return
+      }
+      const data = await response.json()
+      const transformedData = transformReelsData(data)
+      setReelsPosts(transformedData)
     } catch (err) {
-      setError('Tallennus epäonnistui');
+      console.error('Virhe Reels datan haussa:', err)
+      // Pidetään dummy data näkyvissä virheen sattuessa
     } finally {
-      setLoading(false);
+      setReelsLoading(false)
     }
-  };
+  }
 
-  const handleSchedule = async () => {
-    // Tarkista ettei julkaisupäivä ole menneisyydessä
-    if (publishDate && new Date(publishDate) < new Date()) {
-      setError('Julkaisupäivä ei voi olla menneisyydessä');
-      return;
-    }
-    
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
-    try {
-      await axios.post('/api/update-post.js', {
-        id: post["Record ID"] || post.id,
-        Caption: caption,
-        "Publish Date": publishDate,
-        updateType: 'postUpdate',
-        action: 'schedule'
-      });
-      setSuccess(true);
-      setTimeout(() => onClose(), 1000);
-    } catch (err) {
-      setError('Ajastus epäonnistui');
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const handleDelete = async () => {
-    if (!window.confirm('Haluatko varmasti poistaa tämän julkaisun? Tätä toimintoa ei voi perua.')) {
-      return;
-    }
-    
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
+
+  // Transform Reels data to Kanban format
+  const transformReelsData = (reelsData) => {
+    if (!reelsData || !Array.isArray(reelsData)) return []
+    return reelsData.map(item => {
+      const status = item.status || 'Kesken' // Status is forced to 'Kesken' by the API
+      const transformed = {
+        id: item.id,
+        title: item.title || 'Nimetön Reels', // Boldattu otsikko = Title kenttä
+        status: status,
+        thumbnail: item.media_urls?.[0] || '/placeholder.png',
+        caption: item.caption || 'Ei kuvausta', // Leipäteksti = Caption kenttä
+        type: 'Reels',
+        createdAt: item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : null,
+        scheduledDate: null,
+        publishedAt: null,
+        mediaUrls: item.media_urls || [],
+        hashtags: item.hashtags || [],
+        voiceover: item.voiceover || '',
+        originalData: item,
+        source: 'reels'
+      }
+      console.log('Transformed reels item:', transformed) // Debug
+      return transformed
+    })
+  }
+
+  // Yhdistetään data
+  const allPosts = [...posts, ...reelsPosts]
+  const currentPosts = allPosts
+  const currentLoading = loading || reelsLoading
+  const currentError = error || reelsError
+
+  // Filtteröidään postit
+  const filteredPosts = currentPosts.filter(post => {
+    const matchesSearch = (post.title?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+                          (post.caption?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+    const matchesStatus = statusFilter === '' || post.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
+
+  const handleCreatePost = async (postData) => {
     try {
-      await axios.post('/api/update-post.js', {
-        id: post["Record ID"] || post.id,
-        updateType: 'postUpdate',
-        action: 'delete'
-      });
-      setSuccess(true);
-      setTimeout(() => onClose(), 1000);
-    } catch (err) {
-      setError('Poisto epäonnistui');
-    } finally {
-      setLoading(false);
+      // Haetaan käyttäjän user_id ja company_id users taulusta
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id, company_id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (userError || !userData?.id) {
+        throw new Error('Käyttäjän ID ei löytynyt')
+      }
+
+      // Lähetetään idea-generation kutsu N8N:lle
+      try {
+        console.log('Sending idea generation request:', {
+          idea: postData.title,
+          type: postData.type,
+          companyId: userData.company_id
+        })
+        console.log('Company ID type:', typeof userData.company_id)
+        console.log('Company ID value:', userData.company_id)
+
+        const response = await fetch('/api/idea-generation', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            idea: postData.title,
+            type: postData.type,
+            companyId: userData.company_id
+          })
+        })
+
+        if (!response.ok) {
+          console.error('Idea generation failed:', response.status)
+          // Jatketaan silti postauksen luomista
+        } else {
+          const result = await response.json()
+          console.log('Idea generation success:', result)
+        }
+      } catch (webhookError) {
+        console.error('Idea generation webhook error:', webhookError)
+        // Jatketaan silti postauksen luomista
+      }
+
+      setShowCreateModal(false)
+      alert('Idea lähetetty AI:lle! Sisältö generoidaan taustalla.')
+      
+    } catch (error) {
+      console.error('Virhe uuden julkaisun luomisessa:', error)
+      alert('Virhe: Ei voitu luoda julkaisua. Yritä uudelleen.')
     }
-  };
+  }
+
+  const handleEditPost = (post) => {
+    console.log('=== handleEditPost called ===')
+    console.log('Edit post:', post) // Debug
+    console.log('Status:', post.status) // Debug status
+    console.log('Source:', post.source) // Debug source
+    console.log('All keys:', Object.keys(post)) // Debug kaikki kentät
+    
+    setEditingPost(post)
+    setShowEditModal(true)
+    console.log('Modal state set to true')
+  }
+
+  const handleSaveEdit = async (updatedData) => {
+    if (editingPost) {
+      // Päivitä paikallinen tila
+      setPosts(prev => prev.map(post => 
+        post.id === editingPost.id 
+          ? { ...post, ...updatedData }
+          : post
+      ))
+      
+      // Päivitä myös reelsPosts jos kyseessä on reels
+      if (editingPost.source === 'reels') {
+        setReelsPosts(prev => prev.map(post => 
+          post.id === editingPost.id 
+            ? { ...post, ...updatedData }
+            : post
+        ))
+      }
+
+                 // Jos voiceover on merkitty valmiiksi, kyseessä on reels-postaus JA se on "Kesken" sarakkeessa, lähetä webhook
+           if (updatedData.voiceoverReady && (editingPost.source === 'reels' || editingPost.type === 'Reels') && (editingPost.status === 'Kesken' || editingPost.source === 'reels')) {
+             try {
+               console.log('Voiceover marked as ready, sending webhook...')
+
+               // Haetaan company_id käyttäjälle
+               const { data: userData, error: userError } = await supabase
+                 .from('users')
+                 .select('company_id')
+                 .eq('auth_user_id', user.id)
+                 .single()
+
+               if (userError || !userData?.company_id) {
+                 console.error('Could not fetch company_id:', userError)
+                 alert('Virhe: Ei voitu hakea yritystietoja. Yritä uudelleen.')
+                 return
+               }
+
+               console.log('Sending data:', {
+                 recordId: editingPost.id,
+                 voiceover: updatedData.voiceover,
+                 voiceoverReady: updatedData.voiceoverReady,
+                 companyId: userData.company_id
+               })
+
+               const response = await fetch('/api/voiceover-ready', {
+                 method: 'POST',
+                 headers: {
+                   'Content-Type': 'application/json',
+                 },
+                 body: JSON.stringify({
+                   recordId: editingPost.id,
+                   voiceover: updatedData.voiceover,
+                   voiceoverReady: updatedData.voiceoverReady,
+                   companyId: userData.company_id
+                 })
+               })
+
+          if (!response.ok) {
+            console.error('Voiceover webhook failed:', response.status)
+            // Näytä käyttäjälle virheviesti
+            alert('Virhe voiceover-tilan päivityksessä. Yritä uudelleen.')
+            return
+          }
+
+          const result = await response.json()
+          console.log('Voiceover webhook success:', result)
+          
+          // Näytä käyttäjälle onnistumisviesti
+          alert('Voiceover merkitty valmiiksi! Automaatio jatkaa eteenpäin.')
+          
+        } catch (error) {
+          console.error('Voiceover webhook error:', error)
+          alert('Virhe voiceover-tilan päivityksessä. Yritä uudelleen.')
+          return
+        }
+      }
+
+      // Päivitä Supabase kaikille postauksille
+      try {
+        console.log('Updating Supabase post:', editingPost.id, updatedData)
+
+        // Haetaan käyttäjän user_id users taulusta
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('id')
+          .eq('auth_user_id', user.id)
+          .single()
+
+        if (userError || !userData?.id) {
+          console.error('Could not fetch user_id:', userError)
+          // Jatketaan silti paikallisen tilan päivitystä
+        } else {
+                      // Päivitetään Supabase
+            const { error: updateError } = await supabase
+              .from('content')
+              .update({
+                caption: updatedData.caption || null,
+                publish_date: updatedData.publishDate || null,
+                updated_at: new Date().toISOString()
+              })
+              .eq('id', editingPost.id)
+              .eq('user_id', userData.id)
+
+          if (updateError) {
+            console.error('Supabase update error:', updateError)
+            // Jatketaan silti paikallisen tilan päivitystä
+          } else {
+            console.log('Supabase updated successfully')
+          }
+        }
+      } catch (error) {
+        console.error('Error updating Supabase:', error)
+        // Jatketaan silti paikallisen tilan päivitystä
+      }
+      
+      setShowEditModal(false)
+      setEditingPost(null)
+    }
+  }
+
+  const handleDeletePost = (post) => {
+    if (window.confirm('Oletko varma, että haluat poistaa tämän julkaisun?')) {
+      setPosts(prev => prev.filter(p => p.id !== post.id))
+    }
+  }
+
+  const handlePublishPost = async (post) => {
+    try {
+      console.log('Publishing post with RPC:', post.id)
+      
+      // Kutsutaan RPC-funktiota
+      const { data, error } = await supabase.rpc('publish_post_simple', {
+        post_id: post.id
+      })
+
+      if (error) {
+        console.error('RPC error:', error)
+        alert('Julkaisu epäonnistui: ' + error.message)
+        return
+      }
+
+      console.log('Publish successful:', data)
+      
+      // Tarkistetaan julkaisupäivä
+      const publishDate = data.publish_date || data.publishDate
+      const now = new Date()
+      
+      if (!publishDate) {
+        alert('Julkaisu epäonnistui: Julkaisupäivä puuttuu')
+        return
+      }
+      
+      const publishDateTime = new Date(publishDate)
+      if (publishDateTime < now) {
+        alert('Julkaisu epäonnistui: Julkaisupäivä on menneisyydessä')
+        return
+      }
+      
+      console.log('Publish date valid:', publishDateTime)
+      
+      // Lähetetään data N8N webhook:iin backend-proxyn kautta
+      // Haetaan käyttäjän webhook_url erikseen
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('webhook_url')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (userData?.webhook_url) {
+        console.log('Sending to webhook via backend:', userData.webhook_url)
+        console.log('Webhook payload:', data)
+        
+        try {
+          const webhookResponse = await fetch('/api/send-webhook', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              webhook_url: userData.webhook_url,
+              payload: data
+            })
+          })
+
+          console.log('Webhook response status:', webhookResponse.status)
+          
+          if (!webhookResponse.ok) {
+            const errorData = await webhookResponse.json()
+            console.error('Webhook failed:', webhookResponse.status, errorData)
+            alert('Julkaisu onnistui, mutta webhook-kutsu epäonnistui')
+          } else {
+            const responseData = await webhookResponse.json()
+            console.log('Webhook sent successfully:', responseData)
+          }
+        } catch (webhookError) {
+          console.error('Webhook fetch error:', webhookError)
+          alert('Julkaisu onnistui, mutta webhook-kutsu epäonnistui: ' + webhookError.message)
+        }
+      }
+      
+      // Päivitetään UI - haetaan päivitetyt tiedot uudelleen
+      await fetchPosts()
+      if (post.source === 'reels') {
+        await fetchReelsPosts()
+      }
+
+      alert('Julkaisu onnistui!')
+      setShowEditModal(false)
+      setEditingPost(null)
+      
+    } catch (error) {
+      console.error('Publish error:', error)
+      alert('Julkaisu epäonnistui: ' + error.message)
+    }
+  }
+
+  // ESC-näppäimellä sulkeutuminen
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === 'Escape') {
+        if (showEditModal) {
+          setShowEditModal(false)
+          setEditingPost(null)
+        }
+        if (showCreateModal) {
+          setShowCreateModal(false)
+        }
+      }
+    }
+
+    if (showEditModal || showCreateModal) {
+      document.addEventListener('keydown', handleEscKey)
+      return () => document.removeEventListener('keydown', handleEscKey)
+    }
+  }, [showEditModal, showCreateModal])
+
+       // Merkkien laskenta "Tarkistuksessa" sarakkeelle ja create modaliin
+  useEffect(() => {
+    if (showEditModal && editingPost && editingPost.status === 'Tarkistuksessa') {
+      const textarea = document.querySelector('.form-textarea')
+      const charCount = document.querySelector('.char-count')
+
+      if (textarea && charCount) {
+        const updateCharCount = () => {
+          const count = textarea.value.length
+          charCount.textContent = count
+
+          // Vaihda väriä jos yli 2000 merkkiä
+          if (count > 2000) {
+            charCount.style.color = '#ef4444'
+          } else if (count > 1800) {
+            charCount.style.color = '#f59e0b'
+          } else {
+            charCount.style.color = '#3B82F6'
+          }
+        }
+
+        textarea.addEventListener('input', updateCharCount)
+        updateCharCount() // Alustetaan laskenta
+
+        return () => textarea.removeEventListener('input', updateCharCount)
+      }
+    }
+  }, [showEditModal, editingPost])
+
+
+
+  
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modal}>
-        <button onClick={onClose} className={styles.modalClose}>×</button>
-        <div className={styles.modalMedia} style={{marginBottom: 24}}>
-          {isCarousel ? (
-            <CarouselMedia post={post} segments={segments} />
-          ) : media ? (
-            isVideo ? (
-              <video src={media} controls className={styles.modalMediaContent} />
-            ) : (
-              <img src={media} alt={getPostTitle(post) || 'Julkaisukuva'} className={styles.modalMediaContent} />
-            )
-          ) : (
-            <img 
-              src={process.env.BASE_URL ? process.env.BASE_URL + '/placeholder.png' : '/placeholder.png'} 
-              alt="Ei mediaa" 
-              className={styles.modalMediaContent} 
-            />
+    <div className="posts-page">
+      {/* Page Header */}
+      <div className="page-header">
+        <h1>Julkaisut</h1>
+        <p>Hallitse ja seuraa sisältösi eri vaiheissa</p>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="search-filters">
+        <input
+          type="text"
+          placeholder="Etsi julkaisuja..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-input"
+        />
+        <select 
+          value={statusFilter} 
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="status-filter"
+        >
+          <option value="">Kaikki statukset</option>
+          <option value="Kesken">Kesken</option>
+          <option value="Tarkistuksessa">Tarkistuksessa</option>
+          <option value="Aikataulutettu">Aikataulutettu</option>
+          <option value="Julkaistu">Julkaistu</option>
+        </select>
+        <button 
+          className="create-button"
+          onClick={() => setShowCreateModal(true)}
+        >
+          + Luo uusi julkaisu
+        </button>
+      </div>
+
+      {/* Error State */}
+      {currentError && (
+        <div className="error-state">
+          <p>❌ {currentError}</p>
+          <button
+            onClick={() => {
+              window.location.reload()
+            }} 
+            className="retry-button"
+          >
+            Yritä uudelleen
+          </button>
+        </div>
+      )}
+        
+      {/* Kanban Board */}
+      {!currentError && (
+        <div className="kanban-board">
+          {columns.map(column => {
+            const columnPosts = filteredPosts.filter(post => post.status === column.status)
+            return (
+              <div key={column.status} className="kanban-column">
+                <h3 className="column-title">{column.title}</h3>
+                <div className="column-content">
+                  {/* Loading state vain "Kesken" sarakkeessa */}
+                  {column.status === 'Kesken' && currentLoading && (
+                    <div className="column-loading">
+                      <div className="loading-spinner"></div>
+                      <p>Ladataan Reels...</p>
+                    </div>
+                  )}
+                  
+                  {/* Näytä postit aina, paitsi "Kesken" sarakkeessa kun loading */}
+                  {!(column.status === 'Kesken' && currentLoading) && columnPosts.map(post => {
+                    // Varmistetaan että post on oikeassa muodossa
+                    const safePost = {
+                      id: post.id || 'unknown',
+                      title: post.title || 'Nimetön julkaisu',
+                      caption: post.caption || 'Ei kuvausta',
+                      type: post.type || 'Photo',
+                      source: post.source || 'supabase',
+                      thumbnail: post.thumbnail || '/placeholder.png',
+                      status: post.status || 'Kesken' // Lisätään status!
+                    }
+                    
+                    
+                    
+                    return (
+                      <div 
+                        key={safePost.id} 
+                                                  className="post-card"
+                          onClick={() => {
+                            // Muokkaus vain "Kesken" ja "Tarkistuksessa" sarakkeissa
+                            if (safePost.status === 'Kesken' || safePost.status === 'Tarkistuksessa') {
+                              handleEditPost(safePost)
+                            }
+                          }}
+                        style={{
+                          cursor: (safePost.status === 'Kesken' || safePost.status === 'Tarkistuksessa') ? 'pointer' : 'default'
+                        }}
+                      >
+                        <div className="post-thumbnail">
+                          {safePost.thumbnail && safePost.thumbnail !== '/placeholder.png' ? (
+                            <img 
+                              src={safePost.thumbnail} 
+                              alt={safePost.title}
+                              onError={(e) => {
+                                e.target.src = '/placeholder.png'
+                              }}
+                            />
+                          ) : (
+                            <div className="placeholder-content">
+                              <span className="placeholder-icon">📷</span>
+                              <span className="placeholder-text">Ei kuvaa</span>
+                            </div>
           )}
         </div>
-        {/* Type ja Status badge Captionin yhteyteen */}
-        <form className={styles.modalContent} onSubmit={handleSubmit}>
-          <div style={{display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8}}>
-            {post.Type && <span className={styles.typeBadge}>{post.Type}</span>}
-            {post.Status && <span className={styles.statusBadge}>{post.Status}</span>}
+                        <div className="post-info">
+                          <h4 className="post-title">{safePost.title}</h4>
+                          <p className="post-caption">{safePost.caption}</p>
+                          <div className="post-meta">
+                            <span className="post-type">{safePost.type}</span>
+                            <span className={`post-source ${safePost.source}`}>
+                              {safePost.source === 'reels' ? '🎬' : '📝'}
+                            </span>
           </div>
-          <label className={styles.modalLabel} style={{marginBottom: 10}}>
-            <span style={{fontWeight: 600, fontSize: 15}}>Kuvaus</span>
-            <textarea
-              value={caption}
-              onChange={e => setCaption(e.target.value)}
-              rows={6}
-              className={styles.modalTextarea}
-              style={{width: '100%', marginTop: 6, marginBottom: 18}}
-              placeholder="Kirjoita julkaisun kuvaus..."
-            />
-          </label>
-          <label className={styles.modalLabel} style={{marginBottom: 18}}>
-            <span style={{fontWeight: 600, fontSize: 15}}>Julkaisupäivä</span>
-            <input
-              type="datetime-local"
-              value={publishDate}
-              onChange={e => setPublishDate(e.target.value)}
-              min={getCurrentDateTime()}
-              className={styles.modalInput}
-              style={{marginTop: 6}}
-            />
-            {isPastDate && (
-              <div className={styles.dateError}>
-                ⚠️ Julkaisupäivä ei voi olla menneisyydessä
+                          {/* Julkaisu-nappi vain jos status on "Tarkistuksessa" tai "Aikataulutettu" */}
+                          {(safePost.status === 'Tarkistuksessa' || safePost.status === 'Aikataulutettu') && (
+                            <div className="post-actions" style={{ marginTop: '8px' }}>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handlePublishPost(safePost)
+                                }}
+                                style={{
+                                  backgroundColor: '#22c55e',
+                                  color: 'white',
+                                  border: 'none',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  cursor: 'pointer',
+                                  fontSize: '12px',
+                                  fontWeight: '600'
+                                }}
+                              >
+                                📤 Julkaise
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
-            )}
-          </label>
-          {/* Ajasta-nappi */}
-          {hasPublishDate && (
-            <div style={{marginBottom: 18}}>
+            )
+          })}
+          </div>
+        )}
+
+      {/* Create Modal */}
+      {showCreateModal && (
+        <div 
+          className="modal-overlay"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowCreateModal(false)
+            }
+          }}
+        >
+          <div className="modal">
+            <div className="modal-header">
+              <h2>Luo uusi julkaisu</h2>
               <button
-                type="button"
-                className={styles.scheduleButton}
-                onClick={handleSchedule}
-                disabled={loading}
+                onClick={() => setShowCreateModal(false)}
+                className="modal-close"
               >
-                ⏰ Ajasta julkaisu
+                ✕
               </button>
             </div>
-          )}
-          {error && <div className={styles.modalError}>{error}</div>}
-          {success && <div className={styles.modalSuccess}>Tallennettu!</div>}
-          <div style={{display: 'flex', gap: 12, marginTop: 18}}>
-            <button type="button" onClick={onClose} className={styles.secondaryButton} disabled={loading}>Peruuta</button>
-            <button type="submit" className={styles.viewButton} disabled={loading}>Tallenna</button>
-            <button type="button" onClick={handleDelete} className={styles.deleteButton} disabled={loading}>
-              🗑️ Poista
+            <form onSubmit={(e) => {
+              e.preventDefault()
+              const formData = new FormData(e.target)
+              handleCreatePost({
+                title: formData.get('title'),
+                caption: formData.get('caption')
+              })
+            }} className="modal-form">
+              <div className="form-group">
+                <label>Otsikko</label>
+                <input
+                  name="title"
+                  type="text"
+                  required
+                  className="form-input"
+                  placeholder="Syötä julkaisun otsikko..."
+                />
+                  </div>
+              <div className="form-group">
+                <label>Kuvaus</label>
+            <textarea
+                  name="caption"
+                  rows={4}
+                  className="form-textarea"
+              placeholder="Kirjoita julkaisun kuvaus..."
+            />
+              </div>
+              <div className="modal-actions">
+              <button
+                type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="cancel-button"
+              >
+                  Peruuta
+              </button>
+                    <button
+                  type="submit"
+                  className="submit-button"
+                    >
+                  Luo julkaisu
             </button>
           </div>
         </form>
       </div>
     </div>
-  );
-}
-
-export default function ManagePostsPage() {
-  const [posts, setPosts] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [typeFilter, setTypeFilter] = useState('')
-  const [selectedPost, setSelectedPost] = useState(null)
-  const [segments, setSegments] = useState([])
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const companyId = JSON.parse(localStorage.getItem('user') || 'null')?.companyId
-        const url = `/api/get-posts${companyId ? `?companyId=${companyId}` : ''}`
-        const response = await axios.get(url)
-        // Oikea datan purku
-        const all = Array.isArray(response.data?.[0]?.data) ? response.data[0].data : [];
-        setPosts(all.filter(p => !p["Slide No."]));
-        setSegments(all.filter(p => p["Slide No."]));
-      } catch (err) {
-        setError('Virhe haettaessa julkaisuja')
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchPosts()
-  }, [])
-
-  // Hae uniikit tyypit
-  const types = [...new Set(posts.map(post => post.Type).filter(Boolean))]
-
-  // Suodata julkaisut tyypin mukaan
-  const filteredPosts = typeFilter 
-    ? posts.filter(post => post.Type === typeFilter)
-    : posts
-
-  const formatDate = (dateString) => {
-    if (!dateString) return '-'
-    try {
-      return new Date(dateString).toLocaleDateString('fi-FI')
-    } catch {
-      return dateString
-    }
-  }
-
-  return (
-    <>
-      <PageHeader title="Julkaisujen hallinta" />
-      <div className={styles.container}>
-        {/* Filtteripainikkeet */}
-        {!loading && !error && types.length > 0 && (
-          <div className={styles.filters}>
-            <button
-              onClick={() => setTypeFilter('')}
-              className={`${styles.filterButton} ${typeFilter === '' ? styles.filterButtonActive : styles.filterButtonInactive}`}
-            >
-              Kaikki
-            </button>
-            {types.map(type => (
-              <button
-                key={type}
-                onClick={() => setTypeFilter(type)}
-                className={`${styles.filterButton} ${typeFilter === type ? styles.filterButtonActive : styles.filterButtonInactive}`}
-              >
-                {type}
-              </button>
-            ))}
-          </div>
         )}
-        
-        {loading && <p className={styles.loading}>Ladataan...</p>}
-        {error && <p className={styles.error}>{error}</p>}
-        
-        {/* Grid */}
-        {!loading && !error && (
-          <div className={styles.bentoGrid}>
-            {filteredPosts.map((post, index) => (
-              <div
-                key={post["Record ID"] || post.id || index}
-                className={
-                  [
-                    styles.bentoItem,
-                    getGridSpans(post.Media)
-                  ].join(' ')
-                }
+
+              {/* Edit Modal */}
+        {showEditModal && editingPost && (
+        <div 
+          className="modal-overlay"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowEditModal(false)
+              setEditingPost(null)
+            }
+          }}
+        >
+          <div className="modal">
+                         <div className="modal-header">
+               <h2>
+                 {editingPost.status === 'Kesken' ? 'Voiceover-tarkistus' : 'Muokkaa julkaisua'}
+               </h2>
+               {/* Debug: Näytä status */}
+               <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                 Status: {editingPost.status} | Source: {editingPost.source}
+               </div>
+              <button
+                onClick={() => {
+                  setShowEditModal(false)
+                  setEditingPost(null)
+                }}
+                className="modal-close"
               >
-                {/* Media-kuva, video tai placeholder */}
-                {getMediaElement(post.Media, getPostTitle(post), false, post, segments)}
-                <div className={styles.bentoCardContent}>
-                  {/* Tyyppibadge ja Status badge */}
-                  <div style={{display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4}}>
-                    {post.Type && (
-                      <span className={styles.typeBadge}>{post.Type}</span>
-                    )}
-                    {post.Status && (
-                      <span className={styles.statusBadge}>{post.Status}</span>
-                    )}
-                  </div>
-                  {/* Idea näkyvästi */}
-                  {getPostTitle(post) && (
-                    <div className={styles.ideaDisplay}>
-                      <span style={{fontWeight: 700, marginLeft: 0}}>{truncateWords(getPostTitle(post), 8)}</span>
+                ✕
+              </button>
+            </div>
+            <form onSubmit={(e) => {
+              e.preventDefault()
+              const formData = new FormData(e.target)
+                             handleSaveEdit({
+                 title: formData.get('title'),
+                 caption: formData.get('caption'),
+                 voiceover: formData.get('voiceover'),
+                 publishDate: formData.get('publishDate'),
+                 voiceoverReady: formData.get('voiceoverReady') === 'on',
+                 type: formData.get('type'),
+                 status: formData.get('status')
+               })
+            }} className="modal-form">
+              
+              {/* Video Player / Thumbnail */}
+              <div className="video-player">
+                <div className="video-container">
+                  {editingPost.thumbnail && editingPost.thumbnail !== '/placeholder.png' ? (
+                    <video 
+                      src={editingPost.thumbnail} 
+                      controls 
+                      className="video-element"
+                      poster={editingPost.thumbnail}
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                  ) : (
+                    <div className="video-placeholder">
+                      <span className="video-icon">🎥</span>
+                      <p>Ei videota saatavilla</p>
                     </div>
                   )}
-                  {/* Kuvaus */}
-                  {getPostDescription(post) && (
-                    <div className={styles.description}>{getPostDescription(post)}</div>
-                  )}
-                  {/* Alareuna */}
-                  <div className={styles.cardFooter}>
-                    <span className={styles.date}>
-                      {post["Publish Date"] ? `Julkaistu: ${formatDate(post["Publish Date"])} ` : ''}
-                      {post["Slide No."] && `Slide ${post["Slide No."]}`}
-                    </span>
-                    <button
-                      onClick={() => setSelectedPost(post)}
-                      className={styles.viewButton}
-                    >
-                      Muokkaa
-                    </button>
-                  </div>
                 </div>
               </div>
-            ))}
+
+                             {/* Tabs */}
+               <div className="content-tabs">
+                 <button type="button" className="tab-button active">
+                   {editingPost.source === 'reels' ? '🎬 Reels' : `📸 ${editingPost.type || 'Post'}`}
+                 </button>
+                 <button type="button" className="tab-button">
+                   {editingPost.source === 'reels' ? '🎙️ Voiceover' : '📊 Status'}
+                 </button>
+               </div>
+
+                             {/* Content Fields */}
+               <div className="content-fields">
+                 {/* "Kesken" sarakkeessa: Voiceover-muokkaus */}
+                 {editingPost.status === 'Kesken' && (
+                   <div className="form-group">
+                     <label>Voiceover</label>
+                     <textarea
+                       name="voiceover"
+                       rows={8}
+                       className="form-textarea"
+                       defaultValue={editingPost.voiceover || "Oletko innovaattori? Kuvittele maailma, jossa AI käsittelee asiakaspalvelupuhelut puolestasi. Näytämme, miten tämä teknologia voi mullistaa yrityksesi toiminnan, parantaen tiimisi tehokkuutta ja myyntituloksia. Anna työntekijöidesi keskittyä siihen, missä he loistavat, samalla kun tekoäly hoitaa rutiinitehtävät. Astu kanssamme tulevaisuuteen, jossa työskentely on entistäkin sujuvampaa."}
+                       placeholder="Kirjoita voiceover-teksti..."
+                     />
+                     <div className="voiceover-checkbox">
+                       <label className="checkbox-label">
+                         <input 
+                           type="checkbox" 
+                           name="voiceoverReady" 
+                           defaultChecked={editingPost.voiceoverReady}
+                         />
+                         <span className="checkbox-text">Vahvistan että voiceover on valmis ja tarkistettu</span>
+                       </label>
+                     </div>
+                   </div>
+                 )}
+
+                 {/* "Tarkistuksessa" sarakkeessa: Captions-muokkaus + voiceover (readonly) */}
+                 {editingPost.status === 'Tarkistuksessa' && (
+                   <>
+                     <div className="form-group">
+                       <label>Kuvaus</label>
+                       <textarea
+                         name="caption"
+                         rows={6}
+                         className="form-textarea"
+                         defaultValue={editingPost.caption || "Oletko valmis muuttamaan yrityksesi toimintamallit? AI voi hoitaa puhelut, jotta sinä voit keskittyä suureen kuvaan. Tartu tilaisuuteen ja modernisoi asiakashankintasi.🗝️ ja tägää joku, joka hyötyisi tästä innovaatiosta! #Tekoäly #Yrittäjyys #Kasvu #Tekoäly #Yrittäjyys #Asiakashankinta #Valmennus #RascalCompany"}
+                         placeholder="Kirjoita julkaisun kuvaus..."
+                       />
+                       <div className="char-counter">
+                         <span className="char-count">0</span> / 2200 merkkiä
+      </div>
+                     </div>
+
+                     {/* Voiceover näkyy vain jos kyseessä on Reels */}
+                     {(editingPost.source === 'reels' || editingPost.type === 'Reels') && (
+                       <div className="form-group">
+                         <label>Voiceover (vain luku)</label>
+                         <textarea
+                           name="voiceover"
+                           rows={4}
+                           className="form-textarea"
+                           defaultValue={editingPost.voiceover || ""}
+                           placeholder="Voiceover-teksti..."
+                           readOnly
+                           style={{ backgroundColor: '#f8f9fa', color: '#6c757d' }}
+                         />
+                       </div>
+                     )}
+                   </>
+                 )}
+
+                 {/* Muissa sarakkeissa: Perusmuokkaus */}
+                 {editingPost.status !== 'Kesken' && editingPost.status !== 'Tarkistuksessa' && (
+                   <div className="form-group">
+                     <label>Kuvaus</label>
+                     <textarea
+                       name="caption"
+                       rows={4}
+                       className="form-textarea"
+                       defaultValue={editingPost.caption || ""}
+                       placeholder="Kirjoita julkaisun kuvaus..."
+                     />
+                   </div>
+                 )}
+
+                 <div className="form-group">
+                   <label>Julkaisupäivä</label>
+                   <input
+                     name="publishDate"
+                     type="datetime-local"
+                     className="form-input"
+                     defaultValue={editingPost.publishDate || ""}
+                     placeholder="pp.kk.vvvv klo --:--"
+                   />
+                 </div>
+               </div>
+              <div className="modal-actions">
+          <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditModal(false)
+                    setEditingPost(null)
+                  }}
+                  className="cancel-button"
+                >
+                  Peruuta
+          </button>
+            <button
+                  type="submit"
+                  className="submit-button"
+            >
+                  Tallenna
+            </button>
+                {/* Julkaisu-nappi vain jos status on "Tarkistuksessa" tai "Aikataulutettu" */}
+                {(editingPost.status === 'Tarkistuksessa' || editingPost.status === 'Aikataulutettu') && (
+                  <button
+                    type="button"
+                    onClick={() => handlePublishPost(editingPost)}
+                    className="publish-button"
+                    style={{
+                      backgroundColor: '#22c55e',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: '600',
+                      marginLeft: '8px'
+                    }}
+                  >
+                    📤 Julkaise
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm('Oletko varma, että haluat poistaa tämän julkaisun?')) {
+                      handleDeletePost(editingPost)
+                      setShowEditModal(false)
+                      setEditingPost(null)
+                    }
+                  }}
+                  className="delete-button"
+                >
+                  Poista
+                </button>
+              </div>
+            </form>
+          </div>
           </div>
         )}
-      </div>
-      {selectedPost && <PostModal post={selectedPost} onClose={() => setSelectedPost(null)} allPosts={posts} segments={segments} />}
-    </>
+
+        {/* Create Modal */}
+        {showCreateModal && (
+          <div
+            className="modal-overlay"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowCreateModal(false)
+              }
+            }}
+          >
+            <div className="modal">
+              <div className="modal-header">
+                <h2>Luo uusi julkaisu</h2>
+                <button
+                  onClick={() => setShowCreateModal(false)}
+                  className="modal-close"
+                >
+                  ✕
+                </button>
+                  </div>
+              <form onSubmit={(e) => {
+                e.preventDefault()
+                const formData = new FormData(e.target)
+                handleCreatePost({
+                  title: formData.get('title'),
+                  type: formData.get('type')
+                })
+                setShowCreateModal(false)
+              }} className="modal-form">
+                
+                <div className="content-fields">
+                  <div className="form-group">
+                    <label>Idea</label>
+                    <input
+                      name="title"
+                      type="text"
+                      className="form-input"
+                      placeholder="Kirjoita julkaisun idea..."
+                      required
+                    />
+                    </div>
+
+                  <div className="form-group">
+                    <label>Julkaisun tyyppi</label>
+                    <select name="type" className="form-select" required>
+                      <option value="">Valitse tyyppi</option>
+                      <option value="Photo">📸 Photo</option>
+                      <option value="Carousel">🖼️ Carousel</option>
+                      <option value="Reels">🎬 Reels</option>
+                      <option value="Blog">📝 Blog</option>
+                      <option value="Newsletter">📧 Newsletter</option>
+                      <option value="LinkedIn">💼 LinkedIn</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="modal-actions">
+                    <button
+                    type="button"
+                    onClick={() => setShowCreateModal(false)}
+                    className="cancel-button"
+                  >
+                    Peruuta
+                  </button>
+                  <button
+                    type="submit"
+                    className="submit-button"
+                  >
+                    Luo julkaisu
+                    </button>
+                  </div>
+              </form>
+                </div>
+          </div>
+        )}
+    </div>
   )
 }

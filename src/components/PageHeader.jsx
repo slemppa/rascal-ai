@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function PageHeader({ title, background = 'var(--brand-dark)', color = '#fff', children }) {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -8,6 +9,7 @@ export default function PageHeader({ title, background = 'var(--brand-dark)', co
   const paddingLeft = isMobile ? 16 : 32;
   const navigate = useNavigate()
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const { signOut } = useAuth()
 
   // Dummy user
   const user = {
@@ -16,8 +18,12 @@ export default function PageHeader({ title, background = 'var(--brand-dark)', co
   }
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    console.log('=== PAGEHEADER LOGOUT START ===')
+    console.log('Calling AuthContext signOut...')
+    await signOut()
+    console.log('AuthContext signOut completed, navigating to /signin')
     navigate('/signin')
+    console.log('=== PAGEHEADER LOGOUT END ===')
   }
 
   return (

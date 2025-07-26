@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/slemppa/rascal-ai/compare/v1.6.1...v1.8.0) (2025-07-26)
+
+
+### 📚 Documentation
+
+* ohjeet Airtable-Supabase-synkronointiin ([43be6d8](https://github.com/slemppa/rascal-ai/commit/43be6d82bdb5c2cd6e1948f92542baaaeffd0fb6))
+
+
+### 🐛 Bug Fixes
+
+* korjaa logout, sessionin tyhjennys ja supabase-import-polku ([5bd56e8](https://github.com/slemppa/rascal-ai/commit/5bd56e87fc08b829a7852b451668cd021a931272))
+* supabase env, js-importit ja dev-server debugointi ([ebd4607](https://github.com/slemppa/rascal-ai/commit/ebd4607e7dc40686bdc681ace37485b53349bccc))
+
+
+### ✨ Features
+
+* add /calls page with full functionality from main branch ([9cdd13c](https://github.com/slemppa/rascal-ai/commit/9cdd13c6edf8e653225fa71ed9c361683dce91e0))
+* **auth:** lisää käyttäjäprofiilin haku kirjautumisen jälkeen ([e9bdfe2](https://github.com/slemppa/rascal-ai/commit/e9bdfe22fab620a8d0c8f9591a770400a3c2d671))
+* implement strategy page with N8N integration and UI improvements ([6ab466a](https://github.com/slemppa/rascal-ai/commit/6ab466aba11e43056885bd65525d7e83b1fb6547))
+* supabase-integraatio, feature flagit ja dynaaminen navigaatio ([217b924](https://github.com/slemppa/rascal-ai/commit/217b924e05c176bb1e59807d447438d5dd5e525e))
+
+
+### 🔧 Chores
+
+* aloitettu supabase-migraatio omassa branchissa ([4e4b0c2](https://github.com/slemppa/rascal-ai/commit/4e4b0c2a63c0b2e5d100e28abf62c4086b6a15f8))
+* **release:** 1.6.2 ([e174b4f](https://github.com/slemppa/rascal-ai/commit/e174b4fb739d368cb2eeabac11dad360f389302d))
+* **release:** 1.7.0 ([2cc57cb](https://github.com/slemppa/rascal-ai/commit/2cc57cb6af4c6a47be813db82a6048757e6283c7))
+
 ## [1.7.0](https://github.com/slemppa/rascal-ai/compare/v1.6.1...v1.7.0) (2025-07-26)
 
 

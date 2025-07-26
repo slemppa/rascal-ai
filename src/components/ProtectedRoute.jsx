@@ -19,7 +19,7 @@ const ProtectedRoute = ({ children, requiredFeatures = [] }) => {
   }
 
   if (!user) {
-    navigate('/signin')
+    navigate('/')
     return null
   }
 

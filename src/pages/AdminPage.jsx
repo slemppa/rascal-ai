@@ -21,6 +21,7 @@ export default function AdminPage() {
   const [updateTimeout, setUpdateTimeout] = useState(null)
   const [modalChanges, setModalChanges] = useState({})
   const [isSaving, setIsSaving] = useState(false)
+  const [showUserIds, setShowUserIds] = useState(false)
 
   useEffect(() => {
     checkAdminStatus()
@@ -462,14 +463,22 @@ export default function AdminPage() {
                <div className="admin-section">
                  <div className="admin-header-row">
                    <h2>Käyttäjät ({filteredUsers.length})</h2>
-                   <div className="admin-search">
-                     <input
-                       type="text"
-                       placeholder="Hae nimen, sähköpostin tai yrityksen perusteella..."
-                       value={searchTerm}
-                       onChange={(e) => setSearchTerm(e.target.value)}
-                       className="search-input"
-                     />
+                   <div className="admin-controls">
+                     <button
+                       className="admin-btn admin-btn-secondary"
+                       onClick={() => setShowUserIds(!showUserIds)}
+                     >
+                       {showUserIds ? 'Piilota ID:t' : 'Näytä ID:t'}
+                     </button>
+                     <div className="admin-search">
+                       <input
+                         type="text"
+                         placeholder="Hae nimen, sähköpostin tai yrityksen perusteella..."
+                         value={searchTerm}
+                         onChange={(e) => setSearchTerm(e.target.value)}
+                         className="search-input"
+                       />
+                     </div>
                    </div>
                  </div>
                  
@@ -479,6 +488,7 @@ export default function AdminPage() {
                        <tr>
                          <th>Nimi</th>
                          <th>Sähköposti</th>
+                         {showUserIds && <th>User ID</th>}
                          <th>Rooli</th>
                          <th>Yritys</th>
                          <th>Rekisteröitynyt</th>
@@ -490,6 +500,7 @@ export default function AdminPage() {
                          <tr key={user.id}>
                            <td>{user.contact_person || 'Nimeä ei asetettu'}</td>
                            <td>{user.contact_email}</td>
+                           {showUserIds && <td>{user.auth_user_id || '-'}</td>}
                            <td>
                              <select
                                value={user.role || 'user'}

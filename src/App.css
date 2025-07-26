@@ -141,6 +141,8 @@ html, body, #root {
   min-height: 0;
   display: flex;
   flex-direction: column;
+  margin-left: 250px;
+  overflow-x: hidden;
 }
 
 .main-header {

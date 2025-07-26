@@ -311,12 +311,17 @@ export default function CallPanel() {
 
         // Lisää vain jos on sekä selkeä nimi että puhelinnumero
         if (name && phoneNumber && name.trim() !== '' && phoneNumber.trim() !== '' && phoneNumber.startsWith('+358')) {
+          // Hae valitun äänen id
+          const selectedVoiceObj = voiceOptions.find(v => v.value === selectedVoice)
+          const voiceId = selectedVoiceObj?.id
+          
           callLogs.push({
             user_id: publicUserId,
             customer_name: name.trim().substring(0, 100), // Rajaa 100 merkkiin (tietokannan rajoitus)
             phone_number: phoneNumber.trim().substring(0, 20), // Rajaa 20 merkkiin
             call_type: callType.substring(0, 50), // Rajaa 50 merkkiin
             call_type_id: call_type_id,
+            voice_id: voiceId, // Lisätty voice_id
             call_date: new Date().toISOString(),
             call_status: 'pending',
             campaign_id: `mass-call-${Date.now()}`.substring(0, 100), // Rajaa 100 merkkiin
@@ -367,41 +372,44 @@ export default function CallPanel() {
         return
       }
       
-      // Hae user_id Supabasesta
-      const user_id = user?.id
-      
-      // Etsi valitun puhelun tyypin recordId
+      // Etsi valitun puhelun tyypin call_type_id
       const selectedCallType = callTypes.find(type => type.value === callType)
-      const recordId = selectedCallType?.recordId || selectedCallType?.id
+      const call_type_id = selectedCallType?.id
       
-      if (!recordId) {
+      if (!call_type_id) {
         setSingleCallError('Puhelun tyypin tunniste ei löytynyt')
         setCalling(false)
         return
       }
+      
       // Hae valitun äänen id
       const selectedVoiceObj = voiceOptions.find(v => v.value === selectedVoice)
       const voiceId = selectedVoiceObj?.id
       
-      const response = await supabase.rpc('start_calls', { 
+
+      
+      const response = await axios.post('/api/single-call', {
         phoneNumber: normalizedPhoneNumber,
         name,
         callType,
-        recordId,
+        callTypeId: call_type_id,
         script,
-        voice: voiceId,
-        user_id
+        voiceId: voiceId,
+        userId: user?.id
       })
       
-      if (response.data.success) {
-        alert(`✅ ${response.data.message}`)
+      const result = response.data
+      
+      if (result.success) {
+        alert(`✅ ${result.message}`)
         setPhoneNumber('')
         setName('')
       } else {
-        const errorMsg = response.data.error || 'Puhelun käynnistys epäonnistui'
+        const errorMsg = result.error || 'Puhelun käynnistys epäonnistui'
         setSingleCallError(typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg))
       }
     } catch (e) {
+      console.error('Single call error:', e)
       const errorMessage = e.response?.data?.error || 'Yksittäisen puhelun aloitus epäonnistui'
       setSingleCallError(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage))
     } finally {
@@ -725,12 +733,35 @@ export default function CallPanel() {
       setShowLogDetail(true)
       
       // Käytä log-objektia suoraan, koska se sisältää kaikki tiedot
-      console.log('Puhelun yksityiskohdat:', log)
       
     } catch (error) {
       console.error('Yksityiskohtien haku epäonnistui:', error)
     } finally {
       setLoadingLogDetail(false)
+    }
+  }
+
+  // ESC-näppäimen kuuntelija modaalin sulkemiseen
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === 'Escape' && showLogDetail) {
+        setShowLogDetail(false)
+      }
+    }
+
+    if (showLogDetail) {
+      document.addEventListener('keydown', handleEscKey)
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey)
+    }
+  }, [showLogDetail])
+
+  // Modaalin sulkeminen taustan klikkauksesta
+  const handleModalBackgroundClick = (event) => {
+    if (event.target === event.currentTarget) {
+      setShowLogDetail(false)
     }
   }
 
@@ -843,47 +874,7 @@ export default function CallPanel() {
     fetchCallLogs(1)
   }
 
-  // Pollaa soittojen tilaa 5s välein - korjattu turvallisuus
-  useEffect(() => {
-    if (polling && user?.id) {
-      pollingRef.current = setInterval(async () => {
-        try {
-          const res = await supabase.rpc('call_status', { user_id_param: user.id })
-          
-          if (res.error) {
-            console.error('Call status polling error:', res.error)
-            return
-          }
-          
-          if (res.data) {
-          setCallStatus(res.data)
-            if (res.data.stats) {
-              setStats(res.data.stats)
-            }
-            
-            // Tarkista onko kaikki puhelut valmiita
-            const allCompleted = res.data.stats && 
-              res.data.stats.total_calls > 0 && 
-              res.data.stats.pending_calls === 0
-            
-            if (allCompleted) {
-            setPolling(false)
-              // Päivitä puheluloki kun kaikki valmiita
-              fetchCallLogs()
-            }
-          }
-        } catch (e) {
-          console.error('Polling error:', e)
-        }
-      }, 5000)
-    }
-
-    return () => {
-      if (pollingRef.current) {
-        clearInterval(pollingRef.current)
-      }
-    }
-  }, [polling, user?.id])
+  // Polling-logiikka poistettu - ei tarvita
 
   // Cleanup äänet komponentin purkautuessa
   useEffect(() => {
@@ -1532,8 +1523,14 @@ export default function CallPanel() {
       {/* Yksityiskohtainen näkymä modal ja Modaalit - kaikki samassa fragmentissa */}
       <>
         {showLogDetail && selectedLog && (
-          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-            <div style={{ background: '#fff', borderRadius: 16, padding: 32, maxWidth: 600, width: '90%', maxHeight: '80vh', overflow: 'auto' }}>
+          <div 
+            onClick={handleModalBackgroundClick}
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}
+          >
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              style={{ background: '#fff', borderRadius: 16, padding: 32, maxWidth: 600, width: '90%', maxHeight: '80vh', overflow: 'auto' }}
+            >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                 <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937' }}>
                   📞 Puhelun yksityiskohdat
@@ -1650,23 +1647,7 @@ export default function CallPanel() {
                     </div>
                   )}
                   
-                  {/* Kaikki tiedot JSON-muodossa debuggausta varten */}
-                  <div style={{ marginBottom: 24 }}>
-                      <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
-                      Kaikki tiedot (debug)
-                      </h3>
-                      <pre style={{ 
-                        background: '#f8fafc', 
-                        padding: 16, 
-                        borderRadius: 8, 
-                        fontSize: 12, 
-                        overflow: 'auto',
-                      whiteSpace: 'pre-wrap',
-                      maxHeight: '200px'
-                      }}>
-                      {JSON.stringify(selectedLog, null, 2)}
-                      </pre>
-                    </div>
+
                 </div>
               )}
             </div>

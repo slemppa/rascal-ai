@@ -173,6 +173,7 @@ export default async function handler(req, res) {
             phone_number: phoneNumber,
             call_type: callType, // Teksti "Toiminnot" kentästä
             call_type_id: call_type_id, // ID call_types taulusta
+            voice_id: voice, // Lisätty voice_id
             call_date: new Date().toISOString(),
             call_status: 'pending',
             campaign_id: `mass-call-${Date.now()}`,

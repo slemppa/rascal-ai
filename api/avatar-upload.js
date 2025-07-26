@@ -32,11 +32,24 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'No file provided' })
     }
 
+    // Tunnista tiedostotyyppi
+    const filename = file.originalFilename || file.newFilename
+    const fileExtension = filename.split('.').pop()?.toLowerCase()
+    let fileType = 'unknown'
+    
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
+      fileType = 'image'
+    } else if (['mp3', 'wav', 'm4a', 'aac', 'ogg'].includes(fileExtension)) {
+      fileType = 'audio'
+    }
+    
+    console.log('- File type detected:', fileType, 'from extension:', fileExtension)
+
     // Lue tiedosto
     const fileBuffer = fs.readFileSync(file.filepath)
     
     // Lataa Vercel Blobiin
-    const blob = await put(file.originalFilename || file.newFilename, fileBuffer, {
+    const blob = await put(filename, fileBuffer, {
       access: 'public',
       addRandomSuffix: true,
     })
@@ -58,9 +71,10 @@ export default async function handler(req, res) {
           'x-api-key': N8N_SECRET_KEY
         },
         body: JSON.stringify({
-          type: 'avatar-upload',
+          type: fileType === 'audio' ? 'voice-upload' : 'avatar-upload',
+          fileType: fileType,
           blob: blob,
-          filename: file.originalFilename || file.newFilename,
+          filename: filename,
           uploadedAt: new Date().toISOString(),
           companyId: companyId || null,
         }),
@@ -76,7 +90,10 @@ export default async function handler(req, res) {
       // Älä kaada koko uploadia webhook-virheen takia
     }
 
-    return res.status(200).json(blob)
+    return res.status(200).json({
+      ...blob,
+      fileType: fileType
+    })
   } catch (error) {
     console.error('Avatar upload failed', error)
     return res.status(500).json({ error: 'Upload failed', details: error.message })

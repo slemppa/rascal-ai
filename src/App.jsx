@@ -17,6 +17,7 @@ import ContentStrategyPage from './pages/ContentStrategyPage'
 import AIChatPage from './pages/AIChatPage'
 import HelpPage from './pages/HelpPage'
 import CallPanel from './pages/CallPanel'
+import SettingsPage from './pages/SettingsPage'
 
 export default function App() {
   return (
@@ -84,6 +85,14 @@ export default function App() {
             <Sidebar />
             <div className="main-content">
               <ProtectedRoute><CallPanel /></ProtectedRoute>
+            </div>
+          </div>
+        } />
+        <Route path="/settings" element={
+          <div style={{ display: 'flex', minHeight: '100vh' }}>
+            <Sidebar />
+            <div className="main-content">
+              <ProtectedRoute><SettingsPage /></ProtectedRoute>
             </div>
           </div>
         } />

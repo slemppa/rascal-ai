@@ -3,7 +3,6 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 32px 16px;
-  margin-left: 250px;
 }
 
 .dashboard-header {
@@ -48,8 +47,5 @@
   }
   .card {
     padding: 20px;
-  }
-  .dashboard-container {
-    margin-left: 0;
   }
 } 

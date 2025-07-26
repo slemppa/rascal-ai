@@ -3,6 +3,7 @@ import PageHeader from '../components/PageHeader'
 import { supabase } from '../lib/supabase'
 import styles from './DashboardPage.module.css'
 import { useAuth } from '../contexts/AuthContext'
+import PageMeta from '../components/PageMeta'
 
 function EditPostModal({ post, onClose, onSave }) {
   const [idea, setIdea] = useState(post.Idea || '')
@@ -692,6 +693,11 @@ export default function DashboardPage() {
 
   return (
     <>
+      <PageMeta 
+        title="Dashboard - Rascal AI"
+        description="Hallitse sisältöäsi ja seuraa tuloksia Rascal AI Dashboardissa. Julkaisut, tilastot ja aikataulut yhdellä silmäyksellä."
+        image="/hero.png"
+      />
       <div className={styles['dashboard-container']}>
         <div className={styles['dashboard-header']}>
           <h2 style={{ fontSize: 32, fontWeight: 800, color: '#1f2937', margin: 0 }}>Kojelauta</h2>

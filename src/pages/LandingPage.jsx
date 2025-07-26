@@ -4,6 +4,7 @@ import { useState } from 'react'
 import SignIn from '../components/auth/SignIn'
 import ForgotPassword from '../components/auth/ForgotPassword'
 import MagicLink from '../components/auth/MagicLink'
+import PageMeta from '../components/PageMeta'
 
 const features = [
   {
@@ -92,7 +93,13 @@ export default function LandingPage() {
   }
 
   return (
-    <div style={{ background: '#181B20', minHeight: '100vh', width: '100vw', overflowX: 'hidden', color: '#fff', fontFamily: 'system-ui, -apple-system, sans-serif', display: 'flex', flexDirection: 'column' }}>
+    <>
+      <PageMeta 
+        title="Rascal AI - Älykäs puhelin- ja viestintäautomaatio"
+        description="Automatisoi puhelut ja viestit älykkään AI-assistentin avulla. Rascal AI soittaa asiakkaillesi ja hoitaa viestinnän automaattisesti."
+        image="/hero.png"
+      />
+      <div style={{ background: '#181B20', minHeight: '100vh', width: '100vw', overflowX: 'hidden', color: '#fff', fontFamily: 'system-ui, -apple-system, sans-serif', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '32px 48px 0 48px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -266,5 +273,6 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
+    </>
   )
 } 

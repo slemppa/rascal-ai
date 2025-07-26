@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.23.3](https://github.com/slemppa/rascal-ai/compare/v1.23.2...v1.23.3) (2025-01-27)
+
+### 🚀 BREAKING CHANGES
+
+* **database:** Siirrytty Airtablesta Supabaseen - kaikki data on nyt Supabasessa
+* **auth:** Kirjautuminen käyttää nyt Supabase Authia Airtable-autentikaation sijaan
+
+### ✨ Features
+
+* **admin:** Admin-paneelin puhelut-tab parannettu - poistettu Yhteenveto ja Tyyppi sarakkeet, lisätty Käyttäjä-sarake
+* **admin:** Admin-paneelin viestit-tab lisätty kuukausittainen aggregaatio käyttäjittäin
+* **admin:** Admin-paneelin käyttäjät-tab lisätty User ID -sarake (piilotettu oletuksena)
+* **routing:** Korjattu reititys - kirjautumattomat käyttäjät ohjataan landing page -sivulle
+
+### 🧹 Chores
+
+* **api:** Poistettu ylimääräiset single-call API endpointit (2 ja 3)
+* **database:** Täydellinen Supabase-migraatio valmis - kaikki toiminnallisuus käyttää nyt Supabasea
+
 ## [1.9.0](https://github.com/slemppa/rascal-ai/compare/v1.6.1...v1.9.0) (2025-07-26)
 
 

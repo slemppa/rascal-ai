@@ -1,12 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react'
-import axios from 'axios'
+import { supabase } from '../lib/supabase'
 import AddCallTypeModal from '../components/AddCallTypeModal'
 import EditCallTypeModal from '../components/EditCallTypeModal'
 import './CallPanel.css'
 import CallStats from './CallStats'
 import Button from '../components/Button'
+import { useAuth } from '../contexts/AuthContext'
+import axios from 'axios'
 
 export default function CallPanel() {
+  const { user } = useAuth()
   const [sheetUrl, setSheetUrl] = useState('')
   const [validating, setValidating] = useState(false)
   const [validationResult, setValidationResult] = useState(null)
@@ -21,11 +24,11 @@ export default function CallPanel() {
   // Uudet state-muuttujat
   const [callType, setCallType] = useState('myynti')
   const [script, setScript] = useState('Hei! Soitan [Yritys] puolesta. Meillä on kiinnostava tarjous teille...')
-  const [selectedVoice, setSelectedVoice] = useState('aurora')
+  const [selectedVoice, setSelectedVoice] = useState('rascal-nainen-1')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [name, setName] = useState('')
   const [calling, setCalling] = useState(false)
-  const [inboundVoice, setInboundVoice] = useState('aurora')
+  const [inboundVoice, setInboundVoice] = useState('rascal-nainen-1')
   const [inboundScript, setInboundScript] = useState('Kiitos soitostasi! Olen AI-assistentti ja autan sinua mielellään...')
   const [currentAudio, setCurrentAudio] = useState(null)
   const [audioInfo, setAudioInfo] = useState('')
@@ -43,7 +46,6 @@ export default function CallPanel() {
   
   // Puhelulokien state-muuttujat
   const [callLogs, setCallLogs] = useState([])
-  const [callLogsStats, setCallLogsStats] = useState({ totalCount: 0, successfulCount: 0, failedCount: 0, averageDuration: 0 })
   const [loadingCallLogs, setLoadingCallLogs] = useState(false)
   const [callLogsError, setCallLogsError] = useState('')
   
@@ -63,11 +65,59 @@ export default function CallPanel() {
   const [loadingLogDetail, setLoadingLogDetail] = useState(false)
 
   const voiceOptions = [
-    { value: 'aurora', label: 'Aurora (Nainen, Lämmin ja Ammattimainen)' },
-    { value: 'lumi', label: 'Lumi (Nainen, Positiivinen ja Ilmeikäs)' },
-    { value: 'kai', label: 'Kai (Mies, Rauhallinen ja Luottamusta herättävä)' },
-    { value: 'veeti', label: 'Veeti (Mies, Nuorekas ja Energinen)' }
+    { value: 'rascal-nainen-1', label: 'Aurora (Nainen, Lämmin ja Ammattimainen)', id: 'GGiK1UxbDRh5IRtHCTlK' },
+    { value: 'rascal-nainen-2', label: 'Lumi (Nainen, Positiivinen ja Ilmeikäs)', id: 'bEe5jYFAF6J2nz6vM8oo' },
+    { value: 'rascal-mies-1', label: 'Kai (Mies, Rauhallinen ja Luottamusta herättävä)', id: 'waueh7VTxMDDIYKsIaYC' },
+    { value: 'rascal-mies-2', label: 'Veeti (Mies, Nuorekas ja Energinen)', id: 's6UtVF1khAck9KlohM9j' }
   ]
+
+  // Haetaan käyttäjän oma voice_id public.users-taulusta
+  const [userVoiceId, setUserVoiceId] = useState(null)
+  const [userVoiceLabel, setUserVoiceLabel] = useState('Oma ääni')
+
+  // Lisätään isPlaying-state äänen toistoa varten
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [audio, setAudio] = useState(null)
+  const [currentlyPlayingVoice, setCurrentlyPlayingVoice] = useState(null)
+  const [isStopping, setIsStopping] = useState(false)
+
+
+
+  useEffect(() => {
+    const fetchUserVoiceId = async () => {
+      if (!user?.id) return
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('voice_id')
+          .eq('auth_user_id', user.id)
+          .single()
+        
+        if (error) {
+          console.error('Error fetching user voice_id:', error)
+          return
+        }
+        
+        if (data?.voice_id) {
+          setUserVoiceId(data.voice_id)
+          setUserVoiceLabel('Oma ääni')
+        }
+      } catch (err) {
+        console.error('Error in fetchUserVoiceId:', err)
+      }
+    }
+    fetchUserVoiceId()
+  }, [user])
+
+
+
+  // Hae puheluloki ja call types kun käyttäjä muuttuu
+  useEffect(() => {
+    if (user?.id) {
+      fetchCallLogs()
+      fetchCallTypes()
+    }
+  }, [user?.id])
 
   // Pysäytä kaikki äänielementit
   const stopAllAudio = () => {
@@ -85,72 +135,28 @@ export default function CallPanel() {
     
     audioElementsRef.current = []
     setCurrentAudio(null)
+    setIsPlaying(false)
+    setCurrentlyPlayingVoice(null)
+    setAudioInfo('')
   }
 
   // Ääninäytteen toisto
   const playVoiceSample = (voiceValue) => {
-    stopAllAudio()
-
-    const audioFileMap = {
-      'aurora': 'rascal-nainen-1',
-      'lumi': 'rascal-nainen-2', 
-      'kai': 'rascal-mies-1',
-      'veeti': 'rascal-mies-2'
-    }
-
-    const voiceName = voiceOptions.find(v => v.value === voiceValue)?.label || voiceValue
-    const fileName = audioFileMap[voiceValue]
-    
-    if (!fileName) {
-      setAudioInfo('❌ Ääninäyte ei ole saatavilla')
+    if (isPlaying && audio) {
+      audio.pause()
+      audio.currentTime = 0
+      setIsPlaying(false)
+      setAudio(null)
       return
     }
-
-    setAudioInfo(`🔄 Ladataan ${voiceName}...`)
-
-    const tryFormats = ['mp3', 'wav', 'ogg']
-    let audio = null
-
-    const tryNextFormat = (formatIndex = 0) => {
-      if (formatIndex >= tryFormats.length) {
-        setAudioInfo('❌ Ääninäytettä ei voitu toistaa')
-        return
-      }
-
-      const format = tryFormats[formatIndex]
-      audio = new Audio(`/${fileName}.${format}`)
-      
-      audioElementsRef.current.push(audio)
-      
-      audio.onloadedmetadata = () => {
-        const duration = Math.round(audio.duration)
-        setAudioInfo(`📀 ${voiceName} (${duration}s)`)
-      }
-      
-      audio.oncanplaythrough = () => {
-        setCurrentAudio(audio)
-        audio.play().then(() => {
-          setAudioInfo(`▶️ Soittaa: ${voiceName}`)
-        }).catch(e => {
-          console.error('Äänen toisto epäonnistui:', e)
-          setAudioInfo('❌ Äänen toisto epäonnistui')
-        })
-      }
-      
-      audio.onended = () => {
-        setAudioInfo(`✅ Valmis: ${voiceName}`)
-        setCurrentAudio(null)
-        audioElementsRef.current = audioElementsRef.current.filter(a => a !== audio)
-        setTimeout(() => setAudioInfo(''), 3000)
-      }
-      
-      audio.onerror = () => {
-        audioElementsRef.current = audioElementsRef.current.filter(a => a !== audio)
-        tryNextFormat(formatIndex + 1)
-      }
+    const newAudio = new Audio(`/${voiceValue}.mp3`)
+    setAudio(newAudio)
+    newAudio.play()
+    setIsPlaying(true)
+    newAudio.onended = () => {
+      setIsPlaying(false)
+      setAudio(null)
     }
-
-    tryNextFormat()
   }
 
   const handleValidate = async () => {
@@ -158,18 +164,12 @@ export default function CallPanel() {
     setError('')
     setValidationResult(null)
     try {
-      // Hae companyId
-      let companyId = null
-      try {
-        const userObj = JSON.parse(localStorage.getItem('user') || '{}')
-        companyId = userObj.companyId
-      } catch (e) {
-        console.error('Virhe user-objektin parsimisessa:', e)
-      }
+      // Hae user_id Supabasesta
+      const user_id = user?.id
 
-      const res = await axios.post('/api/validate-sheet', { 
+      const res = await axios.post('http://localhost:3000/api/validate-sheet', { 
         sheetUrl,
-        companyId
+        user_id
       })
       
       if (res.data.success) {
@@ -183,55 +183,172 @@ export default function CallPanel() {
         setError(res.data.error || 'Validointi epäonnistui')
       }
     } catch (e) {
-      console.error('Validate error:', e)
       const errorMessage = e.response?.data?.error || 'Validointi epäonnistui'
-      setError(errorMessage)
+      setError(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage))
     } finally {
       setValidating(false)
     }
+  }
+
+  // Apufunktio puhelinnumeron normalisointiin +358-muotoon
+  const normalizePhoneNumber = (phoneNumber) => {
+    if (!phoneNumber) return null
+    
+    // Poista kaikki ei-numeeriset merkit paitsi + ja -
+    let cleaned = phoneNumber.toString().replace(/[^\d+\-]/g, '')
+    
+    // Jos numero alkaa +358:lla, palauta sellaisenaan
+    if (cleaned.startsWith('+358')) {
+      return cleaned
+    }
+    
+    // Jos numero alkaa 358:lla ilman +, lisää +
+    if (cleaned.startsWith('358')) {
+      return '+' + cleaned
+    }
+    
+    // Jos numero alkaa 0:lla, poista se ja lisää +358
+    if (cleaned.startsWith('0')) {
+      return '+358' + cleaned.substring(1)
+    }
+    
+    // Jos numero on 9 numeroa (suomalainen mobiili), lisää +358
+    if (cleaned.length === 9 && /^\d{9}$/.test(cleaned)) {
+      return '+358' + cleaned
+    }
+    
+    // Jos numero on 10 numeroa ja alkaa 0:lla, poista 0 ja lisää +358
+    if (cleaned.length === 10 && cleaned.startsWith('0')) {
+      return '+358' + cleaned.substring(1)
+    }
+    
+    // Jos numero on jo oikeassa muodossa (10-15 numeroa), lisää +358
+    if (cleaned.length >= 10 && cleaned.length <= 15 && /^\d+$/.test(cleaned)) {
+      return '+358' + cleaned
+    }
+    
+    // Jos mikään ei täsmää, palauta alkuperäinen
+    return phoneNumber
   }
 
   const handleStartCalls = async () => {
     setStarting(true)
     setError('')
     try {
-      // Hae companyId
-      let companyId = null
-      try {
-        const userObj = JSON.parse(localStorage.getItem('user') || '{}')
-        companyId = userObj.companyId
-      } catch (e) {
-        console.error('Virhe user-objektin parsimisessa:', e)
+      // Hae user_id Supabasesta
+      const user_id = user?.id
+
+      // Hae ensin public.users.id käyttäen auth_user_id:tä
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user_id)
+        .single()
+
+      if (userError || !userData) {
+        throw new Error('Käyttäjää ei löytynyt')
       }
 
-      // Hae valitun puhelun tyypin Call ID
-      const selectedCallType = callTypes.find(type => type.value === callType)
-      const recordId = selectedCallType?.['Call ID']
+      const publicUserId = userData.id
 
-      // Lähetä sekä sheetUrl että Toiminnot-moduulin asetukset
-      const requestData = { 
-        sheetUrl,
-        callType,
-        recordId, // Käytetään Call ID:tä
-        script,
-        voice: selectedVoice,
-        companyId
+      // Hae call_type_id call_types taulusta
+      const { data: callTypeData, error: callTypeError } = await supabase
+        .from('call_types')
+        .select('id')
+        .eq('name', callType)
+        .eq('user_id', publicUserId)
+        .single()
+
+      if (callTypeError || !callTypeData) {
+        throw new Error('Puhelun tyyppiä ei löytynyt')
+      }
+
+      const call_type_id = callTypeData.id
+
+      // Käytä validationResult.rows dataa ja lisää jokainen suoraan Supabaseen
+      if (!validationResult || !validationResult.rows) {
+        throw new Error('Validointi pitää suorittaa ensin')
+      }
+
+      const callLogs = []
+      let successCount = 0
+      let errorCount = 0
+
+      // Etsi sarakkeiden otsikot ensin
+      let nameColumn = null
+      let phoneColumn = null
+      
+      // Etsi nimisarakkeen otsikko
+      for (const columnName of validationResult.columns || []) {
+        if (columnName.toLowerCase().includes('name') || 
+            columnName.toLowerCase().includes('nimi') ||
+            columnName.toLowerCase().includes('etunimi') ||
+            columnName.toLowerCase().includes('sukunimi')) {
+          nameColumn = columnName
+          break
+        }
       }
       
-      console.log('🔍 Frontend lähettää mass-call:', requestData)
+      // Etsi puhelinnumerosarakkeen otsikko
+      for (const columnName of validationResult.columns || []) {
+        if (columnName.toLowerCase().includes('phone') || 
+            columnName.toLowerCase().includes('puhelin') || 
+            columnName.toLowerCase().includes('numero') ||
+            columnName.toLowerCase().includes('tel')) {
+          phoneColumn = columnName
+          break
+        }
+      }
       
-      const res = await axios.post('/api/mass-call', requestData)
-      
-      if (res.data.success) {
-        setPolling(true)
-        alert(`✅ ${res.data.message}\n\nAloitettu: ${res.data.startedCalls} puhelua\nEpäonnistui: ${res.data.failedCalls} puhelua`)
+      if (!nameColumn || !phoneColumn) {
+        throw new Error('Vaadittuja sarakkeita ei löytynyt. Tarvitaan sekä nimisarakke että puhelinnumerosarakke.')
+      }
+
+      for (const row of validationResult.rows) {
+        // Hae arvot sarakkeiden otsikoiden perusteella
+        const phoneNumber = normalizePhoneNumber(row[phoneColumn])
+        const name = row[nameColumn] ? row[nameColumn].trim() : null
+
+        // Lisää vain jos on sekä selkeä nimi että puhelinnumero
+        if (name && phoneNumber && name.trim() !== '' && phoneNumber.trim() !== '' && phoneNumber.startsWith('+358')) {
+          callLogs.push({
+            user_id: publicUserId,
+            customer_name: name.trim().substring(0, 100), // Rajaa 100 merkkiin (tietokannan rajoitus)
+            phone_number: phoneNumber.trim().substring(0, 20), // Rajaa 20 merkkiin
+            call_type: callType.substring(0, 50), // Rajaa 50 merkkiin
+            call_type_id: call_type_id,
+            call_date: new Date().toISOString(),
+            call_status: 'pending',
+            campaign_id: `mass-call-${Date.now()}`.substring(0, 100), // Rajaa 100 merkkiin
+            summary: `Mass-call: ${script.trim().substring(0, 100)}...`
+          })
       } else {
-        setError(res.data.error || 'Soittojen käynnistys epäonnistui')
+          errorCount++
+        }
       }
+
+      if (callLogs.length === 0) {
+        throw new Error('Kelvollisia rivejä ei löytynyt. Varmista että riveillä on sekä nimi että kelvollinen suomalainen puhelinnumero.')
+      }
+
+      // Lisää kaikki call_logs tauluun
+      const { data: insertedLogs, error: insertError } = await supabase
+        .from('call_logs')
+        .insert(callLogs)
+        .select()
+
+      if (insertError) {
+        throw new Error('Virhe call_logs kirjoittamisessa: ' + insertError.message)
+      }
+
+      successCount = insertedLogs.length
+
+      setPolling(true)
+      alert(`✅ Mass-call käynnistetty onnistuneesti!\n\nAloitettu: ${successCount} puhelua\nOhitettu (puuttuu nimi/kelvollinen puhelinnumero): ${errorCount} riviä`)
+      
     } catch (e) {
-      console.error('Start calls error:', e)
-      const errorMessage = e.response?.data?.error || 'Soittojen käynnistys epäonnistui'
-      setError(errorMessage)
+      const errorMessage = e.message || 'Soittojen käynnistys epäonnistui'
+      setError(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage))
     } finally {
       setStarting(false)
     }
@@ -241,14 +358,17 @@ export default function CallPanel() {
     setCalling(true)
     setSingleCallError('')
     try {
-      // Hae companyId samalla tavalla kuin App.jsx:ssä
-      let companyId = null
-      try {
-        const userObj = JSON.parse(localStorage.getItem('user') || '{}')
-        companyId = userObj.companyId
-      } catch (e) {
-        console.error('Virhe user-objektin parsimisessa:', e)
+      // Normalisoi puhelinnumero
+      const normalizedPhoneNumber = normalizePhoneNumber(phoneNumber)
+      
+      if (!normalizedPhoneNumber || !normalizedPhoneNumber.startsWith('+358')) {
+        setSingleCallError('Kelvollinen suomalainen puhelinnumero vaaditaan')
+        setCalling(false)
+        return
       }
+      
+      // Hae user_id Supabasesta
+      const user_id = user?.id
       
       // Etsi valitun puhelun tyypin recordId
       const selectedCallType = callTypes.find(type => type.value === callType)
@@ -259,15 +379,18 @@ export default function CallPanel() {
         setCalling(false)
         return
       }
+      // Hae valitun äänen id
+      const selectedVoiceObj = voiceOptions.find(v => v.value === selectedVoice)
+      const voiceId = selectedVoiceObj?.id
       
-      const response = await axios.post('/api/start-calls', { 
-        phoneNumber,
+      const response = await supabase.rpc('start_calls', { 
+        phoneNumber: normalizedPhoneNumber,
         name,
         callType,
         recordId,
         script,
-        voice: selectedVoice,
-        companyId
+        voice: voiceId,
+        user_id
       })
       
       if (response.data.success) {
@@ -275,12 +398,12 @@ export default function CallPanel() {
         setPhoneNumber('')
         setName('')
       } else {
-        setSingleCallError(response.data.error || 'Puhelun käynnistys epäonnistui')
+        const errorMsg = response.data.error || 'Puhelun käynnistys epäonnistui'
+        setSingleCallError(typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg))
       }
     } catch (e) {
-      console.error('Single call error:', e)
       const errorMessage = e.response?.data?.error || 'Yksittäisen puhelun aloitus epäonnistui'
-      setSingleCallError(errorMessage)
+      setSingleCallError(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage))
     } finally {
       setCalling(false)
     }
@@ -289,8 +412,10 @@ export default function CallPanel() {
   const handleSaveInboundSettings = async () => {
     setError('')
     try {
-      await axios.post('https://oma-n8n-url.fi/webhook/save-inbound-settings', {
-        voice: inboundVoice,
+      const inboundVoiceObj = voiceOptions.find(v => v.value === inboundVoice)
+      const inboundVoiceId = inboundVoiceObj?.id
+      await supabase.rpc('save_inbound_settings', {
+        voice: inboundVoiceId,
         script: inboundScript
       })
       alert('Inbound-asetukset tallennettu!')
@@ -303,29 +428,26 @@ export default function CallPanel() {
   const handleSaveCallType = async () => {
     try {
       if (editingCallType) {
-        // Päivitä olemassa oleva puhelutyyppi N8N:n kautta
+        // Päivitä olemassa oleva puhelutyyppi Supabase-tietokannassa
         const fields = {
-          Name: editingCallType.callType || editingCallType.Name,
-          Identity: editingCallType.identity || editingCallType.Identity || '',
-          Style: editingCallType.style || editingCallType.Style || '',
-          Guidelines: editingCallType.guidelines || editingCallType.Guidelines || '',
-          Goals: editingCallType.goals || editingCallType.Goals || '',
-          Intro: editingCallType.intro || editingCallType.Intro || '',
-          Questions: editingCallType.questions || editingCallType.Questions || '',
-          Outro: editingCallType.outro || editingCallType.Outro || '',
-          Notes: editingCallType.notes || editingCallType.Notes || '',
-          Version: editingCallType.version || editingCallType.Version || 'v1.0',
-          Status: editingCallType.status || editingCallType.Status || 'Active',
+          name: editingCallType.callType || editingCallType.name,
+          identity: editingCallType.identity || '',
+          style: editingCallType.style || '',
+          guidelines: editingCallType.guidelines || '',
+          goals: editingCallType.goals || '',
+          intro: editingCallType.intro || '',
+          questions: editingCallType.questions || '',
+          outro: editingCallType.outro || '',
+          notes: editingCallType.notes || '',
+          version: editingCallType.version || 'v1.0',
+          status: editingCallType.status || 'Active',
         }
 
-        const response = await axios.put('/api/update-call-type', {
-          recordId: editingCallType.recordId || editingCallType.id,
-          fields: fields
-        })
+        const { error } = await supabase.from('call_types').update(fields).eq('id', editingCallType.id)
 
-        if (response.data.success) {
+        if (!error) {
           alert('Puhelun tyyppi päivitetty!')
-          fetchCallTypes() // Päivitä lista N8N:stä
+          fetchCallTypes() // Päivitä lista
         } else {
           throw new Error('Päivitys epäonnistui')
         }
@@ -339,7 +461,7 @@ export default function CallPanel() {
       setShowEditModal(false)
     } catch (error) {
       console.error('Puhelun tyypin tallennus epäonnistui:', error)
-      alert('Puhelun tyypin tallennus epäonnistui: ' + (error.response?.data?.error || error.message))
+      alert('Puhelun tyypin tallennus epäonnistui: ' + (error.message || error))
     }
   }
 
@@ -349,10 +471,13 @@ export default function CallPanel() {
     }
 
     try {
-      // Poista mock-datasta
-      const updatedCallTypes = callTypes.filter(ct => ct.value !== recordId)
-      setCallTypes(updatedCallTypes)
+      const { error } = await supabase.from('call_types').delete().eq('id', recordId)
+      if (!error) {
       alert('Puhelun tyyppi poistettu!')
+        fetchCallTypes()
+      } else {
+        throw new Error('Poisto epäonnistui')
+      }
     } catch (error) {
       console.error('Puhelun tyypin poisto epäonnistui:', error)
       alert('Puhelun tyypin poisto epäonnistui')
@@ -363,10 +488,8 @@ export default function CallPanel() {
   const updateScriptFromCallType = (selectedCallType) => {
     const selectedType = callTypes.find(type => type.value === selectedCallType)
     if (selectedType) {
-      // Käytä Intro-kenttää skriptinä, koska se on puhelun aloitus
-      if (selectedType.Intro) {
-        setScript(selectedType.Intro)
-      } else if (selectedType.intro) {
+      // Käytä intro-kenttää skriptinä, koska se on puhelun aloitus
+      if (selectedType.intro) {
         setScript(selectedType.intro)
       } else {
         setScript('')
@@ -376,45 +499,44 @@ export default function CallPanel() {
 
   // Hae puhelun tyypit komponentin latauksen yhteydessä
   const fetchCallTypes = async () => {
-    try {
       setLoadingCallTypes(true)
-      
-      // Hae companyId samalla tavalla kuin App.jsx:ssä
-      let companyId = null
-      try {
-        const userObj = JSON.parse(localStorage.getItem('user') || '{}')
-        companyId = userObj.companyId
-      } catch (e) {
-        console.error('Virhe user-objektin parsimisessa:', e)
-      }
-      
-      if (!companyId) {
+    try {
+      if (!user?.id) {
         setCallTypes([])
         return
       }
       
-      // Hae puhelutyypit backendistä
-      const response = await axios.get(`/api/call-types?companyId=${companyId}`)
+      // Hae ensin users.id käyttäen auth_user_id:tä
+      const { data: userProfile, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
       
-      if (response.data.records) {
-        // Muunna data frontend-ystävälliseen muotoon
-        const formattedCallTypes = response.data.records.map(record => ({
-          value: record.fields.Name, // käytetään aina Name-arvoa valintana
-          label: record.fields.Name,
+      if (userError || !userProfile) {
+        setCallTypes([])
+        return
+      }
+      
+      // Hae call_types käyttäen users.id:tä
+      const { data, error } = await supabase
+        .from('call_types')
+        .select('*')
+        .eq('user_id', userProfile.id)
+        .order('created_at', { ascending: false })
+      
+      if (error) throw error
+      
+      const formattedCallTypes = data.map(record => ({
+        value: record.name,
+        label: record.name,
           id: record.id,
-          ...record.fields
+        ...record
         }))
         setCallTypes(formattedCallTypes)
-        // Poistetaan vanha oletuslogiikka tästä
-        // if (formattedCallTypes.length > 0 && !callType) {
-        //   const firstType = formattedCallTypes[0].value
-        //   setCallType(firstType)
-        //   setTimeout(() => updateScriptFromCallType(firstType), 100)
-        // }
-        console.log('Puhelutyypit haettu:', formattedCallTypes.length)
-      } else {
+    } catch (e) {
+      console.error('Error fetching call types:', e)
         setCallTypes([])
-      }
     } finally {
       setLoadingCallTypes(false)
     }
@@ -431,47 +553,68 @@ export default function CallPanel() {
     }
   }, [callTypes])
 
+  // Lisää uusi useEffect, joka varmistaa että callType on aina valittuna
+  useEffect(() => {
+    fetchCallTypes()
+    // eslint-disable-next-line
+  }, [user])
+
+  // Lisää uusi useEffect, joka varmistaa että callType on aina valittuna
+  useEffect(() => {
+    if (callTypes.length > 0) {
+      const exists = callTypes.some(type => type.value === callType)
+      if (!callType || !exists) {
+        setCallType(callTypes[0].value)
+        updateScriptFromCallType(callTypes[0].value)
+      }
+    }
+  }, [callTypes])
+
   const handleAddCallType = async () => {
     setAddTypeLoading(true)
     setAddTypeError('')
     setAddTypeSuccess('')
     try {
-      // Hae companyId localStoragesta
-      let companyId = null
-      try {
-        const userObj = JSON.parse(localStorage.getItem('user') || '{}')
-        companyId = userObj.companyId
-      } catch (e) {}
-      if (!companyId) {
-        setAddTypeError('Yrityksen tunniste puuttuu!')
+      if (!user?.id) {
+        setAddTypeError('Käyttäjän tunniste puuttuu!')
         setAddTypeLoading(false)
         return
       }
-      // Rakenna fields-objekti
-      const fields = {
-        Name: newCallType.callType,
-        Company: [companyId],
-        Identity: newCallType.identity || '',
-        Style: newCallType.style || '',
-        Guidelines: newCallType.guidelines || '',
-        Goals: newCallType.goals || '',
-        Intro: newCallType.intro || '',
-        Questions: newCallType.questions || '',
-        Outro: newCallType.outro || '',
-        Notes: newCallType.notes || '',
-        Version: newCallType.version || 'v1.0',
-        Status: newCallType.status || 'Active',
+      
+      // Hae ensin users.id käyttäen auth_user_id:tä
+      const { data: userProfile, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (userError || !userProfile) {
+        setAddTypeError('Käyttäjää ei löytynyt!')
+        setAddTypeLoading(false)
+        return
       }
-      const response = await axios.post('/api/create-call-type', { fields })
-      if (response.data.success) {
+
+      const insertData = {
+        user_id: userProfile.id,
+        name: newCallType.callType,
+        identity: newCallType.identity || '',
+        style: newCallType.style || '',
+        guidelines: newCallType.guidelines || '',
+        goals: newCallType.goals || '',
+        intro: newCallType.intro || '',
+        questions: newCallType.questions || '',
+        outro: newCallType.outro || '',
+        notes: newCallType.notes || '',
+        version: newCallType.version || 'v1.0',
+        status: newCallType.status || 'Active',
+      }
+      const { error } = await supabase.from('call_types').insert([insertData])
+      if (error) throw error
         setAddTypeSuccess('Puhelutyyppi lisätty!')
         setNewCallType({ callType: '', label: '', description: '', identity: '', style: '', guidelines: '', goals: '', intro: '', questions: '', outro: '', notes: '', version: '', status: 'Active' })
         fetchCallTypes() // Päivitä lista
-      } else {
-        setAddTypeError('Lisäys epäonnistui')
-      }
     } catch (e) {
-      setAddTypeError('Lisäys epäonnistui: ' + (e.response?.data?.error || e.message))
+      setAddTypeError('Lisäys epäonnistui: ' + (e.message || e))
     } finally {
       setAddTypeLoading(false)
     }
@@ -501,63 +644,78 @@ export default function CallPanel() {
       setLoadingCallLogs(true)
       setCallLogsError('')
       
-      // Hae companyId samalla tavalla kuin muissakin funktioissa
-      let companyId = null
-      try {
-        const userObj = JSON.parse(localStorage.getItem('user') || '{}')
-        companyId = userObj.companyId
-      } catch (e) {
-        console.error('Virhe user-objektin parsimisessa:', e)
-      }
-      
-      if (!companyId) {
-        setCallLogsError('Yrityksen tunniste puuttuu!')
+      if (!user?.id) {
+        setCallLogsError('Käyttäjän tunniste puuttuu!')
         return
       }
 
-      // Rakenna query parametrit
-      const params = new URLSearchParams({
-        companyId,
-        page: page.toString(),
-        limit: '1000', // Suurempi limit, jotta kaikki puhelulokit haetaan
-        search: searchTerm,
-        status: statusFilter,
-        callType: callTypeFilter,
-        dateFrom,
-        dateTo
-      })
-
-      // Hae puheluloki N8N:n kautta
-      const response = await axios.get(`/api/call-logs?${params}`)
+      // Hae ensin users.id käyttäen auth_user_id:tä
+      const { data: userProfile, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
       
-      if (response.data.logs) {
-        setCallLogs(response.data.logs)
-        setCallLogsStats(response.data.stats)
-        setCurrentPage(response.data.pagination?.currentPage || page)
-        setTotalPages(response.data.pagination?.totalPages || 1)
-        setTotalCount(response.data.pagination?.totalCount || 0)
-        console.log('Puheluloki haettu:', response.data.logs.length, 'tapahtumaa, sivu', page)
-      } else {
-        throw new Error('Puhelulokin haku epäonnistui')
+      if (userError || !userProfile) {
+        setCallLogsError('Käyttäjää ei löytynyt!')
+        return
       }
+
+      let query = supabase
+        .from('call_logs')
+        .select('*')
+        .eq('user_id', userProfile.id)
+        .order('created_at', { ascending: false })
+
+      // Lisää suodattimet
+      if (searchTerm) {
+        query = query.or(`customer_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%`)
+      }
+              if (statusFilter) {
+          if (statusFilter === 'success') {
+            query = query.eq('call_status', 'done').eq('answered', true)
+          } else if (statusFilter === 'failed') {
+            query = query.eq('call_status', 'done').eq('answered', false)
+          } else if (statusFilter === 'pending') {
+            query = query.eq('call_status', 'pending')
+          } else if (statusFilter === 'in_progress') {
+            query = query.eq('call_status', 'in progress')
+          }
+        }
+      if (callTypeFilter) {
+        query = query.eq('call_type', callTypeFilter)
+      }
+              if (dateFrom) {
+          query = query.gte('call_date', dateFrom)
+        }
+        if (dateTo) {
+          query = query.lte('call_date', dateTo)
+        }
+
+      const { data: logs, error } = await query
+
+      if (error) {
+        throw new Error('Puhelulokin haku epäonnistui: ' + error.message)
+      }
+
+      setCallLogs(logs || [])
+      setCurrentPage(page)
+      setTotalCount(logs?.length || 0)
+      
+      // Poistettu tilastojen laskenta fetchCallLogs-funktiosta
     } catch (error) {
       console.error('Puhelulokin haku epäonnistui:', error)
-      setCallLogsError('Puhelulokin haku epäonnistui: ' + (error.response?.data?.error || error.message))
+      setCallLogsError('Puhelulokin haku epäonnistui: ' + (error.message || error))
     } finally {
       setLoadingCallLogs(false)
     }
   }
 
     useEffect(() => {
-      fetchCallTypes()
-    }, []) // Tyhjä riippuvuuslista - suoritetaan vain kerran
-
-      // Hae puheluloki kun "Lokit" välilehti avataan
-  useEffect(() => {
-    if (activeTab === 'logs') {
-      fetchCallLogs()
-    }
-  }, [activeTab]) // Suoritetaan kun activeTab muuttuu
+      if (user?.id && activeTab === 'logs') {
+        fetchCallLogs()
+      }
+  }, [user, activeTab]) // Suoritetaan kun user tai activeTab muuttuu
 
   // Hae yksityiskohtaiset tiedot puhelusta
   const fetchLogDetail = async (log) => {
@@ -566,34 +724,9 @@ export default function CallPanel() {
       setSelectedLog(log)
       setShowLogDetail(true)
       
-      let companyId = null
-      try {
-        const userObj = JSON.parse(localStorage.getItem('user') || '{}')
-        companyId = userObj.companyId
-      } catch (e) {
-        console.error('Virhe user-objektin parsimisessa:', e)
-      }
+      // Käytä log-objektia suoraan, koska se sisältää kaikki tiedot
+      console.log('Puhelun yksityiskohdat:', log)
       
-      if (!companyId) {
-        console.error('CompanyId puuttuu')
-        return
-      }
-
-      // Käytä oikeita kenttiä puhelulokidatasta
-      const rowId = log.row_number || log.index || ''
-      const callId = log.callId || `${log.Nimi || 'unknown'}_${log.Puhelinnumero || 'unknown'}`
-
-      const params = new URLSearchParams({
-        companyId,
-        rowId: rowId.toString(),
-        callId: callId
-      })
-
-      const response = await axios.get(`/api/call-log-detail?${params}`)
-      
-      if (response.data.detail) {
-        setSelectedLog({ ...log, detail: response.data.detail })
-      }
     } catch (error) {
       console.error('Yksityiskohtien haku epäonnistui:', error)
     } finally {
@@ -604,39 +737,85 @@ export default function CallPanel() {
   // Export puheluloki CSV-muodossa
   const exportCallLogs = async () => {
     try {
-      let companyId = null
-      try {
-        const userObj = JSON.parse(localStorage.getItem('user') || '{}')
-        companyId = userObj.companyId
-      } catch (e) {
-        console.error('Virhe user-objektin parsimisessa:', e)
-      }
-      
-      if (!companyId) {
-        alert('Yrityksen tunniste puuttuu!')
+      if (!user?.id) {
+        alert('Käyttäjän tunniste puuttuu!')
         return
       }
 
-      const params = new URLSearchParams({
-        companyId,
-        search: searchTerm,
-        status: statusFilter,
-        callType: callTypeFilter,
-        dateFrom,
-        dateTo,
-        format: 'csv'
-      })
+      // Hae ensin users.id käyttäen auth_user_id:tä
+      const { data: userProfile, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
 
-      // Luo linkki CSV-latausta varten
-      const downloadUrl = `/api/call-logs-export?${params}`
+      if (userError || !userProfile) {
+        alert('Käyttäjää ei löytynyt!')
+        return
+      }
+
+      // Hae kaikki call_logs käyttäjälle
+      const { data: logs, error } = await supabase
+        .from('call_logs')
+        .select('*')
+        .eq('user_id', userProfile.id)
+        .order('call_date', { ascending: false })
+
+      if (error) {
+        throw new Error('Puhelulokin haku epäonnistui: ' + error.message)
+      }
+
+      if (!logs || logs.length === 0) {
+        alert('Ei puheluja exportattavaksi!')
+        return
+      }
+
+      // Luo CSV sisältö
+      const headers = [
+        'Nimi',
+        'Puhelinnumero', 
+        'Puhelun tyyppi',
+        'Päivämäärä',
+        'Vastattu',
+        'Kesto',
+        'Tila',
+        'Yhteenveto',
+        'Puhelun tulos',
+        'Kampanja ID',
+        'VAPI Call ID'
+      ]
+
+      const csvContent = [
+        headers.join(','),
+        ...logs.map(log => [
+          `"${log.customer_name || ''}"`,
+          `"${log.phone_number || ''}"`,
+          `"${log.call_type || ''}"`,
+          `"${log.call_date ? new Date(log.call_date).toLocaleDateString('fi-FI') + ' ' + new Date(log.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : ''}"`,
+          log.answered ? 'Kyllä' : 'Ei',
+          `"${log.duration || ''}"`,
+          log.call_status === 'done' && log.answered ? 'Onnistui' : 
+          log.call_status === 'done' && !log.answered ? 'Epäonnistui' :
+          log.call_status === 'pending' ? 'Odottaa' : 
+          log.call_status === 'in progress' ? 'Käynnissä' : 'Tuntematon',
+          `"${log.summary || ''}"`,
+          `"${log.call_outcome || ''}"`,
+          `"${log.campaign_id || ''}"`,
+          `"${log.vapi_call_id || ''}"`
+        ].join(','))
+      ].join('\n')
+
+      // Luo ja lataa CSV-tiedosto
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
       const link = document.createElement('a')
-      link.href = downloadUrl
-      link.download = `puheluloki_${new Date().toISOString().split('T')[0]}.csv`
+      const url = URL.createObjectURL(blob)
+      link.setAttribute('href', url)
+      link.setAttribute('download', `puheluloki_${new Date().toISOString().split('T')[0]}.csv`)
+      link.style.visibility = 'hidden'
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
       
-      console.log('Puheluloki exportattu onnistuneesti')
     } catch (error) {
       console.error('Export epäonnistui:', error)
       alert('Export epäonnistui: ' + error.message)
@@ -666,15 +845,32 @@ export default function CallPanel() {
 
   // Pollaa soittojen tilaa 5s välein - korjattu turvallisuus
   useEffect(() => {
-    if (polling) {
+    if (polling && user?.id) {
       pollingRef.current = setInterval(async () => {
         try {
-          const res = await axios.get('https://oma-n8n-url.fi/webhook/call-status')
-          setCallStatus(res.data)
-          setStats(res.data.stats || stats)
+          const res = await supabase.rpc('call_status', { user_id_param: user.id })
           
-          if (res.data.status === 'completed') {
+          if (res.error) {
+            console.error('Call status polling error:', res.error)
+            return
+          }
+          
+          if (res.data) {
+          setCallStatus(res.data)
+            if (res.data.stats) {
+              setStats(res.data.stats)
+            }
+            
+            // Tarkista onko kaikki puhelut valmiita
+            const allCompleted = res.data.stats && 
+              res.data.stats.total_calls > 0 && 
+              res.data.stats.pending_calls === 0
+            
+            if (allCompleted) {
             setPolling(false)
+              // Päivitä puheluloki kun kaikki valmiita
+              fetchCallLogs()
+            }
           }
         } catch (e) {
           console.error('Polling error:', e)
@@ -687,7 +883,7 @@ export default function CallPanel() {
         clearInterval(pollingRef.current)
       }
     }
-  }, [polling])
+  }, [polling, user?.id])
 
   // Cleanup äänet komponentin purkautuessa
   useEffect(() => {
@@ -713,30 +909,19 @@ export default function CallPanel() {
   if (isTablet) gridCols = '1fr 1fr';
   if (!isMobile && !isTablet) gridCols = '1fr 1fr 1fr';
 
-  // Tilastojen laskenta
-  useEffect(() => {
-    if (!callLogs || callLogs.length === 0) {
-      setCallLogsStats({ totalCount: 0, successfulCount: 0, failedCount: 0, averageDuration: 0 })
-      return
+  // Tilastojen laskenta poistettu - käytetään callLogs dataa suoraan
+
+  // Päivitetään voiceOptions dynaamisesti
+  const getVoiceOptions = () => {
+    let options = [...voiceOptions]
+    if (userVoiceId && !options.some(v => v.id === userVoiceId)) {
+      options = [
+        { value: userVoiceId, label: userVoiceLabel + ' (oma)', id: userVoiceId },
+        ...options
+      ]
     }
-    const totalCount = callLogs.length
-    const successfulCount = callLogs.filter(log => log.Answered === 'Kyllä').length
-    const failedCount = callLogs.filter(log => log.Answered === 'Ei').length
-    // Duration keskiarvo sekunteina
-    const durations = callLogs
-      .map(log => {
-        if (!log.Duration) return null
-        // Esim. "2 min 57 sec" tai "57 sec" tai "3 min"
-        const minMatch = /([0-9]+)\s*min/.exec(log.Duration)
-        const secMatch = /([0-9]+)\s*sec/.exec(log.Duration)
-        const min = minMatch ? parseInt(minMatch[1], 10) : 0
-        const sec = secMatch ? parseInt(secMatch[1], 10) : 0
-        return min * 60 + sec
-      })
-      .filter(v => v !== null)
-    const averageDuration = durations.length > 0 ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length) : 0
-    setCallLogsStats({ totalCount, successfulCount, failedCount, averageDuration })
-  }, [callLogs])
+    return options
+  }
 
   return (
     <div className="callpanel-wrapper" style={{ width: '100%', maxWidth: 'none' }}>
@@ -753,7 +938,7 @@ export default function CallPanel() {
           <div className="callpanel-grid" style={{ width: '100%', maxWidth: 'none' }}>
             {/* Aloita puhelut -kortti */}
             <div className="card">
-              <h2 className="section-title">Aloita massa puhelut</h2>
+              <h2 className="section-title">Aloita massapuhelut</h2>
               <div style={{ marginBottom: 10 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                   <label className="label">Google Sheets URL</label>
@@ -820,10 +1005,15 @@ export default function CallPanel() {
               <label className="label">Ääni</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                 <select value={selectedVoice} onChange={e => setSelectedVoice(e.target.value)} className="select">
-                  {voiceOptions.map(voice => <option key={voice.value} value={voice.value}>{voice.label}</option>)}
+                  {getVoiceOptions().map(voice => <option key={voice.value} value={voice.value}>{voice.label}</option>)}
                 </select>
-                <button type="button" className="button-secondary" style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }} onClick={() => playVoiceSample(selectedVoice)}>
-                  🔊 Testaa ääni
+                <button 
+                  type="button" 
+                  className="button-secondary" 
+                  style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }} 
+                  onClick={() => playVoiceSample(selectedVoice)}
+                >
+                  {isPlaying ? '⏹️ Pysäytä' : '🔊 Testaa ääni'}
                 </button>
               </div>
               <label className="label">Skripti</label>
@@ -954,6 +1144,7 @@ export default function CallPanel() {
                     <option value="success">Onnistuneet</option>
                     <option value="failed">Epäonnistuneet</option>
                     <option value="pending">Odottaa</option>
+                    <option value="in_progress">Käynnissä</option>
                   </select>
                 </div>
                 
@@ -974,8 +1165,8 @@ export default function CallPanel() {
                   >
                     <option value="">Kaikki</option>
                     {callTypes.map(type => (
-                      <option key={type.value} value={type.value}>
-                        {type.label}
+                      <option key={type.id} value={type.name}>
+                        {type.name}
                       </option>
                     ))}
                   </select>
@@ -1051,9 +1242,9 @@ export default function CallPanel() {
                 borderRadius: 12, 
                 border: '1px solid #e2e8f0' 
               }}>
-                <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e', marginBottom: 8 }}>
-                  {callLogsStats.successfulCount}
-                </div>
+                                  <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e', marginBottom: 8 }}>
+                    {callLogs.filter(log => log.call_status === 'done' && log.answered).length}
+                  </div>
                 <div style={{ fontSize: 14, color: '#6b7280' }}>Onnistuneet puhelut</div>
               </div>
               
@@ -1063,9 +1254,9 @@ export default function CallPanel() {
                 borderRadius: 12, 
                 border: '1px solid #e2e8f0' 
               }}>
-                <div style={{ fontSize: 32, fontWeight: 700, color: '#ef4444', marginBottom: 8 }}>
-                  {callLogsStats.failedCount}
-                </div>
+                                  <div style={{ fontSize: 32, fontWeight: 700, color: '#ef4444', marginBottom: 8 }}>
+                    {callLogs.filter(log => log.call_status === 'done' && !log.answered).length}
+                  </div>
                 <div style={{ fontSize: 14, color: '#6b7280' }}>Epäonnistuneet</div>
               </div>
               
@@ -1075,21 +1266,33 @@ export default function CallPanel() {
                 borderRadius: 12, 
                 border: '1px solid #e2e8f0' 
               }}>
-                <div style={{ fontSize: 32, fontWeight: 700, color: '#2563eb', marginBottom: 8 }}>
-                  {callLogsStats.averageDuration}s
-                </div>
-                <div style={{ fontSize: 14, color: '#6b7280' }}>Keskimääräinen kesto</div>
+                                  <div style={{ fontSize: 32, fontWeight: 700, color: '#f59e0b', marginBottom: 8 }}>
+                    {callLogs.filter(log => log.call_status === 'pending').length}
+                  </div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>Odottaa</div>
               </div>
-
+              
               <div style={{ 
                 background: '#f8fafc', 
                 padding: 24, 
                 borderRadius: 12, 
                 border: '1px solid #e2e8f0' 
               }}>
-                <div style={{ fontSize: 32, fontWeight: 700, color: '#7c3aed', marginBottom: 8 }}>
-                  {callLogsStats.totalCount}
-                </div>
+                                  <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6', marginBottom: 8 }}>
+                    {callLogs.filter(log => log.call_status === 'in progress').length}
+                  </div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>Käynnissä</div>
+              </div>
+              
+              <div style={{ 
+                background: '#f8fafc', 
+                padding: 24, 
+                borderRadius: 12, 
+                border: '1px solid #e2e8f0' 
+              }}>
+                                  <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1', marginBottom: 8 }}>
+                    {callLogs.length}
+                  </div>
                 <div style={{ fontSize: 14, color: '#6b7280' }}>Yhteensä</div>
               </div>
             </div>
@@ -1138,7 +1341,6 @@ export default function CallPanel() {
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Nimi</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Puhelinnumero</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Yhteenveto</th>
-                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Hinta</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Puhelun tyyppi</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Päivämäärä</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Vastattu</th>
@@ -1149,7 +1351,7 @@ export default function CallPanel() {
                     <tbody>
                       {callLogs.map((log, index) => (
                         <tr
-                          key={log.row_number || index}
+                          key={log.id || index}
                           onClick={() => fetchLogDetail(log)}
                           style={{
                             background: '#fff',
@@ -1160,14 +1362,17 @@ export default function CallPanel() {
                           onMouseOver={e => e.currentTarget.style.background = '#f3f4f6'}
                           onMouseOut={e => e.currentTarget.style.background = '#fff'}
                         >
-                          <td style={{ padding: '8px', fontWeight: 500 }}>{log.Nimi || 'Tuntematon nimi'}</td>
-                          <td style={{ padding: '8px' }}>{log.Puhelinnumero || '-'}</td>
-                          <td style={{ padding: '8px', color: '#6b7280', fontSize: 13 }}>{log.Summary || log.Huomiot || '-'}</td>
-                          <td style={{ padding: '8px', color: '#6b7280', fontSize: 13 }}>{log.Price || '-'}</td>
-                          <td style={{ padding: '8px' }}>{log['Call Type'] || log.PuhelunTyyppi || log.CallType || '-'}</td>
-                          <td style={{ padding: '8px' }}>{log.Date || '-'}</td>
-                          <td style={{ padding: '8px' }}>{log.Answered || '-'}</td>
-                          <td style={{ padding: '8px' }}>{log.Duration || '-'}</td>
+                          <td style={{ padding: '8px', fontWeight: 500 }}>{log.customer_name || 'Tuntematon nimi'}</td>
+                          <td style={{ padding: '8px' }}>{log.phone_number || '-'}</td>
+                          <td style={{ padding: '8px', color: '#6b7280', fontSize: 13 }}>
+                            {log.summary ? (log.summary.length > 50 ? log.summary.substring(0, 50) + '...' : log.summary) : '-'}
+                          </td>
+                          <td style={{ padding: '8px' }}>{log.call_type || '-'}</td>
+                          <td style={{ padding: '8px' }}>
+                            {log.call_date ? new Date(log.call_date).toLocaleDateString('fi-FI') + ' ' + new Date(log.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : '-'}
+                          </td>
+                          <td style={{ padding: '8px' }}>{log.answered ? 'Kyllä' : 'Ei'}</td>
+                          <td style={{ padding: '8px' }}>{log.duration || '-'}</td>
                           <td style={{ padding: '8px', textAlign: 'center' }}>
                             <span style={{
                               display: 'inline-block',
@@ -1175,11 +1380,18 @@ export default function CallPanel() {
                               borderRadius: 8,
                               fontSize: 12,
                               fontWeight: 600,
-                              background: log.Answered === 'Kyllä' ? '#dcfce7' : log.Answered === 'Ei' ? '#fef2f2' : '#f3f4f6',
-                              color: log.Answered === 'Kyllä' ? '#166534' : log.Answered === 'Ei' ? '#dc2626' : '#6b7280',
+                              background: log.call_status === 'done' && log.answered ? '#dcfce7' : 
+                                        log.call_status === 'pending' ? '#f3f4f6' : 
+                                        log.call_status === 'in progress' ? '#dbeafe' : '#fef2f2',
+                              color: log.call_status === 'done' && log.answered ? '#166534' : 
+                                     log.call_status === 'pending' ? '#6b7280' : 
+                                     log.call_status === 'in progress' ? '#1d4ed8' : '#dc2626',
                               minWidth: 60
                             }}>
-                              {log.Answered === 'Kyllä' ? 'Onnistui' : log.Answered === 'Ei' ? 'Epäonnistui' : 'Odottaa'}
+                              {log.call_status === 'done' && log.answered ? 'Onnistui' : 
+                               log.call_status === 'done' && !log.answered ? 'Epäonnistui' :
+                               log.call_status === 'pending' ? 'Odottaa' : 
+                               log.call_status === 'in progress' ? 'Käynnissä' : 'Tuntematon'}
                             </span>
                           </td>
                         </tr>
@@ -1223,7 +1435,7 @@ export default function CallPanel() {
             </div>
             
             <p style={{ margin: '0 0 24px 0', color: '#6b7280', fontSize: 14 }}>
-              Hallitse puhelun tyyppejä Airtable-tietokannassa. Vain Active-status olevat tyypit näkyvät puheluissa.
+              Hallitse puhelun tyyppejä Supabase-tietokannassa. Vain Active-status olevat tyypit näkyvät puheluissa.
             </p>
             
             {/* Olemassa olevat puhelun tyypit */}
@@ -1284,8 +1496,29 @@ export default function CallPanel() {
                           </div>
                         )}
                       </div>
-                      <div style={{ color: '#6b7280', fontSize: 14 }}>
-                        ✏️
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleDeleteCallType(type.id)
+                          }}
+                          style={{
+                            background: '#ef4444',
+                            border: 'none',
+                            borderRadius: 4,
+                            padding: '4px 8px',
+                            cursor: 'pointer',
+                            color: '#fff',
+                            fontSize: 12,
+                            fontWeight: 500
+                          }}
+                          title="Poista puhelun tyyppi"
+                        >
+                          🗑️
+                        </button>
+                        <div style={{ color: '#6b7280', fontSize: 14 }}>
+                          ✏️
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -1330,10 +1563,22 @@ export default function CallPanel() {
                     </h3>
                     <div style={{ display: 'grid', gap: 12 }}>
                       <div>
-                        <strong>Nimi:</strong> {selectedLog.Nimi || 'Ei nimeä'}
+                          <strong>Nimi:</strong> {selectedLog.customer_name || 'Ei nimeä'}
                       </div>
                       <div>
-                        <strong>Puhelinnumero:</strong> {selectedLog.Puhelinnumero || 'Ei numeroa'}
+                          <strong>Puhelinnumero:</strong> {selectedLog.phone_number || 'Ei numeroa'}
+                        </div>
+                        <div>
+                          <strong>Puhelun tyyppi:</strong> {selectedLog.call_type || '-'}
+                        </div>
+                        <div>
+                          <strong>Päivämäärä:</strong> {selectedLog.call_date ? new Date(selectedLog.call_date).toLocaleDateString('fi-FI') + ' ' + new Date(selectedLog.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : '-'}
+                        </div>
+                        <div>
+                          <strong>Vastattu:</strong> {selectedLog.answered ? 'Kyllä' : 'Ei'}
+                        </div>
+                        <div>
+                          <strong>Kesto:</strong> {selectedLog.duration || '-'}
                       </div>
                       <div>
                         <strong>Tila:</strong> 
@@ -1343,41 +1588,72 @@ export default function CallPanel() {
                           borderRadius: 4,
                           fontSize: 12,
                           fontWeight: 500,
-                          background: (selectedLog.Onnistunut === 'Kyllä' || selectedLog.Onnistunut === 'kyllä' || selectedLog.Onnistunut === '1') ? '#dcfce7' : '#fef2f2',
-                          color: (selectedLog.Onnistunut === 'Kyllä' || selectedLog.Onnistunut === 'kyllä' || selectedLog.Onnistunut === '1') ? '#166534' : '#dc2626'
-                        }}>
-                          {(selectedLog.Onnistunut === 'Kyllä' || selectedLog.Onnistunut === 'kyllä' || selectedLog.Onnistunut === '1') ? 'Onnistui' : 'Odottaa'}
+                            background: selectedLog.call_status === 'done' && selectedLog.answered ? '#dcfce7' : 
+                                      selectedLog.call_status === 'pending' ? '#f3f4f6' : 
+                                      selectedLog.call_status === 'in progress' ? '#dbeafe' : '#fef2f2',
+                            color: selectedLog.call_status === 'done' && selectedLog.answered ? '#166534' : 
+                                   selectedLog.call_status === 'pending' ? '#6b7280' : 
+                                   selectedLog.call_status === 'in progress' ? '#1d4ed8' : '#dc2626'
+                          }}>
+                            {selectedLog.call_status === 'done' && selectedLog.answered ? 'Onnistui' : 
+                             selectedLog.call_status === 'done' && !selectedLog.answered ? 'Epäonnistui' :
+                             selectedLog.call_status === 'pending' ? 'Odottaa' : 
+                             selectedLog.call_status === 'in progress' ? 'Käynnissä' : 'Tuntematon'}
                         </span>
                       </div>
+                        {selectedLog.campaign_id && (
+                          <div>
+                            <strong>Kampanja ID:</strong> {selectedLog.campaign_id}
                     </div>
+                        )}
+                        {selectedLog.vapi_call_id && (
+                          <div>
+                            <strong>VAPI Call ID:</strong> {selectedLog.vapi_call_id}
                   </div>
-                  {/* Kysymykset */}
-                  {(selectedLog['Kysymys A '] || selectedLog['Kysymys B '] || selectedLog['Kysymys C'] || selectedLog['Kysymys D ']) && (
+                        )}
+                      </div>
+                  </div>
+                  {/* Yhteenveto */}
+                  {selectedLog.summary && (
                     <div style={{ marginBottom: 24 }}>
                       <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
-                        Vastaukset
+                        Yhteenveto
                       </h3>
-                      <div style={{ display: 'grid', gap: 8 }}>
-                        {selectedLog['Kysymys A '] && (
-                          <div><strong>A:</strong> {selectedLog['Kysymys A ']}</div>
-                        )}
-                        {selectedLog['Kysymys B '] && (
-                          <div><strong>B:</strong> {selectedLog['Kysymys B ']}</div>
-                        )}
-                        {selectedLog['Kysymys C'] && (
-                          <div><strong>C:</strong> {selectedLog['Kysymys C']}</div>
-                        )}
-                        {selectedLog['Kysymys D '] && (
-                          <div><strong>D:</strong> {selectedLog['Kysymys D ']}</div>
-                        )}
+                      <div style={{ 
+                        background: '#f8fafc', 
+                        padding: 16, 
+                        borderRadius: 8, 
+                        fontSize: 14,
+                        lineHeight: 1.5,
+                        whiteSpace: 'pre-wrap'
+                      }}>
+                        {selectedLog.summary}
                       </div>
                     </div>
                   )}
-                  {/* Yksityiskohtaiset tiedot */}
-                  {selectedLog.detail && (
-                    <div>
+                  
+                  {/* Call outcome */}
+                  {selectedLog.call_outcome && (
+                    <div style={{ marginBottom: 24 }}>
                       <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
-                        Yksityiskohdat
+                        Puhelun tulos
+                      </h3>
+                      <div style={{ 
+                        background: '#f8fafc', 
+                        padding: 16, 
+                        borderRadius: 8, 
+                        fontSize: 14,
+                        lineHeight: 1.5
+                      }}>
+                        {selectedLog.call_outcome}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Kaikki tiedot JSON-muodossa debuggausta varten */}
+                  <div style={{ marginBottom: 24 }}>
+                      <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
+                      Kaikki tiedot (debug)
                       </h3>
                       <pre style={{ 
                         background: '#f8fafc', 
@@ -1385,12 +1661,12 @@ export default function CallPanel() {
                         borderRadius: 8, 
                         fontSize: 12, 
                         overflow: 'auto',
-                        whiteSpace: 'pre-wrap'
+                      whiteSpace: 'pre-wrap',
+                      maxHeight: '200px'
                       }}>
-                        {JSON.stringify(selectedLog.detail, null, 2)}
+                      {JSON.stringify(selectedLog, null, 2)}
                       </pre>
                     </div>
-                  )}
                 </div>
               )}
             </div>

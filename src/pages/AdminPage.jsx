@@ -687,11 +687,8 @@ export default function AdminPage() {
                        <tr>
                          <th>Asiakas</th>
                          <th>Puhelinnumero</th>
-                         <th>Yhteenveto</th>
+                         <th>Käyttäjä</th>
                          <th>Hinta</th>
-                         <th>Tyyppi</th>
-                         <th>Vastattu</th>
-                         <th>Tila</th>
                          <th>Päivä</th>
                        </tr>
                      </thead>
@@ -700,19 +697,8 @@ export default function AdminPage() {
                          <tr key={call.id}>
                            <td>{call.customer_name || 'Nimeä ei asetettu'}</td>
                            <td>{call.phone_number}</td>
-                           <td>{call.summary || 'Ei yhteenvetoa'}</td>
+                           <td>{call.users?.contact_person || call.users?.contact_email || 'Tuntematon'}</td>
                            <td>{call.price ? `€${call.price}` : '-'}</td>
-                           <td>{call.call_type || 'Ei tyyppiä'}</td>
-                           <td>
-                             <span className={`status-badge ${call.answered ? 'status-published' : 'status-draft'}`}>
-                               {call.answered ? 'Kyllä' : 'Ei'}
-                             </span>
-                           </td>
-                           <td>
-                             <span className={`status-badge status-${call.call_status?.toLowerCase()}`}>
-                               {call.call_status || 'pending'}
-                             </span>
-                           </td>
                            <td>{new Date(call.call_date).toLocaleDateString('fi-FI')}</td>
                          </tr>
                        ))}
@@ -724,38 +710,47 @@ export default function AdminPage() {
 
              {activeTab === 'messages' && (
                <div className="admin-section">
-                 <h2>Viestit</h2>
+                 <h2>Viestit / kuukausi</h2>
                  <div className="admin-table-container">
                    <table className="admin-table">
                      <thead>
                        <tr>
-                         <th>Puhelinnumero</th>
-                         <th>Viesti</th>
-                         <th>Tyyppi</th>
-                         <th>Suunta</th>
-                         <th>Tila</th>
-                         <th>Luotu</th>
+                         <th>Käyttäjä</th>
+                         <th>Viestien määrä</th>
+                         <th>Kuukausi</th>
+                         <th>Kustannus (€)</th>
                        </tr>
                      </thead>
                      <tbody>
-                       {messageLogs.map(message => (
-                         <tr key={message.id}>
-                           <td>{message.phone_number}</td>
-                           <td>{message.message_text || 'Ei viestiä'}</td>
-                           <td>{message.message_type}</td>
-                           <td>
-                             <span className={`status-badge ${message.direction === 'inbound' ? 'status-published' : 'status-pending'}`}>
-                               {message.direction === 'inbound' ? 'Saapuva' : 'Lähtevä'}
-                             </span>
-                           </td>
-                           <td>
-                             <span className={`status-badge status-${message.status?.toLowerCase()}`}>
-                               {message.status}
-                             </span>
-                           </td>
-                           <td>{new Date(message.created_at).toLocaleDateString('fi-FI')}</td>
-                         </tr>
-                       ))}
+                       {(() => {
+                         // Ryhmitellään messageLogs käyttäjä+kuukausi -tasoille
+                         const monthNames = [
+                           'tammikuu', 'helmikuu', 'maaliskuu', 'huhtikuu', 'toukokuu', 'kesäkuu',
+                           'heinäkuu', 'elokuu', 'syyskuu', 'lokakuu', 'marraskuu', 'joulukuu'
+                         ];
+                         const groups = {};
+                         messageLogs.forEach(msg => {
+                           const user = msg.users?.contact_person || msg.users?.contact_email || 'Tuntematon';
+                           const date = new Date(msg.created_at);
+                           const month = date.getMonth();
+                           const year = date.getFullYear();
+                           const key = `${user}__${year}-${month}`;
+                           if (!groups[key]) {
+                             groups[key] = { user, year, month, count: 0 };
+                           }
+                           groups[key].count++;
+                         });
+                         // Järjestetään tulos uusimmat ensin
+                         const sorted = Object.values(groups).sort((a, b) => b.year !== a.year ? b.year - a.year : b.month - a.month);
+                         return sorted.map((g, idx) => (
+                           <tr key={g.user + g.year + g.month}>
+                             <td>{g.user}</td>
+                             <td>{g.count}</td>
+                             <td>{monthNames[g.month]} {g.year}</td>
+                             <td>{(g.count * 0.01).toFixed(2)} €</td>
+                           </tr>
+                         ));
+                       })()}
                      </tbody>
                    </table>
                  </div>

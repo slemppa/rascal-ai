@@ -26,6 +26,7 @@ export default function AIChatPage() {
   const [pendingFiles, setPendingFiles] = useState([])
   const [dragActive, setDragActive] = useState(false)
   const dropRef = useRef(null)
+  const filesListRef = useRef(null)
   const { user } = useAuth()
   const [userData, setUserData] = useState(null)
   const [loadingUserData, setLoadingUserData] = useState(true)
@@ -532,59 +533,21 @@ export default function AIChatPage() {
                 </form>
               </div>
             ) : (
-              <div style={{
-                width: '100%',
-                maxWidth: 1400,
-                margin: '0 auto',
-                display: 'flex',
-                gap: 0,
-                justifyContent: 'flex-start',
-                alignItems: 'flex-start',
-                padding: '32px 0',
-                minHeight: 0,
-                height: '100%',
-                boxSizing: 'border-box',
-                flex: 1
-              }}>
-                {/* Lomakekortti */}
-                <div style={{
-                  flex: '0 0 380px',
-                  minWidth: 280,
-                  maxWidth: 380,
-                  background: '#fff',
-                  borderRadius: 16,
-                  boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
-                  padding: 32,
-                  minHeight: 'unset',
-                  height: 'auto',
-                  overflow: 'visible',
-                  justifyContent: 'flex-start',
-                  alignSelf: 'flex-start',
-                  marginRight: 0
-                }}>
-                  <h3 style={{margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Lisää tiedosto tietokantaan</h3>
-                  <p style={{margin: 0, color: '#6b7280', fontSize: 15}}>Voit liittää PDF-, Word- tai tekstimuotoisen tiedoston. Tiedosto tallennetaan yrityksesi tietokantaan.</p>
+              <div className="ai-chat-files-container">
+                {/* Upload kortti */}
+                <div className="ai-chat-upload-card">
+                  <h3>Lisää tiedosto tietokantaan</h3>
+                  <p>Voit liittää PDF-, Word- tai tekstimuotoisen tiedoston. Tiedosto tallennetaan yrityksesi tietokantaan.</p>
                   {/* Drag & drop -alue */}
                   <div
                     ref={dropRef}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
-                    style={{
-                      border: dragActive ? '2px solid #2563eb' : '2px dashed #d1d5db',
-                      borderRadius: 12,
-                      background: dragActive ? '#f0f6ff' : '#f9fafb',
-                      padding: '32px 0',
-                      textAlign: 'center',
-                      color: '#6b7280',
-                      fontSize: 16,
-                      cursor: 'pointer',
-                      transition: 'border 0.2s, background 0.2s',
-                      marginBottom: 8
-                    }}
+                    className={`ai-chat-drag-drop ${dragActive ? 'active' : ''}`}
                     onClick={() => dropRef.current && dropRef.current.querySelector('input[type=file]').click()}
                   >
-                    Vedä ja pudota tiedostoja tähän tai <span style={{color: '#2563eb', textDecoration: 'underline'}}>valitse tiedostot</span>
+                    Vedä ja pudota tiedostoja tähän tai <span>valitse tiedostot</span>
                     <input
                       type="file"
                       multiple
@@ -595,19 +558,11 @@ export default function AIChatPage() {
                   </div>
                   {/* Valitut tiedostot */}
                   {pendingFiles.length > 0 && (
-                    <div style={{
-                      background: '#f9fafb',
-                      borderRadius: 8,
-                      padding: '8px 12px',
-                      marginBottom: 8,
-                      maxHeight: 120,
-                      overflowY: 'auto',
-                      fontSize: 15
-                    }}>
+                    <div className="ai-chat-pending-files">
                       {pendingFiles.map(f => (
-                        <div key={f.name + f.size} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 4}}>
-                          <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 180}}>{f.name}</span>
-                          <span style={{color: '#ef4444', cursor: 'pointer', fontSize: 18, marginLeft: 8}} onClick={() => handleRemovePending(f.name, f.size)}>❌</span>
+                        <div key={f.name + f.size} className="ai-chat-pending-file">
+                          <span className="ai-chat-pending-file-name">{f.name}</span>
+                          <span className="ai-chat-remove-file" onClick={() => handleRemovePending(f.name, f.size)}>❌</span>
                         </div>
                       ))}
                     </div>
@@ -615,17 +570,7 @@ export default function AIChatPage() {
                   <button
                     onClick={handleUploadPending}
                     disabled={uploadLoading || pendingFiles.length === 0}
-                    style={{
-                      padding: '12px 0',
-                      background: '#2563eb',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: 8,
-                      fontWeight: 700,
-                      fontSize: 16,
-                      cursor: uploadLoading || pendingFiles.length === 0 ? 'not-allowed' : 'pointer',
-                      opacity: uploadLoading || pendingFiles.length === 0 ? 0.7 : 1
-                    }}
+                    className="ai-chat-upload-button"
                   >
                     Lähetä tiedostot
                   </button>
@@ -634,67 +579,37 @@ export default function AIChatPage() {
                   {uploadSuccess && <p style={{ color: 'green', margin: 0 }}>{uploadSuccess}</p>}
                 </div>
                 {/* Tiedostot */}
-                <div style={{
-                  flex: 1,
-                  minWidth: 0,
-                  background: '#fff',
-                  borderRadius: 16,
-                  boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
-                  padding: 32,
-                  minHeight: 0,
-                  height: '100%',
-                  overflow: 'hidden',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'flex-end',
-                  marginLeft: 0
-                }}>
-                  <h3 style={{margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Tiedostot</h3>
-                  <div style={{flex: 1, overflowY: 'auto', marginTop: 8}}>
+                <div className="ai-chat-files-list">
+                  <h3>Tiedostot</h3>
+                  <div className="ai-chat-files-scroll" ref={filesListRef}>
                     {filesLoading ? (
                       <p>Ladataan tiedostoja...</p>
                     ) : filesError ? (
                       <p style={{ color: 'red' }}>{filesError}</p>
                     ) : files.length === 0 ? (
-                      <div style={{textAlign: 'center', color: '#6b7280', marginTop: 32}}>
-                        <img src="/placeholder.png" alt="Ei tiedostoja" style={{width: 64, opacity: 0.5, marginBottom: 8}} />
+                      <div className="ai-chat-empty-state">
+                        <img src="/placeholder.png" alt="Ei tiedostoja" />
                         <div>Et ole vielä lisännyt tiedostoja</div>
                       </div>
                     ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      <>
                         {files.map((file) => (
-                          <div key={file.id} style={{
-                            padding: '12px',
-                            border: '1px solid #e5e7eb',
-                            borderRadius: '8px',
-                            background: '#f9fafb',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center'
-                          }}>
-                            <div>
-                              <div style={{ fontWeight: 500 }}>{file.filename}</div>
-                              <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                          <div key={file.id} className="ai-chat-file-item">
+                            <div className="ai-chat-file-info">
+                              <div className="ai-chat-file-name">{file.filename}</div>
+                              <div className="ai-chat-file-meta">
                                 {formatBytes(file.bytes)} • {formatDate(file.created_at)}
                               </div>
                             </div>
                             <button
                               onClick={() => handleFileDeletion(file.id)}
-                              style={{
-                                padding: '6px 12px',
-                                background: '#ef4444',
-                                color: '#fff',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontSize: '14px'
-                              }}
+                              className="ai-chat-delete-button"
                             >
                               Poista
                             </button>
                           </div>
                         ))}
-                      </div>
+                      </>
                     )}
                   </div>
                 </div>

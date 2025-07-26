@@ -137,6 +137,10 @@ html, body, #root {
   flex: 1;
   min-width: 0;
   background: #f7f8fc;
+  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .main-header {
@@ -770,7 +774,16 @@ html, body, #root {
   height: 100%;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  min-width: 0;
+}
+
+/* AI Chat responsiivisuus */
+@media (max-width: 768px) {
+  .ai-chat-wrapper {
+    height: 100%;
+    flex: 1;
+    width: 100%;
+  }
 }
 
 /* Dashboard bentogrid responsiivisuus */

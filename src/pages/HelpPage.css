@@ -1,0 +1,313 @@
+/* HelpPage.css - Responsiiviset tyylit help-sivulle */
+
+/* Desktop tyylit */
+.help-container {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.help-header {
+  padding: 24px 24px 0 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.help-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  gap: 32px;
+}
+
+.help-sidebar {
+  width: 280px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  height: fit-content;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 24px;
+}
+
+.help-sidebar h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.help-nav-button {
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  margin: 4px 0;
+  background: transparent;
+  color: #374151;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s;
+}
+
+.help-nav-button:hover {
+  background: #f3f4f6;
+}
+
+.help-nav-button.active {
+  background: #6b7280;
+  color: #fff;
+  font-weight: 600;
+}
+
+.help-nav-button.active:hover {
+  background: #4b5563;
+}
+
+.help-main-content {
+  flex: 1;
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.help-section-header {
+  margin-bottom: 32px;
+}
+
+.help-section-title {
+  margin: 0 0 8px 0;
+  font-size: 32px;
+  font-weight: 800;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.help-section-icon {
+  font-size: 32px;
+}
+
+.help-content-item {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 32px;
+  margin-bottom: 32px;
+}
+
+.help-content-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.help-content-title {
+  margin: 0 0 16px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.help-content-description {
+  margin: 0 0 20px 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.help-features-list,
+.help-tips-list {
+  margin: 0;
+  padding-left: 20px;
+  color: #4b5563;
+}
+
+.help-features-list li,
+.help-tips-list li {
+  margin-bottom: 8px;
+}
+
+.help-steps-list {
+  margin: 0;
+  padding-left: 20px;
+  color: #4b5563;
+}
+
+.help-steps-list li {
+  margin-bottom: 8px;
+}
+
+.help-answer-box {
+  background: #f3f4f6;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #6b7280;
+}
+
+.help-answer-text {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.help-cta {
+  background: #374151;
+  margin: 48px 24px 24px 24px;
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  color: #fff;
+}
+
+.help-cta h2 {
+  margin: 0 0 16px 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.help-cta p {
+  margin: 0 0 24px 0;
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.help-cta-button {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 12px;
+  transition: all 0.2s;
+}
+
+.help-cta-button.primary {
+  background: #fff;
+  color: #374151;
+}
+
+.help-cta-button.primary:hover {
+  background: #f8fafc;
+}
+
+.help-cta-button.secondary {
+  background: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+.help-cta-button.secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Mobiili tyylit */
+@media (max-width: 768px) {
+  .help-header {
+    padding: 16px 16px 0 16px;
+  }
+
+  .help-content {
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .help-sidebar {
+    width: 100%;
+    position: static;
+    order: 2;
+  }
+
+  .help-main-content {
+    order: 1;
+    padding: 20px;
+  }
+
+  .help-section-title {
+    font-size: 24px;
+  }
+
+  .help-section-icon {
+    font-size: 24px;
+  }
+
+  .help-content-title {
+    font-size: 20px;
+  }
+
+  .help-cta {
+    margin: 32px 16px 16px 16px;
+    padding: 24px;
+  }
+
+  .help-cta h2 {
+    font-size: 20px;
+  }
+
+  .help-cta-button {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+  }
+}
+
+/* Pieni mobiili */
+@media (max-width: 480px) {
+  .help-header {
+    padding: 12px 12px 0 12px;
+  }
+
+  .help-content {
+    padding: 12px;
+  }
+
+  .help-main-content {
+    padding: 16px;
+  }
+
+  .help-sidebar {
+    padding: 16px;
+  }
+
+  .help-nav-button {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .help-section-title {
+    font-size: 20px;
+  }
+
+  .help-content-title {
+    font-size: 18px;
+  }
+
+  .help-cta {
+    margin: 24px 12px 12px 12px;
+    padding: 20px;
+  }
+}
+
+/* Tablet tyylit */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .help-content {
+    max-width: 100%;
+    padding: 20px;
+  }
+
+  .help-sidebar {
+    width: 240px;
+  }
+
+  .help-main-content {
+    padding: 24px;
+  }
+} 

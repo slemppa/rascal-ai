@@ -2,6 +2,9 @@ import React, { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
 import ReactMarkdown from 'react-markdown'
 import PageHeader from '../components/PageHeader'
+import { useAuth } from '../contexts/AuthContext'
+import { supabase } from '../lib/supabase'
+import './AIChatPage.css'
 
 export default function AIChatPage() {
   const [messages, setMessages] = useState(() => {
@@ -23,23 +26,44 @@ export default function AIChatPage() {
   const [pendingFiles, setPendingFiles] = useState([])
   const [dragActive, setDragActive] = useState(false)
   const dropRef = useRef(null)
+  const { user } = useAuth()
+  const [userData, setUserData] = useState(null)
+  const [loadingUserData, setLoadingUserData] = useState(true)
 
-  // Hae companyName, companyId, assistantId localStoragesta
-  let companyName = 'Yrityksen';
-  let companyId = null;
-  let assistantId = null;
-  try {
-    const userRaw = JSON.parse(localStorage.getItem('user') || 'null')
-    if (userRaw && userRaw.user && userRaw.user.companyName) {
-      companyName = userRaw.user.companyName
-      companyId = userRaw.user.companyId
-      assistantId = userRaw.user.assistantId
-    } else if (userRaw && userRaw.companyName) {
-      companyName = userRaw.companyName
-      companyId = userRaw.companyId
-      assistantId = userRaw.assistantId
+  // Hae käyttäjän tiedot Supabase-tietokannasta
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!user?.id) {
+        setLoadingUserData(false)
+        return
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('company_name, company_id, assistant_id, id')
+          .eq('auth_user_id', user.id)
+          .single()
+
+        if (error) {
+          console.error('Error fetching user data:', error)
+        } else {
+          setUserData(data)
+        }
+      } catch (error) {
+        console.error('Error in fetchUserData:', error)
+      } finally {
+        setLoadingUserData(false)
+      }
     }
-  } catch (e) {}
+
+    fetchUserData()
+  }, [user?.id])
+
+  // Hae companyName, companyId, assistantId käyttäjän tiedoista
+  const companyName = userData?.company_name || 'Yrityksen'
+  const companyId = userData?.company_id
+  const assistantId = userData?.assistant_id
 
   // Vieritä alas aina kun viestit päivittyvät (column-reverse hoitaa, joten ei tarvita)
   // useEffect ei enää tarpeen
@@ -64,6 +88,10 @@ export default function AIChatPage() {
   }
 
   const fetchFiles = async () => {
+    if (loadingUserData) {
+      setFilesError('Ladataan käyttäjän tietoja...')
+      return
+    }
     if (!companyId) {
       setFilesError('Yrityksen ID puuttuu')
       return
@@ -100,7 +128,13 @@ export default function AIChatPage() {
 
   const handleSendMessage = async (e) => {
     e.preventDefault()
-    if (!input.trim() || loading) return
+    if (!input.trim() || loading || loadingUserData) return
+    
+    if (!assistantId) {
+      const errorMessage = { role: 'assistant', content: 'Assistentin ID puuttuu. Ota yhteyttä ylläpitoon.' }
+      setMessages(prev => [...prev, errorMessage])
+      return
+    }
 
     const userMessage = { role: 'user', content: input }
     setMessages(prev => [...prev, userMessage])
@@ -282,97 +316,84 @@ export default function AIChatPage() {
 
   return (
     <>
-      <PageHeader title={tab === 'chat' ? 'Keskustelu' : 'Tietokanta'} />
-      <div className="ai-chat-wrapper" style={{ 
-        flex: 1, 
-        minHeight: 0, 
-        height: 'calc(100vh - 120px)', 
-        display: 'flex', 
-        flexDirection: 'column',
-        overflow: 'hidden'
-      }}>
-        {/* Välilehdet */}
-        <div style={{
-          display: 'flex',
-          borderBottom: '2px solid #e5e7eb',
-          background: '#f9fafb',
-          flexShrink: 0,
-          padding: '0 32px',
-          gap: 0,
-          height: 48,
-          margin: 0
-        }}>
-          <button
-            onClick={() => setTab('chat')}
-            style={{
-              flex: 1,
-              height: '100%',
-              border: 'none',
-              background: tab === 'chat' ? '#fff' : 'transparent',
-              color: tab === 'chat' ? 'var(--brand-dark, #1f2937)' : '#6b7280',
-              fontWeight: tab === 'chat' ? 700 : 500,
-              cursor: 'pointer',
-              borderBottom: tab === 'chat' ? '3px solid var(--brand-accent, #7c3aed)' : '3px solid transparent',
-              fontSize: 18,
-              letterSpacing: 0.5,
-              transition: 'background 0.15s, color 0.15s',
-              borderRadius: 0,
-              outline: 'none',
-              boxShadow: 'none',
-              margin: 0,
-              padding: 0
-            }}
-            onMouseOver={e => { if(tab !== 'chat') e.currentTarget.style.background = '#f3f4f6' }}
-            onMouseOut={e => { if(tab !== 'chat') e.currentTarget.style.background = 'transparent' }}
-          >
-            Keskustelu
-          </button>
-          <button
-            onClick={() => setTab('files')}
-            style={{
-              flex: 1,
-              height: '100%',
-              border: 'none',
-              background: tab === 'files' ? '#fff' : 'transparent',
-              color: tab === 'files' ? 'var(--brand-dark, #1f2937)' : '#6b7280',
-              fontWeight: tab === 'files' ? 700 : 500,
-              cursor: 'pointer',
-              borderBottom: tab === 'files' ? '3px solid var(--brand-accent, #7c3aed)' : '3px solid transparent',
-              fontSize: 18,
-              letterSpacing: 0.5,
-              transition: 'background 0.15s, color 0.15s',
-              borderRadius: 0,
-              outline: 'none',
-              boxShadow: 'none',
-              margin: 0,
-              padding: 0
-            }}
-            onMouseOver={e => { if(tab !== 'files') e.currentTarget.style.background = '#f3f4f6' }}
-            onMouseOut={e => { if(tab !== 'files') e.currentTarget.style.background = 'transparent' }}
-          >
-            Tietokanta ({files.length})
-          </button>
+      {loadingUserData ? (
+        <div className="ai-chat-loading">
+          Ladataan käyttäjän tietoja...
         </div>
-        {/* Sisältö */}
-        <div style={{
-          flex: 1,
-          minHeight: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          margin: 0,
-          padding: 0
-        }}>
-          {tab === 'chat' ? (
-            <div style={{
-              flex: 1,
-              minHeight: 0,
-              display: 'flex',
-              flexDirection: 'column',
-              margin: 0,
-              padding: 0,
-              height: '100%'
-            }}>
-              {/* Viestit */}
+      ) : (
+        <div className="ai-chat-wrapper">
+          {/* Välilehdet */}
+          <div style={{
+            display: 'flex',
+            borderBottom: '2px solid #e5e7eb',
+            background: '#f9fafb',
+            flexShrink: 0,
+            padding: '0 32px',
+            gap: 0,
+            height: 48,
+            margin: 0
+          }}>
+            <button
+              onClick={() => setTab('chat')}
+              style={{
+                flex: 1,
+                height: '100%',
+                border: 'none',
+                background: tab === 'chat' ? '#fff' : 'transparent',
+                color: tab === 'chat' ? 'var(--brand-dark, #1f2937)' : '#6b7280',
+                fontWeight: tab === 'chat' ? 700 : 500,
+                cursor: 'pointer',
+                borderBottom: tab === 'chat' ? '3px solid var(--brand-accent, #7c3aed)' : '3px solid transparent',
+                fontSize: 18,
+                letterSpacing: 0.5,
+                transition: 'background 0.15s, color 0.15s',
+                borderRadius: 0,
+                outline: 'none',
+                boxShadow: 'none',
+                margin: 0,
+                padding: 0
+              }}
+              onMouseOver={e => { if(tab !== 'chat') e.currentTarget.style.background = '#f3f4f6' }}
+              onMouseOut={e => { if(tab !== 'chat') e.currentTarget.style.background = 'transparent' }}
+            >
+              Keskustelu
+            </button>
+            <button
+              onClick={() => setTab('files')}
+              style={{
+                flex: 1,
+                height: '100%',
+                border: 'none',
+                background: tab === 'files' ? '#fff' : 'transparent',
+                color: tab === 'files' ? 'var(--brand-dark, #1f2937)' : '#6b7280',
+                fontWeight: tab === 'files' ? 700 : 500,
+                cursor: 'pointer',
+                borderBottom: tab === 'files' ? '3px solid var(--brand-accent, #7c3aed)' : '3px solid transparent',
+                fontSize: 18,
+                letterSpacing: 0.5,
+                transition: 'background 0.15s, color 0.15s',
+                borderRadius: 0,
+                outline: 'none',
+                boxShadow: 'none',
+                margin: 0,
+                padding: 0
+              }}
+              onMouseOver={e => { if(tab !== 'files') e.currentTarget.style.background = '#f3f4f6' }}
+              onMouseOut={e => { if(tab !== 'files') e.currentTarget.style.background = 'transparent' }}
+            >
+              Tietokanta ({files.length})
+            </button>
+          </div>
+          {/* Sisältö */}
+          <div style={{
+            flex: 1,
+            minHeight: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            margin: 0,
+            padding: 0
+          }}>
+            {tab === 'chat' ? (
               <div style={{
                 flex: 1,
                 minHeight: 0,
@@ -380,297 +401,308 @@ export default function AIChatPage() {
                 flexDirection: 'column',
                 margin: 0,
                 padding: 0,
-                overflow: 'hidden'
+                height: '100%'
               }}>
+                {/* Viestit */}
                 <div style={{
                   flex: 1,
                   minHeight: 0,
-                  overflowY: 'auto',
                   display: 'flex',
-                  flexDirection: 'column-reverse',
-                  gap: 12,
+                  flexDirection: 'column',
                   margin: 0,
-                  padding: 24,
-                  width: '100%',
-                  height: '100%'
+                  padding: 0,
+                  overflow: 'hidden'
                 }}>
-                  {(() => {
-                    const list = [...messages]
-                    if (loading) {
-                      list.push({ role: 'assistant', content: 'Kirjoittaa…', temp: true })
-                    }
-                    return list.slice().reverse().map((message, index) => (
-                      <div key={index} style={{
-                        display: 'flex',
-                        justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
-                      }}>
-                        <div style={{
-                          maxWidth: '85%',
-                          padding: '12px 16px',
-                          borderRadius: 8,
-                          background: message.role === 'user' ? '#2563eb' : '#fff',
-                          color: message.role === 'user' ? '#fff' : '#1f2937',
-                          boxShadow: '0 1px 3px rgba(0,0,0,0.07)',
-                          lineHeight: 1.5,
-                          overflowWrap: 'break-word',
-                          fontSize: 16
-                        }}>
-                          {message.temp ? (
-                            message.content
-                          ) : message.role === 'assistant' ? (
-                            <ReactMarkdown>{message.content}</ReactMarkdown>
-                          ) : (
-                            message.content
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  })()}
-                </div>
-              </div>
-              {/* Syöttökenttä ja uusi keskustelu -ikoni */}
-              <form onSubmit={handleSendMessage} style={{
-                height: 'auto',
-                minHeight: 56,
-                borderTop: '1.5px solid #e5e7eb',
-                background: '#fff',
-                flexShrink: 0,
-                display: 'flex',
-                gap: 8,
-                alignItems: 'center',
-                padding: '12px 24px',
-                margin: 0,
-                flexWrap: 'wrap'
-              }}>
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Kirjoita viestisi..."
-                  disabled={loading}
-                  style={{
-                    flex: 1,
-                    minWidth: '200px',
-                    padding: '12px 16px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: 8,
-                    fontSize: 16,
-                    outline: 'none',
-                    margin: 0
-                  }}
-                />
-                <button
-                  type="submit"
-                  disabled={loading || !input.trim()}
-                  style={{
-                    padding: '12px 24px',
-                    background: '#2563eb',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 8,
-                    cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
-                    opacity: loading || !input.trim() ? 0.6 : 1,
-                    fontWeight: 600,
-                    fontSize: 16,
-                    margin: 0,
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  Lähetä
-                </button>
-                <button
-                  type="button"
-                  onClick={handleNewChat}
-                  title="Aloita uusi keskustelu"
-                  style={{
-                    padding: '10px 14px',
-                    background: '#e5e7eb',
-                    color: '#2563eb',
-                    border: 'none',
-                    borderRadius: 8,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    fontSize: 20,
-                    margin: 0,
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  <span role="img" aria-label="Uusi keskustelu">➕</span>
-                </button>
-              </form>
-            </div>
-          ) : (
-            <div style={{
-              width: '100%',
-              maxWidth: 1400,
-              margin: '0 auto',
-              display: 'flex',
-              gap: 0,
-              justifyContent: 'flex-start',
-              alignItems: 'flex-start',
-              padding: '32px 0',
-              minHeight: 0,
-              height: '100%',
-              boxSizing: 'border-box',
-              flex: 1
-            }}>
-              {/* Lomakekortti */}
-              <div style={{
-                flex: '0 0 380px',
-                minWidth: 280,
-                maxWidth: 380,
-                background: '#fff',
-                borderRadius: 16,
-                boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
-                padding: 32,
-                minHeight: 'unset',
-                height: 'auto',
-                overflow: 'visible',
-                justifyContent: 'flex-start',
-                alignSelf: 'flex-start',
-                marginRight: 0
-              }}>
-                <h3 style={{margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Lisää tiedosto tietokantaan</h3>
-                <p style={{margin: 0, color: '#6b7280', fontSize: 15}}>Voit liittää PDF-, Word- tai tekstimuotoisen tiedoston. Tiedosto tallennetaan yrityksesi tietokantaan.</p>
-                {/* Drag & drop -alue */}
-                <div
-                  ref={dropRef}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                  style={{
-                    border: dragActive ? '2px solid #2563eb' : '2px dashed #d1d5db',
-                    borderRadius: 12,
-                    background: dragActive ? '#f0f6ff' : '#f9fafb',
-                    padding: '32px 0',
-                    textAlign: 'center',
-                    color: '#6b7280',
-                    fontSize: 16,
-                    cursor: 'pointer',
-                    transition: 'border 0.2s, background 0.2s',
-                    marginBottom: 8
-                  }}
-                  onClick={() => dropRef.current && dropRef.current.querySelector('input[type=file]').click()}
-                >
-                  Vedä ja pudota tiedostoja tähän tai <span style={{color: '#2563eb', textDecoration: 'underline'}}>valitse tiedostot</span>
-                  <input
-                    type="file"
-                    multiple
-                    style={{ display: 'none' }}
-                    onChange={handleFileInput}
-                    disabled={uploadLoading}
-                  />
-                </div>
-                {/* Valitut tiedostot */}
-                {pendingFiles.length > 0 && (
                   <div style={{
-                    background: '#f9fafb',
-                    borderRadius: 8,
-                    padding: '8px 12px',
-                    marginBottom: 8,
-                    maxHeight: 120,
+                    flex: 1,
+                    minHeight: 0,
                     overflowY: 'auto',
-                    fontSize: 15
+                    display: 'flex',
+                    flexDirection: 'column-reverse',
+                    gap: 12,
+                    margin: 0,
+                    padding: 24,
+                    width: '100%',
+                    height: '100%'
                   }}>
-                    {pendingFiles.map(f => (
-                      <div key={f.name + f.size} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 4}}>
-                        <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 180}}>{f.name}</span>
-                        <span style={{color: '#ef4444', cursor: 'pointer', fontSize: 18, marginLeft: 8}} onClick={() => handleRemovePending(f.name, f.size)}>❌</span>
-                      </div>
-                    ))}
+                    {(() => {
+                      const list = [...messages]
+                      if (loading) {
+                        list.push({ role: 'assistant', content: 'Kirjoittaa…', temp: true })
+                      }
+                      return list.slice().reverse().map((message, index) => (
+                        <div key={index} style={{
+                          display: 'flex',
+                          justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
+                        }}>
+                          <div style={{
+                            maxWidth: '85%',
+                            padding: '12px 16px',
+                            borderRadius: 8,
+                            background: message.role === 'user' ? '#2563eb' : '#fff',
+                            color: message.role === 'user' ? '#fff' : '#1f2937',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.07)',
+                            lineHeight: 1.5,
+                            overflowWrap: 'break-word',
+                            fontSize: 16
+                          }}>
+                            {message.temp ? (
+                              message.content
+                            ) : message.role === 'assistant' ? (
+                              <ReactMarkdown>{message.content}</ReactMarkdown>
+                            ) : (
+                              message.content
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    })()}
                   </div>
-                )}
-                <button
-                  onClick={handleUploadPending}
-                  disabled={uploadLoading || pendingFiles.length === 0}
-                  style={{
-                    padding: '12px 0',
-                    background: '#2563eb',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 8,
-                    fontWeight: 700,
-                    fontSize: 16,
-                    cursor: uploadLoading || pendingFiles.length === 0 ? 'not-allowed' : 'pointer',
-                    opacity: uploadLoading || pendingFiles.length === 0 ? 0.7 : 1
-                  }}
-                >
-                  Lähetä tiedostot
-                </button>
-                {uploadLoading && <p style={{ color: '#2563eb', margin: 0 }}>Ladataan...</p>}
-                {uploadError && <p style={{ color: 'red', margin: 0 }}>{uploadError}</p>}
-                {uploadSuccess && <p style={{ color: 'green', margin: 0 }}>{uploadSuccess}</p>}
+                </div>
+                {/* Syöttökenttä ja uusi keskustelu -ikoni */}
+                <form onSubmit={handleSendMessage} style={{
+                  height: 'auto',
+                  minHeight: 56,
+                  borderTop: '1.5px solid #e5e7eb',
+                  background: '#fff',
+                  flexShrink: 0,
+                  display: 'flex',
+                  gap: 8,
+                  alignItems: 'center',
+                  padding: '12px 24px',
+                  margin: 0,
+                  flexWrap: 'wrap'
+                }}>
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Kirjoita viestisi..."
+                    disabled={loading}
+                    style={{
+                      flex: 1,
+                      minWidth: '200px',
+                      padding: '12px 16px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: 8,
+                      fontSize: 16,
+                      outline: 'none',
+                      margin: 0
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    disabled={loading || !input.trim()}
+                    style={{
+                      padding: '12px 24px',
+                      background: '#2563eb',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 8,
+                      cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
+                      opacity: loading || !input.trim() ? 0.6 : 1,
+                      fontWeight: 600,
+                      fontSize: 16,
+                      margin: 0,
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    Lähetä
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleNewChat}
+                    title="Aloita uusi keskustelu"
+                    style={{
+                      padding: '10px 14px',
+                      background: '#e5e7eb',
+                      color: '#2563eb',
+                      border: 'none',
+                      borderRadius: 8,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      fontSize: 20,
+                      margin: 0,
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    <span role="img" aria-label="Uusi keskustelu">➕</span>
+                  </button>
+                </form>
               </div>
-              {/* Tiedostot */}
+            ) : (
               <div style={{
-                flex: 1,
-                minWidth: 0,
-                background: '#fff',
-                borderRadius: 16,
-                boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
-                padding: 32,
+                width: '100%',
+                maxWidth: 1400,
+                margin: '0 auto',
+                display: 'flex',
+                gap: 0,
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start',
+                padding: '32px 0',
                 minHeight: 0,
                 height: '100%',
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-end',
-                marginLeft: 0
+                boxSizing: 'border-box',
+                flex: 1
               }}>
-                <h3 style={{margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Tiedostot</h3>
-                <div style={{flex: 1, overflowY: 'auto', marginTop: 8}}>
-                  {filesLoading ? (
-                    <p>Ladataan tiedostoja...</p>
-                  ) : filesError ? (
-                    <p style={{ color: 'red' }}>{filesError}</p>
-                  ) : files.length === 0 ? (
-                    <div style={{textAlign: 'center', color: '#6b7280', marginTop: 32}}>
-                      <img src="/placeholder.png" alt="Ei tiedostoja" style={{width: 64, opacity: 0.5, marginBottom: 8}} />
-                      <div>Et ole vielä lisännyt tiedostoja</div>
-                    </div>
-                  ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                      {files.map((file) => (
-                        <div key={file.id} style={{
-                          padding: '12px',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '8px',
-                          background: '#f9fafb',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center'
-                        }}>
-                          <div>
-                            <div style={{ fontWeight: 500 }}>{file.filename}</div>
-                            <div style={{ fontSize: '14px', color: '#6b7280' }}>
-                              {formatBytes(file.bytes)} • {formatDate(file.created_at)}
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => handleFileDeletion(file.id)}
-                            style={{
-                              padding: '6px 12px',
-                              background: '#ef4444',
-                              color: '#fff',
-                              border: 'none',
-                              borderRadius: '4px',
-                              cursor: 'pointer',
-                              fontSize: '14px'
-                            }}
-                          >
-                            Poista
-                          </button>
+                {/* Lomakekortti */}
+                <div style={{
+                  flex: '0 0 380px',
+                  minWidth: 280,
+                  maxWidth: 380,
+                  background: '#fff',
+                  borderRadius: 16,
+                  boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
+                  padding: 32,
+                  minHeight: 'unset',
+                  height: 'auto',
+                  overflow: 'visible',
+                  justifyContent: 'flex-start',
+                  alignSelf: 'flex-start',
+                  marginRight: 0
+                }}>
+                  <h3 style={{margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Lisää tiedosto tietokantaan</h3>
+                  <p style={{margin: 0, color: '#6b7280', fontSize: 15}}>Voit liittää PDF-, Word- tai tekstimuotoisen tiedoston. Tiedosto tallennetaan yrityksesi tietokantaan.</p>
+                  {/* Drag & drop -alue */}
+                  <div
+                    ref={dropRef}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    style={{
+                      border: dragActive ? '2px solid #2563eb' : '2px dashed #d1d5db',
+                      borderRadius: 12,
+                      background: dragActive ? '#f0f6ff' : '#f9fafb',
+                      padding: '32px 0',
+                      textAlign: 'center',
+                      color: '#6b7280',
+                      fontSize: 16,
+                      cursor: 'pointer',
+                      transition: 'border 0.2s, background 0.2s',
+                      marginBottom: 8
+                    }}
+                    onClick={() => dropRef.current && dropRef.current.querySelector('input[type=file]').click()}
+                  >
+                    Vedä ja pudota tiedostoja tähän tai <span style={{color: '#2563eb', textDecoration: 'underline'}}>valitse tiedostot</span>
+                    <input
+                      type="file"
+                      multiple
+                      style={{ display: 'none' }}
+                      onChange={handleFileInput}
+                      disabled={uploadLoading}
+                    />
+                  </div>
+                  {/* Valitut tiedostot */}
+                  {pendingFiles.length > 0 && (
+                    <div style={{
+                      background: '#f9fafb',
+                      borderRadius: 8,
+                      padding: '8px 12px',
+                      marginBottom: 8,
+                      maxHeight: 120,
+                      overflowY: 'auto',
+                      fontSize: 15
+                    }}>
+                      {pendingFiles.map(f => (
+                        <div key={f.name + f.size} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 4}}>
+                          <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 180}}>{f.name}</span>
+                          <span style={{color: '#ef4444', cursor: 'pointer', fontSize: 18, marginLeft: 8}} onClick={() => handleRemovePending(f.name, f.size)}>❌</span>
                         </div>
                       ))}
                     </div>
                   )}
+                  <button
+                    onClick={handleUploadPending}
+                    disabled={uploadLoading || pendingFiles.length === 0}
+                    style={{
+                      padding: '12px 0',
+                      background: '#2563eb',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 8,
+                      fontWeight: 700,
+                      fontSize: 16,
+                      cursor: uploadLoading || pendingFiles.length === 0 ? 'not-allowed' : 'pointer',
+                      opacity: uploadLoading || pendingFiles.length === 0 ? 0.7 : 1
+                    }}
+                  >
+                    Lähetä tiedostot
+                  </button>
+                  {uploadLoading && <p style={{ color: '#2563eb', margin: 0 }}>Ladataan...</p>}
+                  {uploadError && <p style={{ color: 'red', margin: 0 }}>{uploadError}</p>}
+                  {uploadSuccess && <p style={{ color: 'green', margin: 0 }}>{uploadSuccess}</p>}
+                </div>
+                {/* Tiedostot */}
+                <div style={{
+                  flex: 1,
+                  minWidth: 0,
+                  background: '#fff',
+                  borderRadius: 16,
+                  boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
+                  padding: 32,
+                  minHeight: 0,
+                  height: '100%',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'flex-end',
+                  marginLeft: 0
+                }}>
+                  <h3 style={{margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937'}}>Tiedostot</h3>
+                  <div style={{flex: 1, overflowY: 'auto', marginTop: 8}}>
+                    {filesLoading ? (
+                      <p>Ladataan tiedostoja...</p>
+                    ) : filesError ? (
+                      <p style={{ color: 'red' }}>{filesError}</p>
+                    ) : files.length === 0 ? (
+                      <div style={{textAlign: 'center', color: '#6b7280', marginTop: 32}}>
+                        <img src="/placeholder.png" alt="Ei tiedostoja" style={{width: 64, opacity: 0.5, marginBottom: 8}} />
+                        <div>Et ole vielä lisännyt tiedostoja</div>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                        {files.map((file) => (
+                          <div key={file.id} style={{
+                            padding: '12px',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            background: '#f9fafb',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}>
+                            <div>
+                              <div style={{ fontWeight: 500 }}>{file.filename}</div>
+                              <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                                {formatBytes(file.bytes)} • {formatDate(file.created_at)}
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleFileDeletion(file.id)}
+                              style={{
+                                padding: '6px 12px',
+                                background: '#ef4444',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '14px'
+                              }}
+                            >
+                              Poista
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </>
   )
 } 

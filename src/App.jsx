@@ -15,6 +15,8 @@ import ManagePostsPage from './pages/ManagePostsPage'
 import AdminPage from './pages/AdminPage'
 import ContentStrategyPage from './pages/ContentStrategyPage'
 import AIChatPage from './pages/AIChatPage'
+import HelpPage from './pages/HelpPage'
+import CallPanel from './pages/CallPanel'
 
 export default function App() {
   return (
@@ -66,6 +68,22 @@ export default function App() {
             <Sidebar />
             <div className="main-content">
               <ProtectedRoute><AIChatPage /></ProtectedRoute>
+            </div>
+          </div>
+        } />
+        <Route path="/help" element={
+          <div style={{ display: 'flex', minHeight: '100vh' }}>
+            <Sidebar />
+            <div className="main-content">
+              <ProtectedRoute><HelpPage /></ProtectedRoute>
+            </div>
+          </div>
+        } />
+        <Route path="/calls" element={
+          <div style={{ display: 'flex', minHeight: '100vh' }}>
+            <Sidebar />
+            <div className="main-content">
+              <ProtectedRoute><CallPanel /></ProtectedRoute>
             </div>
           </div>
         } />

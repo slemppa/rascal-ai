@@ -18,6 +18,8 @@ import AIChatPage from './pages/AIChatPage'
 import HelpPage from './pages/HelpPage'
 import CallPanel from './pages/CallPanel'
 import SettingsPage from './pages/SettingsPage'
+import TermsOfServicePage from './pages/TermsOfServicePage'
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 
 export default function App() {
   return (
@@ -31,6 +33,8 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/magic-link" element={<MagicLink />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/terms" element={<TermsOfServicePage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
         {/* Suojatut reitit sidebarin kanssa */}
         <Route path="/dashboard" element={
           <div style={{ display: 'flex', minHeight: '100vh' }}>

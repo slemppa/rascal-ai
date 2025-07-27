@@ -470,14 +470,14 @@ export default function AdminPage() {
                      >
                        {showUserIds ? 'Piilota ID:t' : 'Näytä ID:t'}
                      </button>
-                     <div className="admin-search">
-                       <input
-                         type="text"
-                         placeholder="Hae nimen, sähköpostin tai yrityksen perusteella..."
-                         value={searchTerm}
-                         onChange={(e) => setSearchTerm(e.target.value)}
-                         className="search-input"
-                       />
+                   <div className="admin-search">
+                     <input
+                       type="text"
+                       placeholder="Hae nimen, sähköpostin tai yrityksen perusteella..."
+                       value={searchTerm}
+                       onChange={(e) => setSearchTerm(e.target.value)}
+                       className="search-input"
+                     />
                      </div>
                    </div>
                  </div>
@@ -759,7 +759,7 @@ export default function AdminPage() {
                              <td>{g.count}</td>
                              <td>{monthNames[g.month]} {g.year}</td>
                              <td>{(g.count * 0.01).toFixed(2)} €</td>
-                           </tr>
+                         </tr>
                          ));
                        })()}
                      </tbody>

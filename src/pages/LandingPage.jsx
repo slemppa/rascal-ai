@@ -99,7 +99,7 @@ export default function LandingPage() {
         description="Automatisoi puhelut ja viestit älykkään AI-assistentin avulla. Rascal AI soittaa asiakkaillesi ja hoitaa viestinnän automaattisesti."
         image="/hero.png"
       />
-      <div style={{ background: '#181B20', minHeight: '100vh', width: '100vw', overflowX: 'hidden', color: '#fff', fontFamily: 'system-ui, -apple-system, sans-serif', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ background: '#181B20', minHeight: '100vh', width: '100vw', overflowX: 'hidden', color: '#fff', fontFamily: 'system-ui, -apple-system, sans-serif', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '32px 48px 0 48px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>

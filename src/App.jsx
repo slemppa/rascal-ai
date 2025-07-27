@@ -20,6 +20,7 @@ import CallPanel from './pages/CallPanel'
 import SettingsPage from './pages/SettingsPage'
 import TermsOfServicePage from './pages/TermsOfServicePage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
+import SocialMediaDashboard from './components/SocialMedia/SocialMediaDashboard'
 
 export default function App() {
   return (
@@ -97,6 +98,14 @@ export default function App() {
             <Sidebar />
             <div className="main-content">
               <ProtectedRoute><SettingsPage /></ProtectedRoute>
+            </div>
+          </div>
+        } />
+        <Route path="/social-media" element={
+          <div style={{ display: 'flex', minHeight: '100vh' }}>
+            <Sidebar />
+            <div className="main-content">
+              <ProtectedRoute><SocialMediaDashboard /></ProtectedRoute>
             </div>
           </div>
         } />

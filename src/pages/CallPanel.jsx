@@ -88,20 +88,20 @@ export default function CallPanel() {
     const fetchUserVoiceId = async () => {
       if (!user?.id) return
       try {
-        const { data, error } = await supabase
-          .from('users')
-          .select('voice_id')
-          .eq('auth_user_id', user.id)
-          .single()
+      const { data, error } = await supabase
+        .from('users')
+        .select('voice_id')
+        .eq('auth_user_id', user.id)
+        .single()
         
         if (error) {
           console.error('Error fetching user voice_id:', error)
           return
         }
         
-        if (data?.voice_id) {
-          setUserVoiceId(data.voice_id)
-          setUserVoiceLabel('Oma ääni')
+      if (data?.voice_id) {
+        setUserVoiceId(data.voice_id)
+        setUserVoiceLabel('Oma ääni')
         }
       } catch (err) {
         console.error('Error in fetchUserVoiceId:', err)
@@ -328,7 +328,7 @@ export default function CallPanel() {
             campaign_id: `mass-call-${Date.now()}`.substring(0, 100), // Rajaa 100 merkkiin
             summary: `Mass-call: ${script.trim().substring(0, 100)}...`
           })
-      } else {
+        } else {
           errorCount++
         }
       }
@@ -482,7 +482,7 @@ export default function CallPanel() {
     try {
       const { error } = await supabase.from('call_types').delete().eq('id', recordId)
       if (!error) {
-      alert('Puhelun tyyppi poistettu!')
+        alert('Puhelun tyyppi poistettu!')
         fetchCallTypes()
       } else {
         throw new Error('Poisto epäonnistui')
@@ -508,7 +508,7 @@ export default function CallPanel() {
 
   // Hae puhelun tyypit komponentin latauksen yhteydessä
   const fetchCallTypes = async () => {
-      setLoadingCallTypes(true)
+    setLoadingCallTypes(true)
     try {
       if (!user?.id) {
         setCallTypes([])
@@ -539,13 +539,13 @@ export default function CallPanel() {
       const formattedCallTypes = data.map(record => ({
         value: record.name,
         label: record.name,
-          id: record.id,
+        id: record.id,
         ...record
-        }))
-        setCallTypes(formattedCallTypes)
+      }))
+      setCallTypes(formattedCallTypes)
     } catch (e) {
       console.error('Error fetching call types:', e)
-        setCallTypes([])
+      setCallTypes([])
     } finally {
       setLoadingCallTypes(false)
     }
@@ -619,9 +619,9 @@ export default function CallPanel() {
       }
       const { error } = await supabase.from('call_types').insert([insertData])
       if (error) throw error
-        setAddTypeSuccess('Puhelutyyppi lisätty!')
-        setNewCallType({ callType: '', label: '', description: '', identity: '', style: '', guidelines: '', goals: '', intro: '', questions: '', outro: '', notes: '', version: '', status: 'Active' })
-        fetchCallTypes() // Päivitä lista
+      setAddTypeSuccess('Puhelutyyppi lisätty!')
+      setNewCallType({ callType: '', label: '', description: '', identity: '', style: '', guidelines: '', goals: '', intro: '', questions: '', outro: '', notes: '', version: '', status: 'Active' })
+      fetchCallTypes() // Päivitä lista
     } catch (e) {
       setAddTypeError('Lisäys epäonnistui: ' + (e.message || e))
     } finally {
@@ -652,7 +652,7 @@ export default function CallPanel() {
     try {
       setLoadingCallLogs(true)
       setCallLogsError('')
-      
+
       if (!user?.id) {
         setCallLogsError('Käyttäjän tunniste puuttuu!')
         return
@@ -680,7 +680,7 @@ export default function CallPanel() {
       if (searchTerm) {
         query = query.or(`customer_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%`)
       }
-              if (statusFilter) {
+      if (statusFilter) {
           if (statusFilter === 'success') {
             query = query.eq('call_status', 'done').eq('answered', true)
           } else if (statusFilter === 'failed') {
@@ -690,16 +690,16 @@ export default function CallPanel() {
           } else if (statusFilter === 'in_progress') {
             query = query.eq('call_status', 'in progress')
           }
-        }
+      }
       if (callTypeFilter) {
         query = query.eq('call_type', callTypeFilter)
       }
-              if (dateFrom) {
+      if (dateFrom) {
           query = query.gte('call_date', dateFrom)
-        }
-        if (dateTo) {
+      }
+      if (dateTo) {
           query = query.lte('call_date', dateTo)
-        }
+      }
 
       const { data: logs, error } = await query
 
@@ -722,7 +722,7 @@ export default function CallPanel() {
 
     useEffect(() => {
       if (user?.id && activeTab === 'logs') {
-        fetchCallLogs()
+      fetchCallLogs()
       }
   }, [user, activeTab]) // Suoritetaan kun user tai activeTab muuttuu
 
@@ -740,7 +740,7 @@ export default function CallPanel() {
     } finally {
       setLoadingLogDetail(false)
     }
-  }
+      }
 
   // ESC-näppäimen kuuntelija modaalin sulkemiseen
   useEffect(() => {
@@ -923,360 +923,360 @@ export default function CallPanel() {
         image="/hero.png"
       />
       <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div className="callpanel-wrapper" style={{ width: '100%', maxWidth: 'none' }}>
-          <div className="callpanel-root" style={{ width: '100%', maxWidth: 'none' }}>
-            {/* Tabs */}
-            <div className="callpanel-tabs">
-              <button onClick={() => setActiveTab('calls')} className={`callpanel-tab${activeTab === 'calls' ? ' active' : ''}`}>📞 Puhelut</button>
-              <button onClick={() => setActiveTab('logs')} className={`callpanel-tab${activeTab === 'logs' ? ' active' : ''}`}>📊 Lokit</button>
-              <button onClick={() => setActiveTab('manage')} className={`callpanel-tab${activeTab === 'manage' ? ' active' : ''}`}>⚙️ Hallinta</button>
+    <div className="callpanel-wrapper" style={{ width: '100%', maxWidth: 'none' }}>
+      <div className="callpanel-root" style={{ width: '100%', maxWidth: 'none' }}>
+        {/* Tabs */}
+        <div className="callpanel-tabs">
+          <button onClick={() => setActiveTab('calls')} className={`callpanel-tab${activeTab === 'calls' ? ' active' : ''}`}>📞 Puhelut</button>
+          <button onClick={() => setActiveTab('logs')} className={`callpanel-tab${activeTab === 'logs' ? ' active' : ''}`}>📊 Lokit</button>
+          <button onClick={() => setActiveTab('manage')} className={`callpanel-tab${activeTab === 'manage' ? ' active' : ''}`}>⚙️ Hallinta</button>
+        </div>
+        
+        {/* Sisältö */}
+        {activeTab === 'calls' && (
+          <div className="callpanel-grid" style={{ width: '100%', maxWidth: 'none' }}>
+            {/* Aloita puhelut -kortti */}
+            <div className="card">
+              <h2 className="section-title">Aloita massapuhelut</h2>
+              <div style={{ marginBottom: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <label className="label">Google Sheets URL</label>
+                  <button type="button" className="button-secondary" style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }} onClick={() => setActiveTab('manage')}>
+                    ➕ Lisää puhelun tyyppi
+                  </button>
+                </div>
+                <input type="url" value={sheetUrl} onChange={e => setSheetUrl(e.target.value)} placeholder="https://docs.google.com/spreadsheets/d/..." className="input" />
+              </div>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                <button onClick={handleValidate} disabled={validating || !sheetUrl} className="button-secondary" style={{ flex: 1 }}>
+                  {validating ? 'Validoidaan...' : 'Validoi'}
+                </button>
+                <button onClick={handleStartCalls} disabled={starting || !validationResult || !callType || !script.trim() || !selectedVoice} className="button-primary" style={{ flex: 1 }}>
+                  {starting ? 'Käynnistetään...' : 'Aloita soitot'}
+                </button>
+              </div>
+              <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 2 }}>
+                Käyttää Toiminnot-moduulin asetuksia (tyyppi, ääni, skripti)
+              </div>
+              {error && <div className="status-error">{error}</div>}
+              {validationResult && (
+                <div className="status-success">
+                  <div style={{ fontWeight: 600 }}>✅ Validointi onnistui!</div>
+                  <div>📈 <strong>Löydetty {validationResult.phoneCount} puhelinnumeroa</strong></div>
+                  {validationResult.totalRows > 0 && <div>📋 Yhteensä {validationResult.totalRows} riviä</div>}
+                  {validationResult.phoneColumns && validationResult.phoneColumns.length > 0 && <div>📞 Puhelinnumerosarakkeet: {validationResult.phoneColumns.join(', ')}</div>}
+                  {validationResult.columns && validationResult.columns.length > 0 && <div>📝 Kaikki sarakkeet: {validationResult.columns.join(', ')}</div>}
+                </div>
+              )}
+            </div>
+            {/* Tee puhelu -kortti */}
+            <div className="card">
+              <h2 className="section-title">Soita yksittäinen puhelu</h2>
+              <label className="label">Nimi</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Matti Meikäläinen" className="input" />
+              <label className="label">Puhelinnumero</label>
+              <input type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="+358 40 123 4567" className="input" />
+              <button onClick={handleSingleCall} disabled={calling || !name.trim() || !phoneNumber.trim() || !callType || !script.trim() || !selectedVoice} className="button-primary">
+                {calling ? '📞 Soittaa...' : '📞 Soita'}
+              </button>
+              <div style={{ fontSize: 13, color: '#6b7280', marginTop: 2 }}>
+                Käyttää Toiminnot-moduulin asetuksia (tyyppi, ääni, skripti)
+              </div>
+              {singleCallError && <div className="status-error">{singleCallError}</div>}
+            </div>
+            {/* Toiminnot -kortti */}
+            <div className="card">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <h2 className="section-title" style={{ marginBottom: 0 }}>Toiminnot</h2>
+                {callType && script.trim() && selectedVoice && (
+                  <div style={{ background: '#e6fbe8', color: '#1a7f37', padding: '4px 12px', borderRadius: 12, fontSize: 13, fontWeight: 600 }}>✅ Valmis</div>
+                )}
+              </div>
+              <label className="label">Puhelun tyyppi</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <select value={callType} onChange={e => { setCallType(e.target.value); updateScriptFromCallType(e.target.value); }} disabled={loadingCallTypes} className="select">
+                  {loadingCallTypes ? <option>Ladataan puhelun tyyppejä...</option> : callTypes.length === 0 ? <option>Ei puhelun tyyppejä saatavilla</option> : callTypes.map(type => <option key={type.value} value={type.value}>{type.label}</option>)}
+                </select>
+                <button type="button" className="button-secondary" style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }} onClick={() => setActiveTab('manage')}>
+                  ➕ Lisää uusi
+                </button>
+              </div>
+              <label className="label">Ääni</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <select value={selectedVoice} onChange={e => setSelectedVoice(e.target.value)} className="select">
+                  {getVoiceOptions().map(voice => <option key={voice.value} value={voice.value}>{voice.label}</option>)}
+                </select>
+                <button 
+                  type="button" 
+                  className="button-secondary" 
+                  style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }} 
+                  onClick={() => playVoiceSample(selectedVoice)}
+                >
+                  {isPlaying ? '⏹️ Pysäytä' : '🔊 Testaa ääni'}
+                </button>
+              </div>
+              <label className="label">Skripti</label>
+              <div className="textarea" style={{ minHeight: 90, background: '#f9fafb', color: '#374151', lineHeight: 1.5, whiteSpace: 'pre-wrap', overflowY: 'auto', maxHeight: 200 }}>
+                {script ? script : <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>Valitse puhelun tyyppi nähdäksesi skriptin</span>}
+              </div>
+              <div style={{ fontSize: 12, color: '#6b7280' }}>Skripti päivittyy automaattisesti valitun puhelutyyppin mukaan</div>
+            </div>
+            {/* Inbound-asetukset -kortti */}
+            <div className="card">
+              <h2 className="section-title">Inbound-asetukset</h2>
+              <label className="label">Ääni</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <select value={inboundVoice} onChange={e => setInboundVoice(e.target.value)} className="select">
+                  {voiceOptions.map(voice => <option key={voice.value} value={voice.value}>{voice.label}</option>)}
+                </select>
+                <button type="button" className="button-secondary" style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }} onClick={() => playVoiceSample(inboundVoice)}>
+                  🔊 Testaa
+                </button>
+              </div>
+              <label className="label">Inbound-skripti</label>
+              <textarea value={inboundScript} onChange={e => setInboundScript(e.target.value)} placeholder="Kirjoita inbound-puhelujen skripti..." rows={5} className="textarea" />
+              <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 10 }}>Tervehdys ja ohjeistus asiakkaille jotka soittavat sinulle</div>
+              <button onClick={handleSaveInboundSettings} className="button-primary">
+                💾 Tallenna asetukset
+              </button>
+            </div>
+          </div>
+        )}
+          
+        {activeTab === 'logs' && (
+          <div style={{
+            background: '#fff',
+            borderRadius: 16,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+            padding: 32,
+            width: '100%'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+              <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
+                📊 Puheluloki
+              </h2>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button
+                  type="button"
+                  onClick={exportCallLogs}
+                  style={{
+                    padding: '8px 16px',
+                    fontSize: 14,
+                    background: '#10b981',
+                    border: 'none',
+                    borderRadius: 8,
+                    cursor: 'pointer',
+                    color: '#fff',
+                    fontWeight: 500
+                  }}
+                >
+                  📥 Export CSV
+                </button>
+                <button
+                  type="button"
+                  onClick={() => fetchCallLogs()}
+                  disabled={loadingCallLogs}
+                  style={{
+                    padding: '8px 16px',
+                    fontSize: 14,
+                    background: loadingCallLogs ? '#9ca3af' : '#3b82f6',
+                    border: 'none',
+                    borderRadius: 8,
+                    cursor: loadingCallLogs ? 'not-allowed' : 'pointer',
+                    color: '#fff',
+                    fontWeight: 500
+                  }}
+                >
+                  {loadingCallLogs ? '🔄 Päivitetään...' : '🔄 Päivitä'}
+                </button>
+              </div>
             </div>
             
-            {/* Sisältö */}
-            {activeTab === 'calls' && (
-              <div className="callpanel-grid" style={{ width: '100%', maxWidth: 'none' }}>
-                {/* Aloita puhelut -kortti */}
-                <div className="card">
-                  <h2 className="section-title">Aloita massapuhelut</h2>
-                  <div style={{ marginBottom: 10 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                      <label className="label">Google Sheets URL</label>
-                      <button type="button" className="button-secondary" style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }} onClick={() => setActiveTab('manage')}>
-                        ➕ Lisää puhelun tyyppi
-                      </button>
-                    </div>
-                    <input type="url" value={sheetUrl} onChange={e => setSheetUrl(e.target.value)} placeholder="https://docs.google.com/spreadsheets/d/..." className="input" />
-                  </div>
-                  <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                    <button onClick={handleValidate} disabled={validating || !sheetUrl} className="button-secondary" style={{ flex: 1 }}>
-                      {validating ? 'Validoidaan...' : 'Validoi'}
-                    </button>
-                    <button onClick={handleStartCalls} disabled={starting || !validationResult || !callType || !script.trim() || !selectedVoice} className="button-primary" style={{ flex: 1 }}>
-                      {starting ? 'Käynnistetään...' : 'Aloita soitot'}
-                    </button>
-                  </div>
-                  <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 2 }}>
-                    Käyttää Toiminnot-moduulin asetuksia (tyyppi, ääni, skripti)
-                  </div>
-                  {error && <div className="status-error">{error}</div>}
-                  {validationResult && (
-                    <div className="status-success">
-                      <div style={{ fontWeight: 600 }}>✅ Validointi onnistui!</div>
-                      <div>📈 <strong>Löydetty {validationResult.phoneCount} puhelinnumeroa</strong></div>
-                      {validationResult.totalRows > 0 && <div>📋 Yhteensä {validationResult.totalRows} riviä</div>}
-                      {validationResult.phoneColumns && validationResult.phoneColumns.length > 0 && <div>📞 Puhelinnumerosarakkeet: {validationResult.phoneColumns.join(', ')}</div>}
-                      {validationResult.columns && validationResult.columns.length > 0 && <div>📝 Kaikki sarakkeet: {validationResult.columns.join(', ')}</div>}
-                    </div>
-                  )}
-                </div>
-                {/* Tee puhelu -kortti */}
-                <div className="card">
-                  <h2 className="section-title">Soita yksittäinen puhelu</h2>
-                  <label className="label">Nimi</label>
-                  <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Matti Meikäläinen" className="input" />
-                  <label className="label">Puhelinnumero</label>
-                  <input type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="+358 40 123 4567" className="input" />
-                  <button onClick={handleSingleCall} disabled={calling || !name.trim() || !phoneNumber.trim() || !callType || !script.trim() || !selectedVoice} className="button-primary">
-                    {calling ? '📞 Soittaa...' : '📞 Soita'}
-                  </button>
-                  <div style={{ fontSize: 13, color: '#6b7280', marginTop: 2 }}>
-                    Käyttää Toiminnot-moduulin asetuksia (tyyppi, ääni, skripti)
-                  </div>
-                  {singleCallError && <div className="status-error">{singleCallError}</div>}
-                </div>
-                {/* Toiminnot -kortti */}
-                <div className="card">
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                    <h2 className="section-title" style={{ marginBottom: 0 }}>Toiminnot</h2>
-                    {callType && script.trim() && selectedVoice && (
-                      <div style={{ background: '#e6fbe8', color: '#1a7f37', padding: '4px 12px', borderRadius: 12, fontSize: 13, fontWeight: 600 }}>✅ Valmis</div>
-                    )}
-                  </div>
-                  <label className="label">Puhelun tyyppi</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                    <select value={callType} onChange={e => { setCallType(e.target.value); updateScriptFromCallType(e.target.value); }} disabled={loadingCallTypes} className="select">
-                      {loadingCallTypes ? <option>Ladataan puhelun tyyppejä...</option> : callTypes.length === 0 ? <option>Ei puhelun tyyppejä saatavilla</option> : callTypes.map(type => <option key={type.value} value={type.value}>{type.label}</option>)}
-                    </select>
-                    <button type="button" className="button-secondary" style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }} onClick={() => setActiveTab('manage')}>
-                      ➕ Lisää uusi
-                    </button>
-                  </div>
-                  <label className="label">Ääni</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                    <select value={selectedVoice} onChange={e => setSelectedVoice(e.target.value)} className="select">
-                      {getVoiceOptions().map(voice => <option key={voice.value} value={voice.value}>{voice.label}</option>)}
-                    </select>
-                    <button 
-                      type="button" 
-                      className="button-secondary" 
-                      style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }} 
-                      onClick={() => playVoiceSample(selectedVoice)}
-                    >
-                      {isPlaying ? '⏹️ Pysäytä' : '🔊 Testaa ääni'}
-                    </button>
-                  </div>
-                  <label className="label">Skripti</label>
-                  <div className="textarea" style={{ minHeight: 90, background: '#f9fafb', color: '#374151', lineHeight: 1.5, whiteSpace: 'pre-wrap', overflowY: 'auto', maxHeight: 200 }}>
-                    {script ? script : <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>Valitse puhelun tyyppi nähdäksesi skriptin</span>}
-                  </div>
-                  <div style={{ fontSize: 12, color: '#6b7280' }}>Skripti päivittyy automaattisesti valitun puhelutyyppin mukaan</div>
-                </div>
-                {/* Inbound-asetukset -kortti */}
-                <div className="card">
-                  <h2 className="section-title">Inbound-asetukset</h2>
-                  <label className="label">Ääni</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                    <select value={inboundVoice} onChange={e => setInboundVoice(e.target.value)} className="select">
-                      {voiceOptions.map(voice => <option key={voice.value} value={voice.value}>{voice.label}</option>)}
-                    </select>
-                    <button type="button" className="button-secondary" style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }} onClick={() => playVoiceSample(inboundVoice)}>
-                      🔊 Testaa
-                    </button>
-                  </div>
-                  <label className="label">Inbound-skripti</label>
-                  <textarea value={inboundScript} onChange={e => setInboundScript(e.target.value)} placeholder="Kirjoita inbound-puhelujen skripti..." rows={5} className="textarea" />
-                  <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 10 }}>Tervehdys ja ohjeistus asiakkaille jotka soittavat sinulle</div>
-                  <button onClick={handleSaveInboundSettings} className="button-primary">
-                    💾 Tallenna asetukset
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Filtterit */}
+            <div style={{ 
+              background: '#f8fafc', 
+              padding: 24, 
+              borderRadius: 12, 
+              border: '1px solid #e2e8f0',
+              marginBottom: 32
+            }}>
+              <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
+                🔍 Filtterit ja haku
+              </h3>
               
-            {activeTab === 'logs' && (
-              <div style={{
-                background: '#fff',
-                borderRadius: 16,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-                padding: 32,
-                width: '100%'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                  <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
-                    📊 Puheluloki
-                  </h2>
-                  <div style={{ display: 'flex', gap: 12 }}>
-                    <button
-                      type="button"
-                      onClick={exportCallLogs}
-                      style={{
-                        padding: '8px 16px',
-                        fontSize: 14,
-                        background: '#10b981',
-                        border: 'none',
-                        borderRadius: 8,
-                        cursor: 'pointer',
-                        color: '#fff',
-                        fontWeight: 500
-                      }}
-                    >
-                      📥 Export CSV
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => fetchCallLogs()}
-                      disabled={loadingCallLogs}
-                      style={{
-                        padding: '8px 16px',
-                        fontSize: 14,
-                        background: loadingCallLogs ? '#9ca3af' : '#3b82f6',
-                        border: 'none',
-                        borderRadius: 8,
-                        cursor: loadingCallLogs ? 'not-allowed' : 'pointer',
-                        color: '#fff',
-                        fontWeight: 500
-                      }}
-                    >
-                      {loadingCallLogs ? '🔄 Päivitetään...' : '🔄 Päivitä'}
-                    </button>
-                  </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 16 }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
+                    Hae nimeä tai numeroa
+                  </label>
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Matti Meikäläinen tai +358..."
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: 6,
+                      fontSize: 14
+                    }}
+                  />
                 </div>
                 
-                {/* Filtterit */}
-                <div style={{ 
-                  background: '#f8fafc', 
-                  padding: 24, 
-                  borderRadius: 12, 
-                  border: '1px solid #e2e8f0',
-                  marginBottom: 32
-                }}>
-                  <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
-                    🔍 Filtterit ja haku
-                  </h3>
-                  
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 16 }}>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-                        Hae nimeä tai numeroa
-                      </label>
-                      <input
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Matti Meikäläinen tai +358..."
-                        style={{
-                          width: '100%',
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      />
-                    </div>
-                    
-                    <div>
-                      <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-                        Tila
-                      </label>
-                      <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      >
-                        <option value="">Kaikki</option>
-                        <option value="success">Onnistuneet</option>
-                        <option value="failed">Epäonnistuneet</option>
-                        <option value="pending">Odottaa</option>
+                <div>
+                  <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
+                    Tila
+                  </label>
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: 6,
+                      fontSize: 14
+                    }}
+                  >
+                    <option value="">Kaikki</option>
+                    <option value="success">Onnistuneet</option>
+                    <option value="failed">Epäonnistuneet</option>
+                    <option value="pending">Odottaa</option>
                         <option value="in_progress">Käynnissä</option>
-                      </select>
-                    </div>
-                    
-                    <div>
-                      <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-                        Puhelun tyyppi
-                      </label>
-                      <select
-                        value={callTypeFilter}
-                        onChange={(e) => setCallTypeFilter(e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      >
-                        <option value="">Kaikki</option>
-                        {callTypes.map(type => (
+                  </select>
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
+                    Puhelun tyyppi
+                  </label>
+                  <select
+                    value={callTypeFilter}
+                    onChange={(e) => setCallTypeFilter(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: 6,
+                      fontSize: 14
+                    }}
+                  >
+                    <option value="">Kaikki</option>
+                    {callTypes.map(type => (
                           <option key={type.id} value={type.name}>
                             {type.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 16 }}>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-                        Päivämäärä alkaen
-                      </label>
-                      <input
-                        type="date"
-                        value={dateFrom}
-                        onChange={(e) => setDateFrom(e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      />
-                    </div>
-                    
-                    <div>
-                      <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-                        Päivämäärä asti
-                      </label>
-                      <input
-                        type="date"
-                        value={dateTo}
-                        onChange={(e) => setDateTo(e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '8px 12px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 14
-                        }}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div style={{ display: 'flex', gap: 12 }}>
-                    <Button
-                      onClick={handleSearch}
-                      disabled={loadingCallLogs}
-                      style={{ fontSize: 14, fontWeight: 500, marginRight: 8 }}
-                    >
-                      🔍 Hae
-                    </Button>
-                    <Button
-                      onClick={clearFilters}
-                      style={{ fontSize: 14, fontWeight: 500 }}
-                      variant="secondary"
-                    >
-                      🗑️ Tyhjennä filtterit
-                    </Button>
-                  </div>
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 16 }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
+                    Päivämäärä alkaen
+                  </label>
+                  <input
+                    type="date"
+                    value={dateFrom}
+                    onChange={(e) => setDateFrom(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: 6,
+                      fontSize: 14
+                    }}
+                  />
                 </div>
                 
-                {/* Tilastot */}
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-                  gap: 24, 
-                  marginBottom: 32 
-                }}>
-                  <div style={{ 
-                    background: '#f8fafc', 
-                    padding: 24, 
-                    borderRadius: 12, 
-                    border: '1px solid #e2e8f0' 
-                  }}>
-                                    <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e', marginBottom: 8 }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
+                    Päivämäärä asti
+                  </label>
+                  <input
+                    type="date"
+                    value={dateTo}
+                    onChange={(e) => setDateTo(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: 6,
+                      fontSize: 14
+                    }}
+                  />
+                </div>
+              </div>
+              
+              <div style={{ display: 'flex', gap: 12 }}>
+                <Button
+                  onClick={handleSearch}
+                  disabled={loadingCallLogs}
+                  style={{ fontSize: 14, fontWeight: 500, marginRight: 8 }}
+                >
+                  🔍 Hae
+                </Button>
+                <Button
+                  onClick={clearFilters}
+                  style={{ fontSize: 14, fontWeight: 500 }}
+                  variant="secondary"
+                >
+                  🗑️ Tyhjennä filtterit
+                </Button>
+              </div>
+            </div>
+            
+            {/* Tilastot */}
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+              gap: 24, 
+              marginBottom: 32 
+            }}>
+              <div style={{ 
+                background: '#f8fafc', 
+                padding: 24, 
+                borderRadius: 12, 
+                border: '1px solid #e2e8f0' 
+              }}>
+                <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e', marginBottom: 8 }}>
                     {callLogs.filter(log => log.call_status === 'done' && log.answered).length}
-                  </div>
-                    <div style={{ fontSize: 14, color: '#6b7280' }}>Onnistuneet puhelut</div>
-                  </div>
-                  
-                  <div style={{ 
-                    background: '#f8fafc', 
-                    padding: 24, 
-                    borderRadius: 12, 
-                    border: '1px solid #e2e8f0' 
-                  }}>
-                                    <div style={{ fontSize: 32, fontWeight: 700, color: '#ef4444', marginBottom: 8 }}>
+                </div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>Onnistuneet puhelut</div>
+              </div>
+              
+              <div style={{ 
+                background: '#f8fafc', 
+                padding: 24, 
+                borderRadius: 12, 
+                border: '1px solid #e2e8f0' 
+              }}>
+                <div style={{ fontSize: 32, fontWeight: 700, color: '#ef4444', marginBottom: 8 }}>
                     {callLogs.filter(log => log.call_status === 'done' && !log.answered).length}
-                  </div>
-                    <div style={{ fontSize: 14, color: '#6b7280' }}>Epäonnistuneet</div>
-                  </div>
-                  
-                  <div style={{ 
-                    background: '#f8fafc', 
-                    padding: 24, 
-                    borderRadius: 12, 
-                    border: '1px solid #e2e8f0' 
-                  }}>
+                </div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>Epäonnistuneet</div>
+              </div>
+              
+              <div style={{ 
+                background: '#f8fafc', 
+                padding: 24, 
+                borderRadius: 12, 
+                border: '1px solid #e2e8f0' 
+              }}>
                                     <div style={{ fontSize: 32, fontWeight: 700, color: '#f59e0b', marginBottom: 8 }}>
                     {callLogs.filter(log => log.call_status === 'pending').length}
-                  </div>
+                </div>
                     <div style={{ fontSize: 14, color: '#6b7280' }}>Odottaa</div>
-                  </div>
-                  
-                  <div style={{ 
-                    background: '#f8fafc', 
-                    padding: 24, 
-                    borderRadius: 12, 
-                    border: '1px solid #e2e8f0' 
-                  }}>
+              </div>
+
+              <div style={{ 
+                background: '#f8fafc', 
+                padding: 24, 
+                borderRadius: 12, 
+                border: '1px solid #e2e8f0' 
+              }}>
                                     <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6', marginBottom: 8 }}>
                     {callLogs.filter(log => log.call_status === 'in progress').length}
                   </div>
@@ -1291,76 +1291,76 @@ export default function CallPanel() {
                   }}>
                                     <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1', marginBottom: 8 }}>
                     {callLogs.length}
-                  </div>
-                    <div style={{ fontSize: 14, color: '#6b7280' }}>Yhteensä</div>
-                  </div>
                 </div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>Yhteensä</div>
+              </div>
+            </div>
 
-                {/* Virheviesti */}
-                {callLogsError && (
-                  <div style={{
-                    background: '#fef2f2',
-                    border: '1px solid #fecaca',
-                    borderRadius: 12,
-                    padding: 16,
-                    marginBottom: 24,
-                    color: '#dc2626',
-                    fontSize: 14
-                  }}>
-                    ❌ {callLogsError}
+            {/* Virheviesti */}
+            {callLogsError && (
+              <div style={{
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
+                borderRadius: 12,
+                padding: 16,
+                marginBottom: 24,
+                color: '#dc2626',
+                fontSize: 14
+              }}>
+                ❌ {callLogsError}
+              </div>
+            )}
+            
+            {/* Puheluloki lista */}
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#374151' }}>
+                  Puheluhistoria
+                </h3>
+                {totalCount > 0 && (
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>
+                    Näytetään {((currentPage - 1) * 25) + 1}-{Math.min(currentPage * 25, totalCount)} / {totalCount} puhelua
                   </div>
                 )}
-                
-                {/* Puheluloki lista */}
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                    <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#374151' }}>
-                      Puheluhistoria
-                    </h3>
-                    {totalCount > 0 && (
-                      <div style={{ fontSize: 14, color: '#6b7280' }}>
-                        Näytetään {((currentPage - 1) * 25) + 1}-{Math.min(currentPage * 25, totalCount)} / {totalCount} puhelua
-                      </div>
-                    )}
-                  </div>
-                  
-                  {loadingCallLogs ? (
-                    <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
-                      Ladataan puhelulokia...
-                    </div>
-                  ) : callLogs.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
-                      Ei puheluja löytynyt valituilla filttereillä
-                    </div>
-                  ) : (
-                    <div style={{ overflowX: 'auto', marginBottom: 24 }}>
-                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
-                        <thead>
-                          <tr style={{ background: '#f3f4f6', color: '#374151' }}>
-                            <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Nimi</th>
-                            <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Puhelinnumero</th>
-                            <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Yhteenveto</th>
-                            <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Puhelun tyyppi</th>
-                            <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Päivämäärä</th>
-                            <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Vastattu</th>
-                            <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Kesto</th>
-                            <th style={{ padding: '8px', textAlign: 'center', fontWeight: 600 }}>Tila</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {callLogs.map((log, index) => (
-                            <tr
+              </div>
+              
+              {loadingCallLogs ? (
+                <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
+                  Ladataan puhelulokia...
+                </div>
+              ) : callLogs.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
+                  Ei puheluja löytynyt valituilla filttereillä
+                </div>
+              ) : (
+                <div style={{ overflowX: 'auto', marginBottom: 24 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+                    <thead>
+                      <tr style={{ background: '#f3f4f6', color: '#374151' }}>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Nimi</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Puhelinnumero</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Yhteenveto</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Puhelun tyyppi</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Päivämäärä</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Vastattu</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Kesto</th>
+                        <th style={{ padding: '8px', textAlign: 'center', fontWeight: 600 }}>Tila</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {callLogs.map((log, index) => (
+                        <tr
                               key={log.id || index}
-                              onClick={() => fetchLogDetail(log)}
-                              style={{
-                                background: '#fff',
-                                cursor: 'pointer',
-                                borderBottom: '1px solid #e5e7eb',
-                                transition: 'background 0.15s',
-                              }}
-                              onMouseOver={e => e.currentTarget.style.background = '#f3f4f6'}
-                              onMouseOut={e => e.currentTarget.style.background = '#fff'}
-                            >
+                          onClick={() => fetchLogDetail(log)}
+                          style={{
+                            background: '#fff',
+                            cursor: 'pointer',
+                            borderBottom: '1px solid #e5e7eb',
+                            transition: 'background 0.15s',
+                          }}
+                          onMouseOver={e => e.currentTarget.style.background = '#f3f4f6'}
+                          onMouseOut={e => e.currentTarget.style.background = '#fff'}
+                        >
                               <td style={{ padding: '8px', fontWeight: 500 }}>{log.customer_name || 'Tuntematon nimi'}</td>
                               <td style={{ padding: '8px' }}>{log.phone_number || '-'}</td>
                               <td style={{ padding: '8px', color: '#6b7280', fontSize: 13 }}>
@@ -1372,129 +1372,129 @@ export default function CallPanel() {
                               </td>
                               <td style={{ padding: '8px' }}>{log.answered ? 'Kyllä' : 'Ei'}</td>
                               <td style={{ padding: '8px' }}>{log.duration || '-'}</td>
-                              <td style={{ padding: '8px', textAlign: 'center' }}>
-                                <span style={{
-                                  display: 'inline-block',
-                                  padding: '3px 10px',
-                                  borderRadius: 8,
-                                  fontSize: 12,
-                                  fontWeight: 600,
+                          <td style={{ padding: '8px', textAlign: 'center' }}>
+                            <span style={{
+                              display: 'inline-block',
+                              padding: '3px 10px',
+                              borderRadius: 8,
+                              fontSize: 12,
+                              fontWeight: 600,
                                   background: log.call_status === 'done' && log.answered ? '#dcfce7' : 
                                             log.call_status === 'pending' ? '#f3f4f6' : 
                                             log.call_status === 'in progress' ? '#dbeafe' : '#fef2f2',
                                   color: log.call_status === 'done' && log.answered ? '#166534' : 
                                          log.call_status === 'pending' ? '#6b7280' : 
                                          log.call_status === 'in progress' ? '#1d4ed8' : '#dc2626',
-                                  minWidth: 60
-                                }}>
+                              minWidth: 60
+                            }}>
                                   {log.call_status === 'done' && log.answered ? 'Onnistui' : 
                                    log.call_status === 'done' && !log.answered ? 'Epäonnistui' :
                                    log.call_status === 'pending' ? 'Odottaa' : 
                                    log.call_status === 'in progress' ? 'Käynnissä' : 'Tuntematon'}
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+          </div>
+        )}
+        
+        {activeTab === 'manage' && (
+          <div style={{
+            background: '#fff',
+            borderRadius: 16,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+            padding: 32,
+            width: '100%'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+              <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
+                ⚙️ Puhelun tyyppien hallinta
+              </h2>
+              <button
+                type="button"
+                onClick={openAddModal}
+                style={{
+                  padding: '12px 24px',
+                  fontSize: 14,
+                  background: '#3b82f6',
+                  border: 'none',
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                  color: '#fff',
+                  fontWeight: 600
+                }}
+              >
+                ➕ Lisää uusi tyyppi
+              </button>
+            </div>
             
-            {activeTab === 'manage' && (
-              <div style={{
-                background: '#fff',
-                borderRadius: 16,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-                padding: 32,
-                width: '100%'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                  <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
-                    ⚙️ Puhelun tyyppien hallinta
-                  </h2>
-                  <button
-                    type="button"
-                    onClick={openAddModal}
-                    style={{
-                      padding: '12px 24px',
-                      fontSize: 14,
-                      background: '#3b82f6',
-                      border: 'none',
-                      borderRadius: 8,
-                      cursor: 'pointer',
-                      color: '#fff',
-                      fontWeight: 600
-                    }}
-                  >
-                    ➕ Lisää uusi tyyppi
-                  </button>
-                </div>
-                
-                <p style={{ margin: '0 0 24px 0', color: '#6b7280', fontSize: 14 }}>
+            <p style={{ margin: '0 0 24px 0', color: '#6b7280', fontSize: 14 }}>
                   Hallitse puhelun tyyppejä Supabase-tietokannassa. Vain Active-status olevat tyypit näkyvät puheluissa.
-                </p>
-                
-                {/* Olemassa olevat puhelun tyypit */}
-                <div>
-                  <h3 style={{ margin: '0 0 16px 0', fontSize: 18, fontWeight: 600, color: '#374151' }}>
-                    Olemassa olevat puhelun tyypit
-                  </h3>
-                  
-                  {loadingCallTypes ? (
-                    <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
-                      Ladataan puhelun tyyppejä...
-                    </div>
-                  ) : callTypes.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
-                      Ei puhelun tyyppejä vielä lisätty
-                    </div>
-                  ) : (
-                    <div style={{ display: 'grid', gap: 12 }}>
-                      {callTypes.map((type, index) => (
-                        <div
-                          key={type.id || index}
-                          onClick={() => openEditModal(type)}
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            padding: '16px',
-                            background: '#f9fafb',
-                            border: '1px solid #e5e7eb',
-                            borderRadius: 8,
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease'
-                          }}
-                          onMouseOver={e => e.currentTarget.style.background = '#f3f4f6'}
-                          onMouseOut={e => e.currentTarget.style.background = '#f9fafb'}
-                        >
-                          <div>
-                            <div style={{ fontWeight: 600, color: '#374151', marginBottom: 4 }}>
-                              {type.label}
-                            </div>
-                            <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-                              Tunniste: <code style={{ background: '#f3f4f6', padding: '2px 4px', borderRadius: 4 }}>{type.value}</code>
-                              <span style={{ 
-                                marginLeft: 12, 
-                                padding: '2px 8px', 
-                                borderRadius: 4, 
-                                fontSize: 10, 
-                                fontWeight: 500, 
-                                background: type.status === 'Active' ? '#dcfce7' : type.status === 'Draft' ? '#fef3c7' : '#f3f4f6',
-                                color: type.status === 'Active' ? '#166534' : type.status === 'Draft' ? '#92400e' : '#6b7280'
-                              }}>
-                                {type.status}
-                              </span>
-                            </div>
-                            {type.description && (
-                              <div style={{ fontSize: 12, color: '#6b7280' }}>
-                                {type.description}
-                              </div>
-                            )}
+            </p>
+            
+            {/* Olemassa olevat puhelun tyypit */}
+            <div>
+              <h3 style={{ margin: '0 0 16px 0', fontSize: 18, fontWeight: 600, color: '#374151' }}>
+                Olemassa olevat puhelun tyypit
+              </h3>
+              
+              {loadingCallTypes ? (
+                <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
+                  Ladataan puhelun tyyppejä...
+                </div>
+              ) : callTypes.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
+                  Ei puhelun tyyppejä vielä lisätty
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gap: 12 }}>
+                  {callTypes.map((type, index) => (
+                    <div
+                      key={type.id || index}
+                      onClick={() => openEditModal(type)}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '16px',
+                        background: '#f9fafb',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: 8,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseOver={e => e.currentTarget.style.background = '#f3f4f6'}
+                      onMouseOut={e => e.currentTarget.style.background = '#f9fafb'}
+                    >
+                      <div>
+                        <div style={{ fontWeight: 600, color: '#374151', marginBottom: 4 }}>
+                          {type.label}
+                        </div>
+                        <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
+                          Tunniste: <code style={{ background: '#f3f4f6', padding: '2px 4px', borderRadius: 4 }}>{type.value}</code>
+                          <span style={{ 
+                            marginLeft: 12, 
+                            padding: '2px 8px', 
+                            borderRadius: 4, 
+                            fontSize: 10, 
+                            fontWeight: 500, 
+                            background: type.status === 'Active' ? '#dcfce7' : type.status === 'Draft' ? '#fef3c7' : '#f3f4f6',
+                            color: type.status === 'Active' ? '#166534' : type.status === 'Draft' ? '#92400e' : '#6b7280'
+                          }}>
+                            {type.status}
+                          </span>
+                        </div>
+                        {type.description && (
+                          <div style={{ fontSize: 12, color: '#6b7280' }}>
+                            {type.description}
                           </div>
+                        )}
+                      </div>
                           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                             <button
                               onClick={(e) => {
@@ -1515,23 +1515,23 @@ export default function CallPanel() {
                             >
                               🗑️
                             </button>
-                            <div style={{ color: '#6b7280', fontSize: 14 }}>
-                              ✏️
+                      <div style={{ color: '#6b7280', fontSize: 14 }}>
+                        ✏️
                             </div>
-                          </div>
-                        </div>
-                      ))}
+                      </div>
                     </div>
-                  )}
+                  ))}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-        
-        {/* Yksityiskohtainen näkymä modal ja Modaalit - kaikki samassa fragmentissa */}
-        <>
-          {showLogDetail && selectedLog && (
+        )}
+          </div>
+      </div>
+      
+      {/* Yksityiskohtainen näkymä modal ja Modaalit - kaikki samassa fragmentissa */}
+      <>
+        {showLogDetail && selectedLog && (
             <div 
               onClick={handleModalBackgroundClick}
               style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}
@@ -1540,38 +1540,38 @@ export default function CallPanel() {
                 onClick={(e) => e.stopPropagation()}
                 style={{ background: '#fff', borderRadius: 16, padding: 32, maxWidth: 600, width: '90%', maxHeight: '80vh', overflow: 'auto' }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                  <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937' }}>
-                    📞 Puhelun yksityiskohdat
-                  </h2>
-                  <button
-                    onClick={() => setShowLogDetail(false)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      fontSize: 24,
-                      cursor: 'pointer',
-                      color: '#6b7280'
-                    }}
-                  >
-                    ✕
-                  </button>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937' }}>
+                  📞 Puhelun yksityiskohdat
+                </h2>
+                <button
+                  onClick={() => setShowLogDetail(false)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: 24,
+                    cursor: 'pointer',
+                    color: '#6b7280'
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+              {loadingLogDetail ? (
+                <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
+                  Ladataan yksityiskohtia...
                 </div>
-                {loadingLogDetail ? (
-                  <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
-                    Ladataan yksityiskohtia...
-                  </div>
-                ) : (
-                  <div>
-                    <div style={{ marginBottom: 24 }}>
-                      <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
-                        Perustiedot
-                      </h3>
-                      <div style={{ display: 'grid', gap: 12 }}>
-                        <div>
+              ) : (
+                <div>
+                  <div style={{ marginBottom: 24 }}>
+                    <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
+                      Perustiedot
+                    </h3>
+                    <div style={{ display: 'grid', gap: 12 }}>
+                      <div>
                             <strong>Nimi:</strong> {selectedLog.customer_name || 'Ei nimeä'}
-                        </div>
-                        <div>
+                      </div>
+                      <div>
                             <strong>Puhelinnumero:</strong> {selectedLog.phone_number || 'Ei numeroa'}
                           </div>
                           <div>
@@ -1585,46 +1585,46 @@ export default function CallPanel() {
                           </div>
                           <div>
                             <strong>Kesto:</strong> {selectedLog.duration || '-'}
-                        </div>
-                        <div>
-                          <strong>Tila:</strong> 
-                          <span style={{ 
-                            marginLeft: 8,
-                            padding: '2px 8px',
-                            borderRadius: 4,
-                            fontSize: 12,
-                            fontWeight: 500,
+                      </div>
+                      <div>
+                        <strong>Tila:</strong> 
+                        <span style={{ 
+                          marginLeft: 8,
+                          padding: '2px 8px',
+                          borderRadius: 4,
+                          fontSize: 12,
+                          fontWeight: 500,
                               background: selectedLog.call_status === 'done' && selectedLog.answered ? '#dcfce7' : 
                                         selectedLog.call_status === 'pending' ? '#f3f4f6' : 
                                         selectedLog.call_status === 'in progress' ? '#dbeafe' : '#fef2f2',
                               color: selectedLog.call_status === 'done' && selectedLog.answered ? '#166534' : 
                                      selectedLog.call_status === 'pending' ? '#6b7280' : 
                                      selectedLog.call_status === 'in progress' ? '#1d4ed8' : '#dc2626'
-                            }}>
+                        }}>
                               {selectedLog.call_status === 'done' && selectedLog.answered ? 'Onnistui' : 
                                selectedLog.call_status === 'done' && !selectedLog.answered ? 'Epäonnistui' :
                                selectedLog.call_status === 'pending' ? 'Odottaa' : 
                                selectedLog.call_status === 'in progress' ? 'Käynnissä' : 'Tuntematon'}
-                          </span>
-                        </div>
+                        </span>
+                      </div>
                           {selectedLog.campaign_id && (
                             <div>
                               <strong>Kampanja ID:</strong> {selectedLog.campaign_id}
-                      </div>
+                    </div>
                           )}
                           {selectedLog.vapi_call_id && (
                             <div>
                               <strong>VAPI Call ID:</strong> {selectedLog.vapi_call_id}
-                    </div>
+                  </div>
                           )}
                         </div>
                     </div>
                     {/* Yhteenveto */}
                     {selectedLog.summary && (
-                      <div style={{ marginBottom: 24 }}>
-                        <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
+                    <div style={{ marginBottom: 24 }}>
+                      <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
                           Yhteenveto
-                        </h3>
+                      </h3>
                         <div style={{ 
                           background: '#f8fafc', 
                           padding: 16, 
@@ -1634,54 +1634,54 @@ export default function CallPanel() {
                           whiteSpace: 'pre-wrap'
                         }}>
                           {selectedLog.summary}
-                        </div>
                       </div>
-                    )}
+                    </div>
+                  )}
                     
                     {/* Call outcome */}
                     {selectedLog.call_outcome && (
                       <div style={{ marginBottom: 24 }}>
-                        <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
+                      <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
                           Puhelun tulos
-                        </h3>
+                      </h3>
                         <div style={{ 
-                          background: '#f8fafc', 
-                          padding: 16, 
-                          borderRadius: 8, 
+                        background: '#f8fafc', 
+                        padding: 16, 
+                        borderRadius: 8, 
                           fontSize: 14,
                           lineHeight: 1.5
-                        }}>
+                      }}>
                           {selectedLog.call_outcome}
                         </div>
-                      </div>
-                    )}
+                    </div>
+                  )}
                     
 
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
-          )}
-          
-          <AddCallTypeModal
-            showModal={showAddModal}
-            onClose={closeModals}
-            newCallType={newCallType}
-            setNewCallType={setNewCallType}
-            onAdd={handleAddCallType}
-            loading={addTypeLoading}
-            error={addTypeError}
-            success={addTypeSuccess}
-          />
-          <EditCallTypeModal
-            showModal={showEditModal}
-            onClose={closeModals}
-            editingCallType={editingCallType}
-            setEditingCallType={setEditingCallType}
-            onSave={handleSaveCallType}
-          />
-        </>
-      </div>
+          </div>
+        )}
+        
+        <AddCallTypeModal
+          showModal={showAddModal}
+          onClose={closeModals}
+          newCallType={newCallType}
+          setNewCallType={setNewCallType}
+          onAdd={handleAddCallType}
+          loading={addTypeLoading}
+          error={addTypeError}
+          success={addTypeSuccess}
+        />
+        <EditCallTypeModal
+          showModal={showEditModal}
+          onClose={closeModals}
+          editingCallType={editingCallType}
+          setEditingCallType={setEditingCallType}
+          onSave={handleSaveCallType}
+        />
+      </>
+    </div>
     </>
   )
 }

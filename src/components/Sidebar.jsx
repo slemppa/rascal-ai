@@ -8,6 +8,7 @@ const menuItems = [
   { label: 'Etusivu', path: '/dashboard', feature: null },
   { label: 'Julkaisut', path: '/posts', feature: 'Social Media' },
   { label: 'Sisältöstrategia', path: '/strategy', feature: 'Social Media' },
+  { label: 'Social Media', path: '/social-media', feature: 'Social Media' },
   { label: 'Puhelut', path: '/calls', feature: 'Phone Calls' },
   { label: 'Assistentti', path: '/ai-chat', feature: 'Marketing assistant' },
   { label: 'Admin', path: '/admin', feature: null, adminOnly: true },

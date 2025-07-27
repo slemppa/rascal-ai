@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import PageHeader from '../components/PageHeader'
 import CarouselTemplateSelector from '../components/CarouselTemplateSelector'
+import SocialMediaConnect from '../components/SocialMediaConnect'
 import styles from './SettingsPage.module.css'
 
 export default function SettingsPage() {
@@ -481,13 +482,26 @@ export default function SettingsPage() {
               </>
             )}
           </div>
-          {/* Oikea sarake: Avatar + Ääni + Karuselli samassa kortissa */}
-          <div className={styles.card}>
-            <AvatarSectionMulti companyId={userProfile?.company_id || null} />
-            <div style={{ marginTop: 16 }}>
+          
+          {/* Oikea sarake: Muut asetukset */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {/* Sosiaalisen median yhdistäminen */}
+            <div className={styles.card}>
+              <SocialMediaConnect />
+            </div>
+            
+            {/* Avatar-kuvat */}
+            <div className={styles.card}>
+              <AvatarSectionMulti companyId={userProfile?.company_id || null} />
+            </div>
+            
+            {/* Äänitiedostot */}
+            <div className={styles.card}>
               <VoiceSection companyId={userProfile?.company_id || null} />
             </div>
-            <div style={{ marginTop: 16 }}>
+            
+            {/* Karuselli-mallit */}
+            <div className={styles.card}>
               <CarouselTemplateSelector />
             </div>
           </div>

@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.24.0](https://github.com/slemppa/rascal-ai/compare/v1.23.3...v1.24.0) (2025-07-27)
+
+
+### 🐛 Bug Fixes
+
+* lisätty puuttuvat /terms ja /privacy reitit App.jsx:ään ([e2904f6](https://github.com/slemppa/rascal-ai/commit/e2904f649dd33ae0677297212d23a7ceb0202de8))
+
+
+### ✨ Features
+
+* Add social media integration with Mixpost API ([3671416](https://github.com/slemppa/rascal-ai/commit/3671416a629329abd22d3ef6325f1cd156c8a094))
+* lisätty sosiaalisen median meta-tagit ja PageMeta-komponentti ([f75c64a](https://github.com/slemppa/rascal-ai/commit/f75c64af112e77900a55dcc5bdc9622b64a503db))
+
+
+### 🔧 Chores
+
+* **release:** 1.10.0 ([d920354](https://github.com/slemppa/rascal-ai/commit/d92035458f383b9765f519094e82a79db80e19b1))
+* Update version to 1.23.4 ([ae4fd5a](https://github.com/slemppa/rascal-ai/commit/ae4fd5ae7e72d84598a10d32ac79299adfc27786))
+
 ## [1.10.0](https://github.com/slemppa/rascal-ai/compare/v1.23.3...v1.10.0) (2025-07-27)
 
 

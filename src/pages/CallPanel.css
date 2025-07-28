@@ -43,11 +43,6 @@
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 20px;
 }
-@media (max-width: 900px) {
-  .callpanel-root {
-    padding: 10px 4px 0 4px;
-  }
-}
 
 .card {
   background: #fff;
@@ -171,21 +166,150 @@
   transition: box-shadow 0.15s, background 0.15s, color 0.15s, border 0.15s, transform 0.15s;
 }
 
+/* Mobiilioptimointi */
 @media (max-width: 900px) {
   .callpanel-root {
-    padding: 10px 0 0 0;
+    padding: 16px 12px 0 12px;
   }
+  
+  .callpanel-tabs {
+    margin-bottom: 24px;
+    height: 40px;
+  }
+  
+  .callpanel-tab {
+    font-size: 15px;
+    padding: 0 0 6px 0;
+  }
+  
+  .callpanel-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
   .card {
-    padding: 14px 10px 10px 10px;
+    padding: 20px 16px 16px 16px;
   }
+  
   .section-title {
-    font-size: 17px;
+    font-size: 18px;
+    margin-bottom: 16px;
   }
+  
   .label {
     font-size: 14px;
   }
+  
+  .input, .select, .textarea {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+  
   .button-primary, .button-secondary {
     font-size: 14px;
-    padding: 10px 10px;
+    padding: 10px 16px;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .status-success, .status-error {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .callpanel-root {
+    padding: 12px 8px 0 8px;
+  }
+  
+  .callpanel-tabs {
+    margin-bottom: 20px;
+    height: 36px;
+  }
+  
+  .callpanel-tab {
+    font-size: 14px;
+    padding: 0 0 4px 0;
+  }
+  
+  .card {
+    padding: 16px 12px 12px 12px;
+    border-radius: 10px;
+  }
+  
+  .section-title {
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+  
+  .label {
+    font-size: 13px;
+  }
+  
+  .input, .select, .textarea {
+    font-size: 13px;
+    padding: 8px 10px;
+    border-radius: 6px;
+  }
+  
+  .button-primary, .button-secondary {
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 6px;
+  }
+  
+  .status-success, .status-error {
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .callpanel-root {
+    padding: 8px 4px 0 4px;
+  }
+  
+  .callpanel-tabs {
+    margin-bottom: 16px;
+    height: 32px;
+  }
+  
+  .callpanel-tab {
+    font-size: 13px;
+    padding: 0 0 2px 0;
+  }
+  
+  .card {
+    padding: 12px 8px 8px 8px;
+    border-radius: 8px;
+  }
+  
+  .section-title {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+  
+  .label {
+    font-size: 12px;
+  }
+  
+  .input, .select, .textarea {
+    font-size: 12px;
+    padding: 6px 8px;
+    border-radius: 5px;
+  }
+  
+  .button-primary, .button-secondary {
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 5px;
+  }
+  
+  .status-success, .status-error {
+    font-size: 12px;
+    padding: 5px 8px;
+    border-radius: 5px;
   }
 } 

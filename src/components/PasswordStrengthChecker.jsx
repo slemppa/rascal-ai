@@ -1,4 +1,5 @@
 import React from 'react'
+import './PasswordStrengthChecker.css'
 
 function checkPasswordStrength(password) {
   const lengthValid = password.length >= 8
@@ -34,18 +35,18 @@ export default function PasswordStrengthChecker({ password }) {
   const { strength, checks } = checkPasswordStrength(password)
 
   return (
-    <div style={{ marginTop: 10 }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+    <div className="password-strength">
+      <div className="password-checklist">
         {checklist.map(item => (
-          <div key={item.key} style={{ display: 'flex', alignItems: 'center', fontSize: 15, color: checks[item.key] ? '#16a34a' : '#dc2626', fontWeight: 600 }}>
-            <span style={{ marginRight: 8 }}>
+          <div key={item.key} className={`password-check-item ${checks[item.key] ? 'valid' : 'invalid'}`}>
+            <span className="password-check-icon">
               {checks[item.key] ? '✅' : '❌'}
             </span>
             {item.label}
           </div>
         ))}
       </div>
-      <div style={{ marginTop: 8, fontWeight: 700, color: strength === 'strong' ? '#16a34a' : '#dc2626', fontSize: 15 }}>
+      <div className={`password-strength-summary ${strength}`}>
         {strength === 'strong' ? 'Vahva salasana' : 'Salasana ei täytä vaatimuksia'}
       </div>
     </div>

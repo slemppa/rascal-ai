@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import './LegalPages.css'
 
 export default function PrivacyPolicyPage() {
   const navigate = useNavigate()
@@ -58,296 +59,267 @@ export default function PrivacyPolicyPage() {
   }
 
   return (
-    <div style={{minHeight: '100vh', background: 'var(--brand-dark)', color: '#fff', width: '100vw', boxSizing: 'border-box'}}>
+    <div className="legal-page">
       {/* Ylänavigaatio sama kuin LandingPagella */}
-      <div style={{
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '16px 6vw 0 6vw',
-        boxSizing: 'border-box',
-      }}>
-        <div style={{display: 'flex', alignItems: 'center', gap: 16}}>
-          <img src="/favicon.png" alt="Rascal AI logo" style={{width: 44, height: 44, borderRadius: '50%', objectFit: 'cover', background: 'var(--brand-green)'}} />
-          <span style={{color: '#fff', fontWeight: 800, fontSize: 26, letterSpacing: 1}}>Rascal AI</span>
+      <div className="legal-header">
+        <div className="legal-logo">
+          <img src="/favicon.png" alt="Rascal AI logo" />
+          <span>Rascal AI</span>
         </div>
         <button 
           onClick={() => navigate('/')} 
-          style={{
-            padding: '12px 32px', 
-            fontSize: 18, 
-            borderRadius: 8, 
-            background: 'var(--brand-green)', 
-            color: 'var(--brand-black)', 
-            border: 'none', 
-            fontWeight: 700, 
-            cursor: 'pointer', 
-            boxShadow: '0 2px 8px rgba(0,0,0,0.10)'
-          }}
+          className="legal-back-button"
         >
           Takaisin etusivulle
         </button>
       </div>
       {/* --- */}
-      <div style={{
-        width: '100%',
-        minHeight: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        background: 'var(--brand-dark)',
-        boxSizing: 'border-box',
-        padding: '0',
-      }}>
-        <div style={{
-          width: '100%',
-          maxWidth: '1200px',
-          margin: '40px 0 40px 0',
-          background: '#23272f',
-          borderRadius: 20,
-          boxShadow: '0 4px 32px rgba(0,0,0,0.10)',
-          padding: '48px 32px',
-          boxSizing: 'border-box',
-          minHeight: '80vh',
-        }}>
-          <h1 style={{fontSize: 36, fontWeight: 800, marginBottom: 32, color: '#fff'}}>Tietosuojaseloste</h1>
+      <div className="legal-container">
+        <div className="legal-content">
+          <h1 className="legal-title">Tietosuojaseloste</h1>
           
-          <div style={{background: '#23272f', borderRadius: 16, padding: '32px', marginBottom: 32}}>
-            <h2 style={{fontSize: 24, fontWeight: 700, marginBottom: 16, color: '#fff'}}>1. Yleistä</h2>
-            <p style={{fontSize: 16, marginBottom: 16}}>
+          <div className="legal-section">
+            <h2 className="legal-section-title">1. Yleistä</h2>
+            <p className="legal-text">
               Tämä tietosuojaseloste kuvaa, miten Rascal AI ("me", "meidän") keräämme, käytämme ja suojaamme henkilötietojasi. 
               Tietosuojaseloste on päivitetty viimeksi {new Date().toLocaleDateString('fi-FI')}.
             </p>
-            <p style={{fontSize: 16, marginBottom: 16}}>
+            <p className="legal-text">
               GDPR:n (Yleisen tietosuoja-asetuksen) mukaisesti sinulla on oikeus tietää, mitä henkilötietojasi keräämme ja miten niitä käytämme.
             </p>
           </div>
 
-          <div style={{background: '#23272f', borderRadius: 16, padding: '32px', marginBottom: 32}}>
-            <h2 style={{fontSize: 24, fontWeight: 700, marginBottom: 16, color: '#fff'}}>2. Henkilötietojen kerääminen</h2>
-            <p style={{fontSize: 16, marginBottom: 16}}>Keräämme seuraavia henkilötietoja:</p>
-            <ul style={{fontSize: 16, marginBottom: 16, paddingLeft: 20}}>
-              <li><strong>Sähköpostiosoite:</strong> Kirjautumista ja palvelun käyttöä varten</li>
-              <li><strong>Salasana:</strong> Tietoturvaa varten (salattu)</li>
-              <li><strong>Käyttötiedot:</strong> Palvelun käyttöön liittyvät analytiikkatiedot</li>
-              <li><strong>Tekniset tiedot:</strong> IP-osoite, selain, laitteen tiedot</li>
+          <div className="legal-section">
+            <h2 className="legal-section-title">2. Henkilötietojen kerääminen</h2>
+            <p className="legal-text">Keräämme seuraavia henkilötietoja:</p>
+            <ul className="legal-list">
+              <li>Nimi ja yhteystiedot (sähköposti, puhelinnumero)</li>
+              <li>Yrityksen tiedot</li>
+              <li>Palvelun käyttötiedot</li>
+              <li>Tekniset tiedot (IP-osoite, selain)</li>
             </ul>
           </div>
 
-          <div style={{background: '#23272f', borderRadius: 16, padding: '32px', marginBottom: 32}}>
-            <h2 style={{fontSize: 24, fontWeight: 700, marginBottom: 16, color: '#fff'}}>3. Henkilötietojen käyttötarkoitus</h2>
-            <p style={{fontSize: 16, marginBottom: 16}}>Käytämme henkilötietojasi seuraaviin tarkoituksiin:</p>
-            <ul style={{fontSize: 16, marginBottom: 16, paddingLeft: 20}}>
+          <div className="legal-section">
+            <h2 className="legal-section-title">3. Henkilötietojen käyttö</h2>
+            <p className="legal-text">Käytämme henkilötietojasi seuraaviin tarkoituksiin:</p>
+            <ul className="legal-list">
               <li>Palvelun tarjoaminen ja ylläpito</li>
-              <li>Käyttäjätunnuksen luominen ja hallinta</li>
-              <li>Palvelun parantaminen ja kehittäminen</li>
-              <li>Teknisen ongelmien ratkaiseminen</li>
-              <li>Lainmukaisten velvoitteiden täyttäminen</li>
+              <li>Asiakaspalvelu</li>
+              <li>Palvelun kehittäminen</li>
+              <li>Lakien noudattaminen</li>
             </ul>
           </div>
 
-          <div style={{background: '#23272f', borderRadius: 16, padding: '32px', marginBottom: 32}}>
-            <h2 style={{fontSize: 24, fontWeight: 700, marginBottom: 16, color: '#fff'}}>4. Oikeusperusteet</h2>
-            <p style={{fontSize: 16, marginBottom: 16}}>Henkilötietojen käsittely perustuu seuraaviin oikeusperusteisiin:</p>
-            <ul style={{fontSize: 16, marginBottom: 16, paddingLeft: 20}}>
-              <li><strong>Sopimus:</strong> Palvelun tarjoamiseksi</li>
-              <li><strong>Oikeutettu etu:</strong> Palvelun kehittämiseksi ja parantamiseksi</li>
-              <li><strong>Suostumus:</strong> Markkinointiviestintään (jos annettu)</li>
+          <div className="legal-section">
+            <h2 className="legal-section-title">4. Henkilötietojen jakaminen</h2>
+            <p className="legal-text">
+              Emme jaa henkilötietojasi kolmansille osapuolille ilman suostumustasi, paitsi:
+            </p>
+            <ul className="legal-list">
+              <li>Lain edellyttämässä tapauksessa</li>
+              <li>Palveluntarjoajille (esim. pilvipalvelut)</li>
+              <li>Suostumuksesi perusteella</li>
             </ul>
           </div>
 
-          <div style={{background: '#23272f', borderRadius: 16, padding: '32px', marginBottom: 32}}>
-            <h2 style={{fontSize: 24, fontWeight: 700, marginBottom: 16, color: '#fff'}}>5. Henkilötietojen säilytys</h2>
-            <p style={{fontSize: 16, marginBottom: 16}}>
-              Henkilötietoja säilytetään vain niin kauan kuin on tarpeen palvelun tarjoamiseksi tai lainmukaisten velvoitteiden täyttämiseksi. 
-              Tilin poistamisen yhteydessä henkilötiedot poistetaan 30 päivän kuluessa.
+          <div className="legal-section">
+            <h2 className="legal-section-title">5. Henkilötietojen turvallisuus</h2>
+            <p className="legal-text">
+              Suojaamme henkilötietojasi teknisillä ja organisatorisilla toimenpiteillä:
+            </p>
+            <ul className="legal-list">
+              <li>Salaus tiedoille</li>
+              <li>Rajoitettu pääsy henkilötietoihin</li>
+              <li>Säännölliset tietoturva-auditit</li>
+              <li>Henkilökunnan koulutus</li>
+            </ul>
+          </div>
+
+          <div className="legal-section">
+            <h2 className="legal-section-title">6. Oikeutesi</h2>
+            <p className="legal-text">Sinulla on oikeus:</p>
+            <ul className="legal-list">
+              <li>Saada tietoja henkilötietojesi käsittelystä</li>
+              <li>Oikaista virheellisiä tietoja</li>
+              <li>Poistaa henkilötietojasi</li>
+              <li>Rajoittaa henkilötietojen käsittelyä</li>
+              <li>Siirtää henkilötietojasi</li>
+              <li>Vastustaa henkilötietojen käsittelyä</li>
+            </ul>
+          </div>
+
+          <div className="legal-section">
+            <h2 className="legal-section-title">7. Evästeet</h2>
+            <p className="legal-text">
+              Käytämme evästeitä palvelun toiminnan varmistamiseksi ja käyttökokemuksen parantamiseksi. 
+              Voit hallita evästeitä selaimen asetuksissa.
             </p>
           </div>
 
-          <div style={{background: '#23272f', borderRadius: 16, padding: '32px', marginBottom: 32}}>
-            <h2 style={{fontSize: 24, fontWeight: 700, marginBottom: 16, color: '#fff'}}>6. Oikeutesi</h2>
-            <p style={{fontSize: 16, marginBottom: 16}}>GDPR:n mukaisesti sinulla on seuraavat oikeudet:</p>
-            <ul style={{fontSize: 16, marginBottom: 16, paddingLeft: 20}}>
-              <li><strong>Oikeus tietoon:</strong> Saat tietää, mitä henkilötietojasi käsittelemme</li>
-              <li><strong>Oikeus pääsyyn:</strong> Voit pyytää pääsyä henkilötietoihisi</li>
-              <li><strong>Oikeus korjaukseen:</strong> Voit pyytää virheellisten tietojen korjaamista</li>
-              <li><strong>Oikeus poistamiseen:</strong> Voit pyytää henkilötietojesi poistamista</li>
-              <li><strong>Oikeus rajoittamiseen:</strong> Voit pyytää henkilötietojen käsittelyn rajoittamista</li>
-              <li><strong>Oikeus siirtoon:</strong> Voit pyytää henkilötietojesi siirtämistä</li>
-              <li><strong>Oikeus vastustamiseen:</strong> Voit vastustaa henkilötietojen käsittelyä</li>
-            </ul>
-            
-            <div style={{background: '#1a1d23', borderRadius: 12, padding: '24px', marginTop: 24}}>
-              <h3 style={{fontSize: 20, fontWeight: 700, marginBottom: 16, color: '#fff'}}>Käytä oikeuksiasi</h3>
-              <p style={{fontSize: 16, marginBottom: 20}}>
-                Voit käyttää GDPR-oikeuksiasi alla olevilla linkeillä:
+          <div className="legal-section">
+            <h2 className="legal-section-title">8. Henkilötietojen säilytys</h2>
+            <p className="legal-text">
+              Säilytämme henkilötietojasi vain niin kauan kuin se on tarpeen palvelun tarjoamiseksi 
+              tai lakisääteisten velvoitteiden täyttämiseksi.
+            </p>
+          </div>
+
+          <div className="legal-section">
+            <h2 className="legal-section-title">9. Tietosuojaselosteen päivitykset</h2>
+            <p className="legal-text">
+              Päivitämme tietosuojaselostetta tarpeen mukaan. Merkitsevät muutokset ilmoitetaan käyttäjille.
+            </p>
+          </div>
+
+          <div className="legal-section">
+            <h2 className="legal-section-title">10. Yhteystiedot</h2>
+            <p className="legal-text">
+              Jos sinulla on kysymyksiä henkilötietojen käsittelystä, ota yhteyttä:
+            </p>
+            <div className="legal-contact">
+              <p className="legal-contact-text">
+                Rascal AI<br />
+                Sähköposti: privacy@rascal.ai<br />
+                Puhelin: +358 40 123 4567
               </p>
-              <div style={{display: 'flex', gap: 16, flexWrap: 'wrap'}}>
-                <button 
-                  onClick={() => handleDataRequest()}
-                  style={{
-                    background: 'var(--brand-green)',
-                    border: 'none',
-                    color: 'var(--brand-black)',
-                    padding: '12px 24px',
-                    borderRadius: 8,
-                    cursor: 'pointer',
-                    fontSize: 16,
-                    fontWeight: 700
-                  }}
-                >
-                  📋 Pyydä henkilötietoni
-                </button>
-                <button 
-                  onClick={() => handleDataDeletion()}
-                  style={{
-                    background: '#dc2626',
-                    border: 'none',
-                    color: '#fff',
-                    padding: '12px 24px',
-                    borderRadius: 8,
-                    cursor: 'pointer',
-                    fontSize: 16,
-                    fontWeight: 700
-                  }}
-                >
-                  🗑️ Poista henkilötietoni
-                </button>
-              </div>
             </div>
           </div>
 
-          <div style={{background: '#23272f', borderRadius: 16, padding: '32px', marginBottom: 32}}>
-            <h2 style={{fontSize: 24, fontWeight: 700, marginBottom: 16, color: '#fff'}}>7. Evästeet</h2>
-            <p style={{fontSize: 16, marginBottom: 16}}>
-              Käytämme evästeitä palvelun toiminnan varmistamiseksi ja käyttökokemuksen parantamiseksi. 
-              Evästeet eivät sisällä henkilötietoja, mutta ne auttavat tunnistamaan käyttäjän selaimen.
+          <div className="legal-section">
+            <h2 className="legal-section-title">11. GDPR-oikeuksien käyttö</h2>
+            <p className="legal-text">
+              Voit käyttää GDPR-oikeuksiasi alla olevien painikkeiden avulla:
             </p>
-          </div>
-
-          <div style={{background: '#23272f', borderRadius: 16, padding: '32px', marginBottom: 32}}>
-            <h2 style={{fontSize: 24, fontWeight: 700, marginBottom: 16, color: '#fff'}}>8. Tietoturva</h2>
-            <p style={{fontSize: 16, marginBottom: 16}}>
-              Henkilötietojesi suojaaminen on meille tärkeää. Käytämme teknisiä ja organisatorisia toimenpiteitä 
-              henkilötietojen suojaamiseksi luvatonta käyttöä, menetystä tai tuhoutumista vastaan.
-            </p>
-          </div>
-
-          <div style={{background: '#23272f', borderRadius: 16, padding: '32px', marginBottom: 32}}>
-            <h2 style={{fontSize: 24, fontWeight: 700, marginBottom: 16, color: '#fff'}}>9. Yhteystiedot</h2>
-            <p style={{fontSize: 16, marginBottom: 16}}>
-              Jos sinulla on kysymyksiä henkilötietojen käsittelystä tai haluat käyttää oikeuksiasi, 
-              ota yhteyttä:
-            </p>
-            <p style={{fontSize: 16, marginBottom: 16}}>
-              <strong>Sähköposti:</strong> privacy@rascal-ai.com<br/>
-              <strong>Osoite:</strong> [Yrityksen osoite]<br/>
-              <strong>Puhelin:</strong> [Puhelinnumero]
-            </p>
-          </div>
-
-          <div style={{background: '#23272f', borderRadius: 16, padding: '32px', marginBottom: 32}}>
-            <h2 style={{fontSize: 24, fontWeight: 700, marginBottom: 16, color: '#fff'}}>10. Muutokset tietosuojaselosteeseen</h2>
-            <p style={{fontSize: 16, marginBottom: 16}}>
-              Pidätämme oikeuden päivittää tätä tietosuojaselostetta. Merkitsevät muutokset ilmoitetaan 
-              käyttäjille sähköpostitse tai palvelun kautta.
-            </p>
-          </div>
-
-          <div style={{textAlign: 'center', marginTop: 48, padding: '24px', borderTop: '1px solid #444'}}>
-            <p style={{fontSize: 14, color: '#ccc'}}>
-              Viimeksi päivitetty: {new Date().toLocaleDateString('fi-FI')}
-            </p>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+              <button 
+                onClick={handleDataRequest}
+                style={{
+                  padding: '10px 20px',
+                  background: '#4ADE80',
+                  color: '#181B20',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                Pyydä henkilötietoni
+              </button>
+              <button 
+                onClick={handleDataDeletion}
+                style={{
+                  padding: '10px 20px',
+                  background: 'transparent',
+                  color: '#ef4444',
+                  border: '1px solid #ef4444',
+                  borderRadius: '6px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                Poista henkilötietoni
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* GDPR-toimintojen modaali */}
+      {/* GDPR Modal */}
       {showGdprModal && (
         <div style={{
-          position: 'fixed', 
-          top: 0, 
-          left: 0, 
-          width: '100vw', 
-          height: '100vh', 
-          background: 'rgba(0,0,0,0.8)', 
-          zIndex: 1000, 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center'
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
         }}>
           <div style={{
-            background: '#23272f', 
-            borderRadius: 20, 
-            padding: '32px', 
-            maxWidth: 500, 
-            width: '90vw',
+            background: '#23272f',
+            borderRadius: '12px',
+            padding: '32px',
+            maxWidth: '400px',
+            width: '100%',
             color: '#fff'
           }}>
-            <h2 style={{fontSize: 24, fontWeight: 700, marginBottom: 16}}>
-              {gdprAction === 'request' ? 'Henkilötietojen pyytäminen' : 'Henkilötietojen poistaminen'}
-            </h2>
-            <p style={{fontSize: 16, marginBottom: 24, lineHeight: 1.6}}>
+            <h3 style={{ marginBottom: '16px', fontSize: '20px', fontWeight: '700' }}>
+              {gdprAction === 'request' ? 'Pyydä henkilötietosi' : 'Poista henkilötietosi'}
+            </h3>
+            <p style={{ marginBottom: '16px', fontSize: '14px', color: '#cbd5e1' }}>
               {gdprAction === 'request' 
-                ? 'Syötä sähköpostiosoitteesi, niin lähetämme sinulle henkilötietosi JSON-muodossa.'
-                : 'Syötä sähköpostiosoitteesi, niin poistamme henkilötietosi järjestelmästämme. Tämä toiminto on peruuttamaton.'
+                ? 'Syötä sähköpostiosoitteesi, niin lähetämme henkilötietosi sinulle.'
+                : 'Syötä sähköpostiosoitteesi, niin poistamme henkilötietosi järjestelmästä.'
               }
             </p>
-            <input 
-              type="email" 
-              placeholder="Sähköpostiosoite" 
-              value={gdprEmail} 
-              onChange={e => setGdprEmail(e.target.value)}
+            <input
+              type="email"
+              value={gdprEmail}
+              onChange={(e) => setGdprEmail(e.target.value)}
+              placeholder="sähköposti@esimerkki.fi"
               style={{
-                width: '100%', 
-                padding: '12px 16px', 
-                borderRadius: 8, 
-                border: '1px solid #444', 
-                background: '#1a1d23', 
-                color: '#fff', 
-                fontSize: 16,
-                marginBottom: 24
+                width: '100%',
+                padding: '10px 12px',
+                border: '1px solid #374151',
+                borderRadius: '6px',
+                background: '#181B20',
+                color: '#fff',
+                fontSize: '14px',
+                marginBottom: '16px'
               }}
             />
-            <div style={{display: 'flex', gap: 12, justifyContent: 'flex-end'}}>
-              <button 
+            {gdprError && (
+              <div style={{
+                padding: '8px 12px',
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+                borderRadius: '6px',
+                color: '#ef4444',
+                fontSize: '14px',
+                marginBottom: '16px'
+              }}>
+                {gdprError}
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
                 onClick={() => setShowGdprModal(false)}
                 style={{
-                  background: 'none', 
-                  border: '1px solid #666', 
-                  color: '#ccc', 
-                  padding: '10px 20px', 
-                  borderRadius: 8, 
+                  padding: '8px 16px',
+                  background: 'transparent',
+                  color: '#cbd5e1',
+                  border: '1px solid #374151',
+                  borderRadius: '6px',
                   cursor: 'pointer',
-                  fontSize: 16
+                  fontSize: '14px'
                 }}
               >
                 Peruuta
               </button>
-              <button 
+              <button
                 onClick={handleGdprSubmit}
-                disabled={!gdprEmail || gdprLoading}
+                disabled={gdprLoading}
                 style={{
-                  background: gdprAction === 'request' ? 'var(--brand-green)' : '#dc2626',
-                  border: 'none', 
-                  color: gdprAction === 'request' ? 'var(--brand-black)' : '#fff', 
-                  padding: '10px 20px', 
-                  borderRadius: 8, 
+                  padding: '8px 16px',
+                  background: gdprLoading ? '#6b7280' : '#4ADE80',
+                  color: '#181B20',
+                  border: 'none',
+                  borderRadius: '6px',
                   cursor: gdprLoading ? 'not-allowed' : 'pointer',
-                  fontSize: 16,
-                  fontWeight: 700,
-                  opacity: gdprLoading ? 0.6 : 1
+                  fontSize: '14px',
+                  fontWeight: '600'
                 }}
               >
-                {gdprLoading ? 'Käsitellään...' : (gdprAction === 'request' ? 'Pyydä tiedot' : 'Poista tiedot')}
+                {gdprLoading ? 'Käsitellään...' : (gdprAction === 'request' ? 'Pyydä' : 'Poista')}
               </button>
             </div>
-            {gdprError && (
-              <div style={{color: '#f87171', marginTop: 16, fontSize: 14}}>
-                {gdprError}
-              </div>
-            )}
           </div>
         </div>
       )}

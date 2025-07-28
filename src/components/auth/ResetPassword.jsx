@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('')
@@ -8,19 +8,53 @@ export default function ResetPassword() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [isValidSession, setIsValidSession] = useState(false)
+  const [isVerifying, setIsVerifying] = useState(true)
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        setIsValidSession(true)
-      } else {
-        navigate('/signin')
+    const handleTokenVerification = async () => {
+      try {
+        // Tarkista onko token_hash URL:ssa
+        const token_hash = searchParams.get('token_hash')
+        const type = searchParams.get('type')
+
+        if (token_hash && type === 'recovery') {
+          // Verify OTP recovery tokenille
+          const { data, error } = await supabase.auth.verifyOtp({
+            token_hash,
+            type: 'recovery'
+          })
+          
+          if (error) {
+            console.error('Error verifying recovery token:', error.message)
+            setMessage('Virheellinen tai vanhentunut palautuslinkki')
+            setIsVerifying(false)
+            return
+          }
+          
+          if (data.session) {
+            setIsValidSession(true)
+            setMessage('Syötä uusi salasanasi alle')
+          }
+        } else {
+          // Fallback: tarkista onko sessio jo olemassa
+          const { data: { session } } = await supabase.auth.getSession()
+          if (session) {
+            setIsValidSession(true)
+          } else {
+            setMessage('Virheellinen tai vanhentunut palautuslinkki')
+          }
+        }
+      } catch (error) {
+        console.error('Unexpected error:', error)
+        setMessage('Odottamaton virhe tapahtui')
+      } finally {
+        setIsVerifying(false)
       }
     }
 
-    checkSession()
+    handleTokenVerification()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -32,7 +66,7 @@ export default function ResetPassword() {
     )
 
     return () => subscription.unsubscribe()
-  }, [navigate])
+  }, [searchParams])
 
   const handlePasswordReset = async (e) => {
     e.preventDefault()
@@ -70,25 +104,37 @@ export default function ResetPassword() {
     }
   }
 
+  if (isVerifying) {
+    return (
+      <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Vahvistetaan palautuslinkkiä...</p>
+        </div>
+      </div>
+    )
+  }
+
   if (!isValidSession) {
     return (
       <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Virheellinen istunto</h2>
+          <h2 className="text-2xl font-bold mb-4">Virheellinen linkki</h2>
           <p className="text-gray-600 mb-4">
-            Tämä salasanan palautuslinkki on virheellinen tai vanhentunut.
+            {message || 'Tämä salasanan palautuslinkki on virheellinen tai vanhentunut.'}
           </p>
           <button
-            onClick={() => navigate('/forgot-password')}
-            className="text-blue-600 hover:text-blue-500 underline"
+            onClick={() => navigate('/signin')}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
-            Pyydä uusi palautuslinkki
+            Takaisin kirjautumiseen
           </button>
         </div>
       </div>
     )
   }
 
+  // Loput komponentin koodi pysyy samana...
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-center">Aseta uusi salasana</h2>

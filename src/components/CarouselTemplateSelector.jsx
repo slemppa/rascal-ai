@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import Button from './Button'
+import Button from './Button';
+import './CarouselTemplateSelector.css';
 
 const templates = [
   { id: 'template1', name: 'Moderni', image: '/carousel1.jpg', placidId: 'xpnx52obc7b5r' },
@@ -46,44 +47,30 @@ export default function CarouselTemplateSelector() {
     }
   };
 
-    return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: 16 }}>
-      <h2 style={{ marginBottom: 16, fontSize: 16, fontWeight: 600, color: '#1f2937' }}>Valitse karusellin ulkoasu</h2>
-      <div style={{ display: 'flex', gap: 16, marginBottom: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+  return (
+    <div className="carousel-selector">
+      <h2 className="carousel-title">Valitse karusellin ulkoasu</h2>
+      <div className="templates-grid">
         {templates.map((tpl) => (
           <div
             key={tpl.id}
             onClick={() => handleSelect(tpl.id)}
-            style={{
-              border: selected === tpl.id ? '3px solid #3b82f6' : '1px solid #e5e7eb',
-              borderRadius: 12,
-              padding: 12,
-              cursor: 'pointer',
-              background: selected === tpl.id ? '#eff6ff' : '#fff',
-              transition: 'all 0.2s',
-              textAlign: 'center',
-              width: 160,
-              boxSizing: 'border-box',
-              boxShadow: selected === tpl.id ? '0 4px 24px rgba(59,130,246,0.10)' : '0 2px 8px rgba(0,0,0,0.07)',
-              marginBottom: 8
-            }}
+            className={`template-card ${selected === tpl.id ? 'selected' : ''}`}
           >
-            <img src={tpl.image} alt={tpl.name} style={{ width: 160, height: 200, objectFit: 'cover', borderRadius: 8, marginBottom: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }} />
-            <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 2 }}>{tpl.name}</div>
+            <img src={tpl.image} alt={tpl.name} className="template-image" />
+            <div className="template-name">{tpl.name}</div>
           </div>
         ))}
       </div>
       <Button
         onClick={handleSubmit}
         disabled={loading}
-        style={{
-          marginBottom: 8
-        }}
+        className="submit-button"
       >
         {loading ? 'Lähetetään...' : 'Valitse'}
       </Button>
-      {success && <div style={{ color: 'green', marginTop: 6, fontSize: 12 }}>Valinta lähetetty!</div>}
-      {error && <div style={{ color: 'red', marginTop: 6, fontSize: 12 }}>{error}</div>}
+      {success && <div className="success-message">Valinta lähetetty!</div>}
+      {error && <div className="error-message">{error}</div>}
     </div>
   );
 } 

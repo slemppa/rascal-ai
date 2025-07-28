@@ -106,8 +106,8 @@ export const useMixpostIntegration = () => {
               const connectSocialAccount = async (platform) => {
                 return new Promise((resolve, reject) => {
       
-      // Facebook OAuth URL (Meta)
-      const oauthUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=YOUR_FACEBOOK_APP_ID&redirect_uri=${encodeURIComponent(window.location.origin)}&scope=instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement,pages_manage_posts,publish_to_groups&response_type=code&state=${platform}`;
+      // Käytä Mixpost OAuth proxy:tä
+      const oauthUrl = `https://mixpost.mak8r.fi/mixpost/accounts/add/${platform}`;
       
       const popup = window.open(oauthUrl, 'oauth', 'width=600,height=600,scrollbars=yes,resizable=yes');
       

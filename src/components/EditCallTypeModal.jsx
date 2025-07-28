@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Button from './Button'
+import './ModalComponents.css'
 
 const EditCallTypeModal = ({ 
   showModal, 
@@ -36,44 +37,23 @@ const EditCallTypeModal = ({
   }
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000
-    }}>
-      <div style={{
-        background: '#fff',
-        borderRadius: 16,
-        padding: 32,
-        maxWidth: 900,
-        width: '95%',
-        maxHeight: '95vh',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
+    <div className="modal-overlay">
+      <div className="modal-container">
+        <div className="modal-header">
+          <h2 className="modal-title">
             Muokkaa puhelun tyyppiä
           </h2>
           <Button
             onClick={onClose}
             variant="secondary"
-            style={{ fontSize: 24, color: '#6b7280', background: 'none', border: 'none' }}
+            className="modal-close-btn"
           >
             ×
           </Button>
         </div>
 
         {/* Vaiheindikaattori */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+        <div className="steps-container">
           {steps.map((step, index) => (
             <React.Fragment key={step.id}>
               <div style={{ display: 'flex', alignItems: 'center' }}>

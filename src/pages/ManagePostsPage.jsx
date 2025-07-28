@@ -119,7 +119,7 @@ const transformReelsData = (reelsData) => {
   })
 }
 
-function PostCard({ post, onEdit, onDelete, onPublish }) {
+function PostCard({ post, onEdit, onDelete, onPublish, onSchedule }) {
   return (
     <div className="post-card">
       <div className="post-card-content">
@@ -143,12 +143,26 @@ function PostCard({ post, onEdit, onDelete, onPublish }) {
             </p>
           <div className="post-footer">
             <span className="post-date">
-              {post.createdAt || post.scheduledDate || post.publishedAt}
+              {post.scheduledDate ? `📅 ${post.scheduledDate}` : post.createdAt || post.publishedAt}
             </span>
             <div className="post-actions">
               <button className="action-button" onClick={() => onEdit(post)}>
                 ✏️ Muokkaa
               </button>
+              {/* Ajastusnappi vain jos status on "Tarkistuksessa" */}
+              {post.status === 'Tarkistuksessa' && (
+                <button
+                  className="action-button schedule" 
+                  onClick={() => onSchedule(post)}
+                  style={{
+                    backgroundColor: '#f59e0b',
+                    color: 'white',
+                    border: 'none'
+                  }}
+                >
+                  ⏰ Ajasta
+                </button>
+              )}
               {/* Julkaisu-nappi vain jos status on "Tarkistuksessa" tai "Aikataulutettu" */}
               {(post.status === 'Tarkistuksessa' || post.status === 'Aikataulutettu') && (
         <button
@@ -515,93 +529,166 @@ export default function ManagePostsPage() {
     }
   }
 
-  const handleDeletePost = (post) => {
+  const handleDeletePost = async (post) => {
     if (window.confirm('Oletko varma, että haluat poistaa tämän julkaisun?')) {
-      setPosts(prev => prev.filter(p => p.id !== post.id))
+      try {
+        // Haetaan käyttäjän data
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('id')
+          .eq('auth_user_id', user.id)
+          .single()
+
+        if (userError || !userData?.id) {
+          throw new Error('Käyttäjän ID ei löytynyt')
+        }
+
+        // Lähetetään delete-kutsu N8N:iin
+        const deleteData = {
+          post_id: post.id,
+          user_id: userData.id,
+          auth_user_id: user.id,
+          content: post.caption || post.title,
+          media_urls: post.mediaUrls || [],
+          action: 'delete'
+        }
+
+        const response = await fetch('/api/post-actions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(deleteData)
+        })
+
+        const result = await response.json()
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Poisto epäonnistui')
+        }
+
+        // Päivitetään UI
+        await fetchPosts()
+        if (post.source === 'reels') {
+          await fetchReelsPosts()
+        }
+
+        alert(result.message || 'Post poistettu onnistuneesti!')
+        
+      } catch (error) {
+        console.error('Delete error:', error)
+        alert('Poisto epäonnistui: ' + error.message)
+      }
     }
   }
 
-  const handlePublishPost = async (post) => {
+  const handleSchedulePost = async (post) => {
     try {
-      console.log('Publishing post with RPC:', post.id)
-      
-      // Kutsutaan RPC-funktiota
-      const { data, error } = await supabase.rpc('publish_post_simple', {
-        post_id: post.id
-      })
-
-      if (error) {
-        console.error('RPC error:', error)
-        alert('Julkaisu epäonnistui: ' + error.message)
-        return
-      }
-
-      console.log('Publish successful:', data)
-      
-      // Tarkistetaan julkaisupäivä
-      const publishDate = data.publish_date || data.publishDate
-      const now = new Date()
-      
-      if (!publishDate) {
-        alert('Julkaisu epäonnistui: Julkaisupäivä puuttuu')
-        return
-      }
-      
-      const publishDateTime = new Date(publishDate)
-      if (publishDateTime < now) {
-        alert('Julkaisu epäonnistui: Julkaisupäivä on menneisyydessä')
-        return
-      }
-      
-      console.log('Publish date valid:', publishDateTime)
-      
-      // Lähetetään data N8N webhook:iin backend-proxyn kautta
-      // Haetaan käyttäjän webhook_url erikseen
+      // Haetaan käyttäjän data
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('webhook_url')
+        .select('id')
         .eq('auth_user_id', user.id)
         .single()
 
-      if (userData?.webhook_url) {
-        console.log('Sending to webhook via backend:', userData.webhook_url)
-        console.log('Webhook payload:', data)
-        
-        try {
-          const webhookResponse = await fetch('/api/send-webhook', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              webhook_url: userData.webhook_url,
-              payload: data
-            })
-          })
-
-          console.log('Webhook response status:', webhookResponse.status)
-          
-          if (!webhookResponse.ok) {
-            const errorData = await webhookResponse.json()
-            console.error('Webhook failed:', webhookResponse.status, errorData)
-            alert('Julkaisu onnistui, mutta webhook-kutsu epäonnistui')
-          } else {
-            const responseData = await webhookResponse.json()
-            console.log('Webhook sent successfully:', responseData)
-          }
-        } catch (webhookError) {
-          console.error('Webhook fetch error:', webhookError)
-          alert('Julkaisu onnistui, mutta webhook-kutsu epäonnistui: ' + webhookError.message)
-        }
+      if (userError || !userData?.id) {
+        throw new Error('Käyttäjän ID ei löytynyt')
       }
-      
-      // Päivitetään UI - haetaan päivitetyt tiedot uudelleen
+
+      // Kysytään ajastuspäivä käyttäjältä
+      const scheduledDate = prompt('Syötä ajastuspäivä (YYYY-MM-DD HH:MM):', 
+        new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16))
+
+      if (!scheduledDate) {
+        return // Käyttäjä perui
+      }
+
+      // Lähetetään yksinkertainen kutsu N8N:iin
+      const scheduleData = {
+        post_id: post.id,
+        user_id: userData.id,
+        auth_user_id: user.id,
+        content: post.caption || post.title,
+        media_urls: post.mediaUrls || [],
+        scheduled_date: scheduledDate,
+        action: 'schedule'
+      }
+
+              const response = await fetch('/api/post-actions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(scheduleData)
+        })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Ajastus epäonnistui')
+      }
+
+      // Päivitetään UI
       await fetchPosts()
       if (post.source === 'reels') {
         await fetchReelsPosts()
       }
 
-      alert('Julkaisu onnistui!')
+      alert(result.message || 'Ajastus onnistui!')
+      setShowEditModal(false)
+      setEditingPost(null)
+      
+    } catch (error) {
+      console.error('Schedule error:', error)
+      alert('Ajastus epäonnistui: ' + error.message)
+    }
+  }
+
+  const handlePublishPost = async (post) => {
+    try {
+      // Haetaan käyttäjän data
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (userError || !userData?.id) {
+        throw new Error('Käyttäjän ID ei löytynyt')
+      }
+
+      // Lähetetään yksinkertainen kutsu N8N:iin
+      const publishData = {
+        post_id: post.id,
+        user_id: userData.id,
+        auth_user_id: user.id,
+        content: post.caption || post.title,
+        media_urls: post.mediaUrls || [],
+        scheduled_date: post.scheduledDate || null,
+        action: 'publish'
+      }
+
+              const response = await fetch('/api/post-actions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(publishData)
+        })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Julkaisu epäonnistui')
+      }
+
+      // Päivitetään UI
+      await fetchPosts()
+      if (post.source === 'reels') {
+        await fetchReelsPosts()
+      }
+
+      alert(result.message || 'Julkaisu onnistui!')
       setShowEditModal(false)
       setEditingPost(null)
       
@@ -748,69 +835,14 @@ export default function ManagePostsPage() {
                     
                     
                     return (
-                      <div 
-                        key={safePost.id} 
-                                                  className="post-card"
-                          onClick={() => {
-                            // Muokkaus vain "Kesken" ja "Tarkistuksessa" sarakkeissa
-                            if (safePost.status === 'Kesken' || safePost.status === 'Tarkistuksessa') {
-                              handleEditPost(safePost)
-                            }
-                          }}
-                        style={{
-                          cursor: (safePost.status === 'Kesken' || safePost.status === 'Tarkistuksessa') ? 'pointer' : 'default'
-                        }}
-                      >
-                        <div className="post-thumbnail">
-                          {safePost.thumbnail && safePost.thumbnail !== '/placeholder.png' ? (
-                            <img 
-                              src={safePost.thumbnail} 
-                              alt={safePost.title}
-                              onError={(e) => {
-                                e.target.src = '/placeholder.png'
-                              }}
-                            />
-                          ) : (
-                            <div className="placeholder-content">
-                              <span className="placeholder-icon">📷</span>
-                              <span className="placeholder-text">Ei kuvaa</span>
-                            </div>
-          )}
-        </div>
-                        <div className="post-info">
-                          <h4 className="post-title">{safePost.title}</h4>
-                          <p className="post-caption">{safePost.caption}</p>
-                          <div className="post-meta">
-                            <span className="post-type">{safePost.type}</span>
-                            <span className={`post-source ${safePost.source}`}>
-                              {safePost.source === 'reels' ? '🎬' : '📝'}
-                            </span>
-          </div>
-                          {/* Julkaisu-nappi vain jos status on "Tarkistuksessa" tai "Aikataulutettu" */}
-                          {(safePost.status === 'Tarkistuksessa' || safePost.status === 'Aikataulutettu') && (
-                            <div className="post-actions" style={{ marginTop: '8px' }}>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  handlePublishPost(safePost)
-                                }}
-                                style={{
-                                  backgroundColor: '#22c55e',
-                                  color: 'white',
-                                  border: 'none',
-                                  padding: '4px 8px',
-                                  borderRadius: '4px',
-                                  cursor: 'pointer',
-                                  fontSize: '12px',
-                                  fontWeight: '600'
-                                }}
-                              >
-                                📤 Julkaise
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                      <PostCard
+                        key={safePost.id}
+                        post={safePost}
+                        onEdit={handleEditPost}
+                        onDelete={handleDeletePost}
+                        onPublish={handlePublishPost}
+                        onSchedule={handleSchedulePost}
+                      />
                     )
                   })}
                 </div>

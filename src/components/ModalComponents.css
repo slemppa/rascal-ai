@@ -1,0 +1,384 @@
+/* Modal-komponenttien tyylit */
+
+/* Yhteiset modal-tyylit */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modal-container {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 900px;
+  width: 95%;
+  max-height: 95vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.modal-close-btn {
+  font-size: 24px;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Vaiheindikaattori */
+.steps-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 8px;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.step-item.active {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.step-number {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  background: #e5e7eb;
+  color: #6b7280;
+}
+
+.step-item.active .step-number {
+  background: #3b82f6;
+  color: white;
+}
+
+.step-separator {
+  width: 20px;
+  height: 2px;
+  background: #e5e7eb;
+  margin: 0 4px;
+}
+
+/* Modal sisältö */
+.modal-content {
+  flex: 1;
+  overflow: auto;
+  padding-right: 8px;
+}
+
+/* Lomakkeiden tyylit */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  margin-bottom: 0;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #374151;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Modal toimintopainikkeet */
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.modal-actions-left {
+  display: flex;
+  gap: 12px;
+}
+
+.modal-actions-right {
+  display: flex;
+  gap: 12px;
+}
+
+/* Virhe- ja onnistumisviestit */
+.modal-error {
+  color: #dc2626;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.modal-success {
+  color: #16a34a;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+/* Mobiilioptimointi */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 12px;
+  }
+
+  .modal-container {
+    padding: 24px;
+    width: 100%;
+    max-height: 98vh;
+    border-radius: 12px;
+  }
+
+  .modal-header {
+    margin-bottom: 20px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+
+  .modal-close-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 20px;
+  }
+
+  .steps-container {
+    margin-bottom: 20px;
+    gap: 6px;
+  }
+
+  .step-item {
+    font-size: 13px;
+  }
+
+  .step-number {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+  }
+
+  .step-separator {
+    width: 16px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .form-column {
+    gap: 12px;
+  }
+
+  .form-label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    font-size: 13px;
+    padding: 10px;
+    border-radius: 6px;
+  }
+
+  .form-textarea {
+    min-height: 60px;
+  }
+
+  .modal-actions {
+    margin-top: 20px;
+    padding-top: 12px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-actions-left,
+  .modal-actions-right {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 8px;
+  }
+
+  .modal-container {
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .modal-header {
+    margin-bottom: 16px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+
+  .modal-close-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 18px;
+  }
+
+  .steps-container {
+    margin-bottom: 16px;
+    gap: 4px;
+  }
+
+  .step-item {
+    font-size: 12px;
+  }
+
+  .step-number {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+
+  .step-separator {
+    width: 12px;
+  }
+
+  .form-grid {
+    gap: 10px;
+  }
+
+  .form-column {
+    gap: 10px;
+  }
+
+  .form-label {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    font-size: 12px;
+    padding: 8px;
+    border-radius: 5px;
+  }
+
+  .form-textarea {
+    min-height: 50px;
+  }
+
+  .modal-actions {
+    margin-top: 16px;
+    padding-top: 10px;
+    gap: 6px;
+  }
+
+  .modal-error,
+  .modal-success {
+    font-size: 12px;
+  }
+}
+
+/* Touch-friendly elementit mobiililla */
+@media (hover: none) and (pointer: coarse) {
+  .modal-close-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    min-height: 44px;
+  }
+
+  .form-textarea {
+    min-height: 80px;
+  }
+} 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Button from './Button'
+import './ModalComponents.css'
 
 const AddCallTypeModal = ({ 
   showModal, 
@@ -39,44 +40,23 @@ const AddCallTypeModal = ({
   }
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000
-    }}>
-      <div style={{
-        background: '#fff',
-        borderRadius: 16,
-        padding: 32,
-        maxWidth: 900,
-        width: '95%',
-        maxHeight: '95vh',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
+    <div className="modal-overlay">
+      <div className="modal-container">
+        <div className="modal-header">
+          <h2 className="modal-title">
             Lisää uusi puhelun tyyppi
           </h2>
           <Button
             onClick={onClose}
             variant="secondary"
-            style={{ fontSize: 24, color: '#6b7280', background: 'none', border: 'none' }}
+            className="modal-close-btn"
           >
             ×
           </Button>
         </div>
 
         {/* Vaiheindikaattori */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+        <div className="steps-container">
           {steps.map((step, index) => (
             <React.Fragment key={step.id}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -116,11 +96,11 @@ const AddCallTypeModal = ({
         </div>
 
         {/* Sisältö */}
-        <div style={{ flex: 1, overflow: 'auto', paddingRight: 8 }}>
+        <div className="modal-content">
           {currentStep === 1 && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="form-label">
                   Nimi *
                 </label>
                 <input
@@ -128,25 +108,25 @@ const AddCallTypeModal = ({
                   value={newCallType.callType}
                   onChange={e => setNewCallType({ ...newCallType, callType: e.target.value })}
                   placeholder="esim. myynti, asiakaspalvelu"
-                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                  className="form-input"
                 />
               </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+              <div className="form-group">
+                <label className="form-label">
                   Tila
                 </label>
                 <select
                   value={newCallType.status || 'Active'}
                   onChange={e => setNewCallType({ ...newCallType, status: e.target.value })}
-                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                  className="form-select"
                 >
                   <option value="Active">Aktiivinen</option>
                   <option value="Draft">Luonnos</option>
                   <option value="Archived">Arkistoitu</option>
                 </select>
               </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+              <div className="form-group">
+                <label className="form-label">
                   Versio
                 </label>
                 <input
@@ -154,7 +134,7 @@ const AddCallTypeModal = ({
                   value={newCallType.version || 'v1.0'}
                   onChange={e => setNewCallType({ ...newCallType, version: e.target.value })}
                   placeholder="v1.0"
-                  style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                  className="form-input"
                 />
               </div>
             </div>
@@ -273,13 +253,12 @@ const AddCallTypeModal = ({
           )}
         </div>
         
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'space-between', marginTop: 24, paddingTop: 16, borderTop: '1px solid #e5e7eb' }}>
-          <div style={{ display: 'flex', gap: 12 }}>
+        <div className="modal-actions">
+          <div className="modal-actions-left">
             <Button
               type="button"
               onClick={onClose}
               variant="secondary"
-              style={{ fontSize: 14 }}
             >
               Peruuta
             </Button>
@@ -288,20 +267,18 @@ const AddCallTypeModal = ({
                 type="button"
                 onClick={handlePrevious}
                 variant="secondary"
-                style={{ fontSize: 14 }}
               >
                 Edellinen
               </Button>
             )}
           </div>
           
-          <div>
+          <div className="modal-actions-right">
             {currentStep < totalSteps ? (
               <Button
                 type="button"
                 onClick={handleNext}
                 disabled={!newCallType.callType}
-                style={{ fontSize: 14 }}
               >
                 Seuraava
               </Button>
@@ -310,7 +287,6 @@ const AddCallTypeModal = ({
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading || !newCallType.callType}
-                style={{ fontSize: 14 }}
               >
                 {loading ? 'Lisätään...' : 'Lisää puhelutyyppi'}
               </Button>
@@ -318,8 +294,8 @@ const AddCallTypeModal = ({
           </div>
         </div>
         
-        {error && <div style={{ color: '#dc2626', marginTop: 12 }}>{error}</div>}
-        {success && <div style={{ color: '#16a34a', marginTop: 12 }}>{success}</div>}
+        {error && <div className="modal-error">{error}</div>}
+        {success && <div className="modal-success">{success}</div>}
       </div>
     </div>
   )

@@ -25,7 +25,7 @@ class MixpostAPI {
     }
   
     async getSocialAccounts(workspaceUuid, apiToken) {
-      const response = await fetch(`${this.mixpostBaseUrl}/${workspaceUuid}/accounts`, {
+      const response = await fetch(`${this.mixpostBaseUrl}/api/${workspaceUuid}/accounts`, {
         headers: {
           'Authorization': `Bearer ${apiToken}`,
           'Accept': 'application/json'
@@ -41,7 +41,7 @@ class MixpostAPI {
         ...(scheduleTime && { scheduled_at: scheduleTime })
       };
   
-      const response = await fetch(`${this.mixpostBaseUrl}/${workspaceUuid}/posts`, {
+      const response = await fetch(`${this.mixpostBaseUrl}/api/${workspaceUuid}/posts`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${apiToken}`,

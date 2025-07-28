@@ -700,7 +700,7 @@ export default function DashboardPage() {
       />
       <div className={styles['dashboard-container']}>
         <div className={styles['dashboard-header']}>
-          <h2 style={{ fontSize: 32, fontWeight: 800, color: '#1f2937', margin: 0 }}>Kojelauta</h2>
+          <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#1f2937', margin: 0 }}>Kojelauta</h2>
         </div>
         <div className={styles['dashboard-bentogrid']}>
           {statsLoading ? (
@@ -732,39 +732,41 @@ export default function DashboardPage() {
             <div style={{ color: '#6b7280', fontSize: 13, marginTop: 8 }}>Dummy chart – korvaa oikealla myöhemmin</div>
           </div>
           */}
-          {/* Tulevat julkaisut -kortti: nyt kolmen sarakkeen levyinen */}
+          {/* Tulevat julkaisut -kortti: mobiiliystävällinen */}
           <div className={styles.card} style={{ gridColumn: 'span 3', minHeight: 180, display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>Tulevat julkaisut</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 15 }}>
-              <thead>
-                <tr style={{ color: '#6b7280', fontWeight: 600, background: '#f7f8fc' }}>
-                  <th style={{ textAlign: 'left', padding: '8px 0' }}>Media</th>
-                  <th style={{ textAlign: 'left', padding: '8px 0' }}>Caption</th>
-                  <th style={{ textAlign: 'left', padding: '8px 0' }}>Status</th>
-                  <th style={{ textAlign: 'left', padding: '8px 0' }}>Pvm</th>
-                </tr>
-              </thead>
-              <tbody>
-                {scheduleLoading ? (
-                  Array(5).fill(0).map((_, i) => (
-                    <tr key={i}>
-                      <td colSpan={4} style={{ background: '#eee', height: 48, borderRadius: 6 }}></td>
-                    </tr>
-                  ))
-                ) : upcomingPosts.length === 0 ? (
-                  <tr><td colSpan={4} style={{ color: '#888', padding: 16 }}>Ei tulevia julkaisuja</td></tr>
-                ) : (
-                  upcomingPosts.map((row, i) => (
-                    <tr key={row.id}>
-                      <td>{renderMediaCell(row)}</td>
-                      <td>{row.caption || '--'}</td>
-                      <td>{statusMap[row.status] || row.status || '--'}</td>
-                      <td>{formatUpcomingDate(row.publish_date)}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+            <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#374151', marginBottom: 12 }}>Tulevat julkaisut</div>
+            <div className="table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'clamp(13px, 3vw, 15px)', minWidth: 600 }}>
+                <thead>
+                  <tr style={{ color: '#6b7280', fontWeight: 600, background: '#f7f8fc' }}>
+                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Media</th>
+                    <th style={{ textAlign: 'left', padding: '8px 4px' }}>Caption</th>
+                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Status</th>
+                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Pvm</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {scheduleLoading ? (
+                    Array(5).fill(0).map((_, i) => (
+                      <tr key={i}>
+                        <td colSpan={4} style={{ background: '#eee', height: 48, borderRadius: 6 }}></td>
+                      </tr>
+                    ))
+                  ) : upcomingPosts.length === 0 ? (
+                    <tr><td colSpan={4} style={{ color: '#888', padding: 16, textAlign: 'center' }}>Ei tulevia julkaisuja</td></tr>
+                  ) : (
+                    upcomingPosts.map((row, i) => (
+                      <tr key={row.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '8px 4px', verticalAlign: 'top' }}>{renderMediaCell(row)}</td>
+                        <td style={{ padding: '8px 4px', verticalAlign: 'top', wordBreak: 'break-word' }}>{row.caption || '--'}</td>
+                        <td style={{ padding: '8px 4px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>{statusMap[row.status] || row.status || '--'}</td>
+                        <td style={{ padding: '8px 4px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>{formatUpcomingDate(row.publish_date)}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

@@ -66,27 +66,103 @@
   align-items: center;
 }
 
+/* Mobiilioptimointi */
 @media (max-width: 900px) {
+  .settings-container {
+    padding: 20px 12px;
+  }
+  
+  .settings-header {
+    margin-bottom: 20px;
+  }
+  
   .settings-bentogrid {
     grid-template-columns: 1fr;
     gap: 16px;
   }
+  
   .card {
     padding: 20px;
   }
+  
   .avatar-grid {
     gap: 12px;
   }
+  
+  .form-group label {
+    font-size: 13px;
+  }
+  
+  .form-input {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .settings-container {
-    padding: 16px 12px;
+    padding: 16px 8px;
   }
+  
+  .settings-header {
+    margin-bottom: 16px;
+  }
+  
   .card {
     padding: 16px;
+    border-radius: 12px;
   }
+  
   .avatar-grid {
     gap: 8px;
+  }
+  
+  .form-group {
+    margin-bottom: 10px;
+  }
+  
+  .form-group label {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  
+  .form-input {
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-container {
+    padding: 12px 4px;
+  }
+  
+  .settings-header {
+    margin-bottom: 12px;
+  }
+  
+  .card {
+    padding: 12px;
+    border-radius: 10px;
+  }
+  
+  .avatar-grid {
+    gap: 6px;
+  }
+  
+  .form-group {
+    margin-bottom: 8px;
+  }
+  
+  .form-group label {
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
+  
+  .form-input {
+    font-size: 11px;
+    padding: 5px 8px;
+    border-radius: 5px;
   }
 } 

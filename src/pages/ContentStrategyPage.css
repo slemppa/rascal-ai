@@ -56,8 +56,6 @@
   font-size: 14px;
 }
 
-
-
 /* ICP Summary kortti */
 .icp-card {
   grid-column: 1 / -1; /* Koko leveä kortti */
@@ -98,7 +96,6 @@
   font-size: 14px;
 }
 
-/* Strategiakorttien grid */
 .strategy-bentogrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -106,127 +103,124 @@
   width: 100%;
 }
 
-/* Strategiakortti - sama kuin Dashboard .card */
 .strategy-card {
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.06);
   padding: 32px;
-  min-height: 120px;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  transition: box-shadow 0.2s ease;
 }
 
+.strategy-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
 
-
-/* Strategiakortin header */
 .strategy-card .strategy-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 20px;
-  gap: 16px;
+  margin-bottom: 16px;
+  gap: 12px;
 }
 
 .strategy-month {
   font-size: 20px;
   font-weight: 700;
   color: #111827;
-  flex: 1;
+  margin: 0;
 }
 
 .strategy-meta {
   display: flex;
   flex-direction: column;
-  gap: 4px;
   align-items: flex-end;
+  gap: 4px;
+  font-size: 12px;
+  color: #6b7280;
 }
 
 .companies-count {
-  font-size: 12px;
-  color: #6b7280;
   background: #f3f4f6;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 2px 8px;
+  border-radius: 12px;
   font-weight: 500;
 }
 
 .created-date {
-  font-size: 12px;
-  color: #9ca3af;
+  font-size: 11px;
 }
 
 .edit-button {
-  background: #22c55e;
-  color: #ffffff;
+  background: #2563eb;
+  color: #fff;
   border: none;
   border-radius: 8px;
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  white-space: nowrap;
+  transition: background 0.2s ease;
+  margin-top: 8px;
 }
 
 .edit-button:hover {
-  background: #16a34a;
+  background: #1d4ed8;
 }
 
-/* Strategiakortin sisältö */
 .strategy-content {
-  font-size: 15px;
-  line-height: 1.6;
+  flex: 1;
   color: #374151;
-  white-space: pre-line;
-  max-height: 300px;
+  line-height: 1.6;
+  font-size: 15px;
   overflow-y: auto;
+  max-height: 300px;
   padding-right: 8px;
 }
 
 .strategy-content::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 
 .strategy-content::-webkit-scrollbar-track {
   background: #f1f5f9;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 .strategy-content::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 .strategy-content::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
 
-/* Muokkausosio */
 .edit-section {
-  margin-top: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .strategy-textarea {
-  width: 100%;
-  min-height: 200px;
-  padding: 16px;
+  flex: 1;
   border: 2px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: 8px;
+  padding: 16px;
   font-size: 15px;
-  line-height: 1.6;
   font-family: inherit;
+  line-height: 1.6;
   resize: vertical;
-  background: #f9fafb;
+  min-height: 200px;
   transition: border-color 0.2s ease;
-  box-sizing: border-box;
 }
 
 .strategy-textarea:focus {
   outline: none;
-  border-color: #22c55e;
-  background: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .edit-actions {
@@ -238,14 +232,14 @@
 
 .save-button {
   background: #22c55e;
-  color: #ffffff;
+  color: #fff;
   border: none;
   border-radius: 8px;
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background 0.2s ease;
 }
 
 .save-button:hover {
@@ -253,25 +247,24 @@
 }
 
 .cancel-button {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
+  background: #6b7280;
+  color: #fff;
+  border: none;
   border-radius: 8px;
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background 0.2s ease;
 }
 
 .cancel-button:hover {
-  background: #e5e7eb;
+  background: #4b5563;
 }
 
-/* Tyhjä tila */
 .empty-state {
   text-align: center;
-  padding: 80px 20px;
+  padding: 48px 24px;
   color: #6b7280;
 }
 
@@ -292,33 +285,30 @@
   margin: 0;
 }
 
-/* Toiminnot */
 .strategy-actions {
   margin-bottom: 24px;
-  display: flex;
-  justify-content: flex-end;
 }
 
 .create-strategy-button {
   background: #22c55e;
-  color: #ffffff;
+  color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 12px 24px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  display: flex;
+  transition: all 0.2s ease;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
 }
 
 .create-strategy-button:hover {
   background: #16a34a;
+  transform: translateY(-1px);
 }
 
-/* Modaali */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -334,12 +324,13 @@
 }
 
 .modal-content {
-  background: #ffffff;
+  background: #fff;
   border-radius: 16px;
+  padding: 0;
   max-width: 600px;
   width: 100%;
   max-height: 90vh;
-  overflow: auto;
+  overflow: hidden;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
@@ -348,15 +339,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 24px 24px 0 24px;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 .modal-header h3 {
-  margin: 0;
   font-size: 20px;
   font-weight: 700;
   color: #111827;
+  margin: 0;
 }
 
 .modal-close {
@@ -365,14 +355,14 @@
   font-size: 24px;
   cursor: pointer;
   color: #6b7280;
-  padding: 0;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
   width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
 }
 
 .modal-close:hover {
@@ -380,7 +370,7 @@
 }
 
 .modal-body {
-  padding: 24px;
+  padding: 0 24px 24px 24px;
 }
 
 .form-group {
@@ -389,80 +379,186 @@
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
+  font-size: 14px;
   font-weight: 600;
   color: #374151;
-  font-size: 14px;
+  margin-bottom: 8px;
 }
 
 .form-input,
-.form-textarea {
+.form-select {
   width: 100%;
   padding: 12px 16px;
   border: 2px solid #e5e7eb;
   border-radius: 8px;
-  font-size: 14px;
-  font-family: inherit;
+  font-size: 16px;
   transition: border-color 0.2s ease;
-  box-sizing: border-box;
 }
 
 .form-input:focus,
-.form-textarea:focus {
+.form-select:focus {
   outline: none;
-  border-color: #22c55e;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .form-textarea {
-  resize: vertical;
   min-height: 120px;
+  resize: vertical;
 }
 
 .modal-actions {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
-  padding: 0 24px 24px 24px;
+  margin-top: 24px;
 }
 
-/* Responsiivisuus */
+/* Mobiilioptimointi */
 @media (max-width: 900px) {
+  .strategy-container {
+    padding: 24px 12px;
+  }
+
   .strategy-bentogrid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 20px;
   }
+
+  .strategy-card {
+    padding: 24px;
+  }
+
+  .strategy-month {
+    font-size: 18px;
+  }
+
+  .strategy-content {
+    font-size: 14px;
+  }
+
+  .modal-content {
+    margin: 20px;
+    max-height: 95vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .strategy-container {
+    padding: 20px 8px;
+  }
+
+  .strategy-header {
+    margin-bottom: 24px;
+  }
+
   .strategy-card {
     padding: 20px;
+    border-radius: 12px;
   }
-  .strategy-container {
-    padding: 20px 12px;
+
+  .strategy-card .strategy-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .strategy-month {
+    font-size: 16px;
+  }
+
+  .strategy-meta {
+    align-items: flex-start;
+  }
+
+  .strategy-content {
+    font-size: 13px;
+    max-height: 250px;
+  }
+
+  .edit-actions {
+    flex-direction: column;
+  }
+
+  .save-button,
+  .cancel-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .modal-header {
+    padding: 20px 20px 0 20px;
+  }
+
+  .modal-body {
+    padding: 0 20px 20px 20px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
   }
 }
 
 @media (max-width: 480px) {
   .strategy-container {
-    padding: 16px 8px;
+    padding: 16px 4px;
   }
-  
+
   .strategy-card {
     padding: 16px;
+    border-radius: 10px;
   }
-  
+
   .strategy-month {
-    font-size: 18px;
+    font-size: 15px;
   }
-  
+
   .strategy-content {
-    font-size: 14px;
+    font-size: 12px;
+    max-height: 200px;
   }
-  
+
   .strategy-textarea {
     font-size: 14px;
     padding: 12px;
+    min-height: 150px;
   }
-  
+
+  .edit-button {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+
+  .save-button,
+  .cancel-button {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+
+  .create-strategy-button {
+    font-size: 14px;
+    padding: 10px 20px;
+    width: 100%;
+    justify-content: center;
+  }
+
   .modal-content {
     margin: 10px;
-    max-height: 95vh;
+    border-radius: 12px;
+  }
+
+  .modal-header {
+    padding: 16px 16px 0 16px;
+  }
+
+  .modal-body {
+    padding: 0 16px 16px 16px;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    font-size: 14px;
+    padding: 10px 12px;
   }
 } 

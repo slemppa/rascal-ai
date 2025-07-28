@@ -930,3 +930,207 @@
     order: 3; /* Poista-nappi viimeiseksi */
   }
 } 
+
+/* ManagePostsPage.css - Mobiilioptimoidut tyylit */
+
+/* Päivitetään olemassa olevat media queries */
+@media (max-width: 1200px) {
+  .kanban-container {
+    padding: 16px;
+  }
+  
+  .kanban-column {
+    min-width: 280px;
+  }
+  
+  .post-card {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .kanban-container {
+    padding: 12px;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .kanban-column {
+    min-width: 100%;
+    max-width: 100%;
+  }
+  
+  .kanban-column-header {
+    padding: 12px;
+    font-size: 16px;
+  }
+  
+  .post-card {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .post-card-title {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  .post-card-caption {
+    font-size: 12px;
+  }
+  
+  .post-card-meta {
+    font-size: 11px;
+  }
+  
+  .post-card-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .post-card-button {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+  
+  .modal-content {
+    margin: 20px;
+    max-height: 95vh;
+    width: calc(100% - 40px);
+  }
+  
+  .modal-header {
+    padding: 16px 20px 0 20px;
+  }
+  
+  .modal-body {
+    padding: 0 20px 20px 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 16px;
+  }
+  
+  .form-input,
+  .form-textarea,
+  .form-select {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .modal-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .kanban-container {
+    padding: 8px;
+    gap: 12px;
+  }
+  
+  .kanban-column {
+    min-width: 100%;
+  }
+  
+  .kanban-column-header {
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  .post-card {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+  }
+  
+  .post-card-title {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  
+  .post-card-caption {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+  
+  .post-card-meta {
+    font-size: 10px;
+    margin-bottom: 8px;
+  }
+  
+  .post-card-actions {
+    gap: 6px;
+  }
+  
+  .post-card-button {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  
+  .modal-content {
+    margin: 10px;
+    border-radius: 12px;
+    width: calc(100% - 20px);
+  }
+  
+  .modal-header {
+    padding: 12px 16px 0 16px;
+  }
+  
+  .modal-header h3 {
+    font-size: 16px;
+  }
+  
+  .modal-body {
+    padding: 0 16px 16px 16px;
+  }
+  
+  .form-group label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  
+  .form-input,
+  .form-textarea,
+  .form-select {
+    font-size: 13px;
+    padding: 8px 10px;
+    border-radius: 6px;
+  }
+  
+  .form-textarea {
+    min-height: 80px;
+  }
+  
+  .modal-actions {
+    gap: 6px;
+  }
+  
+  .modal-button {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+  
+  .page-header {
+    padding: 16px 8px;
+  }
+  
+  .page-title {
+    font-size: 20px;
+  }
+  
+  .create-post-button {
+    font-size: 13px;
+    padding: 8px 16px;
+    width: 100%;
+    justify-content: center;
+  }
+} 

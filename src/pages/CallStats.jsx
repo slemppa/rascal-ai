@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import './CallStats.css'
 
 const STATUS_COLORS = {
   odottaa: '#a0aec0', // harmaa
@@ -70,64 +71,69 @@ function InfoIconWithTooltip() {
 
 export default function CallStats({ status, stats, calls }) {
   return (
-    <div style={{ background: '#fff', borderRadius: 12, padding: 24 }}>
-      <h2 style={{ margin: '0 0 16px 0', fontSize: 20, fontWeight: 600 }}>
+    <div className="call-stats">
+      <h2 className="call-stats-title">
         Soittojen tila
       </h2>
       
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 16, marginBottom: 24 }}>
-        <div style={{ textAlign: 'center', padding: '16px', background: '#f9fafb', borderRadius: 8 }}>
-          <div style={{ fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
+      <div className="call-stats-grid">
+        <div className="call-stat-card">
+          <div className="call-stat-title">Yhteensä</div>
+          <div className="call-stat-value">
             {stats.totalCount}
           </div>
-          <div style={{ fontSize: 14, color: '#6b7280' }}>Yhteensä</div>
         </div>
         
-        <div style={{ textAlign: 'center', padding: '16px', background: '#f9fafb', borderRadius: 8 }}>
-          <div style={{ fontSize: 24, fontWeight: 700, color: '#22c55e' }}>
+        <div className="call-stat-card">
+          <div className="call-stat-title">Soitettu</div>
+          <div className="call-stat-value" style={{ color: '#22c55e' }}>
             {stats.calledCount}
           </div>
-          <div style={{ fontSize: 14, color: '#6b7280' }}>Soitettu</div>
         </div>
         
-        <div style={{ textAlign: 'center', padding: '16px', background: '#f9fafb', borderRadius: 8 }}>
-          <div style={{ fontSize: 24, fontWeight: 700, color: '#ef4444' }}>
+        <div className="call-stat-card">
+          <div className="call-stat-title">Epäonnistui</div>
+          <div className="call-stat-value" style={{ color: '#ef4444' }}>
             {stats.failedCount}
           </div>
-          <div style={{ fontSize: 14, color: '#6b7280' }}>Epäonnistui</div>
-    </div>
+        </div>
         
-        <div style={{ textAlign: 'center', padding: '16px', background: '#f9fafb', borderRadius: 8 }}>
-          <div style={{ fontSize: 24, fontWeight: 700, color: '#2563eb' }}>
+        <div className="call-stat-card">
+          <div className="call-stat-title">Jäljellä</div>
+          <div className="call-stat-value" style={{ color: '#2563eb' }}>
             {stats.totalCount - stats.calledCount - stats.failedCount}
           </div>
-          <div style={{ fontSize: 14, color: '#6b7280' }}>Jäljellä</div>
         </div>
       </div>
       
       {calls && calls.length > 0 && (
-        <div>
-          <h3 style={{ margin: '0 0 12px 0', fontSize: 16, fontWeight: 600 }}>
-            Yksityiskohtaiset tiedot
-          </h3>
-          <div style={{ maxHeight: 300, overflow: 'auto' }}>
-            {calls.map((call, index) => (
-              <div key={index} style={{
-      display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '8px 0',
-                borderBottom: '1px solid #f3f4f6'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <StatusBadge tila={call.status} />
-                  <span style={{ fontSize: 14 }}>{call.name || call.phone}</span>
-                </div>
-                <div style={{ fontSize: 12, color: '#6b7280' }}>
-                  {call.duration ? `${call.duration}s` : '-'}
-                </div>
-              </div>
-            ))}
+        <div className="call-stats-table">
+          <div className="call-stats-table-header">
+            <h3 className="call-stats-table-title">
+              Yksityiskohtaiset tiedot
+            </h3>
+          </div>
+          <div className="call-stats-table-content">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tila</th>
+                  <th>Nimi/Puhelin</th>
+                  <th>Kesto</th>
+                </tr>
+              </thead>
+              <tbody>
+                {calls.map((call, index) => (
+                  <tr key={index}>
+                    <td>
+                      <StatusBadge tila={call.status} />
+                    </td>
+                    <td>{call.name || call.phone}</td>
+                    <td>{call.duration ? `${call.duration}s` : '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

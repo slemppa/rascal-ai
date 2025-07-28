@@ -20,6 +20,9 @@ import CallPanel from './pages/CallPanel'
 import SettingsPage from './pages/SettingsPage'
 import TermsOfServicePage from './pages/TermsOfServicePage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
+import PricingPage from './pages/PricingPage'
+import FeaturesPage from './pages/FeaturesPage'
+import ContactPage from './pages/ContactPage'
 
 
 export default function App() {
@@ -36,6 +39,9 @@ export default function App() {
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/terms" element={<TermsOfServicePage />} />
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         {/* Suojatut reitit sidebarin kanssa */}
         <Route path="/dashboard" element={
           <div style={{ display: 'flex', minHeight: '100vh' }}>

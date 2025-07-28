@@ -1,13 +1,38 @@
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 
 export default function AuthCallback() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
+        // Tarkista onko token_hash parametrit URL:ssa
+        const token_hash = searchParams.get('token_hash')
+        const type = searchParams.get('type')
+
+        if (token_hash && type) {
+          // Verify OTP kun tulee email linkistä
+          const { data, error } = await supabase.auth.verifyOtp({
+            token_hash,
+            type: type
+          })
+          
+          if (error) {
+            console.error('Error verifying OTP:', error.message)
+            navigate('/signin?error=' + encodeURIComponent(error.message))
+            return
+          }
+          
+          if (data.session) {
+            navigate('/dashboard')
+            return
+          }
+        }
+
+        // Fallback: tarkista onko sessio jo olemassa
         const { data, error } = await supabase.auth.getSession()
         
         if (error) {
@@ -25,7 +50,7 @@ export default function AuthCallback() {
     }
 
     handleAuthCallback()
-  }, [navigate])
+  }, [navigate, searchParams])
 
   return (
     <div className="min-h-screen flex items-center justify-center">

@@ -1,4 +1,5 @@
 import React from 'react'
+import './Button.css'
 
 /**
  * Yhtenäinen nappikomponentti Rascal AI -sovellukseen.
@@ -43,15 +44,8 @@ export default function Button({
       type={type}
       onClick={onClick}
       disabled={disabled}
+      className={`button button-${variant}`}
       style={{
-        padding: '14px 32px',
-        borderRadius: 10,
-        fontSize: 16,
-        fontWeight: 700,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        boxShadow: '0 2px 8px rgba(37,99,235,0.10)',
-        transition: 'background 0.15s, color 0.15s, border 0.15s',
-        outline: 'none',
         ...variants[variant],
         ...style
       }}

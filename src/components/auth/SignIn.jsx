@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
+import './AuthComponents.css'
 
-export default function SignIn({ onSuccess, onClose, onForgotClick, onMagicLinkClick }) {
+export default function SignIn({ onClose, onForgotClick, onMagicLinkClick }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -43,22 +44,20 @@ export default function SignIn({ onSuccess, onClose, onForgotClick, onMagicLinkC
   }
 
   return (
-    <div style={{ background: '#23262B', color: '#fff', borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.25)', padding: 32, position: 'relative', maxWidth: 400, width: '100%' }}>
+    <div className="auth-container">
       {onClose && (
         <button
           onClick={onClose}
-          style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', fontSize: 28, color: '#cbd5e1', cursor: 'pointer', transition: 'color 0.2s' }}
+          className="auth-close-btn"
           aria-label="Sulje"
-          onMouseOver={e => e.currentTarget.style.color = '#4ADE80'}
-          onMouseOut={e => e.currentTarget.style.color = '#cbd5e1'}
         >
           ×
         </button>
       )}
-      <h2 style={{ fontSize: 26, fontWeight: 700, marginBottom: 24, textAlign: 'center', color: '#fff' }}>Kirjaudu sisään</h2>
-      <form onSubmit={handleSignIn} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-        <div>
-          <label htmlFor="email" style={{ display: 'block', marginBottom: 6, fontWeight: 500, color: '#cbd5e1' }}>
+      <h2 className="auth-title">Kirjaudu sisään</h2>
+      <form onSubmit={handleSignIn} className="auth-form">
+        <div className="auth-form-group">
+          <label htmlFor="email" className="auth-label">
             Sähköposti
           </label>
           <input
@@ -67,22 +66,12 @@ export default function SignIn({ onSuccess, onClose, onForgotClick, onMagicLinkC
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{
-              width: '100%',
-              padding: '12px 14px',
-              border: '1px solid #374151',
-              borderRadius: 8,
-              background: '#181B20',
-              color: '#fff',
-              fontSize: 15,
-              outline: 'none',
-              marginBottom: 2
-            }}
+            className="auth-input"
             placeholder="sähköposti@esimerkki.fi"
           />
         </div>
-        <div style={{ position: 'relative' }}>
-          <label htmlFor="password" style={{ display: 'block', marginBottom: 6, fontWeight: 500, color: '#cbd5e1' }}>
+        <div className="auth-form-group">
+          <label htmlFor="password" className="auth-label">
             Salasana
           </label>
           <input
@@ -91,17 +80,7 @@ export default function SignIn({ onSuccess, onClose, onForgotClick, onMagicLinkC
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{
-              width: '100%',
-              padding: '12px 44px 12px 14px',
-              border: '1px solid #374151',
-              borderRadius: 8,
-              background: '#181B20',
-              color: '#fff',
-              fontSize: 15,
-              outline: 'none',
-              marginBottom: 2
-            }}
+            className="auth-input password"
             placeholder="Salasanasi"
             autoComplete="current-password"
           />
@@ -110,24 +89,7 @@ export default function SignIn({ onSuccess, onClose, onForgotClick, onMagicLinkC
             onClick={() => setShowPassword(v => !v)}
             tabIndex={-1}
             aria-label={showPassword ? 'Piilota salasana' : 'Näytä salasana'}
-            style={{
-              position: 'absolute',
-              top: 36,
-              right: 12,
-              background: 'none',
-              border: 'none',
-              padding: 0,
-              cursor: 'pointer',
-              color: '#cbd5e1',
-              fontSize: 22,
-              display: 'flex',
-              alignItems: 'center',
-              height: 28,
-              width: 28,
-              transition: 'color 0.2s'
-            }}
-            onMouseOver={e => e.currentTarget.style.color = '#4ADE80'}
-            onMouseOut={e => e.currentTarget.style.color = '#cbd5e1'}
+            className="auth-password-toggle"
           >
             {showPassword ? (
               // Auki silmä (eye open)
@@ -147,60 +109,41 @@ export default function SignIn({ onSuccess, onClose, onForgotClick, onMagicLinkC
         <button
           type="submit"
           disabled={loading}
-          style={{
-            width: '100%',
-            padding: '12px 0',
-            border: 'none',
-            borderRadius: 8,
-            background: loading ? '#4ADE80cc' : '#4ADE80',
-            color: '#181B20',
-            fontWeight: 700,
-            fontSize: 16,
-            cursor: loading ? 'not-allowed' : 'pointer',
-            transition: 'background 0.2s',
-            marginTop: 4
-          }}
+          className="auth-button"
         >
           {loading ? 'Kirjaudutaan...' : 'Kirjaudu sisään'}
         </button>
         {error && (
-          <div style={{
-            padding: 10,
-            background: '#3b1d1d',
-            border: '1px solid #dc2626',
-            borderRadius: 8,
-            color: '#f87171',
-            fontSize: 14,
-            marginTop: 2
-          }}>
+          <div className="auth-error">
             {error}
           </div>
         )}
       </form>
-      <div style={{ marginTop: 18, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <p style={{ fontSize: 15, color: '#cbd5e1' }}>
+      <div className="auth-links">
+        <div>
           {onForgotClick ? (
-            <a href="#" style={{ color: '#60a5fa', textDecoration: 'underline' }} onClick={e => { e.preventDefault(); onForgotClick(); }}>
+            <a href="#" className="auth-link" onClick={e => { e.preventDefault(); onForgotClick(); }}>
               Unohditko salasanan?
             </a>
           ) : (
-            <Link to="/forgot-password" style={{ color: '#60a5fa', textDecoration: 'underline' }}>
+            <Link to="/forgot-password" className="auth-link">
               Unohditko salasanan?
             </Link>
           )}
-        </p>
-        <p style={{ fontSize: 15, color: '#cbd5e1' }}>
+        </div>
+        <div>
           {onMagicLinkClick ? (
-            <a href="#" style={{ color: '#a78bfa', textDecoration: 'underline' }} onClick={e => { e.preventDefault(); onMagicLinkClick(); }}>
+            <a href="#" className="auth-link" onClick={e => { e.preventDefault(); onMagicLinkClick(); }}>
               Kirjaudu taikalinkillä
             </a>
           ) : (
-            <Link to="/magic-link" style={{ color: '#a78bfa', textDecoration: 'underline' }}>
+            <Link to="/magic-link" className="auth-link">
               Kirjaudu taikalinkillä
             </Link>
           )}
-        </p>
+        </div>
       </div>
+
     </div>
   )
 }

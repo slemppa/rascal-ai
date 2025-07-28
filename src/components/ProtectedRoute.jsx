@@ -1,6 +1,7 @@
 import React from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import './ProtectedRoute.css'
 
 const featureMap = {
   '/posts': 'Social Media',
@@ -15,7 +16,7 @@ const ProtectedRoute = ({ children, requiredFeatures = [] }) => {
   const navigate = useNavigate()
 
   if (loading) {
-    return <div>Ladataan...</div>
+    return <div className="protected-route-loading">Ladataan...</div>
   }
 
   if (!user) {
@@ -31,7 +32,7 @@ const ProtectedRoute = ({ children, requiredFeatures = [] }) => {
     )
 
     if (!hasRequiredFeatures) {
-      return <div>Sinulla ei ole tarvittavia oikeuksia tälle sivulle.</div>
+      return <div className="protected-route-error">Sinulla ei ole tarvittavia oikeuksia tälle sivulle.</div>
     }
   }
 

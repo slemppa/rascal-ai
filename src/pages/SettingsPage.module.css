@@ -165,4 +165,24 @@
     padding: 5px 8px;
     border-radius: 5px;
   }
+}
+
+/* Mobiili-optimoitu touch-friendly elementit */
+@media (max-width: 768px) {
+  /* Varmista että kaikki klikattavat elementit ovat touch-friendly */
+  button,
+  .form-input {
+    min-height: 44px;
+  }
+  
+  /* Mobiili-optimoitu fonttikoot */
+  body {
+    font-size: 16px; /* Estää iOS-zoomauksen */
+  }
+  
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* Estää iOS-zoomauksen */
+  }
 } 

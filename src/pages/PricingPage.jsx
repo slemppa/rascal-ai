@@ -115,20 +115,14 @@ export default function PricingPage() {
 
         {/* Auth Modals */}
         {showSignInModal && (
-          <div 
-            className="modal-overlay"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) {
-                setShowSignInModal(false);
-              }
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') {
-                setShowSignInModal(false);
-              }
-            }}
-            tabIndex={0}
-          >
+                  <div 
+          className="modal-overlay"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowSignInModal(false);
+            }
+          }}
+        >
             <div className="modal-container">
               <SignIn 
                 onClose={() => setShowSignInModal(false)}

@@ -10,6 +10,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import AuthCallback from './components/auth/AuthCallback'
 import { AuthProvider } from './contexts/AuthContext'
 import Sidebar from './components/Sidebar'
+import MobileNavigation from './components/MobileNavigation'
 import { supabase } from './lib/supabase'
 import ManagePostsPage from './pages/ManagePostsPage'
 import AdminPage from './pages/AdminPage'
@@ -44,64 +45,72 @@ export default function App() {
         <Route path="/contact" element={<ContactPage />} />
         {/* Suojatut reitit sidebarin kanssa */}
         <Route path="/dashboard" element={
-          <div style={{ display: 'flex', minHeight: '100vh' }}>
+          <div className="app-layout">
             <Sidebar />
+            <MobileNavigation />
             <div className="main-content">
               <ProtectedRoute><DashboardPage /></ProtectedRoute>
             </div>
           </div>
         } />
         <Route path="/posts" element={
-          <div style={{ display: 'flex', minHeight: '100vh' }}>
+          <div className="app-layout">
             <Sidebar />
+            <MobileNavigation />
             <div className="main-content">
               <ProtectedRoute><ManagePostsPage /></ProtectedRoute>
             </div>
           </div>
         } />
         <Route path="/admin" element={
-          <div style={{ display: 'flex', minHeight: '100vh' }}>
+          <div className="app-layout">
             <Sidebar />
+            <MobileNavigation />
             <div className="main-content">
               <ProtectedRoute><AdminPage /></ProtectedRoute>
             </div>
           </div>
         } />
         <Route path="/strategy" element={
-          <div style={{ display: 'flex', minHeight: '100vh' }}>
+          <div className="app-layout">
             <Sidebar />
+            <MobileNavigation />
             <div className="main-content">
               <ProtectedRoute><ContentStrategyPage /></ProtectedRoute>
             </div>
           </div>
         } />
         <Route path="/ai-chat" element={
-          <div style={{ display: 'flex', minHeight: '100vh' }}>
+          <div className="app-layout">
             <Sidebar />
+            <MobileNavigation />
             <div className="main-content">
               <ProtectedRoute><AIChatPage /></ProtectedRoute>
             </div>
           </div>
         } />
         <Route path="/help" element={
-          <div style={{ display: 'flex', minHeight: '100vh' }}>
+          <div className="app-layout">
             <Sidebar />
+            <MobileNavigation />
             <div className="main-content">
               <ProtectedRoute><HelpPage /></ProtectedRoute>
             </div>
           </div>
         } />
         <Route path="/calls" element={
-          <div style={{ display: 'flex', minHeight: '100vh' }}>
+          <div className="app-layout">
             <Sidebar />
+            <MobileNavigation />
             <div className="main-content">
               <ProtectedRoute><CallPanel /></ProtectedRoute>
             </div>
           </div>
         } />
         <Route path="/settings" element={
-          <div style={{ display: 'flex', minHeight: '100vh' }}>
+          <div className="app-layout">
             <Sidebar />
+            <MobileNavigation />
             <div className="main-content">
               <ProtectedRoute><SettingsPage /></ProtectedRoute>
             </div>

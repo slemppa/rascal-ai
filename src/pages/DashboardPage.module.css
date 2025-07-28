@@ -104,4 +104,24 @@
   .stat-number {
     font-size: 20px;
   }
+}
+
+/* Mobiili-optimoitu touch-friendly elementit */
+@media (max-width: 768px) {
+  /* Varmista että kaikki klikattavat elementit ovat touch-friendly */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Mobiili-optimoitu fonttikoot */
+  body {
+    font-size: 16px; /* Estää iOS-zoomauksen */
+  }
+  
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* Estää iOS-zoomauksen */
+  }
 } 

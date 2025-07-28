@@ -9,56 +9,37 @@
 }
 
 /* Posts Page */
-.posts-page {
-  min-height: 100vh;
+.posts-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 16px;
   background-color: #F8F5ED; /* mk8r.fi päätausta */
-  padding: 0; /* Poistettu padding koska page-header ja search-filters hoitavat sen */
 }
 
-/* Page Header - sama kuin dashboard */
-.page-header {
-  background: white;
-  padding: 24px 32px;
-  border-bottom: 1px solid #e5e7eb;
-  margin-bottom: 0;
+/* Page Header */
+.posts-header {
+  margin-bottom: 32px;
 }
 
-.page-header h1 {
-  font-size: 28px;
-  font-weight: 700;
-  color: #111827;
-  margin: 0;
-}
+/* Poistetaan h2 tyylit, koska ne ovat nyt inline-tyyleinä */
 
-.page-header p {
-  font-size: 16px;
-  color: #6b7280;
-  margin: 8px 0 0 0;
-}
+/* Poistetaan p-elementin tyylit, koska sitä ei enää käytetä */
 
-.create-button {
-  background: #3b82f6;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.create-button:hover {
-  background: #2563eb;
-}
+/* Create Button - käytetään Button komponenttia */
 
 /* Search and Filters */
 .search-filters {
   background: white;
-  padding: 20px 32px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 20px 24px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
   display: flex;
   gap: 16px;
   align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .search-input {
@@ -133,9 +114,8 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
-  padding: 24px 32px;
-  height: calc(100vh - 280px);
-  overflow-x: auto;
+  padding: 0;
+  width: 100%;
 }
 
 .kanban-column {
@@ -145,7 +125,8 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
   flex-direction: column;
-  min-height: 400px;
+  height: 100%;
+  min-height: 0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
 }
@@ -200,6 +181,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-height: 0;
 }
 
 /* Modern Post Cards */
@@ -217,6 +199,46 @@
   display: flex;
   flex-direction: column;
 }
+
+.post-card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.post-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.post-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.post-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.post-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.post-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Action buttons - käytetään Button komponenttia */
 
 .post-card::before {
   content: '';
@@ -248,8 +270,8 @@
 
 .post-thumbnail {
   width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: 10px;
+  aspect-ratio: 16 / 9; /* Muutettu 1:1 -> 16:9 paremman näkyvyyden vuoksi */
+  border-radius: 12px;
   overflow: hidden;
   margin-bottom: 16px;
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
@@ -258,17 +280,20 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  min-height: 120px; /* Varmistetaan minimikorkeus */
+  max-height: 200px; /* Rajoitetaan maksimikorkeus */
 }
 
 .post-thumbnail img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .post-thumbnail:hover img {
-  transform: scale(1.08);
+  transform: scale(1.05); /* Pienennetty hover-efektiä */
 }
 
 /* Placeholder content */
@@ -279,19 +304,22 @@
   justify-content: center;
   height: 100%;
   color: #94a3b8;
+  padding: 20px;
+  text-align: center;
 }
 
 .placeholder-icon {
-  font-size: 28px;
-  margin-bottom: 8px;
-  opacity: 0.7;
+  font-size: 32px;
+  margin-bottom: 12px;
+  opacity: 0.6;
 }
 
 .placeholder-text {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  color: #64748b;
 }
 
 .post-title {
@@ -316,6 +344,12 @@
   word-break: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
+}
+
+.post-date {
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 500;
 }
 
 .post-meta {
@@ -695,68 +729,7 @@
   border-top: 1px solid rgba(226, 232, 240, 0.6);
 }
 
-.cancel-button,
-.submit-button,
-.delete-button {
-  flex: 1;
-  padding: 16px 24px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-  position: relative;
-  overflow: hidden;
-}
-
-.cancel-button {
-  background: rgba(241, 245, 249, 0.8);
-  color: #64748b;
-  backdrop-filter: blur(10px);
-}
-
-.cancel-button:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.2);
-}
-
-.submit-button {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.submit-button:hover {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-}
-
-.submit-button:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-/* Delete Button */
-.delete-button {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-}
-
-.delete-button:hover {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
-}
-
-.delete-button:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-}
+/* Modal buttons - käytetään Button komponenttia */
 
 /* Loading and Error States */
 .loading-state {
@@ -829,46 +802,141 @@
   font-weight: 500;
 }
 
-.retry-button {
-  background: #dc2626;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.retry-button:hover {
-  background: #b91c1c;
-}
+/* Retry button - käytetään Button komponenttia */
 
 /* Responsive Design */
 @media (max-width: 1200px) {
   .kanban-board {
     grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 20px 24px;
+  }
+  
+  .search-filters {
+    padding: 16px 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .search-input {
+    max-width: 300px;
   }
 }
 
 @media (max-width: 768px) {
+  .posts-container {
+    padding: 20px 12px;
+  }
+  
+  .posts-header {
+    margin-bottom: 24px;
+  }
+  
+  .search-filters {
+    padding: 16px 20px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .search-input {
+    max-width: none;
+  }
+  
+  .status-filter {
+    width: 100%;
+  }
+  
+  /* Create button - käytetään Button komponenttia */
+  
   .kanban-board {
     grid-template-columns: 1fr;
     gap: 16px;
-    padding: 16px;
+    padding: 0;
   }
   
   .kanban-column {
+    height: auto;
     min-height: 300px;
+  }
+  
+  .column-title {
+    padding: 16px 20px;
+    font-size: 15px;
+  }
+  
+  .column-content {
+    padding: 16px;
   }
   
   .post-card {
     padding: 12px;
+    min-height: 180px;
   }
   
   .post-thumbnail {
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 16 / 9;
+    margin-bottom: 12px;
+    min-height: 100px;
+    max-height: 150px;
   }
+  
+  .placeholder-content {
+    padding: 16px;
+  }
+  
+  .placeholder-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  
+  .placeholder-text {
+    font-size: 11px;
+  }
+  
+  .post-title {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  
+  .post-caption {
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+  
+  .post-info {
+    flex: 1;
+  }
+  
+  .post-header {
+    margin-bottom: 8px;
+  }
+  
+  .post-badges {
+    gap: 6px;
+  }
+  
+  .post-type,
+  .post-source {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+  
+  .post-footer {
+    margin-top: 12px;
+  }
+  
+  .post-date {
+    font-size: 10px;
+  }
+  
+  .post-actions {
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  
+  /* Action buttons - käytetään Button komponenttia */
   
   /* Mobile Modal Adjustments */
   .modal-overlay {
@@ -900,16 +968,11 @@
   }
   
   .modal-actions {
-    flex-direction: column;
+    flex-direction: row;
     gap: 12px;
   }
   
-  .cancel-button,
-  .submit-button,
-  .delete-button {
-    padding: 14px 20px;
-    font-size: 16px;
-  }
+  /* Modal buttons - käytetään Button komponenttia */
   
   /* Mobile adjustments for new elements */
   .video-container {
@@ -926,211 +989,207 @@
     width: 100%;
   }
   
-  .delete-button {
-    order: 3; /* Poista-nappi viimeiseksi */
-  }
-} 
-
-/* ManagePostsPage.css - Mobiilioptimoidut tyylit */
-
-/* Päivitetään olemassa olevat media queries */
-@media (max-width: 1200px) {
-  .kanban-container {
-    padding: 16px;
-  }
-  
-  .kanban-column {
-    min-width: 280px;
-  }
-  
-  .post-card {
-    padding: 16px;
-  }
+  /* Delete button - käytetään Button komponenttia */
 }
 
-@media (max-width: 768px) {
-  .kanban-container {
-    padding: 12px;
-    flex-direction: column;
-    gap: 16px;
+@media (max-width: 480px) {
+  /* Pieni mobiili - marginaalit nollattu */
+  .main-content {
+    margin-left: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
   }
   
-  .kanban-column {
-    min-width: 100%;
-    max-width: 100%;
+  .posts-container {
+    margin: 0 !important;
+    padding: 12px 4px !important;
+    max-width: 100vw !important;
   }
   
-  .kanban-column-header {
-    padding: 12px;
-    font-size: 16px;
+  .kanban-board {
+    margin: 0 !important;
+    padding: 0 2px !important;
   }
   
   .post-card {
-    padding: 12px;
-    margin-bottom: 12px;
+    margin: 0 0 8px 0 !important;
   }
   
-  .post-card-title {
+  .page-header {
+    padding: 12px 16px;
+  }
+  
+  .posts-header {
+    margin-bottom: 20px;
+  }
+  
+  .search-filters {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+  
+  .kanban-board {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+  
+  .kanban-column {
+    height: auto;
+    min-height: 250px;
+  }
+  
+  .column-title {
+    padding: 12px 16px;
     font-size: 14px;
-    line-height: 1.4;
   }
   
-  .post-card-caption {
+  .column-content {
+    padding: 12px;
+  }
+  
+  .post-card {
+    padding: 10px;
+    min-height: 160px;
+  }
+  
+  .post-thumbnail {
+    margin-bottom: 10px;
+    min-height: 80px;
+    max-height: 120px;
+    aspect-ratio: 16 / 9;
+  }
+  
+  .placeholder-content {
+    padding: 12px;
+  }
+  
+  .placeholder-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+  
+  .placeholder-text {
+    font-size: 10px;
+  }
+  
+  .post-title {
     font-size: 12px;
+    margin-bottom: 4px;
   }
   
-  .post-card-meta {
-    font-size: 11px;
+  .post-caption {
+    font-size: 10px;
+    margin-bottom: 10px;
   }
   
-  .post-card-actions {
-    flex-direction: column;
-    gap: 8px;
+  .post-type,
+  .post-source {
+    font-size: 8px;
+    padding: 2px 4px;
   }
   
-  .post-card-button {
-    font-size: 12px;
-    padding: 6px 12px;
+  .post-date {
+    font-size: 9px;
   }
   
-  .modal-content {
-    margin: 20px;
-    max-height: 95vh;
-    width: calc(100% - 40px);
+  /* Action buttons - käytetään Button komponenttia */
+  
+  .modal-overlay {
+    padding: 12px;
+  }
+  
+  .modal {
+    border-radius: 12px;
   }
   
   .modal-header {
-    padding: 16px 20px 0 20px;
+    padding: 16px 20px 12px;
   }
   
-  .modal-body {
-    padding: 0 20px 20px 20px;
+  .modal-header h2 {
+    font-size: 18px;
+  }
+  
+  .modal-form {
+    padding: 20px;
   }
   
   .form-group {
     margin-bottom: 16px;
   }
   
-  .form-input,
-  .form-textarea,
-  .form-select {
-    font-size: 14px;
-    padding: 10px 12px;
-  }
-  
-  .modal-actions {
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .modal-button {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .kanban-container {
-    padding: 8px;
-    gap: 12px;
-  }
-  
-  .kanban-column {
-    min-width: 100%;
-  }
-  
-  .kanban-column-header {
-    padding: 10px;
-    font-size: 14px;
-  }
-  
-  .post-card {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-  }
-  
-  .post-card-title {
-    font-size: 13px;
-    margin-bottom: 6px;
-  }
-  
-  .post-card-caption {
-    font-size: 11px;
-    margin-bottom: 8px;
-  }
-  
-  .post-card-meta {
-    font-size: 10px;
-    margin-bottom: 8px;
-  }
-  
-  .post-card-actions {
-    gap: 6px;
-  }
-  
-  .post-card-button {
-    font-size: 11px;
-    padding: 4px 8px;
-    border-radius: 4px;
-  }
-  
-  .modal-content {
-    margin: 10px;
-    border-radius: 12px;
-    width: calc(100% - 20px);
-  }
-  
-  .modal-header {
-    padding: 12px 16px 0 16px;
-  }
-  
-  .modal-header h3 {
-    font-size: 16px;
-  }
-  
-  .modal-body {
-    padding: 0 16px 16px 16px;
-  }
-  
   .form-group label {
-    font-size: 13px;
+    font-size: 12px;
     margin-bottom: 6px;
   }
   
   .form-input,
   .form-textarea,
   .form-select {
-    font-size: 13px;
-    padding: 8px 10px;
-    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 14px;
   }
   
   .form-textarea {
-    min-height: 80px;
+    min-height: 100px;
   }
   
   .modal-actions {
-    gap: 6px;
+    flex-direction: row;
+    gap: 8px;
   }
   
-  .modal-button {
-    font-size: 13px;
-    padding: 8px 16px;
+  /* Modal buttons - käytetään Button komponenttia */
+}
+
+/* Mobiili-optimoitu touch-friendly elementit */
+@media (max-width: 768px) {
+  /* Mobiili-marginaalit nollattu */
+  .main-content {
+    margin-left: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
   }
   
-  .page-header {
-    padding: 16px 8px;
+  .posts-container {
+    margin: 0 !important;
+    padding: 16px 8px !important;
+    max-width: 100vw !important;
   }
   
-  .page-title {
-    font-size: 20px;
+  .kanban-board {
+    margin: 0 !important;
+    padding: 0 4px !important;
   }
   
-  .create-post-button {
-    font-size: 13px;
-    padding: 8px 16px;
-    width: 100%;
-    justify-content: center;
+  .post-card {
+    margin: 0 0 12px 0 !important;
+  }
+  
+  /* Varmista että kaikki klikattavat elementit ovat touch-friendly */
+  .tab-button,
+  .toggle-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Suurennetaan välit mobiililla */
+  .post-actions {
+    gap: 8px;
+  }
+  
+  .modal-actions {
+    gap: 12px;
+  }
+  
+  /* Mobiili-optimoitu fonttikoot */
+  body {
+    font-size: 16px; /* Estää iOS-zoomauksen */
+  }
+  
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* Estää iOS-zoomauksen */
   }
 } 

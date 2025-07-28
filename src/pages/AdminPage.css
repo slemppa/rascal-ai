@@ -555,4 +555,36 @@
   .admin-table td {
     padding: 0.5rem 0.25rem;
   }
+}
+
+/* Mobiili-optimoitu touch-friendly elementit */
+@media (max-width: 768px) {
+  /* Varmista että kaikki klikattavat elementit ovat touch-friendly */
+  .admin-tab,
+  .admin-btn,
+  .admin-btn-secondary,
+  .admin-btn-danger {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Mobiili-optimoitu fonttikoot */
+  body {
+    font-size: 16px; /* Estää iOS-zoomauksen */
+  }
+  
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* Estää iOS-zoomauksen */
+  }
+  
+  /* Mobiili-optimoitu välit */
+  .action-buttons {
+    gap: 8px;
+  }
+  
+  .modal-buttons {
+    gap: 12px;
+  }
 } 

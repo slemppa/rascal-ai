@@ -447,14 +447,14 @@
 @media (max-width: 768px) {
   .pricing-header {
     padding: 24px 24px 0 24px;
-    flex-direction: column;
-    gap: 20px;
+    flex-direction: row;
+    gap: 16px;
   }
 
   .header-right {
-    flex-direction: column;
+    flex-direction: row;
     gap: 16px;
-    width: 100%;
+    align-items: center;
   }
 
   .header-nav {
@@ -564,5 +564,28 @@
 
   .cta-section p {
     font-size: 16px;
+  }
+}
+
+/* Mobiili-optimoitu touch-friendly elementit */
+@media (max-width: 768px) {
+  /* Varmista että kaikki klikattavat elementit ovat touch-friendly */
+  .login-button,
+  .cta-button,
+  .pricing-card .cta-button,
+  .faq-question {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Mobiili-optimoitu fonttikoot */
+  body {
+    font-size: 16px; /* Estää iOS-zoomauksen */
+  }
+  
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* Estää iOS-zoomauksen */
   }
 } 

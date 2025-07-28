@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import SignIn from '../components/auth/SignIn'
 import ForgotPassword from '../components/auth/ForgotPassword'
 import MagicLink from '../components/auth/MagicLink'
@@ -67,7 +67,25 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
 
+  // ESC-näppäimen kuuntelu
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        if (showMagicModal) {
+          setShowMagicModal(false)
+        } else if (showForgotModal) {
+          setShowForgotModal(false)
+        } else if (showSignInModal) {
+          setShowSignInModal(false)
+        }
+      }
+    }
 
+    if (showSignInModal || showForgotModal || showMagicModal) {
+      document.addEventListener('keydown', handleEscape)
+      return () => document.removeEventListener('keydown', handleEscape)
+    }
+  }, [showSignInModal, showForgotModal, showMagicModal])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -132,20 +150,14 @@ export default function ContactPage() {
 
         {/* Auth Modals */}
         {showSignInModal && (
-          <div 
-            className="modal-overlay"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) {
-                setShowSignInModal(false);
-              }
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') {
-                setShowSignInModal(false);
-              }
-            }}
-            tabIndex={0}
-          >
+                  <div 
+          className="modal-overlay"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowSignInModal(false);
+            }
+          }}
+        >
             <div className="modal-container">
               <SignIn 
                 onClose={() => setShowSignInModal(false)}

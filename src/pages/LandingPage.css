@@ -347,14 +347,14 @@
 @media (max-width: 768px) {
   .landing-header {
     padding: 20px 20px 0 20px;
-    flex-direction: column;
-    gap: 20px;
+    flex-direction: row;
+    gap: 16px;
   }
   
   .header-right {
-    flex-direction: column;
+    flex-direction: row;
     gap: 16px;
-    width: 100%;
+    align-items: center;
   }
   
   .header-nav {
@@ -375,9 +375,9 @@
 
   .login-button {
     font-size: 16px;
-    padding: 10px 24px;
-    width: 100%;
-    max-width: 200px;
+    padding: 10px 20px;
+    white-space: nowrap;
+    min-height: 44px;
   }
 
   .hero-section {
@@ -405,6 +405,8 @@
     flex: 1;
     min-width: 140px;
     text-align: center;
+    min-height: 48px;
+    font-size: 16px;
   }
 
   .hero-image {
@@ -452,6 +454,20 @@
 @media (max-width: 480px) {
   .landing-header {
     padding: 16px 16px 0 16px;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .header-right {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  
+  .header-nav {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
   }
 
   .hero-section {

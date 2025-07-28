@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import heroImg from '/public/hero.png' // Placeholder, vaihda oikeaan kuvaan
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import SignIn from '../components/auth/SignIn'
 import ForgotPassword from '../components/auth/ForgotPassword'
 import MagicLink from '../components/auth/MagicLink'
@@ -89,7 +89,25 @@ export default function LandingPage() {
   const [showMagicModal, setShowMagicModal] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
 
+  // ESC-näppäimen kuuntelu
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        if (showMagicModal) {
+          setShowMagicModal(false)
+        } else if (showForgotModal) {
+          setShowForgotModal(false)
+        } else if (showSignInModal) {
+          setShowSignInModal(false)
+        }
+      }
+    }
 
+    if (showSignInModal || showForgotModal || showMagicModal) {
+      document.addEventListener('keydown', handleEscape)
+      return () => document.removeEventListener('keydown', handleEscape)
+    }
+  }, [showSignInModal, showForgotModal, showMagicModal])
 
   return (
     <>
@@ -146,12 +164,6 @@ export default function LandingPage() {
               setShowSignInModal(false);
             }
           }}
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              setShowSignInModal(false);
-            }
-          }}
-          tabIndex={0}
         >
           <div className="modal-container">
             <SignIn 

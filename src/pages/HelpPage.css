@@ -324,6 +324,27 @@
   }
 }
 
+/* Mobiili-optimoitu touch-friendly elementit */
+@media (max-width: 768px) {
+  /* Varmista että kaikki klikattavat elementit ovat touch-friendly */
+  .help-nav-button,
+  .help-cta-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Mobiili-optimoitu fonttikoot */
+  body {
+    font-size: 16px; /* Estää iOS-zoomauksen */
+  }
+  
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* Estää iOS-zoomauksen */
+  }
+}
+
 @media (min-width: 769px) and (max-width: 1024px) {
   .help-content {
     gap: 24px;

@@ -1,4 +1,14 @@
 export default async function handler(req, res) {
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end()
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
@@ -38,12 +48,10 @@ export default async function handler(req, res) {
       'Content-Type': 'application/json'
     }
 
-    // Lisätään autentikaatio-header N8N webhook:iin
+    // Lisätään API key header N8N webhook:iin
     if (process.env.N8N_SECRET_KEY) {
-      // N8N header-autentikaatio voi olla Authorization tai custom header
-      headers['Authorization'] = `Bearer ${process.env.N8N_SECRET_KEY}`
       headers['x-api-key'] = process.env.N8N_SECRET_KEY
-      console.log('Using authentication headers')
+      console.log('Using API key header')
     } else {
       console.log('No API key found in environment')
     }
@@ -51,18 +59,6 @@ export default async function handler(req, res) {
     console.log('Sending webhook to:', webhookUrl)
     console.log('Webhook data:', webhookData)
     console.log('Headers:', headers)
-
-    // Testataan ensin GET-pyyntö webhook URL:iin
-    console.log('Testing webhook URL with GET request...')
-    try {
-      const testResponse = await fetch(webhookUrl, {
-        method: 'GET',
-        headers: headers
-      })
-      console.log('GET test response status:', testResponse.status)
-    } catch (error) {
-      console.log('GET test failed:', error.message)
-    }
 
     // Lähetetään POST-pyyntö webhook:iin
     console.log('Sending POST request to webhook...')

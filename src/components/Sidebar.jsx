@@ -23,7 +23,7 @@ export default function Sidebar() {
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 900;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
   const { user, signOut } = useAuth()
   const features = user?.features || []
 
@@ -123,27 +123,10 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Desktop sidebar */}
-      {!isMobile && (
-        <div className={styles.sidebar}>
-          {menu}
-        </div>
-      )}
-      {/* Hamburger for mobile */}
-      {isMobile && (
-        <button className={styles['mobile-menu-btn']} onClick={() => setMobileMenuOpen(true)}>
-          <span style={{ fontSize: 28 }}>☰</span>
-        </button>
-      )}
-      {/* Mobile menu overlay */}
-      {mobileMenuOpen && (
-        <div className={styles['mobile-menu-overlay']}>
-          <div className={styles['mobile-menu']}>
-            <button className={styles['mobile-menu-close']} onClick={() => setMobileMenuOpen(false)}>×</button>
-            {menu}
-          </div>
-        </div>
-      )}
+      {/* Desktop sidebar - näytetään vain desktopilla */}
+      <div className={styles.sidebar}>
+        {menu}
+      </div>
     </>
   )
 } 

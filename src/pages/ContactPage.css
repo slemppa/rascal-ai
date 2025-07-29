@@ -24,10 +24,12 @@
   justify-content: center;
   z-index: 9999;
   padding: 20px;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
-.modal-container {
+/* Contact-sivun oma modal-container - ei vaikuta muihin sivuihin */
+.contact-page .modal-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -694,7 +696,7 @@
     gap: 16px;
   }
 
-  .modal-container {
+  .contact-page .modal-container {
     margin: 20px;
     max-height: 95vh;
   }

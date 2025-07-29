@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Button from './Button'
 import './ModalComponents.css'
 
@@ -15,6 +15,23 @@ const AddCallTypeModal = ({
   const [currentStep, setCurrentStep] = useState(1)
   const totalSteps = 3
 
+  // ESC-toiminnallisuus - pitää olla heti useState jälkeen
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    if (showModal) {
+      document.addEventListener('keydown', handleEscKey)
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey)
+    }
+  }, [showModal, onClose])
+
   if (!showModal) return null
 
   const steps = [
@@ -22,6 +39,13 @@ const AddCallTypeModal = ({
     { id: 2, label: 'Sisältö' },
     { id: 3, label: 'Lisäasetukset' }
   ]
+
+  // Tyhjän tilan klikkaus
+  const handleOverlayClick = (event) => {
+    if (event.target === event.currentTarget) {
+      onClose()
+    }
+  }
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -40,7 +64,7 @@ const AddCallTypeModal = ({
   }
 
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay modal-overlay--light" onClick={handleOverlayClick}>
       <div className="modal-container">
         <div className="modal-header">
           <h2 className="modal-title">
@@ -59,37 +83,16 @@ const AddCallTypeModal = ({
         <div className="steps-container">
           {steps.map((step, index) => (
             <React.Fragment key={step.id}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <div style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: '50%',
-                  background: currentStep >= step.id ? '#3b82f6' : '#e5e7eb',
-                  color: currentStep >= step.id ? '#fff' : '#6b7280',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 600,
-                  fontSize: 14
-                }}>
+              <div className="step-item">
+                <div className={`step-number ${currentStep >= step.id ? 'active' : ''}`}>
                   {step.id}
                 </div>
-                <span style={{
-                  marginLeft: 8,
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: currentStep >= step.id ? '#3b82f6' : '#6b7280'
-                }}>
+                <span className={`step-label ${currentStep >= step.id ? 'active' : ''}`}>
                   {step.label}
                 </span>
               </div>
               {index < steps.length - 1 && (
-                <div style={{
-                  width: 40,
-                  height: 2,
-                  background: currentStep > step.id ? '#3b82f6' : '#e5e7eb',
-                  margin: '0 16px'
-                }} />
+                <div className={`step-separator ${currentStep > step.id ? 'active' : ''}`} />
               )}
             </React.Fragment>
           ))}

@@ -1,3 +1,16 @@
+/* CSS Custom Properties - App-tyylit */
+:root {
+  --app-background-primary: #e0c3fc;
+  --app-background-secondary: #b2f7ef;
+  --sidebar-width: 280px;
+  --sidebar-bg: #1a4a3a;
+  --sidebar-color: #fff;
+  --main-content-padding: 24px;
+  --mobile-padding: 16px;
+  --mobile-padding-small: 12px;
+  --mobile-padding-xs: 8px;
+}
+
 /* Reset ja perustyylit */
 * {
   margin: 0;
@@ -7,7 +20,7 @@
 
 body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  background: #e0c3fc !important;
+  background: var(--app-background-primary, #e0c3fc);
   color: #1f2937;
 }
 
@@ -20,7 +33,7 @@ html, body, #root {
   padding: 0;
   box-sizing: border-box;
   overflow-x: hidden;
-  background: #b2f7ef !important;
+  background: var(--app-background-secondary, #b2f7ef);
 }
 
 /* Sovelluksen päärakenne */
@@ -41,11 +54,11 @@ html, body, #root {
 
 /* Vasen valikko */
 .sidebar {
-  width: 280px;
-  max-width: 280px;
-  min-width: 280px;
-  background: #1a4a3a;
-  color: #fff;
+  width: var(--sidebar-width);
+  max-width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  color: var(--sidebar-color);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -145,15 +158,12 @@ html, body, #root {
 /* Pääsisältö */
 .main-content {
   flex: 1;
-  min-width: 0;
-  background: #f7f8fc;
-  height: 100vh;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  margin-left: 280px;
+  margin-left: var(--sidebar-width);
+  padding: var(--main-content-padding);
+  background: var(--app-background-secondary);
+  min-height: 100vh;
   overflow-x: hidden;
-  flex-grow: 1;
+  position: relative;
 }
 
 .main-header {
@@ -179,12 +189,12 @@ html, body, #root {
 }
 
 .main-content.no-padding {
-  padding-left: 0 !important;
+  padding-left: 0;
 }
 
 .main-content.no-gap {
-  margin-left: 0 !important;
-  padding-left: 0 !important;
+  margin-left: 0;
+  padding-left: 0;
 }
 
 .content-header {
@@ -565,21 +575,21 @@ html, body, #root {
 
 @media (max-width: 900px) {
   .sidebar {
-    display: none !important;
-    width: 0 !important;
-    max-width: 0 !important;
-    min-width: 0 !important;
+    display: none;
+    width: 0;
+    max-width: 0;
+    min-width: 0;
   }
   
   .main-content {
-    margin-left: 0 !important;
+    margin-left: 0;
     padding: 16px 4vw;
     flex: 1;
     width: 100%;
   }
   
   .main-header {
-    left: 0 !important;
+    left: 0;
     padding-left: 16px;
     height: 64px;
     width: 100%;
@@ -611,14 +621,14 @@ html, body, #root {
 
 @media (max-width: 768px) {
   .main-content {
-    margin-left: 0 !important;
+    margin-left: 0;
     padding: 12px 2vw;
     flex: 1;
     width: 100%;
   }
   
   .main-header {
-    left: 0 !important;
+    left: 0;
     padding-left: 12px;
     height: 56px;
     width: 100%;
@@ -658,20 +668,20 @@ html, body, #root {
   }
   
   .mobile-menu-btn {
-    display: block !important;
+    display: block;
   }
 }
 
 @media (max-width: 600px) {
   .main-content {
-    margin-left: 0 !important;
+    margin-left: 0;
     padding: 8px 1vw;
     flex: 1;
     width: 100%;
   }
   
   .main-header {
-    left: 0 !important;
+    left: 0;
     padding-left: 8px;
     height: 48px;
     width: 100%;
@@ -682,7 +692,7 @@ html, body, #root {
   }
   
   .mobile-menu-btn {
-    display: block !important;
+    display: block;
   }
   
   .dashboard-grid,
@@ -730,14 +740,14 @@ html, body, #root {
 
 @media (max-width: 480px) {
   .main-content {
-    margin-left: 0 !important;
+    margin-left: 0;
     padding: 4px 0.5vw;
     flex: 1;
     width: 100%;
   }
   
   .main-header {
-    left: 0 !important;
+    left: 0;
     padding-left: 4px;
     height: 44px;
     width: 100%;
@@ -748,7 +758,7 @@ html, body, #root {
   }
   
   .mobile-menu-btn {
-    display: block !important;
+    display: block;
   }
   
   .stats-grid {
@@ -848,31 +858,31 @@ html, body, #root {
 /* LandingPage hero-osio ja laatikot mobiilissa */
 @media (max-width: 700px) {
   .landing-hero {
-    flex-direction: column !important;
-    gap: 20px !important;
-    align-items: stretch !important;
-    padding: 0 2vw !important;
+    flex-direction: column;
+    gap: 20px;
+    align-items: stretch;
+    padding: 0 2vw;
   }
   .landing-hero > div {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 100%;
+    max-width: 100%;
   }
   .landing-hero img,
   .landing-hero .hero-image {
-    width: 100% !important;
-    height: auto !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    max-width: 100%;
   }
   .landing-feature-row {
-    flex-direction: column !important;
-    gap: 16px !important;
-    align-items: stretch !important;
-    padding: 0 2vw !important;
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+    padding: 0 2vw;
   }
   .landing-feature-row > div {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 100%;
+    max-width: 100%;
   }
 }
 
@@ -901,56 +911,57 @@ html, body, #root {
 /* Dashboard bentogrid responsiivisuus */
 @media (max-width: 1400px) {
   .dashboard-bentogrid {
-    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-columns: repeat(3, 1fr);
   }
   .dashboard-bentogrid > div[style*="gridColumn: '1 / 4'"] {
-    grid-column: 1 / 4 !important;
+    grid-column: 1 / 4;
   }
   .dashboard-bentogrid > div[style*="gridColumn: '4 / 6'"] {
-    grid-column: 1 / 4 !important;
+    grid-column: 1 / 4;
   }
 }
 
 @media (max-width: 1000px) {
   .dashboard-bentogrid {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, 1fr);
   }
   .dashboard-bentogrid > div[style*="gridColumn: '1 / 4'"] {
-    grid-column: 1 / 3 !important;
+    grid-column: 1 / 3;
   }
   .dashboard-bentogrid > div[style*="gridColumn: '4 / 6'"] {
-    grid-column: 1 / 3 !important;
+    grid-column: 1 / 3;
   }
 }
 
 @media (max-width: 768px) {
   .dashboard-bentogrid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
   }
   .dashboard-bentogrid > div {
-    grid-column: 1 !important;
+    grid-column: 1;
   }
 }
 
 ul.nav-menu, ul.nav-menu li, li.nav-item {
-  list-style-type: none !important;
-  list-style: none !important;
-  padding-left: 0 !important;
-  margin-left: 0 !important;
+  list-style-type: none;
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
 }
 
 ul.nav-menu li::marker,
-li.nav-item::marker {
-  content: '' !important;
-  display: none !important;
-  font-size: 0 !important;
-  color: transparent !important;
+ul.nav-menu li::before,
+ul.nav-menu li::after {
+  content: '';
+  display: none;
+  font-size: 0;
+  color: transparent;
 }
 
 ul.nav-menu li,
 li.nav-item {
-  list-style-type: none !important;
-  list-style: none !important;
+  list-style-type: none;
+  list-style: none;
 }
 
 .card, .dashboard-card, .dashboard-section {

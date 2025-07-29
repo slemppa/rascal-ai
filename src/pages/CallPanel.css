@@ -1,3 +1,6 @@
+/* Import yhteiset modal-tyylit */
+@import url('../components/ModalComponents.css');
+
 .callpanel-root {
   font-family: 'Inter', 'Roboto', 'Poppins', Arial, sans-serif;
   background: #F8F9FB;
@@ -14,7 +17,9 @@
   gap: 0;
   height: 44px;
 }
-.callpanel-tab {
+
+/* Tab-nappien tyylit Button-komponentille - käytetään tarkempia selektoreita !important:n sijaan */
+.callpanel-tabs .button {
   flex: 1;
   background: none;
   border: none;
@@ -27,16 +32,24 @@
   transition: color 0.15s, border 0.15s, background 0.15s;
   outline: none;
   padding: 0 0 8px 0;
+  border-radius: 0;
+  box-shadow: none;
+  min-height: auto;
+  min-width: auto;
 }
-.callpanel-tab.active {
+
+.callpanel-tabs .button.button-primary {
   color: #2563eb;
   border-bottom: 2.5px solid #2563eb;
   background: none;
 }
-.callpanel-tab:not(.active):hover {
+
+.callpanel-tabs .button.button-secondary:hover {
   background: #f3f4f6;
   color: #1f2937;
 }
+
+/* Tab-tyylit poistettu - käytetään Button.jsx-komponenttia */
 
 .callpanel-grid {
   display: grid;
@@ -90,51 +103,7 @@
   box-shadow: 0 0 0 2px #2563eb22;
 }
 
-.button-primary {
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 7px;
-  padding: 11px 22px;
-  font-size: 15.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s, box-shadow 0.15s;
-  box-shadow: 0 1px 2px rgba(40,60,120,0.07);
-  margin-bottom: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-}
-.button-primary:hover:not(:disabled) {
-  background: #1746b3;
-  box-shadow: 0 2px 8px rgba(40,60,120,0.13);
-}
-.button-primary:disabled {
-  background: #bcd0fa;
-  cursor: not-allowed;
-}
-
-.button-secondary {
-  background: #fff;
-  color: #2563eb;
-  border: 1.5px solid #2563eb;
-  border-radius: 7px;
-  padding: 11px 18px;
-  font-size: 15.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s, border 0.15s;
-  margin-bottom: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-}
-.button-secondary:hover:not(:disabled) {
-  background: #f0f6ff;
-  color: #1746b3;
-  border-color: #1746b3;
-}
+/* Button-tyylit poistettu - käytetään Button.jsx-komponenttia */
 
 .status-success {
   background: #e6fbe8;
@@ -162,7 +131,7 @@
 }
 
 /* Microinteraktiot */
-.card, .button-primary, .button-secondary {
+.card {
   transition: box-shadow 0.15s, background 0.15s, color 0.15s, border 0.15s, transform 0.15s;
 }
 
@@ -177,7 +146,7 @@
     height: 40px;
   }
   
-  .callpanel-tab {
+  .callpanel-tabs .button {
     font-size: 15px;
     padding: 0 0 6px 0;
   }
@@ -205,13 +174,6 @@
     padding: 10px 12px;
   }
   
-  .button-primary, .button-secondary {
-    font-size: 14px;
-    padding: 10px 16px;
-    width: 100%;
-    justify-content: center;
-  }
-  
   .status-success, .status-error {
     font-size: 14px;
     padding: 8px 12px;
@@ -228,7 +190,7 @@
     height: 36px;
   }
   
-  .callpanel-tab {
+  .callpanel-tabs .button {
     font-size: 14px;
     padding: 0 0 4px 0;
   }
@@ -253,12 +215,6 @@
     border-radius: 6px;
   }
   
-  .button-primary, .button-secondary {
-    font-size: 13px;
-    padding: 8px 12px;
-    border-radius: 6px;
-  }
-  
   .status-success, .status-error {
     font-size: 13px;
     padding: 6px 10px;
@@ -276,7 +232,7 @@
     height: 32px;
   }
   
-  .callpanel-tab {
+  .callpanel-tabs .button {
     font-size: 13px;
     padding: 0 0 2px 0;
   }
@@ -301,12 +257,6 @@
     border-radius: 5px;
   }
   
-  .button-primary, .button-secondary {
-    font-size: 12px;
-    padding: 6px 10px;
-    border-radius: 5px;
-  }
-  
   .status-success, .status-error {
     font-size: 12px;
     padding: 5px 8px;
@@ -316,14 +266,6 @@
 
 /* Mobiili-optimoitu touch-friendly elementit */
 @media (max-width: 768px) {
-  /* Varmista että kaikki klikattavat elementit ovat touch-friendly */
-  .callpanel-tab,
-  .button-primary,
-  .button-secondary {
-    min-height: 44px;
-    min-width: 44px;
-  }
-  
   /* Mobiili-optimoitu fonttikoot */
   body {
     font-size: 16px; /* Estää iOS-zoomauksen */

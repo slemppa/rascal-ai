@@ -439,7 +439,7 @@ export default function CallPanel() {
       if (editingCallType) {
         // Päivitä olemassa oleva puhelutyyppi Supabase-tietokannassa
         const fields = {
-          name: editingCallType.callType || editingCallType.name,
+          name: editingCallType.name || editingCallType.callType,
           identity: editingCallType.identity || '',
           style: editingCallType.style || '',
           guidelines: editingCallType.guidelines || '',
@@ -927,9 +927,24 @@ export default function CallPanel() {
       <div className="callpanel-root" style={{ width: '100%', maxWidth: 'none' }}>
         {/* Tabs */}
         <div className="callpanel-tabs">
-          <button onClick={() => setActiveTab('calls')} className={`callpanel-tab${activeTab === 'calls' ? ' active' : ''}`}>📞 Puhelut</button>
-          <button onClick={() => setActiveTab('logs')} className={`callpanel-tab${activeTab === 'logs' ? ' active' : ''}`}>📊 Lokit</button>
-          <button onClick={() => setActiveTab('manage')} className={`callpanel-tab${activeTab === 'manage' ? ' active' : ''}`}>⚙️ Hallinta</button>
+          <Button 
+            onClick={() => setActiveTab('calls')} 
+            variant={activeTab === 'calls' ? 'primary' : 'secondary'}
+          >
+            📞 Puhelut
+          </Button>
+          <Button 
+            onClick={() => setActiveTab('logs')} 
+            variant={activeTab === 'logs' ? 'primary' : 'secondary'}
+          >
+            📊 Lokit
+          </Button>
+          <Button 
+            onClick={() => setActiveTab('manage')} 
+            variant={activeTab === 'manage' ? 'primary' : 'secondary'}
+          >
+            ⚙️ Hallinta
+          </Button>
         </div>
         
         {/* Sisältö */}
@@ -941,19 +956,33 @@ export default function CallPanel() {
               <div style={{ marginBottom: 10 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                   <label className="label">Google Sheets URL</label>
-                  <button type="button" className="button-secondary" style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }} onClick={() => setActiveTab('manage')}>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setActiveTab('manage')}
+                    style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
+                  >
                     ➕ Lisää puhelun tyyppi
-                  </button>
+                  </Button>
                 </div>
                 <input type="url" value={sheetUrl} onChange={e => setSheetUrl(e.target.value)} placeholder="https://docs.google.com/spreadsheets/d/..." className="input" />
               </div>
               <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                <button onClick={handleValidate} disabled={validating || !sheetUrl} className="button-secondary" style={{ flex: 1 }}>
+                <Button
+                  onClick={handleValidate}
+                  disabled={validating || !sheetUrl}
+                  variant="secondary"
+                  style={{ flex: 1 }}
+                >
                   {validating ? 'Validoidaan...' : 'Validoi'}
-                </button>
-                <button onClick={handleStartCalls} disabled={starting || !validationResult || !callType || !script.trim() || !selectedVoice} className="button-primary" style={{ flex: 1 }}>
+                </Button>
+                <Button
+                  onClick={handleStartCalls}
+                  disabled={starting || !validationResult || !callType || !script.trim() || !selectedVoice}
+                  variant="primary"
+                  style={{ flex: 1 }}
+                >
                   {starting ? 'Käynnistetään...' : 'Aloita soitot'}
-                </button>
+                </Button>
               </div>
               <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 2 }}>
                 Käyttää Toiminnot-moduulin asetuksia (tyyppi, ääni, skripti)
@@ -976,9 +1005,13 @@ export default function CallPanel() {
               <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Matti Meikäläinen" className="input" />
               <label className="label">Puhelinnumero</label>
               <input type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="+358 40 123 4567" className="input" />
-              <button onClick={handleSingleCall} disabled={calling || !name.trim() || !phoneNumber.trim() || !callType || !script.trim() || !selectedVoice} className="button-primary">
+              <Button
+                onClick={handleSingleCall}
+                disabled={calling || !name.trim() || !phoneNumber.trim() || !callType || !script.trim() || !selectedVoice}
+                variant="primary"
+              >
                 {calling ? '📞 Soittaa...' : '📞 Soita'}
-              </button>
+              </Button>
               <div style={{ fontSize: 13, color: '#6b7280', marginTop: 2 }}>
                 Käyttää Toiminnot-moduulin asetuksia (tyyppi, ääni, skripti)
               </div>
@@ -997,23 +1030,26 @@ export default function CallPanel() {
                 <select value={callType} onChange={e => { setCallType(e.target.value); updateScriptFromCallType(e.target.value); }} disabled={loadingCallTypes} className="select">
                   {loadingCallTypes ? <option>Ladataan puhelun tyyppejä...</option> : callTypes.length === 0 ? <option>Ei puhelun tyyppejä saatavilla</option> : callTypes.map(type => <option key={type.value} value={type.value}>{type.label}</option>)}
                 </select>
-                <button type="button" className="button-secondary" style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }} onClick={() => setActiveTab('manage')}>
+                <Button
+                  variant="secondary"
+                  onClick={() => setActiveTab('manage')}
+                  style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
+                >
                   ➕ Lisää uusi
-                </button>
+                </Button>
               </div>
               <label className="label">Ääni</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                 <select value={selectedVoice} onChange={e => setSelectedVoice(e.target.value)} className="select">
                   {getVoiceOptions().map(voice => <option key={voice.value} value={voice.value}>{voice.label}</option>)}
                 </select>
-                <button 
-                  type="button" 
-                  className="button-secondary" 
-                  style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }} 
+                <Button 
+                  variant="secondary"
                   onClick={() => playVoiceSample(selectedVoice)}
+                  style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
                 >
                   {isPlaying ? '⏹️ Pysäytä' : '🔊 Testaa ääni'}
-                </button>
+                </Button>
               </div>
               <label className="label">Skripti</label>
               <div className="textarea" style={{ minHeight: 90, background: '#f9fafb', color: '#374151', lineHeight: 1.5, whiteSpace: 'pre-wrap', overflowY: 'auto', maxHeight: 200 }}>
@@ -1029,16 +1065,23 @@ export default function CallPanel() {
                 <select value={inboundVoice} onChange={e => setInboundVoice(e.target.value)} className="select">
                   {voiceOptions.map(voice => <option key={voice.value} value={voice.value}>{voice.label}</option>)}
                 </select>
-                <button type="button" className="button-secondary" style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }} onClick={() => playVoiceSample(inboundVoice)}>
+                <Button 
+                  variant="secondary"
+                  onClick={() => playVoiceSample(inboundVoice)}
+                  style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
+                >
                   🔊 Testaa
-                </button>
+                </Button>
               </div>
               <label className="label">Inbound-skripti</label>
               <textarea value={inboundScript} onChange={e => setInboundScript(e.target.value)} placeholder="Kirjoita inbound-puhelujen skripti..." rows={5} className="textarea" />
               <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 10 }}>Tervehdys ja ohjeistus asiakkaille jotka soittavat sinulle</div>
-              <button onClick={handleSaveInboundSettings} className="button-primary">
+              <Button
+                onClick={handleSaveInboundSettings}
+                variant="primary"
+              >
                 💾 Tallenna asetukset
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -1056,39 +1099,33 @@ export default function CallPanel() {
                 📊 Puheluloki
               </h2>
               <div style={{ display: 'flex', gap: 12 }}>
-                <button
+                <Button
                   type="button"
                   onClick={exportCallLogs}
+                  variant="secondary"
                   style={{
                     padding: '8px 16px',
                     fontSize: 14,
                     background: '#10b981',
-                    border: 'none',
-                    borderRadius: 8,
-                    cursor: 'pointer',
-                    color: '#fff',
-                    fontWeight: 500
+                    color: '#fff'
                   }}
                 >
                   📥 Export CSV
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={() => fetchCallLogs()}
                   disabled={loadingCallLogs}
+                  variant="secondary"
                   style={{
                     padding: '8px 16px',
                     fontSize: 14,
                     background: loadingCallLogs ? '#9ca3af' : '#3b82f6',
-                    border: 'none',
-                    borderRadius: 8,
-                    cursor: loadingCallLogs ? 'not-allowed' : 'pointer',
-                    color: '#fff',
-                    fontWeight: 500
+                    color: '#fff'
                   }}
                 >
                   {loadingCallLogs ? '🔄 Päivitetään...' : '🔄 Päivitä'}
-                </button>
+                </Button>
               </div>
             </div>
             
@@ -1415,22 +1452,18 @@ export default function CallPanel() {
               <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
                 ⚙️ Puhelun tyyppien hallinta
               </h2>
-              <button
+              <Button
                 type="button"
                 onClick={openAddModal}
+                variant="primary"
                 style={{
                   padding: '12px 24px',
                   fontSize: 14,
-                  background: '#3b82f6',
-                  border: 'none',
-                  borderRadius: 8,
-                  cursor: 'pointer',
-                  color: '#fff',
                   fontWeight: 600
                 }}
               >
                 ➕ Lisää uusi tyyppi
-              </button>
+              </Button>
             </div>
             
             <p style={{ margin: '0 0 24px 0', color: '#6b7280', fontSize: 14 }}>
@@ -1496,25 +1529,23 @@ export default function CallPanel() {
                         )}
                       </div>
                           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                            <button
+                            <Button
                               onClick={(e) => {
                                 e.stopPropagation()
                                 handleDeleteCallType(type.id)
                               }}
+                              variant="secondary"
                               style={{
                                 background: '#ef4444',
-                                border: 'none',
-                                borderRadius: 4,
-                                padding: '4px 8px',
-                                cursor: 'pointer',
                                 color: '#fff',
+                                padding: '4px 8px',
                                 fontSize: 12,
                                 fontWeight: 500
                               }}
                               title="Poista puhelun tyyppi"
                             >
                               🗑️
-                            </button>
+                            </Button>
                       <div style={{ color: '#6b7280', fontSize: 14 }}>
                         ✏️
                             </div>
@@ -1534,28 +1565,23 @@ export default function CallPanel() {
         {showLogDetail && selectedLog && (
             <div 
               onClick={handleModalBackgroundClick}
-              style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}
+              className="modal-overlay modal-overlay--dark"
             >
               <div 
                 onClick={(e) => e.stopPropagation()}
-                style={{ background: '#fff', borderRadius: 16, padding: 32, maxWidth: 600, width: '90%', maxHeight: '80vh', overflow: 'auto' }}
+                className="modal-container"
               >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#1f2937' }}>
+              <div className="modal-header">
+                <h2 className="modal-title" style={{ fontSize: 20 }}>
                   📞 Puhelun yksityiskohdat
                 </h2>
-                <button
+                <Button
                   onClick={() => setShowLogDetail(false)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    fontSize: 24,
-                    cursor: 'pointer',
-                    color: '#6b7280'
-                  }}
+                  variant="secondary"
+                  className="modal-close-btn"
                 >
                   ✕
-                </button>
+                </Button>
               </div>
               {loadingLogDetail ? (
                 <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>

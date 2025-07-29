@@ -41,11 +41,13 @@ const initialPosts = [
 ]
 
 const columns = [
+  { status: 'Kesken', title: 'Avatar', color: '#fef3c7' },
   { status: 'Kesken', title: 'Kesken', color: '#fef3c7' },
   { status: 'Tarkistuksessa', title: 'Tarkistuksessa', color: '#dbeafe' },
-  { status: 'Aikataulutettu', title: 'Aikataulutettu', color: '#fce7f3' },
-  { status: 'Julkaistu', title: 'Julkaistu', color: '#dcfce7' }
+  { status: 'Aikataulutettu', title: 'Aikataulutettu', color: '#fce7f3' }
 ]
+
+const publishedColumn = { status: 'Julkaistu', title: 'Julkaistu', color: '#dcfce7' }
 
 // Data muunnos funktio Supabase datasta Kanban muotoon
 const transformSupabaseData = (supabaseData) => {
@@ -75,7 +77,18 @@ const transformSupabaseData = (supabaseData) => {
       status = 'Aikataulutettu'
     }
     
-    const thumbnail = item.media_urls?.[0] || '/placeholder.png';
+    // Carousel-tyyppisillä posteilla käytetään segments-taulun ensimmäistä kuvaa
+    let thumbnail = '/media-placeholder.svg';
+    if (item.type === 'Carousel') {
+      // Jos item sisältää segments-datan, käytetään sitä
+      if (item.segments && item.segments.length > 0) {
+        const firstSegment = item.segments.find(seg => seg.slide_no === 1) || item.segments[0];
+        thumbnail = firstSegment.media_urls?.[0] || '/media-placeholder.svg';
+      }
+    } else {
+      // Muille tyypeille käytetään content-taulun media_urls
+      thumbnail = item.media_urls?.[0] || '/media-placeholder.svg';
+    }
     
     return {
       id: item.id,
@@ -107,7 +120,7 @@ const transformReelsData = (reelsData) => {
       id: item.id,
       title: item.title || 'Nimetön Reels',
       status: status,
-      thumbnail: item.media_urls?.[0] || '/placeholder.png',
+      thumbnail: item.media_urls?.[0] || '/media-placeholder.svg',
       caption: item.caption || 'Ei kuvausta',
       type: 'Reels',
       createdAt: item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : null,
@@ -127,18 +140,29 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule }) {
     <div className="post-card">
       <div className="post-card-content">
         <div className="post-thumbnail">
-          {post.thumbnail && post.thumbnail !== '/placeholder.png' ? (
+          {post.thumbnail && post.thumbnail !== '/placeholder.png' && post.thumbnail !== '/media-placeholder.svg' ? (
             <img
               src={post.thumbnail}
               alt="thumbnail"
                           onError={(e) => {
-              e.target.src = '/placeholder.png';
+              e.target.src = '/media-placeholder.svg';
             }}
             />
           ) : (
             <div className="placeholder-content">
-              <div className="placeholder-icon">📸</div>
-              <div className="placeholder-text">Ei kuvaa</div>
+              <img 
+                src="/media-placeholder.svg" 
+                alt="Media ei saatavilla"
+                className="placeholder-image"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+              <div className="placeholder-fallback" style={{ display: 'none' }}>
+                <div className="placeholder-icon">📸</div>
+                <div className="placeholder-text">Ei kuvaa</div>
+              </div>
             </div>
           )}
         </div>
@@ -148,7 +172,13 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule }) {
                 {post.title.length > 50 ? post.title.slice(0, 50) + '…' : post.title}
               </h3>
               <div className="post-badges">
-                <span className="post-type">{post.type}</span>
+                <span className="post-type">
+                  {post.type === 'Carousel' ? '🎠 Carousel' : 
+                   post.type === 'Reels' ? '🎬 Reels' : 
+                   post.type === 'Blog' ? '📝 Blog' : 
+                   post.type === 'Newsletter' ? '📧 Newsletter' : 
+                   post.type}
+                </span>
                 <span className={`post-source ${post.source}`}>{post.source}</span>
           </div>
           </div>
@@ -167,8 +197,8 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule }) {
                 >
                   ✏️ Muokkaa
                 </Button>
-                {/* Julkaisu-nappi vain jos status on "Tarkistuksessa" tai "Aikataulutettu" */}
-                {(post.status === 'Tarkistuksessa' || post.status === 'Aikataulutettu') && (
+                {/* Julkaisu-nappi vain jos status on "Tarkistuksessa" */}
+                {post.status === 'Tarkistuksessa' && (
                   <Button
                     variant="primary"
                     onClick={() => onPublish(post)}
@@ -241,7 +271,32 @@ export default function ManagePostsPage() {
         throw error
       }
       
-      const transformedData = transformSupabaseData(data)
+      // Haetaan segments-data Carousel-tyyppisille posteille
+      const contentWithSegments = await Promise.all(
+        data.map(async (contentItem) => {
+          if (contentItem.type === 'Carousel') {
+            try {
+              const { data: segmentsData, error: segmentsError } = await supabase
+                .from('segments')
+                .select('*')
+                .eq('content_id', contentItem.id)
+                .order('slide_no', { ascending: true })
+              
+              if (!segmentsError && segmentsData) {
+                return {
+                  ...contentItem,
+                  segments: segmentsData
+                }
+              }
+            } catch (err) {
+              console.error('Virhe segments datan haussa:', err)
+            }
+          }
+          return contentItem
+        })
+      )
+      
+      const transformedData = transformSupabaseData(contentWithSegments)
       setPosts(transformedData || [])
       
     } catch (err) {
@@ -406,12 +461,39 @@ export default function ManagePostsPage() {
     }
   }
 
-  const handleEditPost = (post) => {
+  const handleEditPost = async (post) => {
     console.log('=== handleEditPost called ===')
     console.log('Edit post:', post) // Debug
     console.log('Status:', post.status) // Debug status
     console.log('Source:', post.source) // Debug source
     console.log('All keys:', Object.keys(post)) // Debug kaikki kentät
+    
+    // Jos kyseessä on Carousel-tyyppi, haetaan segments data
+    if (post.type === 'Carousel' && post.source === 'supabase') {
+      try {
+        const { data: segmentsData, error: segmentsError } = await supabase
+          .from('segments')
+          .select('*')
+          .eq('content_id', post.id)
+          .order('slide_no', { ascending: true })
+        
+        if (segmentsError) {
+          console.error('Virhe segments datan haussa:', segmentsError)
+        } else {
+          console.log('Segments data haettu:', segmentsData)
+          // Lisätään segments data post-objektiin
+          const postWithSegments = {
+            ...post,
+            segments: segmentsData || []
+          }
+          setEditingPost(postWithSegments)
+          setShowEditModal(true)
+          return
+        }
+      } catch (error) {
+        console.error('Virhe segments datan haussa:', error)
+      }
+    }
     
     setEditingPost(post)
     setShowEditModal(true)
@@ -901,52 +983,96 @@ export default function ManagePostsPage() {
       {/* Kanban Board */}
       {!currentError && (
         <div className="kanban-board">
-          {columns.map(column => {
-            const columnPosts = filteredPosts.filter(post => post.status === column.status)
-            return (
-              <div key={column.status} className="kanban-column">
-                <h3 className="column-title">{column.title}</h3>
-                <div className="column-content">
-                  {/* Loading state vain "Kesken" sarakkeessa */}
-                  {column.status === 'Kesken' && currentLoading && (
-                    <div className="column-loading">
-                      <div className="loading-spinner"></div>
-                      <p>Ladataan Reels...</p>
-                    </div>
-                  )}
-                  
-                  {/* Näytä postit aina, paitsi "Kesken" sarakkeessa kun loading */}
-                  {!(column.status === 'Kesken' && currentLoading) && columnPosts.map(post => {
-                    // Varmistetaan että post on oikeassa muodossa
-                    const safePost = {
-                      id: post.id || 'unknown',
-                      title: post.title || 'Nimetön julkaisu',
-                      caption: post.caption || 'Ei kuvausta',
-                      type: post.type || 'Photo',
-                      source: post.source || 'supabase',
-                      thumbnail: post.thumbnail || '/placeholder.png',
-                      status: post.status || 'Kesken' // Lisätään status!
-                    }
-                    
-                    
-                    
-                    return (
-                      <PostCard
-                        key={safePost.id}
-                        post={safePost}
-                        onEdit={handleEditPost}
-                        onDelete={handleDeletePost}
-                        onPublish={handlePublishPost}
-                        onSchedule={handleSchedulePost}
-                      />
-                    )
-                  })}
+          {/* Ylemmät 4 saraketta */}
+          <div className="kanban-top-row">
+            {columns.map(column => {
+              // Filteröidään postit statusin JA lähteen mukaan
+              let columnPosts = filteredPosts.filter(post => post.status === column.status)
+              
+              // Avatar-sarakkeessa näytetään vain reels-data (Airtable)
+              if (column.title === 'Avatar') {
+                columnPosts = columnPosts.filter(post => post.source === 'reels')
+              }
+              // Kesken-sarakkeessa näytetään vain Supabase-data (mukaan lukien Carousel)
+              else if (column.title === 'Kesken') {
+                columnPosts = columnPosts.filter(post => post.source === 'supabase')
+              }
+              // Muissa sarakkeissa näytetään vain Supabase-data
+              else {
+                columnPosts = columnPosts.filter(post => post.source === 'supabase')
+              }
+              
+              return (
+                <div key={column.status} className="kanban-column">
+                  <h3 className="column-title">{column.title}</h3>
+                  <div className="column-content">
+                    {columnPosts.map(post => {
+                      // Varmistetaan että post on oikeassa muodossa
+                      const safePost = {
+                        id: post.id || 'unknown',
+                        title: post.title || 'Nimetön julkaisu',
+                        caption: post.caption || 'Ei kuvausta',
+                        type: post.type || 'Photo',
+                        source: post.source || 'supabase',
+                                    thumbnail: post.thumbnail || '/media-placeholder.svg',
+            status: post.status || 'Kesken' // Lisätään status!
+                      }
+                      
+                      return (
+                        <PostCard
+                          key={safePost.id}
+                          post={safePost}
+                          onEdit={handleEditPost}
+                          onDelete={handleDeletePost}
+                          onPublish={handlePublishPost}
+                          onSchedule={handleSchedulePost}
+                        />
+                      )
+                    })}
+                  </div>
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
           </div>
-        )}
+          
+          {/* Julkaistu-sarakkeessa kaikkien 4 sarakkeen levyinen */}
+          <div className="kanban-bottom-row">
+            {(() => {
+              const publishedPosts = filteredPosts.filter(post => post.status === publishedColumn.status && post.source === 'supabase')
+              
+              return (
+                <div className="kanban-column kanban-column-full-width">
+                  <h3 className="column-title">{publishedColumn.title}</h3>
+                  <div className="column-content">
+                    {publishedPosts.map(post => {
+                      const safePost = {
+                        id: post.id || 'unknown',
+                        title: post.title || 'Nimetön julkaisu',
+                        caption: post.caption || 'Ei kuvausta',
+                        type: post.type || 'Photo',
+                        source: post.source || 'supabase',
+                        thumbnail: post.thumbnail || '/media-placeholder.svg',
+                        status: post.status || 'Julkaistu'
+                      }
+                      
+                      return (
+                        <PostCard
+                          key={safePost.id}
+                          post={safePost}
+                          onEdit={handleEditPost}
+                          onDelete={handleDeletePost}
+                          onPublish={handlePublishPost}
+                          onSchedule={handleSchedulePost}
+                        />
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })()}
+          </div>
+        </div>
+      )}
 
       {/* Create Modal */}
       {showCreateModal && (
@@ -1029,7 +1155,8 @@ export default function ManagePostsPage() {
           <div className="modal">
                          <div className="modal-header">
                <h2>
-                 {editingPost.status === 'Kesken' ? 'Voiceover-tarkistus' : 'Muokkaa julkaisua'}
+                 {editingPost.status === 'Kesken' && editingPost.type === 'Carousel' ? 'Kuvaus-tarkistus' : 
+                  editingPost.status === 'Kesken' ? 'Voiceover-tarkistus' : 'Muokkaa julkaisua'}
                </h2>
                {/* Debug: Näytä status */}
                <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
@@ -1068,7 +1195,117 @@ export default function ManagePostsPage() {
               {/* Video Player / Thumbnail */}
               <div className="video-player">
                 <div className="video-container">
-                  {editingPost.thumbnail && editingPost.thumbnail !== '/placeholder.png' ? (
+                  {/* Jos on Carousel-tyyppi ja segments dataa, näytetään slideshow */}
+                  {editingPost.type === 'Carousel' && editingPost.segments && editingPost.segments.length > 0 ? (
+                    <div className="carousel-slideshow">
+                      {(() => {
+                        const slidesWithMedia = editingPost.segments.filter(segment => segment.media_urls && segment.media_urls.length > 0);
+                        if (slidesWithMedia.length === 0) {
+                          return (
+                            <div className="no-media-message">
+                              <span>📄</span>
+                              <p>Ei mediaa saatavilla segments-taulusta</p>
+                            </div>
+                          );
+                        }
+                        
+                                                 return (
+                           <div className="slideshow-container" onClick={(e) => e.stopPropagation()}>
+                            {/* Vasen nuoli */}
+                            <button 
+                              className="slideshow-arrow slideshow-arrow-left"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const currentSlide = editingPost.currentSlide || 0;
+                                const newSlide = currentSlide > 0 ? currentSlide - 1 : slidesWithMedia.length - 1;
+                                setEditingPost(prev => ({ ...prev, currentSlide: newSlide }));
+                              }}
+                            >
+                              ‹
+                            </button>
+                            
+                            {/* Oikea nuoli */}
+                            <button 
+                              className="slideshow-arrow slideshow-arrow-right"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const currentSlide = editingPost.currentSlide || 0;
+                                const newSlide = currentSlide < slidesWithMedia.length - 1 ? currentSlide + 1 : 0;
+                                setEditingPost(prev => ({ ...prev, currentSlide: newSlide }));
+                              }}
+                            >
+                              ›
+                            </button>
+                            
+                            {/* Nykyinen slide */}
+                            <div className="slide-display">
+                              {(() => {
+                                const currentMedia = slidesWithMedia[editingPost.currentSlide || 0].media_urls[0];
+                                const isVideo = currentMedia && (
+                                  currentMedia.includes('.mp4') || 
+                                  currentMedia.includes('.webm') || 
+                                  currentMedia.includes('.mov') ||
+                                  currentMedia.includes('.avi')
+                                );
+                                
+                                if (isVideo) {
+                                  return (
+                                    <div className="video-wrapper">
+                                      <video 
+                                        src={currentMedia}
+                                        className="slide-video"
+                                        controls
+                                        onError={(e) => {
+                                          e.target.style.display = 'none';
+                                          e.target.nextSibling.style.display = 'block';
+                                        }}
+                                      >
+                                        Your browser does not support the video tag.
+                                      </video>
+                                      <div className="video-fallback" style={{ display: 'none' }}>
+                                        <img 
+                                          src="/media-placeholder.svg" 
+                                          alt="Video ei saatavilla"
+                                          className="slide-image"
+                                        />
+                                      </div>
+                                    </div>
+                                  );
+                                } else {
+                                  return (
+                                    <img 
+                                      src={currentMedia} 
+                                      alt={`Slide ${slidesWithMedia[editingPost.currentSlide || 0].slide_no}`}
+                                      className="slide-image"
+                                      onError={(e) => {
+                                        e.target.src = '/media-placeholder.svg';
+                                      }}
+                                    />
+                                  );
+                                }
+                              })()}
+                            </div>
+                            
+                            {/* Pallot alapuolella */}
+                            <div className="slideshow-dots">
+                              {slidesWithMedia.map((_, index) => (
+                                <button
+                                  key={index}
+                                  className={`slideshow-dot ${index === (editingPost.currentSlide || 0) ? 'active' : ''}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingPost(prev => ({ ...prev, currentSlide: index }));
+                                  }}
+                                >
+                                  {index + 1}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  ) : editingPost.thumbnail && editingPost.thumbnail !== '/placeholder.png' ? (
                     <video 
                       src={editingPost.thumbnail} 
                       controls 
@@ -1116,13 +1353,13 @@ export default function ManagePostsPage() {
                  {/* "Kesken" sarakkeessa: Voiceover-muokkaus */}
                  {editingPost.status === 'Kesken' && (
                    <div className="form-group">
-                     <label>Voiceover</label>
+                     <label>{editingPost.type === 'Carousel' ? 'Kuvaus' : 'Voiceover'}</label>
                      <textarea
                        name="voiceover"
                        rows={8}
                        className="form-textarea"
                        defaultValue={editingPost.voiceover || "Oletko innovaattori? Kuvittele maailma, jossa AI käsittelee asiakaspalvelupuhelut puolestasi. Näytämme, miten tämä teknologia voi mullistaa yrityksesi toiminnan, parantaen tiimisi tehokkuutta ja myyntituloksia. Anna työntekijöidesi keskittyä siihen, missä he loistavat, samalla kun tekoäly hoitaa rutiinitehtävät. Astu kanssamme tulevaisuuteen, jossa työskentely on entistäkin sujuvampaa."}
-                       placeholder="Kirjoita voiceover-teksti..."
+                       placeholder={editingPost.type === 'Carousel' ? "Kirjoita kuvaus..." : "Kirjoita voiceover-teksti..."}
                      />
                      <div className="voiceover-checkbox">
                        <label className="checkbox-label">
@@ -1131,7 +1368,7 @@ export default function ManagePostsPage() {
                            name="voiceoverReady" 
                            defaultChecked={editingPost.voiceoverReady}
                          />
-                         <span className="checkbox-text">Vahvistan että voiceover on valmis ja tarkistettu</span>
+                         <span className="checkbox-text">Vahvistan että {editingPost.type === 'Carousel' ? 'kuvaus' : 'voiceover'} on valmis ja tarkistettu</span>
                        </label>
                      </div>
                    </div>

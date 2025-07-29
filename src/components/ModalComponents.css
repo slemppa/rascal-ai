@@ -1,31 +1,102 @@
-/* Modal-komponenttien tyylit */
+/**
+ * ModalComponents.css
+ * 
+ * Yhteiset modal-tyylit sovelluksessa.
+ * 
+ * Käyttö:
+ * - EditCallTypeModal: modal-overlay--light
+ * - AddCallTypeModal: modal-overlay--light  
+ * - Log detail modal: modal-overlay--dark
+ * 
+ * Variantit:
+ * - modal-overlay--light: Kevyt harmaa tausta (30% musta)
+ * - modal-overlay--dark: Tumma tausta (80% musta)
+ * 
+ * Muut modal-systeemit:
+ * - Landing pages: Omat modaalit (FeaturesPage, PricingPage, ContactPage, LandingPage)
+ * - ContentStrategyPage: Oma modal-systeemi
+ * - ManagePostsPage: Oma modal-systeemi
+ */
 
-/* Yhteiset modal-tyylit */
+/* CSS Custom Properties - yhteiset arvot */
+:root {
+  --modal-overlay-light: rgba(0, 0, 0, 0.4);
+  --modal-overlay-dark: rgba(0, 0, 0, 0.8);
+  --modal-background: #fff;
+  --modal-border-radius: 16px;
+  --modal-padding: 32px;
+  --modal-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 8px 16px -4px rgba(0, 0, 0, 0.1);
+  --modal-border: 1px solid rgba(0, 0, 0, 0.1);
+  --modal-z-index: 1000;
+  --modal-blur-light: blur(12px);
+  --modal-blur-dark: blur(8px);
+  --modal-backdrop-blur: blur(16px);
+}
+
+/* Perustyylit - kaikille modaaleille */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: var(--modal-z-index);
   padding: 16px;
 }
 
+/* Variantit taustalle */
+.modal-overlay--light {
+  background: var(--modal-overlay-light);
+  backdrop-filter: var(--modal-blur-light);
+  -webkit-backdrop-filter: var(--modal-blur-light);
+}
+
+.modal-overlay--dark {
+  background: var(--modal-overlay-dark);
+  backdrop-filter: var(--modal-blur-dark);
+  -webkit-backdrop-filter: var(--modal-blur-dark);
+}
+
+/* Perus modal-container - tarkemmat selektorit */
+.modal-overlay .modal-container {
+  background: var(--modal-background) !important;
+  border-radius: var(--modal-border-radius) !important;
+  padding: var(--modal-padding) !important;
+  max-width: 900px !important;
+  width: 95% !important;
+  max-height: 95vh !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-shadow: var(--modal-shadow) !important;
+  border: var(--modal-border) !important;
+}
+
+/* Fallback tarkempaa selektoria varten */
 .modal-container {
-  background: #fff;
-  border-radius: 16px;
-  padding: 32px;
+  background: var(--modal-background);
+  border-radius: var(--modal-border-radius);
+  padding: var(--modal-padding);
   max-width: 900px;
   width: 95%;
   max-height: 95vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--modal-shadow);
+  border: var(--modal-border);
+}
+
+/* EditCallTypeModalia varten leveämpi modaali */
+.edit-call-type-modal {
+  max-width: 1200px;
+  width: 98%;
+  height: 600px;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header {
@@ -33,6 +104,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .modal-title {
@@ -40,27 +113,35 @@
   font-size: 24px;
   font-weight: 700;
   color: #1f2937;
+  line-height: 1.2;
 }
 
 .modal-close-btn {
-  font-size: 24px;
+  font-size: 20px;
   color: #6b7280;
-  background: none;
-  border: none;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 8px;
+  border-radius: 8px;
   transition: all 0.2s ease;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 600;
 }
 
 .modal-close-btn:hover {
-  background: #f3f4f6;
+  background: #e5e7eb;
   color: #374151;
+  border-color: #d1d5db;
+  transform: scale(1.05);
+}
+
+.modal-close-btn:active {
+  transform: scale(0.95);
 }
 
 /* Vaiheindikaattori */
@@ -79,34 +160,46 @@
   color: #6b7280;
 }
 
-.step-item.active {
-  color: #3b82f6;
-  font-weight: 600;
-}
-
 .step-number {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
+  background: #e5e7eb;
+  color: #6b7280;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
   font-weight: 600;
-  background: #e5e7eb;
-  color: #6b7280;
+  font-size: 14px;
+  transition: all 0.2s ease;
 }
 
-.step-item.active .step-number {
+.step-number.active {
   background: #3b82f6;
-  color: white;
+  color: #fff;
+}
+
+.step-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.step-label.active {
+  color: #3b82f6;
 }
 
 .step-separator {
-  width: 20px;
+  width: 40px;
   height: 2px;
   background: #e5e7eb;
-  margin: 0 4px;
+  margin: 0 16px;
+  transition: all 0.2s ease;
+}
+
+.step-separator.active {
+  background: #3b82f6;
 }
 
 /* Modal sisältö */
@@ -114,6 +207,7 @@
   flex: 1;
   overflow: auto;
   padding-right: 8px;
+  min-height: 0;
 }
 
 /* Lomakkeiden tyylit */
@@ -205,11 +299,24 @@
     padding: 12px;
   }
 
+  .modal-overlay .modal-container {
+    padding: 24px;
+    width: 100%;
+    max-height: 98vh;
+    border-radius: 12px;
+  }
+
   .modal-container {
     padding: 24px;
     width: 100%;
     max-height: 98vh;
     border-radius: 12px;
+  }
+
+  .edit-call-type-modal {
+    max-width: 100%;
+    width: 100%;
+    min-height: auto;
   }
 
   .modal-header {
@@ -290,9 +397,18 @@
     padding: 8px;
   }
 
+  .modal-overlay .modal-container {
+    padding: 20px;
+    border-radius: 10px;
+  }
+
   .modal-container {
     padding: 20px;
     border-radius: 10px;
+  }
+
+  .edit-call-type-modal {
+    padding: 16px;
   }
 
   .modal-header {

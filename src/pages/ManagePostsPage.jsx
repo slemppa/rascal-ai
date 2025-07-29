@@ -42,7 +42,7 @@ const initialPosts = [
 
 const columns = [
   { status: 'Kesken', title: 'Avatar', color: '#fef3c7' },
-  { status: 'Kesken', title: 'Kesken', color: '#fef3c7' },
+  { status: 'KeskenSupabase', title: 'Kesken', color: '#fef3c7' },
   { status: 'Tarkistuksessa', title: 'Tarkistuksessa', color: '#dbeafe' },
   { status: 'Aikataulutettu', title: 'Aikataulutettu', color: '#fce7f3' }
 ]
@@ -705,17 +705,6 @@ export default function ManagePostsPage() {
 
   const handleSchedulePost = async (post) => {
     try {
-      // Haetaan käyttäjän data
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-
-      if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
-      }
-
       // Kysytään ajastuspäivä käyttäjältä
       const scheduledDate = prompt('Syötä ajastuspäivä (YYYY-MM-DD HH:MM):', 
         new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16))
@@ -724,52 +713,22 @@ export default function ManagePostsPage() {
         return // Käyttäjä perui
       }
 
-      // Haetaan Mixpost konfiguraatio
-      const { data: mixpostConfig, error: mixpostError } = await supabase
-        .from('user_mixpost_config')
-        .select('mixpost_workspace_uuid, mixpost_api_token')
-        .eq('user_id', userData.id)
-        .single()
-
-      if (mixpostError || !mixpostConfig) {
-        throw new Error('Mixpost konfiguraatio ei löytynyt')
-      }
-
-      // Haetaan yhdistetyt sometilit
-      const { data: socialAccounts, error: socialError } = await supabase
-        .from('user_social_accounts')
-        .select('mixpost_account_uuid, provider, account_name')
-        .eq('user_id', userData.id)
-        .eq('is_authorized', true)
-
-      if (socialError) {
-        throw new Error('Sometilien haku epäonnistui')
-      }
-
-      if (!socialAccounts || socialAccounts.length === 0) {
-        throw new Error('Ei yhdistettyjä sometilejä')
-      }
-
-      // Käytetään ensimmäistä yhdistettyä tiliä
-      const accountId = socialAccounts[0].mixpost_account_uuid
-
-      // Lähetetään yksinkertainen kutsu N8N:iin
+      // Lähetetään data backend:iin, joka hoitaa Supabase-kyselyt
       const scheduleData = {
         post_id: post.id,
-        user_id: userData.id,
+        user_id: user.id,
         auth_user_id: user.id,
         content: post.caption || post.title,
         media_urls: post.mediaUrls || [],
         scheduled_date: scheduledDate,
-        action: 'schedule',
-        workspace_uuid: mixpostConfig.mixpost_workspace_uuid,
-        account_id: accountId
+        action: 'schedule'
       }
 
               const response = await fetch('/api/post-actions', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
           },
           body: JSON.stringify(scheduleData)
         })
@@ -798,63 +757,22 @@ export default function ManagePostsPage() {
 
   const handlePublishPost = async (post) => {
     try {
-      // Haetaan käyttäjän data
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-
-      if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
-      }
-
-      // Haetaan Mixpost konfiguraatio
-      const { data: mixpostConfig, error: mixpostError } = await supabase
-        .from('user_mixpost_config')
-        .select('mixpost_workspace_uuid, mixpost_api_token')
-        .eq('user_id', userData.id)
-        .single()
-
-      if (mixpostError || !mixpostConfig) {
-        throw new Error('Mixpost konfiguraatio ei löytynyt')
-      }
-
-      // Haetaan yhdistetyt sometilit
-      const { data: socialAccounts, error: socialError } = await supabase
-        .from('user_social_accounts')
-        .select('mixpost_account_uuid, provider, account_name')
-        .eq('user_id', userData.id)
-        .eq('is_authorized', true)
-
-      if (socialError) {
-        throw new Error('Sometilien haku epäonnistui')
-      }
-
-      if (!socialAccounts || socialAccounts.length === 0) {
-        throw new Error('Ei yhdistettyjä sometilejä')
-      }
-
-      // Käytetään ensimmäistä yhdistettyä tiliä
-      const accountId = socialAccounts[0].mixpost_account_uuid
-
-      // Lähetetään yksinkertainen kutsu N8N:iin
+      // Lähetetään data backend:iin, joka hoitaa Supabase-kyselyt
       const publishData = {
         post_id: post.id,
-        user_id: userData.id,
+        user_id: user.id,
         auth_user_id: user.id,
         content: post.caption || post.title,
         media_urls: post.mediaUrls || [],
         scheduled_date: post.scheduledDate || null,
-        action: 'publish',
-        workspace_uuid: mixpostConfig.mixpost_workspace_uuid,
-        account_id: accountId
+        action: 'publish'
       }
 
               const response = await fetch('/api/post-actions', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
           },
           body: JSON.stringify(publishData)
         })
@@ -987,20 +905,20 @@ export default function ManagePostsPage() {
           <div className="kanban-top-row">
             {columns.map(column => {
               // Filteröidään postit statusin JA lähteen mukaan
-              let columnPosts = filteredPosts.filter(post => post.status === column.status)
-              
-              // Avatar-sarakkeessa näytetään vain reels-data (Airtable)
-              if (column.title === 'Avatar') {
-                columnPosts = columnPosts.filter(post => post.source === 'reels')
-              }
-              // Kesken-sarakkeessa näytetään vain Supabase-data (mukaan lukien Carousel)
-              else if (column.title === 'Kesken') {
-                columnPosts = columnPosts.filter(post => post.source === 'supabase')
-              }
-              // Muissa sarakkeissa näytetään vain Supabase-data
-              else {
-                columnPosts = columnPosts.filter(post => post.source === 'supabase')
-              }
+              let columnPosts = filteredPosts.filter(post => {
+                // Avatar-sarakkeessa näytetään reels-data "Kesken" statusilla
+                if (column.title === 'Avatar') {
+                  return post.status === 'Kesken' && post.source === 'reels'
+                }
+                // Kesken-sarakkeessa näytetään Supabase-data "Kesken" statusilla
+                else if (column.title === 'Kesken') {
+                  return post.status === 'Kesken' && post.source === 'supabase'
+                }
+                // Muissa sarakkeissa näytetään Supabase-data oikealla statusilla
+                else {
+                  return post.status === column.status && post.source === 'supabase'
+                }
+              })
               
               return (
                 <div key={column.status} className="kanban-column">
@@ -1481,87 +1399,7 @@ export default function ManagePostsPage() {
           </div>
         )}
 
-        {/* Create Modal */}
-        {showCreateModal && (
-          <div
-            className="modal-overlay"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) {
-                setShowCreateModal(false)
-              }
-            }}
-          >
-            <div className="modal">
-              <div className="modal-header">
-                <h2>Luo uusi julkaisu</h2>
-                <Button
-                  variant="secondary"
-                  onClick={() => setShowCreateModal(false)}
-                  style={{ 
-                    padding: '8px', 
-                    minWidth: '32px', 
-                    minHeight: '32px',
-                    fontSize: '16px'
-                  }}
-                >
-                  ✕
-                </Button>
-                  </div>
-              <form onSubmit={(e) => {
-                e.preventDefault()
-                const formData = new FormData(e.target)
-                handleCreatePost({
-                  title: formData.get('title'),
-                  type: formData.get('type')
-                })
-                setShowCreateModal(false)
-              }} className="modal-form">
-                
-                <div className="content-fields">
-                  <div className="form-group">
-                    <label>Idea</label>
-                    <input
-                      name="title"
-                      type="text"
-                      className="form-input"
-                      placeholder="Kirjoita julkaisun idea..."
-                      required
-                    />
-                    </div>
 
-                  <div className="form-group">
-                    <label>Julkaisun tyyppi</label>
-                    <select name="type" className="form-select" required>
-                      <option value="">Valitse tyyppi</option>
-                      <option value="Photo">📸 Photo</option>
-                      <option value="Carousel">🖼️ Carousel</option>
-                      <option value="Reels">🎬 Reels</option>
-                      <option value="Blog">📝 Blog</option>
-                      <option value="Newsletter">📧 Newsletter</option>
-                      <option value="LinkedIn">💼 LinkedIn</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="modal-actions">
-                    <button
-                    type="button"
-                    onClick={() => setShowCreateModal(false)}
-                    className="cancel-button"
-                  >
-                    Peruuta
-                  </button>
-                  <button
-                    type="submit"
-                    className="submit-button"
-                  >
-                    Luo julkaisu
-                    </button>
-                  </div>
-              </form>
-                </div>
-          </div>
-        )}
     </div>
   )
 }

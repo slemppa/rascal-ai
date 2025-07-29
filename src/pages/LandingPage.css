@@ -122,14 +122,35 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.95);
+  background: rgba(0,0,0,0.1);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
   padding: 20px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  will-change: backdrop-filter;
+  isolation: isolate;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  filter: blur(0px);
+  -webkit-filter: blur(0px);
+  -moz-filter: blur(0px);
+  -ms-filter: blur(0px);
+  mix-blend-mode: normal;
+  contain: layout style paint;
+  clip-path: inset(0);
+  overflow: hidden;
+}
+
+/* Fallback jos backdrop-filter ei tueta */
+@supports not (backdrop-filter: blur(16px)) {
+  .modal-overlay {
+    background: rgba(0, 0, 0, 0.4);
+  }
 }
 
 /* Landing-sivun oma modal-container - ei vaikuta muihin sivuihin */

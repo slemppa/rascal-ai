@@ -158,14 +158,14 @@ export default function LandingPage() {
       {/* SignIn Modal */}
       {showSignInModal && (
         <div 
-          className="modal-overlay"
+          className="modal-overlay modal-overlay--light"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowSignInModal(false);
             }
           }}
         >
-          <div className="modal-container">
+          <div className="modal-container auth-modal">
             <SignIn 
               onClose={() => setShowSignInModal(false)}
               onForgotClick={() => { setShowSignInModal(false); setShowForgotModal(true); }}
@@ -176,16 +176,16 @@ export default function LandingPage() {
       )}
       {/* ForgotPassword Modal */}
       {showForgotModal && (
-        <div className="modal-overlay">
-          <div className="modal-container">
+        <div className="modal-overlay modal-overlay--light">
+          <div className="modal-container auth-modal">
             <ForgotPassword onClose={() => { setShowForgotModal(false); setShowSignInModal(true); }} />
           </div>
         </div>
       )}
       {/* MagicLink Modal */}
       {showMagicModal && (
-        <div className="modal-overlay">
-          <div className="modal-container">
+        <div className="modal-overlay modal-overlay--light">
+          <div className="modal-container auth-modal">
             <MagicLink onClose={() => { setShowMagicModal(false); setShowSignInModal(true); }} />
           </div>
         </div>

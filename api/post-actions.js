@@ -1,3 +1,8 @@
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
+
 export default async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -30,6 +35,73 @@ export default async function handler(req, res) {
       })
     }
 
+    // Ota access token headerista
+    const access_token = req.headers['authorization']?.replace('Bearer ', '')
+    if (!access_token) {
+      return res.status(401).json({ error: 'Unauthorized: access token puuttuu' })
+    }
+
+    // Luo Supabase-yhteys käyttäjän tokenilla
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: `Bearer ${access_token}` } }
+    })
+
+    // Haetaan Mixpost konfiguraatio ja sometilit Supabase:sta
+    let mixpostConfig = null
+    let socialAccounts = null
+
+    try {
+      // Haetaan Mixpost konfiguraatio
+      const { data: configData, error: configError } = await supabase
+        .from('user_mixpost_config')
+        .select('mixpost_workspace_uuid, mixpost_api_token')
+        .eq('user_id', user_id)
+        .single()
+
+      if (configError) {
+        console.error('Error fetching mixpost config:', configError)
+        return res.status(400).json({ 
+          error: 'Mixpost konfiguraatio ei löytynyt',
+          details: configError.message
+        })
+      }
+
+      mixpostConfig = configData
+
+      // Haetaan yhdistetyt sometilit
+      const { data: accountsData, error: accountsError } = await supabase
+        .from('user_social_accounts')
+        .select('mixpost_account_uuid, provider, account_name')
+        .eq('user_id', user_id)
+        .eq('is_authorized', true)
+
+      if (accountsError) {
+        console.error('Error fetching social accounts:', accountsError)
+        return res.status(400).json({ 
+          error: 'Sometilien haku epäonnistui',
+          details: accountsError.message
+        })
+      }
+
+      if (!accountsData || accountsData.length === 0) {
+        return res.status(400).json({ 
+          error: 'Ei yhdistettyjä sometilejä'
+        })
+      }
+
+      socialAccounts = accountsData
+
+    } catch (error) {
+      console.error('Supabase error:', error)
+      return res.status(500).json({ 
+        error: 'Supabase virhe',
+        details: error.message
+      })
+    }
+
+    // Käytetään ensimmäistä yhdistettyä tiliä
+    const accountId = socialAccounts[0].mixpost_account_uuid
+
     // Lähetetään data N8N webhook:iin
     const webhookUrl = process.env.MIXPOST_N8N_WEBHOOK_URL || 'https://samikiias.app.n8n.cloud/webhook/mixpost'
     
@@ -41,6 +113,8 @@ export default async function handler(req, res) {
       media_urls,
       scheduled_date,
       action,
+      workspace_uuid: mixpostConfig.mixpost_workspace_uuid,
+      account_id: accountId,
       timestamp: new Date().toISOString()
     }
 

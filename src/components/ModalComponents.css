@@ -75,6 +75,16 @@
   border: var(--modal-border) !important;
 }
 
+/* Auth-komponenteille sopiva koko */
+.modal-overlay .modal-container:has(.auth-container) {
+  max-width: 464px !important; /* 400px + 32px padding * 2 */
+  width: auto !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
 /* Fallback tarkempaa selektoria varten */
 .modal-container {
   background: var(--modal-background);
@@ -88,6 +98,16 @@
   flex-direction: column;
   box-shadow: var(--modal-shadow);
   border: var(--modal-border);
+}
+
+/* Auth-komponenteille sopiva koko - fallback */
+.modal-container.auth-modal {
+  max-width: 464px;
+  width: auto;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  border: none;
 }
 
 /* EditCallTypeModalia varten leveämpi modaali */

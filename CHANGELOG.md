@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.24.1](https://github.com/slemppa/rascal-ai/compare/v1.24.0...v1.24.1) (2025-07-31)
+
+
+### ♻️ Code Refactoring
+
+* Remove unused social media dashboard and navigation ([ba3da2b](https://github.com/slemppa/rascal-ai/commit/ba3da2bcb82efad7e65091feb997a206ed4979a0))
+* yhtenäiset napit Button.jsx, poistettu vanhat nappityylit ([14748ce](https://github.com/slemppa/rascal-ai/commit/14748ce6a8183fa81438ff9249dfc4d6f8a08908))
+
+
+### 🐛 Bug Fixes
+
+* CSS-spesifisyysongelmat korjattu, modaalit toimivat oikein ([e197170](https://github.com/slemppa/rascal-ai/commit/e197170a9159000d71652ea9e9a59a2228adb36a))
+* korjattu media-data ja mixpost_api_token lähettäminen ([e0826c5](https://github.com/slemppa/rascal-ai/commit/e0826c516343a20eb7980293cecba580a1d62142))
+* korjattu media-data lähettäminen webhook:iin kaikille tyypeille ([0f4cb39](https://github.com/slemppa/rascal-ai/commit/0f4cb399bda22e702085645008b97a428bc514a6))
+* korjattu Supabase-integraatio julkaisuprosessissa ([3cd7fb2](https://github.com/slemppa/rascal-ai/commit/3cd7fb2d48b75bf0bbbf4d7ff5c5ff629d6ba0a8))
+* poista rekisteröitymislinkki SignIn-modalista ([dcbd55e](https://github.com/slemppa/rascal-ai/commit/dcbd55e9857c16971eb5bf1f40fda9fbc4f00330))
+
 ## [1.24.0](https://github.com/slemppa/rascal-ai/compare/v1.23.3...v1.24.0) (2025-07-27)
 
 

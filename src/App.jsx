@@ -24,6 +24,7 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 import PricingPage from './pages/PricingPage'
 import FeaturesPage from './pages/FeaturesPage'
 import ContactPage from './pages/ContactPage'
+import BlogNewsletterPage from './pages/BlogNewsletterPage'
 
 
 export default function App() {
@@ -59,6 +60,15 @@ export default function App() {
             <MobileNavigation />
             <div className="main-content">
               <ProtectedRoute><ManagePostsPage /></ProtectedRoute>
+            </div>
+          </div>
+        } />
+        <Route path="/blog-newsletter" element={
+          <div className="app-layout">
+            <Sidebar />
+            <MobileNavigation />
+            <div className="main-content">
+              <ProtectedRoute><BlogNewsletterPage /></ProtectedRoute>
             </div>
           </div>
         } />

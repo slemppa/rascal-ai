@@ -25,7 +25,9 @@ export default async function handler(req, res) {
       auth_user_id,
       content,
       media_urls = [],
+      segments = [],
       scheduled_date,
+      publish_date,
       action = 'schedule' // 'schedule', 'publish', tai 'delete'
     } = req.body
 
@@ -105,13 +107,45 @@ export default async function handler(req, res) {
     // Lähetetään data N8N webhook:iin
     const webhookUrl = process.env.MIXPOST_N8N_WEBHOOK_URL || 'https://samikiias.app.n8n.cloud/webhook/mixpost'
     
+    // Käsittele scheduled_date ja publish_date erillisiksi date ja time kentiksi
+    let date = null
+    let time = null
+    
+    // Käytä publish_date jos se on saatavilla (sisältää ajan)
+    if (publish_date && publish_date.trim() !== '') {
+      try {
+        const dateTime = new Date(publish_date)
+        if (!isNaN(dateTime.getTime())) {
+          date = dateTime.toISOString().split('T')[0] // YYYY-MM-DD
+          time = dateTime.toTimeString().split(' ')[0] // HH:MM:SS
+        }
+      } catch (error) {
+        console.error('Error parsing publish_date:', error)
+      }
+    }
+    // Fallback: käytä scheduled_date jos publish_date ei ole saatavilla
+    else if (scheduled_date && scheduled_date.trim() !== '') {
+      try {
+        const dateTime = new Date(scheduled_date)
+        if (!isNaN(dateTime.getTime())) {
+          date = dateTime.toISOString().split('T')[0] // YYYY-MM-DD
+          time = null // scheduled_date ei sisällä aikaa
+        }
+      } catch (error) {
+        console.error('Error parsing scheduled_date:', error)
+      }
+    }
+    
     const webhookData = {
       post_id,
       user_id,
       auth_user_id,
       content,
       media_urls,
+      segments,
       scheduled_date,
+      date,
+      time,
       action,
       workspace_uuid: mixpostConfig.mixpost_workspace_uuid,
       account_id: accountId,
@@ -133,6 +167,16 @@ export default async function handler(req, res) {
     console.log('Sending webhook to:', webhookUrl)
     console.log('Webhook data:', webhookData)
     console.log('Headers:', headers)
+    console.log('scheduled_date value:', scheduled_date)
+    console.log('scheduled_date type:', typeof scheduled_date)
+    console.log('publish_date value:', publish_date)
+    console.log('publish_date type:', typeof publish_date)
+    console.log('segments count:', segments.length)
+    console.log('segments data:', segments)
+    console.log('media_urls count:', media_urls.length)
+    console.log('media_urls data:', media_urls)
+    console.log('date value:', date)
+    console.log('time value:', time)
 
     // Lähetetään POST-pyyntö webhook:iin
     console.log('Sending POST request to webhook...')

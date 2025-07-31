@@ -6,7 +6,8 @@ import './MobileNavigation.css'
 
 const menuItems = [
   { label: 'Etusivu', path: '/dashboard', feature: null },
-  { label: 'Julkaisut', path: '/posts', feature: 'Social Media' },
+  { label: 'Some', path: '/posts', feature: 'Social Media' },
+  { label: 'Blog & Newsletter', path: '/blog-newsletter', feature: 'Social Media' },
   { label: 'Sisältöstrategia', path: '/strategy', feature: 'Social Media' },
   { label: 'Puhelut', path: '/calls', feature: 'Phone Calls' },
   { label: 'Assistentti', path: '/ai-chat', feature: 'Marketing assistant' },

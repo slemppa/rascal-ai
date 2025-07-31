@@ -90,6 +90,8 @@ const transformSupabaseData = (supabaseData) => {
       thumbnail = item.media_urls?.[0] || '/media-placeholder.svg';
     }
     
+
+    
     return {
       id: item.id,
       title: item.idea || item.caption || 'Nimetön julkaisu',
@@ -315,13 +317,10 @@ export default function ManagePostsPage() {
         })
       )
       
-      console.log('Raw Supabase content data:', contentWithSegments)
-      console.log('Sample content item:', contentWithSegments[0])
-      console.log('Sample content item keys:', contentWithSegments[0] ? Object.keys(contentWithSegments[0]) : [])
-      console.log('Sample segments data:', contentWithSegments[0]?.segments)
-      console.log('Sample segments item keys:', contentWithSegments[0]?.segments?.[0] ? Object.keys(contentWithSegments[0].segments[0]) : [])
+
       
       const transformedData = transformSupabaseData(contentWithSegments)
+
       setPosts(transformedData || [])
       
     } catch (err) {
@@ -411,7 +410,7 @@ export default function ManagePostsPage() {
         originalData: item,
         source: 'reels'
       }
-      console.log('Transformed reels item:', transformed) // Debug
+
       return transformed
     })
   }
@@ -487,11 +486,6 @@ export default function ManagePostsPage() {
   }
 
   const handleEditPost = async (post) => {
-    console.log('=== handleEditPost called ===')
-    console.log('Edit post:', post) // Debug
-    console.log('Status:', post.status) // Debug status
-    console.log('Source:', post.source) // Debug source
-    console.log('All keys:', Object.keys(post)) // Debug kaikki kentät
     
     // Jos kyseessä on Carousel-tyyppi, haetaan segments data
     if (post.type === 'Carousel' && post.source === 'supabase') {
@@ -520,9 +514,14 @@ export default function ManagePostsPage() {
       }
     }
     
-    setEditingPost(post)
+    // Varmistetaan että originalData on mukana
+    const postWithOriginalData = {
+      ...post,
+      originalData: post.originalData || post // Fallback jos originalData puuttuu
+    }
+    
+    setEditingPost(postWithOriginalData)
     setShowEditModal(true)
-    console.log('Modal state set to true')
   }
 
   const handleSaveEdit = async (updatedData) => {
@@ -805,17 +804,68 @@ export default function ManagePostsPage() {
 
   const handlePublishPost = async (post) => {
     try {
-      // Käytetään alkuperäistä media-dataa kaikille tyypeille
+      // Haetaan media-data suoraan Supabase:sta
       let mediaUrls = []
+      let segments = []
+      let mixpostConfig = null
       
-      if (post.type === 'Carousel' && post.originalData && post.originalData.segments) {
-        // Carousel: kerätään kaikki media_urls segments-taulusta
-        mediaUrls = post.originalData.segments
-          .filter(segment => segment.media_urls && segment.media_urls.length > 0)
-          .flatMap(segment => segment.media_urls)
+      if (post.source === 'supabase') {
+        // Haetaan käyttäjän user_id users taulusta
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('id')
+          .eq('auth_user_id', user.id)
+          .single()
+
+        if (userError || !userData?.id) {
+          throw new Error('Käyttäjän ID ei löytynyt')
+        }
+
+        // Haetaan Mixpost config data
+        const { data: mixpostConfig, error: mixpostError } = await supabase
+          .from('user_mixpost_config')
+          .select('mixpost_api_token, mixpost_workspace_uuid')
+          .eq('user_id', user.id)
+          .eq('is_active', true)
+          .single()
+
+        if (mixpostError) {
+          console.error('Error fetching Mixpost config:', mixpostError)
+        }
+
+        // Haetaan content data
+        const { data: contentData, error: contentError } = await supabase
+          .from('content')
+          .select('*')
+          .eq('id', post.id)
+          .eq('user_id', userData.id)
+          .single()
+
+        if (contentError) {
+          console.error('Error fetching content:', contentError)
+        } else {
+          mediaUrls = contentData.media_urls || []
+          
+          // Jos Carousel, haetaan segments data
+          if (post.type === 'Carousel') {
+            const { data: segmentsData, error: segmentsError } = await supabase
+              .from('segments')
+              .select('*')
+              .eq('content_id', post.id)
+              .order('slide_no', { ascending: true })
+            
+            if (!segmentsError && segmentsData) {
+              segments = segmentsData
+              // Kerätään kaikki media_urls segments-taulusta
+              mediaUrls = segmentsData
+                .filter(segment => segment.media_urls && segment.media_urls.length > 0)
+                .flatMap(segment => segment.media_urls)
+            }
+          }
+        }
       } else {
-        // Muut tyypit: käytetään content-taulun media_urls
-        mediaUrls = post.originalData?.media_urls || post.mediaUrls || []
+        // Reels data
+        mediaUrls = post.mediaUrls || []
       }
       
       // Lähetetään data backend:iin, joka hoitaa Supabase-kyselyt
@@ -830,20 +880,18 @@ export default function ManagePostsPage() {
         action: 'publish'
       }
       
-      // Lisää segments-data Carousel-tyyppisillä postauksilla
-      if (post.type === 'Carousel' && post.originalData && post.originalData.segments) {
-        publishData.segments = post.originalData.segments
+      // Lisää Mixpost config data jos saatavilla
+      if (mixpostConfig) {
+        publishData.mixpost_api_token = mixpostConfig.mixpost_api_token
+        publishData.mixpost_workspace_uuid = mixpostConfig.mixpost_workspace_uuid
       }
       
-      console.log('Publishing post with data:', publishData)
-      console.log('post.scheduledDate:', post.scheduledDate)
-      console.log('post.scheduledDate type:', typeof post.scheduledDate)
-      console.log('post.type:', post.type)
-      console.log('post.originalData:', post.originalData)
-      console.log('post.originalData.segments:', post.originalData?.segments)
-      console.log('post.originalData.media_urls:', post.originalData?.media_urls)
-      console.log('Calculated mediaUrls:', mediaUrls)
-      console.log('post.mediaUrls (transformed):', post.mediaUrls)
+      // Lisää segments-data Carousel-tyyppisillä postauksilla
+      if (post.type === 'Carousel' && segments.length > 0) {
+        publishData.segments = segments
+      }
+      
+
 
               const response = await fetch('/api/post-actions', {
           method: 'POST',

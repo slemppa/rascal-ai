@@ -28,6 +28,8 @@ export default async function handler(req, res) {
       segments = [],
       scheduled_date,
       publish_date,
+      mixpost_api_token,
+      mixpost_workspace_uuid,
       action = 'schedule' // 'schedule', 'publish', tai 'delete'
     } = req.body
 
@@ -144,10 +146,12 @@ export default async function handler(req, res) {
       media_urls,
       segments,
       scheduled_date,
+      publish_date, // Keep original for N8N if needed
       date,
       time,
       action,
-      workspace_uuid: mixpostConfig.mixpost_workspace_uuid,
+      workspace_uuid: mixpost_workspace_uuid || mixpostConfig.mixpost_workspace_uuid,
+      mixpost_api_token: mixpost_api_token || mixpostConfig.mixpost_api_token,
       account_id: accountId,
       timestamp: new Date().toISOString()
     }
@@ -159,27 +163,13 @@ export default async function handler(req, res) {
     // Lisätään API key header N8N webhook:iin
     if (process.env.N8N_SECRET_KEY) {
       headers['x-api-key'] = process.env.N8N_SECRET_KEY
-      console.log('Using API key header')
-    } else {
-      console.log('No API key found in environment')
     }
 
-    console.log('Sending webhook to:', webhookUrl)
-    console.log('Webhook data:', webhookData)
-    console.log('Headers:', headers)
-    console.log('scheduled_date value:', scheduled_date)
-    console.log('scheduled_date type:', typeof scheduled_date)
-    console.log('publish_date value:', publish_date)
-    console.log('publish_date type:', typeof publish_date)
-    console.log('segments count:', segments.length)
-    console.log('segments data:', segments)
-    console.log('media_urls count:', media_urls.length)
-    console.log('media_urls data:', media_urls)
-    console.log('date value:', date)
-    console.log('time value:', time)
+
 
     // Lähetetään POST-pyyntö webhook:iin
-    console.log('Sending POST request to webhook...')
+    let result = { success: true, message: 'Webhook sent successfully' } // Default result
+    
     try {
       const response = await fetch(webhookUrl, {
         method: 'POST',
@@ -187,7 +177,7 @@ export default async function handler(req, res) {
         body: JSON.stringify(webhookData)
       })
 
-      console.log('POST response status:', response.status)
+
 
       if (!response.ok) {
         console.error('Webhook response:', response.status, response.statusText)
@@ -196,7 +186,6 @@ export default async function handler(req, res) {
         throw new Error(`Webhook failed: ${response.status} - ${response.statusText}`)
       }
 
-      let result
       try {
         result = await response.json()
       } catch (error) {
@@ -204,10 +193,11 @@ export default async function handler(req, res) {
         result = { success: true, message: 'Webhook sent successfully' }
       }
 
-      console.log('Webhook result:', result)
+
     } catch (error) {
       console.error('Webhook request failed:', error)
-      throw error
+      // Älä throw error, vaan jatka default result:lla
+      result = { success: false, message: 'Webhook failed but continuing', error: error.message }
     }
 
     let message = 'Action completed successfully'

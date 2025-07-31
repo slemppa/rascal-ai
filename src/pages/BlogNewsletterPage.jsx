@@ -9,13 +9,10 @@ import './BlogNewsletterPage.css'
 const transformSupabaseData = (supabaseData) => {
   if (!supabaseData || !Array.isArray(supabaseData)) return []
   
-  console.log('=== transformSupabaseData called ===')
-  console.log('Raw Supabase data:', supabaseData)
+
   
   return supabaseData.map(item => {
-    console.log('Processing item:', item)
-    console.log('Item idea:', item.idea)
-    console.log('Item blog_post:', item.blog_post)
+
     // Muunnetaan Supabase status suomeksi
     const statusMap = {
       'Draft': 'Luonnos',
@@ -58,7 +55,6 @@ const transformSupabaseData = (supabaseData) => {
       source: 'supabase'
     }
     
-    console.log('Transformed item:', transformedItem)
     return transformedItem
   })
 }
@@ -292,7 +288,12 @@ export default function BlogNewsletterPage() {
 
   const handlePublishContent = async (content) => {
     try {
-      // Päivitetään Supabase
+      // Haetaan media-data suoraan Supabase:sta
+      let mediaUrls = []
+      let segments = []
+      let mixpostConfig = null
+      
+      // Haetaan käyttäjän user_id users taulusta
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('id')
@@ -303,23 +304,70 @@ export default function BlogNewsletterPage() {
         throw new Error('Käyttäjän ID ei löytynyt')
       }
 
-      const { error: updateError } = await supabase
+      // Haetaan Mixpost config data
+      const { data: mixpostConfigData, error: mixpostError } = await supabase
+        .from('user_mixpost_config')
+        .select('mixpost_api_token, mixpost_workspace_uuid')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .single()
+
+      if (mixpostError) {
+        console.error('Error fetching Mixpost config:', mixpostError)
+      } else {
+        mixpostConfig = mixpostConfigData
+      }
+
+      // Haetaan content data
+      const { data: contentData, error: contentError } = await supabase
         .from('content')
-        .update({
-          status: 'Published',
-          publish_date: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
+        .select('*')
         .eq('id', content.id)
         .eq('user_id', userData.id)
+        .single()
 
-      if (updateError) {
-        throw updateError
+      if (contentError) {
+        console.error('Error fetching content:', contentError)
+      } else {
+        mediaUrls = contentData.media_urls || []
+      }
+
+      // Lähetetään data backend:iin, joka hoitaa Supabase-kyselyt
+      const publishData = {
+        post_id: content.id,
+        user_id: user.id,
+        auth_user_id: user.id,
+        content: content.caption || content.title,
+        media_urls: mediaUrls,
+        scheduled_date: content.scheduledDate || null,
+        publish_date: content.publishDate || null,
+        action: 'publish'
+      }
+      
+      // Lisää Mixpost config data jos saatavilla
+      if (mixpostConfig) {
+        publishData.mixpost_api_token = mixpostConfig.mixpost_api_token
+        publishData.mixpost_workspace_uuid = mixpostConfig.mixpost_workspace_uuid
+      }
+
+      const response = await fetch('/api/post-actions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        },
+        body: JSON.stringify(publishData)
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Julkaisu epäonnistui')
       }
 
       // Päivitetään UI
       await fetchContents()
-      alert('Julkaisu onnistui!')
+      alert(result.message || 'Julkaisu onnistui!')
       
     } catch (error) {
       console.error('Publish error:', error)

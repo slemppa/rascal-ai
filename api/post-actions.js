@@ -31,7 +31,8 @@ export default async function handler(req, res) {
       mixpost_api_token,
       mixpost_workspace_uuid,
       post_type, // 'post', 'reel', 'carousel'
-      action = 'schedule' // 'schedule', 'publish', tai 'delete'
+      action = 'schedule', // 'schedule', 'publish', tai 'delete'
+      selected_accounts = [] // Valitut somekanavat
     } = req.body
 
     if (!post_id || !user_id) {
@@ -104,8 +105,16 @@ export default async function handler(req, res) {
       })
     }
 
-    // Käytetään ensimmäistä yhdistettyä tiliä
-    const accountId = socialAccounts[0].mixpost_account_uuid
+    // Käytetään valittuja tilejä tai ensimmäistä yhdistettyä tiliä
+    let accountIds = []
+    
+    if (selected_accounts && selected_accounts.length > 0) {
+      // Käytä valittuja tilejä
+      accountIds = selected_accounts
+    } else {
+      // Fallback: käytä ensimmäistä yhdistettyä tiliä
+      accountIds = [socialAccounts[0].mixpost_account_uuid]
+    }
 
     // Lähetetään data N8N webhook:iin
     const webhookUrl = process.env.MIXPOST_N8N_WEBHOOK_URL || 'https://samikiias.app.n8n.cloud/webhook/mixpost'
@@ -154,7 +163,8 @@ export default async function handler(req, res) {
       post_type, // 'post', 'reel', 'carousel'
       workspace_uuid: mixpost_workspace_uuid || mixpostConfig.mixpost_workspace_uuid,
       mixpost_api_token: mixpost_api_token || mixpostConfig.mixpost_api_token,
-      account_id: accountId,
+      account_ids: accountIds, // Useita tilejä
+      selected_accounts: selected_accounts, // Valitut tilit
       timestamp: new Date().toISOString()
     }
 

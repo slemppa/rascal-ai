@@ -25,9 +25,10 @@ const SocialMediaConnect = () => {
   const [connectionError, setConnectionError] = useState(null);
 
   const platforms = [
-    { id: 'instagram', name: 'Instagram', icon: '📷' },
-    { id: 'facebook', name: 'Facebook', icon: '📘' }
-  ];
+  { id: 'instagram', name: 'Instagram', icon: '📷' },
+  { id: 'facebook', name: 'Facebook', icon: '📘' },
+  { id: 'linkedin', name: 'LinkedIn', icon: '💼' }
+];
 
   const handleConnectAccount = async (platform) => {
     try {
@@ -116,7 +117,7 @@ const SocialMediaConnect = () => {
           {connectedAccounts.map((account, index) => (
             <div key={index} className="account-card">
               {/* Profiilikuva */}
-              <div className="profile-image">
+              <div className={`profile-image ${account.provider}`}>
                 {getProfileImageUrl(account) ? (
                   <img 
                     src={getProfileImageUrl(account)} 
@@ -130,6 +131,12 @@ const SocialMediaConnect = () => {
                 ) : null}
                 <div className="profile-fallback">
                   {(account.name || account.username || '?').charAt(0).toUpperCase()}
+                </div>
+                                {/* Platform-ikoni profiilikuvan alaosassa */}
+                <div className="profile-platform-icon">
+                  {account.provider === 'instagram' ? '📷' :
+                   account.provider === 'facebook' ? '📘' :
+                   account.provider === 'linkedin' ? '💼' : '?'}
                 </div>
               </div>
 
@@ -146,10 +153,7 @@ const SocialMediaConnect = () => {
                 </div>
               </div>
 
-              {/* Platform-ikoni */}
-              <div className={`platform-icon ${account.provider}`}>
-                {account.provider === 'instagram' ? '📷' : '📘'}
-              </div>
+
             </div>
           ))}
 

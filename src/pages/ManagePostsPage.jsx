@@ -201,16 +201,44 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
             </p>
           <div className="post-footer">
             <span className="post-date">
-              {post.scheduledDate ? `📅 ${post.scheduledDate}` : post.createdAt || post.publishedAt}
+              {post.source === 'mixpost' ? (
+                post.published_at ? `📅 ${new Date(post.published_at).toLocaleDateString('fi-FI')}` : 
+                post.created_at ? `📅 ${new Date(post.created_at).toLocaleDateString('fi-FI')}` : 
+                '📅 Julkaistu'
+              ) : (
+                post.scheduledDate ? `📅 ${post.scheduledDate}` : post.createdAt || post.publishedAt
+              )}
             </span>
             <div className="post-actions">
-              <Button 
-                variant="secondary" 
-                onClick={() => onEdit(post)}
-                style={{ fontSize: '11px', padding: '6px 10px' }}
-              >
-                ✏️ Muokkaa
-              </Button>
+              {/* Mixpostin postauksille näytetään eri toiminnot */}
+              {post.source === 'mixpost' ? (
+                <>
+                  {post.external_urls && post.external_urls.length > 0 && (
+                    <Button 
+                      variant="secondary" 
+                      onClick={() => window.open(post.external_urls[0], '_blank')}
+                      style={{ fontSize: '11px', padding: '6px 10px' }}
+                    >
+                      🔗 Katso
+                    </Button>
+                  )}
+                  <Button 
+                    variant="secondary" 
+                    style={{ fontSize: '11px', padding: '6px 10px', opacity: 0.5, cursor: 'not-allowed' }}
+                    disabled
+                  >
+                    ✏️ Muokkaa
+                  </Button>
+                </>
+              ) : (
+                <Button 
+                  variant="secondary" 
+                  onClick={() => onEdit(post)}
+                  style={{ fontSize: '11px', padding: '6px 10px' }}
+                >
+                  ✏️ Muokkaa
+                </Button>
+              )}
               
               {/* Siirtymispainikkeet */}
               {post.status === 'Kesken' && post.source === 'supabase' && (
@@ -242,13 +270,16 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
                 </Button>
               )}
               
-              <Button 
-                variant="danger" 
-                onClick={() => onDelete(post)}
-                style={{ fontSize: '11px', padding: '6px 10px' }}
-              >
-                🗑️ Poista
-              </Button>
+              {/* Mixpostin postauksille ei näytetä poisto-nappia */}
+              {post.source !== 'mixpost' && (
+                <Button 
+                  variant="danger" 
+                  onClick={() => onDelete(post)}
+                  style={{ fontSize: '11px', padding: '6px 10px' }}
+                >
+                  🗑️ Poista
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -270,7 +301,15 @@ export default function ManagePostsPage() {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [showPublishModal, setShowPublishModal] = useState(false)
   const [editingPost, setEditingPost] = useState(null)
+  const [publishingPost, setPublishingPost] = useState(null)
+  const [socialAccounts, setSocialAccounts] = useState([])
+  const [selectedAccounts, setSelectedAccounts] = useState([])
+  const [loadingAccounts, setLoadingAccounts] = useState(false)
+  const [mixpostPosts, setMixpostPosts] = useState([])
+  const [mixpostLoading, setMixpostLoading] = useState(false)
+  const [mixpostError, setMixpostError] = useState(null)
   const hasInitialized = useRef(false)
 
   // Data haku Supabasesta
@@ -353,7 +392,103 @@ export default function ManagePostsPage() {
     hasInitialized.current = true
     fetchPosts()
     fetchReelsPosts() // Haetaan reels data automaattisesti
+    fetchSocialAccounts() // Haetaan somekanavat
+    fetchMixpostPosts() // Haetaan Mixpostin julkaistut postaukset
   }, [user])
+
+  // Hae Mixpostin julkaistut postaukset
+  const fetchMixpostPosts = async () => {
+    if (!user) return
+    
+    try {
+      setMixpostLoading(true)
+      setMixpostError(null)
+      
+      // Haetaan käyttäjän user_id users taulusta
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (userError || !userData?.id) {
+        throw new Error('Käyttäjän ID ei löytynyt')
+      }
+      
+      const response = await fetch(`/api/get-mixpost-posts?user_id=${user.id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Mixpost postausten haku epäonnistui')
+      }
+
+      const result = await response.json()
+      
+      if (result.success) {
+        setMixpostPosts(result.data || [])
+      } else {
+        throw new Error(result.error || 'Mixpost postausten haku epäonnistui')
+      }
+      
+    } catch (error) {
+      console.error('Error fetching Mixpost posts:', error)
+      setMixpostError(error.message)
+      setMixpostPosts([])
+    } finally {
+      setMixpostLoading(false)
+    }
+  }
+
+  // Hae somekanavat Supabasesta
+  const fetchSocialAccounts = async () => {
+    if (!user) return
+    
+    console.log('Fetching social accounts for user:', user.id)
+    
+    try {
+      setLoadingAccounts(true)
+      
+      // Haetaan käyttäjän user_id users taulusta
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (userError || !userData?.id) {
+        throw new Error('Käyttäjän ID ei löytynyt')
+      }
+      
+      // Haetaan yhdistetyt sometilit - käytetään auth_user_id:tä
+      const { data: accountsData, error: accountsError } = await supabase
+        .from('user_social_accounts')
+        .select('mixpost_account_uuid, provider, account_name, profile_image_url')
+        .eq('user_id', user.id) // Käytetään auth_user_id:tä suoraan
+        .eq('is_authorized', true)
+        .order('last_synced_at', { ascending: false })
+
+      if (accountsError) {
+        console.error('Error fetching social accounts:', accountsError)
+        setSocialAccounts([])
+        return
+      }
+
+      console.log('Found social accounts:', accountsData)
+      setSocialAccounts(accountsData || [])
+      
+    } catch (error) {
+      console.error('Error fetching social accounts:', error)
+      setSocialAccounts([])
+    } finally {
+      setLoadingAccounts(false)
+    }
+  }
 
   // Debounced search for performance
   useEffect(() => {
@@ -828,13 +963,25 @@ export default function ManagePostsPage() {
   }
 
   const handlePublishPost = async (post) => {
+    // Aseta julkaistava post ja avaa modaali
+    setPublishingPost(post)
+    setSelectedAccounts([]) // Tyhjennä aiemmat valinnat
+    setShowPublishModal(true)
+  }
+
+  const handleConfirmPublish = async () => {
+    if (!publishingPost || selectedAccounts.length === 0) {
+      alert('Valitse vähintään yksi somekanava julkaisua varten')
+      return
+    }
+
     try {
       // Haetaan media-data suoraan Supabase:sta
       let mediaUrls = []
       let segments = []
       let mixpostConfig = null
       
-      if (post.source === 'supabase') {
+      if (publishingPost.source === 'supabase') {
         // Haetaan käyttäjän user_id users taulusta
         const { data: userData, error: userError } = await supabase
           .from('users')
@@ -862,7 +1009,7 @@ export default function ManagePostsPage() {
         const { data: contentData, error: contentError } = await supabase
           .from('content')
           .select('*')
-          .eq('id', post.id)
+          .eq('id', publishingPost.id)
           .eq('user_id', userData.id)
           .single()
 
@@ -872,11 +1019,11 @@ export default function ManagePostsPage() {
           mediaUrls = contentData.media_urls || []
           
           // Jos Carousel, haetaan segments data
-          if (post.type === 'Carousel') {
+          if (publishingPost.type === 'Carousel') {
             const { data: segmentsData, error: segmentsError } = await supabase
               .from('segments')
               .select('*')
-              .eq('content_id', post.id)
+              .eq('content_id', publishingPost.id)
               .order('slide_no', { ascending: true })
             
             if (!segmentsError && segmentsData) {
@@ -890,20 +1037,21 @@ export default function ManagePostsPage() {
         }
       } else {
         // Reels data
-        mediaUrls = post.mediaUrls || []
+        mediaUrls = publishingPost.mediaUrls || []
       }
       
       // Lähetetään data backend:iin, joka hoitaa Supabase-kyselyt
       const publishData = {
-        post_id: post.id,
+        post_id: publishingPost.id,
         user_id: user.id,
         auth_user_id: user.id,
-        content: post.caption || post.title,
+        content: publishingPost.caption || publishingPost.title,
         media_urls: mediaUrls,
-        scheduled_date: post.scheduledDate || null,
-        publish_date: post.publishDate || null, // Lisätään alkuperäinen publishDate
-        post_type: post.type === 'Reels' ? 'reel' : post.type === 'Carousel' ? 'carousel' : 'post',
-        action: 'publish'
+        scheduled_date: publishingPost.scheduledDate || null,
+        publish_date: publishingPost.publishDate || null, // Lisätään alkuperäinen publishDate
+        post_type: publishingPost.type === 'Reels' ? 'reel' : publishingPost.type === 'Carousel' ? 'carousel' : 'post',
+        action: 'publish',
+        selected_accounts: selectedAccounts // Lisätään valitut somekanavat
       }
       
       // Lisää Mixpost config data jos saatavilla
@@ -913,20 +1061,18 @@ export default function ManagePostsPage() {
       }
       
       // Lisää segments-data Carousel-tyyppisillä postauksilla
-      if (post.type === 'Carousel' && segments.length > 0) {
+      if (publishingPost.type === 'Carousel' && segments.length > 0) {
         publishData.segments = segments
       }
       
-
-
-              const response = await fetch('/api/post-actions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-          },
-          body: JSON.stringify(publishData)
-        })
+      const response = await fetch('/api/post-actions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        },
+        body: JSON.stringify(publishData)
+      })
 
       const result = await response.json()
 
@@ -936,13 +1082,14 @@ export default function ManagePostsPage() {
 
       // Päivitetään UI
       await fetchPosts()
-      if (post.source === 'reels') {
+      if (publishingPost.source === 'reels') {
         await fetchReelsPosts()
       }
 
       alert(result.message || 'Some-sisällön julkaisu onnistui!')
-      setShowEditModal(false)
-      setEditingPost(null)
+      setShowPublishModal(false)
+      setPublishingPost(null)
+      setSelectedAccounts([])
       
     } catch (error) {
       console.error('Publish error:', error)
@@ -1090,7 +1237,7 @@ export default function ManagePostsPage() {
       </div>
 
       {/* Loading State */}
-      {loading && (
+      {(loading || mixpostLoading) && (
         <div className="skeleton-loading">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="skeleton-card">
@@ -1105,9 +1252,9 @@ export default function ManagePostsPage() {
       )}
 
       {/* Error State */}
-      {currentError && (
+      {(currentError || mixpostError) && (
         <div className="error-state">
-          <p>❌ {currentError}</p>
+          <p>❌ {currentError || mixpostError}</p>
           <Button
             variant="secondary"
             onClick={() => {
@@ -1179,21 +1326,30 @@ export default function ManagePostsPage() {
           {/* Julkaistu-sarakkeessa kaikkien 4 sarakkeen levyinen */}
           <div className="kanban-bottom-row">
             {(() => {
-              const publishedPosts = filteredPosts.filter(post => post.status === publishedColumn.status && post.source === 'supabase')
+              // Yhdistetään Supabase ja Mixpost julkaistut postaukset
+              const supabasePublishedPosts = filteredPosts.filter(post => post.status === publishedColumn.status && post.source === 'supabase')
+              const mixpostPublishedPosts = mixpostPosts.map(post => ({
+                ...post,
+                source: 'mixpost'
+              }))
+              
+              const allPublishedPosts = [...supabasePublishedPosts, ...mixpostPublishedPosts]
               
               return (
                 <div className="kanban-column kanban-column-full-width">
                   <h3 className="column-title">{publishedColumn.title}</h3>
                   <div className="column-content">
-                    {publishedPosts.map(post => {
+                    {allPublishedPosts.map(post => {
                       const safePost = {
-                        id: post.id || 'unknown',
+                        id: post.id || post.uuid || 'unknown',
                         title: post.title || 'Nimetön julkaisu',
                         caption: post.caption || 'Ei kuvausta',
                         type: post.type || 'Photo',
                         source: post.source || 'supabase',
                         thumbnail: post.thumbnail || '/media-placeholder.svg',
-                        status: post.status || 'Julkaistu'
+                        status: post.status || 'Julkaistu',
+                        published_at: post.published_at,
+                        external_urls: post.external_urls || []
                       }
                       
                       return (
@@ -1675,6 +1831,163 @@ export default function ManagePostsPage() {
           </div>
         )}
 
+      {/* Publish Modal - Somekanavien valinta */}
+      {showPublishModal && publishingPost && (
+        <div 
+          className="modal-overlay"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowPublishModal(false)
+              setPublishingPost(null)
+              setSelectedAccounts([])
+            }
+          }}
+        >
+          <div className="modal someselect-modal">
+            <div className="modal-header">
+              <h2>Valitse somekanavat julkaisua varten</h2>
+              <button
+                onClick={() => {
+                  setShowPublishModal(false)
+                  setPublishingPost(null)
+                  setSelectedAccounts([])
+                }}
+                className="modal-close"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-form">
+              <div className="form-group">
+                <label>Julkaistava sisältö</label>
+                <div style={{ 
+                  padding: '12px', 
+                  backgroundColor: '#f8f9fa', 
+                  borderRadius: '8px',
+                  marginBottom: '16px'
+                }}>
+                  <h4 style={{ margin: '0 0 8px 0', fontSize: '16px' }}>
+                    {publishingPost.title}
+                  </h4>
+                  <p style={{ margin: '0', fontSize: '14px', color: '#666' }}>
+                    {publishingPost.caption}
+                  </p>
+                  <div style={{ marginTop: '8px' }}>
+                    <span style={{ 
+                      fontSize: '12px', 
+                      padding: '4px 8px', 
+                      backgroundColor: '#e3f2fd', 
+                      borderRadius: '4px',
+                      color: '#1976d2'
+                    }}>
+                      {publishingPost.type}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Valitse somekanavat</label>
+                {loadingAccounts ? (
+                  <div style={{ textAlign: 'center', padding: '20px' }}>
+                    <div className="loading-spinner"></div>
+                    <p>Haetaan somekanavia...</p>
+                  </div>
+                ) : socialAccounts.length === 0 ? (
+                  <div style={{ 
+                    textAlign: 'center', 
+                    padding: '20px',
+                    backgroundColor: '#fff3cd',
+                    borderRadius: '8px',
+                    border: '1px solid #ffeaa7'
+                  }}>
+                    <p style={{ margin: '0', color: '#856404' }}>
+                      Ei yhdistettyjä somekanavia. <br />
+                      <a 
+                        href="/settings" 
+                        style={{ color: '#007bff', textDecoration: 'underline' }}
+                      >
+                        Yhdistä somekanavat asetuksissa
+                      </a>
+                    </p>
+                  </div>
+                ) : (
+                  <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                    {socialAccounts.map((account) => (
+                      <div
+                        key={account.mixpost_account_uuid}
+                        className={`someselect-row${selectedAccounts.includes(account.mixpost_account_uuid) ? ' selected' : ''}`}
+                        onClick={() => {
+                          const isSelected = selectedAccounts.includes(account.mixpost_account_uuid)
+                          if (isSelected) {
+                            setSelectedAccounts(selectedAccounts.filter(id => id !== account.mixpost_account_uuid))
+                          } else {
+                            setSelectedAccounts([...selectedAccounts, account.mixpost_account_uuid])
+                          }
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedAccounts.includes(account.mixpost_account_uuid)}
+                          className="someselect-checkbox"
+                          onChange={() => {}} // Handled by onClick
+                          tabIndex={-1}
+                        />
+                        {account.profile_image_url ? (
+                          <img
+                            src={account.profile_image_url}
+                            className="someselect-avatar"
+                            alt="Profiilikuva"
+                            onError={e => {
+                              e.target.style.display = 'none'
+                              e.target.nextSibling.style.display = 'flex'
+                            }}
+                          />
+                        ) : (
+                          <div className="someselect-avatar">
+                            {account.provider === 'instagram' ? '📷' :
+                             account.provider === 'facebook' ? '📘' :
+                             account.provider === 'linkedin' ? '💼' : '👤'}
+                          </div>
+                        )}
+                        <div className="someselect-info">
+                          <div className="someselect-name">{account.account_name}</div>
+                          <div className="someselect-type">
+                            {account.provider === 'instagram' && <>📷 Instagram</>}
+                            {account.provider === 'facebook' && <>📘 Facebook</>}
+                            {account.provider === 'linkedin' && <>💼 LinkedIn</>}
+                            {!['instagram','facebook','linkedin'].includes(account.provider) && account.provider}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="someselect-actions">
+                <button
+                  type="button"
+                  className="someselect-btn cancel"
+                  onClick={() => {
+                    setShowPublishModal(false)
+                    setPublishingPost(null)
+                    setSelectedAccounts([])
+                  }}
+                >
+                  Peruuta
+                </button>
+                <button
+                  type="button"
+                  className="someselect-btn publish"
+                  onClick={handleConfirmPublish}
+                  disabled={selectedAccounts.length === 0 || loadingAccounts}
+                >
+                  📤 Julkaise valituille kanaville
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   )

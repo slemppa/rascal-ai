@@ -341,6 +341,7 @@ export default function BlogNewsletterPage() {
         media_urls: mediaUrls,
         scheduled_date: content.scheduledDate || null,
         publish_date: content.publishDate || null,
+        post_type: content.type === 'Newsletter' ? 'post' : 'post', // Blog ja Newsletter ovat 'post' tyyppiä
         action: 'publish'
       }
       

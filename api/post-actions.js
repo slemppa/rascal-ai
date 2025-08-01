@@ -30,6 +30,7 @@ export default async function handler(req, res) {
       publish_date,
       mixpost_api_token,
       mixpost_workspace_uuid,
+      post_type, // 'post', 'reel', 'carousel'
       action = 'schedule' // 'schedule', 'publish', tai 'delete'
     } = req.body
 
@@ -150,6 +151,7 @@ export default async function handler(req, res) {
       date,
       time,
       action,
+      post_type, // 'post', 'reel', 'carousel'
       workspace_uuid: mixpost_workspace_uuid || mixpostConfig.mixpost_workspace_uuid,
       mixpost_api_token: mixpost_api_token || mixpostConfig.mixpost_api_token,
       account_id: accountId,

@@ -146,9 +146,21 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
             <img
               src={post.thumbnail}
               alt="thumbnail"
-                          onError={(e) => {
-              e.target.src = '/media-placeholder.svg';
-            }}
+              loading="lazy"
+              decoding="async"
+              onLoad={(e) => {
+                e.target.style.opacity = '1'
+              }}
+              onError={(e) => {
+                e.target.src = '/media-placeholder.svg';
+              }}
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'cover',
+                opacity: 0,
+                transition: 'opacity 0.3s ease'
+              }}
             />
           ) : (
             <div className="placeholder-content">
@@ -184,7 +196,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
                 <span className={`post-source ${post.source}`}>{post.source}</span>
           </div>
           </div>
-            <p className="post-caption">
+            <p className="post-caption" style={{ minHeight: '3.6em', contain: 'layout style' }}>
               {post.caption}
             </p>
           <div className="post-footer">
@@ -255,6 +267,7 @@ export default function ManagePostsPage() {
   const [reelsError, setReelsError] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [editingPost, setEditingPost] = useState(null)
@@ -292,30 +305,33 @@ export default function ManagePostsPage() {
         throw error
       }
       
-      // Haetaan segments-data Carousel-tyyppisille posteille
-      const contentWithSegments = await Promise.all(
-        data.map(async (contentItem) => {
-          if (contentItem.type === 'Carousel') {
-            try {
-              const { data: segmentsData, error: segmentsError } = await supabase
-                .from('segments')
-                .select('*')
-                .eq('content_id', contentItem.id)
-                .order('slide_no', { ascending: true })
-              
-              if (!segmentsError && segmentsData) {
-                return {
-                  ...contentItem,
-                  segments: segmentsData
-                }
-              }
-            } catch (err) {
-              console.error('Virhe segments datan haussa:', err)
-            }
+      // Haetaan kaikki segments-data yhdellä kyselyllä
+      const carouselContentIds = data.filter(item => item.type === 'Carousel').map(item => item.id)
+      
+      let segmentsData = []
+      if (carouselContentIds.length > 0) {
+        const { data: segments, error: segmentsError } = await supabase
+          .from('segments')
+          .select('*')
+          .in('content_id', carouselContentIds)
+          .order('slide_no', { ascending: true })
+        
+        if (!segmentsError && segments) {
+          segmentsData = segments
+        }
+      }
+      
+      // Yhdistetään content ja segments data
+      const contentWithSegments = data.map(contentItem => {
+        if (contentItem.type === 'Carousel') {
+          const itemSegments = segmentsData.filter(segment => segment.content_id === contentItem.id)
+          return {
+            ...contentItem,
+            segments: itemSegments
           }
-          return contentItem
-        })
-      )
+        }
+        return contentItem
+      })
       
 
       
@@ -338,6 +354,15 @@ export default function ManagePostsPage() {
     fetchPosts()
     fetchReelsPosts() // Haetaan reels data automaattisesti
   }, [user])
+
+  // Debounced search for performance
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [searchTerm])
 
   // Reels data haku
   const fetchReelsPosts = async () => {
@@ -423,8 +448,8 @@ export default function ManagePostsPage() {
 
   // Filtteröidään postit
   const filteredPosts = currentPosts.filter(post => {
-    const matchesSearch = (post.title?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-                          (post.caption?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+        const matchesSearch = (post.title?.toLowerCase() || '').includes(debouncedSearchTerm.toLowerCase()) ||
+                         (post.caption?.toLowerCase() || '').includes(debouncedSearchTerm.toLowerCase())
     const matchesStatus = statusFilter === '' || post.status === statusFilter
     return matchesSearch && matchesStatus
   })
@@ -877,6 +902,7 @@ export default function ManagePostsPage() {
         media_urls: mediaUrls,
         scheduled_date: post.scheduledDate || null,
         publish_date: post.publishDate || null, // Lisätään alkuperäinen publishDate
+        post_type: post.type === 'Reels' ? 'reel' : post.type === 'Carousel' ? 'carousel' : 'post',
         action: 'publish'
       }
       
@@ -1063,6 +1089,21 @@ export default function ManagePostsPage() {
         </Button>
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="skeleton-loading">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="skeleton-card">
+              <div className="skeleton-thumbnail"></div>
+              <div className="skeleton-content">
+                <div className="skeleton-title"></div>
+                <div className="skeleton-caption"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Error State */}
       {currentError && (
         <div className="error-state">
@@ -1079,7 +1120,7 @@ export default function ManagePostsPage() {
       )}
         
       {/* Kanban Board */}
-      {!currentError && (
+      {!currentError && !loading && (
         <div className="kanban-board">
           {/* Ylemmät 4 saraketta */}
           <div className="kanban-top-row">

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import '../components/ModalComponents.css'
 import './AdminPage.css'
 
 export default function AdminPage() {
@@ -538,110 +540,117 @@ export default function AdminPage() {
                  </div>
 
                  {/* Teknisten ID:iden muokkaus modal */}
-                 {selectedUser && (
-                   <div className="modal-overlay" onClick={closeModal}>
-                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                 {selectedUser && createPortal(
+                   <div className="modal-overlay modal-overlay--light" onClick={closeModal}>
+                     <div className="modal-container" style={{ maxWidth: '600px' }} onClick={(e) => e.stopPropagation()}>
                        <div className="modal-header">
-                         <h3>
-                           Muokkaa teknisiä ID:tä - {selectedUser.contact_person}
-                           {Object.keys(modalChanges).length > 0 && (
-                             <span className="unsaved-changes"> *</span>
-                           )}
-                         </h3>
-                         <button 
-                           className="modal-close"
+                         <h2 className="modal-title">Muokkaa käyttäjän teknisiä ID:itä</h2>
+                         {Object.keys(modalChanges).length > 0 && (
+                           <span style={{ fontSize: '12px', color: '#666' }}>
+                             Tallentamattomia muutoksia
+                           </span>
+                         )}
+                         <button
+                           className="modal-close-btn"
                            onClick={closeModal}
                          >
-                           ×
+                           ✕
                          </button>
                        </div>
-                       <div className="modal-body">
-                         <div className="tech-fields-grid">
-                           <div className="tech-field">
-                             <label>Webhook URL</label>
-                             <input
-                               type="text"
-                               value={modalChanges.webhook_url !== undefined ? modalChanges.webhook_url : (selectedUser.webhook_url || '')}
-                               onChange={(e) => updateModalField('webhook_url', e.target.value)}
-                               placeholder="https://..."
-                             />
-                           </div>
-                           <div className="tech-field">
-                             <label>Thread ID</label>
-                             <input
-                               type="text"
-                               value={modalChanges.thread_id !== undefined ? modalChanges.thread_id : (selectedUser.thread_id || '')}
-                               onChange={(e) => updateModalField('thread_id', e.target.value)}
-                               placeholder="thread_..."
-                             />
-                           </div>
-                           <div className="tech-field">
-                             <label>VAPI Number ID</label>
-                             <input
-                               type="text"
-                               value={modalChanges.vapi_number_id !== undefined ? modalChanges.vapi_number_id : (selectedUser.vapi_number_id || '')}
-                               onChange={(e) => updateModalField('vapi_number_id', e.target.value)}
-                               placeholder="vapi_number_..."
-                             />
-                           </div>
-                           <div className="tech-field">
-                             <label>VAPI Assistant ID</label>
-                             <input
-                               type="text"
-                               value={modalChanges.vapi_assistant_id !== undefined ? modalChanges.vapi_assistant_id : (selectedUser.vapi_assistant_id || '')}
-                               onChange={(e) => updateModalField('vapi_assistant_id', e.target.value)}
-                               placeholder="vapi_assistant_..."
-                             />
-                           </div>
-                           <div className="tech-field">
-                             <label>Vector Store ID</label>
-                             <input
-                               type="text"
-                               value={modalChanges.vector_store_id !== undefined ? modalChanges.vector_store_id : (selectedUser.vector_store_id || '')}
-                               onChange={(e) => updateModalField('vector_store_id', e.target.value)}
-                               placeholder="vector_store_..."
-                             />
-                           </div>
-                           <div className="tech-field">
-                             <label>Voice ID</label>
-                             <input
-                               type="text"
-                               value={modalChanges.voice_id !== undefined ? modalChanges.voice_id : (selectedUser.voice_id || '')}
-                               onChange={(e) => updateModalField('voice_id', e.target.value)}
-                               placeholder="voice_..."
-                             />
-                           </div>
-                           <div className="tech-field">
-                             <label>Assistant ID</label>
-                             <input
-                               type="text"
-                               value={modalChanges.assistant_id !== undefined ? modalChanges.assistant_id : (selectedUser.assistant_id || '')}
-                               onChange={(e) => updateModalField('assistant_id', e.target.value)}
-                               placeholder="asst_..."
-                             />
-                           </div>
+                       <div className="modal-content">
+                         <div className="form-group">
+                           <label className="form-label">Webhook URL</label>
+                           <input
+                             type="text"
+                             className="form-input"
+                             value={modalChanges.webhook_url !== undefined ? modalChanges.webhook_url : (selectedUser.webhook_url || '')}
+                             onChange={(e) => updateModalField('webhook_url', e.target.value)}
+                             placeholder="Webhook URL"
+                           />
                          </div>
-                       </div>
-                       <div className="modal-footer">
-                         <div className="modal-buttons">
-                           <button 
-                             className="admin-btn admin-btn-secondary"
-                             onClick={closeModal}
-                             disabled={isSaving}
-                           >
-                             Sulje
-                           </button>
-                           <button 
-                             className="admin-btn"
-                             onClick={saveModalChanges}
-                             disabled={isSaving || Object.keys(modalChanges).length === 0}
-                           >
-                             {isSaving ? 'Tallennetaan...' : 'Tallenna'}
-                           </button>
+                         <div className="form-group">
+                           <label className="form-label">Thread ID</label>
+                           <input
+                             type="text"
+                             className="form-input"
+                             value={modalChanges.thread_id !== undefined ? modalChanges.thread_id : (selectedUser.thread_id || '')}
+                             onChange={(e) => updateModalField('thread_id', e.target.value)}
+                             placeholder="Thread ID"
+                           />
+                         </div>
+                         <div className="form-group">
+                           <label className="form-label">VAPI Number ID</label>
+                           <input
+                             type="text"
+                             className="form-input"
+                             value={modalChanges.vapi_number_id !== undefined ? modalChanges.vapi_number_id : (selectedUser.vapi_number_id || '')}
+                             onChange={(e) => updateModalField('vapi_number_id', e.target.value)}
+                             placeholder="VAPI Number ID"
+                           />
+                         </div>
+                         <div className="form-group">
+                           <label className="form-label">VAPI Assistant ID</label>
+                           <input
+                             type="text"
+                             className="form-input"
+                             value={modalChanges.vapi_assistant_id !== undefined ? modalChanges.vapi_assistant_id : (selectedUser.vapi_assistant_id || '')}
+                             onChange={(e) => updateModalField('vapi_assistant_id', e.target.value)}
+                             placeholder="VAPI Assistant ID"
+                           />
+                         </div>
+                         <div className="form-group">
+                           <label className="form-label">Vector Store ID</label>
+                           <input
+                             type="text"
+                             className="form-input"
+                             value={modalChanges.vector_store_id !== undefined ? modalChanges.vector_store_id : (selectedUser.vector_store_id || '')}
+                             onChange={(e) => updateModalField('vector_store_id', e.target.value)}
+                             placeholder="Vector Store ID"
+                           />
+                         </div>
+                         <div className="form-group">
+                           <label className="form-label">Voice ID</label>
+                           <input
+                             type="text"
+                             className="form-input"
+                             value={modalChanges.voice_id !== undefined ? modalChanges.voice_id : (selectedUser.voice_id || '')}
+                             onChange={(e) => updateModalField('voice_id', e.target.value)}
+                             placeholder="Voice ID"
+                           />
+                         </div>
+                         <div className="form-group">
+                           <label className="form-label">Assistant ID</label>
+                           <input
+                             type="text"
+                             className="form-input"
+                             value={modalChanges.assistant_id !== undefined ? modalChanges.assistant_id : (selectedUser.assistant_id || '')}
+                             onChange={(e) => updateModalField('assistant_id', e.target.value)}
+                             placeholder="Assistant ID"
+                           />
+                         </div>
+                         <div className="modal-actions">
+                           <div className="modal-actions-left">
+                             <button
+                               className="cancel-button"
+                               onClick={closeModal}
+                             >
+                               Peruuta
+                             </button>
+                           </div>
+                           <div className="modal-actions-right">
+                             <button
+                               className="save-button"
+                               onClick={saveModalChanges}
+                               disabled={isSaving || Object.keys(modalChanges).length === 0}
+                             >
+                               {isSaving ? 'Tallennetaan...' : 'Tallenna'}
+                             </button>
+                           </div>
                          </div>
                        </div>
                      </div>
-                   </div>
+                   </div>,
+                   document.body
                  )}
                </div>
              )}

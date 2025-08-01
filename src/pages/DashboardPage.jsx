@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import PageHeader from '../components/PageHeader'
 import { supabase } from '../lib/supabase'
 import styles from './DashboardPage.module.css'
 import { useAuth } from '../contexts/AuthContext'
 import PageMeta from '../components/PageMeta'
+import '../components/ModalComponents.css'
 
 function EditPostModal({ post, onClose, onSave }) {
   const [idea, setIdea] = useState(post.Idea || '')
@@ -968,21 +970,38 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-      {imageModalUrl && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          background: 'rgba(0,0,0,0.7)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 2000
-        }} onClick={() => setImageModalUrl(null)}>
-          <img src={imageModalUrl} alt="media" style={{ maxWidth: '90vw', maxHeight: '80vh', borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.25)' }} />
-        </div>
+      {/* Image Modal */}
+      {imageModalUrl && createPortal(
+        <div 
+          className="modal-overlay modal-overlay--dark"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setImageModalUrl(null)
+            }
+          }}
+        >
+          <div className="modal-container" style={{ 
+            maxWidth: '90vw', 
+            maxHeight: '90vh',
+            background: 'transparent',
+            boxShadow: 'none',
+            border: 'none',
+            padding: 0
+          }}>
+            <img 
+              src={imageModalUrl} 
+              alt="media" 
+              style={{ 
+                maxWidth: '100%', 
+                maxHeight: '100%', 
+                borderRadius: 16, 
+                boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+                objectFit: 'contain'
+              }} 
+            />
+          </div>
+        </div>,
+        document.body
       )}
     </>
   )

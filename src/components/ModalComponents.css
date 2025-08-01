@@ -27,7 +27,7 @@
   --modal-padding: 32px;
   --modal-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 8px 16px -4px rgba(0, 0, 0, 0.1);
   --modal-border: 1px solid rgba(0, 0, 0, 0.1);
-  --modal-z-index: 1000;
+  --modal-z-index: 9999;
   --modal-blur-light: blur(12px);
   --modal-blur-dark: blur(8px);
   --modal-backdrop-blur: blur(16px);
@@ -35,16 +35,32 @@
 
 /* Perustyylit - kaikille modaaleille */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: var(--modal-z-index);
-  padding: 16px;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: var(--modal-z-index) !important;
+  padding: 16px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  animation: modalFadeIn 0.3s ease-out !important;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: var(--modal-blur-light);
+    -webkit-backdrop-filter: var(--modal-blur-light);
+  }
 }
 
 /* Variantit taustalle */
@@ -73,6 +89,22 @@
   flex-direction: column !important;
   box-shadow: var(--modal-shadow) !important;
   border: var(--modal-border) !important;
+  position: relative !important;
+  z-index: calc(var(--modal-z-index) + 1) !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  animation: modalSlideIn 0.3s ease-out !important;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 /* Auth-komponenteille sopiva koko */
@@ -87,17 +119,22 @@
 
 /* Fallback tarkempaa selektoria varten */
 .modal-container {
-  background: var(--modal-background);
-  border-radius: var(--modal-border-radius);
-  padding: var(--modal-padding);
-  max-width: 900px;
-  width: 95%;
-  max-height: 95vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--modal-shadow);
-  border: var(--modal-border);
+  background: var(--modal-background) !important;
+  border-radius: var(--modal-border-radius) !important;
+  padding: var(--modal-padding) !important;
+  max-width: 900px !important;
+  width: 95% !important;
+  max-height: 95vh !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-shadow: var(--modal-shadow) !important;
+  border: var(--modal-border) !important;
+  position: relative !important;
+  z-index: calc(var(--modal-z-index) + 1) !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  animation: modalSlideIn 0.3s ease-out !important;
 }
 
 /* Auth-komponenteille sopiva koko - fallback */

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import AddCallTypeModal from '../components/AddCallTypeModal'
 import EditCallTypeModal from '../components/EditCallTypeModal'
@@ -8,6 +9,7 @@ import Button from '../components/Button'
 import { useAuth } from '../contexts/AuthContext'
 import axios from 'axios'
 import PageMeta from '../components/PageMeta'
+import '../components/ModalComponents.css'
 
 export default function CallPanel() {
   const { user } = useAuth()
@@ -1015,7 +1017,11 @@ export default function CallPanel() {
               <div style={{ fontSize: 13, color: '#6b7280', marginTop: 2 }}>
                 Käyttää Toiminnot-moduulin asetuksia (tyyppi, ääni, skripti)
               </div>
-              {singleCallError && <div className="status-error">{singleCallError}</div>}
+              {singleCallError && (
+                <div className="status-error">
+                  {singleCallError}
+                </div>
+              )}
             </div>
             {/* Toiminnot -kortti */}
             <div className="card">
@@ -1562,7 +1568,7 @@ export default function CallPanel() {
       
       {/* Yksityiskohtainen näkymä modal ja Modaalit - kaikki samassa fragmentissa */}
       <>
-        {showLogDetail && selectedLog && (
+        {showLogDetail && selectedLog && createPortal(
             <div 
               onClick={handleModalBackgroundClick}
               className="modal-overlay modal-overlay--dark"
@@ -1660,33 +1666,34 @@ export default function CallPanel() {
                           whiteSpace: 'pre-wrap'
                         }}>
                           {selectedLog.summary}
-                      </div>
-                    </div>
-                  )}
-                    
-                    {/* Call outcome */}
-                    {selectedLog.call_outcome && (
-                      <div style={{ marginBottom: 24 }}>
-                      <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
-                          Puhelun tulos
-                      </h3>
-                        <div style={{ 
-                        background: '#f8fafc', 
-                        padding: 16, 
-                        borderRadius: 8, 
-                          fontSize: 14,
-                          lineHeight: 1.5
-                      }}>
-                          {selectedLog.call_outcome}
                         </div>
                     </div>
-                  )}
-                    
-
+                    )}
+                    {/* Transkripti */}
+                    {selectedLog.transcript && (
+                    <div style={{ marginBottom: 24 }}>
+                      <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
+                          Transkripti
+                      </h3>
+                        <div style={{ 
+                          background: '#f8fafc', 
+                          padding: 16, 
+                          borderRadius: 8, 
+                          fontSize: 14,
+                          lineHeight: 1.5,
+                          whiteSpace: 'pre-wrap',
+                          maxHeight: 300,
+                          overflowY: 'auto'
+                        }}>
+                          {selectedLog.transcript}
+                        </div>
+                    </div>
+                    )}
                 </div>
               )}
-            </div>
-          </div>
+              </div>
+            </div>,
+            document.body
         )}
         
         <AddCallTypeModal

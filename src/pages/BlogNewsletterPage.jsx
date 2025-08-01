@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import Button from '../components/Button'
 import ReactMarkdown from 'react-markdown'
+import '../components/ModalComponents.css'
 import './BlogNewsletterPage.css'
 
 // Data muunnos funktio Supabase datasta
@@ -376,6 +378,40 @@ export default function BlogNewsletterPage() {
     }
   }
 
+  const handleDeleteContent = async (contentId) => {
+    try {
+      // Haetaan käyttäjän user_id users taulusta
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (userError || !userData?.id) {
+        throw new Error('Käyttäjän ID ei löytynyt')
+      }
+
+      // Poistetaan sisältö Supabase:sta
+      const { error } = await supabase
+        .from('content')
+        .delete()
+        .eq('id', contentId)
+        .eq('user_id', userData.id)
+
+      if (error) {
+        throw error
+      }
+
+      // Päivitetään UI
+      await fetchContents()
+      alert('Sisältö poistettu onnistuneesti!')
+      
+    } catch (error) {
+      console.error('Delete error:', error)
+      alert('Poisto epäonnistui: ' + error.message)
+    }
+  }
+
   // ESC-näppäimellä sulkeutuminen
   useEffect(() => {
     const handleEscKey = (event) => {
@@ -491,224 +527,176 @@ export default function BlogNewsletterPage() {
       )}
 
       {/* Create Modal */}
-      {showCreateModal && (
+      {showCreateModal && createPortal(
         <div 
-          className="modal-overlay"
+          className="modal-overlay modal-overlay--light"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowCreateModal(false)
             }
           }}
         >
-          <div className="modal">
+          <div className="modal-container" style={{ maxWidth: '800px' }}>
             <div className="modal-header">
-              <h2>Luo uusi sisältö</h2>
+              <h2 className="modal-title">Luo uusi sisältö</h2>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="modal-close"
+                className="modal-close-btn"
               >
                 ✕
               </button>
             </div>
-            <form onSubmit={(e) => {
-              e.preventDefault()
-              const formData = new FormData(e.target)
-              handleCreateContent({
-                title: formData.get('title'),
-                type: formData.get('type'),
-                caption: formData.get('caption')
-              })
-            }} className="modal-form">
-              <div className="form-group">
-                <label>Otsikko</label>
-                <input
-                  name="title"
-                  type="text"
-                  required
-                  className="form-input"
-                  placeholder="Syötä sisällön otsikko..."
-                />
-              </div>
-              <div className="form-group">
-                <label>Tyyppi</label>
-                <select
-                  name="type"
-                  required
-                  className="form-select"
-                >
-                  <option value="Blog">📝 Blog</option>
-                  <option value="Newsletter">📧 Newsletter</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Kuvaus</label>
-                <textarea
-                  name="caption"
-                  rows={4}
-                  className="form-textarea"
-                  placeholder="Kirjoita sisällön kuvaus..."
-                />
-              </div>
-              <div className="modal-actions">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => setShowCreateModal(false)}
-                >
-                  Peruuta
-                </Button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                >
-                  Luo sisältö
-                </Button>
-              </div>
-            </form>
+            <div className="modal-content">
+              <form onSubmit={(e) => {
+                e.preventDefault()
+                const formData = new FormData(e.target)
+                handleCreateContent({
+                  title: formData.get('title'),
+                  content: formData.get('content'),
+                  type: formData.get('type')
+                })
+              }}>
+                <div className="form-group">
+                  <label className="form-label">Otsikko</label>
+                  <input
+                    name="title"
+                    type="text"
+                    required
+                    className="form-input"
+                    placeholder="Syötä sisällön otsikko..."
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Tyyppi</label>
+                  <select
+                    name="type"
+                    required
+                    className="form-select"
+                  >
+                    <option value="blog">📝 Blog</option>
+                    <option value="newsletter">📧 Newsletter</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Sisältö</label>
+                  <textarea
+                    name="content"
+                    rows={12}
+                    className="form-textarea"
+                    placeholder="Kirjoita sisältö..."
+                  />
+                </div>
+                <div className="modal-actions">
+                  <div className="modal-actions-left">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setShowCreateModal(false)}
+                    >
+                      Peruuta
+                    </Button>
+                  </div>
+                  <div className="modal-actions-right">
+                    <Button
+                      type="submit"
+                      variant="primary"
+                    >
+                      Luo sisältö
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* View Modal */}
-      {showViewModal && viewingContent && (
+      {showViewModal && viewingContent && createPortal(
         <div 
-          className="modal-overlay"
+          className="modal-overlay modal-overlay--light"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowViewModal(false)
-              setViewingContent(null)
             }
           }}
         >
-          <div className="modal">
+          <div className="modal-container" style={{ maxWidth: '900px', height: '80vh' }}>
             <div className="modal-header">
-              <h2>Näytä sisältö</h2>
+              <h2 className="modal-title">{viewingContent.title}</h2>
               <button
-                onClick={() => {
-                  setShowViewModal(false)
-                  setViewingContent(null)
-                }}
-                className="modal-close"
+                onClick={() => setShowViewModal(false)}
+                className="modal-close-btn"
               >
                 ✕
               </button>
             </div>
-            <div className="modal-form">
-              {/* Thumbnail */}
-              <div className="view-thumbnail">
-                {viewingContent.thumbnail && viewingContent.thumbnail !== '/placeholder.png' && viewingContent.thumbnail !== '/media-placeholder.svg' ? (
-                  <img
-                    src={viewingContent.thumbnail}
-                    alt="thumbnail"
-                    className="view-thumbnail-image"
-                    onError={(e) => {
-                      e.target.src = '/media-placeholder.svg';
-                    }}
-                  />
-                ) : (
-                  <div className="view-thumbnail-placeholder">
-                    <span className="placeholder-icon">📄</span>
-                    <p>Ei kuvaa</p>
+            <div className="modal-content">
+              <div className="content-view">
+                <div className="content-meta">
+                  <span className="content-type">
+                    {viewingContent.type === 'Blog' ? '📝 Blog' : '📧 Newsletter'}
+                  </span>
+                  <span className="content-date">
+                    {viewingContent.createdAt ? new Date(viewingContent.createdAt).toLocaleDateString('fi-FI') : 'Ei päivämäärää'}
+                  </span>
+                </div>
+                <div className="content-body">
+                  {/* Näytä blog_post jos se on olemassa, muuten caption */}
+                  {viewingContent.blog_post ? (
+                    <ReactMarkdown>{viewingContent.blog_post}</ReactMarkdown>
+                  ) : viewingContent.caption ? (
+                    <ReactMarkdown>{viewingContent.caption}</ReactMarkdown>
+                  ) : (
+                    <p style={{ color: '#666', fontStyle: 'italic' }}>Ei sisältöä saatavilla</p>
+                  )}
+                </div>
+                
+                {/* Näytä lisätietoja jos saatavilla */}
+                {viewingContent.idea && viewingContent.idea !== viewingContent.title && (
+                  <div style={{ marginTop: '20px', padding: '16px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+                    <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#666' }}>Alkuperäinen idea:</h4>
+                    <p style={{ margin: '0', fontSize: '14px' }}>{viewingContent.idea}</p>
                   </div>
                 )}
+                
+                {/* Näytä status */}
+                <div style={{ marginTop: '16px', padding: '12px', backgroundColor: '#f1f5f9', borderRadius: '6px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: '600', color: '#475569' }}>
+                    Status: {viewingContent.status}
+                  </span>
+                </div>
               </div>
-
-              {/* Sisällön tiedot */}
-              <div className="view-content-info">
-                {/* 1. Type */}
-                <div className="view-field">
-                  <label>Type</label>
-                  <div className="view-value">
-                    <span className="content-type-badge">
-                      {viewingContent.type === 'Blog' ? '📝 Blog' : '📧 Newsletter'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* 2. Caption */}
-                <div className="view-field">
-                  <label>Caption</label>
-                  <div className="view-value">
-                    {viewingContent.caption ? (
-                      <div className="view-description">{viewingContent.caption}</div>
-                    ) : (
-                      <span className="empty-field">Ei captionia</span>
-                    )}
-                  </div>
-                </div>
-
-                {/* 3. Blog Post */}
-                <div className="view-field">
-                  <label>Blog Post</label>
-                  <div className="view-value">
-                    {viewingContent.blog_post ? (
-                      <div className="view-blog-post">
-                        <ReactMarkdown>{viewingContent.blog_post}</ReactMarkdown>
-                      </div>
-                    ) : (
-                      <span className="empty-field">Ei blog postia</span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Muut tiedot */}
-                <div className="view-field">
-                  <label>Status</label>
-                  <div className="view-value">
-                    <span className={`content-status-badge ${viewingContent.status.toLowerCase().replace(' ', '-')}`}>
-                      {viewingContent.status}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="view-field">
-                  <label>Luotu</label>
-                  <div className="view-value">{viewingContent.createdAt || 'Ei tietoa'}</div>
-                </div>
-
-                {viewingContent.scheduledDate && (
-                  <div className="view-field">
-                    <label>Ajastettu julkaisuun</label>
-                    <div className="view-value">{viewingContent.scheduledDate}</div>
-                  </div>
-                )}
-
-                {viewingContent.publishedAt && (
-                  <div className="view-field">
-                    <label>Julkaistu</label>
-                    <div className="view-value">{viewingContent.publishedAt}</div>
-                  </div>
-                )}
-
-                {viewingContent.hashtags && viewingContent.hashtags.length > 0 && (
-                  <div className="view-field">
-                    <label>Hashtagit</label>
-                    <div className="view-value">
-                      <div className="hashtags-list">
-                        {viewingContent.hashtags.map((tag, index) => (
-                          <span key={index} className="hashtag">#{tag}</span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
               <div className="modal-actions">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => {
-                    setShowViewModal(false)
-                    setViewingContent(null)
-                  }}
-                >
-                  Sulje
-                </Button>
+                <div className="modal-actions-left">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => setShowViewModal(false)}
+                  >
+                    Sulje
+                  </Button>
+                </div>
+                <div className="modal-actions-right">
+                  <Button
+                    type="button"
+                    variant="danger"
+                    onClick={() => {
+                      if (window.confirm('Oletko varma, että haluat poistaa tämän sisällön?')) {
+                        handleDeleteContent(viewingContent.id)
+                        setShowViewModal(false)
+                      }
+                    }}
+                  >
+                    Poista
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

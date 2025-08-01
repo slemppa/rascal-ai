@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import axios from 'axios'
 import './ContentStrategyPage.css'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
+import Button from '../components/Button'
+import '../components/ModalComponents.css'
 
 // Mock-data oikealla rakenteella
 const mockStrategy = [
@@ -601,58 +605,64 @@ export default function ContentStrategyPage() {
         )}
       </div>
 
-      {/* Luo uusi strategia -modaali */}
-      {showCreateModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+      {/* Create Strategy Modal */}
+      {showCreateModal && createPortal(
+        <div className="modal-overlay modal-overlay--light">
+          <div className="modal-container" style={{ maxWidth: '600px' }}>
             <div className="modal-header">
-              <h3>Luo uusi strategia</h3>
-              <button 
-                className="modal-close"
+              <h2 className="modal-title">Luo uusi sisältöstrategia</h2>
+              <button
+                className="modal-close-btn"
                 onClick={() => setShowCreateModal(false)}
               >
-                ×
+                ✕
               </button>
             </div>
-            <div className="modal-body">
-              <div className="form-group">
-                <label>Kuukausi</label>
-                <input
-                  type="text"
-                  value={newStrategy.Month}
-                  onChange={(e) => setNewStrategy({...newStrategy, Month: e.target.value})}
-                  placeholder="esim. Heinäkuu 2024"
-                  className="form-input"
-                />
-              </div>
-              <div className="form-group">
-                <label>Strategia</label>
-                <textarea
-                  value={newStrategy.Strategy}
-                  onChange={(e) => setNewStrategy({...newStrategy, Strategy: e.target.value})}
-                  placeholder="Kirjoita strategia tähän..."
-                  className="form-textarea"
-                  rows={8}
-                />
-              </div>
-            </div>
-            <div className="modal-actions">
-              <button 
-                className="save-button"
-                onClick={handleCreateStrategy}
-                disabled={!newStrategy.Month || !newStrategy.Strategy}
-              >
-                Luo strategia
-              </button>
-              <button 
-                className="cancel-button"
-                onClick={() => setShowCreateModal(false)}
-              >
-                Peruuta
-              </button>
+            <div className="modal-content">
+              <form onSubmit={handleCreateStrategy}>
+                <div className="form-group">
+                  <label className="form-label">Strategian nimi</label>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    className="form-input"
+                    placeholder="Syötä strategian nimi..."
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Kuvaus</label>
+                  <textarea
+                    name="description"
+                    rows={4}
+                    className="form-textarea"
+                    placeholder="Kuvaa strategia..."
+                  />
+                </div>
+                <div className="modal-actions">
+                  <div className="modal-actions-left">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setShowCreateModal(false)}
+                    >
+                      Peruuta
+                    </Button>
+                  </div>
+                  <div className="modal-actions-right">
+                    <Button
+                      type="submit"
+                      variant="primary"
+                    >
+                      Luo strategia
+                    </Button>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )

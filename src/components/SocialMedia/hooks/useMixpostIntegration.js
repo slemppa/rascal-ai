@@ -106,8 +106,14 @@ export const useMixpostIntegration = () => {
               const connectSocialAccount = async (platform) => {
                 return new Promise((resolve, reject) => {
       
-      // Käytä Mixpost OAuth proxy:tä
-      const oauthUrl = `https://mixpost.mak8r.fi/mixpost/accounts/add/${platform}`;
+      // Käytä suoraa OAuth URL:ia platformin mukaan
+      let oauthUrl;
+      if (platform === 'facebook') {
+        oauthUrl = `https://www.facebook.com/v23.0/dialog/oauth?client_id=4061580827451364&redirect_uri=${encodeURIComponent('https://mixpost.mak8r.fi/mixpost/callback/instagram')}&scope=business_management%2Cpages_show_list%2Cread_insights%2Cpages_manage_posts%2Cpages_read_engagement%2Cpages_manage_engagement%2Cinstagram_basic%2Cinstagram_content_publish%2Cinstagram_manage_insights%2Cinstagram_manage_comments&response_type=code&state=${Math.random().toString(36).substring(2, 15)}`;
+      } else {
+        // Käytä Mixpost OAuth proxy:tä muille platformeille
+        oauthUrl = `https://mixpost.mak8r.fi/mixpost/accounts/add/${platform}`;
+      }
       
       const popup = window.open(oauthUrl, 'oauth', 'width=600,height=600,scrollbars=yes,resizable=yes');
       

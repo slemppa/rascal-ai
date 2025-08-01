@@ -97,6 +97,15 @@ export default async function handler(req, res) {
     if (!response.ok) {
       const errorText = await response.text()
       console.error('N8N webhook epäonnistui:', response.status, errorText)
+      
+      // Tarkista onko kyseessä 404 virhe (webhook ei rekisteröity)
+      if (response.status === 404) {
+        return res.status(500).json({ 
+          error: 'Puhelun käynnistys ei onnistu - N8N workflow ei ole aktiivinen',
+          details: 'Webhook "single-call" ei ole rekisteröity N8N:ssä. Tarkista että workflow on aktiivinen.'
+        })
+      }
+      
       return res.status(500).json({ 
         error: 'Puhelun käynnistys epäonnistui',
         details: `HTTP ${response.status}: ${errorText}`

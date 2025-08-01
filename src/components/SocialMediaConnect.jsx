@@ -26,8 +26,7 @@ const SocialMediaConnect = () => {
 
   const platforms = [
   { id: 'instagram', name: 'Instagram', icon: '📷' },
-  { id: 'facebook', name: 'Facebook', icon: '📘' },
-  { id: 'linkedin', name: 'LinkedIn', icon: '💼' }
+  { id: 'facebook', name: 'Facebook', icon: '📘' }
 ];
 
   const handleConnectAccount = async (platform) => {
@@ -135,8 +134,7 @@ const SocialMediaConnect = () => {
                                 {/* Platform-ikoni profiilikuvan alaosassa */}
                 <div className="profile-platform-icon">
                   {account.provider === 'instagram' ? '📷' :
-                   account.provider === 'facebook' ? '📘' :
-                   account.provider === 'linkedin' ? '💼' : '?'}
+                   account.provider === 'facebook' ? '📘' : '?'}
                 </div>
               </div>
 

@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import Button from '../components/Button'
+import '../components/ModalComponents.css'
 import './ManagePostsPage.css'
 
 // Dummy data
@@ -201,44 +203,16 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
             </p>
           <div className="post-footer">
             <span className="post-date">
-              {post.source === 'mixpost' ? (
-                post.published_at ? `📅 ${new Date(post.published_at).toLocaleDateString('fi-FI')}` : 
-                post.created_at ? `📅 ${new Date(post.created_at).toLocaleDateString('fi-FI')}` : 
-                '📅 Julkaistu'
-              ) : (
-                post.scheduledDate ? `📅 ${post.scheduledDate}` : post.createdAt || post.publishedAt
-              )}
+              {post.scheduledDate ? `📅 ${post.scheduledDate}` : post.createdAt || post.publishedAt}
             </span>
             <div className="post-actions">
-              {/* Mixpostin postauksille näytetään eri toiminnot */}
-              {post.source === 'mixpost' ? (
-                <>
-                  {post.external_urls && post.external_urls.length > 0 && (
-                    <Button 
-                      variant="secondary" 
-                      onClick={() => window.open(post.external_urls[0], '_blank')}
-                      style={{ fontSize: '11px', padding: '6px 10px' }}
-                    >
-                      🔗 Katso
-                    </Button>
-                  )}
-                  <Button 
-                    variant="secondary" 
-                    style={{ fontSize: '11px', padding: '6px 10px', opacity: 0.5, cursor: 'not-allowed' }}
-                    disabled
-                  >
-                    ✏️ Muokkaa
-                  </Button>
-                </>
-              ) : (
-                <Button 
-                  variant="secondary" 
-                  onClick={() => onEdit(post)}
-                  style={{ fontSize: '11px', padding: '6px 10px' }}
-                >
-                  ✏️ Muokkaa
-                </Button>
-              )}
+              <Button 
+                variant="secondary" 
+                onClick={() => onEdit(post)}
+                style={{ fontSize: '11px', padding: '6px 10px' }}
+              >
+                ✏️ Muokkaa
+              </Button>
               
               {/* Siirtymispainikkeet */}
               {post.status === 'Kesken' && post.source === 'supabase' && (
@@ -270,16 +244,13 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
                 </Button>
               )}
               
-              {/* Mixpostin postauksille ei näytetä poisto-nappia */}
-              {post.source !== 'mixpost' && (
-                <Button 
-                  variant="danger" 
-                  onClick={() => onDelete(post)}
-                  style={{ fontSize: '11px', padding: '6px 10px' }}
-                >
-                  🗑️ Poista
-                </Button>
-              )}
+              <Button 
+                variant="danger" 
+                onClick={() => onDelete(post)}
+                style={{ fontSize: '11px', padding: '6px 10px' }}
+              >
+                🗑️ Poista
+              </Button>
             </div>
           </div>
         </div>
@@ -293,23 +264,22 @@ export default function ManagePostsPage() {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [reelsPosts, setReelsPosts] = useState([])
-  const [reelsLoading, setReelsLoading] = useState(false)
-  const [reelsError, setReelsError] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState('')
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
+  const [typeFilter, setTypeFilter] = useState('')
+  const [dataSourceToggle, setDataSourceToggle] = useState('all') // 'all', 'supabase', 'reels'
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
-  const [showPublishModal, setShowPublishModal] = useState(false)
   const [editingPost, setEditingPost] = useState(null)
+  const [showPublishModal, setShowPublishModal] = useState(false)
   const [publishingPost, setPublishingPost] = useState(null)
   const [socialAccounts, setSocialAccounts] = useState([])
   const [selectedAccounts, setSelectedAccounts] = useState([])
   const [loadingAccounts, setLoadingAccounts] = useState(false)
-  const [mixpostPosts, setMixpostPosts] = useState([])
-  const [mixpostLoading, setMixpostLoading] = useState(false)
-  const [mixpostError, setMixpostError] = useState(null)
+  const [reelsPosts, setReelsPosts] = useState([])
+  const [reelsLoading, setReelsLoading] = useState(false)
+  const [reelsError, setReelsError] = useState(null)
   const hasInitialized = useRef(false)
 
   // Data haku Supabasesta
@@ -389,61 +359,12 @@ export default function ManagePostsPage() {
   useEffect(() => {
     if (!user || hasInitialized.current) return
     
+    console.log('useEffect triggered, calling all fetch functions')
     hasInitialized.current = true
     fetchPosts()
     fetchReelsPosts() // Haetaan reels data automaattisesti
     fetchSocialAccounts() // Haetaan somekanavat
-    fetchMixpostPosts() // Haetaan Mixpostin julkaistut postaukset
   }, [user])
-
-  // Hae Mixpostin julkaistut postaukset
-  const fetchMixpostPosts = async () => {
-    if (!user) return
-    
-    try {
-      setMixpostLoading(true)
-      setMixpostError(null)
-      
-      // Haetaan käyttäjän user_id users taulusta
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-      
-      if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
-      }
-      
-      const response = await fetch(`/api/get-mixpost-posts?user_id=${user.id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        }
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Mixpost postausten haku epäonnistui')
-      }
-
-      const result = await response.json()
-      
-      if (result.success) {
-        setMixpostPosts(result.data || [])
-      } else {
-        throw new Error(result.error || 'Mixpost postausten haku epäonnistui')
-      }
-      
-    } catch (error) {
-      console.error('Error fetching Mixpost posts:', error)
-      setMixpostError(error.message)
-      setMixpostPosts([])
-    } finally {
-      setMixpostLoading(false)
-    }
-  }
 
   // Hae somekanavat Supabasesta
   const fetchSocialAccounts = async () => {
@@ -454,18 +375,7 @@ export default function ManagePostsPage() {
     try {
       setLoadingAccounts(true)
       
-      // Haetaan käyttäjän user_id users taulusta
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-      
-      if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
-      }
-      
-      // Haetaan yhdistetyt sometilit - käytetään auth_user_id:tä
+      // Haetaan yhdistetyt sometilit - käytetään auth_user_id:tä suoraan
       const { data: accountsData, error: accountsError } = await supabase
         .from('user_social_accounts')
         .select('mixpost_account_uuid, provider, account_name, profile_image_url')
@@ -480,6 +390,7 @@ export default function ManagePostsPage() {
       }
 
       console.log('Found social accounts:', accountsData)
+      console.log('Social accounts count:', accountsData?.length || 0)
       setSocialAccounts(accountsData || [])
       
     } catch (error) {
@@ -646,7 +557,6 @@ export default function ManagePostsPage() {
   }
 
   const handleEditPost = async (post) => {
-    
     // Jos kyseessä on Carousel-tyyppi, haetaan segments data
     if (post.type === 'Carousel' && post.source === 'supabase') {
       try {
@@ -659,7 +569,6 @@ export default function ManagePostsPage() {
         if (segmentsError) {
           console.error('Virhe segments datan haussa:', segmentsError)
         } else {
-          console.log('Segments data haettu:', segmentsData)
           // Lisätään segments data post-objektiin
           const postWithSegments = {
             ...post,
@@ -840,59 +749,15 @@ export default function ManagePostsPage() {
           throw new Error('Käyttäjän ID ei löytynyt')
         }
 
-        // Haetaan Mixpost konfiguraatio
-        const { data: mixpostConfig, error: mixpostError } = await supabase
-          .from('user_mixpost_config')
-          .select('mixpost_workspace_uuid, mixpost_api_token')
+        // Poistetaan postaus Supabase:sta
+        const { error: deleteError } = await supabase
+          .from('content')
+          .delete()
+          .eq('id', post.id)
           .eq('user_id', userData.id)
-          .single()
 
-        if (mixpostError || !mixpostConfig) {
-          throw new Error('Mixpost konfiguraatio ei löytynyt')
-        }
-
-        // Haetaan yhdistetyt sometilit
-        const { data: socialAccounts, error: socialError } = await supabase
-          .from('user_social_accounts')
-          .select('mixpost_account_uuid, provider, account_name')
-          .eq('user_id', userData.id)
-          .eq('is_authorized', true)
-
-        if (socialError) {
-          throw new Error('Sometilien haku epäonnistui')
-        }
-
-        if (!socialAccounts || socialAccounts.length === 0) {
-          throw new Error('Ei yhdistettyjä sometilejä')
-        }
-
-        // Käytetään ensimmäistä yhdistettyä tiliä
-        const accountId = socialAccounts[0].mixpost_account_uuid
-
-        // Lähetetään delete-kutsu N8N:iin
-        const deleteData = {
-          post_id: post.id,
-          user_id: userData.id,
-          auth_user_id: user.id,
-          content: post.caption || post.title,
-          media_urls: post.mediaUrls || [],
-          action: 'delete',
-          workspace_uuid: mixpostConfig.mixpost_workspace_uuid,
-          account_id: accountId
-        }
-
-        const response = await fetch('/api/post-actions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(deleteData)
-        })
-
-        const result = await response.json()
-
-        if (!response.ok) {
-          throw new Error(result.error || 'Poisto epäonnistui')
+        if (deleteError) {
+          throw new Error('Poisto epäonnistui: ' + deleteError.message)
         }
 
         // Päivitetään UI
@@ -901,7 +766,7 @@ export default function ManagePostsPage() {
           await fetchReelsPosts()
         }
 
-        alert(result.message || 'Some-sisältö poistettu onnistuneesti!')
+        alert('Some-sisältö poistettu onnistuneesti!')
         
       } catch (error) {
         console.error('Delete error:', error)
@@ -967,6 +832,9 @@ export default function ManagePostsPage() {
     setPublishingPost(post)
     setSelectedAccounts([]) // Tyhjennä aiemmat valinnat
     setShowPublishModal(true)
+    
+    // Haetaan somekanavat kun modaali avataan
+    await fetchSocialAccounts()
   }
 
   const handleConfirmPublish = async () => {
@@ -979,7 +847,6 @@ export default function ManagePostsPage() {
       // Haetaan media-data suoraan Supabase:sta
       let mediaUrls = []
       let segments = []
-      let mixpostConfig = null
       
       if (publishingPost.source === 'supabase') {
         // Haetaan käyttäjän user_id users taulusta
@@ -991,18 +858,6 @@ export default function ManagePostsPage() {
 
         if (userError || !userData?.id) {
           throw new Error('Käyttäjän ID ei löytynyt')
-        }
-
-        // Haetaan Mixpost config data
-        const { data: mixpostConfig, error: mixpostError } = await supabase
-          .from('user_mixpost_config')
-          .select('mixpost_api_token, mixpost_workspace_uuid')
-          .eq('user_id', user.id)
-          .eq('is_active', true)
-          .single()
-
-        if (mixpostError) {
-          console.error('Error fetching Mixpost config:', mixpostError)
         }
 
         // Haetaan content data
@@ -1052,12 +907,6 @@ export default function ManagePostsPage() {
         post_type: publishingPost.type === 'Reels' ? 'reel' : publishingPost.type === 'Carousel' ? 'carousel' : 'post',
         action: 'publish',
         selected_accounts: selectedAccounts // Lisätään valitut somekanavat
-      }
-      
-      // Lisää Mixpost config data jos saatavilla
-      if (mixpostConfig) {
-        publishData.mixpost_api_token = mixpostConfig.mixpost_api_token
-        publishData.mixpost_workspace_uuid = mixpostConfig.mixpost_workspace_uuid
       }
       
       // Lisää segments-data Carousel-tyyppisillä postauksilla
@@ -1237,7 +1086,7 @@ export default function ManagePostsPage() {
       </div>
 
       {/* Loading State */}
-      {(loading || mixpostLoading) && (
+      {(loading || reelsLoading) && (
         <div className="skeleton-loading">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="skeleton-card">
@@ -1252,9 +1101,9 @@ export default function ManagePostsPage() {
       )}
 
       {/* Error State */}
-      {(currentError || mixpostError) && (
+      {(currentError || reelsError) && (
         <div className="error-state">
-          <p>❌ {currentError || mixpostError}</p>
+          <p>❌ {currentError || reelsError}</p>
           <Button
             variant="secondary"
             onClick={() => {
@@ -1326,30 +1175,24 @@ export default function ManagePostsPage() {
           {/* Julkaistu-sarakkeessa kaikkien 4 sarakkeen levyinen */}
           <div className="kanban-bottom-row">
             {(() => {
-              // Yhdistetään Supabase ja Mixpost julkaistut postaukset
+              // Haetaan vain Supabase julkaistut postaukset
               const supabasePublishedPosts = filteredPosts.filter(post => post.status === publishedColumn.status && post.source === 'supabase')
-              const mixpostPublishedPosts = mixpostPosts.map(post => ({
-                ...post,
-                source: 'mixpost'
-              }))
-              
-              const allPublishedPosts = [...supabasePublishedPosts, ...mixpostPublishedPosts]
               
               return (
                 <div className="kanban-column kanban-column-full-width">
                   <h3 className="column-title">{publishedColumn.title}</h3>
                   <div className="column-content">
-                    {allPublishedPosts.map(post => {
+                    {supabasePublishedPosts.map(post => {
                       const safePost = {
-                        id: post.id || post.uuid || 'unknown',
+                        id: post.id || 'unknown',
                         title: post.title || 'Nimetön julkaisu',
                         caption: post.caption || 'Ei kuvausta',
                         type: post.type || 'Photo',
                         source: post.source || 'supabase',
                         thumbnail: post.thumbnail || '/media-placeholder.svg',
                         status: post.status || 'Julkaistu',
-                        published_at: post.published_at,
-                        external_urls: post.external_urls || []
+                        published_at: post.publishedAt,
+                        external_urls: []
                       }
                       
                       return (
@@ -1373,89 +1216,96 @@ export default function ManagePostsPage() {
       )}
 
       {/* Create Modal */}
-      {showCreateModal && (
+      {showCreateModal && createPortal(
         <div 
-          className="modal-overlay"
+          className="modal-overlay modal-overlay--light"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowCreateModal(false)
             }
           }}
         >
-          <div className="modal">
+          <div className="modal-container" style={{ maxWidth: '500px' }}>
             <div className="modal-header">
-              <h2>Luo uusi some-sisältö</h2>
+              <h2 className="modal-title">Luo uusi some-sisältö</h2>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="modal-close"
+                className="modal-close-btn"
               >
                 ✕
               </button>
             </div>
-            <form onSubmit={(e) => {
-              e.preventDefault()
-              const formData = new FormData(e.target)
-              handleCreatePost({
-                title: formData.get('title'),
-                type: formData.get('type'),
-                caption: formData.get('caption')
-              })
-            }} className="modal-form">
-              <div className="form-group">
-                <label>Otsikko</label>
-                <input
-                  name="title"
-                  type="text"
-                  required
-                  className="form-input"
-                  placeholder="Syötä some-sisällön otsikko..."
-                />
-              </div>
-              <div className="form-group">
-                <label>Tyyppi</label>
-                <select
-                  name="type"
-                  required
-                  className="form-select"
-                >
-                  <option value="Photo">📸 Photo</option>
-                  <option value="Carousel">🎠 Carousel</option>
-                  <option value="Reels">🎬 Reels</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Kuvaus</label>
-            <textarea
-                  name="caption"
-                  rows={4}
-                  className="form-textarea"
-              placeholder="Kirjoita some-sisällön kuvaus..."
-            />
-              </div>
-              <div className="modal-actions">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => setShowCreateModal(false)}
-                >
-                  Peruuta
-                </Button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                >
-                  Luo some-sisältö
-                </Button>
-              </div>
-        </form>
-      </div>
-    </div>
-        )}
+            <div className="modal-content">
+              <form onSubmit={(e) => {
+                e.preventDefault()
+                const formData = new FormData(e.target)
+                handleCreatePost({
+                  title: formData.get('title'),
+                  type: formData.get('type'),
+                  caption: formData.get('caption')
+                })
+              }}>
+                <div className="form-group">
+                  <label className="form-label">Otsikko</label>
+                  <input
+                    name="title"
+                    type="text"
+                    required
+                    className="form-input"
+                    placeholder="Syötä some-sisällön otsikko..."
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Tyyppi</label>
+                  <select
+                    name="type"
+                    required
+                    className="form-select"
+                  >
+                    <option value="Photo">📸 Photo</option>
+                    <option value="Carousel">🎠 Carousel</option>
+                    <option value="Reels">🎬 Reels</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Kuvaus</label>
+                  <textarea
+                    name="caption"
+                    rows={4}
+                    className="form-textarea"
+                    placeholder="Kirjoita some-sisällön kuvaus..."
+                  />
+                </div>
+                <div className="modal-actions">
+                  <div className="modal-actions-left">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setShowCreateModal(false)}
+                    >
+                      Peruuta
+                    </Button>
+                  </div>
+                  <div className="modal-actions-right">
+                    <Button
+                      type="submit"
+                      variant="primary"
+                    >
+                      Luo some-sisältö
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
-              {/* Edit Modal */}
-        {showEditModal && editingPost && (
+      {/* Edit Modal */}
+        {showEditModal && editingPost && createPortal(
         <div 
-          className="modal-overlay"
+          className="modal-overlay modal-overlay--light"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowEditModal(false)
@@ -1463,35 +1313,30 @@ export default function ManagePostsPage() {
             }
           }}
         >
-          <div className="modal">
-                         <div className="modal-header">
-               <h2>
-                 {editingPost.status === 'Kesken' && editingPost.type === 'Carousel' ? 'Kuvaus-tarkistus' : 
-                  editingPost.status === 'Kesken' ? 'Voiceover-tarkistus' : 'Muokkaa some-sisältöä'}
-               </h2>
-               {/* Debug: Näytä status */}
-               <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                 Status: {editingPost.status} | Source: {editingPost.source}
-               </div>
-              <Button
-                variant="secondary"
+          <div className="modal-container" style={{ maxWidth: '900px', height: '80vh' }}>
+            <div className="modal-header">
+              <h2 className="modal-title">
+                {editingPost.status === 'Kesken' && editingPost.type === 'Carousel' ? 'Kuvaus-tarkistus' : 
+                 editingPost.status === 'Kesken' ? 'Voiceover-tarkistus' : 'Muokkaa some-sisältöä'}
+              </h2>
+              {/* Debug: Näytä status */}
+              <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                Status: {editingPost.status} | Source: {editingPost.source}
+              </div>
+              <button
                 onClick={() => {
                   setShowEditModal(false)
                   setEditingPost(null)
                 }}
-                style={{ 
-                  padding: '8px', 
-                  minWidth: '32px', 
-                  minHeight: '32px',
-                  fontSize: '16px'
-                }}
+                className="modal-close-btn"
               >
                 ✕
-              </Button>
+              </button>
             </div>
-            <form onSubmit={(e) => {
-              e.preventDefault()
-              const formData = new FormData(e.target)
+            <div className="modal-content">
+              <form onSubmit={(e) => {
+                e.preventDefault()
+                const formData = new FormData(e.target)
                              handleSaveEdit({
                  title: formData.get('title'),
                  caption: formData.get('caption'),
@@ -1501,7 +1346,7 @@ export default function ManagePostsPage() {
                  type: formData.get('type'),
                  status: formData.get('status')
                })
-            }} className="modal-form">
+            }}>
               
               {/* Video Player / Thumbnail */}
               <div className="video-player">
@@ -1664,7 +1509,7 @@ export default function ManagePostsPage() {
                  {/* "Kesken" sarakkeessa: Voiceover-muokkaus - vain Avatar-sarakkeessa (reels) */}
                  {editingPost.status === 'Kesken' && (editingPost.source === 'reels' || editingPost.type === 'Reels') && (
                    <div className="form-group">
-                     <label>{editingPost.type === 'Carousel' ? 'Kuvaus' : 'Voiceover'}</label>
+                     <label className="form-label">{editingPost.type === 'Carousel' ? 'Kuvaus' : 'Voiceover'}</label>
                      <textarea
                        name="voiceover"
                        rows={8}
@@ -1688,7 +1533,7 @@ export default function ManagePostsPage() {
                  {/* "Kesken" sarakkeessa: Perusmuokkaus - Supabase-postauksille */}
                  {editingPost.status === 'Kesken' && editingPost.source === 'supabase' && (
                    <div className="form-group">
-                     <label>Kuvaus</label>
+                     <label className="form-label">Kuvaus</label>
                      <textarea
                        name="caption"
                        rows={6}
@@ -1703,7 +1548,7 @@ export default function ManagePostsPage() {
                  {editingPost.status === 'Tarkistuksessa' && (
                    <>
                      <div className="form-group">
-                       <label>Kuvaus</label>
+                       <label className="form-label">Kuvaus</label>
                        <textarea
                          name="caption"
                          rows={6}
@@ -1719,7 +1564,7 @@ export default function ManagePostsPage() {
                      {/* Voiceover näkyy vain jos kyseessä on Reels */}
                      {(editingPost.source === 'reels' || editingPost.type === 'Reels') && (
                        <div className="form-group">
-                         <label>Voiceover (vain luku)</label>
+                         <label className="form-label">Voiceover (vain luku)</label>
                          <textarea
                            name="voiceover"
                            rows={4}
@@ -1737,7 +1582,7 @@ export default function ManagePostsPage() {
                  {/* Muissa sarakkeissa: Perusmuokkaus */}
                  {editingPost.status !== 'Kesken' && editingPost.status !== 'Tarkistuksessa' && (
                    <div className="form-group">
-                     <label>Kuvaus</label>
+                     <label className="form-label">Kuvaus</label>
                      <textarea
                        name="caption"
                        rows={4}
@@ -1749,7 +1594,7 @@ export default function ManagePostsPage() {
                  )}
 
                  <div className="form-group">
-                   <label>Julkaisupäivä</label>
+                   <label className="form-label">Julkaisupäivä</label>
                    <input
                      name="publishDate"
                      type="datetime-local"
@@ -1760,81 +1605,87 @@ export default function ManagePostsPage() {
                  </div>
                </div>
               <div className="modal-actions">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => {
-                    setShowEditModal(false)
-                    setEditingPost(null)
-                  }}
-                >
-                  Peruuta
-                </Button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                >
-                  Tallenna
-                </Button>
-                {/* Julkaisu-nappi vain jos status on "Valmiina julkaisuun" (Tarkistuksessa) tai "Aikataulutettu" */}
-                {(editingPost.status === 'Tarkistuksessa' || editingPost.status === 'Aikataulutettu') && (
+                <div className="modal-actions-left">
                   <Button
                     type="button"
-                    variant="primary"
+                    variant="secondary"
                     onClick={() => {
-                      // Päivitä editingPost modaalissa muokatuilla tiedoilla
-                      const form = document.querySelector('.modal-form')
-                      const formData = new FormData(form)
-                      
-                      let updatedPost = { ...editingPost }
-                      
-                      // Päivitä caption jos se on muokattu
-                      if (formData.get('caption')) {
-                        updatedPost.caption = formData.get('caption')
-                      }
-                      
-                      // Päivitä scheduledDate jos publishDate on muokattu
-                      const publishDate = formData.get('publishDate')
-                      if (publishDate && publishDate.trim() !== '') {
-                        const dateTime = new Date(publishDate)
-                        updatedPost.scheduledDate = dateTime.toISOString().split('T')[0]
-                        // Lisää myös alkuperäinen publishDate ajan käsittelyä varten
-                        updatedPost.publishDate = publishDate
-                      } else {
-                        updatedPost.scheduledDate = null
-                        updatedPost.publishDate = null
-                      }
-                      
-                      handlePublishPost(updatedPost)
-                    }}
-                    style={{ backgroundColor: '#22c55e' }}
-                  >
-                    📤 Julkaise
-                  </Button>
-                )}
-                <Button
-                  type="button"
-                  variant="danger"
-                  onClick={() => {
-                    if (window.confirm('Oletko varma, että haluat poistaa tämän some-sisällön?')) {
-                      handleDeletePost(editingPost)
                       setShowEditModal(false)
                       setEditingPost(null)
-                    }
-                  }}
-                >
-                  Poista
-                </Button>
+                    }}
+                  >
+                    Peruuta
+                  </Button>
+                </div>
+                <div className="modal-actions-right">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                  >
+                    Tallenna
+                  </Button>
+                  {/* Julkaisu-nappi vain jos status on "Valmiina julkaisuun" (Tarkistuksessa) tai "Aikataulutettu" */}
+                  {(editingPost.status === 'Tarkistuksessa' || editingPost.status === 'Aikataulutettu') && (
+                    <Button
+                      type="button"
+                      variant="primary"
+                      onClick={() => {
+                        // Päivitä editingPost modaalissa muokatuilla tiedoilla
+                        const form = document.querySelector('.modal-content form')
+                        const formData = new FormData(form)
+                        
+                        let updatedPost = { ...editingPost }
+                        
+                        // Päivitä caption jos se on muokattu
+                        if (formData.get('caption')) {
+                          updatedPost.caption = formData.get('caption')
+                        }
+                        
+                        // Päivitä scheduledDate jos publishDate on muokattu
+                        const publishDate = formData.get('publishDate')
+                        if (publishDate && publishDate.trim() !== '') {
+                          const dateTime = new Date(publishDate)
+                          updatedPost.scheduledDate = dateTime.toISOString().split('T')[0]
+                          // Lisää myös alkuperäinen publishDate ajan käsittelyä varten
+                          updatedPost.publishDate = publishDate
+                        } else {
+                          updatedPost.scheduledDate = null
+                          updatedPost.publishDate = null
+                        }
+                        
+                        handlePublishPost(updatedPost)
+                      }}
+                      style={{ backgroundColor: '#22c55e' }}
+                    >
+                      📤 Julkaise
+                    </Button>
+                  )}
+                  <Button
+                    type="button"
+                    variant="danger"
+                    onClick={() => {
+                      if (window.confirm('Oletko varma, että haluat poistaa tämän some-sisällön?')) {
+                        handleDeletePost(editingPost)
+                        setShowEditModal(false)
+                        setEditingPost(null)
+                      }
+                    }}
+                  >
+                    Poista
+                  </Button>
+                </div>
               </div>
             </form>
           </div>
           </div>
+        </div>,
+        document.body
         )}
 
       {/* Publish Modal - Somekanavien valinta */}
-      {showPublishModal && publishingPost && (
+      {showPublishModal && publishingPost && createPortal(
         <div 
-          className="modal-overlay"
+          className="modal-overlay modal-overlay--light"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowPublishModal(false)
@@ -1843,23 +1694,23 @@ export default function ManagePostsPage() {
             }
           }}
         >
-          <div className="modal someselect-modal">
+          <div className="modal-container" style={{ maxWidth: '600px' }}>
             <div className="modal-header">
-              <h2>Valitse somekanavat julkaisua varten</h2>
+              <h2 className="modal-title">Valitse somekanavat julkaisua varten</h2>
               <button
                 onClick={() => {
                   setShowPublishModal(false)
                   setPublishingPost(null)
                   setSelectedAccounts([])
                 }}
-                className="modal-close"
+                className="modal-close-btn"
               >
                 ✕
               </button>
             </div>
-            <div className="modal-form">
+            <div className="modal-content">
               <div className="form-group">
-                <label>Julkaistava sisältö</label>
+                <label className="form-label">Julkaistava sisältö</label>
                 <div style={{ 
                   padding: '12px', 
                   backgroundColor: '#f8f9fa', 
@@ -1886,7 +1737,7 @@ export default function ManagePostsPage() {
                 </div>
               </div>
               <div className="form-group">
-                <label>Valitse somekanavat</label>
+                <label className="form-label">Valitse somekanavat</label>
                 {loadingAccounts ? (
                   <div style={{ textAlign: 'center', padding: '20px' }}>
                     <div className="loading-spinner"></div>
@@ -1915,7 +1766,7 @@ export default function ManagePostsPage() {
                     {socialAccounts.map((account) => (
                       <div
                         key={account.mixpost_account_uuid}
-                        className={`someselect-row${selectedAccounts.includes(account.mixpost_account_uuid) ? ' selected' : ''}`}
+                        className={`social-account-row${selectedAccounts.includes(account.mixpost_account_uuid) ? ' selected' : ''}`}
                         onClick={() => {
                           const isSelected = selectedAccounts.includes(account.mixpost_account_uuid)
                           if (isSelected) {
@@ -1924,18 +1775,49 @@ export default function ManagePostsPage() {
                             setSelectedAccounts([...selectedAccounts, account.mixpost_account_uuid])
                           }
                         }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          padding: '16px',
+                          borderRadius: '12px',
+                          border: '2px solid #e0e0e0',
+                          marginBottom: '12px',
+                          background: selectedAccounts.includes(account.mixpost_account_uuid) ? '#f0f8ff' : '#fff',
+                          borderColor: selectedAccounts.includes(account.mixpost_account_uuid) ? '#1976d2' : '#e0e0e0',
+                          boxShadow: selectedAccounts.includes(account.mixpost_account_uuid) ? '0 4px 8px rgba(25, 118, 210, 0.15)' : '0 2px 4px rgba(0, 0, 0, 0.05)',
+                          transform: selectedAccounts.includes(account.mixpost_account_uuid) ? 'translateY(-1px)' : 'none',
+                          transition: 'all 0.2s ease',
+                          cursor: 'pointer',
+                          minHeight: '64px'
+                        }}
                       >
                         <input
                           type="checkbox"
                           checked={selectedAccounts.includes(account.mixpost_account_uuid)}
-                          className="someselect-checkbox"
+                          style={{
+                            marginRight: '16px',
+                            accentColor: '#1976d2',
+                            width: '20px',
+                            height: '20px',
+                            flexShrink: 0,
+                            cursor: 'pointer'
+                          }}
                           onChange={() => {}} // Handled by onClick
                           tabIndex={-1}
                         />
                         {account.profile_image_url ? (
                           <img
                             src={account.profile_image_url}
-                            className="someselect-avatar"
+                            style={{
+                              width: '48px',
+                              height: '48px',
+                              borderRadius: '50%',
+                              marginRight: '16px',
+                              objectFit: 'cover',
+                              border: '2px solid #e0e0e0',
+                              transition: 'border-color 0.2s ease',
+                              flexShrink: 0
+                            }}
                             alt="Profiilikuva"
                             onError={e => {
                               e.target.style.display = 'none'
@@ -1943,15 +1825,44 @@ export default function ManagePostsPage() {
                             }}
                           />
                         ) : (
-                          <div className="someselect-avatar">
+                          <div style={{
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '50%',
+                            marginRight: '16px',
+                            background: '#f5f5f5',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '20px',
+                            border: '2px solid #e0e0e0',
+                            flexShrink: 0
+                          }}>
                             {account.provider === 'instagram' ? '📷' :
                              account.provider === 'facebook' ? '📘' :
                              account.provider === 'linkedin' ? '💼' : '👤'}
                           </div>
                         )}
-                        <div className="someselect-info">
-                          <div className="someselect-name">{account.account_name}</div>
-                          <div className="someselect-type">
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{
+                            fontWeight: 600,
+                            fontSize: '16px',
+                            marginBottom: '4px',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            color: '#333'
+                          }}>
+                            {account.account_name}
+                          </div>
+                          <div style={{
+                            fontSize: '14px',
+                            color: '#666',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            fontWeight: 500
+                          }}>
                             {account.provider === 'instagram' && <>📷 Instagram</>}
                             {account.provider === 'facebook' && <>📘 Facebook</>}
                             {account.provider === 'linkedin' && <>💼 LinkedIn</>}
@@ -1963,30 +1874,35 @@ export default function ManagePostsPage() {
                   </div>
                 )}
               </div>
-              <div className="someselect-actions">
-                <button
-                  type="button"
-                  className="someselect-btn cancel"
-                  onClick={() => {
-                    setShowPublishModal(false)
-                    setPublishingPost(null)
-                    setSelectedAccounts([])
-                  }}
-                >
-                  Peruuta
-                </button>
-                <button
-                  type="button"
-                  className="someselect-btn publish"
-                  onClick={handleConfirmPublish}
-                  disabled={selectedAccounts.length === 0 || loadingAccounts}
-                >
-                  📤 Julkaise valituille kanaville
-                </button>
+              <div className="modal-actions">
+                <div className="modal-actions-left">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => {
+                      setShowPublishModal(false)
+                      setPublishingPost(null)
+                      setSelectedAccounts([])
+                    }}
+                  >
+                    Peruuta
+                  </Button>
+                </div>
+                <div className="modal-actions-right">
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={handleConfirmPublish}
+                    disabled={selectedAccounts.length === 0 || loadingAccounts}
+                  >
+                    📤 Julkaise valituille kanaville
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

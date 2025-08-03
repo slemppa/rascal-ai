@@ -68,6 +68,7 @@ export default function SignIn({ onClose, onForgotClick, onMagicLinkClick }) {
             required
             className="auth-input"
             placeholder="sähköposti@esimerkki.fi"
+            autoComplete="username"
           />
         </div>
         <div className="auth-form-group">

@@ -22,7 +22,7 @@ function EditPostModal({ post, onClose, onSave }) {
 
   // Autoresize textarea
   React.useEffect(() => {
-    if (textareaRef.current) {
+    if (textareaRef.current && textareaRef.current.style) {
       textareaRef.current.style.height = 'auto'
       textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
     }

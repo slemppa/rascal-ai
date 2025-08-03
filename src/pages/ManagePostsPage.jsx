@@ -154,8 +154,12 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
                 e.target.style.opacity = '1'
               }}
               onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'flex';
+                if (e.target && e.target.style) {
+                  e.target.style.display = 'none';
+                }
+                if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
+                  e.target.nextSibling.style.display = 'flex';
+                }
               }}
               style={{ 
                 width: '100%', 
@@ -1362,9 +1366,11 @@ export default function ManagePostsPage() {
                            <div className="slideshow-container" onClick={(e) => e.stopPropagation()}>
                             {/* Vasen nuoli */}
                             <button 
+                              type="button"
                               className="slideshow-arrow slideshow-arrow-left"
                               onClick={(e) => {
                                 e.stopPropagation();
+                                e.preventDefault();
                                 const currentSlide = editingPost.currentSlide || 0;
                                 const newSlide = currentSlide > 0 ? currentSlide - 1 : slidesWithMedia.length - 1;
                                 setEditingPost(prev => ({ ...prev, currentSlide: newSlide }));
@@ -1375,9 +1381,11 @@ export default function ManagePostsPage() {
                             
                             {/* Oikea nuoli */}
                             <button 
+                              type="button"
                               className="slideshow-arrow slideshow-arrow-right"
                               onClick={(e) => {
                                 e.stopPropagation();
+                                e.preventDefault();
                                 const currentSlide = editingPost.currentSlide || 0;
                                 const newSlide = currentSlide < slidesWithMedia.length - 1 ? currentSlide + 1 : 0;
                                 setEditingPost(prev => ({ ...prev, currentSlide: newSlide }));
@@ -1405,8 +1413,12 @@ export default function ManagePostsPage() {
                                         className="slide-video"
                                         controls
                                         onError={(e) => {
-                                          e.target.style.display = 'none';
-                                          e.target.nextSibling.style.display = 'block';
+                                          if (e.target && e.target.style) {
+                                            e.target.style.display = 'none';
+                                          }
+                                          if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
+                                            e.target.nextSibling.style.display = 'block';
+                                          }
                                         }}
                                       >
                                         Your browser does not support the video tag.
@@ -1428,8 +1440,12 @@ export default function ManagePostsPage() {
                                           alt={`Slide ${slidesWithMedia[editingPost.currentSlide || 0].slide_no}`}
                                           className="slide-image"
                                           onError={(e) => {
-                                            e.target.style.display = 'none';
-                                            e.target.nextSibling.style.display = 'flex';
+                                            if (e.target && e.target.style) {
+                                              e.target.style.display = 'none';
+                                            }
+                                            if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
+                                              e.target.nextSibling.style.display = 'flex';
+                                            }
                                           }}
                                         />
                                         <div className="video-fallback" style={{ display: 'none' }}>
@@ -1448,9 +1464,11 @@ export default function ManagePostsPage() {
                               {slidesWithMedia.map((_, index) => (
                                 <button
                                   key={index}
+                                  type="button"
                                   className={`slideshow-dot ${index === (editingPost.currentSlide || 0) ? 'active' : ''}`}
                                   onClick={(e) => {
                                     e.stopPropagation();
+                                    e.preventDefault();
                                     setEditingPost(prev => ({ ...prev, currentSlide: index }));
                                   }}
                                 >
@@ -1821,8 +1839,12 @@ export default function ManagePostsPage() {
                             }}
                             alt="Profiilikuva"
                             onError={e => {
-                              e.target.style.display = 'none'
-                              e.target.nextSibling.style.display = 'flex'
+                              if (e.target && e.target.style) {
+                                e.target.style.display = 'none'
+                              }
+                              if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
+                                e.target.nextSibling.style.display = 'flex'
+                              }
                             }}
                           />
                         ) : (

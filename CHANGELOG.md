@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.24.2](https://github.com/slemppa/rascal-ai/compare/v1.24.1...v1.24.2) (2025-08-03)
+
+
+### 🐛 Bug Fixes
+
+* kriittiset suorituskykyoptimointeja - LCP 25s -> optimoitu ([0d07753](https://github.com/slemppa/rascal-ai/commit/0d077536318aefa01577dbe7bf28a011b231f95f))
+* modal visibility and remove Mixpost from posts page ([62ab3e7](https://github.com/slemppa/rascal-ai/commit/62ab3e74a24ca65679a4dbd0d7f8c698ca1cbd55))
+
+
+### ✨ Features
+
+* add social media channel selection for publishing posts ([32cde15](https://github.com/slemppa/rascal-ai/commit/32cde1508ce99a66400c403ae76e3f95ca3f0092))
+* analytics backend & iframe components, dashboard cleanup ([cc33b44](https://github.com/slemppa/rascal-ai/commit/cc33b442406f97a492f1fcf0728273f4abaf8931))
+
 ### [1.24.1](https://github.com/slemppa/rascal-ai/compare/v1.24.0...v1.24.1) (2025-07-31)
 
 

@@ -80,16 +80,16 @@ const transformSupabaseData = (supabaseData) => {
     }
     
     // Carousel-tyyppisillä posteilla käytetään segments-taulun ensimmäistä kuvaa
-    let thumbnail = '/media-placeholder.svg';
+    let thumbnail = null;
     if (item.type === 'Carousel') {
       // Jos item sisältää segments-datan, käytetään sitä
       if (item.segments && item.segments.length > 0) {
         const firstSegment = item.segments.find(seg => seg.slide_no === 1) || item.segments[0];
-        thumbnail = firstSegment.media_urls?.[0] || '/media-placeholder.svg';
+        thumbnail = firstSegment.media_urls?.[0] || null;
       }
     } else {
       // Muille tyypeille käytetään content-taulun media_urls
-      thumbnail = item.media_urls?.[0] || '/media-placeholder.svg';
+      thumbnail = item.media_urls?.[0] || null;
     }
     
 
@@ -124,7 +124,7 @@ const transformReelsData = (reelsData) => {
       id: item.id,
       title: item.title || 'Nimetön Reels',
       status: status,
-      thumbnail: item.media_urls?.[0] || '/media-placeholder.svg',
+      thumbnail: item.media_urls?.[0] || null,
       caption: item.caption || 'Ei kuvausta',
       type: 'Reels',
       createdAt: item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : null,
@@ -144,7 +144,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
     <div className="post-card">
       <div className="post-card-content">
         <div className="post-thumbnail">
-          {post.thumbnail && post.thumbnail !== '/placeholder.png' && post.thumbnail !== '/media-placeholder.svg' ? (
+          {post.thumbnail ? (
             <img
               src={post.thumbnail}
               alt="thumbnail"
@@ -154,7 +154,8 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
                 e.target.style.opacity = '1'
               }}
               onError={(e) => {
-                e.target.src = '/media-placeholder.svg';
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
               }}
               style={{ 
                 width: '100%', 
@@ -164,18 +165,10 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
                 transition: 'opacity 0.3s ease'
               }}
             />
-          ) : (
+          ) : null}
+          {!post.thumbnail && (
             <div className="placeholder-content">
-              <img 
-                src="/media-placeholder.svg" 
-                alt="Media ei saatavilla"
-                className="placeholder-image"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'flex';
-                }}
-              />
-              <div className="placeholder-fallback" style={{ display: 'none' }}>
+              <div className="placeholder-fallback">
                 <div className="placeholder-icon">📸</div>
                 <div className="placeholder-text">Ei kuvaa</div>
               </div>
@@ -1144,14 +1137,14 @@ export default function ManagePostsPage() {
                   <div className="column-content">
                     {columnPosts.map(post => {
                       // Varmistetaan että post on oikeassa muodossa
-                      const safePost = {
+                                            const safePost = {
                         id: post.id || 'unknown',
                         title: post.title || 'Nimetön julkaisu',
                         caption: post.caption || 'Ei kuvausta',
                         type: post.type || 'Photo',
                         source: post.source || 'supabase',
-                                    thumbnail: post.thumbnail || '/media-placeholder.svg',
-            status: post.status || 'Kesken' // Lisätään status!
+                        thumbnail: post.thumbnail || null,
+                        status: post.status || 'Kesken' // Lisätään status!
                       }
                       
                       return (
@@ -1189,7 +1182,7 @@ export default function ManagePostsPage() {
                         caption: post.caption || 'Ei kuvausta',
                         type: post.type || 'Photo',
                         source: post.source || 'supabase',
-                        thumbnail: post.thumbnail || '/media-placeholder.svg',
+                        thumbnail: post.thumbnail || null,
                         status: post.status || 'Julkaistu',
                         published_at: post.publishedAt,
                         external_urls: []
@@ -1419,24 +1412,32 @@ export default function ManagePostsPage() {
                                         Your browser does not support the video tag.
                                       </video>
                                       <div className="video-fallback" style={{ display: 'none' }}>
-                                        <img 
-                                          src="/media-placeholder.svg" 
-                                          alt="Video ei saatavilla"
-                                          className="slide-image"
-                                        />
+                                                                              <div className="video-fallback">
+                                        <div className="placeholder-icon">🎥</div>
+                                        <div className="placeholder-text">Video ei saatavilla</div>
+                                      </div>
                                       </div>
                                     </div>
                                   );
                                 } else {
                                   return (
-                                    <img 
-                                      src={currentMedia} 
-                                      alt={`Slide ${slidesWithMedia[editingPost.currentSlide || 0].slide_no}`}
-                                      className="slide-image"
-                                      onError={(e) => {
-                                        e.target.src = '/media-placeholder.svg';
-                                      }}
-                                    />
+                                    <div>
+                                      <>
+                                        <img 
+                                          src={currentMedia} 
+                                          alt={`Slide ${slidesWithMedia[editingPost.currentSlide || 0].slide_no}`}
+                                          className="slide-image"
+                                          onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'flex';
+                                          }}
+                                        />
+                                        <div className="video-fallback" style={{ display: 'none' }}>
+                                          <div className="placeholder-icon">📸</div>
+                                          <div className="placeholder-text">Kuva ei saatavilla</div>
+                                        </div>
+                                      </>
+                                    </div>
                                   );
                                 }
                               })()}

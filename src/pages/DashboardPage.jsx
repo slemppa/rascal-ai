@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+// Analytics data haetaan nyt iframe:n kautta
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, Tooltip, Legend, CartesianGrid } from 'recharts'
 import PageHeader from '../components/PageHeader'
 import { supabase } from '../lib/supabase'
 import styles from './DashboardPage.module.css'
 import { useAuth } from '../contexts/AuthContext'
 import PageMeta from '../components/PageMeta'
+// Analytics poistettu - tehdään myöhemmin
 import '../components/ModalComponents.css'
 
 function EditPostModal({ post, onClose, onSave }) {
@@ -221,6 +224,7 @@ function EditPostModal({ post, onClose, onSave }) {
 }
 
 export default function DashboardPage() {
+  // Analytics data haetaan nyt iframe:n kautta
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -248,6 +252,19 @@ export default function DashboardPage() {
   const [scheduleLoading, setScheduleLoading] = useState(true)
   const { user } = useAuth()
   const [imageModalUrl, setImageModalUrl] = useState(null)
+  // Analytics filtteröinnit käsitellään iframe:ssä
+
+  // Platform värit
+  const getPlatformColor = (platform) => {
+    switch (platform?.toLowerCase()) {
+      case 'instagram': return '#e4405f'
+      case 'facebook': return '#1877f2'
+      case 'tiktok': return '#000000'
+      case 'twitter': return '#1da1f2'
+      case 'linkedin': return '#0a66c2'
+      default: return '#6b7280'
+    }
+  }
 
   useEffect(() => {
     if (!imageModalUrl) return
@@ -968,6 +985,8 @@ export default function DashboardPage() {
               </table>
             </div>
           </div>
+
+          {/* Analytics poistettu - tehdään myöhemmin */}
         </div>
       </div>
       {/* Image Modal */}

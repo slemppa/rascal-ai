@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import PageHeader from '../components/PageHeader'
 import CarouselTemplateSelector from '../components/CarouselTemplateSelector'
 import SocialMediaConnect from '../components/SocialMediaConnect'
+
 import styles from './SettingsPage.module.css'
 
 export default function SettingsPage() {
@@ -485,6 +486,8 @@ export default function SettingsPage() {
           
           {/* Oikea sarake: Muut asetukset */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+            
             {/* Sosiaalisen median yhdistäminen */}
             <div className={styles.card}>
               <SocialMediaConnect />

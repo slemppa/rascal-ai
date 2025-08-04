@@ -599,7 +599,7 @@ function AvatarSectionMulti({ companyId }) {
       formData.append('companyId', companyId);
       
       // Lähetä kuva backendiin
-      const res = await fetch('/api/avatar-upload', {
+      const res = await fetch('/api/avatar-upload.js', {
         method: 'POST',
         body: formData
       });
@@ -644,7 +644,7 @@ function AvatarSectionMulti({ companyId }) {
     setLoading(true)
     setError('')
     try {
-      const res = await fetch('/api/avatar-delete', {
+      const res = await fetch('/api/avatar-delete.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ companyId, avatarId })
@@ -688,29 +688,71 @@ function AvatarSectionMulti({ companyId }) {
             return img ? (
               <div
                 key={img.id || slot}
-                className="relative group rounded-xl overflow-hidden shadow-sm border border-gray-200 bg-white transition hover:shadow-lg flex items-center justify-center aspect-square w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 mx-auto"
+                style={{
+                  position: 'relative',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                  border: '1px solid #e5e7eb',
+                  backgroundColor: 'white',
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  aspectRatio: '1',
+                  width: '100%',
+                  maxWidth: '120px',
+                  height: 'auto'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)'}
+                onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)'}
               >
                 <img
                   src={img.url}
                   alt={`Avatar ${slot + 1}`}
-                  className="w-full h-full object-cover rounded-xl mx-auto transition-transform duration-200 group-hover:scale-105"
-                  style={{maxWidth: '100%', maxHeight: '100%'}}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '12px',
+                    transition: 'transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+                  onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
                 />
                 <button
                   type="button"
-                  className="absolute top-1 right-1 sm:top-1 sm:right-1 bg-red-600 text-white rounded-full p-0.5 hover:bg-red-700 transition opacity-100 z-20 shadow"
+                  style={{
+                    position: 'absolute',
+                    top: '4px',
+                    right: '4px',
+                    backgroundColor: '#dc2626',
+                    color: 'white',
+                    borderRadius: '50%',
+                    padding: '2px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s',
+                    zIndex: 20,
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                    width: '20px',
+                    height: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = '#b91c1c'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = '#dc2626'}
                   onClick={() => handleDeleteAvatar(img.variableId)}
                   aria-label="Poista kuva"
-                  tabIndex={-1}
                 >
-                  {/* Selkeä punainen raksi */}
                   <svg
-                    className="w-3 h-3 sm:w-4 sm:h-4"
+                    width="12"
+                    height="12"
                     fill="none"
                     stroke="#fff"
                     strokeWidth={2.5}
                     viewBox="0 0 24 24"
-                    style={{ filter: 'drop-shadow(0 0 2px #b91c1c)' }}
                   >
                     <path
                       strokeLinecap="round"
@@ -723,7 +765,29 @@ function AvatarSectionMulti({ companyId }) {
             ) : (
               <div
                 key={slot}
-                className="bg-gray-100 rounded-xl flex flex-col items-center justify-center aspect-square w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 border-2 border-dashed border-gray-300 hover:border-blue-500 cursor-pointer transition group relative mx-auto"
+                style={{
+                  backgroundColor: '#f3f4f6',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  aspectRatio: '1',
+                  width: '100%',
+                  maxWidth: '120px',
+                  height: 'auto',
+                  border: '2px dashed #d1d5db',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#3b82f6';
+                  e.currentTarget.style.backgroundColor = '#eff6ff';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#d1d5db';
+                  e.currentTarget.style.backgroundColor = '#f3f4f6';
+                }}
                 onClick={openFileDialog}
                 tabIndex={0}
                 onKeyDown={(e) => {
@@ -733,11 +797,13 @@ function AvatarSectionMulti({ companyId }) {
                 aria-label="Lisää uusi kuva"
               >
                 <svg
-                  className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400 group-hover:text-blue-500 transition"
+                  width="24"
+                  height="24"
                   fill="none"
-                  stroke="currentColor"
+                  stroke="#9ca3af"
                   strokeWidth={2}
                   viewBox="0 0 24 24"
+                  style={{ transition: 'stroke 0.2s' }}
                 >
                   <path
                     strokeLinecap="round"
@@ -745,7 +811,13 @@ function AvatarSectionMulti({ companyId }) {
                     d="M12 4v16m8-8H4"
                   />
                 </svg>
-                <span className="mt-1 text-gray-500 text-xs group-hover:text-blue-500 transition text-center">
+                <span style={{ 
+                  marginTop: '4px', 
+                  color: '#6b7280', 
+                  fontSize: '12px',
+                  textAlign: 'center',
+                  transition: 'color 0.2s'
+                }}>
                   Lisää
                 </span>
               </div>
@@ -826,7 +898,7 @@ function VoiceSection({ companyId }) {
       formData.append('file', file);
       formData.append('companyId', companyId);
 
-      const res = await fetch('/api/avatar-upload', {
+      const res = await fetch('/api/avatar-upload.js', {
         method: 'POST',
         body: formData
       });

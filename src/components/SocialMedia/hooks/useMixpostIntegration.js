@@ -25,14 +25,15 @@ export const useMixpostIntegration = () => {
 
       if (error && error.code !== 'PGRST116') {
         console.error('Error fetching Mixpost config:', error);
-        setError(error.message);
+        setError('Mixpost-konfiguraatiota ei löytynyt. Ota yhteyttä tukeen.');
         return;
       }
 
-                        setMixpostConfig(data);
+      setMixpostConfig(data);
+      setError(null); // Tyhjennä virhe jos konfiguraatio löytyi
     } catch (error) {
       console.error('Error fetching Mixpost config:', error);
-      setError(error.message);
+      setError('Virhe Mixpost-konfiguraation haussa.');
     }
   };
 
@@ -54,8 +55,8 @@ export const useMixpostIntegration = () => {
         return [];
       }
 
-                        setSavedSocialAccounts(data || []);
-                  return data || [];
+      setSavedSocialAccounts(data || []);
+      return data || [];
     } catch (error) {
       console.error('Error fetching saved social accounts:', error);
       setSavedSocialAccounts([]);
@@ -66,10 +67,12 @@ export const useMixpostIntegration = () => {
   // Hae sometilit Mixpostista
   const fetchSocialAccounts = async () => {
     if (!mixpostConfig?.mixpost_workspace_uuid || !mixpostConfig?.mixpost_api_token) {
+      console.log('Mixpost config puuttuu, käytetään tallennettuja tilejä');
       return [];
     }
 
     try {
+      console.log('Haetaan sometilit Mixpostista...');
       const response = await fetch(`/api/mixpost-accounts?workspace_uuid=${mixpostConfig.mixpost_workspace_uuid}&api_token=${mixpostConfig.mixpost_api_token}`, {
         method: 'GET',
         headers: {
@@ -78,23 +81,28 @@ export const useMixpostIntegration = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Mixpost API error:', errorData);
+        throw new Error(`Mixpost API virhe: ${response.status} - ${errorData.error || 'Tuntematon virhe'}`);
       }
 
       const result = await response.json();
+      console.log('Mixpost API vastaus:', result);
 
       if (result.data && Array.isArray(result.data)) {
         setSocialAccounts(result.data);
         return result.data;
       } else {
+        console.log('Mixpost API palautti tyhjän tai virheellisen datan');
         setSocialAccounts([]);
         return [];
       }
-                    } catch (error) {
-                  setError(error.message);
-                  setSocialAccounts([]);
-                  return [];
-                }
+    } catch (error) {
+      console.error('Error fetching social accounts from Mixpost:', error);
+      setError(`Virhe sometilien haussa: ${error.message}`);
+      setSocialAccounts([]);
+      return [];
+    }
   };
 
   // Päivitä sometilit Mixpostista (vain kun tiliä yhdistetään)
@@ -102,9 +110,10 @@ export const useMixpostIntegration = () => {
     return await fetchSocialAccounts();
   };
 
-                // Yhdistä sometili OAuth:lla
-              const connectSocialAccount = async (platform) => {
-                return new Promise((resolve, reject) => {
+  // Yhdistä sometili OAuth:lla
+  const connectSocialAccount = async (platform) => {
+    return new Promise((resolve, reject) => {
+      console.log(`Yhdistetään ${platform}...`);
       
       // Käytä suoraa OAuth URL:ia platformin mukaan
       let oauthUrl;
@@ -115,10 +124,12 @@ export const useMixpostIntegration = () => {
         oauthUrl = `https://mixpost.mak8r.fi/mixpost/accounts/add/${platform}`;
       }
       
+      console.log('OAuth URL:', oauthUrl);
+      
       const popup = window.open(oauthUrl, 'oauth', 'width=600,height=600,scrollbars=yes,resizable=yes');
       
       if (!popup) {
-        reject(new Error('Popup estetty'));
+        reject(new Error('Popup estetty. Salli popup-ikkunat tälle sivustolle.'));
         return;
       }
 
@@ -127,10 +138,12 @@ export const useMixpostIntegration = () => {
           clearInterval(checkClosed);
           
           try {
+            console.log('OAuth popup suljettu, päivitetään tilejä...');
             await refreshSocialAccounts();
             await saveSocialAccountToSupabase(platform);
             resolve();
           } catch (error) {
+            console.error('Virhe OAuth-prosessin jälkeen:', error);
             reject(error);
           }
         }
@@ -142,7 +155,7 @@ export const useMixpostIntegration = () => {
         if (!popup.closed) {
           popup.close();
         }
-        reject(new Error('OAuth timeout'));
+        reject(new Error('OAuth-yhdistys aikakatkaistiin. Yritä uudelleen.'));
       }, 300000);
     });
   };
@@ -150,15 +163,21 @@ export const useMixpostIntegration = () => {
   // Tallenna sometili Supabaseen
   const saveSocialAccountToSupabase = async (platform) => {
     try {
+      console.log('Tallennetaan sometili Supabaseen...');
+      
+      // Etsi uusin tili kyseiseltä platformilta
       const latestAccount = socialAccounts.find(account => 
         account.provider === platform && 
         account.created_at && 
         new Date(account.created_at) > new Date(Date.now() - 60000)
       );
 
-                        if (!latestAccount) {
-                    return;
-                  }
+      if (!latestAccount) {
+        console.log('Uutta tiliä ei löytynyt tallennettavaksi');
+        return;
+      }
+
+      console.log('Tallennetaan tili:', latestAccount);
 
       const { error } = await supabase
         .from('user_social_accounts')
@@ -178,18 +197,22 @@ export const useMixpostIntegration = () => {
         });
 
       if (error) {
+        console.error('Virhe sometilin tallennuksessa:', error);
         throw error;
       }
+      
+      console.log('Sometili tallennettu onnistuneesti');
       await fetchSavedSocialAccounts(); // Päivitä tallennetut tilit
-                    } catch (error) {
-                  // Handle error silently
-                }
+    } catch (error) {
+      console.error('Virhe sometilin tallennuksessa:', error);
+      // Älä heitä virhettä, koska tili voi olla jo tallennettu
+    }
   };
 
   // Julkaise sisältö
   const publishContent = async (content, selectedAccounts) => {
     if (!mixpostConfig?.mixpost_workspace_uuid || !mixpostConfig?.mixpost_api_token) {
-      throw new Error('Mixpost config puuttuu');
+      throw new Error('Mixpost-konfiguraatio puuttuu. Ota yhteyttä tukeen.');
     }
 
     try {
@@ -207,14 +230,16 @@ export const useMixpostIntegration = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Julkaisu epäonnistui: ${errorData.error || response.statusText}`);
       }
 
-                        const result = await response.json();
-                  return result;
-                    } catch (error) {
-                  throw error;
-                }
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Virhe sisällön julkaisussa:', error);
+      throw error;
+    }
   };
 
   // Alustus
@@ -222,6 +247,7 @@ export const useMixpostIntegration = () => {
     if (userId) {
       const initialize = async () => {
         setLoading(true);
+        setError(null);
         await fetchMixpostConfig();
         await fetchSavedSocialAccounts();
         setLoading(false);
@@ -249,7 +275,7 @@ export const useMixpostIntegration = () => {
     refreshSocialAccounts,
     connectSocialAccount,
     fetchSavedSocialAccounts,
-    fetchSocialAccounts, // Lisää tämä funktio
+    fetchSocialAccounts,
     isSetupComplete
   };
 };

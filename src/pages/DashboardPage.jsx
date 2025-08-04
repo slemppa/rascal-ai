@@ -637,7 +637,7 @@ export default function DashboardPage() {
           return
         }
 
-        const response = await fetch('/api/avatar-status', {
+        const response = await fetch('/api/avatar-status.js', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -770,7 +770,7 @@ export default function DashboardPage() {
           formData.append('companyId', companyId)
         }
         
-        const res = await fetch('/api/avatar-upload', {
+        const res = await fetch('/api/avatar-upload.js', {
           method: 'POST',
           body: formData,
         })
@@ -803,7 +803,7 @@ export default function DashboardPage() {
         formData.append('companyId', companyId)
       }
       
-      const res = await fetch('/api/avatar-upload', {
+      const res = await fetch('/api/avatar-upload.js', {
         method: 'POST',
         body: formData,
       })

@@ -308,6 +308,31 @@
   font-size: 14px;
 }
 
+.help-text {
+  margin-top: 16px;
+  padding: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.help-text p {
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.help-text ul {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.help-text li {
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
 /* Mobiilioptimointi */
 @media (max-width: 768px) {
   .social-media-title {
@@ -423,6 +448,19 @@
   .connection-error {
     font-size: 13px;
     padding: 10px;
+  }
+
+  .help-text {
+    font-size: 12px;
+    padding: 10px;
+  }
+
+  .help-text ul {
+    padding-left: 12px;
+  }
+
+  .help-text li {
+    margin-bottom: 3px;
   }
 }
 
@@ -540,6 +578,20 @@
     font-size: 12px;
     padding: 8px;
     border-radius: 6px;
+  }
+
+  .help-text {
+    font-size: 11px;
+    padding: 8px;
+    border-radius: 6px;
+  }
+
+  .help-text ul {
+    padding-left: 10px;
+  }
+
+  .help-text li {
+    margin-bottom: 2px;
   }
 }
 

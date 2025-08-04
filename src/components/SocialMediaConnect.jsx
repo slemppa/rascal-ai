@@ -25,9 +25,9 @@ const SocialMediaConnect = () => {
   const [connectionError, setConnectionError] = useState(null);
 
   const platforms = [
-  { id: 'instagram', name: 'Instagram', icon: '📷' },
-  { id: 'facebook', name: 'Facebook', icon: '📘' }
-];
+    { id: 'instagram', name: 'Instagram', icon: '📷' },
+    { id: 'facebook', name: 'Facebook', icon: '📘' }
+  ];
 
   const handleConnectAccount = async (platform) => {
     try {
@@ -42,8 +42,16 @@ const SocialMediaConnect = () => {
       await fetchSavedSocialAccounts();
       
     } catch (error) {
+      console.error(`❌ Virhe yhdistettäessä ${platform}:`, error);
       setConnectionError(error.message);
-      const errorMessage = `Virhe yhdistettäessä ${platform}: ${error.message}`;
+      
+      // Näytä käyttäjäystävällinen virheviesti
+      const errorMessage = error.message.includes('Popup estetty') 
+        ? 'Popup-ikkunat on estetty. Salli popup-ikkunat tälle sivustolle ja yritä uudelleen.'
+        : error.message.includes('timeout') 
+        ? 'Yhdistys aikakatkaistiin. Tarkista internet-yhteys ja yritä uudelleen.'
+        : `Virhe yhdistettäessä ${platform}: ${error.message}`;
+      
       alert(errorMessage);
     } finally {
       setConnecting(null);
@@ -52,15 +60,18 @@ const SocialMediaConnect = () => {
 
   const handleRefreshAccounts = async () => {
     try {
+      console.log('🔄 Päivitetään sometilejä...');
       await fetchSocialAccounts();
       await fetchSavedSocialAccounts();
+      console.log('✅ Sometilit päivitetty!');
     } catch (error) {
-      console.error('Virhe päivitettäessä tilejä:', error);
+      console.error('❌ Virhe päivitettäessä tilejä:', error);
+      alert('Virhe päivitettäessä sometilejä. Yritä uudelleen.');
     }
   };
 
-  // Käytä Mixpostista haettuja tilejä oletuksena
-  const connectedAccounts = socialAccounts || [];
+  // Käytä Mixpostista haettuja tilejä oletuksena, mutta näytä myös tallennetut tilit
+  const connectedAccounts = socialAccounts.length > 0 ? socialAccounts : savedSocialAccounts;
 
   // Apufunktio profiilikuvan URL:n luomiseen
   const getProfileImageUrl = (account) => {
@@ -92,7 +103,9 @@ const SocialMediaConnect = () => {
       
       {error && (
         <div className="error-message">
-          {error}
+          <strong>Virhe:</strong> {error}
+          <br />
+          <small>Jos ongelma jatkuu, ota yhteyttä tukeen.</small>
         </div>
       )}
 
@@ -131,7 +144,7 @@ const SocialMediaConnect = () => {
                 <div className="profile-fallback">
                   {(account.name || account.username || '?').charAt(0).toUpperCase()}
                 </div>
-                                {/* Platform-ikoni profiilikuvan alaosassa */}
+                {/* Platform-ikoni profiilikuvan alaosassa */}
                 <div className="profile-platform-icon">
                   {account.provider === 'instagram' ? '📷' :
                    account.provider === 'facebook' ? '📘' : '?'}
@@ -150,8 +163,6 @@ const SocialMediaConnect = () => {
                   Lisätty {account.created_at ? new Date(account.created_at).toLocaleDateString('fi-FI') : 'tuntematon'}
                 </div>
               </div>
-
-
             </div>
           ))}
 
@@ -208,9 +219,20 @@ const SocialMediaConnect = () => {
 
       {connectionError && (
         <div className="connection-error">
-          {connectionError}
+          <strong>Yhdistysvirhe:</strong> {connectionError}
         </div>
       )}
+
+      {/* Ohjeteksti */}
+      <div className="help-text">
+        <p><strong>Ohjeet:</strong></p>
+        <ul>
+          <li>Salli popup-ikkunat tälle sivustolle</li>
+          <li>Kirjaudu sisään some-tiliisi uudessa ikkunassa</li>
+          <li>Anna tarvittavat oikeudet Rascal AI:lle</li>
+          <li>Ikkuna sulkeutuu automaattisesti yhdistyksen jälkeen</li>
+        </ul>
+      </div>
     </div>
   );
 };

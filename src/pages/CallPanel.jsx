@@ -104,6 +104,8 @@ export default function CallPanel() {
       if (data?.voice_id) {
         setUserVoiceId(data.voice_id)
         setUserVoiceLabel('Oma ääni')
+        // Aseta selectedVoice käyttäjän oman äänen voice_id:ksi
+        setSelectedVoice(data.voice_id)
         }
       } catch (err) {
         console.error('Error in fetchUserVoiceId:', err)

@@ -109,6 +109,7 @@
   box-shadow: 0 4px 24px rgba(0,0,0,0.06);
   padding: 32px;
   min-height: 200px;
+  height: fit-content;
   display: flex;
   flex-direction: column;
   transition: box-shadow 0.2s ease;
@@ -214,13 +215,22 @@
   line-height: 1.6;
   resize: vertical;
   min-height: 200px;
+  height: auto;
   transition: border-color 0.2s ease;
+  box-sizing: border-box;
 }
 
 .strategy-textarea:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Automaattinen korkeuden säätö textarea:lle */
+.strategy-textarea,
+.icp-textarea {
+  overflow: hidden;
+  resize: none;
 }
 
 .edit-actions {

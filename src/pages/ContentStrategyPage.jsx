@@ -131,9 +131,23 @@ export default function ContentStrategyPage() {
     }
   }, [editText, editId])
 
+  useEffect(() => {
+    if (icpTextareaRef.current) {
+      icpTextareaRef.current.style.height = 'auto'
+      icpTextareaRef.current.style.height = icpTextareaRef.current.scrollHeight + 'px'
+    }
+  }, [icpEditText, editingIcp])
+
   const handleEdit = (item) => {
     setEditId(item.id)
     setEditText(item.strategy || item.Strategy)
+    // Säätää textarea:n korkeus seuraavassa renderissä
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto'
+        textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
+      }
+    }, 0)
   }
 
   const handleSave = async (item) => {
@@ -179,6 +193,13 @@ export default function ContentStrategyPage() {
   const handleEditIcp = () => {
     setEditingIcp(true)
     setIcpEditText(icpSummary.join('\n'))
+    // Säätää textarea:n korkeus seuraavassa renderissä
+    setTimeout(() => {
+      if (icpTextareaRef.current) {
+        icpTextareaRef.current.style.height = 'auto'
+        icpTextareaRef.current.style.height = icpTextareaRef.current.scrollHeight + 'px'
+      }
+    }, 0)
   }
 
   const handleSaveIcp = async () => {
@@ -343,6 +364,7 @@ export default function ContentStrategyPage() {
                     ref={icpTextareaRef}
                     value={icpEditText}
                     onChange={e => setIcpEditText(e.target.value)}
+                    className="icp-textarea"
                     style={{
                       width: '100%',
                       minHeight: 120,
@@ -352,7 +374,6 @@ export default function ContentStrategyPage() {
                       fontSize: 14,
                       lineHeight: 1.6,
                       fontFamily: 'inherit',
-                      resize: 'vertical',
                       background: '#f9fafb',
                       boxSizing: 'border-box'
                     }}
@@ -452,6 +473,7 @@ export default function ContentStrategyPage() {
                     ref={textareaRef}
                     value={editText}
                     onChange={e => setEditText(e.target.value)}
+                    className="strategy-textarea"
                     style={{
                       width: '100%',
                       minHeight: 120,
@@ -461,7 +483,6 @@ export default function ContentStrategyPage() {
                       fontSize: 14,
                       lineHeight: 1.6,
                       fontFamily: 'inherit',
-                      resize: 'vertical',
                       background: '#f9fafb',
                       boxSizing: 'border-box'
                     }}

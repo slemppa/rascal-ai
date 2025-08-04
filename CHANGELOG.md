@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.24.3](https://github.com/slemppa/rascal-ai/compare/v1.24.2...v1.24.3) (2025-08-04)
+
+
+### 🐛 Bug Fixes
+
+* korjattu API-kutsu CallPanel-komponentissa ([a410fd1](https://github.com/slemppa/rascal-ai/commit/a410fd1722c6da48e29bea06251df3cf4e519fcb))
+* null reference errors and carousel navigation in posts page ([9832097](https://github.com/slemppa/rascal-ai/commit/9832097183eb3d54ca4edf01f019f0e02f9ef256))
+
 ### [1.24.2](https://github.com/slemppa/rascal-ai/compare/v1.24.1...v1.24.2) (2025-08-03)
 
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.25.1](https://github.com/slemppa/rascal-ai/compare/v1.25.0...v1.25.1) (2025-08-04)
+
+
+### 🐛 Bug Fixes
+
+* korjattu settings-sivun Mixpost-yhdistys ja avatar-kuvien haku ([032bcd6](https://github.com/slemppa/rascal-ai/commit/032bcd645d206d02fda5bfeaed10362cecdf79e6))
+
 ## [1.25.0](https://github.com/slemppa/rascal-ai/compare/v1.24.3...v1.25.0) (2025-08-04)
 
 

@@ -9,9 +9,10 @@ import './PricingPage.css'
 const pricingPlans = [
   {
     name: 'Rascal AI',
-    startPrice: '99',
-    monthlyPrice: '49',
-    callPrice: '0.50',
+    startPrice: '5000 + alv',
+    monthlyPrice: '300 + alv',
+    callPrice: '0.11',
+    messagePrice: '0,08',
     description: 'Yksinkertainen ja selkeä hinnoittelu',
     features: [
       'AI-puhelinmarkkinointi (2 ääntä)',
@@ -185,6 +186,14 @@ export default function PricingPage() {
                         <span className="currency">€</span>
                         <span className="amount">{plan.callPrice}</span>
                         <span className="period">/min</span>
+                      </div>
+                    </div>
+                    <div className="message-price">
+                      <span className="price-label">Viestimaksut</span>
+                      <div className="price">
+                        <span className="currency">€</span>
+                        <span className="amount">{plan.messagePrice}</span>
+                        <span className="period">/viesti</span>
                       </div>
                     </div>
                   </div>

@@ -136,7 +136,8 @@
 
 .start-price,
 .monthly-price,
-.call-price {
+.call-price,
+.message-price {
   text-align: center;
   padding: 16px;
   background: #f9fafb;
@@ -208,7 +209,8 @@
 
 .start-price,
 .monthly-price,
-.call-price {
+.call-price,
+.message-price {
   text-align: center;
   padding: 16px;
   background: #f9fafb;
@@ -543,7 +545,8 @@
 
   .start-price,
   .monthly-price,
-  .call-price {
+  .call-price,
+  .message-price {
     padding: 12px;
   }
 

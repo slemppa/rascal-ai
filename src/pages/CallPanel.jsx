@@ -170,22 +170,34 @@ export default function CallPanel() {
       // Hae user_id Supabasesta
       const user_id = user?.id
 
-      const res = await axios.post('http://localhost:3000/api/validate-sheet', { 
-        sheetUrl,
-        user_id
+      console.log('🔍 Lähetetään validate-sheet kutsu:', { sheetUrl, user_id })
+      
+      const res = await fetch('/api/validate-sheet', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sheetUrl, user_id })
       })
       
-      if (res.data.success) {
-        setValidationResult(res.data)
+      const data = await res.json()
+      console.log('✅ Validate-sheet vastaus:', data)
+      
+      if (data.success) {
+        setValidationResult(data)
         setStats({
-          totalCount: res.data.phoneCount || 0,
+          totalCount: data.phoneCount || 0,
           calledCount: 0,
           failedCount: 0
         })
       } else {
-        setError(res.data.error || 'Validointi epäonnistui')
+        setError(data.error || 'Validointi epäonnistui')
       }
     } catch (e) {
+      console.error('❌ Validate-sheet virhe:', e)
+      console.error('❌ Virheen response:', e.response)
+      console.error('❌ Virheen message:', e.message)
+      
       const errorMessage = e.response?.data?.error || 'Validointi epäonnistui'
       setError(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage))
     } finally {

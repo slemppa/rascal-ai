@@ -277,6 +277,7 @@ export default function ManagePostsPage() {
   const [reelsPosts, setReelsPosts] = useState([])
   const [reelsLoading, setReelsLoading] = useState(false)
   const [reelsError, setReelsError] = useState(null)
+
   const hasInitialized = useRef(false)
 
   // Data haku Supabasesta
@@ -462,13 +463,18 @@ export default function ManagePostsPage() {
     if (!reelsData || !Array.isArray(reelsData)) return []
     return reelsData.map(item => {
       const status = item.status || 'Kesken' // Status is forced to 'Kesken' by the API
+      
+      // Tunnista avatar-kuvat "Type (from Variables) (from Companies)" kentän perusteella
+      const isAvatar = Array.isArray(item["Type (from Variables) (from Companies)"]) && 
+                      item["Type (from Variables) (from Companies)"].includes("Avatar")
+      
       const transformed = {
         id: item.id,
-        title: item.title || 'Nimetön Reels', // Boldattu otsikko = Title kenttä
+        title: isAvatar ? `Avatar ${item.id}` : (item.title || 'Nimetön Reels'),
         status: status,
         thumbnail: item.media_urls?.[0] || '/placeholder.png',
-        caption: item.caption || 'Ei kuvausta', // Leipäteksti = Caption kenttä
-        type: 'Reels',
+        caption: isAvatar ? `Avatar-kuva ${item.id}` : (item.caption || 'Ei kuvausta'),
+        type: isAvatar ? 'Avatar' : 'Reels',
         createdAt: item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : null,
         scheduledDate: null,
         publishedAt: null,
@@ -482,6 +488,8 @@ export default function ManagePostsPage() {
       return transformed
     })
   }
+
+
 
   // Yhdistetään data
   const allPosts = [...posts, ...reelsPosts]
@@ -1120,13 +1128,13 @@ export default function ManagePostsPage() {
             {columns.map(column => {
               // Filteröidään postit statusin JA lähteen mukaan
               let columnPosts = filteredPosts.filter(post => {
-                // Avatar-sarakkeessa näytetään reels-data "Kesken" statusilla
+                // Avatar-sarakkeessa näytetään avatar-kuvia reels-datasta
                 if (column.title === 'Avatar') {
-                  return post.status === 'Kesken' && post.source === 'reels'
+                  return post.status === 'Kesken' && post.source === 'reels' && post.type === 'Avatar'
                 }
-                // Kesken-sarakkeessa näytetään Supabase-data "Kesken" statusilla
+                // Kesken-sarakkeessa näytetään Supabase-data ja reels-data (ei avatar-kuvia) "Kesken" statusilla
                 else if (column.title === 'Kesken') {
-                  return post.status === 'Kesken' && post.source === 'supabase'
+                  return post.status === 'Kesken' && (post.source === 'supabase' || (post.source === 'reels' && post.type !== 'Avatar'))
                 }
 
                 // Muissa sarakkeissa näytetään Supabase-data oikealla statusilla

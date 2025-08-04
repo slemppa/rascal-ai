@@ -163,12 +163,37 @@ export const PostsProvider = ({ children }) => {
 
   const postsByStatus = useMemo(() => {
     const grouped = {}
+    
+    // Erikoiskäsittely Avatar-sarakkeelle
+    const avatarPosts = filteredPosts.filter(post => 
+      post.status === 'Kesken' && post.source === 'reels' && post.type === 'Avatar'
+    )
+    
+    // Muut postit normaalisti statusin mukaan
     filteredPosts.forEach(post => {
-      if (!grouped[post.status]) {
-        grouped[post.status] = []
+      // Avatar-kuvat menevät Avatar-sarakkeeseen
+      if (post.status === 'Kesken' && post.source === 'reels' && post.type === 'Avatar') {
+        if (!grouped['Avatar']) {
+          grouped['Avatar'] = []
+        }
+        grouped['Avatar'].push(post)
       }
-      grouped[post.status].push(post)
+      // Muut reels-postit menevät Kesken-sarakkeeseen
+      else if (post.status === 'Kesken' && post.source === 'reels' && post.type !== 'Avatar') {
+        if (!grouped['Kesken']) {
+          grouped['Kesken'] = []
+        }
+        grouped['Kesken'].push(post)
+      }
+      // Supabase-postit menevät normaalisti statusin mukaan
+      else {
+        if (!grouped[post.status]) {
+          grouped[post.status] = []
+        }
+        grouped[post.status].push(post)
+      }
     })
+    
     return grouped
   }, [filteredPosts])
 
@@ -414,17 +439,24 @@ export const PostsProvider = ({ children }) => {
   const transformReelsData = (reelsData) => {
     if (!reelsData || !Array.isArray(reelsData)) return []
     
-    return reelsData.map(item => ({
-      id: item.id,
-      title: item.idea || item.caption || 'Nimetön reel',
-      status: 'Kesken',
-      thumbnail: item.media_urls?.[0] || null,
-      caption: item.caption || '',
-      type: 'Reel',
-      createdAt: item.created_at,
-      mediaUrls: item.media_urls || [],
-      originalData: item
-    }))
+    return reelsData.map(item => {
+      // Tunnista avatar-kuvat "Type (from Variables) (from Companies)" kentän perusteella
+      const isAvatar = Array.isArray(item["Type (from Variables) (from Companies)"]) && 
+                      item["Type (from Variables) (from Companies)"].includes("Avatar")
+      
+      return {
+        id: item.id,
+        title: isAvatar ? `Avatar ${item.id}` : (item.idea || item.caption || 'Nimetön reel'),
+        status: 'Kesken',
+        thumbnail: item.media_urls?.[0] || null,
+        caption: isAvatar ? `Avatar-kuva ${item.id}` : (item.caption || ''),
+        type: isAvatar ? 'Avatar' : 'Reel',
+        createdAt: item.created_at,
+        mediaUrls: item.media_urls || [],
+        source: 'reels',
+        originalData: item
+      }
+    })
   }
 
   const value = {

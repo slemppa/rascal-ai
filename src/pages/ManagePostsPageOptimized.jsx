@@ -44,8 +44,8 @@ const initialPosts = [
 ]
 
 const columns = [
-  { status: 'Kesken', title: 'Avatar', color: '#fef3c7' },
-  { status: 'KeskenSupabase', title: 'Kesken', color: '#fef3c7' },
+  { status: 'Avatar', title: 'Avatar', color: '#fef3c7' },
+  { status: 'Kesken', title: 'Kesken', color: '#fef3c7' },
   { status: 'Tarkistuksessa', title: 'Valmiina julkaisuun', color: '#dbeafe' },
   { status: 'Aikataulutettu', title: 'Aikataulutettu', color: '#fce7f3' }
 ]

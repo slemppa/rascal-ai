@@ -458,23 +458,22 @@ export default function ManagePostsPage() {
 
 
 
-  // Transform Reels data to Kanban format
+
+
+    // Transform Reels data to Kanban format
   const transformReelsData = (reelsData) => {
     if (!reelsData || !Array.isArray(reelsData)) return []
+    
     return reelsData.map(item => {
       const status = item.status || 'Kesken' // Status is forced to 'Kesken' by the API
       
-      // Tunnista avatar-kuvat "Type (from Variables) (from Companies)" kentän perusteella
-      const isAvatar = Array.isArray(item["Type (from Variables) (from Companies)"]) && 
-                      item["Type (from Variables) (from Companies)"].includes("Avatar")
-      
       const transformed = {
         id: item.id,
-        title: isAvatar ? `Avatar ${item.id}` : (item.title || 'Nimetön Reels'),
+        title: item.title || 'Nimetön Reels',
         status: status,
         thumbnail: item.media_urls?.[0] || '/placeholder.png',
-        caption: isAvatar ? `Avatar-kuva ${item.id}` : (item.caption || 'Ei kuvausta'),
-        type: isAvatar ? 'Avatar' : 'Reels',
+        caption: item.caption || 'Ei kuvausta',
+        type: 'Reels',
         createdAt: item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : null,
         scheduledDate: null,
         publishedAt: null,
@@ -496,6 +495,8 @@ export default function ManagePostsPage() {
   const currentPosts = allPosts
   const currentLoading = loading || reelsLoading
   const currentError = error || reelsError
+  
+  console.log('Kaikki postit:', allPosts.map(p => ({ title: p.title, status: p.status, source: p.source, type: p.type })))
 
   // Filtteröidään postit
   const filteredPosts = currentPosts.filter(post => {
@@ -1128,13 +1129,15 @@ export default function ManagePostsPage() {
             {columns.map(column => {
               // Filteröidään postit statusin JA lähteen mukaan
               let columnPosts = filteredPosts.filter(post => {
-                // Avatar-sarakkeessa näytetään avatar-kuvia reels-datasta
+                // Avatar-sarakkeessa näytetään reels-dataa
                 if (column.title === 'Avatar') {
-                  return post.status === 'Kesken' && post.source === 'reels' && post.type === 'Avatar'
+                  const isAvatarPost = post.status === 'Kesken' && post.source === 'reels'
+                  console.log('Avatar-sarake: post:', post.title, 'isAvatarPost:', isAvatarPost, 'status:', post.status, 'source:', post.source, 'type:', post.type)
+                  return isAvatarPost
                 }
-                // Kesken-sarakkeessa näytetään Supabase-data ja reels-data (ei avatar-kuvia) "Kesken" statusilla
+                // Kesken-sarakkeessa näytetään vain Supabase-dataa "Kesken" statusilla
                 else if (column.title === 'Kesken') {
-                  return post.status === 'Kesken' && (post.source === 'supabase' || (post.source === 'reels' && post.type !== 'Avatar'))
+                  return post.status === 'Kesken' && post.source === 'supabase'
                 }
 
                 // Muissa sarakkeissa näytetään Supabase-data oikealla statusilla
@@ -1142,6 +1145,8 @@ export default function ManagePostsPage() {
                   return post.status === column.status && post.source === 'supabase'
                 }
               })
+              
+              console.log(`${column.title}-sarake: ${columnPosts.length} postia`)
               
               return (
                 <div key={column.status} className="kanban-column">

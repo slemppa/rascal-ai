@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 import Button from './Button';
 import './CarouselTemplateSelector.css';
 
@@ -23,8 +24,18 @@ export default function CarouselTemplateSelector() {
     setSuccess(false);
     try {
       const selectedTemplate = templates.find(t => t.id === selected);
-      // Hae companyId Supabase-käyttäjästä
-      const companyId = user?.user_metadata?.company_id || null;
+      
+      // Hae companyId Supabase users-taulusta
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('company_id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (userError || !userData?.company_id) {
+        throw new Error('Käyttäjän company ID ei löytynyt');
+      }
+      
       const res = await fetch('/api/carousel-template', {
         method: 'POST',
         headers: {
@@ -32,7 +43,7 @@ export default function CarouselTemplateSelector() {
         },
         body: JSON.stringify({ 
           templateId: selectedTemplate.placidId,
-          companyId: companyId
+          companyId: userData.company_id
         })
       });
       if (!res.ok) {

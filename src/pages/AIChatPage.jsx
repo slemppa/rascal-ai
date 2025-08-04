@@ -124,7 +124,7 @@ export default function AIChatPage() {
       setFilesError('Virhe haettaessa tiedostoja')
     } finally {
       setFilesLoading(false)
-        }
+    }
   }
 
   const handleSendMessage = async (e) => {

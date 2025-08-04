@@ -9,10 +9,11 @@ import MagicLink from './components/auth/MagicLink'
 import ProtectedRoute from './components/ProtectedRoute'
 import AuthCallback from './components/auth/AuthCallback'
 import { AuthProvider } from './contexts/AuthContext'
+import { PostsProvider } from './contexts/PostsContext'
 import Sidebar from './components/Sidebar'
 import MobileNavigation from './components/MobileNavigation'
 import { supabase } from './lib/supabase'
-import ManagePostsPage from './pages/ManagePostsPage'
+import ManagePostsPage from './pages/ManagePostsPageOptimized'
 import AdminPage from './pages/AdminPage'
 import ContentStrategyPage from './pages/ContentStrategyPage'
 import AIChatPage from './pages/AIChatPage'
@@ -30,7 +31,8 @@ import BlogNewsletterPage from './pages/BlogNewsletterPage'
 export default function App() {
   return (
     <AuthProvider>
-      <Routes>
+      <PostsProvider>
+        <Routes>
         {/* Julkiset reitit */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/signin" element={<SignIn />} />
@@ -129,6 +131,7 @@ export default function App() {
 
         {/* Lisää muut suojatut reitit tähän samalla tavalla, jos haluat menun näkyvän niilläkin */}
       </Routes>
-    </AuthProvider>
+    </PostsProvider>
+  </AuthProvider>
   )
 }

@@ -16,9 +16,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { sheetUrl, callType, script, voice, user_id } = req.body
+    const { sheetUrl, callType, script, voice, voice_id, user_id } = req.body
 
-    console.log('🔍 Mass-call endpoint sai dataa:', { sheetUrl, callType, script, voice, user_id })
+    console.log('🔍 Mass-call endpoint sai dataa:', { sheetUrl, callType, script, voice, voice_id, user_id })
 
     // Validointi
     if (!sheetUrl || !sheetUrl.trim()) {
@@ -33,7 +33,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Skripti on pakollinen' })
     }
 
-    if (!voice) {
+    // Käytä voice_id:tä jos saatavilla, muuten voice:tä
+    const voiceToUse = voice_id || voice
+    if (!voiceToUse) {
       return res.status(400).json({ error: 'Ääni on pakollinen' })
     }
 
@@ -173,7 +175,7 @@ export default async function handler(req, res) {
             phone_number: phoneNumber,
             call_type: callType, // Teksti "Toiminnot" kentästä
             call_type_id: call_type_id, // ID call_types taulusta
-            voice_id: voice, // Lisätty voice_id
+            voice_id: voiceToUse, // Käytä voice_id:tä tai voice:tä
             call_date: new Date().toISOString(),
             call_status: 'pending',
             campaign_id: `mass-call-${Date.now()}`,
@@ -210,7 +212,7 @@ export default async function handler(req, res) {
         sheetId,
         callType,
         call_type_id,
-        voice,
+        voice: voiceToUse,
         totalCalls: callLogs.length,
         startedCalls: successCount,
         failedCalls: errorCount,

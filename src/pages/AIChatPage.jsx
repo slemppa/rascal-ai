@@ -19,11 +19,21 @@ export default function AIChatPage() {
   const [filesError, setFilesError] = useState('')
   const [threadId, setThreadId] = useState(() => localStorage.getItem('rascalai_threadId') || null)
   const [uploadLoading, setUploadLoading] = useState(false)
+  
+  // Debug: Seuraa uploadLoading tilan muutoksia
+  useEffect(() => {
+    console.log('uploadLoading muuttui:', uploadLoading)
+  }, [uploadLoading])
   const [uploadError, setUploadError] = useState('')
   const [uploadSuccess, setUploadSuccess] = useState('')
   const [showAllFiles, setShowAllFiles] = useState(false)
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [pendingFiles, setPendingFiles] = useState([])
+  
+  // Debug: Seuraa pendingFiles tilan muutoksia
+  useEffect(() => {
+    console.log('pendingFiles muuttui:', pendingFiles.length, pendingFiles.map(f => f.name))
+  }, [pendingFiles])
   const [dragActive, setDragActive] = useState(false)
   const dropRef = useRef(null)
   const filesListRef = useRef(null)
@@ -89,6 +99,7 @@ export default function AIChatPage() {
   }
 
   const fetchFiles = async () => {
+    console.log('fetchFiles alkaa, loadingUserData:', loadingUserData, 'companyId:', companyId)
     if (loadingUserData) {
       setFilesError('Ladataan käyttäjän tietoja...')
       return
@@ -121,6 +132,7 @@ export default function AIChatPage() {
       }
       setFiles(arr)
     } catch (error) {
+      console.error('Virhe haettaessa tiedostoja:', error)
       setFilesError('Virhe haettaessa tiedostoja')
     } finally {
       setFilesLoading(false)
@@ -169,7 +181,16 @@ export default function AIChatPage() {
   const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files)
     if (files.length === 0) return
+    if (!companyId) {
+      setUploadError('Yrityksen ID puuttuu')
+      return
+    }
+    if (!assistantId) {
+      setUploadError('Assistentin ID puuttuu')
+      return
+    }
 
+    console.log('Asetetaan uploadLoading = true (handleFileUpload)')
     setUploadLoading(true)
     setUploadError('')
     setUploadSuccess('')
@@ -177,9 +198,11 @@ export default function AIChatPage() {
     try {
       const formData = new FormData()
       files.forEach(file => formData.append('files', file))
+      formData.append('action', 'feed')
       formData.append('companyId', companyId)
+      formData.append('assistantId', assistantId)
 
-      const response = await axios.post('/api/upload-knowledge', formData, {
+      await axios.post('/api/upload-knowledge', formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
           'x-api-key': import.meta.env.N8N_SECRET_KEY
@@ -187,8 +210,10 @@ export default function AIChatPage() {
       })
 
       setUploadSuccess(`${files.length} tiedosto ladattu onnistuneesti!`)
-      fetchFiles() // Päivitä tiedostolista
+      // Päivitä tiedostolista heti uploadin jälkeen
+      await fetchFiles()
     } catch (error) {
+      console.error('Virhe tiedostojen lataamisessa:', error)
       setUploadError('Virhe tiedostojen lataamisessa')
     } finally {
       setUploadLoading(false)
@@ -242,15 +267,30 @@ export default function AIChatPage() {
   }
   const handleFileInput = (e) => {
     const files = Array.from(e.target.files)
+    console.log('handleFileInput kutsuttu, tiedostoja:', files.length)
     if (files.length > 0) {
-      setPendingFiles(prev => [...prev, ...files.filter(f => !prev.some(p => p.name === f.name && p.size === f.size))])
+      setPendingFiles(prev => {
+        const newPendingFiles = [...prev, ...files.filter(f => !prev.some(p => p.name === f.name && p.size === f.size))]
+        console.log('pendingFiles päivitetty:', newPendingFiles.length)
+        return newPendingFiles
+      })
     }
   }
   const handleRemovePending = (name, size) => {
     setPendingFiles(prev => prev.filter(f => !(f.name === name && f.size === size)))
   }
   const handleUploadPending = async () => {
+    console.log('handleUploadPending klikattu, pendingFiles:', pendingFiles.length)
     if (pendingFiles.length === 0) return
+    if (!companyId) {
+      setUploadError('Yrityksen ID puuttuu')
+      return
+    }
+    if (!assistantId) {
+      setUploadError('Assistentin ID puuttuu')
+      return
+    }
+    console.log('Asetetaan uploadLoading = true (handleUploadPending)')
     setUploadLoading(true)
     setUploadError('')
     setUploadSuccess('')
@@ -260,18 +300,25 @@ export default function AIChatPage() {
       formData.append('action', 'feed')
       formData.append('companyId', companyId)
       formData.append('assistantId', assistantId)
+      console.log('Lähetetään tiedostot...')
       await axios.post('/api/upload-knowledge', formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
           'x-api-key': import.meta.env.N8N_SECRET_KEY
         }
       })
+      console.log('Tiedostot lähetetty onnistuneesti')
       setUploadSuccess(`${pendingFiles.length} tiedosto(a) ladattu onnistuneesti!`)
       setPendingFiles([])
-      fetchFiles()
+      // Päivitä tiedostolista heti uploadin jälkeen
+      console.log('Päivitetään tiedostolista...')
+      await fetchFiles()
+      console.log('Tiedostolista päivitetty')
     } catch (error) {
+      console.error('Virhe tiedostojen lataamisessa:', error)
       setUploadError('Virhe tiedostojen lataamisessa')
     } finally {
+      console.log('Asetetaan uploadLoading = false (handleFileUpload)')
       setUploadLoading(false)
     }
   }
@@ -571,8 +618,12 @@ export default function AIChatPage() {
                     onClick={handleUploadPending}
                     disabled={uploadLoading || pendingFiles.length === 0}
                     className="ai-chat-upload-button"
+                    style={{ 
+                      opacity: (uploadLoading || pendingFiles.length === 0) ? 0.5 : 1,
+                      cursor: (uploadLoading || pendingFiles.length === 0) ? 'not-allowed' : 'pointer'
+                    }}
                   >
-                    Lähetä tiedostot
+                    Lähetä tiedostot ({pendingFiles.length})
                   </button>
                   {uploadLoading && <p style={{ color: '#2563eb', margin: 0 }}>Ladataan...</p>}
                   {uploadError && <p style={{ color: 'red', margin: 0 }}>{uploadError}</p>}

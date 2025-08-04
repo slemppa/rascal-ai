@@ -327,7 +327,7 @@ export default function CallPanel() {
         // Lisää vain jos on sekä selkeä nimi että puhelinnumero
         if (name && phoneNumber && name.trim() !== '' && phoneNumber.trim() !== '' && phoneNumber.startsWith('+358')) {
           // Hae valitun äänen id
-          const selectedVoiceObj = voiceOptions.find(v => v.value === selectedVoice)
+          const selectedVoiceObj = getVoiceOptions().find(v => v.value === selectedVoice)
           const voiceId = selectedVoiceObj?.id
           
           callLogs.push({
@@ -398,7 +398,7 @@ export default function CallPanel() {
       }
       
       // Hae valitun äänen id
-      const selectedVoiceObj = voiceOptions.find(v => v.value === selectedVoice)
+      const selectedVoiceObj = getVoiceOptions().find(v => v.value === selectedVoice)
       const voiceId = selectedVoiceObj?.id
       
 
@@ -617,6 +617,10 @@ export default function CallPanel() {
         return
       }
 
+      // Hae valitun äänen id
+      const selectedVoiceObj = getVoiceOptions().find(v => v.value === selectedVoice)
+      const voiceId = selectedVoiceObj?.id
+
       const insertData = {
         user_id: userProfile.id,
         name: newCallType.callType,
@@ -630,6 +634,7 @@ export default function CallPanel() {
         notes: newCallType.notes || '',
         version: newCallType.version || 'v1.0',
         status: newCallType.status || 'Active',
+        voice_id: voiceId, // Lisätty voice_id
       }
       const { error } = await supabase.from('call_types').insert([insertData])
       if (error) throw error

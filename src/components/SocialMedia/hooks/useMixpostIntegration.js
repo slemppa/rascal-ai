@@ -73,7 +73,7 @@ export const useMixpostIntegration = () => {
 
     try {
       console.log('Haetaan sometilit Mixpostista...');
-      const response = await fetch(`/api/mixpost-accounts?workspace_uuid=${mixpostConfig.mixpost_workspace_uuid}&api_token=${mixpostConfig.mixpost_api_token}`, {
+      const response = await fetch(`/api/mixpost-accounts.js?workspace_uuid=${mixpostConfig.mixpost_workspace_uuid}&api_token=${mixpostConfig.mixpost_api_token}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -216,7 +216,7 @@ export const useMixpostIntegration = () => {
     }
 
     try {
-      const response = await fetch('/api/mixpost-publish', {
+      const response = await fetch('/api/post-actions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

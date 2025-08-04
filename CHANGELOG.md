@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.25.0](https://github.com/slemppa/rascal-ai/compare/v1.24.3...v1.25.0) (2025-08-04)
+
+
+### 🐛 Bug Fixes
+
+* Avatar-sarake näyttää nyt get-reels.js endpointin dataa ([53d1f30](https://github.com/slemppa/rascal-ai/commit/53d1f30d682143d244487343c6ea54cb8c131674))
+* korjaa Avatar-sarake ja palauta ManagePostsPage ([b7515c3](https://github.com/slemppa/rascal-ai/commit/b7515c374a2a8aa726ba442822a55b5a0d8e7dd9))
+* korjattu AIChatPage syntaksivirhe ([5b148c1](https://github.com/slemppa/rascal-ai/commit/5b148c1216f3c959c133a16b6ed38eabb265d761))
+
+
+### ✨ Features
+
+* päivitetty ResetPassword UI ja lisätty viestimaksut ([c48c643](https://github.com/slemppa/rascal-ai/commit/c48c6430a523671a8c681b7e7adbc2cfb6dbfa4e))
+
 ### [1.24.3](https://github.com/slemppa/rascal-ai/compare/v1.24.2...v1.24.3) (2025-08-04)
 
 

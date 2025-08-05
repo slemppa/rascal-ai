@@ -672,9 +672,7 @@ export default function CallPanel() {
         return
       }
 
-      // Hae valitun äänen id
-      const selectedVoiceObj = getVoiceOptions().find(v => v.value === selectedVoice)
-      const voiceId = selectedVoiceObj?.id
+
 
       const insertData = {
         user_id: userProfile.id,
@@ -689,7 +687,6 @@ export default function CallPanel() {
         notes: newCallType.notes || '',
         version: newCallType.version || 'v1.0',
         status: newCallType.status || 'Active',
-        voice_id: voiceId, // Lisätty voice_id
       }
       const { error } = await supabase.from('call_types').insert([insertData])
       if (error) throw error

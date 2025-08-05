@@ -40,6 +40,7 @@ export default function AIChatPage() {
   const { user } = useAuth()
   const [userData, setUserData] = useState(null)
   const [loadingUserData, setLoadingUserData] = useState(true)
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
 
   // Hae käyttäjän tiedot Supabase-tietokannasta
   useEffect(() => {
@@ -85,6 +86,13 @@ export default function AIChatPage() {
       fetchFiles()
     }
   }, [tab])
+
+  // Seuraa ikkunan koon muutoksia responsiivisuutta varten
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // Apufunktiot tiedostokoon ja päivämäärän muotoiluun
   function formatBytes(bytes) {
@@ -580,9 +588,17 @@ export default function AIChatPage() {
                 </form>
               </div>
             ) : (
-              <div className="ai-chat-files-container">
-                {/* Upload kortti */}
-                <div className="ai-chat-upload-card">
+              <div style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                padding: windowWidth <= 768 ? '16px' : windowWidth <= 480 ? '12px' : '24px',
+                gap: windowWidth <= 768 ? '20px' : windowWidth <= 480 ? '16px' : '24px',
+                overflow: 'hidden',
+                background: '#f7f8fc'
+              }}>
+                {/* Upload kortti - aina näkyvissä */}
+                <div className="ai-chat-upload-card" style={{ flexShrink: 0 }}>
                   <h3>Lisää tiedosto tietokantaan</h3>
                   <p>Voit liittää PDF-, Word- tai tekstimuotoisen tiedoston. Tiedosto tallennetaan yrityksesi tietokantaan.</p>
                   {/* Drag & drop -alue */}
@@ -629,14 +645,31 @@ export default function AIChatPage() {
                   {uploadError && <p style={{ color: 'red', margin: 0 }}>{uploadError}</p>}
                   {uploadSuccess && <p style={{ color: 'green', margin: 0 }}>{uploadSuccess}</p>}
                 </div>
-                {/* Tiedostot */}
-                <div className="ai-chat-files-list">
+                
+                {/* Tiedostot - erillinen container */}
+                <div className="ai-chat-files-list" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
                   <h3>Tiedostot</h3>
-                  <div className="ai-chat-files-scroll" ref={filesListRef}>
+                  <div className="ai-chat-files-scroll" ref={filesListRef} style={{ flex: 1, minHeight: 0 }}>
                     {filesLoading ? (
-                      <p>Ladataan tiedostoja...</p>
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        padding: '24px',
+                        color: '#6b7280'
+                      }}>
+                        <span>Ladataan tiedostoja...</span>
+                      </div>
                     ) : filesError ? (
-                      <p style={{ color: 'red' }}>{filesError}</p>
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        padding: '24px',
+                        color: 'red'
+                      }}>
+                        <span>{filesError}</span>
+                      </div>
                     ) : files.length === 0 ? (
                       <div className="ai-chat-empty-state">
                         <img src="/placeholder.png" alt="Ei tiedostoja" />

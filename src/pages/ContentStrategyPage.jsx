@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
 import axios from 'axios'
 import './ContentStrategyPage.css'
 import { supabase } from '../lib/supabase'
@@ -67,8 +66,7 @@ export default function ContentStrategyPage() {
   const [editingIcp, setEditingIcp] = useState(false)
   const [icpEditText, setIcpEditText] = useState('')
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [newStrategy, setNewStrategy] = useState({ Month: '', Strategy: '' })
+
   const [companyId, setCompanyId] = useState(null)
   const textareaRef = React.useRef(null)
   const icpTextareaRef = React.useRef(null)
@@ -298,43 +296,7 @@ export default function ContentStrategyPage() {
     }
   }
 
-  const handleCreateStrategy = async () => {
-    try {
-      // Haetaan company_id jos se puuttuu
-      let currentCompanyId = companyId
-      if (!currentCompanyId) {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session?.user) {
-          const { data: userRecord } = await supabase
-            .from('users')
-            .select('company_id')
-            .eq('auth_user_id', session.user.id)
-            .single()
-          
-          if (userRecord?.company_id) {
-            currentCompanyId = userRecord.company_id
-            setCompanyId(userRecord.company_id)
-          }
-        }
-      }
-      
-      const strategyData = {
-        ...newStrategy,
-        id: `strategy-${Date.now()}`,
-        created_at: new Date().toISOString(),
-        createdTime: new Date().toISOString(), // Säilytetään myös vanha kenttä
-        updateType: 'strategyCreate',
-        company_id: currentCompanyId
-      }
-      
-      await axios.post('/api/update-post', strategyData)
-      setStrategy([...strategy, strategyData])
-      setShowCreateModal(false)
-      setNewStrategy({ Month: '', Strategy: '' })
-    } catch (e) {
-      alert('Strategian luonti epäonnistui')
-    }
-  }
+
 
   if (loading) {
     return (
@@ -593,25 +555,7 @@ export default function ContentStrategyPage() {
           </div>
         )}
 
-        {/* Luo uusi strategia -nappi */}
-        <div style={{ marginTop: 24 }}>
-          <button 
-            style={{
-              background: '#22c55e',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: 12,
-              padding: '12px 24px',
-              fontSize: 16,
-              fontWeight: 600,
-              cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)'
-            }}
-            onClick={() => setShowCreateModal(true)}
-          >
-            + Luo uusi strategia
-          </button>
-        </div>
+
 
         {error && (
           <div style={{ 
@@ -626,65 +570,7 @@ export default function ContentStrategyPage() {
         )}
       </div>
 
-      {/* Create Strategy Modal */}
-      {showCreateModal && createPortal(
-        <div className="modal-overlay modal-overlay--light">
-          <div className="modal-container" style={{ maxWidth: '600px' }}>
-            <div className="modal-header">
-              <h2 className="modal-title">Luo uusi sisältöstrategia</h2>
-              <button
-                className="modal-close-btn"
-                onClick={() => setShowCreateModal(false)}
-              >
-                ✕
-              </button>
-            </div>
-            <div className="modal-content">
-              <form onSubmit={handleCreateStrategy}>
-                <div className="form-group">
-                  <label className="form-label">Strategian nimi</label>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    className="form-input"
-                    placeholder="Syötä strategian nimi..."
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Kuvaus</label>
-                  <textarea
-                    name="description"
-                    rows={4}
-                    className="form-textarea"
-                    placeholder="Kuvaa strategia..."
-                  />
-                </div>
-                <div className="modal-actions">
-                  <div className="modal-actions-left">
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => setShowCreateModal(false)}
-                    >
-                      Peruuta
-                    </Button>
-                  </div>
-                  <div className="modal-actions-right">
-                    <Button
-                      type="submit"
-                      variant="primary"
-                    >
-                      Luo strategia
-                    </Button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
+
     </>
   )
 } 

@@ -41,24 +41,24 @@ export default async function handler(req, res) {
         const dummyData = [
           {
             id: 'reels-1',
-            title: 'Dummy Reels 1',
-            caption: 'Tämä on testi reels dataa',
+            title: 'Testi Reels - AI automaatio',
+            caption: 'Oletko valmis vapauttamaan aikasi keskittyäksesi siihen, mikä todella merkitsee? Meidän oppaallamme näytämme, kuinka AI voi muuttaa liiketoimintasi.',
             media_urls: ['/placeholder.png'],
             status: 'Kesken',
             created_at: new Date().toISOString(),
             hashtags: ['#test', '#reels'],
-            voiceover: 'Testi äänitys',
+            voiceover: 'Kuvittele, että voit keskittyä liiketoiminnan kasvattamiseen, kun AI vapauttaa sinut rutiineista. Nyt se on mahdollista!',
             source: 'reels'
           },
           {
             id: 'reels-2', 
-            title: 'Dummy Reels 2',
-            caption: 'Toinen testi reels',
+            title: 'Toinen testi reels',
+            caption: 'Tämä on toinen testi reels sisältöä',
             media_urls: ['/placeholder.png'],
             status: 'Kesken',
             created_at: new Date().toISOString(),
             hashtags: ['#dummy', '#content'],
-            voiceover: 'Toinen äänitys',
+            voiceover: 'Toinen äänitys testiä varten',
             source: 'reels'
           }
         ]
@@ -68,31 +68,31 @@ export default async function handler(req, res) {
     }
 
     const responseText = await response.text()
-    console.log('N8N response text:', responseText)
+
 
     if (responseText.includes('Workflow was started')) {
       console.log('N8N workflow käynnistyi, palautetaan dummy reels dataa')
       const dummyData = [
         {
           id: 'reels-1',
-          title: 'Dummy Reels 1',
-          caption: 'Tämä on testi reels dataa',
+          title: 'Testi Reels - AI automaatio',
+          caption: 'Oletko valmis vapauttamaan aikasi keskittyäksesi siihen, mikä todella merkitsee? Meidän oppaallamme näytämme, kuinka AI voi muuttaa liiketoimintasi.',
           media_urls: ['/placeholder.png'],
           status: 'Kesken',
           created_at: new Date().toISOString(),
           hashtags: ['#test', '#reels'],
-          voiceover: 'Testi äänitys',
+          voiceover: 'Kuvittele, että voit keskittyä liiketoiminnan kasvattamiseen, kun AI vapauttaa sinut rutiineista. Nyt se on mahdollista!',
           source: 'reels'
-          },
+        },
         {
           id: 'reels-2', 
-          title: 'Dummy Reels 2',
-          caption: 'Toinen testi reels',
+          title: 'Toinen testi reels',
+          caption: 'Tämä on toinen testi reels sisältöä',
           media_urls: ['/placeholder.png'],
           status: 'Kesken',
           created_at: new Date().toISOString(),
           hashtags: ['#dummy', '#content'],
-          voiceover: 'Toinen äänitys',
+          voiceover: 'Toinen äänitys testiä varten',
           source: 'reels'
         }
       ]
@@ -113,24 +113,40 @@ export default async function handler(req, res) {
       data = []
     }
     const reelsData = data.map(item => {
-      const mediaUrls = item.Media ? item.Media.map(media => media.url) : []
-      const audioUrls = item.Audio ? item.Audio.map(audio => audio.url) : []
-      const allMediaUrls = [...mediaUrls, ...audioUrls]
+      // Käytetään Idea-kenttää otsikkona, jos Caption ei ole saatavilla
+      const title = item.Idea || (item.Caption ? item.Caption.substring(0, 100) + '...' : 'Nimetön Reels')
+      
+      // Käytetään Caption-kenttää kuvausta varten
+      const caption = item.Caption || item.Idea || ''
+      
+      // Käytetään Voiceover-kenttää voiceover-tekstinä
+      const voiceover = item.Voiceover || ''
+      
+      // Status-mappaus
+      const statusMap = {
+        'Draft': 'Kesken',
+        'In Progress': 'Kesken',
+        'Under Review': 'Tarkistuksessa',
+        'Scheduled': 'Aikataulutettu',
+        'Published': 'Julkaistu'
+      }
+      const status = statusMap[item.Status] || 'Kesken'
+      
       return {
         id: item.id || item['Record ID'] || `reels-${Date.now()}-${Math.random()}`,
-        title: item.Caption ? item.Caption.substring(0, 100) + '...' : 'Nimetön Reels',
-        caption: item.Caption || '',
-        media_urls: allMediaUrls,
-        status: 'Kesken',
+        title: title,
+        caption: caption,
+        media_urls: [], // Media URL:t tulevat myöhemmin
+        status: status,
         created_at: item.createdTime || item.Created || new Date().toISOString(),
         publish_date: null,
         hashtags: [],
-        voiceover: item.Voiceover || '',
+        voiceover: voiceover,
         user_id: null,
         source: 'reels'
       }
     })
-    console.log('Palautetaan reels data:', reelsData)
+
     res.status(200).json(reelsData)
   } catch (e) {
     console.error('Virhe N8N reels haussa:', e)

@@ -93,29 +93,27 @@ export default function AdminPage() {
 
   const loadUsers = async () => {
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select(`
-          id,
-          contact_email,
-          contact_person,
-          role,
-          company_id,
-          webhook_url,
-          created_at,
-          auth_user_id,
-          company_name,
-          thread_id,
-          vapi_number_id,
-          vapi_assistant_id,
-          vector_store_id,
-          voice_id,
-          assistant_id
-        `)
-        .order('created_at', { ascending: false })
+      const token = await supabase.auth.getSession()
+      if (!token.data.session?.access_token) {
+        throw new Error('No access token')
+      }
 
-      if (error) throw error
-      setUsers(data || [])
+      const response = await fetch('/api/admin-data?type=users', {
+        headers: {
+          'Authorization': `Bearer ${token.data.session.access_token}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      if (result.success) {
+        setUsers(result.users || [])
+      } else {
+        throw new Error(result.error || 'Failed to fetch users')
+      }
     } catch (error) {
       throw error
     }
@@ -123,21 +121,27 @@ export default function AdminPage() {
 
   const loadContent = async () => {
     try {
-      const { data, error } = await supabase
-        .from('content')
-        .select(`
-          id,
-          idea,
-          type,
-          status,
-          created_at,
-          user_id,
-          users(contact_person, contact_email)
-        `)
-        .order('created_at', { ascending: false })
+      const token = await supabase.auth.getSession()
+      if (!token.data.session?.access_token) {
+        throw new Error('No access token')
+      }
 
-      if (error) throw error
-      setContent(data || [])
+      const response = await fetch('/api/admin-data?type=content', {
+        headers: {
+          'Authorization': `Bearer ${token.data.session.access_token}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      if (result.success) {
+        setContent(result.content || [])
+      } else {
+        throw new Error(result.error || 'Failed to fetch content')
+      }
     } catch (error) {
       throw error
     }
@@ -285,27 +289,27 @@ export default function AdminPage() {
 
   const loadCallLogs = async () => {
     try {
-      const { data, error } = await supabase
-        .from('call_logs')
-        .select(`
-          id,
-          customer_name,
-          phone_number,
-          summary,
-          price,
-          call_type,
-          call_date,
-          answered,
-          duration,
-          call_status,
-          call_outcome,
-          created_at,
-          users(contact_person, contact_email)
-        `)
-        .order('call_date', { ascending: false })
+      const token = await supabase.auth.getSession()
+      if (!token.data.session?.access_token) {
+        throw new Error('No access token')
+      }
 
-      if (error) throw error
-      setCallLogs(data || [])
+      const response = await fetch('/api/admin-call-logs', {
+        headers: {
+          'Authorization': `Bearer ${token.data.session.access_token}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      if (result.success) {
+        setCallLogs(result.data || [])
+      } else {
+        throw new Error(result.error || 'Failed to fetch call logs')
+      }
     } catch (error) {
       throw error
     }
@@ -313,24 +317,27 @@ export default function AdminPage() {
 
   const loadMessageLogs = async () => {
     try {
-      const { data, error } = await supabase
-        .from('message_logs')
-        .select(`
-          id,
-          phone_number,
-          message_text,
-          message_type,
-          direction,
-          status,
-          media_url,
-          media_type,
-          created_at,
-          users(contact_person, contact_email)
-        `)
-        .order('created_at', { ascending: false })
+      const token = await supabase.auth.getSession()
+      if (!token.data.session?.access_token) {
+        throw new Error('No access token')
+      }
 
-      if (error) throw error
-      setMessageLogs(data || [])
+      const response = await fetch('/api/admin-message-logs', {
+        headers: {
+          'Authorization': `Bearer ${token.data.session.access_token}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      if (result.success) {
+        setMessageLogs(result.data || [])
+      } else {
+        throw new Error(result.error || 'Failed to fetch message logs')
+      }
     } catch (error) {
       throw error
     }
@@ -338,21 +345,27 @@ export default function AdminPage() {
 
   const loadSegments = async () => {
     try {
-      const { data, error } = await supabase
-        .from('segments')
-        .select(`
-          id,
-          slide_no,
-          text,
-          media_urls,
-          status,
-          created_at,
-          users(contact_person, contact_email)
-        `)
-        .order('created_at', { ascending: false })
+      const token = await supabase.auth.getSession()
+      if (!token.data.session?.access_token) {
+        throw new Error('No access token')
+      }
 
-      if (error) throw error
-      setSegments(data || [])
+      const response = await fetch('/api/admin-data?type=segments', {
+        headers: {
+          'Authorization': `Bearer ${token.data.session.access_token}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      if (result.success) {
+        setSegments(result.segments || [])
+      } else {
+        throw new Error(result.error || 'Failed to fetch segments')
+      }
     } catch (error) {
       throw error
     }
@@ -360,33 +373,27 @@ export default function AdminPage() {
 
   const loadSystemStats = async () => {
     try {
-      // Lataa kaikki data samanaikaisesti tilastojen laskemista varten
-      const [usersData, contentData, callLogsData, messageLogsData, segmentsData] = await Promise.all([
-        supabase.from('users').select('role, status, created_at'),
-        supabase.from('content').select('status, type, created_at'),
-        supabase.from('call_logs').select('call_status, answered, created_at'),
-        supabase.from('message_logs').select('status, message_type, created_at'),
-        supabase.from('segments').select('status, created_at')
-      ])
-
-      const stats = {
-        totalUsers: usersData.data?.length || 0,
-        adminUsers: usersData.data?.filter(u => u.role === 'admin').length || 0,
-        activeUsers: usersData.data?.filter(u => u.status === 'Active').length || 0,
-        totalContent: contentData.data?.length || 0,
-        publishedContent: contentData.data?.filter(c => c.status === 'Published').length || 0,
-        totalCalls: callLogsData.data?.length || 0,
-        answeredCalls: callLogsData.data?.filter(c => c.answered).length || 0,
-        totalMessages: messageLogsData.data?.length || 0,
-        totalSegments: segmentsData.data?.length || 0,
-        recentActivity: {
-          users: usersData.data?.slice(0, 5) || [],
-          content: contentData.data?.slice(0, 5) || [],
-          calls: callLogsData.data?.slice(0, 5) || []
-        }
+      const token = await supabase.auth.getSession()
+      if (!token.data.session?.access_token) {
+        throw new Error('No access token')
       }
 
-      setStats(stats)
+      const response = await fetch('/api/admin-data?type=stats', {
+        headers: {
+          'Authorization': `Bearer ${token.data.session.access_token}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      if (result.success) {
+        setStats(result.stats)
+      } else {
+        throw new Error(result.error || 'Failed to fetch stats')
+      }
     } catch (error) {
       throw error
     }

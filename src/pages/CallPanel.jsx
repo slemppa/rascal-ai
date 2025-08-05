@@ -13,6 +13,10 @@ import '../components/ModalComponents.css'
 
 export default function CallPanel() {
   const { user } = useAuth()
+  
+  // Kovakoodatut tarkistukset
+  const isMika = user?.email === 'mika.jarvinen@kuudesaisti.fi'
+  const isAdmin = user?.email === 'sami@mak8r.fi'
   const [sheetUrl, setSheetUrl] = useState('')
   const [validating, setValidating] = useState(false)
   const [validationResult, setValidationResult] = useState(null)
@@ -83,6 +87,16 @@ export default function CallPanel() {
   const [audio, setAudio] = useState(null)
   const [currentlyPlayingVoice, setCurrentlyPlayingVoice] = useState(null)
   const [isStopping, setIsStopping] = useState(false)
+  
+  // Mika Special - lomakehaku state-muuttujat
+  const [mikaContacts, setMikaContacts] = useState([])
+  const [loadingMikaContacts, setLoadingMikaContacts] = useState(false)
+  const [mikaContactsError, setMikaContactsError] = useState('')
+  const [mikaSearchName, setMikaSearchName] = useState('')
+  const [mikaSearchTitle, setMikaSearchTitle] = useState('')
+  const [mikaSearchOrganization, setMikaSearchOrganization] = useState('')
+  const [mikaSearchResults, setMikaSearchResults] = useState([])
+  const [mikaSearchLoading, setMikaSearchLoading] = useState(false)
 
 
 
@@ -172,8 +186,6 @@ export default function CallPanel() {
       // Hae user_id Supabasesta
       const user_id = user?.id
 
-      console.log('🔍 Lähetetään validate-sheet kutsu:', { sheetUrl, user_id })
-      
       const res = await fetch('/api/validate-sheet', {
         method: 'POST',
         headers: {
@@ -183,7 +195,6 @@ export default function CallPanel() {
       })
       
       const data = await res.json()
-      console.log('✅ Validate-sheet vastaus:', data)
       
       if (data.success) {
         setValidationResult(data)
@@ -252,121 +263,163 @@ export default function CallPanel() {
     setStarting(true)
     setError('')
     try {
-      // Hae user_id Supabasesta
-      const user_id = user?.id
-
-      // Hae ensin public.users.id käyttäen auth_user_id:tä
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user_id)
-        .single()
-
-      if (userError || !userData) {
-        throw new Error('Käyttäjää ei löytynyt')
-      }
-
-      const publicUserId = userData.id
-
-      // Hae call_type_id call_types taulusta
-      const { data: callTypeData, error: callTypeError } = await supabase
-        .from('call_types')
-        .select('id')
-        .eq('name', callType)
-        .eq('user_id', publicUserId)
-        .single()
-
-      if (callTypeError || !callTypeData) {
-        throw new Error('Puhelun tyyppiä ei löytynyt')
-      }
-
-      const call_type_id = callTypeData.id
-
-      // Käytä validationResult.rows dataa ja lisää jokainen suoraan Supabaseen
-      if (!validationResult || !validationResult.rows) {
-        throw new Error('Validointi pitää suorittaa ensin')
-      }
-
-      const callLogs = []
-      let successCount = 0
-      let errorCount = 0
-
-      // Etsi sarakkeiden otsikot ensin
-      let nameColumn = null
-      let phoneColumn = null
+      // Tarkista onko kyseessä Mika Special -data
+      const isMikaSpecialData = validationResult?.data && Array.isArray(validationResult.data) && validationResult.data.length > 0
       
-      // Etsi nimisarakkeen otsikko
-      for (const columnName of validationResult.columns || []) {
-        if (columnName.toLowerCase().includes('name') || 
-            columnName.toLowerCase().includes('nimi') ||
-            columnName.toLowerCase().includes('etunimi') ||
-            columnName.toLowerCase().includes('sukunimi')) {
-          nameColumn = columnName
-          break
-        }
-      }
-      
-      // Etsi puhelinnumerosarakkeen otsikko
-      for (const columnName of validationResult.columns || []) {
-        if (columnName.toLowerCase().includes('phone') || 
-            columnName.toLowerCase().includes('puhelin') || 
-            columnName.toLowerCase().includes('numero') ||
-            columnName.toLowerCase().includes('tel')) {
-          phoneColumn = columnName
-          break
-        }
-      }
-      
-      if (!nameColumn || !phoneColumn) {
-        throw new Error('Vaadittuja sarakkeita ei löytynyt. Tarvitaan sekä nimisarakke että puhelinnumerosarakke.')
-      }
-
-      for (const row of validationResult.rows) {
-        // Hae arvot sarakkeiden otsikoiden perusteella
-        const phoneNumber = normalizePhoneNumber(row[phoneColumn])
-        const name = row[nameColumn] ? row[nameColumn].trim() : null
-
-        // Lisää vain jos on sekä selkeä nimi että puhelinnumero
-        if (name && phoneNumber && name.trim() !== '' && phoneNumber.trim() !== '' && phoneNumber.startsWith('+358')) {
-          // Hae valitun äänen id
-          const selectedVoiceObj = getVoiceOptions().find(v => v.value === selectedVoice)
-          const voiceId = selectedVoiceObj?.id
-          
-          callLogs.push({
-            user_id: publicUserId,
-            customer_name: name.trim().substring(0, 100), // Rajaa 100 merkkiin (tietokannan rajoitus)
-            phone_number: phoneNumber.trim().substring(0, 20), // Rajaa 20 merkkiin
-            call_type: callType.substring(0, 50), // Rajaa 50 merkkiin
-            call_type_id: call_type_id,
-            voice_id: voiceId, // Lisätty voice_id
-            call_date: new Date().toISOString(),
-            call_status: 'pending',
-            campaign_id: `mass-call-${Date.now()}`.substring(0, 100), // Rajaa 100 merkkiin
-            summary: `Mass-call: ${script.trim().substring(0, 100)}...`
+      if (isMikaSpecialData) {
+        // Käytä Mika Special mass-call API:a
+        console.log('Käytetään Mika Special mass-call API:a')
+        
+        console.log('Mika mass-call debug - user:', user)
+        console.log('Mika mass-call debug - user.id:', user?.id)
+        
+        const response = await fetch('/api/mika-mass-call', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contacts: validationResult.data,
+            callType: callType,
+            script: script,
+            voice_id: selectedVoice,
+            user_id: user?.id
           })
-        } else {
-          errorCount++
+        })
+        
+        const result = await response.json()
+        
+        if (!response.ok) {
+          throw new Error(result.error || 'Mika mass-call epäonnistui')
         }
+        
+        setPolling(true)
+        alert(`✅ Mika Special mass-call käynnistetty onnistuneesti!\n\nAloitettu: ${result.data.successfulCalls} puhelua\nOhitettu: ${result.data.failedCalls} kontakti`)
+        
+      } else {
+        // Käytä normaalia mass-call API:a Google Sheets -datalle
+        console.log('Käytetään normaalia mass-call API:a')
+        
+        // Hae user_id Supabasesta
+        const user_id = user?.id
+
+        // Hae ensin public.users.id käyttäen auth_user_id:tä
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('id')
+          .eq('auth_user_id', user_id)
+          .single()
+
+        if (userError || !userData) {
+          throw new Error('Käyttäjää ei löytynyt')
+        }
+
+        const publicUserId = userData.id
+
+        // Hae call_type_id call_types taulusta
+        const { data: callTypeData, error: callTypeError } = await supabase
+          .from('call_types')
+          .select('id')
+          .eq('name', callType)
+          .eq('user_id', publicUserId)
+          .single()
+
+        if (callTypeError || !callTypeData) {
+          throw new Error('Puhelun tyyppiä ei löytynyt')
+        }
+
+        const call_type_id = callTypeData.id
+
+        // Käytä validationResult.rows dataa ja lisää jokainen suoraan Supabaseen
+        if (!validationResult || !validationResult.rows) {
+          throw new Error('Validointi pitää suorittaa ensin')
+        }
+
+        console.log('Mass-calls debug - validationResult:', validationResult)
+        console.log('Mass-calls debug - columns:', validationResult.columns)
+        console.log('Mass-calls debug - rows:', validationResult.rows)
+
+        const callLogs = []
+        let successCount = 0
+        let errorCount = 0
+
+        // Etsi sarakkeiden otsikot ensin
+        let nameColumn = null
+        let phoneColumn = null
+        
+        // Etsi nimisarakkeen otsikko
+        for (const columnName of validationResult.columns || []) {
+          if (columnName.toLowerCase().includes('name') || 
+              columnName.toLowerCase().includes('nimi') ||
+              columnName.toLowerCase().includes('etunimi') ||
+              columnName.toLowerCase().includes('sukunimi')) {
+            nameColumn = columnName
+            break
+          }
+        }
+        
+        // Etsi puhelinnumerosarakkeen otsikko
+        for (const columnName of validationResult.columns || []) {
+          if (columnName.toLowerCase().includes('phone') || 
+              columnName.toLowerCase().includes('puhelin') || 
+              columnName.toLowerCase().includes('numero') ||
+              columnName.toLowerCase().includes('tel')) {
+            phoneColumn = columnName
+            break
+          }
+        }
+        
+        if (!nameColumn || !phoneColumn) {
+          throw new Error('Vaadittuja sarakkeita ei löytynyt. Tarvitaan sekä nimisarakke että puhelinnumerosarakke.')
+        }
+
+        for (const row of validationResult.rows) {
+          // Hae arvot sarakkeiden otsikoiden perusteella
+          const phoneNumber = normalizePhoneNumber(row[phoneColumn])
+          const name = row[nameColumn] ? row[nameColumn].trim() : null
+
+          // Lisää vain jos on sekä selkeä nimi että puhelinnumero
+          if (name && phoneNumber && name.trim() !== '' && phoneNumber.trim() !== '' && phoneNumber.startsWith('+358')) {
+            // Hae valitun äänen id
+            const selectedVoiceObj = getVoiceOptions().find(v => v.value === selectedVoice)
+            const voiceId = selectedVoiceObj?.id
+            
+            callLogs.push({
+              user_id: publicUserId,
+              customer_name: name.trim().substring(0, 100), // Rajaa 100 merkkiin (tietokannan rajoitus)
+              phone_number: phoneNumber.trim().substring(0, 20), // Rajaa 20 merkkiin
+              call_type: callType.substring(0, 50), // Rajaa 50 merkkiin
+              call_type_id: call_type_id,
+              voice_id: voiceId, // Lisätty voice_id
+              call_date: new Date().toISOString(),
+              call_status: 'pending',
+              campaign_id: `mass-call-${Date.now()}`.substring(0, 100), // Rajaa 100 merkkiin
+              summary: `Mass-call: ${script.trim().substring(0, 100)}...`
+            })
+          } else {
+            errorCount++
+          }
+        }
+
+        if (callLogs.length === 0) {
+          throw new Error('Kelvollisia rivejä ei löytynyt. Varmista että riveillä on sekä nimi että kelvollinen suomalainen puhelinnumero.')
+        }
+
+        // Lisää kaikki call_logs tauluun
+        const { data: insertedLogs, error: insertError } = await supabase
+          .from('call_logs')
+          .insert(callLogs)
+          .select()
+
+        if (insertError) {
+          throw new Error('Virhe call_logs kirjoittamisessa: ' + insertError.message)
+        }
+
+        successCount = insertedLogs.length
+
+        setPolling(true)
+        alert(`✅ Mass-call käynnistetty onnistuneesti!\n\nAloitettu: ${successCount} puhelua\nOhitettu (puuttuu nimi/kelvollinen puhelinnumero): ${errorCount} riviä`)
       }
-
-      if (callLogs.length === 0) {
-        throw new Error('Kelvollisia rivejä ei löytynyt. Varmista että riveillä on sekä nimi että kelvollinen suomalainen puhelinnumero.')
-      }
-
-      // Lisää kaikki call_logs tauluun
-      const { data: insertedLogs, error: insertError } = await supabase
-        .from('call_logs')
-        .insert(callLogs)
-        .select()
-
-      if (insertError) {
-        throw new Error('Virhe call_logs kirjoittamisessa: ' + insertError.message)
-      }
-
-      successCount = insertedLogs.length
-
-      setPolling(true)
-      alert(`✅ Mass-call käynnistetty onnistuneesti!\n\nAloitettu: ${successCount} puhelua\nOhitettu (puuttuu nimi/kelvollinen puhelinnumero): ${errorCount} riviä`)
       
     } catch (e) {
       const errorMessage = e.message || 'Soittojen käynnistys epäonnistui'
@@ -936,6 +989,222 @@ export default function CallPanel() {
     return options
   }
 
+  // Mika Special - lomakehakufunktiot
+  const fetchMikaContacts = async () => {
+    console.log('=== Frontend: fetchMikaContacts called ===')
+    setLoadingMikaContacts(true)
+    setMikaContactsError('')
+    
+    try {
+      console.log('Frontend: Making fetch request to /api/mika-special-contacts')
+      const response = await fetch('/api/mika-special-contacts')
+      console.log('Frontend: Response status:', response.status)
+      console.log('Frontend: Response ok:', response.ok)
+      
+      const result = await response.json()
+      console.log('Frontend: Response data:', result)
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to fetch contacts')
+      }
+      
+      console.log('Frontend: Setting contacts:', result.data)
+      setMikaContacts(result.data || [])
+      
+    } catch (error) {
+      console.error('Frontend: Error fetching Mika Special contacts:', error)
+      setMikaContactsError(error.message)
+    } finally {
+      setLoadingMikaContacts(false)
+    }
+  }
+
+  const handleMikaSearch = async () => {
+    // Tarkista että vähintään yksi hakukenttä on täytetty
+    if (!mikaSearchName.trim() && !mikaSearchTitle.trim() && !mikaSearchOrganization.trim()) {
+      setMikaSearchResults([])
+      return
+    }
+    
+    setMikaSearchLoading(true)
+    
+    try {
+      console.log('Frontend: Sending search request with:', {
+        name: mikaSearchName,
+        title: mikaSearchTitle,
+        organization: mikaSearchOrganization
+      })
+      
+      // Lähetä webhook-kutsu N8N:ään hakusanoilla
+      const response = await fetch('/api/mika-special-contacts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'search_contacts',
+          name: mikaSearchName.trim(),
+          title: mikaSearchTitle.trim(),
+          organization: mikaSearchOrganization.trim(),
+          timestamp: new Date().toISOString()
+        })
+      })
+      
+      console.log('Frontend: Search response status:', response.status)
+      
+      if (!response.ok) {
+        throw new Error('Search request failed')
+      }
+      
+      const result = await response.json()
+      console.log('Frontend: Search response data:', result)
+      
+      setMikaSearchResults(result.data || [])
+      
+    } catch (error) {
+      console.error('Frontend: Error searching Mika contacts:', error)
+      setMikaSearchResults([])
+    } finally {
+      setMikaSearchLoading(false)
+    }
+  }
+
+  const handleMikaMassCall = async (contact) => {
+    console.log('Frontend: Starting mass calls for contact:', contact)
+    
+    try {
+      // Muodosta Google Sheets URL kontaktidatasta
+      const contactData = {
+        name: contact.name,
+        phone: contact.phones && contact.phones[0] ? contact.phones[0] : '',
+        email: contact.primary_email || (contact.emails && contact.emails[0]) || '',
+        company: contact.organization?.name || '',
+        title: contact.custom_fields && contact.custom_fields[0] ? contact.custom_fields[0] : '',
+        address: contact.organization?.address || ''
+      }
+      
+      console.log('Frontend: Contact data for mass calls:', contactData)
+      
+      // Muodosta Google Sheets -yhteensopiva data-rakenne
+      const columns = ['name', 'phone', 'email', 'company', 'title', 'address']
+      const rows = [[
+        contactData.name,
+        contactData.phone,
+        contactData.email,
+        contactData.company,
+        contactData.title,
+        contactData.address
+      ]]
+      
+      // Aseta kontaktidata mass-calls -kenttiin
+      setSheetUrl('') // Tyhjennä Google Sheets URL
+      setValidationResult({
+        phoneCount: 1,
+        success: true,
+        columns: columns,
+        rows: rows,
+        data: [contactData]
+      })
+      
+      // Siirry mass-calls -välilehdelle
+      setActiveTab('calls')
+      
+      // Näytä ilmoitus
+      alert(`Kontakti "${contact.name}" lisätty mass-calls -palikkaan! Siirry "Puhelut" -välilehdelle aloittaaksesi soitot.`)
+      
+    } catch (error) {
+      console.error('Frontend: Error starting mass calls:', error)
+      alert('Virhe mass-calls -palikan alustamisessa')
+    }
+  }
+
+  const handleMikaSingleCall = async (contact) => {
+    console.log('Frontend: Starting single call for contact:', contact)
+    
+    try {
+      // Aseta kontaktidata yksittäiseen soittoon
+      setPhoneNumber(contact.phones && contact.phones[0] ? contact.phones[0] : '')
+      setName(contact.name || '')
+      
+      // Siirry mass-calls -välilehdelle
+      setActiveTab('calls')
+      
+      // Näytä ilmoitus
+      alert(`Kontakti "${contact.name}" lisätty yksittäiseen soittoon! Siirry "Puhelut" -välilehdelle aloittaaksesi soiton.`)
+      
+    } catch (error) {
+      console.error('Frontend: Error starting single call:', error)
+      alert('Virhe yksittäisen soiton alustamisessa')
+    }
+  }
+
+  const handleMikaMassCallAll = async () => {
+    console.log('Frontend: Adding all contacts to mass calls:', mikaSearchResults.length)
+    
+    try {
+      // Muodosta kontaktidata kaikille hakutuloksille
+      const allContactsData = mikaSearchResults.map(contact => ({
+        name: contact.name,
+        phone: contact.phones && contact.phones[0] ? contact.phones[0] : '',
+        email: contact.primary_email || (contact.emails && contact.emails[0]) || '',
+        company: contact.organization?.name || '',
+        title: contact.custom_fields && contact.custom_fields[0] ? contact.custom_fields[0] : '',
+        address: contact.organization?.address || ''
+      })).filter(contact => contact.phone) // Vain kontakteja joilla on puhelinnumero
+      
+      if (allContactsData.length === 0) {
+        alert('Ei kontakteja puhelinnumerolla!')
+        return
+      }
+      
+      // Muodosta Google Sheets -yhteensopiva data-rakenne
+      const columns = ['name', 'phone', 'email', 'company', 'title', 'address']
+      const rows = allContactsData.map(contact => [
+        contact.name,
+        contact.phone,
+        contact.email,
+        contact.company,
+        contact.title,
+        contact.address
+      ])
+      
+      console.log('Frontend: All contacts data for mass calls:', allContactsData)
+      console.log('Frontend: Setting validationResult with:', {
+        phoneCount: allContactsData.length,
+        success: true,
+        columns: columns,
+        rows: rows
+      })
+      
+      // Aseta kaikki kontaktidata mass-calls -kenttiin
+      setSheetUrl('') // Tyhjennä Google Sheets URL
+      setValidationResult({
+        phoneCount: allContactsData.length,
+        success: true,
+        columns: columns,
+        rows: rows,
+        data: allContactsData
+      })
+      
+      // Siirry mass-calls -välilehdelle
+      setActiveTab('calls')
+      
+      // Näytä ilmoitus
+      alert(`${allContactsData.length} kontakti lisätty mass-calls -palikkaan! Siirry "Puhelut" -välilehdelle aloittaaksesi soitot.`)
+      
+    } catch (error) {
+      console.error('Frontend: Error adding all contacts to mass calls:', error)
+      alert('Virhe mass-calls -palikan alustamisessa')
+    }
+  }
+
+  // Hae kontakteja kun Mika Special -välilehti avataan
+  useEffect(() => {
+    if (activeTab === 'mika' && mikaContacts.length === 0) {
+      fetchMikaContacts()
+    }
+  }, [activeTab])
+
   return (
     <>
       <PageMeta 
@@ -966,13 +1235,28 @@ export default function CallPanel() {
           >
             ⚙️ Hallinta
           </Button>
+          {(isMika || isAdmin) && (
+            <Button 
+              onClick={() => setActiveTab('mika')} 
+              variant={activeTab === 'mika' ? 'primary' : 'secondary'}
+            >
+              🎯 Mika Special
+            </Button>
+          )}
         </div>
         
         {/* Sisältö */}
         {activeTab === 'calls' && (
           <div className="callpanel-grid" style={{ width: '100%', maxWidth: 'none' }}>
-            {/* Aloita puhelut -kortti */}
-            <div className="card">
+            {console.log('Calls tab - validationResult:', validationResult)}
+            {console.log('Calls tab - validationResult.rows:', validationResult?.rows)}
+            {console.log('Calls tab - validationResult.columns:', validationResult?.columns)}
+            {console.log('Calls tab - callType:', callType)}
+            {console.log('Calls tab - script:', script)}
+            {console.log('Calls tab - selectedVoice:', selectedVoice)}
+            {/* Aloita puhelut -kortti - näkyy vain adminille tai jos ei ole Mika */}
+            {(!isMika || isAdmin) && (
+              <div className="card">
               <h2 className="section-title">Aloita massapuhelut</h2>
               <div style={{ marginBottom: 10 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
@@ -1019,6 +1303,67 @@ export default function CallPanel() {
                 </div>
               )}
             </div>
+            )}
+            
+            {/* Mika Special - Aloita puhelut -kortti */}
+            {isMika && (
+              <div className="card" style={{ 
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                border: 'none'
+              }}>
+                <h2 className="section-title" style={{ color: 'white' }}>🚀 Mika Special - Puhelut</h2>
+                <div style={{ marginBottom: 16 }}>
+                  <p style={{ margin: '0 0 12px 0', fontSize: 14, opacity: 0.9 }}>
+                    Tervetuloa eksklusiiviseen puhelinmarkkinointi-ominaisuuteen! Sinulla on pääsy edistyneisiin toimintoihin.
+                  </p>
+                  <div style={{ 
+                    background: 'rgba(255,255,255,0.1)', 
+                    padding: 16, 
+                    borderRadius: 8,
+                    marginBottom: 16
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <span>VIP Status:</span>
+                      <strong>🎯 Aktiivinen</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <span>Puhelut tänään:</span>
+                      <strong>0/50</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>Seuraava päivitys:</span>
+                      <strong>24h</strong>
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <Button
+                    variant="secondary"
+                    style={{
+                      background: 'rgba(255,255,255,0.2)',
+                      color: 'white',
+                      border: '1px solid rgba(255,255,255,0.3)',
+                      flex: 1
+                    }}
+                  >
+                    🔓 Aktivoi ominaisuudet
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    style={{
+                      background: 'rgba(255,255,255,0.2)',
+                      color: 'white',
+                      border: '1px solid rgba(255,255,255,0.3)',
+                      flex: 1
+                    }}
+                  >
+                    📊 Näytä raportti
+                  </Button>
+                </div>
+              </div>
+            )}
+            
             {/* Tee puhelu -kortti */}
             <div className="card">
               <h2 className="section-title">Soita yksittäinen puhelu</h2>
@@ -1580,6 +1925,169 @@ export default function CallPanel() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+        
+        {activeTab === 'mika' && (
+          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32, width: '100%' }}>
+            <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937', marginBottom: 24 }}>
+              🎯 Mika Special - Kontaktihaku
+            </h2>
+            <form
+              onSubmit={e => {
+                e.preventDefault();
+                handleMikaSearch();
+              }}
+              style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 24 }}
+            >
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: 4, fontSize: 14, fontWeight: 500, color: '#374151' }}>
+                    Nimi
+                  </label>
+                  <input
+                    type="text"
+                    value={mikaSearchName}
+                    onChange={e => setMikaSearchName(e.target.value)}
+                    placeholder="Syötä nimi..."
+                    style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 16 }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: 4, fontSize: 14, fontWeight: 500, color: '#374151' }}>
+                    Tehtävänimike
+                  </label>
+                  <input
+                    type="text"
+                    value={mikaSearchTitle}
+                    onChange={e => setMikaSearchTitle(e.target.value)}
+                    placeholder="Syötä tehtävänimike..."
+                    style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 16 }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: 4, fontSize: 14, fontWeight: 500, color: '#374151' }}>
+                    Organisaatio
+                  </label>
+                  <input
+                    type="text"
+                    value={mikaSearchOrganization}
+                    onChange={e => setMikaSearchOrganization(e.target.value)}
+                    placeholder="Syötä organisaatio..."
+                    style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 16 }}
+                  />
+                </div>
+              </div>
+              <Button
+                type="submit"
+                variant="primary"
+                style={{ padding: '12px 24px', fontSize: 16, fontWeight: 600, alignSelf: 'flex-start' }}
+                disabled={mikaSearchLoading || loadingMikaContacts}
+              >
+                {mikaSearchLoading ? 'Haetaan...' : 'Hae'}
+              </Button>
+            </form>
+            {loadingMikaContacts && (
+              <div style={{ textAlign: 'center', color: '#6b7280', marginBottom: 16 }}>Ladataan kontakteja...</div>
+            )}
+            {mikaContactsError && (
+              <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 12, padding: 16, color: '#dc2626', fontSize: 14, marginBottom: 16 }}>
+                ❌ {mikaContactsError}
+              </div>
+            )}
+            {mikaSearchResults.length > 0 ? (
+              <div style={{ marginTop: 16 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <h3 style={{ fontSize: 18, fontWeight: 600, color: '#374151', margin: 0 }}>Hakutulokset ({mikaSearchResults.length})</h3>
+                  <Button
+                    onClick={() => handleMikaMassCallAll()}
+                    variant="primary"
+                    style={{ 
+                      padding: '10px 20px', 
+                      fontSize: 14, 
+                      fontWeight: 600,
+                      background: '#10b981',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: 6,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    📞 Lisää kaikki mass-calls ({mikaSearchResults.length})
+                  </Button>
+                </div>
+                <div style={{ display: 'grid', gap: 16 }}>
+                  {mikaSearchResults.map((contact, idx) => (
+                    <div key={contact.id || idx} style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 8, padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <div style={{ fontWeight: 600, fontSize: 16 }}>{contact.name || 'Nimetön'}</div>
+                      <div style={{ color: '#6b7280', fontSize: 14 }}>
+                        <strong>Tehtävänimike:</strong> {contact.custom_fields && contact.custom_fields[0] ? contact.custom_fields[0] : 'Ei määritelty'}
+                      </div>
+                      <div style={{ color: '#6b7280', fontSize: 14 }}>
+                        <strong>Organisaatio:</strong> {contact.organization?.name || 'Ei määritelty'}
+                      </div>
+                      <div style={{ color: '#6b7280', fontSize: 14 }}>
+                        <strong>Osoite:</strong> {contact.organization?.address || 'Ei määritelty'}
+                      </div>
+                      <div style={{ color: '#6b7280', fontSize: 14 }}>
+                        <strong>Sähköposti:</strong> {contact.primary_email || (contact.emails && contact.emails[0]) || '-'}
+                      </div>
+                      <div style={{ color: '#6b7280', fontSize: 14 }}>
+                        <strong>Puhelin:</strong> {contact.phones && contact.phones[0] ? contact.phones[0] : '-'}
+                      </div>
+                      {contact.result_score && (
+                        <div style={{ color: '#059669', fontSize: 12, fontStyle: 'italic' }}>
+                          Hakupisteet: {Math.round(contact.result_score * 100)}%
+                        </div>
+                      )}
+                      
+                      {/* Mass-calls -nappi */}
+                      <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
+                        <Button
+                          onClick={() => handleMikaMassCall(contact)}
+                          variant="primary"
+                          style={{ 
+                            padding: '8px 16px', 
+                            fontSize: 14, 
+                            fontWeight: 600,
+                            background: '#3b82f6',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: 6,
+                            cursor: 'pointer'
+                          }}
+                          disabled={!contact.phones || contact.phones.length === 0}
+                        >
+                          📞 Aloita massapuhelut
+                        </Button>
+                        <Button
+                          onClick={() => handleMikaSingleCall(contact)}
+                          variant="secondary"
+                          style={{ 
+                            padding: '8px 16px', 
+                            fontSize: 14, 
+                            fontWeight: 600,
+                            background: '#f3f4f6',
+                            color: '#374151',
+                            border: '1px solid #d1d5db',
+                            borderRadius: 6,
+                            cursor: 'pointer'
+                          }}
+                          disabled={!contact.phones || contact.phones.length === 0}
+                        >
+                          📱 Yksittäinen soitto
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div style={{ color: '#6b7280', fontSize: 15, marginTop: 24 }}>
+                {(mikaSearchName || mikaSearchTitle || mikaSearchOrganization) && !mikaSearchLoading && 'Ei tuloksia haulla.'}
+                {!mikaSearchName && !mikaSearchTitle && !mikaSearchOrganization && 'Syötä vähintään yksi hakukenttä ja paina Hae.'}
+              </div>
+            )}
           </div>
         )}
           </div>

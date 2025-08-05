@@ -109,6 +109,7 @@ const transformSupabaseData = (supabaseData) => {
       hashtags: item.hashtags || [],
       voiceover: item.voiceover || '',
       voiceoverReady: item.voiceover_ready || false,
+      segments: item.segments || [], // Lisätään segments data!
       originalData: item, // Säilytetään alkuperäinen data
       source: 'supabase'
     }
@@ -144,40 +145,133 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
     <div className="post-card">
       <div className="post-card-content">
         <div className="post-thumbnail">
-          {post.thumbnail ? (
-            <img
-              src={post.thumbnail}
-              alt="thumbnail"
-              loading="lazy"
-              decoding="async"
-              onLoad={(e) => {
-                e.target.style.opacity = '1'
-              }}
-              onError={(e) => {
-                if (e.target && e.target.style) {
-                  e.target.style.display = 'none';
+          {(() => {
+            // Carousel: Näytä ensimmäinen slide segments-taulusta
+            if (post.type === 'Carousel' && post.segments && post.segments.length > 0) {
+              const firstSegment = post.segments.find(seg => seg.slide_no === 1) || post.segments[0];
+              const mediaUrl = firstSegment.media_urls?.[0];
+              
+              if (mediaUrl) {
+                const isVideo = mediaUrl.includes('.mp4') || mediaUrl.includes('.webm') || mediaUrl.includes('.mov') || mediaUrl.includes('.avi');
+                
+                if (isVideo) {
+                  return (
+                    <video
+                      src={mediaUrl}
+                      muted
+                      loop
+                      playsInline
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'cover'
+                      }}
+                      onError={(e) => {
+                        if (e.target && e.target.style) {
+                          e.target.style.display = 'none';
+                        }
+                        if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
+                          e.target.nextSibling.style.display = 'flex';
+                        }
+                      }}
+                    />
+                  );
+                } else {
+                  return (
+                    <img
+                      src={mediaUrl}
+                      alt="carousel preview"
+                      loading="lazy"
+                      decoding="async"
+                      onLoad={(e) => {
+                        e.target.style.opacity = '1'
+                      }}
+                      onError={(e) => {
+                        if (e.target && e.target.style) {
+                          e.target.style.display = 'none';
+                        }
+                        if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
+                          e.target.nextSibling.style.display = 'flex';
+                        }
+                      }}
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'cover',
+                        opacity: 0,
+                        transition: 'opacity 0.3s ease'
+                      }}
+                    />
+                  );
                 }
-                if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
-                  e.target.nextSibling.style.display = 'flex';
-                }
-              }}
-              style={{ 
-                width: '100%', 
-                height: '100%', 
-                objectFit: 'cover',
-                opacity: 0,
-                transition: 'opacity 0.3s ease'
-              }}
-            />
-          ) : null}
-          {!post.thumbnail && (
-            <div className="placeholder-content">
-              <div className="placeholder-fallback">
-                <div className="placeholder-icon">📸</div>
-                <div className="placeholder-text">Ei kuvaa</div>
+              }
+            }
+            
+            // Video: Toisto
+            if (post.thumbnail && (post.thumbnail.includes('.mp4') || post.thumbnail.includes('.webm') || post.thumbnail.includes('.mov') || post.thumbnail.includes('.avi'))) {
+              return (
+                <video
+                  src={post.thumbnail}
+                  muted
+                  loop
+                  playsInline
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'cover'
+                  }}
+                  onError={(e) => {
+                    if (e.target && e.target.style) {
+                      e.target.style.display = 'none';
+                    }
+                    if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
+                      e.target.nextSibling.style.display = 'flex';
+                    }
+                  }}
+                />
+              );
+            }
+            
+            // Kuva: Vain preview
+            if (post.thumbnail) {
+              return (
+                <img
+                  src={post.thumbnail}
+                  alt="thumbnail"
+                  loading="lazy"
+                  decoding="async"
+                  onLoad={(e) => {
+                    e.target.style.opacity = '1'
+                  }}
+                  onError={(e) => {
+                    if (e.target && e.target.style) {
+                      e.target.style.display = 'none';
+                    }
+                    if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
+                      e.target.nextSibling.style.display = 'flex';
+                    }
+                  }}
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'cover',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease'
+                  }}
+                />
+              );
+            }
+            
+            // Placeholder jos ei mediaa
+            return (
+              <div className="placeholder-content">
+                <div className="placeholder-fallback">
+                  <div className="placeholder-icon">📸</div>
+                  <div className="placeholder-text">Ei kuvaa</div>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
                   <div className="post-info">
             <div className="post-header">
@@ -496,7 +590,7 @@ export default function ManagePostsPage() {
   const currentLoading = loading || reelsLoading
   const currentError = error || reelsError
   
-  console.log('Kaikki postit:', allPosts.map(p => ({ title: p.title, status: p.status, source: p.source, type: p.type })))
+
 
   // Filtteröidään postit
   const filteredPosts = currentPosts.filter(post => {
@@ -1127,12 +1221,11 @@ export default function ManagePostsPage() {
           {/* Ylemmät 4 saraketta */}
           <div className="kanban-top-row">
             {columns.map(column => {
-              // Filteröidään postit statusin JA lähteen mukaan
+                              // Filteröidään postit statusin JA lähteen mukaan
               let columnPosts = filteredPosts.filter(post => {
                 // Avatar-sarakkeessa näytetään reels-dataa
                 if (column.title === 'Avatar') {
                   const isAvatarPost = post.status === 'Kesken' && post.source === 'reels'
-                  console.log('Avatar-sarake: post:', post.title, 'isAvatarPost:', isAvatarPost, 'status:', post.status, 'source:', post.source, 'type:', post.type)
                   return isAvatarPost
                 }
                 // Kesken-sarakkeessa näytetään vain Supabase-dataa "Kesken" statusilla
@@ -1146,22 +1239,22 @@ export default function ManagePostsPage() {
                 }
               })
               
-              console.log(`${column.title}-sarake: ${columnPosts.length} postia`)
-              
               return (
                 <div key={column.status} className="kanban-column">
                   <h3 className="column-title">{column.title}</h3>
                   <div className="column-content">
                     {columnPosts.map(post => {
                       // Varmistetaan että post on oikeassa muodossa
-                                            const safePost = {
+                      const safePost = {
                         id: post.id || 'unknown',
                         title: post.title || 'Nimetön julkaisu',
                         caption: post.caption || 'Ei kuvausta',
                         type: post.type || 'Photo',
                         source: post.source || 'supabase',
                         thumbnail: post.thumbnail || null,
-                        status: post.status || 'Kesken' // Lisätään status!
+                        status: post.status || 'Kesken',
+                        voiceover: post.voiceover || '',
+                        segments: post.segments || [] // Lisätään segments data!
                       }
                       
                       return (
@@ -1202,7 +1295,8 @@ export default function ManagePostsPage() {
                         thumbnail: post.thumbnail || null,
                         status: post.status || 'Julkaistu',
                         published_at: post.publishedAt,
-                        external_urls: []
+                        external_urls: [],
+                        segments: post.segments || [] // Lisätään segments data!
                       }
                       
                       return (
@@ -1361,22 +1455,22 @@ export default function ManagePostsPage() {
               {/* Video Player / Thumbnail */}
               <div className="video-player">
                 <div className="video-container">
-                  {/* Jos on Carousel-tyyppi ja segments dataa, näytetään slideshow */}
-                  {editingPost.type === 'Carousel' && editingPost.segments && editingPost.segments.length > 0 ? (
-                    <div className="carousel-slideshow">
-                      {(() => {
-                        const slidesWithMedia = editingPost.segments.filter(segment => segment.media_urls && segment.media_urls.length > 0);
-                        if (slidesWithMedia.length === 0) {
-                          return (
-                            <div className="no-media-message">
-                              <span>📄</span>
-                              <p>Ei mediaa saatavilla segments-taulusta</p>
-                            </div>
-                          );
-                        }
-                        
-                                                 return (
-                           <div className="slideshow-container" onClick={(e) => e.stopPropagation()}>
+                  {(() => {
+                    // Carousel: Näytä slideshow segments-taulusta
+                    if (editingPost.type === 'Carousel' && editingPost.segments && editingPost.segments.length > 0) {
+                      const slidesWithMedia = editingPost.segments.filter(segment => segment.media_urls && segment.media_urls.length > 0);
+                      if (slidesWithMedia.length === 0) {
+                        return (
+                          <div className="no-media-message">
+                            <span>📄</span>
+                            <p>Ei mediaa saatavilla segments-taulusta</p>
+                          </div>
+                        );
+                      }
+                      
+                      return (
+                        <div className="carousel-slideshow">
+                          <div className="slideshow-container" onClick={(e) => e.stopPropagation()}>
                             {/* Vasen nuoli */}
                             <button 
                               type="button"
@@ -1437,35 +1531,31 @@ export default function ManagePostsPage() {
                                         Your browser does not support the video tag.
                                       </video>
                                       <div className="video-fallback" style={{ display: 'none' }}>
-                                                                              <div className="video-fallback">
                                         <div className="placeholder-icon">🎥</div>
                                         <div className="placeholder-text">Video ei saatavilla</div>
-                                      </div>
                                       </div>
                                     </div>
                                   );
                                 } else {
                                   return (
                                     <div>
-                                      <>
-                                        <img 
-                                          src={currentMedia} 
-                                          alt={`Slide ${slidesWithMedia[editingPost.currentSlide || 0].slide_no}`}
-                                          className="slide-image"
-                                          onError={(e) => {
-                                            if (e.target && e.target.style) {
-                                              e.target.style.display = 'none';
-                                            }
-                                            if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
-                                              e.target.nextSibling.style.display = 'flex';
-                                            }
-                                          }}
-                                        />
-                                        <div className="video-fallback" style={{ display: 'none' }}>
-                                          <div className="placeholder-icon">📸</div>
-                                          <div className="placeholder-text">Kuva ei saatavilla</div>
-                                        </div>
-                                      </>
+                                      <img 
+                                        src={currentMedia} 
+                                        alt={`Slide ${slidesWithMedia[editingPost.currentSlide || 0].slide_no}`}
+                                        className="slide-image"
+                                        onError={(e) => {
+                                          if (e.target && e.target.style) {
+                                            e.target.style.display = 'none';
+                                          }
+                                          if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
+                                            e.target.nextSibling.style.display = 'flex';
+                                          }
+                                        }}
+                                      />
+                                      <div className="video-fallback" style={{ display: 'none' }}>
+                                        <div className="placeholder-icon">📸</div>
+                                        <div className="placeholder-text">Kuva ei saatavilla</div>
+                                      </div>
                                     </div>
                                   );
                                 }
@@ -1490,24 +1580,43 @@ export default function ManagePostsPage() {
                               ))}
                             </div>
                           </div>
-                        );
-                      })()}
-                    </div>
-                  ) : editingPost.thumbnail && editingPost.thumbnail !== '/placeholder.png' ? (
-                    <video 
-                      src={editingPost.thumbnail} 
-                      controls 
-                      className="video-element"
-                      poster={editingPost.thumbnail}
-                    >
-                      Your browser does not support the video tag.
-                    </video>
-                  ) : (
-                    <div className="video-placeholder">
-                      <span className="video-icon">🎥</span>
-                      <p>Ei videota saatavilla</p>
-                    </div>
-                  )}
+                        </div>
+                      );
+                    }
+                    
+                    // Video: Toisto
+                    if (editingPost.thumbnail && (editingPost.thumbnail.includes('.mp4') || editingPost.thumbnail.includes('.webm') || editingPost.thumbnail.includes('.mov') || editingPost.thumbnail.includes('.avi'))) {
+                      return (
+                        <video 
+                          src={editingPost.thumbnail} 
+                          controls 
+                          className="video-element"
+                        >
+                          Your browser does not support the video tag.
+                        </video>
+                      );
+                    }
+                    
+                    // Kuva: Vain preview
+                    if (editingPost.thumbnail && editingPost.thumbnail !== '/placeholder.png') {
+                      return (
+                        <img 
+                          src={editingPost.thumbnail} 
+                          alt="thumbnail"
+                          className="video-element"
+                          style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                        />
+                      );
+                    }
+                    
+                    // Placeholder jos ei mediaa
+                    return (
+                      <div className="video-placeholder">
+                        <span className="video-icon">🎥</span>
+                        <p>Ei videota saatavilla</p>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
 
@@ -1546,7 +1655,7 @@ export default function ManagePostsPage() {
                        name="voiceover"
                        rows={8}
                        className="form-textarea"
-                       defaultValue={editingPost.voiceover || "Oletko innovaattori? Kuvittele maailma, jossa AI käsittelee asiakaspalvelupuhelut puolestasi. Näytämme, miten tämä teknologia voi mullistaa yrityksesi toiminnan, parantaen tiimisi tehokkuutta ja myyntituloksia. Anna työntekijöidesi keskittyä siihen, missä he loistavat, samalla kun tekoäly hoitaa rutiinitehtävät. Astu kanssamme tulevaisuuteen, jossa työskentely on entistäkin sujuvampaa."}
+                       defaultValue={editingPost.voiceover || ""}
                        placeholder={editingPost.type === 'Carousel' ? "Kirjoita kuvaus..." : "Kirjoita voiceover-teksti..."}
                      />
                      <div className="voiceover-checkbox">
@@ -1585,7 +1694,7 @@ export default function ManagePostsPage() {
                          name="caption"
                          rows={6}
                          className="form-textarea"
-                         defaultValue={editingPost.caption || "Oletko valmis muuttamaan yrityksesi toimintamallit? AI voi hoitaa puhelut, jotta sinä voit keskittyä suureen kuvaan. Tartu tilaisuuteen ja modernisoi asiakashankintasi.🗝️ ja tägää joku, joka hyötyisi tästä innovaatiosta! #Tekoäly #Yrittäjyys #Kasvu #Tekoäly #Yrittäjyys #Asiakashankinta #Valmennus #RascalCompany"}
+                         defaultValue={editingPost.caption || ""}
                          placeholder="Kirjoita some-sisällön kuvaus..."
                        />
                        <div className="char-counter">

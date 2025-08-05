@@ -850,38 +850,79 @@ function VoiceSection({ companyId }) {
   const [error, setError] = useState('');
   const fileInputRef = React.useRef(null);
 
-  // Hae voice_id Supabasesta
-  const fetchVoiceId = async () => {
+  // Apufunktio: poimi äänitiedostot N8N/Airtable-rakenteesta
+  function extractAudioFiles(apiData) {
+    console.log('extractAudioFiles: Alkuperäinen data:', apiData);
+    if (!Array.isArray(apiData)) {
+      console.log('extractAudioFiles: Data ei ole array, palautetaan tyhjä lista');
+      return [];
+    }
+    
+    // Etsi kaikki Voice[] url:t
+    const audioFiles = [];
+    for (const record of apiData) {
+      console.log('extractAudioFiles: Käsitellään record:', record);
+      if (Array.isArray(record.Voice)) {
+        console.log('extractAudioFiles: Voice array löytyi:', record.Voice);
+        for (const voice of record.Voice) {
+          let url = null;
+          if (voice.url) url = voice.url;
+          if (url) {
+            console.log('extractAudioFiles: Lisätään äänitiedosto URL:llä:', url);
+            audioFiles.push({ 
+              url, 
+              id: voice.id || url, 
+              filename: 'Voice Clone',
+              fileType: 'audio',
+              voiceId: record["Variable ID"] || record.id 
+            });
+          }
+        }
+      } else {
+        console.log('extractAudioFiles: Voice ei ole array tai ei löydy:', record.Voice);
+      }
+      if (audioFiles.length >= 1) break; // Max 1 äänitiedosto
+    }
+    console.log('extractAudioFiles: Palautetaan äänitiedostot:', audioFiles);
+    return audioFiles.slice(0, 1);
+  }
+
+  // Hae äänitiedostot N8N/Airtable-rakenteesta
+  const fetchAudioFiles = async () => {
     if (!companyId) return;
     
+    setLoading(true);
+    setError('');
+    console.log('VoiceSection: Haetaan äänitiedostoja companyId:llä:', companyId);
+    
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('voice_id')
-        .eq('company_id', companyId)
-        .single();
+      const res = await fetch('/api/avatar-status.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ companyId })
+      });
       
-      if (error) {
-        console.error('Error fetching voice_id:', error);
-        return;
+      if (res.ok) {
+        const data = await res.json();
+        console.log('VoiceSection: API vastaus:', data);
+        const extractedAudioFiles = extractAudioFiles(data);
+        console.log('VoiceSection: Poimitut äänitiedostot:', extractedAudioFiles);
+        setAudioFiles(extractedAudioFiles);
+      } else {
+        console.error('VoiceSection: API virhe:', res.status);
+        setError('Äänitiedostojen haku epäonnistui');
       }
-      
-      if (data?.voice_id) {
-        setAudioFiles([{
-          id: data.voice_id,
-          filename: 'Voice Clone',
-          fileType: 'audio',
-          voiceId: data.voice_id
-        }]);
-      }
-    } catch (err) {
-      console.error('Error fetching voice_id:', err);
+    } catch (error) {
+      console.error('VoiceSection: Virhe äänitiedostojen haussa:', error);
+      setError('Äänitiedostojen haku epäonnistui');
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Hae voice_id kun komponentti latautuu
+  // Hae äänitiedostot kun komponentti latautuu
   useEffect(() => {
-    fetchVoiceId();
+    fetchAudioFiles();
   }, [companyId]);
 
   // Lisää uusi äänitiedosto (lähetä backendiin)
@@ -905,9 +946,9 @@ function VoiceSection({ companyId }) {
 
       if (res.ok) {
         const data = await res.json();
-        // Odota että voice_id ilmestyy Supabaseen
+        // Odota että äänitiedosto ilmestyy N8N/Airtable-rakenteeseen
         setTimeout(() => {
-          fetchVoiceId();
+          fetchAudioFiles();
         }, 3000); // 3 sekunnin viive
         
         // Näytä väliaikainen tila
@@ -1034,7 +1075,7 @@ function VoiceSection({ companyId }) {
       />
       {/* Info-teksti */}
       <div style={{ color: '#6b7280', fontSize: 11, marginTop: 8 }}>
-        {audioFiles.length}/1 äänitiedosto lisätty. Äänitiedosto pysyy pysyvästi ja sitä ei voi poistaa.
+        {audioFiles.length}/1 äänitiedosto lisätty. {audioFiles.length === 0 ? 'Lisää äänitiedosto voice clone -ominaisuutta varten.' : 'Äänitiedosto pysyy pysyvästi ja sitä ei voi poistaa.'}
       </div>
       {error && <div style={{ color: '#ef4444', fontSize: 11, marginTop: 6 }}>{error}</div>}
     </div>

@@ -240,6 +240,7 @@
   font-size: 36px;
   font-weight: 700;
   margin-bottom: 48px;
+  color: #ffffff;
 }
 
 .contact-info-grid {
@@ -249,11 +250,12 @@
 }
 
 .contact-info-card {
-  background: #fff;
+  background: #1e293b !important;
+  border: 1px solid #475569 !important;
   border-radius: 16px;
   padding: 32px;
   text-align: center;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
   transition: transform 0.2s;
 }
 
@@ -278,13 +280,26 @@
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 16px;
-  color: #1f2937;
+  color: #ffffff;
 }
 
 .contact-info-card p {
-  color: #6b7280;
+  color: #e5e7eb;
   line-height: 1.6;
   margin-bottom: 16px;
+}
+
+.contact-value {
+  color: #f3f4f6;
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.contact-description {
+  color: #cbd5e1;
+  font-size: 14px;
+  margin: 0;
 }
 
 .contact-info-card a {
@@ -296,6 +311,47 @@
 
 .contact-info-card a:hover {
   color: #22c55e;
+}
+
+/* Contact CTA */
+.contact-cta {
+  text-align: center;
+  margin-top: 48px;
+  padding: 32px;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 16px;
+}
+
+.contact-cta h3 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #ffffff;
+}
+
+.contact-cta p {
+  font-size: 16px;
+  color: #e5e7eb;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.demo-button {
+  background: #4ADE80;
+  color: #000;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.demo-button:hover {
+  background: #22c55e;
+  transform: translateY(-1px);
 }
 
 /* Demo CTA */
@@ -350,26 +406,30 @@
   font-size: 36px;
   font-weight: 700;
   margin-bottom: 48px;
+  color: #ffffff;
 }
 
 .faq-item {
-  background: #fff;
+  background: #1e293b !important;
+  border: 1px solid #475569 !important;
   border-radius: 12px;
   margin-bottom: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  padding: 24px;
 }
 
 .faq-question {
-  background: #f9fafb;
-  padding: 24px;
+  background: transparent;
+  padding: 0;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-weight: 600;
-  color: #1f2937;
+  color: #ffffff;
   transition: background 0.2s;
+  margin-bottom: 16px;
 }
 
 .faq-question:hover {
@@ -377,16 +437,16 @@
 }
 
 .faq-answer {
-  padding: 0 24px;
+  padding: 0;
   max-height: 0;
   overflow: hidden;
   transition: all 0.3s ease;
-  color: #374151;
+  color: #e5e7eb;
   line-height: 1.6;
 }
 
 .faq-answer.active {
-  padding: 24px;
+  padding: 0;
   max-height: 200px;
 }
 
@@ -520,6 +580,19 @@
     padding: 24px;
   }
 
+  .contact-cta {
+    margin-top: 24px;
+    padding: 20px;
+  }
+
+  .contact-cta h3 {
+    font-size: 20px;
+  }
+
+  .contact-cta p {
+    font-size: 15px;
+  }
+
   .demo-cta-section {
     margin: 0 32px 60px 32px;
     padding: 60px 20px;
@@ -586,6 +659,19 @@
 
   .contact-info-card h3 {
     font-size: 18px;
+  }
+
+  .contact-cta {
+    margin-top: 20px;
+    padding: 16px;
+  }
+
+  .contact-cta h3 {
+    font-size: 18px;
+  }
+
+  .contact-cta p {
+    font-size: 14px;
   }
 
   .demo-cta-section h2 {

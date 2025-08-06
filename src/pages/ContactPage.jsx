@@ -9,25 +9,19 @@ import './ContactPage.css'
 const contactInfo = [
   {
     title: 'Sähköposti',
-    value: 'info@rascal-ai.fi',
+    value: 'info@rascalcompany.fi',
     icon: '📧',
     description: 'Vastaanotamme viestejä 24/7'
   },
   {
     title: 'Puhelin',
-    value: '+358 50 123 4567',
+    value: '+358 40 7597296',
     icon: '📞',
     description: 'Ma-Pe 9:00-17:00'
   },
   {
-    title: 'Toimisto',
-    value: 'Helsinki, Suomi',
-    icon: '🏢',
-    description: 'Vierailut sopimuksen mukaan'
-  },
-  {
     title: 'Support',
-    value: 'support@rascal-ai.fi',
+    value: '+358 50 3603619',
     icon: '🛠️',
     description: 'Tekninen tuki'
   }
@@ -99,23 +93,40 @@ export default function ContactPage() {
     e.preventDefault()
     setIsSubmitting(true)
     
-    // Simuloidaan lomakkeen lähetystä
-    setTimeout(() => {
-      setIsSubmitting(false)
-      setSubmitSuccess(true)
-      setFormData({
-        name: '',
-        email: '',
-        company: '',
-        subject: '',
-        message: ''
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
       })
-      
-      // Piilota success-viesti 5 sekunnin jälkeen
-      setTimeout(() => {
-        setSubmitSuccess(false)
-      }, 5000)
-    }, 2000)
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setSubmitSuccess(true)
+        setFormData({
+          name: '',
+          email: '',
+          company: '',
+          subject: '',
+          message: ''
+        })
+        
+        // Piilota success-viesti 5 sekunnin jälkeen
+        setTimeout(() => {
+          setSubmitSuccess(false)
+        }, 5000)
+      } else {
+        alert(result.error || 'Virhe viestin lähetyksessä')
+      }
+    } catch (error) {
+      console.error('Submit error:', error)
+      alert('Virhe viestin lähetyksessä')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -293,8 +304,8 @@ export default function ContactPage() {
               <div className="contact-cta">
                 <h3>Haluatko nähdä Rascal AI:n toiminnassa?</h3>
                 <p>Varaa aika demo-keskusteluun ja näe miten voimme auttaa sinua.</p>
-                <button className="demo-button" onClick={() => navigate('/pricing')}>
-                  Pyydä demo
+                <button className="demo-button" onClick={() => window.open('https://calendar.app.google/tfjpG4yw4JdC955M9', '_blank')}>
+                  Varaa demo
                 </button>
               </div>
             </div>

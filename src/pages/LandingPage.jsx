@@ -132,10 +132,19 @@ export default function LandingPage() {
     <div className="landing-page">
       {/* Header */}
       <header className="landing-header">
-        <div className="header-logo">
-          <img src="/favicon.png" alt="Rascal AI logo" />
-          <span>Rascal AI</span>
+        <div className="header-left">
+          <div className="header-logo">
+            <img src="/favicon.png" alt="Rascal AI logo" />
+            <span>Rascal AI</span>
+          </div>
         </div>
+        
+        <div className="header-center">
+          <a href="https://rascalcompany.fi/" target="_blank" rel="noopener noreferrer" className="company-logo-link">
+            <img src="/rascal-company-logo.png" alt="Rascal Company" className="company-logo" />
+          </a>
+        </div>
+        
         <div className="header-right">
           <nav className="header-nav">
             <a href="/features">Ominaisuudet</a>
@@ -230,6 +239,18 @@ export default function LandingPage() {
             <h1>
               Näe markkinointisi totuus yhdellä silmäyksellä <span role="img" aria-label="aivot">🧠</span>
             </h1>
+            
+            <div className="cta-box cta-box--phone">
+              <div className="cta-title">Soita assarille</div>
+              <div className="cta-description">Kysy mitä tahansa tai pyydä henkilökohtaista demoa</div>
+              <div className="cta-phone">
+                <a href="tel:+358454905548" className="phone-link">
+                  <span className="phone-icon">📞</span>
+                  <span className="phone-number">+358 45 490 5548</span>
+                </a>
+              </div>
+            </div>
+            
             <p>
               Ei enää taulukkoh***ttiä. Rascal AI kokoaa kaiken olennaisen yhteen näkymään – julkaisut, uutiskirjeet, tilaajat ja AI-puhelut. Säästät tunteja viikossa ja näet vaikutukset reaaliajassa.
             </p>

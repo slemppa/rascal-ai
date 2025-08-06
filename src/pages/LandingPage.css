@@ -104,11 +104,45 @@
   padding: 32px 48px 0 48px;
 }
 
-.header-right {
+.header-left {
+  flex: 1;
   display: flex;
   align-items: center;
+}
+
+.header-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   gap: 32px;
 }
+
+.company-logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.company-logo-link:hover {
+  opacity: 0.8;
+}
+
+.company-logo {
+  height: 40px;
+  width: auto;
+  max-width: 200px;
+}
+
+
 
 .header-logo {
   display: flex;
@@ -283,7 +317,8 @@
 .hero-content p {
   font-size: 20px;
   margin-bottom: 32px;
-  color: #cbd5e1;
+  color: #e5e7eb;
+  line-height: 1.6;
 }
 
 .cta-box {
@@ -300,7 +335,7 @@
 }
 
 .cta-description {
-  color: #cbd5e1;
+  color: #e5e7eb;
   margin-bottom: 16px;
 }
 
@@ -342,6 +377,56 @@
   background: #f3f4f6;
 }
 
+/* Puhelinlaatikko */
+.cta-box--phone {
+  background: linear-gradient(135deg, #4ADE80 0%, #22c55e 100%);
+  color: #181B20;
+  margin: 16px 0 24px 0;
+  padding: 16px 20px;
+  border-radius: 12px;
+}
+
+.cta-box--phone .cta-title {
+  color: #181B20;
+}
+
+.cta-box--phone .cta-description {
+  color: #064e3b;
+}
+
+.cta-phone {
+  margin-top: 8px;
+}
+
+.phone-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #181B20;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.phone-link:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.phone-icon {
+  font-size: 20px;
+}
+
+.phone-number {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+}
+
 .hero-image {
   flex: 1;
   min-width: 320px;
@@ -367,7 +452,8 @@
 }
 
 .feature-card {
-  background: #23262B;
+  background: #0f172a !important;
+  border: 1px solid #334155 !important;
   border-radius: 16px;
   padding: 28px;
   min-height: 220px;
@@ -380,13 +466,15 @@
   font-weight: 700;
   font-size: 20px;
   margin-bottom: 8px;
+  color: #ffffff;
 }
 
 .feature-card ul {
-  color: #cbd5e1;
+  color: #e2e8f0;
   font-size: 16px;
   margin: 0;
   padding-left: 20px;
+  line-height: 1.5;
 }
 
 .feature-card li {
@@ -435,7 +523,7 @@
 }
 
 .footer-links a {
-  color: #cbd5e1;
+  color: #e5e7eb;
   text-decoration: underline;
   font-size: 16px;
   transition: color 0.2s;
@@ -455,8 +543,23 @@
 @media (max-width: 768px) {
   .landing-header {
     padding: 20px 20px 0 20px;
-    flex-direction: row;
+    flex-direction: column;
     gap: 16px;
+  }
+  
+  .header-left,
+  .header-center,
+  .header-right {
+    flex: none;
+    width: 100%;
+  }
+  
+  .header-center {
+    order: -1;
+  }
+  
+  .company-logo {
+    height: 35px;
   }
   
   .header-right {
@@ -517,6 +620,21 @@
     font-size: 16px;
   }
 
+  .cta-box--phone {
+    margin: 12px 0 20px 0;
+    padding: 14px 16px;
+  }
+
+  .phone-link {
+    font-size: 16px;
+    padding: 10px 14px;
+    justify-content: center;
+  }
+
+  .phone-number {
+    font-size: 16px;
+  }
+
   .hero-image {
     min-width: 280px;
     max-width: 320px;
@@ -566,6 +684,10 @@
     gap: 12px;
   }
   
+  .company-logo {
+    height: 30px;
+  }
+  
   .header-right {
     flex-direction: column;
     gap: 12px;
@@ -605,6 +727,20 @@
   .cta-primary,
   .cta-secondary {
     width: 100%;
+  }
+
+  .cta-box--phone {
+    margin: 8px 0 16px 0;
+    padding: 12px 14px;
+  }
+
+  .phone-link {
+    font-size: 15px;
+    padding: 8px 12px;
+  }
+
+  .phone-number {
+    font-size: 15px;
   }
 
   .features-grid {

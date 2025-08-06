@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.26.0](https://github.com/slemppa/rascal-ai/compare/v1.25.1...v1.26.0) (2025-08-06)
+
+
+### 🐛 Bug Fixes
+
+* aseta selectedVoice käyttäjän oman äänen voice_id:ksi ([6cac287](https://github.com/slemppa/rascal-ai/commit/6cac287b79eeec75f15dbb045518451a6594a347))
+* remove voice_id from call_types table and code ([3ac2ce9](https://github.com/slemppa/rascal-ai/commit/3ac2ce99cf4729539aa8dd2b0ac6026c181a57a4))
+* voice_id tallennus mass-call ja single-call toiminnallisuudessa ([fb007b7](https://github.com/slemppa/rascal-ai/commit/fb007b70c8a1c4faa54e55787cab9ecad2a8c2c4))
+* voiceover display and media handling in posts page ([18cabc5](https://github.com/slemppa/rascal-ai/commit/18cabc5faf5c10812c5e26ec85588ee5bb712160))
+
+
+### ✨ Features
+
+* automaattinen textarea korkeuden säätö strategy-sivulla ([082c102](https://github.com/slemppa/rascal-ai/commit/082c1024bfa8575ed70a5b8d669bf2d9e2ba2edb))
+* implement auto-logout with inactivity detection ([c8e1d99](https://github.com/slemppa/rascal-ai/commit/c8e1d991d300455b6f238b6f0b2baf629c517f69))
+
 ### [1.25.1](https://github.com/slemppa/rascal-ai/compare/v1.25.0...v1.25.1) (2025-08-04)
 
 

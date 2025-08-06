@@ -268,10 +268,6 @@ export default function CallPanel() {
       
       if (isMikaSpecialData) {
         // Käytä Mika Special mass-call API:a
-        console.log('Käytetään Mika Special mass-call API:a')
-        
-        console.log('Mika mass-call debug - user:', user)
-        console.log('Mika mass-call debug - user.id:', user?.id)
         
         const response = await fetch('/api/mika-mass-call', {
           method: 'POST',
@@ -298,7 +294,6 @@ export default function CallPanel() {
         
       } else {
         // Käytä normaalia mass-call API:a Google Sheets -datalle
-        console.log('Käytetään normaalia mass-call API:a')
         
         // Hae user_id Supabasesta
         const user_id = user?.id
@@ -335,9 +330,7 @@ export default function CallPanel() {
           throw new Error('Validointi pitää suorittaa ensin')
         }
 
-        console.log('Mass-calls debug - validationResult:', validationResult)
-        console.log('Mass-calls debug - columns:', validationResult.columns)
-        console.log('Mass-calls debug - rows:', validationResult.rows)
+
 
         const callLogs = []
         let successCount = 0
@@ -988,24 +981,16 @@ export default function CallPanel() {
 
   // Mika Special - lomakehakufunktiot
   const fetchMikaContacts = async () => {
-    console.log('=== Frontend: fetchMikaContacts called ===')
     setLoadingMikaContacts(true)
     setMikaContactsError('')
     
     try {
-      console.log('Frontend: Making fetch request to /api/mika-special-contacts')
       const response = await fetch('/api/mika-special-contacts')
-      console.log('Frontend: Response status:', response.status)
-      console.log('Frontend: Response ok:', response.ok)
-      
       const result = await response.json()
-      console.log('Frontend: Response data:', result)
       
       if (!response.ok) {
         throw new Error(result.error || 'Failed to fetch contacts')
       }
-      
-      console.log('Frontend: Setting contacts:', result.data)
       setMikaContacts(result.data || [])
       
     } catch (error) {
@@ -1026,11 +1011,7 @@ export default function CallPanel() {
     setMikaSearchLoading(true)
     
     try {
-      console.log('Frontend: Sending search request with:', {
-        name: mikaSearchName,
-        title: mikaSearchTitle,
-        organization: mikaSearchOrganization
-      })
+
       
       // Lähetä webhook-kutsu N8N:ään hakusanoilla
       const response = await fetch('/api/mika-special-contacts', {
@@ -1047,14 +1028,11 @@ export default function CallPanel() {
         })
       })
       
-      console.log('Frontend: Search response status:', response.status)
-      
       if (!response.ok) {
         throw new Error('Search request failed')
       }
       
       const result = await response.json()
-      console.log('Frontend: Search response data:', result)
       
       setMikaSearchResults(result.data || [])
       
@@ -1067,8 +1045,6 @@ export default function CallPanel() {
   }
 
   const handleMikaMassCall = async (contact) => {
-    console.log('Frontend: Starting mass calls for contact:', contact)
-    
     try {
       // Muodosta Google Sheets URL kontaktidatasta
       const contactData = {
@@ -1079,8 +1055,6 @@ export default function CallPanel() {
         title: contact.custom_fields && contact.custom_fields[0] ? contact.custom_fields[0] : '',
         address: contact.organization?.address || ''
       }
-      
-      console.log('Frontend: Contact data for mass calls:', contactData)
       
       // Muodosta Google Sheets -yhteensopiva data-rakenne
       const columns = ['name', 'phone', 'email', 'company', 'title', 'address']
@@ -1116,7 +1090,7 @@ export default function CallPanel() {
   }
 
   const handleMikaSingleCall = async (contact) => {
-    console.log('Frontend: Starting single call for contact:', contact)
+    
     
     try {
       // Aseta kontaktidata yksittäiseen soittoon
@@ -1136,7 +1110,7 @@ export default function CallPanel() {
   }
 
   const handleMikaMassCallAll = async () => {
-    console.log('Frontend: Adding all contacts to mass calls:', mikaSearchResults.length)
+
     
     try {
       // Muodosta kontaktidata kaikille hakutuloksille
@@ -1165,13 +1139,7 @@ export default function CallPanel() {
         contact.address
       ])
       
-      console.log('Frontend: All contacts data for mass calls:', allContactsData)
-      console.log('Frontend: Setting validationResult with:', {
-        phoneCount: allContactsData.length,
-        success: true,
-        columns: columns,
-        rows: rows
-      })
+
       
       // Aseta kaikki kontaktidata mass-calls -kenttiin
       setSheetUrl('') // Tyhjennä Google Sheets URL
@@ -1245,12 +1213,6 @@ export default function CallPanel() {
         {/* Sisältö */}
         {activeTab === 'calls' && (
           <div className="callpanel-grid" style={{ width: '100%', maxWidth: 'none' }}>
-            {console.log('Calls tab - validationResult:', validationResult)}
-            {console.log('Calls tab - validationResult.rows:', validationResult?.rows)}
-            {console.log('Calls tab - validationResult.columns:', validationResult?.columns)}
-            {console.log('Calls tab - callType:', callType)}
-            {console.log('Calls tab - script:', script)}
-            {console.log('Calls tab - selectedVoice:', selectedVoice)}
             {/* Aloita puhelut -kortti - näkyy vain adminille tai jos ei ole Mika */}
             {(!isMika || isAdmin) && (
               <div className="card">

@@ -9,12 +9,7 @@ import './BlogNewsletterPage.css'
 
 // Data muunnos funktio Supabase datasta
 const transformSupabaseData = (supabaseData) => {
-  console.log('=== DEBUG: transformSupabaseData called ===')
-  console.log('Input data:', supabaseData)
-  console.log('Input data length:', supabaseData?.length || 0)
-  
   if (!supabaseData || !Array.isArray(supabaseData)) {
-    console.log('No data or not array, returning empty array')
     return []
   }
   
@@ -66,10 +61,6 @@ const transformSupabaseData = (supabaseData) => {
     
     return transformedItem
   })
-  
-  console.log('=== DEBUG: transformSupabaseData result ===')
-  console.log('Transformed result:', transformed)
-  console.log('Transformed result length:', transformed.length)
   
   return transformed
 }
@@ -204,12 +195,6 @@ export default function BlogNewsletterPage() {
       }
       
       const transformedData = transformSupabaseData(data)
-      console.log('=== DEBUG: Raw data from Supabase ===')
-      console.log('Raw data count:', data?.length || 0)
-      console.log('Raw data:', data)
-      console.log('=== DEBUG: Transformed data ===')
-      console.log('Transformed data count:', transformedData?.length || 0)
-      console.log('Transformed data:', transformedData)
       setContents(transformedData || [])
       
     } catch (err) {
@@ -236,14 +221,7 @@ export default function BlogNewsletterPage() {
     return matchesSearch && matchesStatus && matchesType
   })
 
-  // Debug: Tulostetaan filtteröity data
-  console.log('=== DEBUG: Filtered contents ===')
-  console.log('All contents count:', contents.length)
-  console.log('Filtered contents count:', filteredContents.length)
-  console.log('Search term:', searchTerm)
-  console.log('Status filter:', statusFilter)
-  console.log('Type filter:', typeFilter)
-  console.log('Filtered contents:', filteredContents)
+
 
   const handleCreateContent = async (contentData) => {
     try {
@@ -260,11 +238,7 @@ export default function BlogNewsletterPage() {
 
       // Lähetetään idea-generation kutsu N8N:lle
       try {
-        console.log('Sending idea generation request:', {
-          idea: contentData.title,
-          type: contentData.type,
-          companyId: userData.company_id
-        })
+
 
         const response = await fetch('/api/idea-generation', {
           method: 'POST',
@@ -282,7 +256,6 @@ export default function BlogNewsletterPage() {
           console.error('Idea generation failed:', response.status)
         } else {
           const result = await response.json()
-          console.log('Idea generation success:', result)
         }
       } catch (webhookError) {
         console.error('Idea generation webhook error:', webhookError)
@@ -306,12 +279,6 @@ export default function BlogNewsletterPage() {
 
 
   const handleViewContent = async (content) => {
-    console.log('=== handleViewContent called ===')
-    console.log('View content:', content)
-    console.log('Content idea:', content.idea)
-    console.log('Content blog_post:', content.blog_post)
-    console.log('Content originalData:', content.originalData)
-    
     setViewingContent(content)
     setShowViewModal(true)
   }

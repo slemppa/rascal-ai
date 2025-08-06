@@ -38,17 +38,13 @@ const getStrategy = async () => {
     }
 
     const companyId = userRecord.company_id
-    console.log('Company ID haettu:', companyId)
 
     // Kutsu API endpointia company_id:llä
     const url = `/api/strategy?companyId=${companyId}`
-    console.log('Haetaan strategiaa URL:sta:', url)
     
   const res = await fetch(url)
-    console.log('Strategy API response status:', res.status)
   if (!res.ok) throw new Error('Strategian haku epäonnistui')
     const data = await res.json()
-    console.log('Strategy API response data:', data)
     return data
   } catch (error) {
     console.error('Error in getStrategy:', error)

@@ -261,13 +261,14 @@ export const PostsProvider = ({ children }) => {
         throw new Error('Käyttäjän ID ei löytynyt')
       }
       
-      // Haetaan käyttäjän some-sisältö (ei Blog/Newsletter)
+      // Haetaan käyttäjän some-sisältö (ei Blog/Newsletter, ei poistettuja)
       const { data, error } = await supabase
         .from('content')
         .select('*')
         .eq('user_id', userData.id)
         .neq('type', 'Blog')
         .neq('type', 'Newsletter')
+        .neq('status', 'Deleted')
         .order('created_at', { ascending: false })
       
       if (error) {
@@ -329,14 +330,12 @@ export const PostsProvider = ({ children }) => {
           .eq('is_authorized', true)
         
         if (error) {
-          console.log('Virhe user_social_accounts haussa:', error)
           dispatch({ type: ACTIONS.SET_SOCIAL_ACCOUNTS, payload: [] })
           return
         }
         
         dispatch({ type: ACTIONS.SET_SOCIAL_ACCOUNTS, payload: data || [] })
       } catch (tableError) {
-        console.log('Virhe user_social_accounts haussa:', tableError)
         dispatch({ type: ACTIONS.SET_SOCIAL_ACCOUNTS, payload: [] })
       }
       

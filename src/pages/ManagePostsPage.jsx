@@ -393,13 +393,14 @@ export default function ManagePostsPage() {
         throw new Error('Käyttäjän ID ei löytynyt')
       }
       
-      // Haetaan käyttäjän some-sisältö (ei Blog/Newsletter)
+      // Haetaan käyttäjän some-sisältö (ei Blog/Newsletter, ei poistettuja)
       const { data, error } = await supabase
         .from('content')
         .select('*')
         .eq('user_id', userData.id)
         .neq('type', 'Blog')
         .neq('type', 'Newsletter')
+        .neq('status', 'Deleted')
         .order('created_at', { ascending: false })
       
       if (error) {
@@ -451,7 +452,6 @@ export default function ManagePostsPage() {
   useEffect(() => {
     if (!user || hasInitialized.current) return
     
-    console.log('useEffect triggered, calling all fetch functions')
     hasInitialized.current = true
     fetchPosts()
     fetchReelsPosts() // Haetaan reels data automaattisesti
@@ -461,8 +461,6 @@ export default function ManagePostsPage() {
   // Hae somekanavat Supabasesta
   const fetchSocialAccounts = async () => {
     if (!user) return
-    
-    console.log('Fetching social accounts for user:', user.id)
     
     try {
       setLoadingAccounts(true)
@@ -475,14 +473,11 @@ export default function ManagePostsPage() {
         .eq('is_authorized', true)
         .order('last_synced_at', { ascending: false })
 
-      if (accountsError) {
-        console.error('Error fetching social accounts:', accountsError)
-        setSocialAccounts([])
-        return
-      }
-
-      console.log('Found social accounts:', accountsData)
-      console.log('Social accounts count:', accountsData?.length || 0)
+              if (accountsError) {
+          console.error('Error fetching social accounts:', accountsError)
+          setSocialAccounts([])
+          return
+        }
       setSocialAccounts(accountsData || [])
       
     } catch (error) {
@@ -615,13 +610,8 @@ export default function ManagePostsPage() {
 
       // Lähetetään idea-generation kutsu N8N:lle
       try {
-        console.log('Sending idea generation request:', {
-          idea: postData.title,
-          type: postData.type,
-          companyId: userData.company_id
-        })
-        console.log('Company ID type:', typeof userData.company_id)
-        console.log('Company ID value:', userData.company_id)
+
+
 
         const response = await fetch('/api/idea-generation', {
           method: 'POST',
@@ -640,7 +630,6 @@ export default function ManagePostsPage() {
           // Jatketaan silti postauksen luomista
         } else {
           const result = await response.json()
-          console.log('Idea generation success:', result)
         }
       } catch (webhookError) {
         console.error('Idea generation webhook error:', webhookError)
@@ -726,9 +715,7 @@ export default function ManagePostsPage() {
                  // Jos voiceover on merkitty valmiiksi, kyseessä on reels-postaus JA se on "Kesken" sarakkeessa, lähetä webhook
            if (updatedData.voiceoverReady && (editingPost.source === 'reels' || editingPost.type === 'Reels') && (editingPost.status === 'Kesken' || editingPost.source === 'reels')) {
              try {
-               console.log('Voiceover marked as ready, sending webhook...')
-
-               // Haetaan company_id käyttäjälle
+                       // Haetaan company_id käyttäjälle
                const { data: userData, error: userError } = await supabase
                  .from('users')
                  .select('company_id')
@@ -741,12 +728,7 @@ export default function ManagePostsPage() {
                  return
                }
 
-               console.log('Sending data:', {
-                 recordId: editingPost.id,
-                 voiceover: updatedData.voiceover,
-                 voiceoverReady: updatedData.voiceoverReady,
-                 companyId: userData.company_id
-               })
+
 
                const response = await fetch('/api/voiceover-ready', {
                  method: 'POST',
@@ -769,7 +751,6 @@ export default function ManagePostsPage() {
           }
 
           const result = await response.json()
-          console.log('Voiceover webhook success:', result)
           
           // Näytä käyttäjälle onnistumisviesti
           alert('Voiceover merkitty valmiiksi! Automaatio jatkaa eteenpäin.')
@@ -783,7 +764,7 @@ export default function ManagePostsPage() {
 
       // Päivitä Supabase kaikille postauksille
       try {
-        console.log('Updating Supabase post:', editingPost.id, updatedData)
+
 
         // Haetaan käyttäjän user_id users taulusta
         const { data: userData, error: userError } = await supabase
@@ -810,8 +791,6 @@ export default function ManagePostsPage() {
           if (updateError) {
             console.error('Supabase update error:', updateError)
             // Jatketaan silti paikallisen tilan päivitystä
-          } else {
-            console.log('Supabase updated successfully')
           }
         }
       } catch (error) {
@@ -849,15 +828,15 @@ export default function ManagePostsPage() {
           throw new Error('Käyttäjän ID ei löytynyt')
         }
 
-        // Poistetaan postaus Supabase:sta
-        const { error: deleteError } = await supabase
+        // Muutetaan status 'Deleted':ksi sen sijaan että poistetaan rivi
+        const { error: updateError } = await supabase
           .from('content')
-          .delete()
+          .update({ status: 'Deleted' })
           .eq('id', post.id)
           .eq('user_id', userData.id)
 
-        if (deleteError) {
-          throw new Error('Poisto epäonnistui: ' + deleteError.message)
+        if (updateError) {
+          throw new Error('Statusin päivitys epäonnistui: ' + updateError.message)
         }
 
         // Päivitetään UI
@@ -866,7 +845,7 @@ export default function ManagePostsPage() {
           await fetchReelsPosts()
         }
 
-        alert('Some-sisältö poistettu onnistuneesti!')
+        alert('Some-sisältö merkitty poistetuksi!')
         
       } catch (error) {
         console.error('Delete error:', error)

@@ -500,7 +500,7 @@ export default function SettingsPage() {
             
             {/* Avatar-kuvat */}
             <div className={styles.card}>
-              {console.log('SettingsPage: userProfile?.company_id:', userProfile?.company_id)}
+      
               <AvatarSectionMulti companyId={userProfile?.company_id || null} />
             </div>
             
@@ -529,24 +529,19 @@ function AvatarSectionMulti({ companyId }) {
 
   // Apufunktio: poimi avatar-kuvat N8N/Airtable-rakenteesta
   function extractAvatarImages(apiData) {
-    console.log('extractAvatarImages: Alkuperäinen data:', apiData);
     if (!Array.isArray(apiData)) {
-      console.log('extractAvatarImages: Data ei ole array, palautetaan tyhjä lista');
       return [];
     }
     // Etsi kaikki Media[] url:t, käytä thumb/full/large jos löytyy
     const images = [];
     for (const record of apiData) {
-      console.log('extractAvatarImages: Käsitellään record:', record);
       if (Array.isArray(record.Media)) {
-        console.log('extractAvatarImages: Media array löytyi:', record.Media);
         for (const media of record.Media) {
           let url = null;
           if (media.thumbnails?.full?.url) url = media.thumbnails.full.url;
           else if (media.thumbnails?.large?.url) url = media.thumbnails.large.url;
           else if (media.url) url = media.url;
           if (url) {
-            console.log('extractAvatarImages: Lisätään kuva URL:llä:', url);
             images.push({ 
               url, 
               id: media.id || url, 
@@ -554,12 +549,9 @@ function AvatarSectionMulti({ companyId }) {
             });
           }
         }
-      } else {
-        console.log('extractAvatarImages: Media ei ole array tai ei löydy:', record.Media);
       }
       if (images.length >= 4) break;
     }
-    console.log('extractAvatarImages: Palautetaan kuvat:', images);
     return images.slice(0, 4);
   }
 
@@ -567,7 +559,6 @@ function AvatarSectionMulti({ companyId }) {
     if (!companyId) return;
     setLoading(true);
     setError('');
-    console.log('AvatarSectionMulti: Haetaan kuvia companyId:llä:', companyId);
     fetch('/api/avatar-status.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -575,10 +566,8 @@ function AvatarSectionMulti({ companyId }) {
     })
       .then(res => res.json())
       .then(data => {
-        console.log('AvatarSectionMulti: API vastaus:', data);
         // data voi olla array (Airtable/N8N), poimi Media[] url:t
         const extractedImages = extractAvatarImages(data);
-        console.log('AvatarSectionMulti: Poimitut kuvat:', extractedImages);
         setImages(extractedImages);
       })
       .catch((error) => {

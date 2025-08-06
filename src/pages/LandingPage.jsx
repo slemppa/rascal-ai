@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import heroImg from '/public/hero.png' // Placeholder, vaihda oikeaan kuvaan
 import { useState, useEffect } from 'react'
 import SignIn from '../components/auth/SignIn'
@@ -84,10 +84,23 @@ const features = [
 
 export default function LandingPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showForgotModal, setShowForgotModal] = useState(false)
   const [showMagicModal, setShowMagicModal] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
+  const [showLogoutMessage, setShowLogoutMessage] = useState(false)
+  const [logoutReason, setLogoutReason] = useState('')
+
+  // Tarkista logout-viesti location statesta
+  useEffect(() => {
+    if (location.state?.showLogoutMessage) {
+      setShowLogoutMessage(true)
+      setLogoutReason(location.state.logoutReason || 'Sessio päättyi')
+      // Tyhjennä state
+      navigate(location.pathname, { replace: true })
+    }
+  }, [location.state, navigate, location.pathname])
 
   // ESC-näppäimen kuuntelu
   useEffect(() => {
@@ -152,6 +165,25 @@ export default function LandingPage() {
           <a href="/features">Ominaisuudet</a>
           <a href="/pricing">Hinnat</a>
           <a href="/contact">Yhteystiedot</a>
+        </div>
+      )}
+
+      {/* Logout Message */}
+      {showLogoutMessage && (
+        <div className="logout-message">
+          <div className="logout-message-content">
+            <div className="logout-message-icon">⚠️</div>
+            <div className="logout-message-text">
+              <h3>Kirjautuminen päättyi</h3>
+              <p>{logoutReason}</p>
+            </div>
+            <button 
+              className="logout-message-close"
+              onClick={() => setShowLogoutMessage(false)}
+            >
+              ×
+            </button>
+          </div>
         </div>
       )}
 

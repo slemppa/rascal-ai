@@ -60,8 +60,18 @@ export const AuthProvider = ({ children }) => {
           })
           setUser(null)
           setLoading(false)
-          // Ohjaus landingpageen
-          navigate('/')
+          
+          // Hae logout-syy sessionStoragesta
+          const logoutReason = sessionStorage.getItem('logoutReason')
+          sessionStorage.removeItem('logoutReason') // Tyhjennä heti
+          
+          // Ohjaus landingpageen logout-syyllä
+          navigate('/', { 
+            state: { 
+              logoutReason: logoutReason || 'Sessio päättyi',
+              showLogoutMessage: true 
+            } 
+          })
         } else if (session?.user) {
           const userWithProfile = await fetchUserProfile(session.user)
           setUser(userWithProfile)
@@ -84,13 +94,7 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = async () => {
     try {
-      // Lisätään timeout 3 sekuntiin
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('signOut timeout')), 3000)
-      )
-      
-      const signOutPromise = supabase.auth.signOut({ scope: 'global' })
-      const { error } = await Promise.race([signOutPromise, timeoutPromise])
+      const { error } = await supabase.auth.signOut({ scope: 'global' })
       
       if (error) {
         console.error('Error signing out:', error.message)

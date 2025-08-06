@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import PageHeader from '../components/PageHeader'
 import CarouselTemplateSelector from '../components/CarouselTemplateSelector'
 import SocialMediaConnect from '../components/SocialMediaConnect'
+import TimeoutSettings from '../components/TimeoutSettings'
 
 import styles from './SettingsPage.module.css'
 
@@ -480,13 +481,17 @@ export default function SettingsPage() {
                     </div>
                   )}
                 </div>
+                
+                {/* Sessio-asetukset */}
+                <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
+                  <TimeoutSettings />
+                </div>
               </>
             )}
           </div>
           
           {/* Oikea sarake: Muut asetukset */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-
             
             {/* Sosiaalisen median yhdistäminen */}
             <div className={styles.card}>
@@ -852,38 +857,31 @@ function VoiceSection({ companyId }) {
 
   // Apufunktio: poimi äänitiedostot N8N/Airtable-rakenteesta
   function extractAudioFiles(apiData) {
-    console.log('extractAudioFiles: Alkuperäinen data:', apiData);
-    if (!Array.isArray(apiData)) {
-      console.log('extractAudioFiles: Data ei ole array, palautetaan tyhjä lista');
-      return [];
-    }
+    if (!Array.isArray(apiData)) return [];
     
-    // Etsi kaikki Voice[] url:t
+    // Etsi äänitiedostot Voice ID -kentästä
     const audioFiles = [];
     for (const record of apiData) {
-      console.log('extractAudioFiles: Käsitellään record:', record);
-      if (Array.isArray(record.Voice)) {
-        console.log('extractAudioFiles: Voice array löytyi:', record.Voice);
-        for (const voice of record.Voice) {
-          let url = null;
-          if (voice.url) url = voice.url;
-          if (url) {
-            console.log('extractAudioFiles: Lisätään äänitiedosto URL:llä:', url);
+      // Tarkista onko Voice ID -kenttää
+      if (record['Voice ID']) {
+        // Voice ID voi olla string tai array
+        const voiceIds = Array.isArray(record['Voice ID']) ? record['Voice ID'] : [record['Voice ID']];
+        
+        for (const voiceId of voiceIds) {
+          if (voiceId) {
             audioFiles.push({ 
-              url, 
-              id: voice.id || url, 
+              url: null, 
+              id: voiceId, 
               filename: 'Voice Clone',
               fileType: 'audio',
-              voiceId: record["Variable ID"] || record.id 
+              voiceId: record["Variable ID"] || record.id,
+              isPlaceholder: true
             });
           }
         }
-      } else {
-        console.log('extractAudioFiles: Voice ei ole array tai ei löydy:', record.Voice);
       }
       if (audioFiles.length >= 1) break; // Max 1 äänitiedosto
     }
-    console.log('extractAudioFiles: Palautetaan äänitiedostot:', audioFiles);
     return audioFiles.slice(0, 1);
   }
 
@@ -893,7 +891,6 @@ function VoiceSection({ companyId }) {
     
     setLoading(true);
     setError('');
-    console.log('VoiceSection: Haetaan äänitiedostoja companyId:llä:', companyId);
     
     try {
       const res = await fetch('/api/avatar-status.js', {
@@ -904,16 +901,12 @@ function VoiceSection({ companyId }) {
       
       if (res.ok) {
         const data = await res.json();
-        console.log('VoiceSection: API vastaus:', data);
         const extractedAudioFiles = extractAudioFiles(data);
-        console.log('VoiceSection: Poimitut äänitiedostot:', extractedAudioFiles);
         setAudioFiles(extractedAudioFiles);
       } else {
-        console.error('VoiceSection: API virhe:', res.status);
         setError('Äänitiedostojen haku epäonnistui');
       }
     } catch (error) {
-      console.error('VoiceSection: Virhe äänitiedostojen haussa:', error);
       setError('Äänitiedostojen haku epäonnistui');
     } finally {
       setLoading(false);
@@ -1001,15 +994,15 @@ function VoiceSection({ companyId }) {
             return audio ? (
               <div
                 key={audio.id || slot}
-                className="relative group rounded-xl overflow-hidden shadow-sm border border-gray-200 bg-white transition hover:shadow-lg flex items-center justify-center aspect-square w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 mx-auto"
+                className="relative group rounded-xl overflow-hidden shadow-sm border border-gray-200 bg-white transition hover:shadow-lg flex items-center justify-center aspect-square w-16 h-16 sm:w-20 sm:h-20 mx-auto"
               >
                 {/* Äänitiedoston ikoni */}
                 <div className="flex flex-col items-center justify-center w-full h-full p-2">
                   {audio.status === 'uploading' ? (
-                    <div className="animate-spin rounded-full h-8 w-8 sm:h-10 sm:w-10 border-b-2 border-blue-600"></div>
-                  ) : (
+                    <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-blue-600"></div>
+                  ) : audio.isPlaceholder ? (
                     <svg
-                      className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600"
+                      className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth={2}
@@ -1021,11 +1014,25 @@ function VoiceSection({ companyId }) {
                         d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
                       />
                     </svg>
+                                      ) : (
+                      <svg
+                        className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        viewBox="0 0 24 24"
+                      >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+                      />
+                    </svg>
                   )}
                   <span className="text-xs text-gray-600 mt-1 text-center truncate w-full">
                     {audio.filename}
                   </span>
-                  <span className="text-xs text-green-600 mt-1 text-center">
+                  <span className={`text-xs mt-1 text-center ${audio.isPlaceholder ? 'text-green-600' : 'text-green-600'}`}>
                     {audio.status === 'uploading' ? 'Käsitellään...' : 'Ääni lisätty'}
                   </span>
                 </div>
@@ -1034,7 +1041,7 @@ function VoiceSection({ companyId }) {
             ) : (
               <div
                 key={slot}
-                className="bg-gray-100 rounded-xl flex flex-col items-center justify-center aspect-square w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 border-2 border-dashed border-gray-300 hover:border-blue-500 cursor-pointer transition group relative mx-auto"
+                className="bg-gray-100 rounded-xl flex flex-col items-center justify-center aspect-square w-16 h-16 sm:w-20 sm:h-20 border-2 border-dashed border-gray-300 hover:border-blue-500 cursor-pointer transition group relative mx-auto"
                 onClick={openFileDialog}
                 tabIndex={0}
                 onKeyDown={(e) => {
@@ -1044,7 +1051,7 @@ function VoiceSection({ companyId }) {
                 aria-label="Lisää uusi äänitiedosto"
               >
                 <svg
-                  className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400 group-hover:text-blue-500 transition"
+                  className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-blue-500 transition"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={2}
@@ -1057,7 +1064,7 @@ function VoiceSection({ companyId }) {
                   />
                 </svg>
                 <span className="mt-1 text-gray-500 text-xs group-hover:text-blue-500 transition text-center">
-                  Lisää ääni
+                  Lisää
                 </span>
               </div>
             );

@@ -9,9 +9,11 @@ import MagicLink from './components/auth/MagicLink'
 import ProtectedRoute from './components/ProtectedRoute'
 import AuthCallback from './components/auth/AuthCallback'
 import { AuthProvider } from './contexts/AuthContext'
+import { AutoLogoutProvider } from './contexts/AutoLogoutContext'
 import { PostsProvider } from './contexts/PostsContext'
 import Sidebar from './components/Sidebar'
 import MobileNavigation from './components/MobileNavigation'
+import InactivityWarningModal from './components/InactivityWarningModal'
 import { supabase } from './lib/supabase'
 import ManagePostsPage from './pages/ManagePostsPage'
 import AdminPage from './pages/AdminPage'
@@ -31,8 +33,9 @@ import BlogNewsletterPage from './pages/BlogNewsletterPage'
 export default function App() {
   return (
     <AuthProvider>
-      <PostsProvider>
-        <Routes>
+      <AutoLogoutProvider>
+        <PostsProvider>
+          <Routes>
         {/* Julkiset reitit */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/signin" element={<SignIn />} />
@@ -131,7 +134,9 @@ export default function App() {
 
         {/* Lisää muut suojatut reitit tähän samalla tavalla, jos haluat menun näkyvän niilläkin */}
       </Routes>
-    </PostsProvider>
-  </AuthProvider>
+        </PostsProvider>
+        <InactivityWarningModal />
+      </AutoLogoutProvider>
+    </AuthProvider>
   )
 }

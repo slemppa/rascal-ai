@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import AddCallTypeModal from '../components/AddCallTypeModal'
 import EditCallTypeModal from '../components/EditCallTypeModal'
+import MikaSpecialTab from '../components/MikaSpecialTab.jsx'
 import './CallPanel.css'
 import CallStats from './CallStats'
 import Button from '../components/Button'
@@ -29,7 +30,7 @@ export default function CallPanel() {
   const [stats, setStats] = useState({ totalCount: 0, calledCount: 0, failedCount: 0 })
   
   // Uudet state-muuttujat
-  const [callType, setCallType] = useState('myynti')
+  const [callType, setCallType] = useState('AI-assarin kartoitus')
   const [script, setScript] = useState('Hei! Soitan [Yritys] puolesta. Meillä on kiinnostava tarjous teille...')
   const [selectedVoice, setSelectedVoice] = useState('rascal-nainen-1')
   const [phoneNumber, setPhoneNumber] = useState('')
@@ -37,6 +38,10 @@ export default function CallPanel() {
   const [calling, setCalling] = useState(false)
   const [inboundVoice, setInboundVoice] = useState('rascal-nainen-1')
   const [inboundScript, setInboundScript] = useState('Kiitos soitostasi! Olen AI-assistentti ja autan sinua mielellään...')
+  const [inboundWelcomeMessage, setInboundWelcomeMessage] = useState('Kiitos soitostasi! Olen AI-assistentti ja autan sinua mielellään...')
+  const [inboundSettingsId, setInboundSettingsId] = useState(null)
+  const [inboundSettingsLoaded, setInboundSettingsLoaded] = useState(false)
+  const [showInboundModal, setShowInboundModal] = useState(false)
   const [currentAudio, setCurrentAudio] = useState(null)
   const [audioInfo, setAudioInfo] = useState('')
   const audioElementsRef = useRef([])
@@ -97,7 +102,7 @@ export default function CallPanel() {
   const [mikaSearchOrganization, setMikaSearchOrganization] = useState('')
   const [mikaSearchResults, setMikaSearchResults] = useState([])
   const [mikaSearchLoading, setMikaSearchLoading] = useState(false)
-
+  
 
 
   useEffect(() => {
@@ -267,9 +272,9 @@ export default function CallPanel() {
       const isMikaSpecialData = validationResult?.data && Array.isArray(validationResult.data) && validationResult.data.length > 0
       
       if (isMikaSpecialData) {
-        // Käytä Mika Special mass-call API:a
+        // Käytä Mika Special mass-call v2 API:a
         
-        const response = await fetch('/api/mika-mass-call', {
+        const response = await fetch('/api/mika-mass-call-v2', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -290,7 +295,7 @@ export default function CallPanel() {
         }
         
         setPolling(true)
-        alert(`✅ Mika Special mass-call käynnistetty onnistuneesti!\n\nAloitettu: ${result.data.successfulCalls} puhelua\nOhitettu: ${result.data.failedCalls} kontakti`)
+        alert(`✅ Mika Special mass-call käynnistetty onnistuneesti!\n\nAloitettu: ${result.startedCalls} puhelua\nOhitettu: ${result.failedCalls} kontakti`)
         
       } else {
         // Käytä normaalia mass-call API:a Google Sheets -datalle
@@ -483,15 +488,55 @@ export default function CallPanel() {
   const handleSaveInboundSettings = async () => {
     setError('')
     try {
-      const inboundVoiceObj = voiceOptions.find(v => v.value === inboundVoice)
+      const inboundVoiceObj = getVoiceOptions().find(v => v.value === inboundVoice)
       const inboundVoiceId = inboundVoiceObj?.id
-      await supabase.rpc('save_inbound_settings', {
-        voice: inboundVoiceId,
-        script: inboundScript
+      
+      // Hae käyttäjän tiedot (vapi_inbound_assistant_id)
+      const { data: userProfile, error: userError } = await supabase
+        .from('users')
+        .select('contact_email, contact_person, company_name, vapi_inbound_assistant_id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (userError || !userProfile) {
+        setError('Käyttäjää ei löytynyt')
+        return
+      }
+
+      // Käytä uutta API endpointia webhook-integraatiolla
+      const response = await fetch('/api/save-inbound-settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          voiceId: inboundVoiceId,
+          script: inboundScript,
+          welcomeMessage: inboundWelcomeMessage,
+          userId: user.id, // auth_user_id
+          userEmail: userProfile.contact_email,
+          userName: userProfile.contact_person,
+          companyName: userProfile.company_name,
+          vapiInboundAssistantId: userProfile.vapi_inbound_assistant_id,
+          inboundSettingsId: inboundSettingsId
+        })
       })
-      alert('Inbound-asetukset tallennettu!')
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        // Tarkista onko kyseessä N8N workflow virhe
+        if (result.error && result.error.includes('N8N workflow ei ole aktiivinen')) {
+          alert('⚠️ Inbound-asetukset tallennettu! N8N workflow ei ole vielä aktiivinen, mutta data on lähetetty.')
+        } else {
+          throw new Error(result.error || 'Inbound-asetusten tallennus epäonnistui')
+        }
+      } else {
+        alert('✅ Inbound-asetukset tallennettu onnistuneesti!')
+      }
     } catch (e) {
-      setError('Inbound-asetusten tallennus epäonnistui')
+      console.error('Inbound settings error:', e)
+      setError('Inbound-asetusten tallennus epäonnistui: ' + (e.message || e))
     }
   }
 
@@ -627,6 +672,7 @@ export default function CallPanel() {
   // Lisää uusi useEffect, joka varmistaa että callType on aina valittuna
   useEffect(() => {
     fetchCallTypes()
+    fetchInboundSettings()
     // eslint-disable-next-line
   }, [user])
 
@@ -640,6 +686,61 @@ export default function CallPanel() {
       }
     }
   }, [callTypes])
+
+  // Hae inbound-asetukset Supabaseesta
+  const fetchInboundSettings = async () => {
+    try {
+      if (!user?.id || inboundSettingsLoaded) {
+        return
+      }
+      
+      // Hae ensin users.id käyttäen auth_user_id:tä
+      const { data: userProfile, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (userError || !userProfile) {
+        return
+      }
+
+      // Hae inbound-asetukset
+      const { data: inboundData, error: inboundError } = await supabase
+        .from('inbound_call_types')
+        .select('*')
+        .eq('user_id', userProfile.id)
+        .eq('is_active', true)
+        .single()
+
+      if (inboundError && inboundError.code !== 'PGRST116') {
+        console.error('Error fetching inbound settings:', inboundError)
+        return
+      }
+
+      if (inboundData) {
+        // Aseta inbound-asetukset
+        setInboundSettingsId(inboundData.id)
+        if (inboundData.voice_id) {
+          // Etsi äänen nimi voice_id:n perusteella
+          const voiceOption = getVoiceOptions().find(v => v.id === inboundData.voice_id)
+          if (voiceOption) {
+            setInboundVoice(voiceOption.value)
+          }
+        }
+        if (inboundData.script) {
+          setInboundScript(inboundData.script)
+        }
+        if (inboundData.welcome_message) {
+          setInboundWelcomeMessage(inboundData.welcome_message)
+        }
+      }
+      setInboundSettingsLoaded(true)
+    } catch (e) {
+      console.error('Error fetching inbound settings:', e)
+      setInboundSettingsLoaded(true)
+    }
+  }
 
   const handleAddCallType = async () => {
     setAddTypeLoading(true)
@@ -1110,57 +1211,7 @@ export default function CallPanel() {
   }
 
   const handleMikaMassCallAll = async () => {
-
-    
-    try {
-      // Muodosta kontaktidata kaikille hakutuloksille
-      const allContactsData = mikaSearchResults.map(contact => ({
-        name: contact.name,
-        phone: contact.phones && contact.phones[0] ? contact.phones[0] : '',
-        email: contact.primary_email || (contact.emails && contact.emails[0]) || '',
-        company: contact.organization?.name || '',
-        title: contact.custom_fields && contact.custom_fields[0] ? contact.custom_fields[0] : '',
-        address: contact.organization?.address || ''
-      })).filter(contact => contact.phone) // Vain kontakteja joilla on puhelinnumero
-      
-      if (allContactsData.length === 0) {
-        alert('Ei kontakteja puhelinnumerolla!')
-        return
-      }
-      
-      // Muodosta Google Sheets -yhteensopiva data-rakenne
-      const columns = ['name', 'phone', 'email', 'company', 'title', 'address']
-      const rows = allContactsData.map(contact => [
-        contact.name,
-        contact.phone,
-        contact.email,
-        contact.company,
-        contact.title,
-        contact.address
-      ])
-      
-
-      
-      // Aseta kaikki kontaktidata mass-calls -kenttiin
-      setSheetUrl('') // Tyhjennä Google Sheets URL
-      setValidationResult({
-        phoneCount: allContactsData.length,
-        success: true,
-        columns: columns,
-        rows: rows,
-        data: allContactsData
-      })
-      
-      // Siirry mass-calls -välilehdelle
-      setActiveTab('calls')
-      
-      // Näytä ilmoitus
-      alert(`${allContactsData.length} kontakti lisätty mass-calls -palikkaan! Siirry "Puhelut" -välilehdelle aloittaaksesi soitot.`)
-      
-    } catch (error) {
-      console.error('Frontend: Error adding all contacts to mass calls:', error)
-      alert('Virhe mass-calls -palikan alustamisessa')
-    }
+    // Tämä funktio ei enää tarvita, koska se on siirretty MikaSpecialTab-komponenttiin
   }
 
   // Hae kontakteja kun Mika Special -välilehti avataan
@@ -1388,11 +1439,20 @@ export default function CallPanel() {
             </div>
             {/* Inbound-asetukset -kortti */}
             <div className="card">
-              <h2 className="section-title">Inbound-asetukset</h2>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <h2 className="section-title">Inbound-asetukset</h2>
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowInboundModal(true)}
+                  style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
+                >
+                  📝 Muokkaa isossa ikkunassa
+                </Button>
+              </div>
               <label className="label">Ääni</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                 <select value={inboundVoice} onChange={e => setInboundVoice(e.target.value)} className="select">
-                  {voiceOptions.map(voice => <option key={voice.value} value={voice.value}>{voice.label}</option>)}
+                  {getVoiceOptions().map(voice => <option key={voice.value} value={voice.value}>{voice.label}</option>)}
                 </select>
                 <Button 
                   variant="secondary"
@@ -1402,6 +1462,10 @@ export default function CallPanel() {
                   🔊 Testaa
                 </Button>
               </div>
+              <label className="label">Aloitusviesti</label>
+              <textarea value={inboundWelcomeMessage} onChange={e => setInboundWelcomeMessage(e.target.value)} placeholder="Kirjoita aloitusviesti..." rows={3} className="textarea" />
+              <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 10 }}>Ensimmäinen viesti joka lähetetään asiakkaalle</div>
+              
               <label className="label">Inbound-skripti</label>
               <textarea value={inboundScript} onChange={e => setInboundScript(e.target.value)} placeholder="Kirjoita inbound-puhelujen skripti..." rows={5} className="textarea" />
               <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 10 }}>Tervehdys ja ohjeistus asiakkaille jotka soittavat sinulle</div>
@@ -1888,166 +1952,25 @@ export default function CallPanel() {
         )}
         
         {activeTab === 'mika' && (
-          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: 32, width: '100%' }}>
-            <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937', marginBottom: 24 }}>
-              🎯 Mika Special - Kontaktihaku
-            </h2>
-            <form
-              onSubmit={e => {
-                e.preventDefault();
-                handleMikaSearch();
-              }}
-              style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 24 }}
-            >
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: 4, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-                    Nimi
-                  </label>
-                  <input
-                    type="text"
-                    value={mikaSearchName}
-                    onChange={e => setMikaSearchName(e.target.value)}
-                    placeholder="Syötä nimi..."
-                    style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 16 }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: 4, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-                    Tehtävänimike
-                  </label>
-                  <input
-                    type="text"
-                    value={mikaSearchTitle}
-                    onChange={e => setMikaSearchTitle(e.target.value)}
-                    placeholder="Syötä tehtävänimike..."
-                    style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 16 }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: 4, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-                    Organisaatio
-                  </label>
-                  <input
-                    type="text"
-                    value={mikaSearchOrganization}
-                    onChange={e => setMikaSearchOrganization(e.target.value)}
-                    placeholder="Syötä organisaatio..."
-                    style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 16 }}
-                  />
-                </div>
-              </div>
-              <Button
-                type="submit"
-                variant="primary"
-                style={{ padding: '12px 24px', fontSize: 16, fontWeight: 600, alignSelf: 'flex-start' }}
-                disabled={mikaSearchLoading || loadingMikaContacts}
-              >
-                {mikaSearchLoading ? 'Haetaan...' : 'Hae'}
-              </Button>
-            </form>
-            {loadingMikaContacts && (
-              <div style={{ textAlign: 'center', color: '#6b7280', marginBottom: 16 }}>Ladataan kontakteja...</div>
-            )}
-            {mikaContactsError && (
-              <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 12, padding: 16, color: '#dc2626', fontSize: 14, marginBottom: 16 }}>
-                ❌ {mikaContactsError}
-              </div>
-            )}
-            {mikaSearchResults.length > 0 ? (
-              <div style={{ marginTop: 16 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                  <h3 style={{ fontSize: 18, fontWeight: 600, color: '#374151', margin: 0 }}>Hakutulokset ({mikaSearchResults.length})</h3>
-                  <Button
-                    onClick={() => handleMikaMassCallAll()}
-                    variant="primary"
-                    style={{ 
-                      padding: '10px 20px', 
-                      fontSize: 14, 
-                      fontWeight: 600,
-                      background: '#10b981',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: 6,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    📞 Lisää kaikki mass-calls ({mikaSearchResults.length})
-                  </Button>
-                </div>
-                <div style={{ display: 'grid', gap: 16 }}>
-                  {mikaSearchResults.map((contact, idx) => (
-                    <div key={contact.id || idx} style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 8, padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      <div style={{ fontWeight: 600, fontSize: 16 }}>{contact.name || 'Nimetön'}</div>
-                      <div style={{ color: '#6b7280', fontSize: 14 }}>
-                        <strong>Tehtävänimike:</strong> {contact.custom_fields && contact.custom_fields[0] ? contact.custom_fields[0] : 'Ei määritelty'}
-                      </div>
-                      <div style={{ color: '#6b7280', fontSize: 14 }}>
-                        <strong>Organisaatio:</strong> {contact.organization?.name || 'Ei määritelty'}
-                      </div>
-                      <div style={{ color: '#6b7280', fontSize: 14 }}>
-                        <strong>Osoite:</strong> {contact.organization?.address || 'Ei määritelty'}
-                      </div>
-                      <div style={{ color: '#6b7280', fontSize: 14 }}>
-                        <strong>Sähköposti:</strong> {contact.primary_email || (contact.emails && contact.emails[0]) || '-'}
-                      </div>
-                      <div style={{ color: '#6b7280', fontSize: 14 }}>
-                        <strong>Puhelin:</strong> {contact.phones && contact.phones[0] ? contact.phones[0] : '-'}
-                      </div>
-                      {contact.result_score && (
-                        <div style={{ color: '#059669', fontSize: 12, fontStyle: 'italic' }}>
-                          Hakupisteet: {Math.round(contact.result_score * 100)}%
-                        </div>
-                      )}
-                      
-                      {/* Mass-calls -nappi */}
-                      <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                        <Button
-                          onClick={() => handleMikaMassCall(contact)}
-                          variant="primary"
-                          style={{ 
-                            padding: '8px 16px', 
-                            fontSize: 14, 
-                            fontWeight: 600,
-                            background: '#3b82f6',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: 6,
-                            cursor: 'pointer'
-                          }}
-                          disabled={!contact.phones || contact.phones.length === 0}
-                        >
-                          📞 Aloita massapuhelut
-                        </Button>
-                        <Button
-                          onClick={() => handleMikaSingleCall(contact)}
-                          variant="secondary"
-                          style={{ 
-                            padding: '8px 16px', 
-                            fontSize: 14, 
-                            fontWeight: 600,
-                            background: '#f3f4f6',
-                            color: '#374151',
-                            border: '1px solid #d1d5db',
-                            borderRadius: 6,
-                            cursor: 'pointer'
-                          }}
-                          disabled={!contact.phones || contact.phones.length === 0}
-                        >
-                          📱 Yksittäinen soitto
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div style={{ color: '#6b7280', fontSize: 15, marginTop: 24 }}>
-                {(mikaSearchName || mikaSearchTitle || mikaSearchOrganization) && !mikaSearchLoading && 'Ei tuloksia haulla.'}
-                {!mikaSearchName && !mikaSearchTitle && !mikaSearchOrganization && 'Syötä vähintään yksi hakukenttä ja paina Hae.'}
-              </div>
-            )}
-          </div>
+          <MikaSpecialTab
+            user={user}
+            callTypes={callTypes}
+            selectedVoice={selectedVoice}
+            mikaSearchResults={mikaSearchResults}
+            mikaSearchName={mikaSearchName}
+            setMikaSearchName={setMikaSearchName}
+            mikaSearchTitle={mikaSearchTitle}
+            setMikaSearchTitle={setMikaSearchTitle}
+            mikaSearchOrganization={mikaSearchOrganization}
+            setMikaSearchOrganization={setMikaSearchOrganization}
+            mikaSearchLoading={mikaSearchLoading}
+            loadingMikaContacts={loadingMikaContacts}
+            mikaContactsError={mikaContactsError}
+            handleMikaSearch={handleMikaSearch}
+            handleMikaMassCall={handleMikaMassCall}
+            handleMikaSingleCall={handleMikaSingleCall}
+            handleMikaMassCallAll={handleMikaMassCallAll}
+          />
         )}
           </div>
       </div>
@@ -2199,6 +2122,134 @@ export default function CallPanel() {
           setEditingCallType={setEditingCallType}
           onSave={handleSaveCallType}
         />
+        
+        {/* Inbound-asetukset modaali */}
+        {showInboundModal && createPortal(
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.5)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
+              padding: 20
+            }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowInboundModal(false)
+              }
+            }}
+          >
+            <div
+              style={{
+                background: '#fff',
+                borderRadius: 16,
+                padding: 32,
+                width: '100%',
+                maxWidth: 800,
+                maxHeight: '90vh',
+                overflowY: 'auto',
+                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
+                  📞 Inbound-asetukset
+                </h2>
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowInboundModal(false)}
+                  style={{ width: 'auto', padding: '8px 16px' }}
+                >
+                  ✕ Sulje
+                </Button>
+              </div>
+              
+              <div style={{ marginBottom: 24 }}>
+                <label className="label">Ääni</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                  <select value={inboundVoice} onChange={e => setInboundVoice(e.target.value)} className="select" style={{ flex: 1 }}>
+                    {getVoiceOptions().map(voice => <option key={voice.value} value={voice.value}>{voice.label}</option>)}
+                  </select>
+                  <Button 
+                    variant="secondary"
+                    onClick={() => playVoiceSample(inboundVoice)}
+                    style={{ width: 'auto', padding: '8px 16px' }}
+                  >
+                    🔊 Testaa ääntä
+                  </Button>
+                </div>
+              </div>
+              
+              <div style={{ marginBottom: 24 }}>
+                <label className="label">Aloitusviesti</label>
+                <textarea 
+                  value={inboundWelcomeMessage} 
+                  onChange={e => setInboundWelcomeMessage(e.target.value)} 
+                  placeholder="Kirjoita aloitusviesti..." 
+                  rows={5} 
+                  className="textarea"
+                  style={{ 
+                    width: '100%',
+                    fontFamily: 'monospace',
+                    fontSize: 14,
+                    lineHeight: 1.5
+                  }}
+                />
+                <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8 }}>
+                  Ensimmäinen viesti joka lähetetään asiakkaalle kun he soittavat sinulle.
+                </div>
+              </div>
+              
+              <div style={{ marginBottom: 24 }}>
+                <label className="label">Inbound-skripti</label>
+                <textarea 
+                  value={inboundScript} 
+                  onChange={e => setInboundScript(e.target.value)} 
+                  placeholder="Kirjoita inbound-puhelujen skripti..." 
+                  rows={15} 
+                  className="textarea"
+                  style={{ 
+                    width: '100%',
+                    minHeight: 300,
+                    fontFamily: 'monospace',
+                    fontSize: 14,
+                    lineHeight: 1.5
+                  }}
+                />
+                <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8 }}>
+                  Tervehdys ja ohjeistus asiakkaille jotka soittavat sinulle. Käytä *odota vastaus* merkintää kun haluat että AI odottaa asiakkaan vastausta.
+                </div>
+              </div>
+              
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowInboundModal(false)}
+                >
+                  Peruuta
+                </Button>
+                <Button
+                  onClick={async () => {
+                    await handleSaveInboundSettings()
+                    setShowInboundModal(false)
+                  }}
+                  variant="primary"
+                >
+                  💾 Tallenna asetukset
+                </Button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
+        
+
       </>
     </div>
     </>

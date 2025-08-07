@@ -1,10 +1,19 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucnBsb3hqaWdveXFham9xZ2tqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ5NzI5NzQsImV4cCI6MjA1MDU0ODk3NH0.Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8'
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-// Käytä anonyymiä clientia kehitysympäristössä
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
+console.log('🔧 Environment variables check:')
+console.log('SUPABASE_URL:', process.env.SUPABASE_URL ? 'EXISTS' : 'MISSING')
+console.log('VITE_SUPABASE_URL:', process.env.VITE_SUPABASE_URL ? 'EXISTS' : 'MISSING')
+console.log('SUPABASE_SERVICE_ROLE_KEY:', supabaseServiceKey ? 'EXISTS' : 'MISSING')
+console.log('Using supabaseUrl:', supabaseUrl ? 'FOUND' : 'MISSING')
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  throw new Error('Missing Supabase environment variables')
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
 export default async function handler(req, res) {
   // Vain POST-metodit sallittu
@@ -13,22 +22,17 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { contacts, callType, script, voice, voice_id, user_id } = req.body
+    const { contacts, callType, script, voice, voice_id } = req.body
 
     console.log('🔍 Mika mass-call endpoint sai dataa:', { 
       contactsCount: contacts?.length, 
       callType, 
       script, 
       voice, 
-      voice_id, 
-      user_id 
+      voice_id
     })
-    
-    console.log('🔍 Mika mass-call debug - contacts:', contacts)
-    console.log('🔍 Mika mass-call debug - callType:', callType)
-    console.log('🔍 Mika mass-call debug - script:', script)
-    console.log('🔍 Mika mass-call debug - voice_id:', voice_id)
-    console.log('🔍 Mika mass-call debug - user_id:', user_id)
+    console.log('📞 Contacts data:', contacts)
+    console.log('🎤 Voice data:', { voice, voice_id, selectedVoice: voice_id || voice })
 
     // Validointi
     if (!contacts || !Array.isArray(contacts) || contacts.length === 0) {
@@ -45,11 +49,24 @@ export default async function handler(req, res) {
 
     // Käytä voice_id:tä jos saatavilla, muuten voice:tä
     const voiceToUse = voice_id || voice
+    console.log('🔊 Voice validation:', { voice, voice_id, voiceToUse })
     if (!voiceToUse) {
       return res.status(400).json({ error: 'Ääni on pakollinen' })
     }
 
-    // Hae ensin public.users.id käyttäen auth_user_id:tä
+    // Käytä samaa logiikkaa kuin mass-call.js - ei tokenia
+    // Jos service role key on saatavilla, käytä sitä. Muuten käytä anonyymiä key:tä.
+    
+    // Hae käyttäjän tiedot request bodysta (frontend lähettää user_id:n)
+    const { user_id } = req.body
+    
+    if (!user_id) {
+      return res.status(400).json({ error: 'user_id is required' })
+    }
+    
+    console.log('🔍 User ID from request:', user_id)
+
+    // Hae public.users.id käyttäen auth_user_id:tä
     const { data: userData, error: userError } = await supabase
       .from('users')
       .select('id')
@@ -84,45 +101,76 @@ export default async function handler(req, res) {
 
     const call_type_id = callTypeData.id
 
-    // Valmistellaan puhelut call_logs tauluun
+    // Valmistellaan puhelut call_logs tauluun - samalla tavalla kuin mass-call.js
     const callLogs = []
-    let successCount = 0
     let errorCount = 0
     
-    for (const contact of contacts) {
-      const { name, phone, email, company, title, address } = contact
+    for (let i = 0; i < contacts.length; i++) {
+      const contact = contacts[i]
       
-      if (phone && name) {
+      // Etsi puhelinnumero ja nimi - samalla logiikalla kuin mass-call.js
+      let phoneNumber = null
+      let name = null
+      
+      // Etsi puhelinnumero (tarkista eri kentät)
+      if (contact.phone) {
+        phoneNumber = contact.phone
+      } else if (contact.phones && contact.phones[0]) {
+        phoneNumber = contact.phones[0]
+      } else if (contact.phone_number) {
+        phoneNumber = contact.phone_number
+      } else if (contact.tel) {
+        phoneNumber = contact.tel
+      }
+      
+      // Etsi nimi (tarkista eri kentät)
+      if (contact.name) {
+        name = contact.name
+      } else if (contact.customer_name) {
+        name = contact.customer_name
+      } else if (contact.first_name && contact.last_name) {
+        name = `${contact.first_name} ${contact.last_name}`
+      } else if (contact.etunimi && contact.sukunimi) {
+        name = `${contact.etunimi} ${contact.sukunimi}`
+      }
+      
+      // Jos nimeä ei löytynyt, käytä ensimmäistä ei-tyhjää kenttää
+      if (!name) {
+        const possibleNameFields = ['title', 'company', 'organization', 'email']
+        for (const field of possibleNameFields) {
+          if (contact[field]) {
+            name = contact[field]
+            break
+          }
+        }
+      }
+      
+      // Jos nimeä ei vieläkään löytynyt, käytä "Asiakas X"
+      if (!name) {
+        name = `Asiakas ${i + 1}`
+      }
+      
+      if (phoneNumber) {
         callLogs.push({
-          user_id: publicUserId,
+          user_id: publicUserId, // Käytä public.users.id
           customer_name: name,
-          phone_number: phone,
-          call_type: callType,
-          call_type_id: call_type_id,
-          voice_id: voiceToUse,
+          phone_number: phoneNumber,
+          call_type: callType, // Teksti "name" kentästä
+          call_type_id: call_type_id, // ID call_types taulusta
+          voice_id: voiceToUse, // Käytä voice_id:tä tai voice:tä
           call_date: new Date().toISOString(),
           call_status: 'pending',
           campaign_id: `mika-mass-call-${Date.now()}`,
-          summary: `Mika Special mass-call: ${script.trim().substring(0, 100)}...`,
-          // Lisätään ylimääräiset tiedot metadata-kenttiin
-          metadata: {
-            email: email || null,
-            company: company || null,
-            title: title || null,
-            address: address || null
-          }
+          summary: `Mika Special mass-call: ${script.trim().substring(0, 100)}...`
         })
-        successCount++
       } else {
         errorCount++
       }
     }
     
     if (callLogs.length === 0) {
-      return res.status(400).json({ error: 'Kelvollisia kontakteja ei löytynyt' })
+      return res.status(400).json({ error: 'Puhelinnumeroita ei löytynyt kontaktidatasta' })
     }
-    
-    console.log(`📞 Mika mass-call: ${callLogs.length} puhelua valmisteltu`)
     
     // Kirjoita call_logs tauluun Supabaseen
     const { data: insertedLogs, error: insertError } = await supabase
@@ -131,30 +179,33 @@ export default async function handler(req, res) {
       .select()
 
     if (insertError) {
-      console.error('Call logs kirjoitus epäonnistui:', insertError)
+      console.error('Supabase insert error:', insertError)
       return res.status(500).json({ 
         error: 'Virhe call_logs kirjoittamisessa',
         details: insertError.message 
       })
     }
 
-    console.log(`✅ Mika mass-call onnistui: ${insertedLogs.length} puhelua lisätty`)
+    const successCount = insertedLogs.length
 
-    return res.status(200).json({
+    // Palauta tulokset samassa muodossa kuin mass-call.js
+    res.status(200).json({
       success: true,
-      message: 'Mika Special mass-call käynnistetty onnistuneesti',
-      data: {
-        totalContacts: contacts.length,
-        successfulCalls: insertedLogs.length,
-        failedCalls: errorCount,
-        callLogs: insertedLogs
-      }
+      callType,
+      call_type_id,
+      voice: voiceToUse,
+      totalCalls: callLogs.length,
+      startedCalls: successCount,
+      failedCalls: errorCount,
+      message: `Mika Special mass-call käynnistetty onnistuneesti. ${successCount} puhelua lisätty call_logs tauluun.`,
+      timestamp: new Date().toISOString()
     })
 
   } catch (error) {
-    console.error('Mika mass-call virhe:', error)
-    return res.status(500).json({ 
-      error: 'Mika mass-call virhe',
+    console.error('Mika mass-call API virhe:', error)
+    console.error('Virheen stack trace:', error.stack)
+    res.status(500).json({ 
+      error: 'Palvelinvirhe Mika mass-call käynnistyksessä',
       details: error.message 
     })
   }

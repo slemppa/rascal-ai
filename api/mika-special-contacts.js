@@ -19,35 +19,55 @@ export default async function handler(req, res) {
     if (!n8nSecret) {
       console.log('N8N_SECRET_KEY not configured, returning test data')
       
-      const testData = [
-        {
-          id: 1,
-          name: 'Matti Meikäläinen',
-          email: 'matti.meikalainen@example.com',
-          phone: '+358401234567',
-          company: 'Testi Oy'
-        },
-        {
-          id: 2,
-          name: 'Maija Virtanen',
-          email: 'maija.virtanen@example.com',
-          phone: '+358501234567',
-          company: 'Demo Ltd'
-        }
-      ]
+      if (req.method === 'GET') {
+        const testData = [
+          {
+            id: 1,
+            name: 'Matti Meikäläinen',
+            email: 'matti.meikalainen@example.com',
+            phone: '+358401234567',
+            company: 'Testi Oy'
+          },
+          {
+            id: 2,
+            name: 'Maija Virtanen',
+            email: 'maija.virtanen@example.com',
+            phone: '+358501234567',
+            company: 'Demo Ltd'
+          }
+        ]
 
-      return res.status(200).json({
-        success: true,
-        data: testData,
-        timestamp: new Date().toISOString(),
-        note: 'Test data - N8N_SECRET_KEY not configured'
-      })
+        return res.status(200).json({
+          success: true,
+          data: testData,
+          timestamp: new Date().toISOString(),
+          note: 'Test data - N8N_SECRET_KEY not configured'
+        })
+      } else if (req.method === 'POST') {
+        const testSearchData = [
+          {
+            id: 3,
+            name: 'Testi Hakija',
+            email: 'testi.hakija@example.com',
+            phone: '+358601234567',
+            company: 'Hakija Oy',
+            title: 'Toimitusjohtaja'
+          }
+        ]
+
+        return res.status(200).json({
+          success: true,
+          data: testSearchData,
+          timestamp: new Date().toISOString(),
+          note: 'Test search data - N8N_SECRET_KEY not configured'
+        })
+      }
     }
 
     // Käsittele GET ja POST kutsut eri tavalla
     if (req.method === 'GET') {
       // GET: Hae kaikki kontaktit
-      console.log('GET request: Fetching all contacts')
+      console.log('GET request: Fetching all contacts from N8N')
       
       const response = await fetch(n8nUrl, {
         method: 'POST',
@@ -77,15 +97,13 @@ export default async function handler(req, res) {
         timestamp: new Date().toISOString(),
         note: 'Data from N8N'
       })
+      
     } else if (req.method === 'POST') {
       // POST: Hae kontakteja hakusanoilla
-      const { action, searchTerm } = req.body
-      console.log('POST request:', { action, searchTerm })
+      const { action, name, title, organization } = req.body
+      console.log('POST request: Searching contacts in N8N', { action, name, title, organization })
       
       if (action === 'search_contacts') {
-        const { name, title, organization } = req.body
-        console.log('Searching contacts with:', { name, title, organization })
-        
         const response = await fetch(n8nUrl, {
           method: 'POST',
           headers: {
@@ -110,8 +128,6 @@ export default async function handler(req, res) {
         const data = await response.json()
         console.log('N8N search response data:', data)
 
-
-
         return res.status(200).json({
           success: true,
           data: data,
@@ -120,17 +136,58 @@ export default async function handler(req, res) {
         })
       } else {
         return res.status(400).json({
-          error: 'Invalid request body',
-          details: 'Missing action or searchTerm'
+          error: 'Invalid action',
+          details: 'Action must be "search_contacts"'
         })
       }
     }
 
   } catch (error) {
     console.error('Error in Mika Special Contacts API:', error)
-    return res.status(500).json({ 
-      error: 'Failed to fetch contacts',
-      details: error.message 
-    })
+    
+    // Jos N8N-kutsu epäonnistuu, palautetaan testidataa
+    if (req.method === 'GET') {
+      const testData = [
+        {
+          id: 1,
+          name: 'Matti Meikäläinen (Fallback)',
+          email: 'matti.meikalainen@example.com',
+          phone: '+358401234567',
+          company: 'Testi Oy'
+        },
+        {
+          id: 2,
+          name: 'Maija Virtanen (Fallback)',
+          email: 'maija.virtanen@example.com',
+          phone: '+358501234567',
+          company: 'Demo Ltd'
+        }
+      ]
+
+      return res.status(200).json({
+        success: true,
+        data: testData,
+        timestamp: new Date().toISOString(),
+        note: 'Fallback data - N8N request failed'
+      })
+    } else if (req.method === 'POST') {
+      const testSearchData = [
+        {
+          id: 3,
+          name: 'Testi Hakija (Fallback)',
+          email: 'testi.hakija@example.com',
+          phone: '+358601234567',
+          company: 'Hakija Oy',
+          title: 'Toimitusjohtaja'
+        }
+      ]
+
+      return res.status(200).json({
+        success: true,
+        data: testSearchData,
+        timestamp: new Date().toISOString(),
+        note: 'Fallback search data - N8N request failed'
+      })
+    }
   }
 } 

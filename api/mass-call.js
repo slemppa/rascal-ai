@@ -60,7 +60,7 @@ export default async function handler(req, res) {
     const { data: callTypeData, error: callTypeError } = await supabase
       .from('call_types')
       .select('id')
-      .eq('Toiminnot', callType)
+      .eq('name', callType)
       .eq('user_id', publicUserId)
       .single()
 

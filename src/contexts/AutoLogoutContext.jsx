@@ -30,7 +30,7 @@ export const AutoLogoutProvider = ({ children }) => {
   
   const location = useLocation()
   const navigate = useNavigate()
-  const { signOut } = useAuth()
+  const { signOut, user } = useAuth()
   
   const timeoutRef = useRef(null)
   const warningTimeoutRef = useRef(null)
@@ -106,7 +106,8 @@ export const AutoLogoutProvider = ({ children }) => {
   const resetTimers = useCallback(() => {
     clearTimers()
     
-    if (!isActive) return
+    // Älä aloita ajastimia jos käyttäjä ei ole kirjautunut sisään
+    if (!user || !isActive) return
     
     const warningTime = (currentTimeout - WARNING_TIME) * 60 * 1000 // millisekunteina
     const logoutTime = currentTimeout * 60 * 1000 // millisekunteina
@@ -124,27 +125,42 @@ export const AutoLogoutProvider = ({ children }) => {
         handleLogout('Sessio päättyi inaktiivisuuden vuoksi')
       }
     }, logoutTime)
-  }, [currentTimeout, isActive, clearTimers, showWarningDialog, handleLogout])
+  }, [currentTimeout, isActive, clearTimers, showWarningDialog, handleLogout, user])
 
   // Inaktiivisuuden tarkistus
   const checkInactivity = useCallback(() => {
+    // Älä tarkista inaktiivisuutta jos käyttäjä ei ole kirjautunut sisään
+    if (!user) {
+      return
+    }
+
     const lastActivity = getLastActivity()
     const now = Date.now()
     const inactiveTime = (now - lastActivity) / 1000 / 60 // minuutteina
     
     const warningTime = currentTimeout - WARNING_TIME
     
-    if (inactiveTime >= currentTimeout) {
-      // Aika umpeutunut - logout
+    // Jos käyttäjä on ollut inaktiivinen liian kauan, mutta alle 24 tuntia,
+    // anna mahdollisuus jatkaa sessiota näyttämällä varoitus
+    if (inactiveTime >= currentTimeout && inactiveTime < 1440) { // 1440 min = 24h
+      // Näytä varoitus dialogi heti
+      showWarningDialog()
+    } else if (inactiveTime >= 1440) {
+      // Jos yli 24h inaktiivinen, logout suoraan
       handleLogout('Sessio päättyi inaktiivisuuden vuoksi')
     } else if (inactiveTime >= warningTime && !showWarning) {
       // Näytä varoitus
       showWarningDialog()
     }
-  }, [currentTimeout, showWarning, handleLogout, showWarningDialog])
+  }, [currentTimeout, showWarning, handleLogout, showWarningDialog, user])
 
   // Sessio jatkaminen
   const extendSession = useCallback(() => {
+    // Älä jatka sessiota jos käyttäjä ei ole kirjautunut sisään
+    if (!user) {
+      return
+    }
+
     updateLastActivity()
     hideWarningDialog()
     resetTimers()
@@ -153,10 +169,15 @@ export const AutoLogoutProvider = ({ children }) => {
     if (broadcastChannelRef.current) {
       broadcastChannelRef.current.postMessage({ type: 'ACTIVITY' })
     }
-  }, [hideWarningDialog, resetTimers])
+  }, [hideWarningDialog, resetTimers, user])
 
   // Aktiviteetin pysäyttäminen/jatkaminen
   const setActivityState = useCallback((active) => {
+    // Älä muuta aktiviteetin tilaa jos käyttäjä ei ole kirjautunut sisään
+    if (!user) {
+      return
+    }
+
     setIsActive(active)
     if (active) {
       updateLastActivity()
@@ -164,10 +185,15 @@ export const AutoLogoutProvider = ({ children }) => {
     } else {
       clearTimers()
     }
-  }, [resetTimers, clearTimers])
+  }, [resetTimers, clearTimers, user])
 
   // BroadcastChannel viestien kuuntelu
   useEffect(() => {
+    // Älä aloita BroadcastChannel jos käyttäjä ei ole kirjautunut sisään
+    if (!user) {
+      return
+    }
+
     broadcastChannelRef.current = createBroadcastChannel('rascal-auto-logout')
     
     if (broadcastChannelRef.current) {
@@ -188,10 +214,15 @@ export const AutoLogoutProvider = ({ children }) => {
         }
       }
     }
-  }, [handleLogout, resetTimers])
+  }, [handleLogout, resetTimers, user])
 
   // Aktiviteetin tunnistus
   useEffect(() => {
+    // Älä aloita auto-logout jos käyttäjä ei ole kirjautunut sisään
+    if (!user) {
+      return
+    }
+
     const handleActivity = createActivityDetector(() => {
       if (isActive) {
         resetTimers()
@@ -229,25 +260,37 @@ export const AutoLogoutProvider = ({ children }) => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       clearTimers()
     }
-  }, [isActive, resetTimers, checkInactivity, clearTimers])
+  }, [isActive, resetTimers, checkInactivity, clearTimers, user])
 
   // Timeout-asetuksen päivitys kun sijainti muuttuu
   useEffect(() => {
+    // Älä päivitä timeout-asetuksia jos käyttäjä ei ole kirjautunut sisään
+    if (!user) {
+      return
+    }
+
     const newTimeout = getContextTimeout(location.pathname)
     setCurrentTimeout(newTimeout)
     
     if (isActive) {
       resetTimers()
     }
-  }, [location.pathname, isActive, resetTimers])
+  }, [location.pathname, isActive, resetTimers, user])
 
   // Inaktiivisuuden tarkistus kun komponentti mountataan
   useEffect(() => {
+    // Älä aloita auto-logout jos käyttäjä ei ole kirjautunut sisään
+    if (!user) {
+      return
+    }
+
     if (isActive) {
+      // Alusta aktiviteetti heti kun komponentti mountataan
+      updateLastActivity()
       checkInactivity()
       resetTimers()
     }
-  }, [isActive, checkInactivity, resetTimers])
+  }, [isActive, checkInactivity, resetTimers, user])
 
   const value = {
     showWarning,

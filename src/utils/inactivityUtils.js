@@ -69,7 +69,12 @@ export const updateLastActivity = () => {
 // Viimeisen aktiviteetin haku
 export const getLastActivity = () => {
   const lastActivity = localStorage.getItem(STORAGE_KEYS.LAST_ACTIVITY)
-  return lastActivity ? parseInt(lastActivity, 10) : Date.now()
+  if (!lastActivity) {
+    // Jos ei ole tallennettua aktiviteettiä, alusta se nykyisellä ajalla
+    updateLastActivity()
+    return Date.now()
+  }
+  return parseInt(lastActivity, 10)
 }
 
 // Timeout-asetuksen tallentaminen

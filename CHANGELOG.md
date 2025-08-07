@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.27.0](https://github.com/slemppa/rascal-ai/compare/v1.26.0...v1.27.0) (2025-08-07)
+
+
+### ✨ Features
+
+* add contact form webhook and update landing page header ([cdf9815](https://github.com/slemppa/rascal-ai/commit/cdf9815de2f1143f1bbcc20996e63104b3ef2fea))
+
+
+### ♻️ Code Refactoring
+
+* poista debug-logeja kaikista sivuista ([258f3ab](https://github.com/slemppa/rascal-ai/commit/258f3abdbb0e1eb12038ba649ad526a0d56912a1))
+
+
+### 🐛 Bug Fixes
+
+* implement Vercel Blob file upload for AI chat knowledge base ([33fe4f7](https://github.com/slemppa/rascal-ai/commit/33fe4f7f60212f7f906c4a867f2821735c88bd85))
+
 ## [1.26.0](https://github.com/slemppa/rascal-ai/compare/v1.25.1...v1.26.0) (2025-08-06)
 
 

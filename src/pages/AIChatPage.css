@@ -8,6 +8,41 @@
   background: #f7f8fc;
   overflow: hidden;
   flex: 1;
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+/* Viestien tyylit */
+.ai-chat-loading-text {
+  color: #2563eb;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ai-chat-error-text {
+  color: #dc2626;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ai-chat-success-text {
+  color: #16a34a;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ai-chat-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .ai-chat-tabs {
@@ -180,7 +215,6 @@
   flex-direction: column;
   padding: 24px;
   gap: 24px;
-  overflow-y: auto;
   background: #f7f8fc;
 }
 
@@ -379,6 +413,8 @@
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
+  z-index: 1;
+  pointer-events: auto;
 }
 
 .ai-chat-upload-card::before {
@@ -422,6 +458,10 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
+  min-height: 0;
 }
 
 .ai-chat-files-list h3 {
@@ -510,6 +550,9 @@
   align-items: center;
   justify-content: center;
   font-size: 12px;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .ai-chat-remove-file:hover {
@@ -530,6 +573,9 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .ai-chat-upload-button:hover:not(:disabled) {
@@ -541,6 +587,7 @@
   background: #9ca3af;
   cursor: not-allowed;
   transform: none;
+  pointer-events: none;
 }
 
 .ai-chat-files-scroll {
@@ -631,6 +678,9 @@
   justify-content: center;
   transition: all 0.2s ease;
   font-size: 14px;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .ai-chat-delete-button:hover {

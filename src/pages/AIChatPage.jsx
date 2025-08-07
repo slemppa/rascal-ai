@@ -222,8 +222,16 @@ export default function AIChatPage() {
       await fetchFiles()
     } catch (error) {
       console.error('Virhe tiedostojen lataamisessa:', error)
-      setUploadError('Virhe tiedostojen lataamisessa')
+      console.error('Virheen response:', error.response?.data)
+      console.error('Virheen message:', error.message)
+      console.error('Virheen status:', error.response?.status)
+      console.error('Virheen config:', error.config)
+      
+      const errorMessage = error.response?.data?.details || error.response?.data?.error || error.message
+      console.log('Asetetaan virheviesti:', errorMessage)
+      setUploadError(`Virhe tiedostojen lataamisessa: ${errorMessage}`)
     } finally {
+      console.log('Finally-lohko suoritettu')
       setUploadLoading(false)
     }
   }
@@ -285,16 +293,29 @@ export default function AIChatPage() {
     }
   }
   const handleRemovePending = (name, size) => {
-    setPendingFiles(prev => prev.filter(f => !(f.name === name && f.size === size)))
+    console.log('handleRemovePending kutsuttu:', name, size)
+    setPendingFiles(prev => {
+      const newFiles = prev.filter(f => !(f.name === name && f.size === size))
+      console.log('pendingFiles päivitetty:', newFiles.length)
+      return newFiles
+    })
   }
   const handleUploadPending = async () => {
     console.log('handleUploadPending klikattu, pendingFiles:', pendingFiles.length)
-    if (pendingFiles.length === 0) return
+    console.log('companyId:', companyId, 'assistantId:', assistantId)
+    console.log('uploadLoading:', uploadLoading)
+    
+    if (pendingFiles.length === 0) {
+      console.log('Ei pendingFiles, palautetaan')
+      return
+    }
     if (!companyId) {
+      console.log('companyId puuttuu')
       setUploadError('Yrityksen ID puuttuu')
       return
     }
     if (!assistantId) {
+      console.log('assistantId puuttuu')
       setUploadError('Assistentin ID puuttuu')
       return
     }
@@ -326,7 +347,7 @@ export default function AIChatPage() {
       console.error('Virhe tiedostojen lataamisessa:', error)
       setUploadError('Virhe tiedostojen lataamisessa')
     } finally {
-      console.log('Asetetaan uploadLoading = false (handleFileUpload)')
+      console.log('Asetetaan uploadLoading = false (handleUploadPending)')
       setUploadLoading(false)
     }
   }
@@ -616,7 +637,6 @@ export default function AIChatPage() {
                       multiple
                       style={{ display: 'none' }}
                       onChange={handleFileInput}
-                      disabled={uploadLoading}
                     />
                   </div>
                   {/* Valitut tiedostot */}
@@ -631,43 +651,29 @@ export default function AIChatPage() {
                     </div>
                   )}
                   <button
-                    onClick={handleUploadPending}
+                    onClick={() => {
+                      handleUploadPending()
+                    }}
                     disabled={uploadLoading || pendingFiles.length === 0}
                     className="ai-chat-upload-button"
-                    style={{ 
-                      opacity: (uploadLoading || pendingFiles.length === 0) ? 0.5 : 1,
-                      cursor: (uploadLoading || pendingFiles.length === 0) ? 'not-allowed' : 'pointer'
-                    }}
                   >
                     Lähetä tiedostot ({pendingFiles.length})
                   </button>
-                  {uploadLoading && <p style={{ color: '#2563eb', margin: 0 }}>Ladataan...</p>}
-                  {uploadError && <p style={{ color: 'red', margin: 0 }}>{uploadError}</p>}
-                  {uploadSuccess && <p style={{ color: 'green', margin: 0 }}>{uploadSuccess}</p>}
+                  {uploadLoading && <p className="ai-chat-loading-text">Ladataan...</p>}
+                  {uploadError && <p className="ai-chat-error-text">{uploadError}</p>}
+                  {uploadSuccess && <p className="ai-chat-success-text">{uploadSuccess}</p>}
                 </div>
                 
                 {/* Tiedostot - erillinen container */}
-                <div className="ai-chat-files-list" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+                <div className="ai-chat-files-list">
                   <h3>Tiedostot</h3>
-                  <div className="ai-chat-files-scroll" ref={filesListRef} style={{ flex: 1, minHeight: 0 }}>
+                  <div className="ai-chat-files-scroll" ref={filesListRef}>
                     {filesLoading ? (
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        padding: '24px',
-                        color: '#6b7280'
-                      }}>
+                      <div className="ai-chat-loading">
                         <span>Ladataan tiedostoja...</span>
                       </div>
                     ) : filesError ? (
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        padding: '24px',
-                        color: 'red'
-                      }}>
+                      <div className="ai-chat-error">
                         <span>{filesError}</span>
                       </div>
                     ) : files.length === 0 ? (

@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.28.0](https://github.com/slemppa/rascal-ai/compare/v1.27.0...v1.28.0) (2025-08-08)
+
+
+### ✨ Features
+
+* add email support to call logs and Google Sheets validation ([4ccb0ee](https://github.com/slemppa/rascal-ai/commit/4ccb0eeca93d0249a64b44bfc2bc5606b7370b49))
+* add Mika special contacts and mass call functionality ([dcf1854](https://github.com/slemppa/rascal-ai/commit/dcf185479582a054f67f72a97c6ee0ea84c0fabb))
+
 ## [1.27.0](https://github.com/slemppa/rascal-ai/compare/v1.26.0...v1.27.0) (2025-08-07)
 
 

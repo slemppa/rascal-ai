@@ -61,6 +61,14 @@ export default async function handler(req, res) {
         header.toLowerCase().includes('tel')
       )
       
+      // Etsitään sähköpostisarakkeet
+      const emailColumns = headers.filter(header => 
+        header.toLowerCase().includes('email') || 
+        header.toLowerCase().includes('sähköposti') || 
+        header.toLowerCase().includes('e-mail') ||
+        header.toLowerCase().includes('mail')
+      )
+      
       if (phoneColumns.length === 0) {
         return res.status(400).json({ error: 'Puhelinnumerosarakkeita ei löytynyt. Tarkista että tiedostossa on sarake nimeltä "phone", "puhelin", "numero" tai "tel".' })
       }
@@ -70,10 +78,13 @@ export default async function handler(req, res) {
         header.toLowerCase().includes('name') || 
         header.toLowerCase().includes('nimi') || 
         header.toLowerCase().includes('phone') || 
-        header.toLowerCase().includes('puhelin')
+        header.toLowerCase().includes('puhelin') ||
+        header.toLowerCase().includes('email') ||
+        header.toLowerCase().includes('sähköposti')
       )
       
       const phoneCount = dataRows.length
+      const emailCount = emailColumns.length > 0 ? dataRows.length : 0
 
       // Parsitaan kaikki rivit objekteiksi
       const rows = dataRows.map(row => {
@@ -89,11 +100,13 @@ export default async function handler(req, res) {
         success: true,
         sheetId,
         phoneCount,
+        emailCount,
         totalRows: dataRows.length,
         columns: headers,
         phoneColumns: relevantColumns,
+        emailColumns: emailColumns,
         rows, // kaikki rivit objekteina
-        message: `Google Sheets -tiedosto validioitu onnistuneesti. Löydetty ${phoneCount} puhelinnumeroa.`,
+        message: `Google Sheets -tiedosto validioitu onnistuneesti. Löydetty ${phoneCount} puhelinnumeroa ja ${emailCount} sähköpostia.`,
         timestamp: new Date().toISOString()
       })
       

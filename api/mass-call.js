@@ -111,11 +111,19 @@ export default async function handler(req, res) {
         header.toLowerCase().includes('tel')
       )
       
+      // Etsitään sähköpostisarakkeet
+      const emailColumns = headers.filter(header => 
+        header.toLowerCase().includes('email') || 
+        header.toLowerCase().includes('sähköposti') || 
+        header.toLowerCase().includes('e-mail') ||
+        header.toLowerCase().includes('mail')
+      )
+      
       if (phoneColumns.length === 0) {
         return res.status(400).json({ error: 'Puhelinnumerosarakkeita ei löytynyt. Tarkista että tiedostossa on sarake nimeltä "phone", "puhelin", "numero" tai "tel".' })
       }
       
-      // Valmistellaan puhelut call_logs tauluun - vain Nimi ja Puhelinnumero
+      // Valmistellaan puhelut call_logs tauluun - Nimi, Puhelinnumero ja Sähköposti
       const callLogs = []
       let successCount = 0
       let errorCount = 0
@@ -124,9 +132,10 @@ export default async function handler(req, res) {
         const row = dataRows[i]
         const values = row.split(',').map(v => v.trim().replace(/"/g, ''))
         
-        // Etsi puhelinnumero ja nimi
+        // Etsi puhelinnumero, nimi ja sähköposti
         let phoneNumber = null
         let name = null
+        let email = null
         
         // Etsi puhelinnumero
         for (const phoneCol of phoneColumns) {
@@ -153,10 +162,23 @@ export default async function handler(req, res) {
           }
         }
         
+        // Etsi sähköposti
+        for (const emailCol of emailColumns) {
+          const colIndex = headers.indexOf(emailCol)
+          if (colIndex >= 0 && values[colIndex]) {
+            const emailValue = values[colIndex]
+            // Validoi sähköposti
+            if (isValidEmail(emailValue)) {
+              email = emailValue.toLowerCase().trim()
+              break
+            }
+          }
+        }
+        
         // Jos nimeä ei löytynyt, käytä ensimmäistä ei-tyhjää saraketta
         if (!name) {
           for (let j = 0; j < values.length; j++) {
-            if (values[j] && !phoneColumns.includes(headers[j])) {
+            if (values[j] && !phoneColumns.includes(headers[j]) && !emailColumns.includes(headers[j])) {
               name = values[j]
               break
             }
@@ -173,6 +195,7 @@ export default async function handler(req, res) {
             user_id: publicUserId, // Käytä public.users.id
             customer_name: name,
             phone_number: phoneNumber,
+            email: email, // Lisää sähköposti
             call_type: callType, // Teksti "Toiminnot" kentästä
             call_type_id: call_type_id, // ID call_types taulusta
             voice_id: voiceToUse, // Käytä voice_id:tä tai voice:tä
@@ -237,4 +260,10 @@ export default async function handler(req, res) {
       details: error.message 
     })
   }
+}
+
+// Apufunktio sähköpostin validoimiseen
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
 } 

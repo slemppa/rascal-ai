@@ -843,7 +843,7 @@ export default function CallPanel() {
 
       // Lisää suodattimet
       if (searchTerm) {
-        query = query.or(`customer_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%`)
+        query = query.or(`customer_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`)
       }
       if (statusFilter) {
           if (statusFilter === 'success') {
@@ -970,7 +970,8 @@ export default function CallPanel() {
       // Luo CSV sisältö
       const headers = [
         'Nimi',
-        'Puhelinnumero', 
+        'Puhelinnumero',
+        'Sähköposti',
         'Puhelun tyyppi',
         'Päivämäärä',
         'Vastattu',
@@ -987,6 +988,7 @@ export default function CallPanel() {
         ...logs.map(log => [
           `"${log.customer_name || ''}"`,
           `"${log.phone_number || ''}"`,
+          `"${log.email || ''}"`,
           `"${log.call_type || ''}"`,
           `"${log.call_date ? new Date(log.call_date).toLocaleDateString('fi-FI') + ' ' + new Date(log.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : ''}"`,
           log.answered ? 'Kyllä' : 'Ei',
@@ -1307,8 +1309,12 @@ export default function CallPanel() {
                 <div className="status-success">
                   <div style={{ fontWeight: 600 }}>✅ Validointi onnistui!</div>
                   <div>📈 <strong>Löydetty {validationResult.phoneCount} puhelinnumeroa</strong></div>
+                  {validationResult.emailCount > 0 && (
+                    <div>📧 <strong>Löydetty {validationResult.emailCount} sähköpostia</strong></div>
+                  )}
                   {validationResult.totalRows > 0 && <div>📋 Yhteensä {validationResult.totalRows} riviä</div>}
                   {validationResult.phoneColumns && validationResult.phoneColumns.length > 0 && <div>📞 Puhelinnumerosarakkeet: {validationResult.phoneColumns.join(', ')}</div>}
+                  {validationResult.emailColumns && validationResult.emailColumns.length > 0 && <div>📧 Sähköpostisarakkeet: {validationResult.emailColumns.join(', ')}</div>}
                   {validationResult.columns && validationResult.columns.length > 0 && <div>📝 Kaikki sarakkeet: {validationResult.columns.join(', ')}</div>}
                 </div>
               )}
@@ -1537,13 +1543,13 @@ export default function CallPanel() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 16 }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-                    Hae nimeä tai numeroa
+                    Hae nimeä, numeroa tai sähköpostia
                   </label>
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Matti Meikäläinen tai +358..."
+                    placeholder="Matti Meikäläinen, +358... tai matt@example.com"
                     style={{
                       width: '100%',
                       padding: '8px 12px',
@@ -1769,6 +1775,7 @@ export default function CallPanel() {
                       <tr style={{ background: '#f3f4f6', color: '#374151' }}>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Nimi</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Puhelinnumero</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Sähköposti</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Yhteenveto</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Puhelun tyyppi</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Päivämäärä</th>
@@ -1793,6 +1800,7 @@ export default function CallPanel() {
                         >
                               <td style={{ padding: '8px', fontWeight: 500 }}>{log.customer_name || 'Tuntematon nimi'}</td>
                               <td style={{ padding: '8px' }}>{log.phone_number || '-'}</td>
+                              <td style={{ padding: '8px' }}>{log.email || '-'}</td>
                               <td style={{ padding: '8px', color: '#6b7280', fontSize: 13 }}>
                                 {log.summary ? (log.summary.length > 50 ? log.summary.substring(0, 50) + '...' : log.summary) : '-'}
                               </td>
@@ -2014,6 +2022,9 @@ export default function CallPanel() {
                       </div>
                       <div>
                             <strong>Puhelinnumero:</strong> {selectedLog.phone_number || 'Ei numeroa'}
+                          </div>
+                          <div>
+                            <strong>Sähköposti:</strong> {selectedLog.email || 'Ei sähköpostia'}
                           </div>
                           <div>
                             <strong>Puhelun tyyppi:</strong> {selectedLog.call_type || '-'}

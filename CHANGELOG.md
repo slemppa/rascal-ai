@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.29.2](https://github.com/slemppa/rascal-ai/compare/v1.29.1...v1.29.2) (2025-08-10)
+
+
+### 🔧 Chores
+
+* **calls:** remove Mika Special VIP card from calls tab ([a36b8d2](https://github.com/slemppa/rascal-ai/commit/a36b8d2bf364f613942f82eed7b7911b022760d2))
+
 ### [1.29.1](https://github.com/slemppa/rascal-ai/compare/v1.29.0...v1.29.1) (2025-08-10)
 
 

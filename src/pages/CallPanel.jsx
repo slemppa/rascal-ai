@@ -1325,64 +1325,7 @@ export default function CallPanel() {
             </div>
             )}
             
-            {/* Mika Special - Aloita puhelut -kortti */}
-            {isMika && (
-              <div className="card" style={{ 
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                color: 'white',
-                border: 'none'
-              }}>
-                <h2 className="section-title" style={{ color: 'white' }}>🚀 Mika Special - Puhelut</h2>
-                <div style={{ marginBottom: 16 }}>
-                  <p style={{ margin: '0 0 12px 0', fontSize: 14, opacity: 0.9 }}>
-                    Tervetuloa eksklusiiviseen puhelinmarkkinointi-ominaisuuteen! Sinulla on pääsy edistyneisiin toimintoihin.
-                  </p>
-                  <div style={{ 
-                    background: 'rgba(255,255,255,0.1)', 
-                    padding: 16, 
-                    borderRadius: 8,
-                    marginBottom: 16
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                      <span>VIP Status:</span>
-                      <strong>🎯 Aktiivinen</strong>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                      <span>Puhelut tänään:</span>
-                      <strong>0/50</strong>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span>Seuraava päivitys:</span>
-                      <strong>24h</strong>
-                    </div>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <Button
-                    variant="secondary"
-                    style={{
-                      background: 'rgba(255,255,255,0.2)',
-                      color: 'white',
-                      border: '1px solid rgba(255,255,255,0.3)',
-                      flex: 1
-                    }}
-                  >
-                    🔓 Aktivoi ominaisuudet
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    style={{
-                      background: 'rgba(255,255,255,0.2)',
-                      color: 'white',
-                      border: '1px solid rgba(255,255,255,0.3)',
-                      flex: 1
-                    }}
-                  >
-                    📊 Näytä raportti
-                  </Button>
-                </div>
-              </div>
-            )}
+            {/* Mika Special - VIP-kortti poistettu pyynnöstä */}
             
             {/* Tee puhelu -kortti */}
             <div className="card">

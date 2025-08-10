@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.28.1](https://github.com/slemppa/rascal-ai/compare/v1.28.0...v1.28.1) (2025-08-10)
+
+
+### ✨ Features
+
+* **calls:** add analytics fields and guidance to modals ([63bf2d8](https://github.com/slemppa/rascal-ai/commit/63bf2d8835121c523c1b56fc6aaa1bd1c7bb8869))
+
 ## [1.28.0](https://github.com/slemppa/rascal-ai/compare/v1.27.0...v1.28.0) (2025-08-08)
 
 

@@ -557,6 +557,8 @@ export default function CallPanel() {
           notes: editingCallType.notes || '',
           version: editingCallType.version || 'v1.0',
           status: editingCallType.status || 'Active',
+          summary: editingCallType.summary || '',
+          success_assessment: editingCallType.success_assessment || ''
         }
 
         const { error } = await supabase.from('call_types').update(fields).eq('id', editingCallType.id)
@@ -781,6 +783,8 @@ export default function CallPanel() {
         notes: newCallType.notes || '',
         version: newCallType.version || 'v1.0',
         status: newCallType.status || 'Active',
+        summary: newCallType.summary || '',
+        success_assessment: newCallType.success_assessment || ''
       }
       const { error } = await supabase.from('call_types').insert([insertData])
       if (error) throw error
@@ -798,7 +802,7 @@ export default function CallPanel() {
     setShowAddModal(false)
     setShowEditModal(false)
     setEditingCallType(null)
-    setNewCallType({ callType: '', label: '', description: '', identity: '', style: '', guidelines: '', goals: '', intro: '', questions: '', outro: '', notes: '', version: '', status: 'Active' })
+    setNewCallType({ callType: '', label: '', description: '', identity: '', style: '', guidelines: '', goals: '', intro: '', questions: '', outro: '', notes: '', version: '', status: 'Active', summary: '', success_assessment: '' })
     setAddTypeError('')
     setAddTypeSuccess('')
   }

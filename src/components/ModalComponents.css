@@ -94,6 +94,8 @@
   visibility: visible !important;
   opacity: 1 !important;
   animation: modalSlideIn 0.3s ease-out !important;
+  box-sizing: border-box !important;
+  align-items: stretch !important;
 }
 
 @keyframes modalSlideIn {
@@ -135,6 +137,8 @@
   visibility: visible !important;
   opacity: 1 !important;
   animation: modalSlideIn 0.3s ease-out !important;
+  box-sizing: border-box !important;
+  align-items: stretch !important;
 }
 
 /* Auth-komponenteille sopiva koko - fallback */
@@ -154,6 +158,17 @@
   height: 600px;
   display: flex;
   flex-direction: column;
+}
+
+/* Varmistetaan että edit-modalin sisältö täyttää koko leveyden */
+.edit-call-type-modal .modal-content {
+  width: 100% !important;
+  max-width: 100% !important;
+  align-self: stretch !important;
+}
+.edit-call-type-modal .modal-content > * {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 .modal-header {
@@ -261,10 +276,23 @@
 
 /* Modal sisältö */
 .modal-content {
-  flex: 1;
-  overflow: auto;
-  padding-right: 8px;
-  min-height: 0;
+  flex: 1 1 auto !important;
+  overflow: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  align-self: stretch !important;
+  box-sizing: border-box !important;
+}
+
+/* Varmista että sisäiset lohkot eivät aseta kapeampaa maksimileveyttä */
+.modal-content > .form-grid,
+.modal-content > .form-column,
+.modal-content > div {
+  max-width: 100% !important;
+  width: 100% !important;
 }
 
 /* Lomakkeiden tyylit */

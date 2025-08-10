@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { idea, type, companyId } = req.body
+    const { idea, type, companyId, caption } = req.body
 
     if (!idea || !type || !companyId) {
       return res.status(400).json({ error: 'Missing required fields: idea, type, companyId' })
@@ -24,6 +24,7 @@ export default async function handler(req, res) {
       idea,
       type,
       companyId,
+      caption,
       timestamp: new Date().toISOString(),
       action: 'idea_generation'
     }

@@ -313,7 +313,8 @@ export default function ManagePostsPageOptimized() {
           body: JSON.stringify({
             idea: postData.title,
             type: postData.type,
-            companyId: userData.company_id
+            companyId: userData.company_id,
+            caption: postData.caption
           })
         })
 

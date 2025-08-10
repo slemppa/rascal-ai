@@ -621,7 +621,8 @@ export default function ManagePostsPage() {
           body: JSON.stringify({
             idea: postData.title,
             type: postData.type,
-            companyId: userData.company_id
+            companyId: userData.company_id,
+            caption: postData.caption
           })
         })
 

@@ -1257,7 +1257,7 @@ export default function CallPanel() {
           >
             ⚙️ Hallinta
           </Button>
-          {(isMika || isAdmin) && (
+          {isMika && (
             <Button 
               onClick={() => setActiveTab('mika')} 
               variant={activeTab === 'mika' ? 'primary' : 'secondary'}
@@ -1270,8 +1270,8 @@ export default function CallPanel() {
         {/* Sisältö */}
         {activeTab === 'calls' && (
           <div className="callpanel-grid" style={{ width: '100%', maxWidth: 'none' }}>
-            {/* Aloita puhelut -kortti - näkyy vain adminille tai jos ei ole Mika */}
-            {(!isMika || isAdmin) && (
+            {/* Aloita puhelut -kortti - näkyy kaikille */}
+            {(
               <div className="card">
               <h2 className="section-title">Aloita massapuhelut</h2>
               <div style={{ marginBottom: 10 }}>

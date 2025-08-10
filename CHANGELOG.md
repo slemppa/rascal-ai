@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.29.0](https://github.com/slemppa/rascal-ai/compare/v1.28.1...v1.29.0) (2025-08-10)
+
+
+### ✨ Features
+
+* **posts:** send caption with new post to idea-generation ([675bce5](https://github.com/slemppa/rascal-ai/commit/675bce5aaa4dd9568b6896dc757b1ef73b7be0c1))
+
 ### [1.28.1](https://github.com/slemppa/rascal-ai/compare/v1.28.0...v1.28.1) (2025-08-10)
 
 

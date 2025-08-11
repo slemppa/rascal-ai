@@ -1065,6 +1065,8 @@ export default function CallPanel() {
     }
   }, [])
 
+  // Ei erillistä auto-resizea; käytetään lohkoa, jossa maxHeight ja sisäinen scroll
+
   // Responsiivinen apu
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const isTablet = typeof window !== 'undefined' && window.innerWidth >= 768 && window.innerWidth < 1200;
@@ -2024,14 +2026,21 @@ export default function CallPanel() {
                       <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
                           Yhteenveto
                       </h3>
-                        <div style={{ 
-                          background: '#f8fafc', 
-                          padding: 16, 
-                          borderRadius: 8, 
-                          fontSize: 14,
-                          lineHeight: 1.5,
-                          whiteSpace: 'pre-wrap'
-                        }}>
+                        <div
+                          style={{
+                            width: '100%',
+                            background: '#f8fafc',
+                            padding: 16,
+                            borderRadius: 8,
+                            fontSize: 14,
+                            lineHeight: 1.6,
+                            whiteSpace: 'pre-wrap',
+                            overflowY: 'auto',
+                            maxHeight: '30vh',
+                            border: '1px solid #e2e8f0',
+                            boxSizing: 'border-box'
+                          }}
+                        >
                           {selectedLog.summary}
                         </div>
                     </div>

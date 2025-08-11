@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Button from './Button'
 import './ModalComponents.css'
 
@@ -14,6 +14,9 @@ const AddCallTypeModal = ({
 }) => {
   const [currentStep, setCurrentStep] = useState(1)
   const totalSteps = 4
+
+  // Auto-resize viite Yhteenveto-kentälle
+  const summaryRef = useRef(null)
 
   // ESC-toiminnallisuus - pitää olla heti useState jälkeen
   useEffect(() => {
@@ -31,6 +34,14 @@ const AddCallTypeModal = ({
       document.removeEventListener('keydown', handleEscKey)
     }
   }, [showModal, onClose])
+
+  // Säädä Yhteenveto-tekstialueen korkeus sisällön mukaan
+  useEffect(() => {
+    const el = summaryRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${el.scrollHeight}px`
+  }, [newCallType.summary, currentStep, showModal])
 
   if (!showModal) return null
 
@@ -162,8 +173,8 @@ const AddCallTypeModal = ({
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“Olet [Yritys]n AI‑assistentti [Nimi]. Autat [kohdeyleisöä] [aihe]‑asioissa ja ohjaat tarvittaessa ihmisasiantuntijalle.”</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Kuka olet</div>
+                  <div>Olet [Yritys]n AI‑assistentti [Nimi]. Autat [kohdeyleisöä] [aihe]‑asioissa ja ohjaat tarvittaessa ihmisasiantuntijalle.</div>
                 </div>
               </div>
 
@@ -183,8 +194,8 @@ const AddCallTypeModal = ({
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“Puhu selkeää suomea, sinuttele, ole lämmin ja napakka. Vältä jargonia. Käytä lyhyitä lauseita ja luonnollisia taukoja (… tai –).”</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Miten toimit</div>
+                  <div>Puhu selkeää suomea, sinuttele, ole lämmin ja napakka. Vältä jargonia. Käytä lyhyitä lauseita ja luonnollisia taukoja (… tai –).</div>
                 </div>
               </div>
 
@@ -205,7 +216,7 @@ const AddCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“1) Selvitä [X]. 2) Kartoita [kiinnostus/haasteet]. 3) Tarjoa apuvaihtoehto. 4) Kysy jatkoyhteydenotto. 5) Kerää paras aika ja yhteystapa.”</div>
+                  <div>1) Selvitä [X]. 2) Kartoita [kiinnostus/haasteet]. 3) Tarjoa apuvaihtoehto. 4) Kysy jatkoyhteydenotto. 5) Kerää paras aika ja yhteystapa.</div>
                 </div>
               </div>
 
@@ -226,7 +237,7 @@ const AddCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“Esitä vain yksi kysymys kerrallaan ja odota vastaus. Jos vastaus on epäselvä, pyydä esimerkki. Vastaa asiakkaan kysymyksiin ytimekkäästi ja jatka runkoa.”</div>
+                  <div>Esitä vain yksi kysymys kerrallaan ja odota vastaus. Jos vastaus on epäselvä, pyydä esimerkki. Vastaa asiakkaan kysymyksiin ytimekkäästi ja jatka runkoa.</div>
                 </div>
               </div>
             </div>
@@ -251,7 +262,7 @@ const AddCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“Moikka! Täällä [Nimi], [Yritys]n AI‑assistentti. Soitan/ vastaan, koska [syy]. Jos sopii, kysyn pari ytimekästä kysymystä — aloitetaanko?”</div>
+                  <div>Moikka! Täällä [Nimi], [Yritys]n AI‑assistentti. Soitan/ vastaan, koska [syy]. Jos sopii, kysyn pari ytimekästä kysymystä — aloitetaanko?</div>
                 </div>
               </div>
 
@@ -293,7 +304,7 @@ const AddCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151', whiteSpace: 'pre-wrap' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>{`“Kiitos juttutuokiosta! Laitanko yhteenvedon ja linkit sähköpostilla?\nodota vastausta\nSovitaan näin: [seuraava askel]. Mukavaa päivää ja kuulemiin!”`}</div>
+                  <div>{`Kiitos juttutuokiosta! Laitanko yhteenvedon ja linkit sähköpostilla?\nodota vastausta\nSovitaan näin: [seuraava askel]. Mukavaa päivää ja kuulemiin!`}</div>
                 </div>
               </div>
 
@@ -314,7 +325,7 @@ const AddCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“Tallenna: suosittu yhteydenottoaika, yhteystapa, sähköposti, webinaarilinkin/tallenteen pyyntö, lyhyt yhteenveto haasteista/tavoitteista.”</div>
+                  <div>Tallenna: suosittu yhteydenottoaika, yhteystapa, sähköposti, webinaarilinkin/tallenteen pyyntö, lyhyt yhteenveto haasteista/tavoitteista.</div>
                 </div>
               </div>
             </div>
@@ -328,18 +339,19 @@ const AddCallTypeModal = ({
                     Yhteenveto (analytiikka)
                   </label>
                   <textarea
+                    ref={summaryRef}
                     value={newCallType.summary || ''}
                     onChange={e => setNewCallType({ ...newCallType, summary: e.target.value })}
                     placeholder={
 `• 2–3 virkkeen tiivistelmä suomeksi.\n• Kerro mitä selvisi + sovitut jatkotoimet.`
                     }
-                    rows={5}
-                    style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, resize: 'vertical' }}
+                    rows={1}
+                    style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, resize: 'none', overflow: 'hidden' }}
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“Tiivistä 2–3 virkkeeseen: osallistuiko [tapahtuma], tärkeimmät kiinnostukset/haasteet, sovitut next steps (soittoaika/tapa).”</div>
+                  <div>Tiivistä 2–3 virkkeeseen: osallistuiko [tapahtuma], tärkeimmät kiinnostukset/haasteet, sovitut next steps (soittoaika/tapa).</div>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
@@ -359,7 +371,7 @@ const AddCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“Arvioi, saavutettiinko: 1) osallistumistieto, 2) kiinnostukset/haasteet, 3) jatkoyhteydenotto, 4) yhteydenoton aika/tapa. Perustele lyhyesti.”</div>
+                  <div>Arvioi, saavutettiinko: 1) osallistumistieto, 2) kiinnostukset/haasteet, 3) jatkoyhteydenotto, 4) yhteydenoton aika/tapa. Perustele lyhyesti.</div>
                 </div>
               </div>
             </div>

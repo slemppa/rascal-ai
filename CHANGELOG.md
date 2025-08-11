@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.30.1](https://github.com/slemppa/rascal-ai/compare/v1.30.0...v1.30.1) (2025-08-11)
+
+
+### 🐛 Bug Fixes
+
+* **landing:** testimonial carousel styles and HTML structure ([05b3c3e](https://github.com/slemppa/rascal-ai/commit/05b3c3e3d984ab3570f2ae63f586c9ea94b7e4e3))
+
 ## [1.30.0](https://github.com/slemppa/rascal-ai/compare/v1.29.3...v1.30.0) (2025-08-11)
 
 

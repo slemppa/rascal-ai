@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.29.3](https://github.com/slemppa/rascal-ai/compare/v1.29.2...v1.29.3) (2025-08-11)
+
+
+### 🐛 Bug Fixes
+
+* **calls:** Yhteenveto venyy ja modaalin max‑korkeus 30vh ([d23a431](https://github.com/slemppa/rascal-ai/commit/d23a431d17068f6c5385237f2a195cd924be5315))
+
 ### [1.29.2](https://github.com/slemppa/rascal-ai/compare/v1.29.1...v1.29.2) (2025-08-10)
 
 

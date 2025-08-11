@@ -101,6 +101,20 @@ export default function LandingPage() {
         .kpi-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gap);align-items:stretch}.kpi{grid-column:span 3;text-align:center}
         .triple-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gap)}.triple{grid-column:span 4}
         .logos-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gap);align-items:center}.logo-box{grid-column:span 2;height:40px;border:1px solid #E5E7EB;border-radius:10px;background:var(--panel)}
+        .carousel{position:relative;overflow:hidden;border-radius:var(--radius);background:var(--panel);padding:40px 20px}
+        .carousel-track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none}
+        .carousel-track::-webkit-scrollbar{display:none}
+        .testimonial-card{flex:0 0 100%;scroll-snap-align:start;display:grid;gap:16px;text-align:center;min-height:200px;align-content:center}
+        .testimonial-card .quote{font-size:clamp(18px,2.5vw,24px);font-family:'Playfair Display',Georgia,serif;color:var(--text-dark);line-height:1.4}
+        .testimonial-card .helper{color:var(--muted);font-size:14px;font-weight:500}
+        .carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:var(--panel);border:1px solid #E5E7EB;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;z-index:10}
+        .carousel-btn:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+        .carousel-btn:disabled{opacity:.5;cursor:not-allowed}
+        .carousel-btn.prev{left:20px}
+        .carousel-btn.next{right:20px}
+        .carousel-dots{display:flex;gap:8px;justify-content:center;margin-top:20px}
+        .carousel-dots button{width:8px;height:8px;border-radius:50%;border:none;background:rgba(0,0,0,.2);cursor:pointer;transition:background .2s}
+        .carousel-dots button.active{background:var(--brand)}
         footer{margin-top:32px;padding-top:16px;border-top:1px solid rgba(255,255,255,.18);color:var(--muted);font-size:13px}
       `}</style>
 
@@ -240,7 +254,7 @@ export default function LandingPage() {
               </div>
               <button className="carousel-btn next" aria-label="Seuraava" data-next>›</button>
               <div className="carousel-dots" role="tablist" aria-label="Karusellin sivut" data-dots></div>
-        </div>
+            </div>
           </section>
         </main>
 

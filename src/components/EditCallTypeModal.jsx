@@ -156,7 +156,7 @@ const EditCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“Olet [Yritys]n AI‑assistentti [Nimi]. Autat [kohdeyleisöä] [aihe]‑asioissa ja ohjaat tarvittaessa ihmisasiantuntijalle.”</div>
+                  <div>Olet [Yritys]n AI‑assistentti [Nimi]. Autat [kohdeyleisöä] [aihe]‑asioissa ja ohjaat tarvittaessa ihmisasiantuntijalle.</div>
                 </div>
               </div>
 
@@ -175,7 +175,7 @@ const EditCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“Puhu selkeää suomea, sinuttele, ole lämmin ja napakka. Vältä jargonia. Käytä lyhyitä lauseita ja luonnollisia taukoja (… tai –).”</div>
+                  <div>Puhu selkeää suomea, sinuttele, ole lämmin ja napakka. Vältä jargonia. Käytä lyhyitä lauseita ja luonnollisia taukoja (… tai –).</div>
                 </div>
               </div>
 
@@ -194,7 +194,7 @@ const EditCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“1) Selvitä [X]. 2) Kartoita [kiinnostus/haasteet]. 3) Tarjoa apuvaihtoehto. 4) Kysy jatkoyhteydenotto. 5) Kerää paras aika ja yhteystapa.”</div>
+                  <div>1) Selvitä [X]. 2) Kartoita [kiinnostus/haasteet]. 3) Tarjoa apuvaihtoehto. 4) Kysy jatkoyhteydenotto. 5) Kerää paras aika ja yhteystapa.</div>
                 </div>
               </div>
 
@@ -213,7 +213,7 @@ const EditCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“Esitä vain yksi kysymys kerrallaan ja odota vastaus. Jos vastaus on epäselvä, pyydä esimerkki. Vastaa asiakkaan kysymyksiin ytimekkäästi ja jatka runkoa.”</div>
+                  <div>Esitä vain yksi kysymys kerrallaan ja odota vastaus. Jos vastaus on epäselvä, pyydä esimerkki. Vastaa asiakkaan kysymyksiin ytimekkäästi ja jatka runkoa.</div>
                 </div>
               </div>
             </div>
@@ -236,7 +236,7 @@ const EditCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“Moikka! Täällä [Nimi], [Yritys]n AI‑assistentti. Soitan/ vastaan, koska [syy]. Jos sopii, kysyn pari ytimekästä kysymystä — aloitetaanko?”</div>
+                  <div>Moikka! Täällä [Nimi], [Yritys]n AI‑assistentti. Soitan/ vastaan, koska [syy]. Jos sopii, kysyn pari ytimekästä kysymystä — aloitetaanko?</div>
                 </div>
               </div>
 
@@ -247,7 +247,7 @@ const EditCallTypeModal = ({
                     value={editingCallType.questions || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, questions: e.target.value })}
                     placeholder={
-`• Numeroi 4–7 ydinkysymystä.\n• Kirjoita jokainen omalle rivilleen.\n• Lisää haarat: “Jos ei/kyllä → tee X”.\n• Lisää “odota vastausta” joka väliin.`
+`• Numeroi 4–7 ydinkysymystä.\n• Kirjoita jokainen omalle rivilleen.\n• Lisää haarat: Jos ei/kyllä → tee X.\n• Lisää: odota vastausta joka väliin.`
                     }
                     rows={8}
                     className="form-textarea"
@@ -274,7 +274,7 @@ const EditCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151', whiteSpace: 'pre-wrap' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>{`“Kiitos juttutuokiosta! Laitanko yhteenvedon ja linkit sähköpostilla?\nodota vastausta\nSovitaan näin: [seuraava askel]. Mukavaa päivää ja kuulemiin!”`}</div>
+                  <div>{`Kiitos juttutuokiosta! Laitanko yhteenvedon ja linkit sähköpostilla?\nodota vastausta\nSovitaan näin: [seuraava askel]. Mukavaa päivää ja kuulemiin!`}</div>
                 </div>
               </div>
 
@@ -293,7 +293,7 @@ const EditCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“Tallenna: suosittu yhteydenottoaika, yhteystapa, sähköposti, webinaarilinkin/tallenteen pyyntö, lyhyt yhteenveto haasteista/tavoitteista.”</div>
+                  <div>Tallenna: suosittu yhteydenottoaika, yhteystapa, sähköposti, webinaarilinkin/tallenteen pyyntö, lyhyt yhteenveto haasteista/tavoitteista.</div>
                 </div>
               </div>
             </div>
@@ -316,7 +316,7 @@ const EditCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“Tiivistä 2–3 virkkeeseen: osallistuiko [tapahtuma], tärkeimmät kiinnostukset/haasteet, sovitut next steps (soittoaika/tapa).”</div>
+                  <div>Tiivistä 2–3 virkkeeseen: osallistuiko [tapahtuma], tärkeimmät kiinnostukset/haasteet, sovitut next steps (soittoaika/tapa).</div>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
@@ -334,7 +334,7 @@ const EditCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>“Arvioi, saavutettiinko: 1) osallistumistieto, 2) kiinnostukset/haasteet, 3) jatkoyhteydenotto, 4) yhteydenoton aika/tapa. Perustele lyhyesti.”</div>
+                  <div>Arvioi, saavutettiinko: 1) osallistumistieto, 2) kiinnostukset/haasteet, 3) jatkoyhteydenotto, 4) yhteydenoton aika/tapa. Perustele lyhyesti.</div>
                 </div>
               </div>
             </div>

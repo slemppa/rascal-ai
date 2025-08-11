@@ -1222,6 +1222,37 @@ export default function CallPanel() {
     // Tämä funktio ei enää tarvita, koska se on siirretty MikaSpecialTab-komponenttiin
   }
 
+  // Lisää useita Mika Special -valittuja kontakteja mass-calls -palikkaan
+  const handleMikaMassCallSelected = (selectedContacts) => {
+    try {
+      const columns = ['name', 'phone', 'email', 'company', 'title', 'address']
+      const rows = selectedContacts.map(c => [
+        c.name || '',
+        c.phone || '',
+        c.email || '',
+        c.company || '',
+        c.title || '',
+        c.address || ''
+      ])
+
+      // Korvaa nykyinen mass-calls data
+      setSheetUrl('')
+      setValidationResult({
+        phoneCount: rows.length,
+        success: true,
+        columns,
+        rows,
+        data: selectedContacts
+      })
+
+      // Siirry mass-calls -välilehdelle
+      setActiveTab('calls')
+    } catch (error) {
+      console.error('Virhe valittujen kontaktien lisäämisessä mass-calls -palikkaan:', error)
+      alert('Virhe valittujen kontaktien lisäämisessä mass-calls -palikkaan')
+    }
+  }
+
   // Hae kontakteja kun Mika Special -välilehti avataan
   useEffect(() => {
     if (activeTab === 'mika' && mikaContacts.length === 0) {
@@ -1927,6 +1958,7 @@ export default function CallPanel() {
             handleMikaMassCall={handleMikaMassCall}
             handleMikaSingleCall={handleMikaSingleCall}
             handleMikaMassCallAll={handleMikaMassCallAll}
+            handleMikaMassCallSelected={handleMikaMassCallSelected}
           />
         )}
           </div>

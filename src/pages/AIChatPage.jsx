@@ -7,6 +7,15 @@ import { supabase } from '../lib/supabase'
 import './AIChatPage.css'
 
 export default function AIChatPage() {
+  // Luotettava lähetystapa sivulta poistuttaessa
+  const PENDING_KEY = 'rascalai_pending_msgs'
+  const loadPendingQueue = () => {
+    try { const s = localStorage.getItem(PENDING_KEY); return s ? JSON.parse(s) : [] } catch { return [] }
+  }
+  const savePendingQueue = (q) => { try { localStorage.setItem(PENDING_KEY, JSON.stringify(q)) } catch {} }
+  const pendingQueueRef = useRef(loadPendingQueue())
+  const enqueuePending = (item) => { pendingQueueRef.current = [...pendingQueueRef.current, item]; savePendingQueue(pendingQueueRef.current) }
+  const dequeuePending = (id) => { pendingQueueRef.current = pendingQueueRef.current.filter(i => i.id !== id); savePendingQueue(pendingQueueRef.current) }
   const [messages, setMessages] = useState(() => {
     const saved = localStorage.getItem('rascalai_chat_messages')
     return saved ? JSON.parse(saved) : []
@@ -163,17 +172,16 @@ export default function AIChatPage() {
     setLoading(true)
 
     try {
-      const response = await axios.post('/api/chat', {
-        message: input,
-        threadId: threadId,
-        companyId: companyId,
-        assistantId: assistantId
-      })
+      const payload = { message: input, threadId, companyId, assistantId }
+      const pendingId = `msg_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
+      enqueuePending({ id: pendingId, payload })
+      const response = await axios.post('/api/chat', payload)
 
       // Ota oikea vastausmuoto (array tai objekti)
       const data = Array.isArray(response.data) ? response.data[0] : response.data;
       const assistantMessage = { role: 'assistant', content: data.output || data.response }
       setMessages(prev => [...prev, assistantMessage])
+      dequeuePending(pendingId)
       if (data.threadId && !threadId) {
         setThreadId(data.threadId)
         localStorage.setItem('rascalai_threadId', data.threadId)
@@ -185,6 +193,43 @@ export default function AIChatPage() {
       setLoading(false)
     }
   }
+
+  // Flushaa keskeneräiset viestit käynnistyksessä ja poistuttaessa
+  useEffect(() => {
+    const flushWithAxios = async () => {
+      if (!pendingQueueRef.current.length) return
+      const queue = [...pendingQueueRef.current]
+      for (const item of queue) {
+        try { await axios.post('/api/chat', item.payload); dequeuePending(item.id) } catch {}
+      }
+    }
+    flushWithAxios()
+
+    const flushWithBeacon = () => {
+      if (!pendingQueueRef.current.length) return
+      const queue = [...pendingQueueRef.current]
+      for (const item of queue) {
+        const body = JSON.stringify(item.payload)
+        let sent = false
+        if (navigator.sendBeacon) {
+          const blob = new Blob([body], { type: 'application/json' })
+          sent = navigator.sendBeacon('/api/chat', blob)
+        }
+        if (!sent) {
+          try { fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }) } catch {}
+        }
+        dequeuePending(item.id)
+      }
+    }
+    const onVis = () => { if (document.visibilityState === 'hidden') flushWithBeacon() }
+    const onUnload = () => { flushWithBeacon() }
+    document.addEventListener('visibilitychange', onVis)
+    window.addEventListener('beforeunload', onUnload)
+    return () => {
+      document.removeEventListener('visibilitychange', onVis)
+      window.removeEventListener('beforeunload', onUnload)
+    }
+  }, [])
 
   const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files)

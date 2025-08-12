@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.30.2](https://github.com/slemppa/rascal-ai/compare/v1.30.1...v1.30.2) (2025-08-12)
+
+
+### ✨ Features
+
+* **mika:** 'Lisää valitut' avaa calltype‑modaalin valituille ([0116d84](https://github.com/slemppa/rascal-ai/commit/0116d84574b661ae40dd40e4fef9cb5420565e12))
+
 ### [1.30.1](https://github.com/slemppa/rascal-ai/compare/v1.30.0...v1.30.1) (2025-08-11)
 
 

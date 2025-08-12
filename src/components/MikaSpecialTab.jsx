@@ -29,6 +29,7 @@ const MikaSpecialTab = ({
   const [selectedVoiceForMika, setSelectedVoiceForMika] = useState(selectedVoice || 'rascal-nainen-1')
   const [mikaCallTypeLoading, setMikaCallTypeLoading] = useState(false)
   const [selectedContactIds, setSelectedContactIds] = useState(new Set())
+  const [selectedContactsForModal, setSelectedContactsForModal] = useState([])
   
   // Äänen valinta vaihtoehdot
   const voiceOptions = [
@@ -93,8 +94,13 @@ const MikaSpecialTab = ({
     setMikaCallTypeLoading(true)
     
     try {
-      // Muodosta kontaktidata kaikille hakutuloksille
-      const allContactsData = mikaSearchResults.map(contact => ({
+      // Käytä valittuja kontakteja, jos niitä on, muuten kaikki hakutulokset
+      const sourceContacts = (selectedContactsForModal && selectedContactsForModal.length > 0)
+        ? selectedContactsForModal
+        : mikaSearchResults
+
+      // Muodosta kontaktidata
+      const allContactsData = sourceContacts.map(contact => ({
         name: contact.name,
         phone: contact.phones && contact.phones[0] ? contact.phones[0] : '',
         email: contact.primary_email || (contact.emails && contact.emails[0]) || '',
@@ -223,9 +229,11 @@ const MikaSpecialTab = ({
         message: 'Tiedot lisätty onnistuneesti Supabaseen'
       }
       
-      // Sulje modaali
+      // Sulje modaali ja tyhjennä valinnat
       setShowCallTypeModal(false)
       setSelectedCallTypeForMika('')
+      setSelectedContactsForModal([])
+      setSelectedContactIds(new Set())
       
       // Näytä onnistumisilmoitus
       alert(`✅ Mika Special mass-call käynnistetty onnistuneesti!\n\nAloitettu: ${result.startedCalls} puhelua\nOhitettu: ${result.failedCalls} kontakti\n\nPuhelut on tallennettu Supabaseen ja ne alkavat pian!`)
@@ -310,22 +318,44 @@ const MikaSpecialTab = ({
           <div style={{ marginTop: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <h3 style={{ fontSize: 18, fontWeight: 600, color: '#374151', margin: 0 }}>Hakutulokset ({mikaSearchResults.length})</h3>
-              <Button
-                onClick={() => setShowCallTypeModal(true)}
-                variant="primary"
-                style={{ 
-                  padding: '10px 20px', 
-                  fontSize: 14, 
-                  fontWeight: 600,
-                  background: '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 6,
-                  cursor: 'pointer'
-                }}
-              >
-                📞 Aloitetaan puhelut ({mikaSearchResults.length})
-              </Button>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <Button
+                  onClick={() => {
+                    const selectedRaw = mikaSearchResults
+                      .map((c, idx) => ({ c, key: c.id || idx }))
+                      .filter(({ key }) => selectedContactIds.has(key))
+                      .map(({ c }) => c)
+                      .filter(c => c.phones && c.phones[0])
+                    if (selectedRaw.length === 0) {
+                      alert('Valitse vähintään yksi kontakti, jolla on puhelinnumero')
+                      return
+                    }
+                    setSelectedContactsForModal(selectedRaw)
+                    setShowCallTypeModal(true)
+                  }}
+                  variant="secondary"
+                  disabled={selectedContactIds.size === 0}
+                  style={{ padding: '10px 16px', fontSize: 14, fontWeight: 600 }}
+                >
+                  📞 Lisää valitut mass-calls
+                </Button>
+                <Button
+                  onClick={() => setShowCallTypeModal(true)}
+                  variant="primary"
+                  style={{ 
+                    padding: '10px 20px', 
+                    fontSize: 14, 
+                    fontWeight: 600,
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: 6,
+                    cursor: 'pointer'
+                  }}
+                >
+                  📞 Aloitetaan puhelut ({mikaSearchResults.length})
+                </Button>
+              </div>
             </div>
             <div style={{ display: 'grid', gap: 16 }}>
               {mikaSearchResults.map((contact, idx) => (
@@ -406,38 +436,6 @@ const MikaSpecialTab = ({
                   </div>
                 </div>
               ))}
-              {/* Bulk-toiminto */}
-              {mikaSearchResults.length > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-                  <Button
-                    onClick={() => {
-                      // Kerää valitut kontaktit (vain ensimmäinen numero)
-                      const selected = mikaSearchResults
-                        .map((c, idx) => ({ c, key: c.id || idx }))
-                        .filter(({ key }) => selectedContactIds.has(key))
-                        .map(({ c }) => ({
-                          name: c.name || '',
-                          phone: c.phones && c.phones[0] ? c.phones[0] : '',
-                          email: c.primary_email || (c.emails && c.emails[0]) || '',
-                          company: c.organization?.name || '',
-                          title: (c.custom_fields && c.custom_fields[0]) || '',
-                          address: c.organization?.address || ''
-                        }))
-                        .filter(item => item.phone)
-                      if (selected.length === 0) {
-                        alert('Valitse vähintään yksi kontakti, jolla on puhelinnumero')
-                        return
-                      }
-                      handleMikaMassCallSelected(selected)
-                    }}
-                    variant="primary"
-                    disabled={selectedContactIds.size === 0}
-                    style={{ padding: '10px 16px', fontSize: 14, fontWeight: 600 }}
-                  >
-                    📞 Lisää valitut mass-calls
-                  </Button>
-                </div>
-              )}
             </div>
           </div>
         ) : (
@@ -473,7 +471,7 @@ const MikaSpecialTab = ({
             </div>
             <div className="modal-body">
               <p style={{ marginBottom: 16, color: '#6b7280' }}>
-                Valitse puhelun tyyppi ja ääni {mikaSearchResults.length} kontaktille:
+                Valitse puhelun tyyppi ja ääni {(selectedContactsForModal.length > 0 ? selectedContactsForModal.length : mikaSearchResults.length)} kontaktille:
               </p>
               
               <label className="label">Puhelun tyyppi</label>

@@ -99,16 +99,19 @@ const MikaSpecialTab = ({
         ? selectedContactsForModal
         : mikaSearchResults
 
-      // Muodosta kontaktidata
-      const allContactsData = sourceContacts.map(contact => ({
-        id: contact.id || null,
-        name: contact.name,
-        phone: contact.phones && contact.phones[0] ? contact.phones[0] : '',
-        email: contact.primary_email || (contact.emails && contact.emails[0]) || '',
-        company: contact.organization?.name || '',
-        title: contact.custom_fields && contact.custom_fields[0] ? contact.custom_fields[0] : '',
-        address: contact.organization?.address || ''
-      })).filter(contact => contact.phone) // Vain kontakteja joilla on puhelinnumero
+      // Muodosta kontaktidata (tukea useille ID-avaimille)
+      const allContactsData = sourceContacts.map(contact => {
+        const computedId = contact.id ?? contact.contact_id ?? contact.person_id ?? contact.external_id ?? contact.crm_id ?? null
+        return {
+          id: computedId,
+          name: contact.name,
+          phone: contact.phones && contact.phones[0] ? contact.phones[0] : '',
+          email: contact.primary_email || (contact.emails && contact.emails[0]) || '',
+          company: contact.organization?.name || '',
+          title: contact.custom_fields && contact.custom_fields[0] ? contact.custom_fields[0] : '',
+          address: contact.organization?.address || ''
+        }
+      }).filter(contact => contact.phone) // Vain kontakteja joilla on puhelinnumero
       
       if (allContactsData.length === 0) {
         alert('Ei kontakteja puhelinnumerolla!')

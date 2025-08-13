@@ -130,13 +130,17 @@ export default async function handler(req, res) {
         header.toLowerCase().includes('tel')
       )
       
-      // Etsitään sähköpostisarakkeet
-      const emailColumns = headers.filter(header => 
-        header.toLowerCase().includes('email') || 
-        header.toLowerCase().includes('sähköposti') || 
-        header.toLowerCase().includes('e-mail') ||
-        header.toLowerCase().includes('mail')
-      )
+      // Etsitään sähköpostisarakkeet (tiukempi tunnistus)
+      const emailColumns = headers.filter(header => {
+        const h = header.toLowerCase()
+        return (
+          h === 'email' ||
+          h === 'e-mail' ||
+          h.includes('email') ||
+          h.includes('sähköposti') ||
+          h.includes('sahkoposti')
+        )
+      })
       
       if (phoneColumns.length === 0) {
         return res.status(400).json({ error: 'Puhelinnumerosarakkeita ei löytynyt. Tarkista että tiedostossa on sarake nimeltä "phone", "puhelin", "numero" tai "tel".' })
@@ -154,7 +158,6 @@ export default async function handler(req, res) {
       )
       
       const phoneCount = dataRows.length
-      const emailCount = emailColumns.length > 0 ? dataRows.length : 0
 
       // Parsitaan kaikki rivit objekteiksi
       const rows = dataRows.map(row => {
@@ -165,6 +168,23 @@ export default async function handler(req, res) {
         })
         return obj
       })
+
+      // Laske todellinen emailCount vain kelvollisista sähköposteista
+      const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/i
+      let emailCount = 0
+      if (emailColumns.length > 0) {
+        for (const row of rows) {
+          let hasValidEmail = false
+          for (const col of emailColumns) {
+            const val = row[col]
+            if (val && emailRegex.test(String(val).trim())) {
+              hasValidEmail = true
+              break
+            }
+          }
+          if (hasValidEmail) emailCount++
+        }
+      }
 
       return res.status(200).json({
         success: true,

@@ -344,6 +344,7 @@ export default function CallPanel() {
         // Etsi sarakkeiden otsikot ensin
         let nameColumn = null
         let phoneColumn = null
+        let emailColumn = null
         
         // Etsi nimisarakkeen otsikko
         for (const columnName of validationResult.columns || []) {
@@ -366,18 +367,55 @@ export default function CallPanel() {
             break
           }
         }
+
+        // Etsi sähköpostisarakkeen otsikko (tiukempi tunnistus)
+        for (const columnName of validationResult.columns || []) {
+          const lower = String(columnName).toLowerCase().trim()
+          if (
+            lower === 'email' ||
+            lower === 'e-mail' ||
+            lower.includes('email') ||
+            lower.includes('sähköposti') ||
+            lower.includes('sahkoposti')
+          ) {
+            emailColumn = columnName
+            break
+          }
+        }
         
         if (!nameColumn || !phoneColumn) {
           throw new Error('Vaadittuja sarakkeita ei löytynyt. Tarvitaan sekä nimisarakke että puhelinnumerosarakke.')
         }
 
-        for (const row of validationResult.rows) {
+        for (const [rowIndex, row] of (validationResult.rows || []).entries()) {
           // Hae arvot sarakkeiden otsikoiden perusteella
           const phoneNumber = normalizePhoneNumber(row[phoneColumn])
           const name = row[nameColumn] ? row[nameColumn].trim() : null
+          // Ota CRM-kontaktin id Mika Special -datasta, jos saatavilla
+          const crmId = Array.isArray(validationResult.data) && validationResult.data[rowIndex] && validationResult.data[rowIndex].id
+            ? String(validationResult.data[rowIndex].id)
+            : (row.id ? String(row.id) : null)
 
           // Lisää vain jos on sekä selkeä nimi että puhelinnumero
           if (name && phoneNumber && name.trim() !== '' && phoneNumber.trim() !== '' && phoneNumber.startsWith('+358')) {
+            // Ota sähköposti sarakkeesta, validoi ja fallbackaa jos otsikkoa ei löytynyt
+            const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/i
+            let emailValue = null
+            if (emailColumn) {
+              const raw = row[emailColumn]
+              if (raw && emailRegex.test(String(raw).trim())) {
+                emailValue = String(raw).trim().toLowerCase().substring(0, 120)
+              }
+            } else {
+              // Fallback: etsi mikä tahansa sähköpostin näköinen arvo riviltä
+              for (const key of Object.keys(row)) {
+                const val = row[key]
+                if (val && emailRegex.test(String(val).trim())) {
+                  emailValue = String(val).trim().toLowerCase().substring(0, 120)
+                  break
+                }
+              }
+            }
             // Hae valitun äänen id
             const selectedVoiceObj = getVoiceOptions().find(v => v.value === selectedVoice)
             const voiceId = selectedVoiceObj?.id
@@ -386,13 +424,15 @@ export default function CallPanel() {
               user_id: publicUserId,
               customer_name: name.trim().substring(0, 100), // Rajaa 100 merkkiin (tietokannan rajoitus)
               phone_number: phoneNumber.trim().substring(0, 20), // Rajaa 20 merkkiin
+              email: emailValue,
               call_type: callType.substring(0, 50), // Rajaa 50 merkkiin
               call_type_id: call_type_id,
               voice_id: voiceId, // Lisätty voice_id
               call_date: new Date().toISOString(),
               call_status: 'pending',
               campaign_id: `mass-call-${Date.now()}`.substring(0, 100), // Rajaa 100 merkkiin
-              summary: `Mass-call: ${script.trim().substring(0, 100)}...`
+              summary: `Mass-call: ${script.trim().substring(0, 100)}...`,
+              crm_id: crmId || null
             })
           } else {
             errorCount++
@@ -955,12 +995,39 @@ export default function CallPanel() {
         return
       }
 
-      // Hae kaikki call_logs käyttäjälle
-      const { data: logs, error } = await supabase
+      // Hae filtteröidyt call_logs käyttäjälle (samat filtterit kuin listassa)
+      let exportQuery = supabase
         .from('call_logs')
         .select('*')
         .eq('user_id', userProfile.id)
-        .order('call_date', { ascending: false })
+        .order('created_at', { ascending: false })
+
+      // Lisää suodattimet
+      if (searchTerm) {
+        exportQuery = exportQuery.or(`customer_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`)
+      }
+      if (statusFilter) {
+        if (statusFilter === 'success') {
+          exportQuery = exportQuery.eq('call_status', 'done').eq('answered', true)
+        } else if (statusFilter === 'failed') {
+          exportQuery = exportQuery.eq('call_status', 'done').eq('answered', false)
+        } else if (statusFilter === 'pending') {
+          exportQuery = exportQuery.eq('call_status', 'pending')
+        } else if (statusFilter === 'in_progress') {
+          exportQuery = exportQuery.eq('call_status', 'in progress')
+        }
+      }
+      if (callTypeFilter) {
+        exportQuery = exportQuery.eq('call_type', callTypeFilter)
+      }
+      if (dateFrom) {
+        exportQuery = exportQuery.gte('call_date', dateFrom)
+      }
+      if (dateTo) {
+        exportQuery = exportQuery.lte('call_date', dateTo)
+      }
+
+      const { data: logs, error } = await exportQuery
 
       if (error) {
         throw new Error('Puhelulokin haku epäonnistui: ' + error.message)

@@ -26,7 +26,8 @@ const SocialMediaConnect = () => {
 
   const platforms = [
     { id: 'instagram', name: 'Instagram', icon: '📷' },
-    { id: 'facebook', name: 'Facebook', icon: '📘' }
+    { id: 'facebook', name: 'Facebook', icon: '📘' },
+    { id: 'linkedin', name: 'LinkedIn', icon: '💼' }
   ];
 
   const handleConnectAccount = async (platform) => {

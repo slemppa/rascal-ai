@@ -585,6 +585,7 @@ export default function ManagePostsPageOptimized() {
                   <option value="Photo">📸 Photo</option>
                   <option value="Carousel">🎠 Carousel</option>
                   <option value="Reels">🎬 Reels</option>
+                  <option value="LinkedIn">💼 LinkedIn</option>
                 </select>
               </div>
               <div className="form-group">

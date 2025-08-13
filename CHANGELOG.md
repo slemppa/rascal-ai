@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.33.2](https://github.com/slemppa/rascal-ai/compare/v1.33.1...v1.33.2) (2025-08-13)
+
+
+### 🐛 Bug Fixes
+
+* **call-logs:** CSV export uses filters; email + crm_id capture ([d38f527](https://github.com/slemppa/rascal-ai/commit/d38f5274458949535f47835da718e1222e51aa76))
+
 ### [1.33.1](https://github.com/slemppa/rascal-ai/compare/v1.33.0...v1.33.1) (2025-08-13)
 
 

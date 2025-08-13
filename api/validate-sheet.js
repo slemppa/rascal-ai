@@ -33,16 +33,56 @@ export default async function handler(req, res) {
     }
 
     const sheetId = match[1]
-    const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`
+    // Poimi gid, jos se on annettu URL:ssa; muuten oletetaan 0
+    const gidMatch = sheetUrl.match(/[?&#]gid=(\d+)/)
+    const gid = gidMatch ? gidMatch[1] : '0'
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`
 
     // Hae tiedot Google Sheets -tiedostosta
     try {
-      const csvResponse = await fetch(csvUrl)
+      // Käytä timeoutia ja selkeää User-Agenttia
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 12000)
+      const csvResponse = await fetch(csvUrl, {
+        headers: {
+          'User-Agent': 'RascalAI/1.0 (+https://rascal-ai)',
+          'Accept': 'text/csv, */*'
+        },
+        signal: controller.signal
+      }).finally(() => clearTimeout(timeoutId))
       if (!csvResponse.ok) {
+        // Tarkenna tyypillisiä virheitä käyttäjäystävällisiksi
+        if (csvResponse.status === 403) {
+          return res.status(400).json({
+            error: 'Pääsy estetty (403) – jaa Google Sheets "Anyone with the link can view" -asetuksella tai varmista, että linkki on julkinen.'
+          })
+        }
+        if (csvResponse.status === 404) {
+          return res.status(400).json({
+            error: 'Välilehteä ei löytynyt (404). Tarkista, että URL:ssa oleva gid vastaa olemassa olevaa sheet-välilehteä.'
+          })
+        }
+        if (csvResponse.status === 400) {
+          return res.status(400).json({
+            error: 'Virheellinen CSV-pyyntö (400). Tarkista että: (1) tiedosto on Google Sheets -muotoinen (ei esim. liitetty Excel), (2) tiedoston jakaminen on asetettu Anyone with the link can view, (3) URL sisältää oikean gid-välilehden.'
+          })
+        }
+        if (csvResponse.status >= 500) {
+          return res.status(502).json({
+            error: 'Google palasi virheellä (5xx). Yritä uudelleen hetken kuluttua.'
+          })
+        }
         throw new Error(`CSV-haku epäonnistui: ${csvResponse.status}`)
       }
       
+      const contentType = csvResponse.headers.get('content-type') || ''
       const csvText = await csvResponse.text()
+      // Jos saadaan HTML:ää CSV:n sijaan, kyse on tyypillisesti kirjautumissivusta → ohjaa jakamaan tiedosto julkiseksi
+      if (contentType.includes('text/html') || csvText.trim().startsWith('<')) {
+        return res.status(400).json({
+          error: 'Google Sheets ei ole julkisesti luettavissa. Avaa jakaminen: Anyone with the link can view.'
+        })
+      }
       const lines = csvText.split('\n').filter(line => line.trim())
       
       if (lines.length === 0) {
@@ -55,7 +95,8 @@ export default async function handler(req, res) {
       
       // Etsitään puhelinnumerosarakkeet
       const phoneColumns = headers.filter(header => 
-        header.toLowerCase().includes('phone') || 
+        header.toLowerCase().includes('phone') ||
+        header.toLowerCase().includes('puhelinnumero') ||
         header.toLowerCase().includes('puhelin') || 
         header.toLowerCase().includes('numero') ||
         header.toLowerCase().includes('tel')
@@ -78,6 +119,7 @@ export default async function handler(req, res) {
         header.toLowerCase().includes('name') || 
         header.toLowerCase().includes('nimi') || 
         header.toLowerCase().includes('phone') || 
+        header.toLowerCase().includes('puhelinnumero') ||
         header.toLowerCase().includes('puhelin') ||
         header.toLowerCase().includes('email') ||
         header.toLowerCase().includes('sähköposti')
@@ -113,9 +155,13 @@ export default async function handler(req, res) {
     } catch (csvError) {
       console.error('CSV-haku epäonnistui:', csvError)
       console.error('CSV-virheen stack trace:', csvError.stack)
+      const isAbort = csvError && (csvError.name === 'AbortError' || csvError.code === 'ABORT_ERR')
+      if (isAbort) {
+        return res.status(504).json({ error: 'CSV-haku aikakatkaistiin (timeout). Yritä uudelleen.' })
+      }
       return res.status(500).json({ 
         error: 'Google Sheets -tiedoston lukeminen epäonnistui',
-        details: csvError.message 
+        details: csvError && (csvError.message || String(csvError))
       })
     }
 

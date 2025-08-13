@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.31.0](https://github.com/slemppa/rascal-ai/compare/v1.30.2...v1.31.0) (2025-08-13)
+
+
+### ✨ Features
+
+* **validate-sheet:** CSV-virhekäsittely, gid-tuki ja 'puhelinnumero' ([07d58a7](https://github.com/slemppa/rascal-ai/commit/07d58a71986757b0bc1bf9e90f6cad73bde6fc8d))
+
 ### [1.30.2](https://github.com/slemppa/rascal-ai/compare/v1.30.1...v1.30.2) (2025-08-12)
 
 

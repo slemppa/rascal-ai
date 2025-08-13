@@ -101,6 +101,7 @@ const MikaSpecialTab = ({
 
       // Muodosta kontaktidata
       const allContactsData = sourceContacts.map(contact => ({
+        id: contact.id || null,
         name: contact.name,
         phone: contact.phones && contact.phones[0] ? contact.phones[0] : '',
         email: contact.primary_email || (contact.emails && contact.emails[0]) || '',
@@ -190,7 +191,8 @@ const MikaSpecialTab = ({
               call_date: new Date().toISOString(),
               call_status: 'pending',
               campaign_id: `mika-mass-call-${Date.now()}`,
-              summary: `Mika Special mass-call: ${script.trim().substring(0, 100)}...`
+              summary: `Mika Special mass-call: ${script.trim().substring(0, 100)}...`,
+              crm_id: contact.id || null
             })
             
             console.log(`✅ Lisätään kontakti: ${name} (${phoneNumber} → ${normalizedPhoneNumber}) - Call Type: ${selectedCallTypeForMika} - Voice: ${selectedVoiceForMika} (ID: ${voiceId})`)

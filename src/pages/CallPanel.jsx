@@ -1157,6 +1157,7 @@ export default function CallPanel() {
     try {
       // Muodosta Google Sheets URL kontaktidatasta
       const contactData = {
+        id: contact.id || null,
         name: contact.name,
         phone: contact.phones && contact.phones[0] ? contact.phones[0] : '',
         email: contact.primary_email || (contact.emails && contact.emails[0]) || '',

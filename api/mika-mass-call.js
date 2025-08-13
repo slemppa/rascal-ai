@@ -161,7 +161,8 @@ export default async function handler(req, res) {
           call_date: new Date().toISOString(),
           call_status: 'pending',
           campaign_id: `mika-mass-call-${Date.now()}`,
-          summary: `Mika Special mass-call: ${script.trim().substring(0, 100)}...`
+          summary: `Mika Special mass-call: ${script.trim().substring(0, 100)}...`,
+          crm_id: contact.id || null
         })
       } else {
         errorCount++

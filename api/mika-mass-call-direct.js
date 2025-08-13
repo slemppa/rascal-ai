@@ -98,9 +98,9 @@ export default async function handler(req, res) {
               INSERT INTO call_logs (
                 id, user_id, customer_name, phone_number, 
                 call_type, call_type_id, call_date, call_status, 
-                voice_id, created_at, summary, campaign_id
+                voice_id, created_at, summary, campaign_id, crm_id
               ) VALUES (
-                gen_random_uuid(), $1, $2, $3, $4, $5, NOW(), 'pending', $6, NOW(), $7, $8
+                gen_random_uuid(), $1, $2, $3, $4, $5, NOW(), 'pending', $6, NOW(), $7, $8, $9
               )
             `,
             params: [
@@ -111,7 +111,8 @@ export default async function handler(req, res) {
               callTypeId,
               voice_id,
               script.trim().substring(0, 100) + '...',
-              `mika-mass-call-${Date.now()}`
+              `mika-mass-call-${Date.now()}`,
+              contact.id || null
             ]
           })
           

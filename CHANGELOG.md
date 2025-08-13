@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.32.0](https://github.com/slemppa/rascal-ai/compare/v1.31.1...v1.32.0) (2025-08-13)
+
+
+### ✨ Features
+
+* **validate-sheet:** fallback ilman gid ja varalle gid=0 ([cfb69b8](https://github.com/slemppa/rascal-ai/commit/cfb69b86ee003c653edbef12b9536995f2f195b7))
+
 ### [1.31.1](https://github.com/slemppa/rascal-ai/compare/v1.31.0...v1.31.1) (2025-08-13)
 
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import pkg from '../../package.json'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -840,12 +841,12 @@ export default function AdminPage() {
                      <p>Vastattu: {stats.answeredCalls || 0}</p>
                      <p>Viestit: {stats.totalMessages || 0}</p>
                    </div>
-                   <div className="info-card">
-                     <h3>Järjestelmä</h3>
-                     <p>Versio: 1.0.0</p>
-                     <p>Ympäristö: {process.env.NODE_ENV}</p>
-                     <p>Supabase: Aktiivinen</p>
-                   </div>
+                    <div className="info-card">
+                      <h3>Järjestelmä</h3>
+                      <p>Versio: {pkg.version}</p>
+                      <p>Ympäristö: {process.env.NODE_ENV}</p>
+                      <p>Supabase: Aktiivinen</p>
+                    </div>
                  </div>
                </div>
              )}

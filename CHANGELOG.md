@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.33.1](https://github.com/slemppa/rascal-ai/compare/v1.33.0...v1.33.1) (2025-08-13)
+
+
+### ✨ Features
+
+* **calls:** tallenna contact id crm_id-kenttään Mika-mass-calls ([c8580b1](https://github.com/slemppa/rascal-ai/commit/c8580b1479c377d8a03ec59acf3d9b85f8706a3f))
+
 ## [1.33.0](https://github.com/slemppa/rascal-ai/compare/v1.32.0...v1.33.0) (2025-08-13)
 
 

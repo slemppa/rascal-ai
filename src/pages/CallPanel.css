@@ -1,12 +1,33 @@
 /* Import yhteiset modal-tyylit */
 @import url('../components/ModalComponents.css');
 
+.callpanel-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 16px 32px 16px;
+}
+
+/* Ison resoluution optimointeja */
+@media (min-width: 1600px) {
+  .callpanel-container {
+    max-width: 1600px;
+    padding: 0 24px 40px 24px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .callpanel-container {
+    max-width: 1800px;
+    padding: 0 32px 48px 32px;
+  }
+}
+
 .callpanel-root {
   font-family: 'Inter', 'Roboto', 'Poppins', Arial, sans-serif;
   background: #F8F9FB;
   min-height: 100vh;
   box-sizing: border-box;
-  padding: 24px 24px 0 24px;
+  padding: 0;
 }
 
 .callpanel-tabs {
@@ -137,8 +158,8 @@
 
 /* Mobiilioptimointi */
 @media (max-width: 900px) {
-  .callpanel-root {
-    padding: 16px 12px 0 12px;
+  .callpanel-container {
+    padding: 0 20px;
   }
   
   .callpanel-tabs {
@@ -181,8 +202,8 @@
 }
 
 @media (max-width: 768px) {
-  .callpanel-root {
-    padding: 12px 8px 0 8px;
+  .callpanel-container {
+    padding: 0 16px;
   }
   
   .callpanel-tabs {
@@ -223,8 +244,8 @@
 }
 
 @media (max-width: 480px) {
-  .callpanel-root {
-    padding: 8px 4px 0 4px;
+  .callpanel-container {
+    padding: 0 12px;
   }
   
   .callpanel-tabs {

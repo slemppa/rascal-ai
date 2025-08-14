@@ -208,6 +208,27 @@ export default function CallPanel() {
     }
   }
 
+  // Muunna kesto muotoon min:sec
+  const formatDuration = (duration) => {
+    if (!duration) return '-'
+    
+    // Jos duration on jo muodossa "mm:ss", palauta se sellaisenaan
+    if (typeof duration === 'string' && duration.includes(':')) {
+      return duration
+    }
+    
+    // Jos duration on sekunneissa (numero tai string), muunna muotoon "mm:ss"
+    const seconds = parseInt(duration)
+    if (!isNaN(seconds)) {
+      const minutes = Math.floor(seconds / 60)
+      const remainingSeconds = seconds % 60
+      return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
+    }
+    
+    // Jos ei voida muuntaa, palauta alkuperäinen arvo
+    return duration
+  }
+
   const handleValidate = async () => {
     setValidating(true)
     setError('')
@@ -1158,6 +1179,7 @@ export default function CallPanel() {
         'Päivämäärä',
         'Vastattu',
         'Yhteydenotto',
+        'Suunta',
         'Kesto',
         'Tila',
         'Yhteenveto',
@@ -1177,7 +1199,8 @@ export default function CallPanel() {
           log.answered ? 'Kyllä' : 'Ei',
           log.wants_contact === true ? 'Otetaan yhteyttä' : 
           log.wants_contact === false ? 'Ei oteta yhteyttä' : 'Ei määritelty',
-          `"${log.duration || ''}"`,
+          log.direction === 'outbound' ? 'Lähtenyt' : 'Vastaanotettu',
+          `"${log.duration ? formatDuration(log.duration) : ''}"`,
           log.call_status === 'done' && log.answered ? 'Onnistui' : 
           log.call_status === 'done' && !log.answered ? 'Epäonnistui' :
           log.call_status === 'pending' ? 'Odottaa' : 
@@ -1449,7 +1472,7 @@ export default function CallPanel() {
         description="Automatisoi puhelut ja seuraa puhelulokeja Rascal AI:ssä. Älykäs puhelinmarkkinointi ja asiakaspalvelu."
         image="/hero.png"
       />
-      <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
+      <div className="callpanel-container">
     <div className="callpanel-wrapper" style={{ width: '100%', maxWidth: 'none' }}>
       <div className="callpanel-root" style={{ width: '100%', maxWidth: 'none' }}>
         {/* Tabs */}
@@ -1906,6 +1929,47 @@ export default function CallPanel() {
                 </div>
                 <div style={{ fontSize: 14, color: '#6b7280' }}>Yhteensä</div>
               </div>
+              
+              {/* Outbound/Inbound tilastot */}
+              <div style={{ 
+                background: '#f8fafc', 
+                padding: 24, 
+                borderRadius: 12, 
+                border: '1px solid #e2e8f0' 
+              }}>
+                <div style={{ fontSize: 32, fontWeight: 700, color: '#1d4ed8', marginBottom: 8 }}>
+                  {callLogs.filter(log => log.direction === 'outbound').length}
+                </div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>Lähteneet puhelut</div>
+              </div>
+              
+              <div style={{ 
+                background: '#f8fafc', 
+                padding: 24, 
+                borderRadius: 12, 
+                border: '1px solid #e2e8f0' 
+              }}>
+                <div style={{ fontSize: 32, fontWeight: 700, color: '#92400e', marginBottom: 8 }}>
+                  {callLogs.filter(log => log.direction === 'inbound').length}
+                </div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>Vastaanotetut puhelut</div>
+              </div>
+              
+              {/* Hinta-tilastot */}
+              <div style={{ 
+                background: '#f8fafc', 
+                padding: 24, 
+                borderRadius: 12, 
+                border: '1px solid #e2e8f0' 
+              }}>
+                <div style={{ fontSize: 32, fontWeight: 700, color: '#059669', marginBottom: 8 }}>
+                  €{callLogs.reduce((total, log) => {
+                    const price = parseFloat(log.price) || 0
+                    return total + price
+                  }, 0).toFixed(2)}
+                </div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>Kokonaishinta</div>
+              </div>
             </div>
 
             {/* Virheviesti */}
@@ -1931,10 +1995,12 @@ export default function CallPanel() {
                 </h3>
                 {totalCount > 0 && (
                   <div style={{ fontSize: 14, color: '#6b7280' }}>
-                    Näytetään {((currentPage - 1) * 25) + 1}-{Math.min(currentPage * 25, totalCount)} / {totalCount} puhelua
+                    Yhteensä {totalCount} puhelua
                   </div>
                 )}
               </div>
+              
+
               
               {loadingCallLogs ? (
                 <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
@@ -1957,6 +2023,7 @@ export default function CallPanel() {
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Päivämäärä</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Vastattu</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Yhteydenotto</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Suunta</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Kesto</th>
                         <th style={{ padding: '8px', textAlign: 'center', fontWeight: 600 }}>Tila</th>
                       </tr>
@@ -2028,7 +2095,23 @@ export default function CallPanel() {
                                   </span>
                                 )}
                               </td>
-                              <td style={{ padding: '8px' }}>{log.duration || '-'}</td>
+                              <td style={{ padding: '8px', textAlign: 'center' }}>
+                                <span style={{
+                                  display: 'inline-block',
+                                  padding: '3px 10px',
+                                  borderRadius: 8,
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  background: log.direction === 'outbound' ? '#dbeafe' : '#fef3c7',
+                                  color: log.direction === 'outbound' ? '#1d4ed8' : '#92400e',
+                                  minWidth: 80
+                                }}>
+                                  {log.direction === 'outbound' ? '📤 Lähtenyt' : '📥 Vastaanotettu'}
+                                </span>
+                              </td>
+                              <td style={{ padding: '8px' }}>
+                                {log.duration ? formatDuration(log.duration) : '-'}
+                              </td>
                           <td style={{ padding: '8px', textAlign: 'center' }}>
                             <span style={{
                               display: 'inline-block',

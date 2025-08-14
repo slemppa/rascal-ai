@@ -62,6 +62,7 @@ const MikaSpecialTab = ({
     }
     
     // Jos numero on 9 numeroa (suomalainen mobiili), lisää +358
+    // Tämä kattaa muodot kuten: 401234567, 501234567, 301234567
     if (cleaned.length === 9 && /^\d{9}$/.test(cleaned)) {
       return '+358' + cleaned
     }

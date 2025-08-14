@@ -634,9 +634,25 @@ function AvatarSectionMulti({ companyId }) {
   };
 
   // Poista kuva backendistä (avatar-delete)
+  const [deletingAvatars, setDeletingAvatars] = useState(new Set())
+  const [lastClickTime, setLastClickTime] = useState(0)
+  
   const handleDeleteAvatar = async (avatarId) => {
-    setLoading(true)
+    // Estetään useita klikkauksia samalle avatarille
+    if (deletingAvatars.has(avatarId)) {
+      return
+    }
+    
+    // Debounce: estetään useita klikkauksia 500ms sisällä
+    const now = Date.now()
+    if (now - lastClickTime < 500) {
+      return
+    }
+    setLastClickTime(now)
+    
+    setDeletingAvatars(prev => new Set(prev).add(avatarId))
     setError('')
+    
     try {
       const res = await fetch('/api/avatar-delete.js', {
         method: 'POST',
@@ -652,7 +668,11 @@ function AvatarSectionMulti({ companyId }) {
     } catch (e) {
       setError('Poisto epäonnistui')
     } finally {
-      setLoading(false)
+      setDeletingAvatars(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(avatarId)
+        return newSet
+      })
     }
   }
 
@@ -716,16 +736,17 @@ function AvatarSectionMulti({ companyId }) {
                 />
                 <button
                   type="button"
+                  disabled={deletingAvatars.has(img.variableId)}
                   style={{
                     position: 'absolute',
                     top: '4px',
                     right: '4px',
-                    backgroundColor: '#dc2626',
+                    backgroundColor: deletingAvatars.has(img.variableId) ? '#9ca3af' : '#dc2626',
                     color: 'white',
                     borderRadius: '50%',
                     padding: '2px',
                     border: 'none',
-                    cursor: 'pointer',
+                    cursor: deletingAvatars.has(img.variableId) ? 'not-allowed' : 'pointer',
                     transition: 'background-color 0.2s',
                     zIndex: 20,
                     boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
@@ -735,25 +756,37 @@ function AvatarSectionMulti({ companyId }) {
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = '#b91c1c'}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = '#dc2626'}
+                  onMouseEnter={(e) => {
+                    if (!deletingAvatars.has(img.variableId)) {
+                      e.target.style.backgroundColor = '#b91c1c'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!deletingAvatars.has(img.variableId)) {
+                      e.target.style.backgroundColor = '#dc2626'
+                    }
+                  }}
                   onClick={() => handleDeleteAvatar(img.variableId)}
-                  aria-label="Poista kuva"
+                  aria-label={deletingAvatars.has(img.variableId) ? 'Poistetaan...' : 'Poista kuva'}
                 >
-                  <svg
-                    width="12"
-                    height="12"
-                    fill="none"
-                    stroke="#fff"
-                    strokeWidth={2.5}
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  {deletingAvatars.has(img.variableId) ? (
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                  ) : (
+                    <svg
+                      width="12"
+                      height="12"
+                      fill="none"
+                      stroke="#fff"
+                      strokeWidth={2.5}
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  )}
                 </button>
               </div>
             ) : (

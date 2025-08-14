@@ -296,6 +296,8 @@ const EditCallTypeModal = ({
                   <div>Tallenna: suosittu yhteydenottoaika, yhteystapa, sähköposti, webinaarilinkin/tallenteen pyyntö, lyhyt yhteenveto haasteista/tavoitteista.</div>
                 </div>
               </div>
+
+
             </div>
           )}
 

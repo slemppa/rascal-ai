@@ -18,6 +18,7 @@ export default function CallPanel() {
   // Kovakoodatut tarkistukset
   const isMika = user?.email === 'mika.jarvinen@kuudesaisti.fi'
   const isAdmin = user?.email === 'sami@mak8r.fi'
+  const showTextMessagesTab = user?.email === 'mikko@varapuu.fi'
   const [sheetUrl, setSheetUrl] = useState('')
   const [validating, setValidating] = useState(false)
   const [validationResult, setValidationResult] = useState(null)
@@ -47,7 +48,24 @@ export default function CallPanel() {
   const audioElementsRef = useRef([])
   const [activeTab, setActiveTab] = useState('calls')
   const [editingCallType, setEditingCallType] = useState(null)
-  const [newCallType, setNewCallType] = useState({ callType: '', label: '', description: '' })
+  const [newCallType, setNewCallType] = useState({ 
+    callType: '', 
+    label: '', 
+    description: '', 
+    identity: '', 
+    style: '', 
+    guidelines: '', 
+    goals: '', 
+    intro: '', 
+    questions: '', 
+    outro: '', 
+    notes: '', 
+    version: '', 
+    status: 'Active', 
+    summary: '', 
+    success_assessment: '',
+    first_sms: '' // Uusi kenttä: Ensimmäinen SMS
+  })
   const [callTypes, setCallTypes] = useState([])
   const [loadingCallTypes, setLoadingCallTypes] = useState(true)
   const [addTypeLoading, setAddTypeLoading] = useState(false)
@@ -60,6 +78,13 @@ export default function CallPanel() {
   const [callLogs, setCallLogs] = useState([])
   const [loadingCallLogs, setLoadingCallLogs] = useState(false)
   const [callLogsError, setCallLogsError] = useState('')
+  
+  // Viestilokin state-muuttujat
+  const [messageLogs, setMessageLogs] = useState([])
+  const [loadingMessageLogs, setLoadingMessageLogs] = useState(false)
+  const [messageLogsError, setMessageLogsError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
   
   // Pagination ja filtterit
   const [currentPage, setCurrentPage] = useState(1)
@@ -246,6 +271,7 @@ export default function CallPanel() {
     }
     
     // Jos numero on 9 numeroa (suomalainen mobiili), lisää +358
+    // Tämä kattaa muodot kuten: 401234567, 501234567, 301234567
     if (cleaned.length === 9 && /^\d{9}$/.test(cleaned)) {
       return '+358' + cleaned
     }
@@ -598,7 +624,8 @@ export default function CallPanel() {
           version: editingCallType.version || 'v1.0',
           status: editingCallType.status || 'Active',
           summary: editingCallType.summary || '',
-          success_assessment: editingCallType.success_assessment || ''
+          success_assessment: editingCallType.success_assessment || '',
+          first_sms: editingCallType.first_sms || '' // Uusi kenttä
         }
 
         const { error } = await supabase.from('call_types').update(fields).eq('id', editingCallType.id)
@@ -623,22 +650,40 @@ export default function CallPanel() {
     }
   }
 
+  const [deletingCallTypes, setDeletingCallTypes] = useState(new Set())
+  
   const handleDeleteCallType = async (recordId) => {
     if (!confirm('Haluatko varmasti poistaa tämän puhelun tyypin?')) {
       return
     }
 
+    // Estetään useita poistoja samalle tyypille
+    if (deletingCallTypes.has(recordId)) {
+      return
+    }
+
+    setDeletingCallTypes(prev => new Set(prev).add(recordId))
+
     try {
       const { error } = await supabase.from('call_types').delete().eq('id', recordId)
       if (!error) {
-        alert('Puhelun tyyppi poistettu!')
+        // Käytä toast-viestiä alertin sijaan
+        setSuccessMessage('Puhelun tyyppi poistettu onnistuneesti!')
+        setTimeout(() => setSuccessMessage(''), 3000)
         fetchCallTypes()
       } else {
         throw new Error('Poisto epäonnistui')
       }
     } catch (error) {
       console.error('Puhelun tyypin poisto epäonnistui:', error)
-      alert('Puhelun tyypin poisto epäonnistui')
+      setErrorMessage('Puhelun tyypin poisto epäonnistui: ' + (error.message || error))
+      setTimeout(() => setErrorMessage(''), 5000)
+    } finally {
+      setDeletingCallTypes(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(recordId)
+        return newSet
+      })
     }
   }
 
@@ -824,7 +869,8 @@ export default function CallPanel() {
         version: newCallType.version || 'v1.0',
         status: newCallType.status || 'Active',
         summary: newCallType.summary || '',
-        success_assessment: newCallType.success_assessment || ''
+        success_assessment: newCallType.success_assessment || '',
+        first_sms: newCallType.first_sms || '' // Uusi kenttä
       }
       const { error } = await supabase.from('call_types').insert([insertData])
       if (error) throw error
@@ -842,7 +888,24 @@ export default function CallPanel() {
     setShowAddModal(false)
     setShowEditModal(false)
     setEditingCallType(null)
-    setNewCallType({ callType: '', label: '', description: '', identity: '', style: '', guidelines: '', goals: '', intro: '', questions: '', outro: '', notes: '', version: '', status: 'Active', summary: '', success_assessment: '' })
+    setNewCallType({ 
+      callType: '', 
+      label: '', 
+      description: '', 
+      identity: '', 
+      style: '', 
+      guidelines: '', 
+      goals: '', 
+      intro: '', 
+      questions: '', 
+      outro: '', 
+      notes: '', 
+      version: '', 
+      status: 'Active', 
+      summary: '', 
+      success_assessment: '',
+      first_sms: '' // Uusi kenttä
+    })
     setAddTypeError('')
     setAddTypeSuccess('')
   }
@@ -934,6 +997,54 @@ export default function CallPanel() {
       fetchCallLogs()
       }
   }, [user, activeTab]) // Suoritetaan kun user tai activeTab muuttuu
+
+  // Hae viestiloki
+  const fetchMessageLogs = async () => {
+    try {
+      setLoadingMessageLogs(true)
+      setMessageLogsError('')
+
+      if (!user?.id) {
+        setMessageLogsError('Käyttäjän tunniste puuttuu!')
+        return
+      }
+
+      // Hae ensin users.id käyttäen auth_user_id:tä
+      const { data: userProfile, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (userError || !userProfile) {
+        setMessageLogsError('Käyttäjää ei löytynyt!')
+        return
+      }
+
+      const { data: logs, error } = await supabase
+        .from('message_logs')
+        .select('*')
+        .eq('user_id', userProfile.id)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        throw new Error('Viestilokin haku epäonnistui: ' + error.message)
+      }
+
+      setMessageLogs(logs || [])
+    } catch (error) {
+      console.error('Viestilokin haku epäonnistui:', error)
+      setMessageLogsError('Viestilokin haku epäonnistui: ' + (error.message || error))
+    } finally {
+      setLoadingMessageLogs(false)
+    }
+  }
+
+  useEffect(() => {
+    if (user?.id && activeTab === 'messages') {
+      fetchMessageLogs()
+    }
+  }, [user, activeTab])
 
   // Hae yksityiskohtaiset tiedot puhelusta
   const fetchLogDetail = async (log) => {
@@ -1046,6 +1157,7 @@ export default function CallPanel() {
         'Puhelun tyyppi',
         'Päivämäärä',
         'Vastattu',
+        'Yhteydenotto',
         'Kesto',
         'Tila',
         'Yhteenveto',
@@ -1063,6 +1175,8 @@ export default function CallPanel() {
           `"${log.call_type || ''}"`,
           `"${log.call_date ? new Date(log.call_date).toLocaleDateString('fi-FI') + ' ' + new Date(log.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : ''}"`,
           log.answered ? 'Kyllä' : 'Ei',
+          log.wants_contact === true ? 'Otetaan yhteyttä' : 
+          log.wants_contact === false ? 'Ei oteta yhteyttä' : 'Ei määritelty',
           `"${log.duration || ''}"`,
           log.call_status === 'done' && log.answered ? 'Onnistui' : 
           log.call_status === 'done' && !log.answered ? 'Epäonnistui' :
@@ -1350,8 +1464,22 @@ export default function CallPanel() {
             onClick={() => setActiveTab('logs')} 
             variant={activeTab === 'logs' ? 'primary' : 'secondary'}
           >
-            📊 Lokit
+            📊 Puheluloki
           </Button>
+          <Button 
+            onClick={() => setActiveTab('messages')} 
+            variant={activeTab === 'messages' ? 'primary' : 'secondary'}
+          >
+            💬 Viestiloki
+          </Button>
+          {showTextMessagesTab && (
+            <Button 
+              onClick={() => setActiveTab('textmessages')} 
+              variant={activeTab === 'textmessages' ? 'primary' : 'secondary'}
+            >
+              📱 Tekstiviestejä
+            </Button>
+          )}
           <Button 
             onClick={() => setActiveTab('manage')} 
             variant={activeTab === 'manage' ? 'primary' : 'secondary'}
@@ -1828,6 +1956,7 @@ export default function CallPanel() {
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Puhelun tyyppi</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Päivämäärä</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Vastattu</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Yhteydenotto</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Kesto</th>
                         <th style={{ padding: '8px', textAlign: 'center', fontWeight: 600 }}>Tila</th>
                       </tr>
@@ -1857,6 +1986,48 @@ export default function CallPanel() {
                                 {log.call_date ? new Date(log.call_date).toLocaleDateString('fi-FI') + ' ' + new Date(log.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : '-'}
                               </td>
                               <td style={{ padding: '8px' }}>{log.answered ? 'Kyllä' : 'Ei'}</td>
+                              <td style={{ padding: '8px', textAlign: 'center' }}>
+                                {log.wants_contact === true ? (
+                                  <span style={{
+                                    display: 'inline-block',
+                                    padding: '3px 10px',
+                                    borderRadius: 8,
+                                    fontSize: 12,
+                                    fontWeight: 600,
+                                    background: '#dcfce7',
+                                    color: '#166534',
+                                    minWidth: 80
+                                  }}>
+                                    ✅ Otetaan yhteyttä
+                                  </span>
+                                ) : log.wants_contact === false ? (
+                                  <span style={{
+                                    display: 'inline-block',
+                                    padding: '3px 10px',
+                                    borderRadius: 8,
+                                    fontSize: 12,
+                                    fontWeight: 600,
+                                    background: '#fef2f2',
+                                    color: '#dc2626',
+                                    minWidth: 80
+                                  }}>
+                                    ❌ Ei oteta yhteyttä
+                                  </span>
+                                ) : (
+                                  <span style={{
+                                    display: 'inline-block',
+                                    padding: '3px 10px',
+                                    borderRadius: 8,
+                                    fontSize: 12,
+                                    fontWeight: 600,
+                                    background: '#f3f4f6',
+                                    color: '#6b7280',
+                                    minWidth: 80
+                                  }}>
+                                    ⚪ Ei määritelty
+                                  </span>
+                                )}
+                              </td>
                               <td style={{ padding: '8px' }}>{log.duration || '-'}</td>
                           <td style={{ padding: '8px', textAlign: 'center' }}>
                             <span style={{
@@ -1897,6 +2068,64 @@ export default function CallPanel() {
             padding: 32,
             width: '100%'
           }}>
+            {/* Toast-viestit */}
+            {successMessage && (
+              <div style={{
+                background: '#dcfce7',
+                border: '1px solid #bbf7d0',
+                borderRadius: 8,
+                padding: 16,
+                marginBottom: 24,
+                color: '#166534',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <span>✅ {successMessage}</span>
+                <button
+                  onClick={() => setSuccessMessage('')}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#166534',
+                    cursor: 'pointer',
+                    fontSize: 18,
+                    padding: 0
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            )}
+            
+            {errorMessage && (
+              <div style={{
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
+                borderRadius: 8,
+                padding: 16,
+                marginBottom: 24,
+                color: '#dc2626',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <span>❌ {errorMessage}</span>
+                <button
+                  onClick={() => setErrorMessage('')}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#dc2626',
+                    cursor: 'pointer',
+                    fontSize: 18,
+                    padding: 0
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
               <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
                 ⚙️ Puhelun tyyppien hallinta
@@ -1934,7 +2163,48 @@ export default function CallPanel() {
                   Ei puhelun tyyppejä vielä lisätty
                 </div>
               ) : (
-                <div style={{ display: 'grid', gap: 12 }}>
+                <>
+                  <div style={{ marginBottom: 16 }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      gap: 8, 
+                      alignItems: 'center', 
+                      fontSize: 12, 
+                      color: '#6b7280',
+                      marginBottom: 8
+                    }}>
+                      <span>Järjestä:</span>
+                      <button
+                        onClick={() => setCallTypes([...callTypes].sort((a, b) => a.status === 'Active' ? -1 : b.status === 'Active' ? 1 : 0))}
+                        style={{
+                          background: '#f3f4f6',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: 6,
+                          padding: '4px 8px',
+                          fontSize: 11,
+                          cursor: 'pointer',
+                          color: '#374151'
+                        }}
+                      >
+                        🔄 Status
+                      </button>
+                      <button
+                        onClick={() => setCallTypes([...callTypes].sort((a, b) => a.label.localeCompare(b.label)))}
+                        style={{
+                          background: '#f3f4f6',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: 6,
+                          padding: '4px 8px',
+                          fontSize: 11,
+                          cursor: 'pointer',
+                          color: '#374151'
+                        }}
+                      >
+                        🔤 Nimi
+                      </button>
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gap: 12 }}>
                   {callTypes.map((type, index) => (
                     <div
                       key={type.id || index}
@@ -1961,14 +2231,15 @@ export default function CallPanel() {
                           Tunniste: <code style={{ background: '#f3f4f6', padding: '2px 4px', borderRadius: 4 }}>{type.value}</code>
                           <span style={{ 
                             marginLeft: 12, 
-                            padding: '2px 8px', 
-                            borderRadius: 4, 
+                            padding: '4px 8px', 
+                            borderRadius: 12, 
                             fontSize: 10, 
-                            fontWeight: 500, 
+                            fontWeight: 600, 
                             background: type.status === 'Active' ? '#dcfce7' : type.status === 'Draft' ? '#fef3c7' : '#f3f4f6',
-                            color: type.status === 'Active' ? '#166534' : type.status === 'Draft' ? '#92400e' : '#6b7280'
+                            color: type.status === 'Active' ? '#166534' : type.status === 'Draft' ? '#92400e' : '#6b7280',
+                            border: type.status === 'Active' ? '1px solid #bbf7d0' : type.status === 'Draft' ? '1px solid #fed7aa' : '1px solid #e5e7eb'
                           }}>
-                            {type.status}
+                            {type.status === 'Active' ? '✅ Aktiivinen' : type.status === 'Draft' ? '📝 Luonnos' : '❓ Tuntematon'}
                           </span>
                         </div>
                         {type.description && (
@@ -1983,21 +2254,377 @@ export default function CallPanel() {
                                 e.stopPropagation()
                                 handleDeleteCallType(type.id)
                               }}
+                              disabled={deletingCallTypes.has(type.id)}
                               variant="secondary"
                               style={{
-                                background: '#ef4444',
+                                background: deletingCallTypes.has(type.id) ? '#9ca3af' : '#ef4444',
                                 color: '#fff',
                                 padding: '4px 8px',
                                 fontSize: 12,
-                                fontWeight: 500
+                                fontWeight: 500,
+                                cursor: deletingCallTypes.has(type.id) ? 'not-allowed' : 'pointer'
                               }}
-                              title="Poista puhelun tyyppi"
+                              title={deletingCallTypes.has(type.id) ? 'Poistetaan...' : 'Poista puhelun tyyppi'}
                             >
-                              🗑️
+                              {deletingCallTypes.has(type.id) ? (
+                                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                              ) : (
+                                '🗑️'
+                              )}
                             </Button>
                       <div style={{ color: '#6b7280', fontSize: 14 }}>
                         ✏️
                             </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                  </>
+              )}
+            </div>
+          </div>
+        )}
+        
+        {activeTab === 'messages' && (
+          <div style={{
+            background: '#fff',
+            borderRadius: 16,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+            padding: 32,
+            width: '100%'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+              <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
+                💬 Viestiloki
+              </h2>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <Button
+                  type="button"
+                  onClick={() => fetchMessageLogs()}
+                  disabled={loadingMessageLogs}
+                  variant="secondary"
+                  style={{
+                    padding: '8px 16px',
+                    fontSize: 14,
+                    background: loadingMessageLogs ? '#9ca3af' : '#3b82f6',
+                    color: '#fff'
+                  }}
+                >
+                  {loadingMessageLogs ? '🔄 Päivitetään...' : '🔄 Päivitä'}
+                </Button>
+              </div>
+            </div>
+            
+            {messageLogsError && (
+              <div style={{ 
+                background: '#fef2f2', 
+                border: '1px solid #fecaca', 
+                borderRadius: 8, 
+                padding: 16, 
+                marginBottom: 24, 
+                color: '#dc2626' 
+              }}>
+                {messageLogsError}
+              </div>
+            )}
+            
+            {/* Viestiloki lista */}
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#374151' }}>
+                  Viestihistoria
+                </h3>
+                {messageLogs.length > 0 && (
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>
+                    Näytetään {messageLogs.length} viestiä
+                  </div>
+                )}
+              </div>
+              
+              {loadingMessageLogs ? (
+                <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
+                  Ladataan viestilokia...
+                </div>
+              ) : messageLogs.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
+                  Ei viestejä löytynyt
+                </div>
+              ) : (
+                <div style={{ overflowX: 'auto', marginBottom: 24 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+                    <thead>
+                      <tr style={{ background: '#f3f4f6', color: '#374151' }}>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Puhelinnumero</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Tyyppi</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Suunta</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Tila</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>AI-teksti</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Asiakkaan vastaus</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Päivämäärä</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {messageLogs.map((log, index) => (
+                        <tr
+                          key={log.id || index}
+                          style={{
+                            background: '#fff',
+                            borderBottom: '1px solid #e5e7eb',
+                            transition: 'background 0.15s',
+                          }}
+                          onMouseOver={e => e.currentTarget.style.background = '#f3f4f6'}
+                          onMouseOut={e => e.currentTarget.style.background = '#fff'}
+                        >
+                          <td style={{ padding: '8px', fontWeight: 500 }}>{log.phone_number || '-'}</td>
+                          <td style={{ padding: '8px' }}>
+                            <span style={{
+                              display: 'inline-block',
+                              padding: '2px 8px',
+                              borderRadius: 6,
+                              fontSize: 12,
+                              fontWeight: 500,
+                              background: log.message_type === 'sms' ? '#dbeafe' : 
+                                        log.message_type === 'whatsapp' ? '#dcfce7' : 
+                                        log.message_type === 'email' ? '#fef3c7' : '#f3f4f6',
+                              color: log.message_type === 'sms' ? '#1d4ed8' : 
+                                     log.message_type === 'whatsapp' ? '#166534' : 
+                                     log.message_type === 'email' ? '#92400e' : '#6b7280'
+                            }}>
+                              {log.message_type === 'sms' ? '📱 SMS' : 
+                               log.message_type === 'whatsapp' ? '💬 WhatsApp' : 
+                               log.message_type === 'email' ? '📧 Email' : log.message_type}
+                            </span>
+                          </td>
+                          <td style={{ padding: '8px' }}>
+                            <span style={{
+                              display: 'inline-block',
+                              padding: '2px 8px',
+                              borderRadius: 6,
+                              fontSize: 12,
+                              fontWeight: 500,
+                              background: log.direction === 'outbound' ? '#dbeafe' : '#fef3c7',
+                              color: log.direction === 'outbound' ? '#1d4ed8' : '#92400e'
+                            }}>
+                              {log.direction === 'outbound' ? '📤 Lähetetty' : '📥 Vastaanotettu'}
+                            </span>
+                          </td>
+                          <td style={{ padding: '8px', textAlign: 'center' }}>
+                            <span style={{
+                              display: 'inline-block',
+                              padding: '3px 10px',
+                              borderRadius: 8,
+                              fontSize: 12,
+                              fontWeight: 600,
+                              background: log.status === 'sent' ? '#dcfce7' : 
+                                        log.status === 'delivered' ? '#dbeafe' : 
+                                        log.status === 'read' ? '#fef3c7' : 
+                                        log.status === 'failed' ? '#fef2f2' : '#f3f4f6',
+                              color: log.status === 'sent' ? '#166534' : 
+                                     log.status === 'delivered' ? '#1d4ed8' : 
+                                     log.status === 'read' ? '#92400e' : 
+                                     log.status === 'failed' ? '#dc2626' : '#6b7280',
+                              minWidth: 60
+                            }}>
+                              {log.status === 'sent' ? 'Lähetetty' : 
+                               log.status === 'delivered' ? 'Toimitettu' : 
+                               log.status === 'read' ? 'Luettu' : 
+                               log.status === 'failed' ? 'Epäonnistui' : 
+                               log.status === 'pending' ? 'Odottaa' : log.status}
+                            </span>
+                          </td>
+                          <td style={{ padding: '8px', color: '#6b7280', fontSize: 13 }}>
+                            {log.ai_text ? (log.ai_text.length > 50 ? log.ai_text.substring(0, 50) + '...' : log.ai_text) : '-'}
+                          </td>
+                          <td style={{ padding: '8px', color: '#6b7280', fontSize: 13 }}>
+                            {log.customer_text ? (log.customer_text.length > 50 ? log.customer_text.substring(0, 50) + '...' : log.customer_text) : '-'}
+                          </td>
+                          <td style={{ padding: '8px' }}>
+                            {log.created_at ? new Date(log.created_at).toLocaleDateString('fi-FI') + ' ' + new Date(log.created_at).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : '-'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        
+        {activeTab === 'textmessages' && (
+          <div style={{
+            background: '#fff',
+            borderRadius: 16,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+            padding: 32,
+            width: '100%'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+              <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
+                📱 Tekstiviestejä
+              </h2>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <Button
+                  type="button"
+                  onClick={() => fetchCallTypes()}
+                  disabled={loadingCallTypes}
+                  variant="secondary"
+                  style={{
+                    padding: '8px 16px',
+                    fontSize: 14,
+                    background: loadingCallTypes ? '#9ca3af' : '#3b82f6',
+                    color: '#fff'
+                  }}
+                >
+                  {loadingCallTypes ? '🔄 Päivitetään...' : '🔄 Päivitä'}
+                </Button>
+              </div>
+            </div>
+            
+            {/* Tekstiviestejä lista */}
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#374151' }}>
+                  Ensimmäinen tekstiviesti
+                </h3>
+                {callTypes.length > 0 && (
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>
+                    Näytetään {callTypes.length} puhelun tyyppiä
+                  </div>
+                )}
+              </div>
+              
+              {loadingCallTypes ? (
+                <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
+                  Ladataan puhelun tyyppejä...
+                </div>
+              ) : callTypes.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
+                  Ei puhelun tyyppejä löytynyt
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gap: 16 }}>
+                  {callTypes.map((type, index) => (
+                    <div
+                      key={type.id || index}
+                      style={{
+                        background: '#f8fafc',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: 12,
+                        padding: 20,
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'}
+                      onMouseOut={e => e.currentTarget.style.background = '#f8fafc'}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                        <div>
+                          <h4 style={{ margin: '0 0 8px 0', fontSize: 18, fontWeight: 600, color: '#1f2937' }}>
+                            {type.label || type.name || type.callType || 'Nimeämätön tyyppi'}
+                          </h4>
+                          <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
+                            <span style={{ 
+                              padding: '4px 8px', 
+                              borderRadius: 12, 
+                              fontSize: 10, 
+                              fontWeight: 600, 
+                              background: type.status === 'Active' ? '#dcfce7' : type.status === 'Draft' ? '#fef3c7' : '#f3f4f6',
+                              color: type.status === 'Active' ? '#166534' : type.status === 'Draft' ? '#92400e' : '#6b7280',
+                              border: type.status === 'Active' ? '1px solid #bbf7d0' : type.status === 'Draft' ? '1px solid #fed7aa' : '1px solid #e5e7eb'
+                            }}>
+                              {type.status === 'Active' ? '✅ Aktiivinen' : type.status === 'Draft' ? '📝 Luonnos' : '❓ Tuntematon'}
+                            </span>
+                            <span style={{ fontSize: 12, color: '#6b7280' }}>
+                              Tunniste: <code style={{ background: '#f3f4f6', padding: '2px 4px', borderRadius: 4 }}>{type.value || type.callType}</code>
+                            </span>
+                          </div>
+                        </div>
+                        <Button
+                          onClick={() => {
+                            setEditingCallType(type)
+                            setShowEditModal(true)
+                          }}
+                          variant="secondary"
+                          style={{
+                            background: '#3b82f6',
+                            color: '#fff',
+                            padding: '6px 12px',
+                            fontSize: 12,
+                            fontWeight: 500
+                          }}
+                        >
+                          ✏️ Muokkaa
+                        </Button>
+                      </div>
+                      
+                      <div style={{ marginBottom: 16 }}>
+                        <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14, color: '#374151' }}>
+                          Viesti
+                        </label>
+                        <textarea
+                          value={type.first_sms || ''}
+                          onChange={e => {
+                            const updatedType = { ...type, first_sms: e.target.value }
+                            setEditingCallType(updatedType)
+                            // Päivitä myös callTypes array
+                            const updatedCallTypes = callTypes.map(t => t.id === type.id ? updatedType : t)
+                            setCallTypes(updatedCallTypes)
+                          }}
+                          placeholder="SMS-viesti joka lähetetään asiakkaalle ennen puhelua..."
+                          rows={4}
+                          style={{ 
+                            width: '100%', 
+                            padding: '12px', 
+                            border: '1px solid #d1d5db', 
+                            borderRadius: 8, 
+                            fontSize: 14, 
+                            resize: 'vertical',
+                            fontFamily: 'inherit'
+                          }}
+                        />
+                      </div>
+                      
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ fontSize: 12, color: '#6b7280' }}>
+                          {type.first_sms ? (
+                            <span style={{ color: '#059669' }}>
+                              ✅ SMS-viesti määritelty ({type.first_sms.length} merkkiä)
+                            </span>
+                          ) : (
+                            <span style={{ color: '#dc2626' }}>
+                              ❌ SMS-viestiä ei ole määritelty
+                            </span>
+                          )}
+                        </div>
+                        <Button
+                          onClick={async () => {
+                            try {
+                              const { error } = await supabase
+                                .from('call_types')
+                                .update({ first_sms: type.first_sms })
+                                .eq('id', type.id)
+                              
+                              if (error) throw error
+                              
+                              setSuccessMessage('SMS-viesti tallennettu onnistuneesti!')
+                              setTimeout(() => setSuccessMessage(''), 3000)
+                            } catch (error) {
+                              console.error('SMS-viestin tallennus epäonnistui:', error)
+                              setErrorMessage('SMS-viestin tallennus epäonnistui: ' + (error.message || error))
+                              setTimeout(() => setErrorMessage(''), 5000)
+                            }
+                          }}
+                          disabled={!type.first_sms || type.first_sms.trim() === ''}
+                          variant="primary"
+                          style={{
+                            padding: '6px 12px',
+                            fontSize: 12,
+                            fontWeight: 500,
+                            opacity: (!type.first_sms || type.first_sms.trim() === '') ? 0.5 : 1
+                          }}
+                        >
+                          💾 Tallenna
+                        </Button>
                       </div>
                     </div>
                   ))}
@@ -2174,7 +2801,11 @@ export default function CallPanel() {
         
         <AddCallTypeModal
           showModal={showAddModal}
-          onClose={closeModals}
+          onClose={async () => {
+            // Tallennetaan automaattisesti kun suljetaan
+            await handleAddCallType()
+            closeModals()
+          }}
           newCallType={newCallType}
           setNewCallType={setNewCallType}
           onAdd={handleAddCallType}
@@ -2184,7 +2815,11 @@ export default function CallPanel() {
         />
         <EditCallTypeModal
           showModal={showEditModal}
-          onClose={closeModals}
+          onClose={async () => {
+            // Tallennetaan automaattisesti kun suljetaan
+            await handleSaveCallType()
+            closeModals()
+          }}
           editingCallType={editingCallType}
           setEditingCallType={setEditingCallType}
           onSave={handleSaveCallType}
@@ -2206,8 +2841,10 @@ export default function CallPanel() {
               zIndex: 1000,
               padding: 20
             }}
-            onClick={(e) => {
+            onClick={async (e) => {
               if (e.target === e.currentTarget) {
+                // Tallennetaan automaattisesti kun klikkaa ulkopuolelta
+                await handleSaveInboundSettings()
                 setShowInboundModal(false)
               }
             }}

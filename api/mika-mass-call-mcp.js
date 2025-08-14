@@ -33,9 +33,9 @@ export default async function handler(req, res) {
         INSERT INTO call_logs (
           id, user_id, customer_name, phone_number, 
           call_type, call_type_id, call_date, call_status, 
-          voice_id, created_at, summary, crm_id
+          voice_id, created_at, summary
         ) VALUES (
-          gen_random_uuid(), $1, $2, $3, $4, $5, NOW(), 'pending', $6, NOW(), $7, $8
+          gen_random_uuid(), $1, $2, $3, $4, $5, NOW(), 'pending', $6, NOW(), $7
         )
       `,
       params: [
@@ -45,8 +45,7 @@ export default async function handler(req, res) {
         callType,
         callTypeId,
         voice_id || 'voice_1',
-        script || 'Hei! Soitan sinulle...',
-        contact.id || null
+        script || 'Hei! Soitan sinulle...'
       ]
     }))
 

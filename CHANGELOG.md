@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.34.0](https://github.com/slemppa/rascal-ai/compare/v1.33.2...v1.34.0) (2025-08-14)
+
+
+### ✨ Features
+
+* add first_sms field and Text Messages tab for call types ([e6b7273](https://github.com/slemppa/rascal-ai/commit/e6b727383aab4d2e2a9c863474a07565cf87c554))
+
+
+### 🐛 Bug Fixes
+
+* korjattu CallPanel padding ja lisätty outbound/inbound tilastot ([0f214d7](https://github.com/slemppa/rascal-ai/commit/0f214d751b2792c61bed286c52ff617a6cae9b15))
+
 ### [1.33.2](https://github.com/slemppa/rascal-ai/compare/v1.33.1...v1.33.2) (2025-08-13)
 
 

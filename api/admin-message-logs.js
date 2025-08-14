@@ -50,14 +50,14 @@ export default async function handler(req, res) {
       .select(`
         id,
         phone_number,
-        message_text,
         message_type,
         direction,
         status,
         media_url,
         media_type,
         created_at,
-        users(contact_person, contact_email)
+        user_id,
+        users!message_logs_user_id_fkey(contact_person, contact_email)
       `)
       .order('created_at', { ascending: false })
 

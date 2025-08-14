@@ -330,6 +330,8 @@ export default function AdminPage() {
       })
 
       if (!response.ok) {
+        const errorText = await response.text()
+        console.error('Admin message logs response:', response.status, errorText)
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
@@ -340,6 +342,8 @@ export default function AdminPage() {
         throw new Error(result.error || 'Failed to fetch message logs')
       }
     } catch (error) {
+      console.error('Error loading message logs:', error)
+      setMessageLogs([]) // Aseta tyhjä array virheen sattuessa
       throw error
     }
   }
@@ -740,47 +744,84 @@ export default function AdminPage() {
                <div className="admin-section">
                  <h2>Viestit / kuukausi</h2>
                  <div className="admin-table-container">
-                   <table className="admin-table">
-                     <thead>
-                       <tr>
-                         <th>Käyttäjä</th>
-                         <th>Viestien määrä</th>
-                         <th>Kuukausi</th>
-                         <th>Kustannus (€)</th>
-                       </tr>
-                     </thead>
-                     <tbody>
-                       {(() => {
-                         // Ryhmitellään messageLogs käyttäjä+kuukausi -tasoille
-                         const monthNames = [
-                           'tammikuu', 'helmikuu', 'maaliskuu', 'huhtikuu', 'toukokuu', 'kesäkuu',
-                           'heinäkuu', 'elokuu', 'syyskuu', 'lokakuu', 'marraskuu', 'joulukuu'
-                         ];
-                         const groups = {};
-                         messageLogs.forEach(msg => {
-                           const user = msg.users?.contact_person || msg.users?.contact_email || 'Tuntematon';
-                           const date = new Date(msg.created_at);
-                           const month = date.getMonth();
-                           const year = date.getFullYear();
-                           const key = `${user}__${year}-${month}`;
-                           if (!groups[key]) {
-                             groups[key] = { user, year, month, count: 0 };
-                           }
-                           groups[key].count++;
-                         });
-                         // Järjestetään tulos uusimmat ensin
-                         const sorted = Object.values(groups).sort((a, b) => b.year !== a.year ? b.year - a.year : b.month - a.month);
-                         return sorted.map((g, idx) => (
-                           <tr key={g.user + g.year + g.month}>
-                             <td>{g.user}</td>
-                             <td>{g.count}</td>
-                             <td>{monthNames[g.month]} {g.year}</td>
-                             <td>{(g.count * 0.01).toFixed(2)} €</td>
+                   {loading ? (
+                     <div className="admin-loading">Ladataan viestejä...</div>
+                   ) : error ? (
+                     <div className="admin-error">
+                       <p>❌ Virhe viestien lataamisessa: {error}</p>
+                       <button 
+                         className="admin-btn admin-btn-secondary"
+                         onClick={() => loadData()}
+                       >
+                         Yritä uudelleen
+                       </button>
+                     </div>
+                   ) : !messageLogs || messageLogs.length === 0 ? (
+                     <div className="admin-empty">
+                       <p>Ei viestejä löytynyt.</p>
+                     </div>
+                   ) : (
+                     <table className="admin-table">
+                       <thead>
+                         <tr>
+                           <th>Käyttäjä</th>
+                           <th>Viestien määrä</th>
+                           <th>Kuukausi</th>
+                           <th>Kustannus (€)</th>
                          </tr>
-                         ));
-                       })()}
-                     </tbody>
-                   </table>
+                       </thead>
+                       <tbody>
+                         {(() => {
+                           try {
+                             // Ryhmitellään messageLogs käyttäjä+kuukausi -tasoille
+                             const monthNames = [
+                               'tammikuu', 'helmikuu', 'maaliskuu', 'huhtikuu', 'toukokuu', 'kesäkuu',
+                               'heinäkuu', 'elokuu', 'syyskuu', 'lokakuu', 'marraskuu', 'joulukuu'
+                             ];
+                             const groups = {};
+                             
+                             if (Array.isArray(messageLogs)) {
+                               messageLogs.forEach(msg => {
+                                 if (msg && msg.created_at) {
+                                   const user = msg.users?.contact_person || msg.users?.contact_email || 'Tuntematon';
+                                   const date = new Date(msg.created_at);
+                                   if (!isNaN(date.getTime())) {
+                                     const month = date.getMonth();
+                                     const year = date.getFullYear();
+                                     const key = `${user}__${year}-${month}`;
+                                     if (!groups[key]) {
+                                       groups[key] = { user, year, month, count: 0 };
+                                     }
+                                     groups[key].count++;
+                                   }
+                                 }
+                               });
+                             }
+                             
+                             // Järjestetään tulos uusimmat ensin
+                             const sorted = Object.values(groups).sort((a, b) => b.year !== a.year ? b.year - a.year : b.month - a.month);
+                             return sorted.map((g, idx) => (
+                               <tr key={g.user + g.year + g.month}>
+                                 <td>{g.user}</td>
+                                 <td>{g.count}</td>
+                                 <td>{monthNames[g.month]} {g.year}</td>
+                                 <td>{(g.count * 0.01).toFixed(2)} €</td>
+                               </tr>
+                             ));
+                           } catch (error) {
+                             console.error('Error processing message logs:', error);
+                             return (
+                               <tr>
+                                 <td colSpan="4" style={{ textAlign: 'center', color: '#dc2626' }}>
+                                   Virhe tietojen käsittelyssä
+                                 </td>
+                               </tr>
+                             );
+                           }
+                         })()}
+                       </tbody>
+                     </table>
+                   )}
                  </div>
                </div>
              )}

@@ -53,8 +53,8 @@ export default async function handler(req, res) {
         message_type,
         direction,
         status,
-        media_url,
-        media_type,
+        ai_text,
+        customer_text,
         created_at,
         user_id,
         users!message_logs_user_id_fkey(contact_person, contact_email)

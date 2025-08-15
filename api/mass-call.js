@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 if (!supabaseUrl || !supabaseServiceKey) {
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   try {
     const { sheetUrl, callType, script, voice, voice_id, user_id, scheduledDate, scheduledTime } = req.body
 
-    console.log('🔍 Mass-call endpoint sai dataa:', { sheetUrl, callType, script, voice, voice_id, user_id })
+    console.log('🔍 Mass-call endpoint sai dataa:', { sheetUrl, callType, scriptExists: Boolean(script), voice, voice_idExists: Boolean(voice_id), user_id, scheduledDate, scheduledTime })
 
     // Validointi
     if (!sheetUrl || !sheetUrl.trim()) {
@@ -112,6 +112,7 @@ export default async function handler(req, res) {
     }
 
     const sheetId = match[1]
+    // Huom: käytetään samoja parametreja kuin aiemmin toiminut toteutus
     const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`
 
     // Hae tiedot Google Sheets -tiedostosta

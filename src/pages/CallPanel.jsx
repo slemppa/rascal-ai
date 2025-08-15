@@ -1525,6 +1525,7 @@ export default function CallPanel() {
       if (!massCallSheetUrl) throw new Error('Google Sheets URL puuttuu')
       if (!massCallCallType) throw new Error('Puhelun tyyppi puuttuu')
 
+      const selectedVoiceObj = getVoiceOptions().find(v => v.value === massCallSelectedVoice)
       const res = await fetch('/api/mass-call', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1532,6 +1533,7 @@ export default function CallPanel() {
           sheetUrl: massCallSheetUrl,
           callType: massCallCallType,
           voice: massCallSelectedVoice,
+          voice_id: selectedVoiceObj?.id,
           user_id: user?.id
         })
       })
@@ -1725,6 +1727,7 @@ export default function CallPanel() {
       if (!massCallCallType) throw new Error('Puhelun tyyppi puuttuu')
       if (!massCallScheduledDate || !massCallScheduledTime) throw new Error('Ajastuksen päivä ja aika vaaditaan')
 
+      const selectedVoiceObj2 = getVoiceOptions().find(v => v.value === massCallSelectedVoice)
       const res = await fetch('/api/mass-call', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1732,6 +1735,7 @@ export default function CallPanel() {
           sheetUrl: massCallSheetUrl,
           callType: massCallCallType,
           voice: massCallSelectedVoice,
+          voice_id: selectedVoiceObj2?.id,
           user_id: user?.id,
           scheduledDate: massCallScheduledDate,
           scheduledTime: massCallScheduledTime

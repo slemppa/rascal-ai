@@ -119,23 +119,44 @@ export default function HelpPage() {
       icon: '📞',
       content: [
         {
-          title: 'Puhelujen hallinta',
-          description: 'Puhelut-ominaisuus auttaa sinua hallitsemaan puheluja ja puheluihin liittyvää sisältöä.',
+          title: 'Uusi puhelujen hallinta',
+          description: 'Puhelut-sivulla on kaksi virtaa: Massapuhelut (Google Sheets) ja Yksittäinen puhelu. Molemmat käyttävät backend-API:a ja tallentavat tapahtumat call_logs-tauluun.',
           features: [
-            'Tallenna puheluja äänitiedostoina',
-            'Luo sisältöä puheluihin perustuen',
-            'Hallitse puheluihin liittyviä tiedostoja',
-            'Analysoi puheluita ja niiden sisältöä'
+            '📊 Massapuhelut: kolmi­vaiheinen modaali (Sheets → Tyyppi & ääni → Aloita/Ajastus)',
+            '🕐 Ajastus: kellonajat aina 00 tai 30 (HH:MM/HH:MM:SS)',
+            '📞 Yksittäinen puhelu: nappi avaa modaalin (Tyyppi & ääni → Nimi & numero → Soita)',
+            '🔁 Numeron normalisointi: 40 → 040 → +35840…, 00358/358 → +358…',
+            '🗄️ Kirjaus: call_logs (call_date, call_time, call_status=pending)',
+            '🔐 Frontti kutsuu vain /api/ -endpointteja (esim. /api/mass-call)'            
           ]
         },
         {
-          title: 'Puhelun lisääminen',
-          description: 'Puhelun lisääminen järjestelmään.',
+          title: 'Massapuhelut (Google Sheets)',
+          description: 'Aloita massapuhelut -nappi avaa modaalin, jossa etenet kolmessa vaiheessa.',
           steps: [
-            'Lataa äänitiedosto puhelusta',
-            'Anna puhelulle kuvaava nimi',
-            'Lisää tarvittaessa kuvaus tai muistiinpanot',
-            'Tallenna puhelu järjestelmään'
+            'Vaihe 1 – Google Sheets: liitä julkinen Sheets-linkki ja suorita validointi. Puhelin- ja sähköpostisarakkeet tunnistetaan automaattisesti.',
+            'Vaihe 2 – Asetukset: valitse puhelun tyyppi ja ääni (skripti päivittyy tyypin mukaan).',
+            'Vaihe 3 – Käynnistys: valitse “Aloita heti” tai “Ajasta puhelut”. Ajastus käyttää päivämäärää ja kellonaikaa (minuutit 00/30).'
+          ]
+        },
+        {
+          title: 'Yksittäinen puhelu',
+          description: 'Kortissa on nappi “Soita yksittäinen puhelu”, joka avaa kaksivaiheisen modaalin.',
+          steps: [
+            'Vaihe 1 – Asetukset: valitse puhelun tyyppi ja ääni.',
+            'Vaihe 2 – Tiedot: syötä nimi ja puhelinnumero, ja käynnistä puhelu.'
+          ],
+          tips: [
+            'Numero normalisoidaan aina +358-muotoon: 50 → 050 → +35850…',
+            'Kaksoispisteellinen aika (HH:MM tai HH:MM:SS) tallentuu call_time-kenttään.'
+          ]
+        },
+        {
+          title: 'N8N-integraatio',
+          description: 'Ajastetut puhelut poimitaan automaattisesti N8N:llä.',
+          tips: [
+            'Suodatus: call_date = TODAY ja call_time ≤ NOW, call_status = pending',
+            'Massapuheluissa sekä yksittäisissä kirjaukset löytyvät call_logs-taulusta'
           ]
         }
       ]

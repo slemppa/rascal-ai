@@ -21,7 +21,7 @@ if (!supabaseUrl || (!supabaseServiceKey && !supabaseAnonKey)) {
   throw new Error('Missing Supabase environment variables')
 }
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+// Luodaan Supabase client vasta handlerissa (valitaan service/anon + token siellä)
 
 export default async function handler(req, res) {
   // Vain POST-metodit sallittu

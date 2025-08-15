@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { sheetUrl, callType, script, voice, voice_id, user_id } = req.body
+    const { sheetUrl, callType, script, voice, voice_id, user_id, scheduledDate, scheduledTime } = req.body
 
     console.log('🔍 Mass-call endpoint sai dataa:', { sheetUrl, callType, script, voice, voice_id, user_id })
 
@@ -29,9 +29,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Puhelun tyyppi on pakollinen' })
     }
 
-    if (!script || !script.trim()) {
-      return res.status(400).json({ error: 'Skripti on pakollinen' })
-    }
+    // Skripti on nykyisessä virrassa vapaaehtoinen (käytetään summaryssa jos annettu)
 
     // Käytä voice_id:tä jos saatavilla, muuten voice:tä
     const voiceToUse = voice_id || voice
@@ -73,6 +71,37 @@ export default async function handler(req, res) {
     }
 
     const call_type_id = callTypeData.id
+
+    // Valmistele päivämäärä ja kellonaika
+    const now = new Date()
+    const today = now.toISOString().split('T')[0]
+    const toHHMMSS = (dateObj) => `${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}:${String(dateObj.getSeconds()).padStart(2, '0')}`
+    const normalizeTime = (t) => {
+      if (!t) return null
+      let x = String(t).trim()
+      // Vaihda mahdolliset pisteet kaksoispisteiksi
+      x = x.replace(/\./g, ':')
+      // Lisää sekunnit jos puuttuu
+      if (/^\d{2}:\d{2}$/.test(x)) return `${x}:00`
+      // Jos jo HH:MM:SS muodossa, palauta sellaisenaan
+      if (/^\d{2}:\d{2}:\d{2}$/.test(x)) return x
+      // Viimeinen yritys: jos vain tunnit/minuutit, yritä parsia
+      try {
+        const [h, m, s] = x.split(':')
+        const hh = String(Number(h)).padStart(2, '0')
+        // Pyöristä 00 tai 30
+        const minutesNum = Number(m || 0)
+        const mm = minutesNum >= 30 ? '30' : '00'
+        const ss = String(Number(s || 0)).padStart(2, '0')
+        return `${hh}:${mm}:${ss}`
+      } catch {
+        return toHHMMSS(now)
+      }
+    }
+
+    const isScheduled = Boolean(scheduledDate && scheduledTime)
+    const effectiveDate = isScheduled ? String(scheduledDate).slice(0, 10) : today
+    const effectiveTime = isScheduled ? normalizeTime(scheduledTime) : normalizeTime(toHHMMSS(now))
 
     // Tarkista että URL on Google Sheets -muotoa ja poimi sheet ID
     const googleSheetsRegex = /^https:\/\/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/
@@ -199,10 +228,11 @@ export default async function handler(req, res) {
             call_type: callType, // Teksti "Toiminnot" kentästä
             call_type_id: call_type_id, // ID call_types taulusta
             voice_id: voiceToUse, // Käytä voice_id:tä tai voice:tä
-            call_date: new Date().toISOString(),
+            call_date: effectiveDate,
+            call_time: effectiveTime,
             call_status: 'pending',
             campaign_id: `mass-call-${Date.now()}`,
-            summary: `Mass-call: ${script.trim().substring(0, 100)}...`
+            summary: script && script.trim() ? `Mass-call: ${script.trim().substring(0, 100)}...` : `Mass-call: ${callType}`
           })
         } else {
           errorCount++

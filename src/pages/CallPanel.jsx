@@ -128,7 +128,19 @@ export default function CallPanel() {
   const [mikaSearchResults, setMikaSearchResults] = useState([])
   const [mikaSearchLoading, setMikaSearchLoading] = useState(false)
   
-
+  // Massapuhelumodaalin state-muuttujat
+  const [showMassCallModal, setShowMassCallModal] = useState(false)
+  const [massCallStep, setMassCallStep] = useState(1) // 1: sheets, 2: settings, 3: schedule
+  const [massCallSheetUrl, setMassCallSheetUrl] = useState('')
+  const [massCallValidating, setMassCallValidating] = useState(false)
+  const [massCallValidationResult, setMassCallValidationResult] = useState(null)
+  const [massCallError, setMassCallError] = useState('')
+  const [massCallCallType, setMassCallCallType] = useState('')
+  const [massCallSelectedVoice, setMassCallSelectedVoice] = useState('rascal-nainen-1')
+  const [massCallScheduledDate, setMassCallScheduledDate] = useState('')
+  const [massCallScheduledTime, setMassCallScheduledTime] = useState('')
+  const [massCallStarting, setMassCallStarting] = useState(false)
+  const [massCallScheduling, setMassCallScheduling] = useState(false)
 
   useEffect(() => {
     const fetchUserVoiceId = async () => {
@@ -1465,6 +1477,462 @@ export default function CallPanel() {
     }
   }, [activeTab])
 
+  // Alusta massCallCallType kun callTypes ladataan
+  useEffect(() => {
+    if (callTypes.length > 0 && !massCallCallType) {
+      setMassCallCallType(callTypes[0].value)
+    }
+  }, [callTypes, massCallCallType])
+
+  // Massapuhelumodaalin funktiot
+  const handleMassCallValidate = async () => {
+    setMassCallValidating(true)
+    setMassCallError('')
+    setMassCallValidationResult(null)
+    try {
+      const user_id = user?.id
+
+      const res = await fetch('/api/validate-sheet', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sheetUrl: massCallSheetUrl, user_id })
+      })
+      
+      const data = await res.json()
+      
+      if (data.success) {
+        setMassCallValidationResult(data)
+        setMassCallStep(2) // Siirry seuraavalle sivulle
+      } else {
+        setMassCallError(data.error || 'Validointi epäonnistui')
+      }
+    } catch (e) {
+      console.error('❌ Mass call validate-sheet virhe:', e)
+      const errorMessage = e.response?.data?.error || 'Validointi epäonnistui'
+      setMassCallError(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage))
+    } finally {
+      setMassCallValidating(false)
+    }
+  }
+
+  const handleMassCallStart = async () => {
+    setMassCallStarting(true)
+    setMassCallError('')
+    try {
+      // Käytä backendin APIa massapuhelujen luontiin (ei suoria Supabase-kutsuja frontendista)
+      if (!massCallSheetUrl) throw new Error('Google Sheets URL puuttuu')
+      if (!massCallCallType) throw new Error('Puhelun tyyppi puuttuu')
+
+      const res = await fetch('/api/mass-call', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sheetUrl: massCallSheetUrl,
+          callType: massCallCallType,
+          voice: massCallSelectedVoice,
+          user_id: user?.id
+        })
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Massapuhelujen aloitus epäonnistui')
+      }
+
+      alert(`✅ Massapuhelut käynnistetty!\n\nLisätty: ${data.startedCalls ?? data.totalCalls ?? ''} puhelua`)
+      setShowMassCallModal(false)
+      setMassCallStep(1)
+      setMassCallSheetUrl('')
+      setMassCallValidationResult(null)
+      setMassCallCallType('')
+      setMassCallSelectedVoice('rascal-nainen-1')
+      fetchCallLogs()
+      return
+      // Käytä normaalia mass-call API:a Google Sheets -datalle
+      const user_id = user?.id
+
+      // Hae ensin public.users.id käyttäen auth_user_id:tä
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user_id)
+        .single()
+
+      if (userError || !userData) {
+        throw new Error('Käyttäjää ei löytynyt')
+      }
+
+      const publicUserId = userData.id
+
+      // Hae call_type_id call_types taulusta
+      const { data: callTypeData, error: callTypeError } = await supabase
+        .from('call_types')
+        .select('id')
+        .eq('name', massCallCallType)
+        .eq('user_id', publicUserId)
+        .single()
+
+      if (callTypeError || !callTypeData) {
+        throw new Error('Puhelun tyyppiä ei löytynyt')
+      }
+
+      const call_type_id = callTypeData.id
+
+      // Käytä massCallValidationResult.rows dataa ja lisää jokainen suoraan Supabaseen
+      if (!massCallValidationResult || !massCallValidationResult.rows) {
+        throw new Error('Validointi pitää suorittaa ensin')
+      }
+
+      const callLogs = []
+      let successCount = 0
+      let errorCount = 0
+
+      // Etsi sarakkeiden otsikot ensin
+      let nameColumn = null
+      let phoneColumn = null
+      let emailColumn = null
+      
+      // Etsi nimisarakkeen otsikko
+      for (const columnName of massCallValidationResult.columns || []) {
+        if (columnName.toLowerCase().includes('name') || 
+            columnName.toLowerCase().includes('nimi') ||
+            columnName.toLowerCase().includes('etunimi') ||
+            columnName.toLowerCase().includes('sukunimi')) {
+          nameColumn = columnName
+          break
+        }
+      }
+      
+      // Etsi puhelinnumerosarakkeen otsikko
+      for (const columnName of massCallValidationResult.columns || []) {
+        if (columnName.toLowerCase().includes('phone') || 
+            columnName.toLowerCase().includes('puhelin') || 
+            columnName.toLowerCase().includes('numero') ||
+            columnName.toLowerCase().includes('tel')) {
+          phoneColumn = columnName
+          break
+        }
+      }
+
+      // Etsi sähköpostisarakkeen otsikko (tiukempi tunnistus)
+      for (const columnName of massCallValidationResult.columns || []) {
+        const lower = String(columnName).toLowerCase().trim()
+        if (
+          lower === 'email' ||
+          lower === 'e-mail' ||
+          lower.includes('email') ||
+          lower.includes('sähköposti') ||
+          lower.includes('sahkoposti')
+        ) {
+          emailColumn = columnName
+          break
+        }
+      }
+      
+      if (!nameColumn || !phoneColumn) {
+        throw new Error('Vaadittuja sarakkeita ei löytynyt. Tarvitaan sekä nimisarakke että puhelinnumerosarakke.')
+      }
+
+      for (const [rowIndex, row] of (massCallValidationResult.rows || []).entries()) {
+        // Hae arvot sarakkeiden otsikoiden perusteella
+        const phoneNumber = normalizePhoneNumber(row[phoneColumn])
+        const name = row[nameColumn] ? row[nameColumn].trim() : null
+
+        // Lisää vain jos on sekä selkeä nimi että puhelinnumero
+        if (name && phoneNumber && name.trim() !== '' && phoneNumber.trim() !== '' && phoneNumber.startsWith('+358')) {
+          // Ota sähköposti sarakkeesta, validoi ja fallbackaa jos otsikkoa ei löytynyt
+          const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/i
+          let emailValue = null
+          if (emailColumn) {
+            const raw = row[emailColumn]
+            if (raw && emailRegex.test(String(raw).trim())) {
+              emailValue = String(raw).trim().toLowerCase().substring(0, 120)
+            }
+          } else {
+            // Fallback: etsi mikä tahansa sähköpostin näköinen arvo riviltä
+            for (const key of Object.keys(row)) {
+              const val = row[key]
+              if (val && emailRegex.test(String(val).trim())) {
+                emailValue = String(val).trim().toLowerCase().substring(0, 120)
+                break
+              }
+            }
+          }
+          // Hae valitun äänen id
+          const selectedVoiceObj = getVoiceOptions().find(v => v.value === massCallSelectedVoice)
+          const voiceId = selectedVoiceObj?.id
+          
+          callLogs.push({
+            user_id: publicUserId,
+            call_type_id: call_type_id,
+            customer_name: name,
+            phone_number: phoneNumber,
+            email: emailValue,
+            voice_id: voiceId,
+            call_status: 'pending',
+            call_date: new Date().toISOString().split('T')[0],
+            call_time: new Date().toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }),
+            answered: false,
+            duration: null,
+                          summary: `Mass-call: ${massCallCallType}`,  // Käytä summary saraketta notes sijaan
+            created_at: new Date().toISOString()
+          })
+        }
+      }
+
+      if (callLogs.length === 0) {
+        throw new Error('Ei kelvollisia puhelinnumeroita löytynyt')
+      }
+
+      // Lisää kaikki call_logs Supabaseen
+      const { error: insertError } = await supabase
+        .from('call_logs')
+        .insert(callLogs)
+
+      if (insertError) {
+        throw new Error('Puhelulokien lisäys epäonnistui: ' + insertError.message)
+      }
+
+      successCount = callLogs.length
+      
+      // Näytä onnistumisviesti ja sulje modaali
+      alert(`✅ Massapuhelut käynnistetty onnistuneesti!\n\nAloitettu: ${successCount} puhelua`)
+      setShowMassCallModal(false)
+      setMassCallStep(1)
+      setMassCallSheetUrl('')
+      setMassCallValidationResult(null)
+      setMassCallCallType('')
+      setMassCallSelectedVoice('rascal-nainen-1')
+      
+      // Päivitä puheluloki
+      fetchCallLogs()
+      
+    } catch (error) {
+      console.error('Mass call start error:', error)
+      setMassCallError(error.message)
+    } finally {
+      setMassCallStarting(false)
+    }
+  }
+
+  const handleMassCallSchedule = async () => {
+    setMassCallScheduling(true)
+    setMassCallError('')
+    try {
+      // Käytä backendin APIa ja välitä ajastus
+      if (!massCallSheetUrl) throw new Error('Google Sheets URL puuttuu')
+      if (!massCallCallType) throw new Error('Puhelun tyyppi puuttuu')
+      if (!massCallScheduledDate || !massCallScheduledTime) throw new Error('Ajastuksen päivä ja aika vaaditaan')
+
+      const res = await fetch('/api/mass-call', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sheetUrl: massCallSheetUrl,
+          callType: massCallCallType,
+          voice: massCallSelectedVoice,
+          user_id: user?.id,
+          scheduledDate: massCallScheduledDate,
+          scheduledTime: massCallScheduledTime
+        })
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Ajastuksen tallennus epäonnistui')
+      }
+
+      alert(`✅ Puhelut ajastettu!\n\nPäivä: ${massCallScheduledDate} klo ${massCallScheduledTime}\nYhteensä: ${data.startedCalls ?? data.totalCalls ?? ''} puhelua`)
+      setShowMassCallModal(false)
+      setMassCallStep(1)
+      setMassCallSheetUrl('')
+      setMassCallValidationResult(null)
+      setMassCallCallType('')
+      setMassCallSelectedVoice('rascal-nainen-1')
+      setMassCallScheduledDate('')
+      setMassCallScheduledTime('')
+      fetchCallLogs()
+      return
+      // Tallenna ajastetut puhelut call_logs tauluun
+      const user_id = user?.id
+
+      // Hae ensin public.users.id käyttäen auth_user_id:tä
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user_id)
+        .single()
+
+      if (userError || !userData) {
+        throw new Error('Käyttäjää ei löytynyt')
+      }
+
+      const publicUserId = userData.id
+
+      // Hae call_type_id call_types taulusta
+      const { data: callTypeData, error: callTypeError } = await supabase
+        .from('call_types')
+        .select('id')
+        .eq('name', massCallCallType)
+        .eq('user_id', publicUserId)
+        .single()
+
+      if (callTypeError || !callTypeData) {
+        throw new Error('Puhelun tyyppiä ei löytynyt')
+      }
+
+      const call_type_id = callTypeData.id
+
+      // Käytä massCallValidationResult.rows dataa ja lisää jokainen suoraan Supabaseen
+      if (!massCallValidationResult || !massCallValidationResult.rows) {
+        throw new Error('Validointi pitää suorittaa ensin')
+      }
+
+      const scheduledCallLogs = []
+      let successCount = 0
+
+      // Etsi sarakkeiden otsikot ensin
+      let nameColumn = null
+      let phoneColumn = null
+      let emailColumn = null
+      
+      // Etsi nimisarakkeen otsikko
+      for (const columnName of massCallValidationResult.columns || []) {
+        if (columnName.toLowerCase().includes('name') || 
+            columnName.toLowerCase().includes('nimi') ||
+            columnName.toLowerCase().includes('etunimi') ||
+            columnName.toLowerCase().includes('sukunimi')) {
+          nameColumn = columnName
+          break
+        }
+      }
+      
+      // Etsi puhelinnumerosarakkeen otsikko
+      for (const columnName of massCallValidationResult.columns || []) {
+        if (columnName.toLowerCase().includes('phone') || 
+            columnName.toLowerCase().includes('puhelin') || 
+            columnName.toLowerCase().includes('numero') ||
+            columnName.toLowerCase().includes('tel')) {
+          phoneColumn = columnName
+          break
+        }
+      }
+
+      // Etsi sähköpostisarakkeen otsikko (tiukempi tunnistus)
+      for (const columnName of massCallValidationResult.columns || []) {
+        const lower = String(columnName).toLowerCase().trim()
+        if (
+          lower === 'email' ||
+          lower === 'e-mail' ||
+          lower.includes('email') ||
+          lower.includes('sähköposti') ||
+          lower.includes('sahkoposti')
+        ) {
+          emailColumn = columnName
+          break
+        }
+      }
+      
+      if (!nameColumn || !phoneColumn) {
+        throw new Error('Vaadittuja sarakkeita ei löytynyt. Tarvitaan sekä nimisarakke että puhelinnumerosarakke.')
+      }
+
+      for (const [rowIndex, row] of (massCallValidationResult.rows || []).entries()) {
+        // Hae arvot sarakkeiden otsikoiden perusteella
+        const phoneNumber = normalizePhoneNumber(row[phoneColumn])
+        const name = row[nameColumn] ? row[nameColumn].trim() : null
+
+        // Lisää vain jos on sekä selkeä nimi että puhelinnumero
+        if (name && phoneNumber && name.trim() !== '' && phoneNumber.trim() !== '' && phoneNumber.startsWith('+358')) {
+          // Ota sähköposti sarakkeesta, validoi ja fallbackaa jos otsikkoa ei löytynyt
+          const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/i
+          let emailValue = null
+          if (emailColumn) {
+            const raw = row[emailColumn]
+            if (raw && emailRegex.test(String(raw).trim())) {
+              emailValue = String(raw).trim().toLowerCase().substring(0, 120)
+            }
+          } else {
+            // Fallback: etsi mikä tahansa sähköpostin näköinen arvo riviltä
+            for (const key of Object.keys(row)) {
+              const val = row[key]
+              if (val && emailRegex.test(String(val).trim())) {
+                emailValue = String(val).trim().toLowerCase().substring(0, 120)
+                break
+              }
+            }
+          }
+          // Hae valitun äänen id
+          const selectedVoiceObj = getVoiceOptions().find(v => v.value === massCallSelectedVoice)
+          const voiceId = selectedVoiceObj?.id
+          
+          scheduledCallLogs.push({
+            user_id: publicUserId,
+            call_type_id: call_type_id,
+            customer_name: name,
+            phone_number: phoneNumber,
+            email: emailValue,
+            voice_id: voiceId,
+            call_status: 'pending',
+            call_date: massCallScheduledDate,        // AJASTETTU päivämäärä
+            call_time: massCallScheduledTime,        // AJASTETTU kellonaika
+            answered: false,
+            duration: null,
+            summary: `Scheduled mass-call: ${massCallCallType}`,  // Käytä summary saraketta notes sijaan
+            created_at: new Date().toISOString()
+          })
+        }
+      }
+
+      if (scheduledCallLogs.length === 0) {
+        throw new Error('Ei kelvollisia puhelinnumeroita löytynyt')
+      }
+
+      // Lisää kaikki ajastetut puhelut call_logs tauluun
+      const { error: insertError } = await supabase
+        .from('call_logs')
+        .insert(scheduledCallLogs)
+
+      if (insertError) {
+        throw new Error('Ajastettujen puhelujen lisäys epäonnistui: ' + insertError.message)
+      }
+
+      successCount = scheduledCallLogs.length
+      
+      // Näytä onnistumisviesti ja sulje modaali
+      alert(`✅ Puhelut ajastettu onnistuneesti!\n\nAjastettu: ${massCallScheduledDate} klo ${massCallScheduledTime}\n\nYhteensä: ${successCount} puhelua`)
+      setShowMassCallModal(false)
+      setMassCallStep(1)
+      setMassCallSheetUrl('')
+      setMassCallValidationResult(null)
+      setMassCallCallType('')
+      setMassCallSelectedVoice('rascal-nainen-1')
+      setMassCallScheduledDate('')
+      setMassCallScheduledTime('')
+      
+      // Päivitä puheluloki
+      fetchCallLogs()
+      
+    } catch (error) {
+      console.error('Mass call schedule error:', error)
+      setMassCallError(error.message)
+    } finally {
+      setMassCallScheduling(false)
+    }
+  }
+
+  const resetMassCallModal = () => {
+    setShowMassCallModal(false)
+    setMassCallStep(1)
+    setMassCallSheetUrl('')
+    setMassCallValidationResult(null)
+    setMassCallError('')
+    setMassCallCallType(callTypes.length > 0 ? callTypes[0].value : '')
+    setMassCallSelectedVoice('rascal-nainen-1')
+    setMassCallScheduledDate('')
+    setMassCallScheduledTime('')
+  }
+
   return (
     <>
       <PageMeta 
@@ -1526,54 +1994,16 @@ export default function CallPanel() {
             {(
               <div className="card">
               <h2 className="section-title">Aloita massapuhelut</h2>
-              <div style={{ marginBottom: 10 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                  <label className="label">Google Sheets URL</label>
+              <p style={{ color: '#6b7280', marginBottom: 20, fontSize: 15 }}>
+                Aloita massapuhelut Google Sheets -datalle tai ajasta ne myöhemmäksi.
+              </p>
                   <Button
-                    variant="secondary"
-                    onClick={() => setActiveTab('manage')}
-                    style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
-                  >
-                    ➕ Lisää puhelun tyyppi
-                  </Button>
-                </div>
-                <input type="url" value={sheetUrl} onChange={e => setSheetUrl(e.target.value)} placeholder="https://docs.google.com/spreadsheets/d/..." className="input" />
-              </div>
-              <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                <Button
-                  onClick={handleValidate}
-                  disabled={validating || !sheetUrl}
-                  variant="secondary"
-                  style={{ flex: 1 }}
-                >
-                  {validating ? 'Validoidaan...' : 'Validoi'}
-                </Button>
-                <Button
-                  onClick={handleStartCalls}
-                  disabled={starting || !validationResult || !callType || !script.trim() || !selectedVoice}
+                onClick={() => setShowMassCallModal(true)}
                   variant="primary"
-                  style={{ flex: 1 }}
+                style={{ width: '100%', padding: '16px 24px', fontSize: 16, fontWeight: 600 }}
                 >
-                  {starting ? 'Käynnistetään...' : 'Aloita soitot'}
+                🚀 Aloita massapuhelut
                 </Button>
-              </div>
-              <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 2 }}>
-                Käyttää Toiminnot-moduulin asetuksia (tyyppi, ääni, skripti)
-              </div>
-              {error && <div className="status-error">{error}</div>}
-              {validationResult && (
-                <div className="status-success">
-                  <div style={{ fontWeight: 600 }}>✅ Validointi onnistui!</div>
-                  <div>📈 <strong>Löydetty {validationResult.phoneCount} puhelinnumeroa</strong></div>
-                  {validationResult.emailCount > 0 && (
-                    <div>📧 <strong>Löydetty {validationResult.emailCount} sähköpostia</strong></div>
-                  )}
-                  {validationResult.totalRows > 0 && <div>📋 Yhteensä {validationResult.totalRows} riviä</div>}
-                  {validationResult.phoneColumns && validationResult.phoneColumns.length > 0 && <div>📞 Puhelinnumerosarakkeet: {validationResult.phoneColumns.join(', ')}</div>}
-                  {validationResult.emailColumns && validationResult.emailColumns.length > 0 && <div>📧 Sähköpostisarakkeet: {validationResult.emailColumns.join(', ')}</div>}
-                  {validationResult.columns && validationResult.columns.length > 0 && <div>📝 Kaikki sarakkeet: {validationResult.columns.join(', ')}</div>}
-                </div>
-              )}
             </div>
             )}
             
@@ -3036,7 +3466,252 @@ export default function CallPanel() {
           document.body
         )}
         
-
+        {/* Massapuhelumodaali */}
+        {showMassCallModal && createPortal(
+          <div 
+            onClick={resetMassCallModal}
+            className="modal-overlay modal-overlay--dark"
+          >
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              className="modal-container"
+              style={{ maxWidth: '600px' }}
+            >
+              <div className="modal-header">
+                <h2 className="modal-title" style={{ fontSize: 22 }}>
+                  🚀 Massapuhelut
+                </h2>
+                <Button
+                  onClick={resetMassCallModal}
+                  variant="secondary"
+                  className="modal-close-btn"
+                >
+                  ✕
+                </Button>
+              </div>
+              
+              <div className="modal-body">
+                {/* Vaihe 1: Google Sheets validointi */}
+                {massCallStep === 1 && (
+                  <div>
+                    <div style={{ marginBottom: 20 }}>
+                      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937' }}>
+                        📊 Vaihe 1: Google Sheets -data
+                      </h3>
+                      <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 16 }}>
+                        Syötä Google Sheets URL ja validoi data ennen jatkamista.
+                      </p>
+                    </div>
+                    
+                    <label className="label">Google Sheets URL</label>
+                    <input 
+                      type="url" 
+                      value={massCallSheetUrl} 
+                      onChange={e => setMassCallSheetUrl(e.target.value)} 
+                      placeholder="https://docs.google.com/spreadsheets/d/..." 
+                      className="input" 
+                      style={{ width: '100%', marginBottom: 16 }}
+                    />
+                    
+                    {massCallError && (
+                      <div className="status-error" style={{ marginBottom: 16 }}>
+                        {massCallError}
+                      </div>
+                    )}
+                    
+                    <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+                      <Button
+                        onClick={resetMassCallModal}
+                        variant="secondary"
+                      >
+                        Peruuta
+                      </Button>
+                      <Button
+                        onClick={handleMassCallValidate}
+                        disabled={massCallValidating || !massCallSheetUrl}
+                        variant="primary"
+                      >
+                        {massCallValidating ? 'Validoidaan...' : 'Validoi ja jatka'}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Vaihe 2: Puhelun tyyppi ja ääni */}
+                {massCallStep === 2 && (
+                  <div>
+                    <div style={{ marginBottom: 20 }}>
+                      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937' }}>
+                        ⚙️ Vaihe 2: Puhelun asetukset
+                      </h3>
+                      <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 16 }}>
+                        Valitse puhelun tyyppi ja ääni.
+                      </p>
+                      
+                      {massCallValidationResult && (
+                        <div className="status-success" style={{ marginBottom: 16 }}>
+                          <div style={{ fontWeight: 600 }}>✅ Validointi onnistui!</div>
+                          <div>📈 <strong>Löydetty {massCallValidationResult.phoneCount} puhelinnumeroa</strong></div>
+                          {massCallValidationResult.emailCount > 0 && (
+                            <div>📧 <strong>Löydetty {massCallValidationResult.emailCount} sähköpostia</strong></div>
+                          )}
+                          {massCallValidationResult.totalRows > 0 && <div>📋 Yhteensä {massCallValidationResult.totalRows} riviä</div>}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <label className="label">Puhelun tyyppi</label>
+                    <select 
+                      value={massCallCallType} 
+                      onChange={e => setMassCallCallType(e.target.value)}
+                      className="select"
+                      style={{ width: '100%', marginBottom: 16 }}
+                    >
+                      <option value="">Valitse puhelun tyyppi...</option>
+                      {callTypes.map(type => (
+                        <option key={type.value} value={type.value}>
+                          {type.label}
+                        </option>
+                      ))}
+                    </select>
+                    
+                    <label className="label">Ääni</label>
+                    <select 
+                      value={massCallSelectedVoice} 
+                      onChange={e => setMassCallSelectedVoice(e.target.value)}
+                      className="select"
+                      style={{ width: '100%', marginBottom: 16 }}
+                    >
+                      {getVoiceOptions().map(voice => (
+                        <option key={voice.value} value={voice.value}>
+                          {voice.label}
+                        </option>
+                      ))}
+                    </select>
+                    
+                    <div style={{ display: 'flex', gap: 12, justifyContent: 'space-between' }}>
+                      <Button
+                        onClick={() => setMassCallStep(1)}
+                        variant="secondary"
+                      >
+                        ← Takaisin
+                      </Button>
+                      <Button
+                        onClick={() => setMassCallStep(3)}
+                        disabled={!massCallCallType || !massCallSelectedVoice}
+                        variant="primary"
+                      >
+                        Jatka →
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Vaihe 3: Ajastus tai aloitus */}
+                {massCallStep === 3 && (
+                  <div>
+                    <div style={{ marginBottom: 20 }}>
+                      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937' }}>
+                        🎯 Vaihe 3: Aloita tai ajasta puhelut
+                      </h3>
+                      <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 16 }}>
+                        Valitse haluatko aloittaa puhelut heti vai ajastaa ne myöhemmäksi.
+                      </p>
+                    </div>
+                    
+                    <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+                      <Button
+                        onClick={handleMassCallStart}
+                        disabled={massCallStarting}
+                        variant="primary"
+                        style={{ flex: 1, padding: '16px 24px', fontSize: 16, fontWeight: 600 }}
+                      >
+                        {massCallStarting ? 'Käynnistetään...' : '🚀 Aloita heti'}
+                      </Button>
+                    </div>
+                    
+                    <div style={{ 
+                      borderTop: '1px solid #e5e7eb', 
+                      paddingTop: 20, 
+                      marginTop: 20 
+                    }}>
+                      <h4 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12, color: '#374151' }}>
+                        📅 Tai ajasta puhelut
+                      </h4>
+                      
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
+                        <div>
+                          <label className="label">Päivämäärä</label>
+                          <input 
+                            type="date" 
+                            value={massCallScheduledDate} 
+                            onChange={e => setMassCallScheduledDate(e.target.value)}
+                            className="input"
+                            min={new Date().toISOString().split('T')[0]}
+                          />
+                        </div>
+                        <div>
+                          <label className="label">Kellonaika</label>
+                          <div style={{ display: 'flex', gap: 8 }}>
+                            <select
+                              className="select"
+                              value={(massCallScheduledTime || '').split(':')[0] || ''}
+                              onChange={e => {
+                                const hour = String(e.target.value || '').padStart(2, '0')
+                                const minute = (massCallScheduledTime || '').split(':')[1] || '00'
+                                const mm = parseInt(minute, 10) >= 30 ? '30' : '00'
+                                setMassCallScheduledTime(hour ? `${hour}:${mm}` : '')
+                              }}
+                              style={{ flex: 1 }}
+                            >
+                              <option value="">--</option>
+                              {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map(hh => (
+                                <option key={hh} value={hh}>{hh}</option>
+                              ))}
+                            </select>
+                            <select
+                              className="select"
+                              value={(massCallScheduledTime || '').split(':')[1] || ''}
+                              onChange={e => {
+                                const minute = e.target.value === '30' ? '30' : '00'
+                                const hour = (massCallScheduledTime || '').split(':')[0] || ''
+                                setMassCallScheduledTime(hour ? `${String(hour).padStart(2, '0')}:${minute}` : '')
+                              }}
+                              style={{ width: 100 }}
+                            >
+                              <option value="">--</option>
+                              <option value="00">00</option>
+                              <option value="30">30</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <Button
+                        onClick={handleMassCallSchedule}
+                        disabled={massCallScheduling || !massCallScheduledDate || !massCallScheduledTime}
+                        variant="secondary"
+                        style={{ width: '100%', padding: '12px 24px' }}
+                      >
+                        {massCallScheduling ? 'Ajastetaan...' : '📅 Ajasta puhelut'}
+                      </Button>
+                    </div>
+                    
+                    <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-start', marginTop: 20 }}>
+                      <Button
+                        onClick={() => setMassCallStep(2)}
+                        variant="secondary"
+                      >
+                        ← Takaisin
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
       </>
     </div>
     </>

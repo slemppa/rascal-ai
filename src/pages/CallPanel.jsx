@@ -141,6 +141,10 @@ export default function CallPanel() {
   const [massCallScheduledTime, setMassCallScheduledTime] = useState('')
   const [massCallStarting, setMassCallStarting] = useState(false)
   const [massCallScheduling, setMassCallScheduling] = useState(false)
+  
+  // Yksittäisen puhelun modaali
+  const [showSingleCallModal, setShowSingleCallModal] = useState(false)
+  const [singleCallStep, setSingleCallStep] = useState(1) // 1: tyyppi/ääni, 2: tiedot
 
   useEffect(() => {
     const fetchUserVoiceId = async () => {
@@ -2017,28 +2021,19 @@ export default function CallPanel() {
             
             {/* Mika Special - VIP-kortti poistettu pyynnöstä */}
             
-            {/* Tee puhelu -kortti */}
+            {/* Tee puhelu -kortti: nappi avaa modaalin */}
             <div className="card">
               <h2 className="section-title">Soita yksittäinen puhelu</h2>
-              <label className="label">Nimi</label>
-              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Matti Meikäläinen" className="input" />
-              <label className="label">Puhelinnumero</label>
-              <input type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="+358 40 123 4567" className="input" />
+              <p style={{ color: '#6b7280', marginBottom: 20, fontSize: 15 }}>
+                Valitse puhelun tyyppi ja tiedot modaalissa.
+              </p>
               <Button
-                onClick={handleSingleCall}
-                disabled={calling || !name.trim() || !phoneNumber.trim() || !callType || !script.trim() || !selectedVoice}
+                onClick={() => { setShowSingleCallModal(true); setSingleCallStep(1) }}
                 variant="primary"
+                style={{ width: '100%', padding: '16px 24px', fontSize: 16, fontWeight: 600 }}
               >
-                {calling ? '📞 Soittaa...' : '📞 Soita'}
+                📞 Soita yksittäinen puhelu
               </Button>
-              <div style={{ fontSize: 13, color: '#6b7280', marginTop: 2 }}>
-                Käyttää Toiminnot-moduulin asetuksia (tyyppi, ääni, skripti)
-              </div>
-              {singleCallError && (
-                <div className="status-error">
-                  {singleCallError}
-                </div>
-              )}
             </div>
             {/* Toiminnot -kortti */}
             <div className="card">
@@ -3713,6 +3708,96 @@ export default function CallPanel() {
                         ← Takaisin
                       </Button>
                     </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
+
+        {/* Yksittäisen puhelun modaali */}
+        {showSingleCallModal && createPortal(
+          <div 
+            onClick={() => { setShowSingleCallModal(false); setSingleCallStep(1) }}
+            className="modal-overlay modal-overlay--dark"
+          >
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              className="modal-container"
+              style={{ maxWidth: '560px' }}
+            >
+              <div className="modal-header">
+                <h2 className="modal-title" style={{ fontSize: 22 }}>
+                  📞 Yksittäinen puhelu
+                </h2>
+                <Button
+                  onClick={() => { setShowSingleCallModal(false); setSingleCallStep(1) }}
+                  variant="secondary"
+                  className="modal-close-btn"
+                >
+                  ✕
+                </Button>
+              </div>
+
+              <div className="modal-body">
+                {singleCallStep === 1 && (
+                  <div>
+                    <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937' }}>⚙️ Vaihe 1: Puhelun asetukset</h3>
+                    <label className="label">Puhelun tyyppi</label>
+                    <select 
+                      value={callType} 
+                      onChange={e => { setCallType(e.target.value); updateScriptFromCallType(e.target.value) }} 
+                      className="select"
+                      style={{ width: '100%', marginBottom: 16 }}
+                    >
+                      <option value="">Valitse puhelun tyyppi...</option>
+                      {callTypes.map(type => (
+                        <option key={type.value} value={type.value}>{type.label}</option>
+                      ))}
+                    </select>
+
+                    <label className="label">Ääni</label>
+                    <select 
+                      value={selectedVoice} 
+                      onChange={e => setSelectedVoice(e.target.value)}
+                      className="select"
+                      style={{ width: '100%', marginBottom: 16 }}
+                    >
+                      {getVoiceOptions().map(voice => (
+                        <option key={voice.value} value={voice.value}>{voice.label}</option>
+                      ))}
+                    </select>
+
+                    <div style={{ display: 'flex', gap: 12, justifyContent: 'space-between' }}>
+                      <Button onClick={() => { setShowSingleCallModal(false); setSingleCallStep(1) }} variant="secondary">Peruuta</Button>
+                      <Button onClick={() => setSingleCallStep(2)} disabled={!callType || !selectedVoice} variant="primary">Jatka →</Button>
+                    </div>
+                  </div>
+                )}
+
+                {singleCallStep === 2 && (
+                  <div>
+                    <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937' }}>👤 Vaihe 2: Asiakkaan tiedot</h3>
+                    <label className="label">Nimi</label>
+                    <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Matti Meikäläinen" className="input" />
+                    <label className="label">Puhelinnumero</label>
+                    <input type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="040 123 4567 tai +358401234567" className="input" />
+
+                    <div style={{ color: '#6b7280', fontSize: 13, margin: '6px 0 12px' }}>
+                      Skripti: {script ? <span style={{ color: '#111827' }}>{script.slice(0, 140)}{script.length > 140 ? '…' : ''}</span> : 'Valitse puhelun tyyppi niin skripti tulee näkyviin.'}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: 12, justifyContent: 'space-between' }}>
+                      <Button onClick={() => setSingleCallStep(1)} variant="secondary">← Takaisin</Button>
+                      <Button onClick={handleSingleCall} disabled={calling || !name.trim() || !phoneNumber.trim() || !callType || !script.trim() || !selectedVoice} variant="primary">
+                        {calling ? '📞 Soittaa…' : '📞 Soita'}
+                      </Button>
+                    </div>
+
+                    {singleCallError && (
+                      <div className="status-error" style={{ marginTop: 8 }}>{singleCallError}</div>
+                    )}
                   </div>
                 )}
               </div>

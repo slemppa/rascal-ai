@@ -296,10 +296,17 @@ export default async function handler(req, res) {
         }
         
         if (phoneNumber) {
+          // Normalisoi suomalainen numero: 050... -> +35850..., 00358... -> +358..., 358... -> +358...
+          const normalized = normalizeFinnishPhone(String(phoneNumber))
+          const isValidFinn = normalized ? /^\+358\d{7,11}$/.test(normalized) : false
+          if (!isValidFinn) {
+            errorCount++
+            continue
+          }
           callLogs.push({
             user_id: publicUserId, // Käytä public.users.id
             customer_name: name,
-            phone_number: phoneNumber,
+            phone_number: normalized,
             email: email, // Lisää sähköposti
             call_type: callType, // Teksti "Toiminnot" kentästä
             call_type_id: call_type_id, // ID call_types taulusta
@@ -373,3 +380,32 @@ function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(email)
 } 
+
+// Normalisoi suomalaiset puhelinnumerot yhtenäiseen muotoon +358...
+function normalizeFinnishPhone(input) {
+  if (!input) return null
+  let x = String(input).trim()
+  // Poista välilyönnit ja yhdysmerkit
+  x = x.replace(/[\s-]/g, '')
+  // Korvaa alkunolla +358:lla: 050... -> +35850...
+  if (/^0\d+/.test(x)) {
+    return '+358' + x.slice(1)
+  }
+  // 00358... -> +358...
+  if (x.startsWith('00358')) {
+    return '+358' + x.slice(5)
+  }
+  // 358... -> +358...
+  if (x.startsWith('358')) {
+    return '+358' + x.slice(3)
+  }
+  // Jos alkaa jo +, varmista että +358...
+  if (x.startsWith('+358')) return x
+  // Muut maat: palauta sellaisenaan, tai null jos ei numeroita
+  if (x.startsWith('+')) return x
+  // Viimeinen yritys: jos pelkkiä numeroita ja pituus näyttää suomalaiselta (9-12), lisää +358
+  if (/^\d{7,12}$/.test(x)) {
+    return '+358' + (x.startsWith('0') ? x.slice(1) : x)
+  }
+  return null
+}

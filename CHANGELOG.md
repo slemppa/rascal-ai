@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.36.0](https://github.com/slemppa/rascal-ai/compare/v1.35.0...v1.36.0) (2025-08-15)
+
+
+### 🐛 Bug Fixes
+
+* **api:** allow anon key with user token; ui: send Authorization ([9cb3cd6](https://github.com/slemppa/rascal-ai/commit/9cb3cd609756a2603a130a8f6c049728d0442caa))
+* **api:** create Supabase client lazily with service or anon+token ([1608b43](https://github.com/slemppa/rascal-ai/commit/1608b4376ddbd0dd5793775cb2d3247f4ba84c53))
+* **api:** fallback to NEXT_PUBLIC_SUPABASE_URL; env diagnostics ([0353d33](https://github.com/slemppa/rascal-ai/commit/0353d332bda0474c5a14057204d4661da30daaf8))
+* **api:** robust CSV fetch for Google Sheets (gid, timeout) ([4058eb2](https://github.com/slemppa/rascal-ai/commit/4058eb21ebf1a2df6ce092e40d251d5694b7a65d))
+* **api:** use SUPABASE_URL fallback; send voice_id; round time ([15a64d1](https://github.com/slemppa/rascal-ai/commit/15a64d18424e00754dd050a0600616c6752bd999))
+
+
+### ✨ Features
+
+* **calls:** single-call modal flow; phone normalization ([6a4dc87](https://github.com/slemppa/rascal-ai/commit/6a4dc8725fee1503711561fe381b7a5bba8dfe07))
+
 ## [1.35.0](https://github.com/slemppa/rascal-ai/compare/v1.34.0...v1.35.0) (2025-08-15)
 
 

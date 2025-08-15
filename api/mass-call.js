@@ -112,17 +112,70 @@ export default async function handler(req, res) {
     }
 
     const sheetId = match[1]
-    // Huom: käytetään samoja parametreja kuin aiemmin toiminut toteutus
-    const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`
+    // Poimi gid, jos annettu. Muuten yritä ilman gid-paramia ja varalla gid=0
+    const gidMatch = sheetUrl.match(/[?&#]gid=(\d+)/)
+    const gid = gidMatch ? gidMatch[1] : null
+    const candidateUrls = gid
+      ? [
+          `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`
+        ]
+      : [
+          `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`,
+          `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`
+        ]
 
     // Hae tiedot Google Sheets -tiedostosta
     try {
-      const csvResponse = await fetch(csvUrl)
-      if (!csvResponse.ok) {
-        throw new Error(`CSV-haku epäonnistui: ${csvResponse.status}`)
+      // Sama kestävä haku kuin validate-sheet: yritä useampaa URL:ia ja vältä HTML-redirectteja
+      const attemptFetchCsv = async (url) => {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 12000)
+        try {
+          const response = await fetch(url, {
+            headers: {
+              'User-Agent': 'RascalAI/1.0 (+https://rascal-ai)',
+              'Accept': 'text/csv, */*'
+            },
+            signal: controller.signal
+          })
+          const contentType = response.headers.get('content-type') || ''
+          const text = await response.text()
+          return {
+            ok: response.ok,
+            status: response.status,
+            contentType,
+            text,
+            isHtml: contentType.includes('text/html') || text.trim().startsWith('<')
+          }
+        } finally {
+          clearTimeout(timeoutId)
+        }
       }
-      
-      const csvText = await csvResponse.text()
+
+      let csvText = null
+      let lastStatus = null
+      for (const url of candidateUrls) {
+        const result = await attemptFetchCsv(url)
+        lastStatus = result.status
+        if (result.ok && !result.isHtml) {
+          csvText = result.text
+          break
+        }
+      }
+
+      if (csvText === null) {
+        if (lastStatus === 403) {
+          return res.status(400).json({ error: 'Pääsy estetty (403) – jaa Google Sheets julkiseksi (Anyone with the link can view).' })
+        }
+        if (lastStatus === 404) {
+          return res.status(400).json({ error: 'Välilehteä ei löytynyt (404). Varmista oikea gid-parameteri.' })
+        }
+        if (lastStatus && lastStatus >= 500) {
+          return res.status(502).json({ error: 'Google palautti virheen (5xx). Yritä hetken kuluttua.' })
+        }
+        return res.status(500).json({ error: 'CSV-haku epäonnistui.' })
+      }
+
       const lines = csvText.split('\n').filter(line => line.trim())
       
       if (lines.length === 0) {

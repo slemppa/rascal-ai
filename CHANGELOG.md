@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.35.0](https://github.com/slemppa/rascal-ai/compare/v1.34.0...v1.35.0) (2025-08-15)
+
+
+### 🐛 Bug Fixes
+
+* korjaa admin paneelin Viestit-tabin virheenkäsittelyn ([0c16e98](https://github.com/slemppa/rascal-ai/commit/0c16e981ba3b598a00feb21acb612ef4a9330e61))
+* korjaa admin-message-logs API sarakkeet ([6bad3b4](https://github.com/slemppa/rascal-ai/commit/6bad3b4746352f61b14e20095eb12a0a1e37ea47))
+
+
+### ✨ Features
+
+* **calls:** use backend for mass-calls; enforce 00/30 scheduling ([32bc02c](https://github.com/slemppa/rascal-ai/commit/32bc02c8566385a03a6687beda3034d114a32926))
+
 ## [1.34.0](https://github.com/slemppa/rascal-ai/compare/v1.33.2...v1.34.0) (2025-08-14)
 
 

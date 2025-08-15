@@ -1526,9 +1526,11 @@ export default function CallPanel() {
       if (!massCallCallType) throw new Error('Puhelun tyyppi puuttuu')
 
       const selectedVoiceObj = getVoiceOptions().find(v => v.value === massCallSelectedVoice)
+      const session = await supabase.auth.getSession()
+      const token = session?.data?.session?.access_token
       const res = await fetch('/api/mass-call', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
         body: JSON.stringify({
           sheetUrl: massCallSheetUrl,
           callType: massCallCallType,
@@ -1728,9 +1730,11 @@ export default function CallPanel() {
       if (!massCallScheduledDate || !massCallScheduledTime) throw new Error('Ajastuksen päivä ja aika vaaditaan')
 
       const selectedVoiceObj2 = getVoiceOptions().find(v => v.value === massCallSelectedVoice)
+      const session2 = await supabase.auth.getSession()
+      const token2 = session2?.data?.session?.access_token
       const res = await fetch('/api/mass-call', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(token2 ? { Authorization: `Bearer ${token2}` } : {}) },
         body: JSON.stringify({
           sheetUrl: massCallSheetUrl,
           callType: massCallCallType,

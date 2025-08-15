@@ -1,18 +1,22 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.SUPABASE_URL 
-  || process.env.VITE_SUPABASE_URL 
-  || process.env.NEXT_PUBLIC_SUPABASE_URL
+  || process.env.NEXT_PUBLIC_SUPABASE_URL 
+  || process.env.VITE_SUPABASE_URL
+// Käytä ensin service role -avainta; jos puuttuu, käytetään anon key:tä ja pyydetään Authorization header käyttäjältä
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY 
   || process.env.SUPABASE_SERVICE_KEY
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY 
+  || process.env.VITE_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseServiceKey) {
+if (!supabaseUrl || (!supabaseServiceKey && !supabaseAnonKey)) {
   console.error('❌ Missing Supabase envs in mass-call', {
     has_SUPABASE_URL: Boolean(process.env.SUPABASE_URL),
     has_VITE_SUPABASE_URL: Boolean(process.env.VITE_SUPABASE_URL),
     has_NEXT_PUBLIC_SUPABASE_URL: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
     has_SERVICE_ROLE_KEY: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
-    has_SERVICE_KEY: Boolean(process.env.SUPABASE_SERVICE_KEY)
+    has_SERVICE_KEY: Boolean(process.env.SUPABASE_SERVICE_KEY),
+    has_ANON: Boolean(supabaseAnonKey)
   })
   throw new Error('Missing Supabase environment variables')
 }
@@ -27,8 +31,16 @@ export default async function handler(req, res) {
 
   try {
     const { sheetUrl, callType, script, voice, voice_id, user_id, scheduledDate, scheduledTime } = req.body
+    const access_token = req.headers['authorization']?.replace('Bearer ', '')
 
-    console.log('🔍 Mass-call endpoint sai dataa:', { sheetUrl, callType, scriptExists: Boolean(script), voice, voice_idExists: Boolean(voice_id), user_id, scheduledDate, scheduledTime })
+    console.log('🔍 Mass-call endpoint sai dataa:', { sheetUrl, callType, scriptExists: Boolean(script), voice, voice_idExists: Boolean(voice_id), user_id, scheduledDate, scheduledTime, hasAccessToken: Boolean(access_token), usingServiceRole: Boolean(supabaseServiceKey) })
+
+    // Luo Supabase client
+    const supabase = createClient(
+      supabaseUrl,
+      supabaseServiceKey || supabaseAnonKey,
+      access_token && !supabaseServiceKey ? { global: { headers: { Authorization: `Bearer ${access_token}` } } } : undefined
+    )
 
     // Validointi
     if (!sheetUrl || !sheetUrl.trim()) {

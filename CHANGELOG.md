@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.37.0](https://github.com/slemppa/rascal-ai/compare/v1.36.0...v1.37.0) (2025-08-17)
+
+
+### 📚 Documentation
+
+* **help:** update calls section for new modal flows and scheduling ([6a598fb](https://github.com/slemppa/rascal-ai/commit/6a598fbf23a85e81c5e26e077afd11fe2ac1242d))
+
+
+### ✨ Features
+
+* **calls:** CSV-filtterit, pending-toiminnot ja UI-korjaukset ([7e04a05](https://github.com/slemppa/rascal-ai/commit/7e04a053115250e844f0f68b4595ce5e0a914354))
+
 ## [1.36.0](https://github.com/slemppa/rascal-ai/compare/v1.35.0...v1.36.0) (2025-08-15)
 
 

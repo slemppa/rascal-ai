@@ -30,10 +30,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { sheetUrl, callType, script, voice, voice_id, user_id, scheduledDate, scheduledTime } = req.body
+    const { sheetUrl, callType, script, voice, voice_id, user_id, scheduledDate, scheduledTime, sms_first } = req.body
     const access_token = req.headers['authorization']?.replace('Bearer ', '')
 
-    console.log('🔍 Mass-call endpoint sai dataa:', { sheetUrl, callType, scriptExists: Boolean(script), voice, voice_idExists: Boolean(voice_id), user_id, scheduledDate, scheduledTime, hasAccessToken: Boolean(access_token), usingServiceRole: Boolean(supabaseServiceKey) })
+    console.log('🔍 Mass-call endpoint sai dataa:', { sheetUrl, callType, scriptExists: Boolean(script), voice, voice_idExists: Boolean(voice_id), user_id, scheduledDate, scheduledTime, sms_first: Boolean(sms_first), hasAccessToken: Boolean(access_token), usingServiceRole: Boolean(supabaseServiceKey) })
 
     // Luo Supabase client
     const supabase = createClient(
@@ -315,7 +315,8 @@ export default async function handler(req, res) {
             call_time: effectiveTime,
             call_status: 'pending',
             campaign_id: `mass-call-${Date.now()}`,
-            summary: script && script.trim() ? `Mass-call: ${script.trim().substring(0, 100)}...` : `Mass-call: ${callType}`
+            summary: script && script.trim() ? `Mass-call: ${script.trim().substring(0, 100)}...` : `Mass-call: ${callType}`,
+            sms_first: Boolean(sms_first)
           })
         } else {
           errorCount++

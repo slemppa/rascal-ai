@@ -28,6 +28,7 @@ import PricingPage from './pages/PricingPage'
 import FeaturesPage from './pages/FeaturesPage'
 import ContactPage from './pages/ContactPage'
 import BlogNewsletterPage from './pages/BlogNewsletterPage'
+// MixpostAnalyticsDashboard poistettu
 
 
 export default function App() {
@@ -59,6 +60,7 @@ export default function App() {
             </div>
           </div>
         } />
+        {/* /mixpost-analytics reitti poistettu */}
         <Route path="/posts" element={
           <div className="app-layout">
             <Sidebar />

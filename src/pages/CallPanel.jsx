@@ -18,7 +18,6 @@ export default function CallPanel() {
   // Kovakoodatut tarkistukset
   const isMika = user?.email === 'mika.jarvinen@kuudesaisti.fi'
   const isAdmin = user?.email === 'sami@mak8r.fi'
-  const showTextMessagesTab = user?.email === 'mikko@varapuu.fi'
   const [sheetUrl, setSheetUrl] = useState('')
   const [validating, setValidating] = useState(false)
   const [validationResult, setValidationResult] = useState(null)
@@ -78,6 +77,7 @@ export default function CallPanel() {
   const [callLogs, setCallLogs] = useState([])
   const [loadingCallLogs, setLoadingCallLogs] = useState(false)
   const [callLogsError, setCallLogsError] = useState('')
+  const [updatingLogIds, setUpdatingLogIds] = useState({})
   
   // Viestilokin state-muuttujat
   const [messageLogs, setMessageLogs] = useState([])
@@ -141,6 +141,7 @@ export default function CallPanel() {
   const [massCallScheduledTime, setMassCallScheduledTime] = useState('')
   const [massCallStarting, setMassCallStarting] = useState(false)
   const [massCallScheduling, setMassCallScheduling] = useState(false)
+  const [massCallSmsFirst, setMassCallSmsFirst] = useState(false)
   
   // Yksittäisen puhelun modaali
   const [showSingleCallModal, setShowSingleCallModal] = useState(false)
@@ -688,7 +689,7 @@ export default function CallPanel() {
   }
 
   const [deletingCallTypes, setDeletingCallTypes] = useState(new Set())
-  
+
   const handleDeleteCallType = async (recordId) => {
     if (!confirm('Haluatko varmasti poistaa tämän puhelun tyypin?')) {
       return
@@ -1123,6 +1124,47 @@ export default function CallPanel() {
     }
   }
 
+  // Päivitä pending-puhelun tyyppi
+  const handleUpdateCallType = async (log, newType) => {
+    try {
+      if (!log?.id) return
+      setUpdatingLogIds(prev => ({ ...prev, [log.id]: true }))
+      const selectedType = callTypes.find(t => t.name === newType || t.value === newType)
+      const call_type_id = selectedType?.id || null
+      const { error } = await supabase
+        .from('call_logs')
+        .update({ call_type: newType, call_type_id })
+        .eq('id', log.id)
+        .eq('call_status', 'pending')
+      if (error) throw error
+      await fetchCallLogs(currentPage)
+    } catch (e) {
+      alert('Puhelun tyypin vaihto epäonnistui: ' + (e.message || e))
+    } finally {
+      setUpdatingLogIds(prev => ({ ...prev, [log.id]: false }))
+    }
+  }
+
+  // Peruuta pending-puhelu (poista rivi)
+  const handleCancelCall = async (log) => {
+    try {
+      if (!log?.id) return
+      if (!confirm('Peruutetaanko tämä puhelu?')) return
+      setUpdatingLogIds(prev => ({ ...prev, [log.id]: true }))
+      const { error } = await supabase
+        .from('call_logs')
+        .delete()
+        .eq('id', log.id)
+        .eq('call_status', 'pending')
+      if (error) throw error
+      await fetchCallLogs(currentPage)
+    } catch (e) {
+      alert('Puhelun peruutus epäonnistui: ' + (e.message || e))
+    } finally {
+      setUpdatingLogIds(prev => ({ ...prev, [log.id]: false }))
+    }
+  }
+
   // Export puheluloki CSV-muodossa
   const exportCallLogs = async () => {
     try {
@@ -1211,16 +1253,19 @@ export default function CallPanel() {
           `"${log.phone_number || ''}"`,
           `"${log.email || ''}"`,
           `"${log.call_type || ''}"`,
-          `"${log.call_date ? new Date(log.call_date).toLocaleDateString('fi-FI') + ' ' + new Date(log.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : ''}"`,
+          `"${log.call_date ? new Date(log.call_date).toLocaleDateString('fi-FI') + ' ' + (log.call_time ? log.call_time : new Date(log.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' })) : ''}"`,
           log.answered ? 'Kyllä' : 'Ei',
           log.wants_contact === true ? 'Otetaan yhteyttä' : 
           log.wants_contact === false ? 'Ei oteta yhteyttä' : 'Ei määritelty',
           log.direction === 'outbound' ? 'Lähtenyt' : 'Vastaanotettu',
           `"${log.duration ? formatDuration(log.duration) : ''}"`,
+          (log.call_date && log.call_time) ? 'Ajastettu' : 
+          (log.call_status === 'done' && log.call_outcome === 'cancelled') ? 'Peruttu' :
           log.call_status === 'done' && log.answered ? 'Onnistui' : 
           log.call_status === 'done' && !log.answered ? 'Epäonnistui' :
           log.call_status === 'pending' ? 'Odottaa' : 
-          log.call_status === 'in progress' ? 'Käynnissä' : 'Tuntematon',
+          log.call_status === 'in progress' ? 'Käynnissä' : 
+          'Tuntematon',
           `"${log.summary || ''}"`,
           `"${log.call_outcome || ''}"`,
           `"${log.campaign_id || ''}"`,
@@ -1540,7 +1585,8 @@ export default function CallPanel() {
           callType: massCallCallType,
           voice: massCallSelectedVoice,
           voice_id: selectedVoiceObj?.id,
-          user_id: user?.id
+          user_id: user?.id,
+          sms_first: massCallSmsFirst === true
         })
       })
       const data = await res.json().catch(() => ({}))
@@ -1684,7 +1730,8 @@ export default function CallPanel() {
             answered: false,
             duration: null,
                           summary: `Mass-call: ${massCallCallType}`,  // Käytä summary saraketta notes sijaan
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
+            sms_first: massCallSmsFirst === true
           })
         }
       }
@@ -1746,7 +1793,8 @@ export default function CallPanel() {
           voice_id: selectedVoiceObj2?.id,
           user_id: user?.id,
           scheduledDate: massCallScheduledDate,
-          scheduledTime: massCallScheduledTime
+          scheduledTime: massCallScheduledTime,
+          sms_first: massCallSmsFirst === true
         })
       })
       const data = await res.json().catch(() => ({}))
@@ -1955,48 +2003,22 @@ export default function CallPanel() {
       <div className="callpanel-container">
     <div className="callpanel-wrapper" style={{ width: '100%', maxWidth: 'none' }}>
       <div className="callpanel-root" style={{ width: '100%', maxWidth: 'none' }}>
-        {/* Tabs */}
-        <div className="callpanel-tabs">
-          <Button 
-            onClick={() => setActiveTab('calls')} 
-            variant={activeTab === 'calls' ? 'primary' : 'secondary'}
-          >
-            📞 Puhelut
-          </Button>
-          <Button 
-            onClick={() => setActiveTab('logs')} 
-            variant={activeTab === 'logs' ? 'primary' : 'secondary'}
-          >
-            📊 Puheluloki
-          </Button>
-          <Button 
-            onClick={() => setActiveTab('messages')} 
-            variant={activeTab === 'messages' ? 'primary' : 'secondary'}
-          >
-            💬 Viestiloki
-          </Button>
-          {showTextMessagesTab && (
-            <Button 
-              onClick={() => setActiveTab('textmessages')} 
-              variant={activeTab === 'textmessages' ? 'primary' : 'secondary'}
-            >
-              📱 Tekstiviestejä
-            </Button>
-          )}
-          <Button 
-            onClick={() => setActiveTab('manage')} 
-            variant={activeTab === 'manage' ? 'primary' : 'secondary'}
-          >
-            ⚙️ Hallinta
-          </Button>
-          {isMika && (
-            <Button 
-              onClick={() => setActiveTab('mika')} 
-              variant={activeTab === 'mika' ? 'primary' : 'secondary'}
-            >
-              🎯 Mika Special
-            </Button>
-          )}
+        {/* Tabs (3 per rivi) */}
+        <div className="callpanel-tabs" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8, position: 'relative', zIndex: 3 }}>
+          <div style={{ display: 'contents' }}>
+            <Button onClick={() => setActiveTab('calls')} variant={activeTab === 'calls' ? 'primary' : 'secondary'}>📞 Puhelut</Button>
+            <Button onClick={() => setActiveTab('logs')} variant={activeTab === 'logs' ? 'primary' : 'secondary'}>📊 Puheluloki</Button>
+            <Button onClick={() => setActiveTab('messages')} variant={activeTab === 'messages' ? 'primary' : 'secondary'}>💬 Viestiloki</Button>
+          </div>
+          <div style={{ display: 'contents' }}>
+            <Button onClick={() => setActiveTab('textmessages')} variant={activeTab === 'textmessages' ? 'primary' : 'secondary'}>📱 Tekstiviestit</Button>
+            <Button onClick={() => setActiveTab('manage')} variant={activeTab === 'manage' ? 'primary' : 'secondary'}>⚙️ Hallinta</Button>
+            {isMika ? (
+              <Button onClick={() => setActiveTab('mika')} variant={activeTab === 'mika' ? 'primary' : 'secondary'}>🎯 Mika Special</Button>
+            ) : (
+              <span />
+            )}
+          </div>
         </div>
         
         {/* Sisältö */}
@@ -2038,7 +2060,7 @@ export default function CallPanel() {
             {/* Toiminnot -kortti */}
             <div className="card">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <h2 className="section-title" style={{ marginBottom: 0 }}>Toiminnot</h2>
+                <h2 className="section-title" style={{ marginBottom: 0 }}>Asetukset</h2>
                 {callType && script.trim() && selectedVoice && (
                   <div style={{ background: '#e6fbe8', color: '#1a7f37', padding: '4px 12px', borderRadius: 12, fontSize: 13, fontWeight: 600 }}>✅ Valmis</div>
                 )}
@@ -2459,6 +2481,7 @@ export default function CallPanel() {
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Suunta</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Kesto</th>
                         <th style={{ padding: '8px', textAlign: 'center', fontWeight: 600 }}>Tila</th>
+                        <th style={{ padding: '8px', textAlign: 'right', fontWeight: 600 }}>Toiminnot</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -2483,17 +2506,19 @@ export default function CallPanel() {
                               </td>
                               <td style={{ padding: '8px' }}>{log.call_type || '-'}</td>
                               <td style={{ padding: '8px' }}>
-                                {log.call_date ? new Date(log.call_date).toLocaleDateString('fi-FI') + ' ' + new Date(log.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : '-'}
+                                {log.call_date ? (
+                                  new Date(log.call_date).toLocaleDateString('fi-FI') + ' ' + (log.call_time ? log.call_time : new Date(log.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }))
+                                ) : '-'}
                               </td>
                               <td style={{ padding: '8px' }}>{log.answered ? 'Kyllä' : 'Ei'}</td>
-                              <td style={{ padding: '8px', textAlign: 'center' }}>
+                          <td style={{ padding: '8px', textAlign: 'center' }}>
                                 {log.wants_contact === true ? (
-                                  <span style={{
-                                    display: 'inline-block',
-                                    padding: '3px 10px',
-                                    borderRadius: 8,
-                                    fontSize: 12,
-                                    fontWeight: 600,
+                            <span style={{
+                              display: 'inline-block',
+                              padding: '3px 10px',
+                              borderRadius: 8,
+                              fontSize: 12,
+                              fontWeight: 600,
                                     background: '#dcfce7',
                                     color: '#166534',
                                     minWidth: 80
@@ -2552,19 +2577,54 @@ export default function CallPanel() {
                               borderRadius: 8,
                               fontSize: 12,
                               fontWeight: 600,
-                                  background: log.call_status === 'done' && log.answered ? '#dcfce7' : 
+                                  background: (log.call_date && log.call_time) ? '#e0f2fe' :
+                                            (log.call_status === 'done' && log.call_outcome === 'cancelled') ? '#fee2e2' :
+                                            log.call_status === 'done' && log.answered ? '#dcfce7' : 
                                             log.call_status === 'pending' ? '#f3f4f6' : 
                                             log.call_status === 'in progress' ? '#dbeafe' : '#fef2f2',
-                                  color: log.call_status === 'done' && log.answered ? '#166534' : 
+                                  color: (log.call_date && log.call_time) ? '#0369a1' :
+                                         (log.call_status === 'done' && log.call_outcome === 'cancelled') ? '#b91c1c' :
+                                         log.call_status === 'done' && log.answered ? '#166534' : 
                                          log.call_status === 'pending' ? '#6b7280' : 
                                          log.call_status === 'in progress' ? '#1d4ed8' : '#dc2626',
                               minWidth: 60
                             }}>
-                                  {log.call_status === 'done' && log.answered ? 'Onnistui' : 
+                                  {(log.call_date && log.call_time) ? 'Ajastettu' : 
+                                   (log.call_status === 'done' && log.call_outcome === 'cancelled') ? 'Peruttu' :
+                                   log.call_status === 'done' && log.answered ? 'Onnistui' : 
                                    log.call_status === 'done' && !log.answered ? 'Epäonnistui' :
                                    log.call_status === 'pending' ? 'Odottaa' : 
                                    log.call_status === 'in progress' ? 'Käynnissä' : 'Tuntematon'}
                             </span>
+                          </td>
+                          <td style={{ padding: '8px', textAlign: 'right', whiteSpace: 'nowrap' }} onClick={(e) => e.stopPropagation()}>
+                            {log.call_status === 'pending' ? (
+                              <div style={{ display: 'inline-flex', gap: 8 }}>
+                                <select
+                                  value={log.call_type || ''}
+                                  onChange={(e) => handleUpdateCallType(log, e.target.value)}
+                                  onClick={(e) => e.stopPropagation()}
+                                  onMouseDown={(e) => e.stopPropagation()}
+                                  disabled={!!updatingLogIds[log.id]}
+                                  style={{ padding: '4px 8px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 12 }}
+                                >
+                                  <option value="">Vaihda tyyppi...</option>
+                                  {callTypes.map(type => (
+                                    <option key={type.id} value={type.name}>{type.name}</option>
+                                  ))}
+                                </select>
+                                <Button
+                                  variant="secondary"
+                                  onClick={(e) => { e.stopPropagation(); handleCancelCall(log) }}
+                                  disabled={!!updatingLogIds[log.id]}
+                                  style={{ padding: '4px 10px', fontSize: 12, background: '#ef4444', color: '#fff' }}
+                                >
+                                  Peruuta
+                                </Button>
+                              </div>
+                            ) : (
+                              <span style={{ color: '#9ca3af', fontSize: 12 }}>—</span>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -2720,7 +2780,7 @@ export default function CallPanel() {
                       </button>
                     </div>
                   </div>
-                  <div style={{ display: 'grid', gap: 12 }}>
+                <div style={{ display: 'grid', gap: 12 }}>
                   {callTypes.map((type, index) => (
                     <div
                       key={type.id || index}
@@ -2977,7 +3037,7 @@ export default function CallPanel() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
               <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
-                📱 Tekstiviestejä
+                📱 Tekstiviestit
               </h2>
               <div style={{ display: 'flex', gap: 12 }}>
                 <Button
@@ -2997,7 +3057,7 @@ export default function CallPanel() {
               </div>
             </div>
             
-            {/* Tekstiviestejä lista */}
+            {/* Tekstiviestit lista */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#374151' }}>
@@ -3550,9 +3610,57 @@ export default function CallPanel() {
                       <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 16 }}>
                         Valitse puhelun tyyppi ja ääni.
                       </p>
+
+                      <div style={{ display: 'grid', gap: 16, marginTop: 8 }}>
+                        <div>
+                          <label className="label">Puhelun tyyppi</label>
+                          <select 
+                            value={massCallCallType} 
+                            onChange={e => setMassCallCallType(e.target.value)} 
+                            className="select"
+                          >
+                            {callTypes.map(type => (
+                              <option key={type.id} value={type.value}>{type.label}</option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="label">Ääni</label>
+                          <select 
+                            value={massCallSelectedVoice} 
+                            onChange={e => setMassCallSelectedVoice(e.target.value)} 
+                            className="select"
+                          >
+                            {getVoiceOptions().map(voice => (
+                              <option key={voice.value} value={voice.value}>{voice.label}</option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <label style={{ fontWeight: 600 }}>Tekstari ensin</label>
+                          <label className="switch">
+                            <input type="checkbox" checked={massCallSmsFirst} onChange={e => setMassCallSmsFirst(e.target.checked)} />
+                            <span className="slider round"></span>
+                          </label>
+                        </div>
+
+                        {massCallSmsFirst && (
+                          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12 }}>
+                            <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>Ensimmäinen SMS (vain luku)</div>
+                            <div style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', fontSize: 13, color: '#374151' }}>
+                              {(() => {
+                                const t = callTypes.find(t => t.value === massCallCallType)
+                                return t?.first_sms ? t.first_sms : 'Ei määritelty tälle puhelun tyypille'
+                              })()}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                       
                       {massCallValidationResult && (
-                        <div className="status-success" style={{ marginBottom: 16 }}>
+                        <div className="status-success" style={{ marginTop: 8, marginBottom: 16 }}>
                           <div style={{ fontWeight: 600 }}>✅ Validointi onnistui!</div>
                           <div>📈 <strong>Löydetty {massCallValidationResult.phoneCount} puhelinnumeroa</strong></div>
                           {massCallValidationResult.emailCount > 0 && (
@@ -3563,34 +3671,6 @@ export default function CallPanel() {
                       )}
                     </div>
                     
-                    <label className="label">Puhelun tyyppi</label>
-                    <select 
-                      value={massCallCallType} 
-                      onChange={e => setMassCallCallType(e.target.value)}
-                      className="select"
-                      style={{ width: '100%', marginBottom: 16 }}
-                    >
-                      <option value="">Valitse puhelun tyyppi...</option>
-                      {callTypes.map(type => (
-                        <option key={type.value} value={type.value}>
-                          {type.label}
-                        </option>
-                      ))}
-                    </select>
-                    
-                    <label className="label">Ääni</label>
-                    <select 
-                      value={massCallSelectedVoice} 
-                      onChange={e => setMassCallSelectedVoice(e.target.value)}
-                      className="select"
-                      style={{ width: '100%', marginBottom: 16 }}
-                    >
-                      {getVoiceOptions().map(voice => (
-                        <option key={voice.value} value={voice.value}>
-                          {voice.label}
-                        </option>
-                      ))}
-                    </select>
                     
                     <div style={{ display: 'flex', gap: 12, justifyContent: 'space-between' }}>
                       <Button

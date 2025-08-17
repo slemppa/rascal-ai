@@ -43,7 +43,7 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  z-index: var(--modal-z-index) !important;
+  z-index: calc(var(--modal-z-index) - 1) !important; /* Laske hieman, ettei peitä tabivalikkoa hover-efektillä */
   padding: 16px !important;
   visibility: visible !important;
   opacity: 1 !important;
@@ -583,3 +583,53 @@
     min-height: 80px;
   }
 } 
+
+/* Liukukytkin (switch) – käytössä massapuheluiden "Tekstari ensin" */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: #e5e7eb;
+  transition: background 0.2s ease;
+  border-radius: 9999px;
+  box-shadow: inset 0 0 0 1px #d1d5db;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
+  transition: transform 0.2s ease;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .slider {
+  background: #10b981;
+  box-shadow: inset 0 0 0 1px #10b981;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+}

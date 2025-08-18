@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.39.1](https://github.com/slemppa/rascal-ai/compare/v1.39.0...v1.39.1) (2025-08-18)
+
+
+### 🐛 Bug Fixes
+
+* improve mass call modal layout and SMS preview ([c459013](https://github.com/slemppa/rascal-ai/commit/c4590130a4f922c9b3fee90fca1116789242c632))
+
 ## [1.39.0](https://github.com/slemppa/rascal-ai/compare/v1.38.0...v1.39.0) (2025-08-18)
 
 

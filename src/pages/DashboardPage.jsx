@@ -245,6 +245,7 @@ export default function DashboardPage() {
     upcomingCount: 0,
     monthlyCount: 0,
     totalCallPrice: 0,
+    totalMessagePrice: 0,
     features: [],
     aiUsage: 0
   })
@@ -379,6 +380,15 @@ export default function DashboardPage() {
           .gte('call_date', firstDay.toISOString())
         const totalCallPrice = (callData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
 
+        // Viestien kokonaishinta tässä kuussa - vain käyttäjän omat
+        const { data: messageData } = await supabase
+          .from('message_logs')
+          .select('price')
+          .eq('user_id', userId)
+          .gte('created_at', firstDay.toISOString())
+          .not('price', 'is', null)
+        const totalMessagePrice = (messageData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
+
         // Käyttäjän features
         let features = []
         if (user) {
@@ -401,6 +411,7 @@ export default function DashboardPage() {
           upcomingCount: upcomingCount || 0,
           monthlyCount: monthlyCount || 0,
           totalCallPrice: totalCallPrice || 0,
+          totalMessagePrice: totalMessagePrice || 0,
           features,
           aiUsage: aiUsage || 0
         })
@@ -487,6 +498,15 @@ export default function DashboardPage() {
           .gte('call_date', firstDay.toISOString())
         const totalCallPrice = (callData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
 
+        // Viestien kokonaishinta tässä kuussa - vain käyttäjän omat
+        const { data: messageData } = await supabase
+          .from('message_logs')
+          .select('price')
+          .eq('user_id', userId)
+          .gte('created_at', firstDay.toISOString())
+          .not('price', 'is', null)
+        const totalMessagePrice = (messageData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
+
         // Käyttäjän features
         let features = []
         if (user) {
@@ -509,6 +529,7 @@ export default function DashboardPage() {
           upcomingCount: upcomingCount || 0,
           monthlyCount: monthlyCount || 0,
           totalCallPrice: totalCallPrice || 0,
+          totalMessagePrice: totalMessagePrice || 0,
           features,
           aiUsage: aiUsage || 0
         })
@@ -868,6 +889,7 @@ export default function DashboardPage() {
     { label: 'Tulevat postaukset', value: statsData.upcomingCount, sub: 'Status: Scheduled', color: '#22c55e' },
     { label: 'Julkaisut kuukaudessa', value: `${statsData.monthlyCount} / 30`, sub: 'Tämä kuukausi', color: '#2563eb' },
     { label: 'Puheluiden kokonaishinta', value: statsData.totalCallPrice.toLocaleString('fi-FI', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }), sub: 'Tämä kuukausi', color: '#f59e42' },
+    { label: 'Viestien kokonaishinta', value: statsData.totalMessagePrice.toLocaleString('fi-FI', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }), sub: 'Tämä kuukausi', color: '#059669' },
   ]
 
   // Aikataulu-kortin data: näytetään vain tulevat julkaisut (publish_date >= nyt)
@@ -921,7 +943,7 @@ export default function DashboardPage() {
         </div>
         <div className={styles['dashboard-bentogrid']}>
           {statsLoading ? (
-            Array(3).fill(0).map((_, i) => (
+            Array(4).fill(0).map((_, i) => (
               <div key={i} className={styles.card}>
                 <div className={styles['stat-label']} style={{ background: '#eee', height: 18, width: 120, borderRadius: 6 }}></div>
                 <div className={styles['stat-number']} style={{ background: '#eee', height: 32, width: 60, borderRadius: 8, margin: '16px 0' }}></div>
@@ -937,6 +959,7 @@ export default function DashboardPage() {
               </div>
             ))
           )}
+          
           {/* Poistetaan Engagement Analytics -kortti kokonaan */}
           {/*
           <div className={styles.card} style={{ gridColumn: 'span 2', minHeight: 220, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -989,6 +1012,7 @@ export default function DashboardPage() {
           {/* Analytics poistettu - tehdään myöhemmin */}
         </div>
       </div>
+      
       {/* Image Modal */}
       {imageModalUrl && createPortal(
         <div 

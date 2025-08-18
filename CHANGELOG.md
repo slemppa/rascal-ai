@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.38.0](https://github.com/slemppa/rascal-ai/compare/v1.37.0...v1.38.0) (2025-08-18)
+
+
+### ✨ Features
+
+* update EditCallTypeModal and CallPanel components ([d11efb4](https://github.com/slemppa/rascal-ai/commit/d11efb4222769a5a20c6d437b53ab6acb1a5ec7d))
+
 ## [1.37.0](https://github.com/slemppa/rascal-ai/compare/v1.36.0...v1.37.0) (2025-08-17)
 
 

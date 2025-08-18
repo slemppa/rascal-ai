@@ -3140,14 +3140,19 @@ export default function CallPanel() {
                         <textarea
                           value={type.first_sms || ''}
                           onChange={e => {
-                            const updatedType = { ...type, first_sms: e.target.value }
-                            setEditingCallType(updatedType)
-                            // Päivitä myös callTypes array
-                            const updatedCallTypes = callTypes.map(t => t.id === type.id ? updatedType : t)
-                            setCallTypes(updatedCallTypes)
+                            const value = e.target.value
+                            // Rajoita 160 merkkiin
+                            if (value.length <= 160) {
+                              const updatedType = { ...type, first_sms: value }
+                              setEditingCallType(updatedType)
+                              // Päivitä myös callTypes array
+                              const updatedCallTypes = callTypes.map(t => t.id === type.id ? updatedType : t)
+                              setCallTypes(updatedCallTypes)
+                            }
                           }}
-                          placeholder="SMS-viesti joka lähetetään asiakkaalle ennen puhelua..."
+                          placeholder="SMS-viesti joka lähetetään asiakkaalle ennen puhelua... (max 160 merkkiä)"
                           rows={4}
+                          maxLength={160}
                           style={{ 
                             width: '100%', 
                             padding: '12px', 
@@ -3158,13 +3163,29 @@ export default function CallPanel() {
                             fontFamily: 'inherit'
                           }}
                         />
+                        <div style={{ 
+                          display: 'flex', 
+                          justifyContent: 'space-between', 
+                          alignItems: 'center', 
+                          marginTop: 4,
+                          fontSize: 12 
+                        }}>
+                          <span style={{ color: '#6b7280' }}>
+                            {type.first_sms ? `${type.first_sms.length}/160 merkkiä` : '0/160 merkkiä'}
+                          </span>
+                          {type.first_sms && type.first_sms.length > 140 && (
+                            <span style={{ color: '#f59e0b' }}>
+                              ⚠️ Pitkä viesti ({type.first_sms.length > 150 ? '2 viestiä' : '1 viesti'})
+                            </span>
+                          )}
+                        </div>
                       </div>
                       
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ fontSize: 12, color: '#6b7280' }}>
                           {type.first_sms ? (
                             <span style={{ color: '#059669' }}>
-                              ✅ SMS-viesti määritelty ({type.first_sms.length} merkkiä)
+                              ✅ SMS-viesti määritelty
                             </span>
                           ) : (
                             <span style={{ color: '#dc2626' }}>

@@ -297,6 +297,51 @@ const EditCallTypeModal = ({
                 </div>
               </div>
 
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
+                <div className="form-group">
+                  <label className="form-label">Ensimmäinen tekstiviesti (SMS)</label>
+                  <textarea
+                    value={editingCallType.first_sms || ''}
+                    onChange={e => {
+                      const value = e.target.value
+                      // Rajoita 160 merkkiin
+                      if (value.length <= 160) {
+                        setEditingCallType({ ...editingCallType, first_sms: value })
+                      }
+                    }}
+                    placeholder="SMS-viesti joka lähetetään asiakkaalle ennen puhelua... (max 160 merkkiä)"
+                    rows={4}
+                    maxLength={160}
+                    className="form-textarea"
+                    style={{ 
+                      resize: 'none',
+                      overflowY: 'auto',
+                      maxHeight: '120px'
+                    }}
+                  />
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    marginTop: 4,
+                    fontSize: 12 
+                  }}>
+                    <span style={{ color: '#6b7280' }}>
+                      {editingCallType.first_sms ? `${editingCallType.first_sms.length}/160 merkkiä` : '0/160 merkkiä'}
+                    </span>
+                    {editingCallType.first_sms && editingCallType.first_sms.length > 140 && (
+                      <span style={{ color: '#f59e0b' }}>
+                        ⚠️ Pitkä viesti ({editingCallType.first_sms.length > 150 ? '2 viestiä' : '1 viesti'})
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
+                  <div>Kirjoita lyhyt ja ytimekäs viesti joka esittelee puhelun ja asettaa odotukset. Viesti lähetetään automaattisesti ennen soittoa.</div>
+                </div>
+              </div>
+
 
             </div>
           )}

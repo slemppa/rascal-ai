@@ -38,11 +38,16 @@ const transformSupabaseData = (supabaseData) => {
       status = 'Aikataulutettu'
     }
     
+    // Käytetään placeholder-kuvaa jos media_urls ei ole saatavilla tai on tyhjä
+    const thumbnail = item.media_urls && item.media_urls.length > 0 && item.media_urls[0] 
+      ? item.media_urls[0] 
+      : '/placeholder.png'
+    
     const transformedItem = {
       id: item.id,
       title: item.idea || item.caption || 'Nimetön sisältö',
       status: status,
-      thumbnail: item.media_urls?.[0] || '/media-placeholder.svg',
+      thumbnail: thumbnail,
       caption: item.caption || item.idea || 'Ei kuvausta',
       type: item.type || 'Blog',
       idea: item.idea || '',
@@ -70,18 +75,18 @@ function ContentCard({ content, onView, onPublish }) {
     <div className="content-card">
       <div className="content-card-content">
         <div className="content-thumbnail">
-          {content.thumbnail && content.thumbnail !== '/placeholder.png' && content.thumbnail !== '/media-placeholder.svg' ? (
+          {content.thumbnail && content.thumbnail !== '/placeholder.png' ? (
             <img
               src={content.thumbnail}
               alt="thumbnail"
               onError={(e) => {
-                e.target.src = '/media-placeholder.svg';
+                e.target.src = '/placeholder.png';
               }}
             />
           ) : (
             <div className="placeholder-content">
               <img 
-                src="/media-placeholder.svg" 
+                src="/placeholder.png" 
                 alt="Media ei saatavilla"
                 className="placeholder-image"
                 onError={(e) => {
@@ -629,6 +634,36 @@ export default function BlogNewsletterPage() {
             </div>
             <div className="modal-content">
               <div className="content-view">
+                {/* Näytä thumbnail kuva jos saatavilla */}
+                {viewingContent.thumbnail && viewingContent.thumbnail !== '/placeholder.png' ? (
+                  <div className="view-thumbnail">
+                    <img
+                      src={viewingContent.thumbnail}
+                      alt="Thumbnail"
+                      className="view-thumbnail-image"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div className="view-thumbnail-placeholder" style={{ display: 'none' }}>
+                      <img 
+                        src="/placeholder.png" 
+                        alt="Placeholder"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="view-thumbnail">
+                    <img 
+                      src="/placeholder.png" 
+                      alt="Placeholder"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }}
+                    />
+                  </div>
+                )}
+                
                 <div className="content-meta">
                   <span className="content-type">
                     {viewingContent.type === 'Blog' ? '📝 Blog' : '📧 Newsletter'}

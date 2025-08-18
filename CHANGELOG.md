@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.39.0](https://github.com/slemppa/rascal-ai/compare/v1.38.0...v1.39.0) (2025-08-18)
+
+
+### ✨ Features
+
+* improve placeholder image handling in blog-newsletter ([ee1f4d7](https://github.com/slemppa/rascal-ai/commit/ee1f4d7a6544651348051f337f99d475bf6f0e6b))
+
 ## [1.38.0](https://github.com/slemppa/rascal-ai/compare/v1.37.0...v1.38.0) (2025-08-18)
 
 

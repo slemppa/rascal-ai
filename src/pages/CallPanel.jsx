@@ -3558,7 +3558,7 @@ export default function CallPanel() {
           >
             <div 
               onClick={(e) => e.stopPropagation()}
-              className="modal-container"
+              className="modal-container mass-call-modal"
               style={{ maxWidth: '600px' }}
             >
               <div className="modal-header">
@@ -3668,9 +3668,9 @@ export default function CallPanel() {
                         </div>
 
                         {massCallSmsFirst && (
-                          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12 }}>
+                          <div className="sms-preview-container">
                             <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>Ensimmäinen SMS (vain luku)</div>
-                            <div style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', fontSize: 13, color: '#374151' }}>
+                            <div className="sms-preview-text">
                               {(() => {
                                 const t = callTypes.find(t => t.value === massCallCallType)
                                 return t?.first_sms ? t.first_sms : 'Ei määritelty tälle puhelun tyypille'

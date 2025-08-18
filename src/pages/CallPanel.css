@@ -1,6 +1,50 @@
 /* Import yhteiset modal-tyylit */
 @import url('../components/ModalComponents.css');
 
+/* Massapuhelumodaalin tyylit */
+.mass-call-modal .modal-container {
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+}
+
+.mass-call-modal .modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  margin: 0;
+}
+
+.mass-call-modal .modal-body > div {
+  min-height: 0;
+}
+
+/* Varmistetaan että napit pysyvät näkyvissä */
+.mass-call-modal .modal-body > div:last-child {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* SMS preview -kentän tyylit */
+.sms-preview-container {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.sms-preview-text {
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: 13px;
+  color: #374151;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
 .callpanel-container {
   max-width: 1400px;
   margin: 0 auto;

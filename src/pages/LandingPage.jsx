@@ -138,6 +138,23 @@ export default function LandingPage() {
                       </p>
                     </div>
                   </div>
+                  <div className="feature-card">
+                    <div className="feature-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                        <path d="M4 19.5C4 18.1193 5.11929 17 6.5 17H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M6.5 2H20V22H6.5C5.11929 22 4 20.8807 4 19.5V2.5C4 1.11929 5.11929 0 6.5 0Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M10 9H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M10 13H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M10 17H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <div className="feature-content">
+                      <h2 className="feature-title">Sisällöntuotanto</h2>
+                      <p className="feature-description">
+                        Luo sisältöaihiot moneen eri kanavaan. Perustuu yrityksesi oikeaan tietoon.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 

@@ -1,7 +1,7 @@
 /* Auth-komponenttien tyylit */
 
 .auth-container {
-  background: #23262B;
+  background: #24170f;
   color: #fff;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.25);
@@ -9,6 +9,7 @@
   position: relative;
   max-width: 400px;
   width: 100%;
+  border: 1px solid #4b3120;
 }
 
 .auth-close-btn {
@@ -31,7 +32,7 @@
 }
 
 .auth-close-btn:hover {
-  color: #4ADE80;
+  color: #cea78d;
 }
 
 .auth-title {
@@ -74,7 +75,7 @@
 }
 
 .auth-input:focus {
-  border-color: #4ADE80;
+  border-color: #cea78d;
 }
 
 .auth-input.password {
@@ -101,13 +102,13 @@
 }
 
 .auth-password-toggle:hover {
-  color: #4ADE80;
+  color: #cea78d;
 }
 
 .auth-button {
   width: 100%;
   padding: 12px;
-  background: #4ADE80;
+  background: #cea78d;
   color: #181B20;
   border: none;
   border-radius: 8px;
@@ -120,7 +121,7 @@
 }
 
 .auth-button:hover:not(:disabled) {
-  background: #22c55e;
+  background: #b8946f;
   transform: translateY(-1px);
 }
 
@@ -131,12 +132,12 @@
 
 .auth-button.secondary {
   background: transparent;
-  color: #4ADE80;
-  border: 1px solid #4ADE80;
+  color: #cea78d;
+  border: 1px solid #cea78d;
 }
 
 .auth-button.secondary:hover:not(:disabled) {
-  background: #4ADE80;
+  background: #cea78d;
   color: #181B20;
 }
 
@@ -169,7 +170,7 @@
 }
 
 .auth-link {
-  color: #4ADE80;
+  color: #cea78d;
   text-decoration: none;
   cursor: pointer;
   transition: color 0.2s;
@@ -181,8 +182,8 @@
 }
 
 .auth-link:hover {
-  color: #22c55e;
-  background: rgba(74, 222, 128, 0.1);
+  color: #b8946f;
+  background: rgba(206, 167, 141, 0.1);
 }
 
 .auth-divider {
@@ -226,13 +227,13 @@
 }
 
 .auth-magic-input:focus {
-  border-color: #4ADE80;
+  border-color: #cea78d;
 }
 
 .auth-magic-button {
   width: 100%;
   padding: 12px;
-  background: #4ADE80;
+  background: #cea78d;
   color: #181B20;
   border: none;
   border-radius: 8px;
@@ -244,7 +245,7 @@
 }
 
 .auth-magic-button:hover:not(:disabled) {
-  background: #22c55e;
+  background: #b8946f;
   transform: translateY(-1px);
 }
 

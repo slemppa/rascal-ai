@@ -62,10 +62,19 @@ html, body, #root, .landing-page {
 }
 
 .logo-icon {
-  width: 16px;
-  height: 16px;
-  color: white;
+  width: 32px;
+  height: 32px;
   transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 6px;
 }
 
 .logo-icon:hover {
@@ -124,6 +133,67 @@ html, body, #root, .landing-page {
 .header-buttons {
   display: flex;
   gap: 8px;
+}
+
+/* Mobile Menu Styles */
+.mobile-menu-button {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #24170f;
+  border-bottom: 1px solid #4b3120;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  z-index: 99;
+}
+
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.mobile-nav-link {
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: color 0.3s ease;
+}
+
+.mobile-nav-link:hover {
+  color: #cea78d;
+}
+
+.mobile-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobile-btn {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 16px;
 }
 
 /* Buttons - Ammattimaiset ja modernit */
@@ -524,20 +594,22 @@ html, body, #root, .landing-page {
   background-color: rgba(206, 167, 141, 0.1);
 }
 
-.footer-social {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.social-icon {
-  color: #cea78d;
-  width: 24px;
-  height: 24px;
-  transition: all 0.3s ease;
-  padding: 8px;
-  border-radius: 6px;
-}
+  .footer-social {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .social-icon {
+    color: #cea78d;
+    width: 24px;
+    height: 24px;
+    transition: all 0.3s ease;
+    padding: 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
 
 .social-icon:hover {
   color: white;
@@ -557,7 +629,7 @@ html, body, #root, .landing-page {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(36, 23, 15, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -567,13 +639,13 @@ html, body, #root, .landing-page {
 }
 
 .modal-container {
-  background-color: white;
+  background-color: #24170f;
   border-radius: 16px;
   padding: 40px;
   max-width: 400px;
   width: 100%;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  border: 1px solid #E5E7EB;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+  border: 1px solid #4b3120;
   animation: modalSlideIn 0.3s ease-out;
 }
 
@@ -590,125 +662,324 @@ html, body, #root, .landing-page {
 
 /* Responsive Design - Ammattimainen mobiili-optimointi */
 @media (max-width: 1024px) {
-  .main-content {
-    padding: 20px 80px;
+  .landing-main-content {
+    padding: 20px 40px;
+    max-width: 1000px;
+  }
+  
+  .hero-background {
+    min-height: 550px;
+    padding: 70px 40px;
+    margin: 0 20px;
   }
   
   .hero-title {
-    font-size: 48px;
+    font-size: 52px;
+  }
+  
+  .hero-subtitle {
+    font-size: 19px;
+    max-width: 650px;
   }
   
   .section-title {
-    font-size: 32px;
+    font-size: 34px;
+  }
+  
+  .section-description {
+    font-size: 17px;
   }
   
   .cta-title {
-    font-size: 32px;
+    font-size: 34px;
+  }
+  
+  .cta-description {
+    font-size: 17px;
+  }
+  
+  .cta-section {
+    padding: 80px 40px;
+    margin: 50px 20px;
   }
   
   .features-grid,
   .industries-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .content-container {
+    max-width: 900px;
   }
 }
 
 @media (max-width: 768px) {
   .header {
-    padding: 12px 20px;
-    flex-direction: column;
+    padding: 16px 20px;
+    flex-direction: row;
+    gap: 0;
+    position: relative;
+  }
+  
+  .footer-social {
     gap: 16px;
+  }
+  
+  .social-icon {
+    padding: 6px;
+  }
+  
+  .logo-section {
+    order: 1;
   }
   
   .header-right {
-    flex-direction: column;
+    flex-direction: row;
     gap: 16px;
+    order: 2;
+    width: auto;
+    align-items: center;
   }
   
-  .nav-links {
-    gap: 24px;
+  .desktop-nav {
+    display: none;
   }
   
-  .main-content {
-    padding: 20px;
+  .desktop-buttons {
+    display: none;
+  }
+  
+  .mobile-menu-button {
+    display: block;
+  }
+  
+  .landing-main-content {
+    padding: 16px;
+    max-width: 100%;
   }
   
   .hero-background {
-    padding: 40px 20px;
-    min-height: 400px;
+    padding: 60px 20px;
+    min-height: 500px;
+    margin: 0 16px;
+    border-radius: 12px;
+  }
+  
+  .hero-content {
+    max-width: 100%;
+    padding: 0 10px;
   }
   
   .hero-title {
-    font-size: 36px;
+    font-size: 40px;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  
+  .hero-subtitle {
+    font-size: 18px;
+    margin-bottom: 30px;
+    max-width: 100%;
   }
   
   .section-title {
-    font-size: 28px;
+    font-size: 30px;
+    margin-bottom: 16px;
+  }
+  
+  .section-description {
+    font-size: 16px;
   }
   
   .cta-title {
-    font-size: 28px;
+    font-size: 30px;
+    margin-bottom: 16px;
+  }
+  
+  .cta-description {
+    font-size: 16px;
+    margin-bottom: 24px;
   }
   
   .cta-section {
-    padding: 80px 20px;
+    padding: 60px 20px;
+    margin: 30px 16px;
+    border-radius: 12px;
   }
   
   .features-grid,
   .industries-grid {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 16px;
+    max-width: 100%;
+    margin: 0;
+  }
+  
+  .feature-card {
+    padding: 20px;
+    margin: 0 8px;
+  }
+  
+  .industry-card {
+    margin: 0 8px;
   }
   
   .footer-links {
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
   }
   
   .section {
-    margin-bottom: 80px;
+    margin-bottom: 60px;
+  }
+  
+  .content-container {
+    max-width: 100%;
+    padding: 0 16px;
   }
 }
 
 @media (max-width: 480px) {
-  .hero-title {
-    font-size: 28px;
-  }
-  
-  .section-title {
-    font-size: 24px;
-  }
-  
-  .cta-title {
-    font-size: 24px;
-  }
-  
-  .btn {
+  .header {
     padding: 12px 16px;
-    font-size: 14px;
-  }
-  
-  .hero-cta {
-    font-size: 16px;
-    padding: 16px 20px;
-  }
-  
-  .cta-button {
-    font-size: 16px;
-    padding: 16px 20px;
+    gap: 0;
   }
   
   .modal-container {
     padding: 24px;
     margin: 20px;
+    max-width: calc(100% - 40px);
+  }
+  
+  .header-right {
+    gap: 12px;
+  }
+  
+  .mobile-menu-button {
+    padding: 6px;
+  }
+  
+  .mobile-menu {
+    padding: 16px;
+  }
+  
+  .mobile-nav-link {
+    font-size: 15px;
+    padding: 10px 0;
+  }
+  
+  .mobile-btn {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+  
+  .landing-main-content {
+    padding: 12px;
   }
   
   .hero-background {
-    padding: 30px 20px;
+    padding: 40px 16px;
+    min-height: 400px;
+    margin: 0 8px;
+    border-radius: 8px;
+  }
+  
+  .hero-content {
+    padding: 0 8px;
+  }
+  
+  .hero-title {
+    font-size: 32px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  
+  .hero-subtitle {
+    font-size: 16px;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  
+  .section-title {
+    font-size: 26px;
+    margin-bottom: 12px;
+  }
+  
+  .section-description {
+    font-size: 15px;
+  }
+  
+  .cta-title {
+    font-size: 26px;
+    margin-bottom: 12px;
+  }
+  
+  .cta-description {
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .cta-section {
+    padding: 40px 16px;
+    margin: 20px 8px;
+    border-radius: 8px;
+  }
+  
+  .features-grid,
+  .industries-grid {
+    gap: 12px;
+  }
+  
+  .feature-card {
+    padding: 16px;
+    margin: 0 4px;
+  }
+  
+  .industry-card {
+    margin: 0 4px;
+  }
+  
+  .footer {
+    padding: 30px 16px;
+  }
+  
+  .footer-content {
+    gap: 20px;
+  }
+  
+  .footer-links {
+    gap: 12px;
+  }
+  
+  .footer-link {
+    font-size: 14px;
+    min-width: 120px;
   }
   
   .section {
-    margin-bottom: 60px;
+    margin-bottom: 40px;
+  }
+  
+  .content-container {
+    padding: 0 12px;
+  }
+  
+  .hero-cta {
+    font-size: 15px;
+    padding: 14px 18px;
+  }
+  
+  .cta-button {
+    font-size: 15px;
+    padding: 14px 18px;
+  }
+  
+  .modal-container {
+    padding: 20px;
+    margin: 16px;
   }
 }

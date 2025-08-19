@@ -1,3 +1,53 @@
+// Tarkista onko numero estettyjen alueiden joukossa
+function isBlockedNumber(originalNumber, normalizedNumber) {
+  // Estettyjen alkuperäisten numeroiden tarkistus
+  const blockedPrefixes = ['020', '010', '09']
+  for (const prefix of blockedPrefixes) {
+    if (String(originalNumber).startsWith(prefix)) {
+      return { blocked: true, reason: `Estetty numeroalue: ${prefix}` }
+    }
+  }
+  
+  // Estettyjen normalisoitujen numeroiden tarkistus
+  const blockedNormalized = ['+35820', '+35810', '+3589']
+  for (const blocked of blockedNormalized) {
+    if (normalizedNumber && normalizedNumber.startsWith(blocked)) {
+      return { blocked: true, reason: `Estetty numeroalue: ${blocked}` }
+    }
+  }
+  
+  return { blocked: false, reason: null }
+}
+
+// Normalisoi suomalaiset puhelinnumerot yhtenäiseen muotoon +358...
+function normalizeFinnishPhone(input) {
+  if (!input) return null
+  let x = String(input).trim()
+  // Poista välilyönnit ja yhdysmerkit
+  x = x.replace(/[\s-]/g, '')
+  // Korvaa alkunolla +358:lla: 050... -> +35850...
+  if (/^0\d+/.test(x)) {
+    return '+358' + x.slice(1)
+  }
+  // 00358... -> +358...
+  if (x.startsWith('00358')) {
+    return '+358' + x.slice(5)
+  }
+  // 358... -> +358...
+  if (x.startsWith('358')) {
+    return '+358' + x.slice(3)
+  }
+  // Jos alkaa jo +, varmista että +358...
+  if (x.startsWith('+358')) return x
+  // Muut maat: palauta sellaisenaan, tai null jos ei numeroita
+  if (x.startsWith('+')) return x
+  // Viimeinen yritys: jos pelkkiä numeroita ja pituus näyttää suomalaiselta (9-12), lisää +358
+  if (/^\d{7,12}$/.test(x)) {
+    return '+358' + (x.startsWith('0') ? x.slice(1) : x)
+  }
+  return null
+}
+
 export default async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173')
@@ -157,7 +207,47 @@ export default async function handler(req, res) {
         header.toLowerCase().includes('sähköposti')
       )
       
-      const phoneCount = dataRows.length
+      // Lasketaan estetyt numerot ja virheelliset numerot
+      let blockedCount = 0
+      let invalidCount = 0
+      const blockedReasons = {}
+      
+      // Tarkistetaan jokainen puhelinnumero
+      for (const row of dataRows) {
+        const values = row.split(',').map(v => v.trim().replace(/"/g, ''))
+        
+        // Etsi puhelinnumero
+        let phoneNumber = null
+        for (const phoneCol of phoneColumns) {
+          const colIndex = headers.indexOf(phoneCol)
+          if (colIndex >= 0 && values[colIndex]) {
+            phoneNumber = values[colIndex]
+            break
+          }
+        }
+        
+        if (phoneNumber) {
+          // Normalisoi numero
+          const normalized = normalizeFinnishPhone(String(phoneNumber))
+          
+          // Tarkista estetyt numeroalueet
+          const blockedCheck = isBlockedNumber(phoneNumber, normalized)
+          if (blockedCheck.blocked) {
+            blockedCount++
+            const reason = blockedCheck.reason
+            blockedReasons[reason] = (blockedReasons[reason] || 0) + 1
+            continue
+          }
+          
+          // Tarkista onko numero validi suomalainen numero
+          const isValidFinn = normalized ? /^\+358\d{7,11}$/.test(normalized) : false
+          if (!isValidFinn) {
+            invalidCount++
+          }
+        }
+      }
+      
+      const validPhoneCount = dataRows.length - blockedCount - invalidCount
 
       // Parsitaan kaikki rivit objekteiksi
       const rows = dataRows.map(row => {
@@ -189,14 +279,17 @@ export default async function handler(req, res) {
       return res.status(200).json({
         success: true,
         sheetId,
-        phoneCount,
+        phoneCount: validPhoneCount,
         emailCount,
         totalRows: dataRows.length,
+        blockedCount,
+        invalidCount,
+        blockedReasons,
         columns: headers,
         phoneColumns: relevantColumns,
         emailColumns: emailColumns,
         rows, // kaikki rivit objekteina
-        message: `Google Sheets -tiedosto validioitu onnistuneesti. Löydetty ${phoneCount} puhelinnumeroa ja ${emailCount} sähköpostia.`,
+        message: `Google Sheets -tiedosto validioitu onnistuneesti. Löydetty ${validPhoneCount} kelvollista puhelinnumeroa ja ${emailCount} sähköpostia.${blockedCount > 0 ? ` ${blockedCount} numeroa estetty (estettyjen alueiden vuoksi).` : ''}${invalidCount > 0 ? ` ${invalidCount} numeroa virheellisiä.` : ''}`,
         timestamp: new Date().toISOString()
       })
       

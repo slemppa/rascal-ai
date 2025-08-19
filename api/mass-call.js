@@ -232,6 +232,8 @@ export default async function handler(req, res) {
       const callLogs = []
       let successCount = 0
       let errorCount = 0
+      let blockedCount = 0
+      const blockedReasons = {}
       
       for (let i = 0; i < dataRows.length; i++) {
         const row = dataRows[i]
@@ -298,6 +300,16 @@ export default async function handler(req, res) {
         if (phoneNumber) {
           // Normalisoi suomalainen numero: 050... -> +35850..., 00358... -> +358..., 358... -> +358...
           const normalized = normalizeFinnishPhone(String(phoneNumber))
+          
+          // Tarkista estetyt numeroalueet
+          const blockedCheck = isBlockedNumber(phoneNumber, normalized)
+          if (blockedCheck.blocked) {
+            blockedCount++
+            const reason = blockedCheck.reason
+            blockedReasons[reason] = (blockedReasons[reason] || 0) + 1
+            continue
+          }
+          
           const isValidFinn = normalized ? /^\+358\d{7,11}$/.test(normalized) : false
           if (!isValidFinn) {
             errorCount++
@@ -353,7 +365,9 @@ export default async function handler(req, res) {
         totalCalls: callLogs.length,
         startedCalls: successCount,
         failedCalls: errorCount,
-        message: `Mass-call käynnistetty onnistuneesti. ${successCount} puhelua lisätty call_logs tauluun.`,
+        blockedCalls: blockedCount,
+        blockedReasons: blockedReasons,
+        message: `Mass-call käynnistetty onnistuneesti. ${successCount} puhelua lisätty call_logs tauluun.${blockedCount > 0 ? ` ${blockedCount} numeroa ei lisätty (estettyjen alueiden vuoksi).` : ''}`,
         timestamp: new Date().toISOString()
       })
       
@@ -381,6 +395,27 @@ function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(email)
 } 
+
+// Tarkista onko numero estettyjen alueiden joukossa
+function isBlockedNumber(originalNumber, normalizedNumber) {
+  // Estettyjen alkuperäisten numeroiden tarkistus
+  const blockedPrefixes = ['020', '010', '09']
+  for (const prefix of blockedPrefixes) {
+    if (String(originalNumber).startsWith(prefix)) {
+      return { blocked: true, reason: `Estetty numeroalue: ${prefix}` }
+    }
+  }
+  
+  // Estettyjen normalisoitujen numeroiden tarkistus
+  const blockedNormalized = ['+35820', '+35810', '+3589']
+  for (const blocked of blockedNormalized) {
+    if (normalizedNumber && normalizedNumber.startsWith(blocked)) {
+      return { blocked: true, reason: `Estetty numeroalue: ${blocked}` }
+    }
+  }
+  
+  return { blocked: false, reason: null }
+}
 
 // Normalisoi suomalaiset puhelinnumerot yhtenäiseen muotoon +358...
 function normalizeFinnishPhone(input) {

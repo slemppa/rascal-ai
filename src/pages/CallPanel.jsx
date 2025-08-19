@@ -2209,7 +2209,9 @@ export default function CallPanel() {
                       padding: '8px 12px',
                       border: '1px solid #d1d5db',
                       borderRadius: 6,
-                      fontSize: 14
+                      fontSize: 14,
+                      color: '#1f2937',
+                      background: '#fff'
                     }}
                   />
                 </div>
@@ -2226,7 +2228,9 @@ export default function CallPanel() {
                       padding: '8px 12px',
                       border: '1px solid #d1d5db',
                       borderRadius: 6,
-                      fontSize: 14
+                      fontSize: 14,
+                      color: '#1f2937',
+                      background: '#fff'
                     }}
                   >
                     <option value="">Kaikki</option>
@@ -2249,7 +2253,9 @@ export default function CallPanel() {
                       padding: '8px 12px',
                       border: '1px solid #d1d5db',
                       borderRadius: 6,
-                      fontSize: 14
+                      fontSize: 14,
+                      color: '#1f2937',
+                      background: '#fff'
                     }}
                   >
                     <option value="">Kaikki</option>
@@ -2276,7 +2282,9 @@ export default function CallPanel() {
                       padding: '8px 12px',
                       border: '1px solid #d1d5db',
                       borderRadius: 6,
-                      fontSize: 14
+                      fontSize: 14,
+                      color: '#1f2937',
+                      background: '#fff'
                     }}
                   />
                 </div>
@@ -2294,7 +2302,9 @@ export default function CallPanel() {
                       padding: '8px 12px',
                       border: '1px solid #d1d5db',
                       borderRadius: 6,
-                      fontSize: 14
+                      fontSize: 14,
+                      color: '#1f2937',
+                      background: '#fff'
                     }}
                   />
                 </div>
@@ -2498,19 +2508,19 @@ export default function CallPanel() {
                           onMouseOver={e => e.currentTarget.style.background = '#f3f4f6'}
                           onMouseOut={e => e.currentTarget.style.background = '#fff'}
                         >
-                              <td style={{ padding: '8px', fontWeight: 500 }}>{log.customer_name || 'Tuntematon nimi'}</td>
-                              <td style={{ padding: '8px' }}>{log.phone_number || '-'}</td>
-                              <td style={{ padding: '8px' }}>{log.email || '-'}</td>
-                              <td style={{ padding: '8px', color: '#6b7280', fontSize: 13 }}>
+                              <td style={{ padding: '8px', fontWeight: 500, color: '#1f2937' }}>{log.customer_name || 'Tuntematon nimi'}</td>
+                              <td style={{ padding: '8px', color: '#1f2937' }}>{log.phone_number || '-'}</td>
+                              <td style={{ padding: '8px', color: '#1f2937' }}>{log.email || '-'}</td>
+                              <td style={{ padding: '8px', color: '#1f2937', fontSize: 13 }}>
                                 {log.summary ? (log.summary.length > 50 ? log.summary.substring(0, 50) + '...' : log.summary) : '-'}
                               </td>
-                              <td style={{ padding: '8px' }}>{log.call_type || '-'}</td>
-                              <td style={{ padding: '8px' }}>
+                              <td style={{ padding: '8px', color: '#1f2937' }}>{log.call_type || '-'}</td>
+                              <td style={{ padding: '8px', color: '#1f2937' }}>
                                 {log.call_date ? (
                                   new Date(log.call_date).toLocaleDateString('fi-FI') + ' ' + (log.call_time ? log.call_time : new Date(log.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }))
                                 ) : '-'}
                               </td>
-                              <td style={{ padding: '8px' }}>{log.answered ? 'Kyllä' : 'Ei'}</td>
+                              <td style={{ padding: '8px', color: '#1f2937' }}>{log.answered ? 'Kyllä' : 'Ei'}</td>
                           <td style={{ padding: '8px', textAlign: 'center' }}>
                                 {log.wants_contact === true ? (
                             <span style={{
@@ -2567,7 +2577,7 @@ export default function CallPanel() {
                                   {log.direction === 'outbound' ? '📤 Lähtenyt' : '📥 Vastaanotettu'}
                                 </span>
                               </td>
-                              <td style={{ padding: '8px' }}>
+                              <td style={{ padding: '8px', color: '#1f2937' }}>
                                 {log.duration ? formatDuration(log.duration) : '-'}
                               </td>
                           <td style={{ padding: '8px', textAlign: 'center' }}>
@@ -2589,7 +2599,7 @@ export default function CallPanel() {
                                          log.call_status === 'in progress' ? '#1d4ed8' : '#dc2626',
                               minWidth: 60
                             }}>
-                                  {(log.call_date && log.call_time) ? 'Ajastettu' : 
+                                  {(log.call_date && log.call_time && log.call_status === 'pending') ? 'Ajastettu' : 
                                    (log.call_status === 'done' && log.call_outcome === 'cancelled') ? 'Peruttu' :
                                    log.call_status === 'done' && log.answered ? 'Onnistui' : 
                                    log.call_status === 'done' && !log.answered ? 'Epäonnistui' :
@@ -2606,7 +2616,7 @@ export default function CallPanel() {
                                   onClick={(e) => e.stopPropagation()}
                                   onMouseDown={(e) => e.stopPropagation()}
                                   disabled={!!updatingLogIds[log.id]}
-                                  style={{ padding: '4px 8px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 12 }}
+                                  style={{ padding: '4px 8px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 12, color: '#1f2937', background: '#fff' }}
                                 >
                                   <option value="">Vaihda tyyppi...</option>
                                   {callTypes.map(type => (
@@ -2951,7 +2961,7 @@ export default function CallPanel() {
                           onMouseOver={e => e.currentTarget.style.background = '#f3f4f6'}
                           onMouseOut={e => e.currentTarget.style.background = '#fff'}
                         >
-                          <td style={{ padding: '8px', fontWeight: 500 }}>{log.phone_number || '-'}</td>
+                          <td style={{ padding: '8px', fontWeight: 500, color: '#1f2937' }}>{log.phone_number || '-'}</td>
                           <td style={{ padding: '8px' }}>
                             <span style={{
                               display: 'inline-block',
@@ -3008,13 +3018,13 @@ export default function CallPanel() {
                                log.status === 'pending' ? 'Odottaa' : log.status}
                             </span>
                           </td>
-                          <td style={{ padding: '8px', color: '#6b7280', fontSize: 13 }}>
+                          <td style={{ padding: '8px', color: '#1f2937', fontSize: 13 }}>
                             {log.ai_text ? (log.ai_text.length > 50 ? log.ai_text.substring(0, 50) + '...' : log.ai_text) : '-'}
                           </td>
-                          <td style={{ padding: '8px', color: '#6b7280', fontSize: 13 }}>
+                          <td style={{ padding: '8px', color: '#1f2937', fontSize: 13 }}>
                             {log.customer_text ? (log.customer_text.length > 50 ? log.customer_text.substring(0, 50) + '...' : log.customer_text) : '-'}
                           </td>
-                          <td style={{ padding: '8px' }}>
+                          <td style={{ padding: '8px', color: '#1f2937' }}>
                             {log.created_at ? new Date(log.created_at).toLocaleDateString('fi-FI') + ' ' + new Date(log.created_at).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : '-'}
                           </td>
                         </tr>
@@ -3290,29 +3300,29 @@ export default function CallPanel() {
                       Perustiedot
                     </h3>
                     <div style={{ display: 'grid', gap: 12 }}>
-                      <div>
-                            <strong>Nimi:</strong> {selectedLog.customer_name || 'Ei nimeä'}
+                      <div style={{ color: '#1f2937' }}>
+                            <strong style={{ color: '#374151' }}>Nimi:</strong> {selectedLog.customer_name || 'Ei nimeä'}
                       </div>
-                      <div>
-                            <strong>Puhelinnumero:</strong> {selectedLog.phone_number || 'Ei numeroa'}
+                      <div style={{ color: '#1f2937' }}>
+                            <strong style={{ color: '#374151' }}>Puhelinnumero:</strong> {selectedLog.phone_number || 'Ei numeroa'}
                           </div>
-                          <div>
-                            <strong>Sähköposti:</strong> {selectedLog.email || 'Ei sähköpostia'}
+                          <div style={{ color: '#1f2937' }}>
+                            <strong style={{ color: '#374151' }}>Sähköposti:</strong> {selectedLog.email || 'Ei sähköpostia'}
                           </div>
-                          <div>
-                            <strong>Puhelun tyyppi:</strong> {selectedLog.call_type || '-'}
+                          <div style={{ color: '#1f2937' }}>
+                            <strong style={{ color: '#374151' }}>Puhelun tyyppi:</strong> {selectedLog.call_type || '-'}
                           </div>
-                          <div>
-                            <strong>Päivämäärä:</strong> {selectedLog.call_date ? new Date(selectedLog.call_date).toLocaleDateString('fi-FI') + ' ' + new Date(selectedLog.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : '-'}
+                          <div style={{ color: '#1f2937' }}>
+                            <strong style={{ color: '#374151' }}>Päivämäärä:</strong> {selectedLog.call_date ? new Date(selectedLog.call_date).toLocaleDateString('fi-FI') + ' ' + new Date(selectedLog.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : '-'}
                           </div>
-                          <div>
-                            <strong>Vastattu:</strong> {selectedLog.answered ? 'Kyllä' : 'Ei'}
+                          <div style={{ color: '#1f2937' }}>
+                            <strong style={{ color: '#374151' }}>Vastattu:</strong> {selectedLog.answered ? 'Kyllä' : 'Ei'}
                           </div>
-                          <div>
-                            <strong>Kesto:</strong> {selectedLog.duration || '-'}
+                          <div style={{ color: '#1f2937' }}>
+                            <strong style={{ color: '#374151' }}>Kesto:</strong> {selectedLog.duration || '-'}
                       </div>
-                      <div>
-                        <strong>Tila:</strong> 
+                      <div style={{ color: '#1f2937' }}>
+                        <strong style={{ color: '#374151' }}>Tila:</strong> 
                         <span style={{ 
                           marginLeft: 8,
                           padding: '2px 8px',
@@ -3333,13 +3343,13 @@ export default function CallPanel() {
                         </span>
                       </div>
                           {selectedLog.campaign_id && (
-                            <div>
-                              <strong>Kampanja ID:</strong> {selectedLog.campaign_id}
+                            <div style={{ color: '#1f2937' }}>
+                              <strong style={{ color: '#374151' }}>Kampanja ID:</strong> {selectedLog.campaign_id}
                     </div>
                           )}
                           {selectedLog.vapi_call_id && (
-                            <div>
-                              <strong>VAPI Call ID:</strong> {selectedLog.vapi_call_id}
+                            <div style={{ color: '#1f2937' }}>
+                              <strong style={{ color: '#374151' }}>VAPI Call ID:</strong> {selectedLog.vapi_call_id}
                   </div>
                           )}
                         </div>
@@ -3362,7 +3372,8 @@ export default function CallPanel() {
                             overflowY: 'auto',
                             maxHeight: '30vh',
                             border: '1px solid #e2e8f0',
-                            boxSizing: 'border-box'
+                            boxSizing: 'border-box',
+                            color: '#1f2937'
                           }}
                         >
                           {selectedLog.summary}
@@ -3383,7 +3394,8 @@ export default function CallPanel() {
                           lineHeight: 1.5,
                           whiteSpace: 'pre-wrap',
                           maxHeight: 300,
-                          overflowY: 'auto'
+                          overflowY: 'auto',
+                          color: '#1f2937'
                         }}>
                           {selectedLog.transcript}
                         </div>

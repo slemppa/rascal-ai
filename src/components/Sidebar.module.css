@@ -6,11 +6,11 @@
   left: 0;
   top: 0;
   width: 250px;
-  background: #ffffff;
-  color: #1f2937;
+  background: #24170f;
+  color: #ffffff;
   z-index: 20;
-  border-right: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border-right: 1px solid #6b462e;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
 .profile-section {
@@ -19,26 +19,26 @@
   align-items: flex-start;
   gap: 16px;
   padding: 24px 20px;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid #6b462e;
 }
 
 .profile-avatar {
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background: #f3f4f6;
+  background: #ff6600;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   font-size: 16px;
-  color: #6b7280;
+  color: #ffffff;
 }
 
 .profile-name {
   font-weight: 500;
   font-size: 14px;
-  color: #6b7280;
+  color: #cea78d;
   letter-spacing: -0.2px;
 }
 
@@ -60,7 +60,7 @@
   border-radius: 8px;
   padding: 12px 20px;
   background: transparent;
-  color: #6b7280;
+  color: #cea78d;
   font-weight: 500;
   transition: all 0.15s ease;
   cursor: pointer;
@@ -77,18 +77,18 @@
   width: 20px;
   text-align: center;
   flex-shrink: 0;
-  color: #9ca3af;
+  color: #cea78d;
 }
 
 .nav-link.active {
-  background: #f3f4f6;
-  color: #1f2937;
+  background: #ff6600;
+  color: #ffffff;
   font-weight: 600;
 }
 
 .nav-link:hover:not(.active) {
-  background: #f9fafb;
-  color: #374151;
+  background: #362317;
+  color: #ffffff;
 }
 
 .settings-section {
@@ -97,13 +97,13 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid #6b462e;
 }
 
 .logout-btn {
   width: 100%;
   background: transparent;
-  color: #6b7280;
+  color: #cea78d;
   font-weight: 500;
   border: none;
   border-radius: 8px;
@@ -119,8 +119,8 @@
 }
 
 .logout-btn:hover {
-  background: #f9fafb;
-  color: #374151;
+  background: #362317;
+  color: #ffffff;
 }
 
 

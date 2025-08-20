@@ -1134,14 +1134,14 @@ export default function ManagePostsPage() {
     <div className="posts-container">
       {/* Page Header */}
       <div className="posts-header">
-        <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#1f2937', margin: 0 }}>Some</h2>
+        <h2>Sosiaalisen median sisältö</h2>
       </div>
 
       {/* Search and Filters */}
       <div className="search-filters">
         <input
           type="text"
-          placeholder="Etsi some-sisältöä..."
+          placeholder="Etsi sosiaalisen median sisältöä..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
@@ -1161,7 +1161,7 @@ export default function ManagePostsPage() {
           variant="primary"
           onClick={() => setShowCreateModal(true)}
         >
-          + Luo uusi some-sisältö
+          + Luo uusi sisältö
         </Button>
       </div>
 

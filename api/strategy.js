@@ -11,38 +11,24 @@ if (supabaseServiceKey) {
 }
 
 export default async function handler(req, res) {
-  console.log('=== STRATEGY API CALLED ===')
-  console.log('Method:', req.method)
-  console.log('Query:', req.query)
-  console.log('Headers:', req.headers)
-  
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   
   if (req.method === 'OPTIONS') {
-    console.log('OPTIONS request handled')
     return res.status(200).end()
   }
-
-  // Tarkista ympäristömuuttujat
-  console.log('N8N_GET_STRATEGY_URL:', process.env.N8N_GET_STRATEGY_URL)
-  console.log('N8N_SECRET_KEY exists:', !!process.env.N8N_SECRET_KEY)
 
   const companyId = req.query.companyId
 
   if (!companyId) {
-    console.log('No company_id provided')
     return res.status(400).json({ error: 'company_id puuttuu' })
   }
-
-  console.log('Company ID received:', companyId)
 
   // Kutsu N8N:ää GET:llä ja companyId query-parametrina
   const N8N_STRATEGY_URL = process.env.N8N_GET_STRATEGY_URL
   if (N8N_STRATEGY_URL) {
     const url = `${N8N_STRATEGY_URL}?companyId=${companyId}`
-    console.log('Calling N8N URL:', url)
     
     try {
       const response = await fetch(url, {
@@ -51,21 +37,16 @@ export default async function handler(req, res) {
           'x-api-key': process.env.N8N_SECRET_KEY
         }
       })
-      console.log('N8N response status:', response.status)
       
       if (response.ok) {
         const responseText = await response.text()
-        console.log('N8N response text:', responseText)
         
         let data
         try {
           data = JSON.parse(responseText)
         } catch (parseError) {
-          console.log('JSON parse error:', parseError)
           throw new Error('Invalid JSON response from N8N')
         }
-        
-        console.log('N8N response data:', data)
         
         // Muunna N8N:n data oikeaan muotoon
         if (Array.isArray(data) && data.length > 0) {
@@ -82,19 +63,17 @@ export default async function handler(req, res) {
           
           const transformedData = {
             strategies: strategies,
-            icpSummary: n8nData.icpSummary || []
+            icpSummary: n8nData.icpSummary || [],
+            kpi: n8nData.kpi || []
           }
           
-          console.log('Transformed data:', transformedData)
           return res.status(200).json(transformedData)
         }
         
         return res.status(200).json(data)
-      } else {
-        console.log('N8N returned error, using mock data')
       }
     } catch (e) {
-      console.log('Error calling N8N:', e.message)
+      // N8N error - käytetään mock dataa
     }
   }
 
@@ -124,9 +103,14 @@ export default async function handler(req, res) {
       "Suomalaiset yrittäjät ja pienet yritykset, jotka haluavat parantaa digitaalista läsnäoloa",
       "Ikäryhmä 25-45, teknologia-innostuneet mutta aikarajoitteiset",
       "Haluavat käytännön vinkkejä ja todistettuja strategioita markkinointiin"
+    ],
+    kpi: [
+      "Kasvata organista liikennettä 30% seuraavassa 6 kuukaudessa",
+      "Paranna lead quality scorea 25%",
+      "Lisää sosiaalisen median engagementia 40%",
+      "Kasvata newsletter-tilaajia 50%"
     ]
   }
 
-  console.log('Returning mock data:', mockData)
   res.status(200).json(mockData)
 } 

@@ -17,6 +17,8 @@ const mockStrategy = [
   }
 ]
 
+
+
 const STRATEGY_URL = import.meta.env.N8N_GET_STRATEGY_URL || 'https://samikiias.app.n8n.cloud/webhook/strategy-89777321'
 
 const getStrategy = async () => {
@@ -55,17 +57,21 @@ const getStrategy = async () => {
 export default function ContentStrategyPage() {
   const [strategy, setStrategy] = useState([])
   const [icpSummary, setIcpSummary] = useState([])
+  const [kpiData, setKpiData] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [editId, setEditId] = useState(null)
   const [editText, setEditText] = useState('')
   const [editingIcp, setEditingIcp] = useState(false)
   const [icpEditText, setIcpEditText] = useState('')
+  const [editingKpi, setEditingKpi] = useState(false)
+  const [kpiEditText, setKpiEditText] = useState('')
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
   const [companyId, setCompanyId] = useState(null)
   const textareaRef = React.useRef(null)
   const icpTextareaRef = React.useRef(null)
+  const kpiTextareaRef = React.useRef(null)
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -95,17 +101,22 @@ export default function ContentStrategyPage() {
         
         const data = await getStrategy()
         
-        // Käsittele uusi data-rakenne
-        if (data && typeof data === 'object' && data.strategies) {
-          setStrategy(data.strategies)
+        // Käsittele data-rakenne
+        if (data && typeof data === 'object') {
+          // Data tulee objektina: {strategies: [...], icpSummary: [...], kpi: [...]}
+          setStrategy(data.strategies || [])
           setIcpSummary(data.icpSummary || [])
-        } else if (Array.isArray(data)) {
+          setKpiData(data.kpi || [])
+        } else if (Array.isArray(data) && data.length > 0) {
           // Vanha rakenne (array)
-          setStrategy(data)
-          setIcpSummary([])
+          const firstItem = data[0]
+          setStrategy(firstItem.strategyAndMonth || [])
+          setIcpSummary(firstItem.icpSummary || [])
+          setKpiData(firstItem.kpi || [])
         } else {
           setStrategy(mockStrategy)
           setIcpSummary([])
+          setKpiData([])
         }
       } catch (e) {
         setStrategy(mockStrategy)
@@ -131,6 +142,13 @@ export default function ContentStrategyPage() {
       icpTextareaRef.current.style.height = icpTextareaRef.current.scrollHeight + 'px'
     }
   }, [icpEditText, editingIcp])
+
+  useEffect(() => {
+    if (kpiTextareaRef.current) {
+      kpiTextareaRef.current.style.height = 'auto'
+      kpiTextareaRef.current.style.height = kpiTextareaRef.current.scrollHeight + 'px'
+    }
+  }, [kpiEditText, editingKpi])
 
   const handleEdit = (item) => {
     setEditId(item.id)
@@ -238,6 +256,48 @@ export default function ContentStrategyPage() {
     setIcpEditText('')
   }
 
+  const handleSaveKpi = async () => {
+    try {
+      const newKpiData = kpiEditText.split('\n').filter(line => line.trim() !== '')
+      
+      // Haetaan company_id jos se puuttuu
+      let currentCompanyId = companyId
+      if (!currentCompanyId) {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
+          const { data: userRecord } = await supabase
+            .from('users')
+            .select('company_id')
+            .eq('auth_user_id', session.user.id)
+            .single()
+          
+          if (userRecord?.company_id) {
+            currentCompanyId = userRecord.company_id
+            setCompanyId(userRecord.company_id)
+          }
+        }
+      }
+      
+      // Lähetä KPI päivitys N8N:ään
+      await axios.post('/api/update-post', {
+        updateType: 'kpiUpdate',
+        kpiData: newKpiData,
+        company_id: currentCompanyId
+      })
+      
+      setKpiData(newKpiData)
+      setEditingKpi(false)
+      setKpiEditText('')
+    } catch (e) {
+      alert('KPI:n tallennus epäonnistui')
+    }
+  }
+
+  const handleCancelKpi = () => {
+    setEditingKpi(false)
+    setKpiEditText('')
+  }
+
   // Funktio kuukauden kirjoittamiseen isolla alkukirjaimella
   const formatMonth = (month) => {
     if (!month) return ''
@@ -307,14 +367,16 @@ export default function ContentStrategyPage() {
     <>
       <div className="strategy-container">
         <div className="strategy-header">
-          <h2 style={{ fontSize: 32, fontWeight: 800, color: '#1f2937', margin: 0 }}>Sisältöstrategia</h2>
+          <h2>🎯 Sisältöstrategia</h2>
         </div>
         
         <div className="strategy-bentogrid">
-          {/* ICP Summary - normaali kortti */}
-          {icpSummary && icpSummary.length > 0 && (
-            <div className="strategy-card">
-              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>👥 Ihanneasiakas</div>
+          {/* Kohderyhmä ja Tavoitteet - ylemmät kortit */}
+          <div className="strategy-top-row">
+            {/* Kohderyhmä-kortti */}
+            {icpSummary && icpSummary.length > 0 && (
+              <div className="strategy-card">
+                <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>👥 Kohderyhmä</div>
               
               {editingIcp ? (
                 <div style={{ flex: 1 }}>
@@ -335,7 +397,7 @@ export default function ContentStrategyPage() {
                       background: '#f9fafb',
                       boxSizing: 'border-box'
                     }}
-                    placeholder="Kirjoita ICP-kuvaukset tähän (yksi per rivi)..."
+                    placeholder="Kirjoita kohderyhmäprofiilit tähän (yksi per rivi)..."
                   />
                   <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
                     <button 
@@ -391,7 +453,10 @@ export default function ContentStrategyPage() {
                         fontWeight: 600,
                         cursor: 'pointer'
                       }}
-                      onClick={handleEditIcp}
+                                              onClick={() => {
+                          setEditingIcp(true)
+                          setIcpEditText(icpSummary.join('\n'))
+                        }}
                     >
                       Muokkaa ICP
                     </button>
@@ -401,10 +466,108 @@ export default function ContentStrategyPage() {
             </div>
           )}
 
+            {/* Tavoitteet-kortti */}
+            {kpiData && kpiData.length > 0 && (
+              <div className="strategy-card">
+                <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🎯 Tavoitteet</div>
+                
+                {editingKpi ? (
+                  <div style={{ flex: 1 }}>
+                    <textarea
+                      ref={kpiTextareaRef}
+                      value={kpiEditText}
+                      onChange={e => setKpiEditText(e.target.value)}
+                      className="kpi-textarea"
+                      style={{
+                        width: '100%',
+                        minHeight: 120,
+                        padding: 12,
+                        border: '2px solid #e5e7eb',
+                        borderRadius: 8,
+                        fontSize: 14,
+                        lineHeight: 1.6,
+                        fontFamily: 'inherit',
+                        background: '#f9fafb',
+                        boxSizing: 'border-box'
+                      }}
+                      placeholder="Kirjoita tavoitteet tähän..."
+                    />
+                    <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
+                      <button 
+                        style={{
+                          background: '#22c55e',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: 8,
+                          padding: '8px 16px',
+                          fontSize: 14,
+                          fontWeight: 600,
+                          cursor: 'pointer'
+                        }}
+                        onClick={handleSaveKpi}
+                      >
+                        Tallenna
+                      </button>
+                      <button 
+                        style={{
+                          background: '#6b7280',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: 8,
+                          padding: '8px 16px',
+                          fontSize: 14,
+                          fontWeight: 600,
+                          cursor: 'pointer'
+                        }}
+                        onClick={handleCancelKpi}
+                      >
+                        Peruuta
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ flex: 1 }}>
+                    {kpiData.map((kpi, index) => (
+                      <div key={index} style={{ 
+                        marginBottom: 12 
+                      }}>
+                        <p style={{ margin: 0, color: '#374151', lineHeight: 1.6, fontSize: 14 }}>{kpi}</p>
+                      </div>
+                    ))}
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+                      <button 
+                        style={{
+                          background: '#22c55e',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: 8,
+                          padding: '8px 16px',
+                          fontSize: 14,
+                          fontWeight: 600,
+                          cursor: 'pointer'
+                        }}
+                        onClick={() => {
+                          setEditingKpi(true)
+                          setKpiEditText(kpiData.join('\n'))
+                        }}
+                      >
+                        Muokkaa tavoitteita
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
+          {/* Sisältöstrategiat - otsikko */}
+          <div className="strategy-section-header">
+            <h3>📋 Sisältöstrategiat</h3>
+          </div>
 
           {/* Strategiakortit */}
-          {strategy.map(item => {
+          <div className="strategy-grid">
+            {strategy.map(item => {
             const status = getStrategyStatus(item.month || item.Month)
             return (
             <div key={item.id} className="strategy-card">
@@ -444,7 +607,7 @@ export default function ContentStrategyPage() {
                       background: '#f9fafb',
                       boxSizing: 'border-box'
                     }}
-                    placeholder="Kirjoita strategia tähän..."
+                    placeholder="Kirjoita kuukauden sisältöstrategia tähän..."
                   />
                   <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
                     <button 
@@ -515,23 +678,24 @@ export default function ContentStrategyPage() {
             </div>
           )
         })}
+          </div>
         </div>
 
         {/* Tyhjä tila jos ei strategioita */}
         {strategy.length === 0 && (
-          <div className="strategy-card" style={{ gridColumn: 'span 3', textAlign: 'center', padding: 48 }}>
+          <div className="strategy-card" style={{ textAlign: 'center', padding: 48 }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>📋</div>
-            <h3 style={{ margin: '0 0 8px 0', color: '#374151' }}>Ei strategioita vielä</h3>
-            <p style={{ margin: 0, color: '#6b7280' }}>Aloita luomalla ensimmäinen sisältöstrategia</p>
+            <h3 style={{ margin: '0 0 8px 0', color: '#374151' }}>Ei sisältöstrategioita vielä</h3>
+            <p style={{ margin: 0, color: '#6b7280' }}>Aloita luomalla ensimmäinen kuukausistrategia</p>
           </div>
         )}
 
-        {/* ICP Summary jos ei ole vielä olemassa */}
+        {/* Kohderyhmä jos ei ole vielä olemassa */}
         {(!icpSummary || icpSummary.length === 0) && (
           <div className="strategy-card">
-            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>👥 Ihanneasiakas</div>
+            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>👥 Kohderyhmä</div>
             <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
-              <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Ei ICP-kuvausta vielä</p>
+              <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Ei kohderyhmäprofiileja vielä</p>
               <button 
                 style={{
                   background: '#22c55e',
@@ -543,15 +707,44 @@ export default function ContentStrategyPage() {
                   fontWeight: 600,
                   cursor: 'pointer'
                 }}
-                onClick={handleEditIcp}
+                onClick={() => {
+                  setEditingIcp(true)
+                  setIcpEditText('')
+                }}
               >
-                Luo ICP
+                Luo kohderyhmäprofiili
               </button>
             </div>
           </div>
         )}
 
-
+        {/* Tavoitteet jos ei ole vielä olemassa */}
+        {(!kpiData || kpiData.length === 0) && (
+          <div className="strategy-card">
+            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🎯 Tavoitteet</div>
+            <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
+              <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Ei tavoitteita vielä</p>
+              <button 
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '8px 16px',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+                onClick={() => {
+                  setEditingKpi(true)
+                  setKpiEditText('')
+                }}
+              >
+                Luo tavoitteet
+              </button>
+            </div>
+          </div>
+        )}
 
         {error && (
           <div style={{ 

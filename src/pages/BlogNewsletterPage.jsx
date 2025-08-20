@@ -436,14 +436,14 @@ export default function BlogNewsletterPage() {
     <div className="blog-newsletter-container">
       {/* Page Header */}
       <div className="blog-newsletter-header">
-        <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#1f2937', margin: 0 }}>Blog & Newsletter</h2>
+        <h2>Blogit ja uutiskirjeet</h2>
       </div>
 
       {/* Search and Filters */}
       <div className="search-filters">
         <input
           type="text"
-          placeholder="Etsi sisältöä..."
+          placeholder="Etsi blogeja ja newslettereja..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
@@ -466,9 +466,9 @@ export default function BlogNewsletterPage() {
           onChange={(e) => setTypeFilter(e.target.value)}
           className="type-filter"
         >
-          <option value="">Kaikki tyypit</option>
-          <option value="Blog">Blog</option>
-          <option value="Newsletter">Newsletter</option>
+          <option value="">Kaikki sisältötyypit</option>
+          <option value="Blog">📝 Blog-artikkelit</option>
+          <option value="Newsletter">📧 Newsletterit</option>
         </select>
         <Button 
           variant="primary"
@@ -504,7 +504,7 @@ export default function BlogNewsletterPage() {
           ) : filteredContents.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon">📝</div>
-              <h3>Ei sisältöä</h3>
+              <h3>Ei sisältöä vielä</h3>
               <p>Aloita luomalla uusi blog-artikkeli tai newsletter</p>
               <Button 
                 variant="primary"

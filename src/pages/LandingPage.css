@@ -427,6 +427,12 @@ html, body, #root, .landing-page {
   width: 24px;
   height: 24px;
   transition: transform 0.3s ease;
+  background-color: #ff6600 !important;
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .feature-card:hover .feature-icon {

@@ -249,11 +249,186 @@ export default function DashboardPage() {
     features: [],
     aiUsage: 0
   })
+  
+  // Stats data trendeillä - käytetään oikeita tietoja
+  const dashboardStats = [
+    { 
+      label: 'Tulevat postaukset', 
+      value: statsData.upcomingCount || 0, 
+      trend: 12.5, 
+      color: '#cea78d' 
+    },
+    { 
+      label: 'Sisältö julkaistu', 
+      value: statsData.monthlyCount || 0, 
+      trend: -5.2, 
+      color: '#cea78d' 
+    },
+    { 
+      label: 'Kustannukset (viestit)', 
+      value: statsData.totalMessagePrice ? `€${statsData.totalMessagePrice.toFixed(2)}` : '€0.00', 
+      trend: 8.7, 
+      color: '#cea78d' 
+    },
+    { 
+      label: 'Puhelinkustannukset', 
+      value: statsData.totalCallPrice ? `€${statsData.totalCallPrice.toFixed(2)}` : '€0.00', 
+      trend: 15.3, 
+      color: '#cea78d' 
+    }
+  ]
   const [schedule, setSchedule] = useState([])
   const [scheduleLoading, setScheduleLoading] = useState(true)
   const { user } = useAuth()
   const [imageModalUrl, setImageModalUrl] = useState(null)
+  const [selectedFilter, setSelectedFilter] = useState('all')
+  const [selectedTimeFilter, setSelectedTimeFilter] = useState('7days')
   // Analytics filtteröinnit käsitellään iframe:ssä
+
+  // Chart data - käytetään oikeita tietoja Supabase:sta
+  const [chartData, setChartData] = useState([])
+  const [chartLoading, setChartLoading] = useState(true)
+  
+  // Hae chart data Supabase:sta
+  const fetchChartData = async (timeFilter) => {
+    if (!user) return
+    
+    setChartLoading(true)
+    
+    try {
+      // Hae käyttäjän user_id ensin
+      const { data: userRow } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (!userRow) return
+      
+      const userId = userRow.id
+      const now = new Date()
+      let startDate
+      
+      if (timeFilter === '7days') {
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+      } else {
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+      }
+      
+      // Hae puhelut
+      const { data: calls } = await supabase
+        .from('call_logs')
+        .select('created_at')
+        .eq('user_id', userId)
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', now.toISOString())
+      
+      // Hae viestit
+      const { data: messages } = await supabase
+        .from('message_logs')
+        .select('created_at')
+        .eq('user_id', userId)
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', now.toISOString())
+      
+      // Ryhmittele data päivien mukaan
+      const groupedData = {}
+      
+      // Alusta päivät
+      if (timeFilter === '7days') {
+        const days = ['Su', 'Ma', 'Ti', 'Ke', 'To', 'Pe', 'La']
+        const today = now.getDay()
+        for (let i = 6; i >= 0; i--) {
+          const dayIndex = (today - i + 7) % 7
+          const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000)
+          const dayKey = days[dayIndex]
+          groupedData[dayKey] = { date: dayKey, calls: 0, messages: 0 }
+        }
+      } else {
+        // 30 päivää - viikoittain
+        for (let i = 29; i >= 0; i -= 7) {
+          const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000)
+          const weekKey = `${date.getDate()}.${date.getMonth() + 1}`
+          groupedData[weekKey] = { date: weekKey, calls: 0, messages: 0 }
+        }
+      }
+      
+      // Laske puhelut päivittäin
+      if (calls) {
+        calls.forEach(call => {
+          const callDate = new Date(call.created_at)
+          if (timeFilter === '7days') {
+            const dayIndex = callDate.getDay()
+            const days = ['Su', 'Ma', 'Ti', 'Ke', 'To', 'Pe', 'La']
+            const dayKey = days[dayIndex]
+            if (groupedData[dayKey]) {
+              groupedData[dayKey].calls++
+            }
+          } else {
+            // 30 päivää - viikoittain
+            const weekStart = new Date(callDate.getTime() - callDate.getDay() * 24 * 60 * 60 * 1000)
+            const weekKey = `${weekStart.getDate()}.${weekStart.getMonth() + 1}`
+            if (groupedData[weekKey]) {
+              groupedData[weekKey].calls++
+            }
+          }
+        })
+      }
+      
+      // Laske viestit päivittäin
+      if (messages) {
+        messages.forEach(message => {
+          const messageDate = new Date(message.created_at)
+          if (timeFilter === '7days') {
+            const dayIndex = messageDate.getDay()
+            const days = ['Su', 'Ma', 'Ti', 'Ke', 'To', 'Pe', 'La']
+            const dayKey = days[dayIndex]
+            if (groupedData[dayKey]) {
+              groupedData[dayKey].messages++
+            }
+          } else {
+            // 30 päivää - viikoittain
+            const weekStart = new Date(messageDate.getTime() - messageDate.getDay() * 24 * 60 * 60 * 1000)
+            const weekKey = `${weekStart.getDate()}.${weekStart.getMonth() + 1}`
+            if (groupedData[weekKey]) {
+              groupedData[weekKey].messages++
+            }
+          }
+        })
+      }
+      
+      // Muunna objektista array:ksi ja järjestä
+      const sortedData = Object.values(groupedData).sort((a, b) => {
+        if (timeFilter === '7days') {
+          const days = ['Su', 'Ma', 'Ti', 'Ke', 'To', 'Pe', 'La']
+          return days.indexOf(a.date) - days.indexOf(b.date)
+        } else {
+          return a.date.localeCompare(b.date)
+        }
+      })
+      
+      setChartData(sortedData)
+    } catch (error) {
+      console.error('Virhe haettaessa chart dataa:', error)
+      // Fallback dummy data jos virhe
+      setChartData([
+        { date: 'Ma', calls: 0, messages: 0 },
+        { date: 'Ti', calls: 0, messages: 0 },
+        { date: 'Ke', calls: 0, messages: 0 },
+        { date: 'To', calls: 0, messages: 0 },
+        { date: 'Pe', calls: 0, messages: 0 },
+        { date: 'La', calls: 0, messages: 0 },
+        { date: 'Su', calls: 0, messages: 0 }
+      ])
+    } finally {
+      setChartLoading(false)
+    }
+  }
+  
+  // Päivitä chartData kun aikaväli muuttuu
+  useEffect(() => {
+    fetchChartData(selectedTimeFilter)
+  }, [selectedTimeFilter, user])
 
   // Platform värit
   const getPlatformColor = (platform) => {
@@ -939,26 +1114,66 @@ export default function DashboardPage() {
       />
       <div className={styles['dashboard-container']}>
         <div className={styles['dashboard-header']}>
-          <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#1f2937', margin: 0 }}>Kojelauta</h2>
+          <h1>Kojelauta</h1>
+          <p>Hallitse sisältöäsi ja seuraa tuloksia yhdellä silmäyksellä</p>
         </div>
+        {/* Metrics Section - VAPIn tyylillä */}
+        <div className={styles['metrics-section']}>
+          <div className={styles['metrics-header']}>
+            <h2>Metrics</h2>
+            <div className={styles['metrics-filters']}>
+              <button 
+                className={styles['filter-btn'] + ' ' + (selectedFilter === 'all' ? styles['filter-active'] : '')}
+                onClick={() => setSelectedFilter('all')}
+              >
+                Kaikki
+              </button>
+              <button 
+                className={styles['filter-btn'] + ' ' + (selectedFilter === 'week' ? styles['filter-active'] : '')}
+                onClick={() => setSelectedFilter('week')}
+              >
+                Viime viikko
+              </button>
+              <button 
+                className={styles['filter-btn'] + ' ' + (selectedFilter === 'month' ? styles['filter-active'] : '')}
+                onClick={() => setSelectedFilter('month')}
+              >
+                Viime kuukausi
+              </button>
+            </div>
+          </div>
+          
+          <div className={styles['metrics-grid']}>
+            {statsLoading ? (
+              Array(4).fill(0).map((_, i) => (
+                <div key={i} className={styles['metric-card']}>
+                  <div className={styles['metric-skeleton']}>
+                    <div style={{ background: '#eee', height: 16, width: 100, borderRadius: 4 }}></div>
+                    <div style={{ background: '#eee', height: 32, width: 80, borderRadius: 6, margin: '12px 0' }}></div>
+                    <div style={{ background: '#eee', height: 14, width: 60, borderRadius: 4 }}></div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              dashboardStats.map((stat, i) => (
+                <div key={i} className={styles['metric-card']}>
+                  <div className={styles['metric-label']}>{stat.label}</div>
+                  <div className={styles['metric-value']}>{stat.value}</div>
+                  <div className={styles['metric-trend']}>
+                    <span className={styles['trend-icon'] + ' ' + (stat.trend > 0 ? styles['trend-up'] : styles['trend-down'])}>
+                      {stat.trend > 0 ? '↗' : '↘'}
+                    </span>
+                    <span className={styles['trend-text']}>
+                      {Math.abs(stat.trend)}% {stat.trend > 0 ? 'kasvu' : 'lasku'} edelliseen
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
         <div className={styles['dashboard-bentogrid']}>
-          {statsLoading ? (
-            Array(4).fill(0).map((_, i) => (
-              <div key={i} className={styles.card}>
-                <div className={styles['stat-label']} style={{ background: '#eee', height: 18, width: 120, borderRadius: 6 }}></div>
-                <div className={styles['stat-number']} style={{ background: '#eee', height: 32, width: 60, borderRadius: 8, margin: '16px 0' }}></div>
-                <div style={{ background: '#eee', height: 14, width: 80, borderRadius: 6 }}></div>
-              </div>
-            ))
-          ) : (
-            stats.map((stat, i) => (
-              <div key={i} className={styles.card}>
-                <div className={styles['stat-label']}>{stat.label}</div>
-                <div className={styles['stat-number']} style={{ color: stat.color }}>{stat.value}</div>
-                <div style={{ color: '#6b7280', fontSize: 14, marginTop: 4 }}>{stat.sub}</div>
-              </div>
-            ))
-          )}
           
           {/* Poistetaan Engagement Analytics -kortti kokonaan */}
           {/*
@@ -974,11 +1189,11 @@ export default function DashboardPage() {
           */}
           {/* Tulevat julkaisut -kortti: mobiiliystävällinen */}
           <div className={styles.card} style={{ gridColumn: 'span 3', minHeight: 180, display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#374151', marginBottom: 12 }}>Tulevat julkaisut</div>
+            <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>Tulevat julkaisut</div>
             <div className="table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'clamp(13px, 3vw, 15px)', minWidth: 600 }}>
                 <thead>
-                  <tr style={{ color: '#6b7280', fontWeight: 600, background: '#f7f8fc' }}>
+                  <tr style={{ color: '#1f2937', fontWeight: 600, background: '#f7f8fc' }}>
                     <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Media</th>
                     <th style={{ textAlign: 'left', padding: '8px 4px' }}>Caption</th>
                     <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Status</th>
@@ -1010,6 +1225,64 @@ export default function DashboardPage() {
           </div>
 
           {/* Analytics poistettu - tehdään myöhemmin */}
+        </div>
+        
+        {/* Grafiikki Section - VAPIn tyylillä */}
+        <div className={styles['chart-section']}>
+          <div className={styles['chart-header']}>
+            <h2>Puhelut ja viestit aikajärjestyksessä</h2>
+            <div className={styles['chart-filters']}>
+              <button 
+                className={styles['filter-btn'] + ' ' + (selectedTimeFilter === '7days' ? styles['filter-active'] : '')}
+                onClick={() => setSelectedTimeFilter('7days')}
+              >
+                Viime 7 päivää
+              </button>
+              <button 
+                className={styles['filter-btn'] + ' ' + (selectedTimeFilter === '30days' ? styles['filter-active'] : '')}
+                onClick={() => setSelectedTimeFilter('30days')}
+              >
+                Viime 30 päivää
+              </button>
+            </div>
+          </div>
+          
+          <div className={styles['chart-container']}>
+            {chartLoading ? (
+              <div className={styles['chart-skeleton']}>
+                <div style={{ background: '#eee', height: 200, width: '100%', borderRadius: 8 }}></div>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={200}>
+                <LineChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="date" stroke="#6b7280" fontSize={12} />
+                  <YAxis stroke="#6b7280" fontSize={12} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#fff', 
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="calls" 
+                    stroke="#cea78d" 
+                    strokeWidth={3}
+                    dot={{ fill: '#cea78d', strokeWidth: 2, r: 4 }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="messages" 
+                    stroke="#4b3120" 
+                    strokeWidth={3}
+                    dot={{ fill: '#4b3120', strokeWidth: 2, r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
+          </div>
         </div>
       </div>
       

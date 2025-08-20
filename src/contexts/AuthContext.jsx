@@ -94,13 +94,32 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = async () => {
     try {
+      // Aseta logout-syy sessionStorage:en
+      sessionStorage.setItem('logoutReason', 'Käyttäjä kirjautui ulos')
+      
       const { error } = await supabase.auth.signOut({ scope: 'global' })
       
       if (error) {
         console.error('Error signing out:', error.message)
+        // Jos Supabase logout epäonnistuu, tyhjennetään silti local state
+        setUser(null)
+        navigate('/', { 
+          state: { 
+            logoutReason: 'Virhe kirjautumisessa ulos',
+            showLogoutMessage: true 
+          } 
+        })
       }
     } catch (err) {
       console.error('SignOut error:', err)
+      // Jos tapahtuu poikkeus, tyhjennetään silti local state
+      setUser(null)
+      navigate('/', { 
+        state: { 
+          logoutReason: 'Virhe kirjautumisessa ulos',
+          showLogoutMessage: true 
+        } 
+      })
     }
   }
 

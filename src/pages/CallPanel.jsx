@@ -96,6 +96,10 @@ export default function CallPanel() {
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   
+  // Järjestämismahdollisuudet
+  const [sortField, setSortField] = useState('created_at')
+  const [sortDirection, setSortDirection] = useState('desc')
+  
   // Yksityiskohtainen näkymä
   const [selectedLog, setSelectedLog] = useState(null)
   const [showLogDetail, setShowLogDetail] = useState(false)
@@ -984,7 +988,18 @@ export default function CallPanel() {
         .from('call_logs')
         .select('*')
         .eq('user_id', userProfile.id)
-        .order('created_at', { ascending: false })
+
+      // Lisää järjestäminen
+      if (sortField === 'duration') {
+        query = query.order('duration', { ascending: sortDirection === 'asc' })
+      } else if (sortField === 'call_date') {
+        query = query.order('call_date', { ascending: sortDirection === 'asc' })
+      } else if (sortField === 'call_status') {
+        query = query.order('call_status', { ascending: sortDirection === 'asc' })
+      } else {
+        // Oletusjärjestys: created_at
+        query = query.order('created_at', { ascending: sortDirection === 'asc' })
+      }
 
       // Lisää suodattimet
       if (searchTerm) {
@@ -1034,7 +1049,7 @@ export default function CallPanel() {
       if (user?.id && activeTab === 'logs') {
       fetchCallLogs()
       }
-  }, [user, activeTab]) // Suoritetaan kun user tai activeTab muuttuu
+  }, [user, activeTab, sortField, sortDirection]) // Suoritetaan kun user, activeTab, sortField tai sortDirection muuttuu
 
   // Hae viestiloki
   const fetchMessageLogs = async () => {
@@ -1261,6 +1276,7 @@ export default function CallPanel() {
           `"${log.duration ? formatDuration(log.duration) : ''}"`,
           (log.call_date && log.call_time) ? 'Ajastettu' : 
           (log.call_status === 'done' && log.call_outcome === 'cancelled') ? 'Peruttu' :
+          (log.call_status === 'done' && log.call_outcome === 'voice mail') ? 'Vastaaja' :
           log.call_status === 'done' && log.answered ? 'Onnistui' : 
           log.call_status === 'done' && !log.answered ? 'Epäonnistui' :
           log.call_status === 'pending' ? 'Odottaa' : 
@@ -1290,6 +1306,18 @@ export default function CallPanel() {
     }
   }
 
+  // Järjestämisfunktio
+  const handleSort = (field) => {
+    if (sortField === field) {
+      // Jos sama kenttä, vaihda suuntaa
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      // Jos uusi kenttä, aseta nouseva järjestys
+      setSortField(field)
+      setSortDirection('asc')
+    }
+  }
+
   // Filtteröinti ja haku
   const handleSearch = () => {
     setCurrentPage(1) // Palaa ensimmäiselle sivulle
@@ -1307,6 +1335,8 @@ export default function CallPanel() {
     setCallTypeFilter('')
     setDateFrom('')
     setDateTo('')
+    setSortField('created_at')
+    setSortDirection('desc')
     setCurrentPage(1)
     fetchCallLogs(1)
   }
@@ -2485,12 +2515,72 @@ export default function CallPanel() {
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Sähköposti</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Yhteenveto</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Puhelun tyyppi</th>
-                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Päivämäärä</th>
+                        <th 
+                          style={{ 
+                            padding: '8px', 
+                            textAlign: 'left', 
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            userSelect: 'none',
+                            transition: 'background-color 0.2s'
+                          }}
+                          onClick={() => handleSort('call_date')}
+                          title="Klikkaa järjestääksesi päivämäärän mukaan"
+                          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e5e7eb'}
+                          onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
+                        >
+                          Päivämäärä
+                          {sortField === 'call_date' && (
+                            <span style={{ marginLeft: 4, fontSize: 12 }}>
+                              {sortDirection === 'asc' ? '↑' : '↓'}
+                            </span>
+                          )}
+                        </th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Vastattu</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Yhteydenotto</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Suunta</th>
-                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Kesto</th>
-                        <th style={{ padding: '8px', textAlign: 'center', fontWeight: 600 }}>Tila</th>
+                        <th 
+                          style={{ 
+                            padding: '8px', 
+                            textAlign: 'left', 
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            userSelect: 'none',
+                            transition: 'background-color 0.2s'
+                          }}
+                          onClick={() => handleSort('duration')}
+                          title="Klikkaa järjestääksesi keston mukaan"
+                          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e5e7eb'}
+                          onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
+                        >
+                          Kesto
+                          {sortField === 'duration' && (
+                            <span style={{ marginLeft: 4, fontSize: 12 }}>
+                              {sortDirection === 'asc' ? '↑' : '↓'}
+                            </span>
+                          )}
+                        </th>
+                        <th 
+                          style={{ 
+                            padding: '8px', 
+                            textAlign: 'center', 
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            userSelect: 'none',
+                            transition: 'background-color 0.2s'
+                          }}
+                          onClick={() => handleSort('call_status')}
+                          title="Klikkaa järjestääksesi tilan mukaan"
+                          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e5e7eb'}
+                          onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
+                        >
+                          Tila
+                          {sortField === 'call_status' && (
+                            <span style={{ marginLeft: 4, fontSize: 12 }}>
+                              {sortDirection === 'asc' ? '↑' : '↓'}
+                            </span>
+                          )}
+                        </th>
                         <th style={{ padding: '8px', textAlign: 'right', fontWeight: 600 }}>Toiminnot</th>
                       </tr>
                     </thead>
@@ -2589,11 +2679,13 @@ export default function CallPanel() {
                               fontWeight: 600,
                                   background: (log.call_date && log.call_time) ? '#e0f2fe' :
                                             (log.call_status === 'done' && log.call_outcome === 'cancelled') ? '#fee2e2' :
+                                            (log.call_status === 'done' && log.call_outcome === 'voice mail') ? '#fef3c7' :
                                             log.call_status === 'done' && log.answered ? '#dcfce7' : 
                                             log.call_status === 'pending' ? '#f3f4f6' : 
                                             log.call_status === 'in progress' ? '#dbeafe' : '#fef2f2',
                                   color: (log.call_date && log.call_time) ? '#0369a1' :
                                          (log.call_status === 'done' && log.call_outcome === 'cancelled') ? '#b91c1c' :
+                                         (log.call_status === 'done' && log.call_outcome === 'voice mail') ? '#92400e' :
                                          log.call_status === 'done' && log.answered ? '#166534' : 
                                          log.call_status === 'pending' ? '#6b7280' : 
                                          log.call_status === 'in progress' ? '#1d4ed8' : '#dc2626',
@@ -2601,6 +2693,7 @@ export default function CallPanel() {
                             }}>
                                   {(log.call_date && log.call_time && log.call_status === 'pending') ? 'Ajastettu' : 
                                    (log.call_status === 'done' && log.call_outcome === 'cancelled') ? 'Peruttu' :
+                                   (log.call_status === 'done' && log.call_outcome === 'voice mail') ? 'Vastaaja' :
                                    log.call_status === 'done' && log.answered ? 'Onnistui' : 
                                    log.call_status === 'done' && !log.answered ? 'Epäonnistui' :
                                    log.call_status === 'pending' ? 'Odottaa' : 

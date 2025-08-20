@@ -6,100 +6,121 @@
   left: 0;
   top: 0;
   width: 250px;
-  background: #181B20;
-  color: #fff;
+  background: #ffffff;
+  color: #1f2937;
   z-index: 20;
-  border-top-right-radius: 24px;
-  border-bottom-right-radius: 24px;
-  box-shadow: 2px 0 16px rgba(0,0,0,0.10);
+  border-right: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .profile-section {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 32px 0 24px 0;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 24px 20px;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 .profile-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  color: #6b7280;
 }
 
 .profile-name {
-  font-weight: 700;
-  font-size: 18px;
-  color: #fff;
-  letter-spacing: -0.5px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #6b7280;
+  letter-spacing: -0.2px;
 }
 
 .nav-menu {
   flex: 1;
-  margin-top: 12px;
+  margin: 0;
   list-style: none;
-  padding: 0;
+  padding: 16px 0;
 }
 
 .nav-item {
-  margin-bottom: 6px;
+  margin: 0;
 }
 
 .nav-link {
-  font-size: 18px;
+  font-size: 14px;
   display: flex;
   align-items: center;
-  border-radius: 12px;
-  padding: 14px 24px;
+  border-radius: 8px;
+  padding: 12px 20px;
   background: transparent;
-  color: #cbd5e1;
+  color: #6b7280;
   font-weight: 500;
-  transition: background 0.15s, color 0.15s;
+  transition: all 0.15s ease;
   cursor: pointer;
-  gap: 16px;
+  gap: 12px;
   text-decoration: none;
   border: none;
+  width: 100%;
+  text-align: left;
+  margin: 2px 8px;
+}
+
+.nav-icon {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+  color: #9ca3af;
 }
 
 .nav-link.active {
-  background: #22c55e;
-  color: #fff;
-  font-weight: 700;
+  background: #f3f4f6;
+  color: #1f2937;
+  font-weight: 600;
 }
 
 .nav-link:hover:not(.active) {
-  background: #20614a;
-  color: #fff;
+  background: #f9fafb;
+  color: #374151;
 }
 
 .settings-section {
   margin-top: auto;
-  padding: 24px 0 16px 0;
+  padding: 16px 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  gap: 4px;
+  border-top: 1px solid #f3f4f6;
 }
 
 .logout-btn {
-  width: 90%;
-  background: #fff;
-  color: #1a4a3a;
-  font-weight: 700;
+  width: 100%;
+  background: transparent;
+  color: #6b7280;
+  font-weight: 500;
   border: none;
-  border-radius: 10px;
-  padding: 12px 0;
-  font-size: 17px;
-  margin-top: 10px;
-  margin-bottom: 0;
-  transition: background 0.15s;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 14px;
+  margin: 0;
+  transition: all 0.15s ease;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
 }
 
 .logout-btn:hover {
-  background: #e2e8f0;
+  background: #f9fafb;
+  color: #374151;
 }
 
 

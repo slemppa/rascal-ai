@@ -60,10 +60,14 @@ export const AutoLogoutProvider = ({ children }) => {
     setIsActive(false)
     setShowWarning(false)
     
-    // Ilmoita muille välilehdille logoutista
-    if (broadcastChannelRef.current) {
-      broadcastChannelRef.current.postMessage({ type: 'LOGOUT' })
-    }
+            // Ilmoita muille välilehdille logoutista
+        if (broadcastChannelRef.current && broadcastChannelRef.current.readyState === 'open') {
+          try {
+            broadcastChannelRef.current.postMessage({ type: 'LOGOUT' })
+          } catch (error) {
+            console.warn('BroadcastChannel postMessage failed:', error)
+          }
+        }
     
     // Tyhjennä localStorage
     localStorage.removeItem(STORAGE_KEYS.LAST_ACTIVITY)
@@ -166,8 +170,12 @@ export const AutoLogoutProvider = ({ children }) => {
     resetTimers()
     
     // Ilmoita muille välilehdille aktiviteetista
-    if (broadcastChannelRef.current) {
-      broadcastChannelRef.current.postMessage({ type: 'ACTIVITY' })
+    if (broadcastChannelRef.current && broadcastChannelRef.current.readyState === 'open') {
+      try {
+        broadcastChannelRef.current.postMessage({ type: 'ACTIVITY' })
+      } catch (error) {
+        console.warn('BroadcastChannel postMessage failed:', error)
+      }
     }
   }, [hideWarningDialog, resetTimers, user])
 
@@ -227,8 +235,12 @@ export const AutoLogoutProvider = ({ children }) => {
       if (isActive) {
         resetTimers()
         // Ilmoita muille välilehdille aktiviteetista
-        if (broadcastChannelRef.current) {
-          broadcastChannelRef.current.postMessage({ type: 'ACTIVITY' })
+        if (broadcastChannelRef.current && broadcastChannelRef.current.readyState === 'open') {
+          try {
+            broadcastChannelRef.current.postMessage({ type: 'ACTIVITY' })
+          } catch (error) {
+            console.warn('BroadcastChannel postMessage failed:', error)
+          }
         }
       }
     })

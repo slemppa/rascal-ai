@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.40.0](https://github.com/slemppa/rascal-ai/compare/v1.39.1...v1.40.0) (2025-08-20)
+
+
+### ♻️ Code Refactoring
+
+* update sidebar to VAPI dashboard style ([7d53c68](https://github.com/slemppa/rascal-ai/commit/7d53c6816ab1409005948de72e6b5cb543f0df38))
+
+
+### ✨ Features
+
+* add blocked number filter to mass-call and validate-sheet APIs ([17a24d4](https://github.com/slemppa/rascal-ai/commit/17a24d4f69c95d5b4c60e86acfee75d979fa0a49))
+* add Google Analytics tracking ([3ddd789](https://github.com/slemppa/rascal-ai/commit/3ddd7890fd24d233e2f072910299e29650475477))
+* add hamburger menu, Instagram icon and update favicon ([71dcba5](https://github.com/slemppa/rascal-ai/commit/71dcba50d63ddbb67cd00a96099163f6fe6e64b3))
+* LandingPage redesign - ammattimainen design ja koko sivun leveys ([769dbe8](https://github.com/slemppa/rascal-ai/commit/769dbe8fa9aea895c67520e33617eeed6caf336e))
+* LandingPage redesign - ammattimainen design ja tiivistetty layout ([0f52fa2](https://github.com/slemppa/rascal-ai/commit/0f52fa29b40b677e0b683a63b28c5c6d30daf23e))
+* lisää viestien kokonaishinta DashboardPage stats-osioon ([70316cc](https://github.com/slemppa/rascal-ai/commit/70316cc8932ff2cf6525a6ba72d1ec640087d9b9))
+* rebrand ContentStrategyPage and add KPI functionality ([0067807](https://github.com/slemppa/rascal-ai/commit/0067807eea66b14b9b336d277082f489c11c8829))
+
+
+### 💄 Styles
+
+* brändi yhtenäinen /calls, /ai-chat, help ja asetukset ([9fa5978](https://github.com/slemppa/rascal-ai/commit/9fa59787c54c3733d6526095f05cea959be9287d))
+
 ### [1.39.1](https://github.com/slemppa/rascal-ai/compare/v1.39.0...v1.39.1) (2025-08-18)
 
 

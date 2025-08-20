@@ -7,6 +7,62 @@
   overflow-y: auto !important;
 }
 
+/* Varmistetaan että modaalien tekstit näkyvät */
+.mass-call-modal .modal-title,
+.mass-call-modal h2,
+.mass-call-modal h3,
+.mass-call-modal p,
+.mass-call-modal label {
+  color: #1f2937 !important;
+}
+
+/* Varmistetaan että modaalien tausta on oikean värinen */
+.mass-call-modal .modal-container {
+  background: #ffffff !important;
+}
+
+/* Tarkemmat selektorit modaalien otsikoille */
+.mass-call-modal .modal-header h2,
+.mass-call-modal .modal-header .modal-title,
+.mass-call-modal .modal-body h3 {
+  color: #1f2937 !important;
+  font-weight: 700 !important;
+}
+
+/* Yleiset modaalien otsikot */
+.modal-header h2,
+.modal-header .modal-title,
+.modal-body h3 {
+  color: #1f2937 !important;
+  font-weight: 700 !important;
+}
+
+/* Tarkemmat selektorit modaalien otsikoille - ohitetaan index.css:n valkoinen väri */
+.modal-overlay h2,
+.modal-overlay h3,
+.modal-overlay .modal-title,
+.modal-container h2,
+.modal-container h3,
+.modal-container .modal-title {
+  color: #1f2937 !important;
+  font-weight: 700 !important;
+}
+
+/* Varmistetaan että kaikki modaalien tekstit ovat tummia */
+.modal-overlay *,
+.modal-container * {
+  color: inherit;
+}
+
+.modal-overlay h2,
+.modal-overlay h3,
+.modal-overlay .modal-title,
+.modal-container h2,
+.modal-container h3,
+.modal-container .modal-title {
+  color: #1f2937 !important;
+}
+
 .mass-call-modal .modal-body {
   flex: 1;
   overflow-y: auto;
@@ -23,6 +79,18 @@
   margin-top: auto;
   padding-top: 20px;
   border-top: 1px solid #e5e7eb;
+}
+
+/* Yksittäisen puhelun modaalin tyylit */
+.modal-container:not(.mass-call-modal) {
+  background: #ffffff !important;
+}
+
+.modal-container:not(.mass-call-modal) .modal-title,
+.modal-container:not(.mass-call-modal) h2,
+.modal-container:not(.mass-call-modal) h3 {
+  color: #1f2937 !important;
+  font-weight: 700 !important;
 }
 
 /* SMS preview -kentän tyylit */
@@ -48,7 +116,7 @@
 .callpanel-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 16px 32px 16px;
+  padding: 32px 16px;
 }
 
 /* Ison resoluution optimointeja */
@@ -76,42 +144,47 @@
 
 .callpanel-tabs {
   display: flex;
-  border-bottom: 1.5px solid #e5e7eb;
   background: transparent;
-  margin-bottom: 32px;
-  gap: 0;
-  height: 44px;
+  margin-bottom: 28px;
+  gap: 8px;
+  height: auto;
 }
 
 /* Tab-nappien tyylit Button-komponentille - käytetään tarkempia selektoreita !important:n sijaan */
 .callpanel-tabs .button {
   flex: 1;
-  background: none;
-  border: none;
-  border-bottom: 2.5px solid transparent;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   color: #6b7280;
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  transition: color 0.15s, border 0.15s, background 0.15s;
+  transition: all 0.25s ease;
   outline: none;
-  padding: 0 0 8px 0;
-  border-radius: 0;
-  box-shadow: none;
+  padding: 10px 12px;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
   min-height: auto;
   min-width: auto;
 }
 
 .callpanel-tabs .button.button-primary {
-  color: #2563eb;
-  border-bottom: 2.5px solid #2563eb;
-  background: none;
+  color: #ffffff;
+  background: #ff6600;
+  border-color: #ff6600;
+  box-shadow: 0 6px 14px rgba(255, 102, 0, 0.25);
+  transform: translateY(-1px);
 }
 
-.callpanel-tabs .button.button-secondary:hover {
-  background: #f3f4f6;
+.callpanel-tabs .button:hover {
+  background: #f9fafb;
   color: #1f2937;
+  border-color: #e5e7eb;
+}
+
+.callpanel-tabs .button:focus-visible {
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.25);
 }
 
 /* Tab-tyylit poistettu - käytetään Button.jsx-komponenttia */
@@ -124,23 +197,25 @@
 
 .card {
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 1.5px 8px rgba(40,60,120,0.07);
-  padding: 28px 28px 22px 28px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 32px;
   margin-bottom: 0;
-  transition: box-shadow 0.18s, transform 0.18s;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.06);
 }
 .card:hover {
-  box-shadow: 0 4px 18px rgba(40,60,120,0.13);
-  transform: translateY(-1px) scale(1.01);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  border-color: #ff6600;
 }
 
 .section-title {
-  font-size: 21px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 800;
   color: #1f2937;
-  margin-bottom: 18px;
-  letter-spacing: 0.01em;
+  margin-bottom: 20px;
+  letter-spacing: -0.025em;
 }
 
 .label {
@@ -153,19 +228,19 @@
 
 .input, .select, .textarea {
   width: 100%;
-  padding: 11px 14px;
-  border: 1.5px solid #d1d5db;
-  border-radius: 7px;
+  padding: 12px 16px;
+  border: 2px solid #d1d5db;
+  border-radius: 12px;
   font-size: 15px;
   font-family: inherit;
   background: #fff;
-  margin-bottom: 14px;
-  transition: border 0.18s, box-shadow 0.18s;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
 }
 .input:focus, .select:focus, .textarea:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px #2563eb22;
+  border-color: #ff6600;
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.15);
 }
 
 /* Button-tyylit poistettu - käytetään Button.jsx-komponenttia */
@@ -174,19 +249,21 @@
   background: #e6fbe8;
   color: #1a7f37;
   border: 1px solid #b7e4c7;
-  border-radius: 7px;
-  padding: 10px 14px;
-  margin-top: 10px;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 12px;
   font-size: 15px;
+  font-weight: 600;
 }
 .status-error {
   background: #fef2f2;
   color: #dc2626;
   border: 1px solid #fecaca;
-  border-radius: 7px;
-  padding: 10px 14px;
-  margin-top: 10px;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 12px;
   font-size: 15px;
+  font-weight: 600;
 }
 
 .card .textarea {
@@ -197,7 +274,7 @@
 
 /* Microinteraktiot */
 .card {
-  transition: box-shadow 0.15s, background 0.15s, color 0.15s, border 0.15s, transform 0.15s;
+  transition: all 0.3s ease;
 }
 
 /* Mobiilioptimointi */
@@ -222,7 +299,8 @@
   }
   
   .card {
-    padding: 20px 16px 16px 16px;
+    padding: 24px 20px;
+    border-radius: 16px;
   }
   
   .section-title {
@@ -261,8 +339,8 @@
   }
   
   .card {
-    padding: 16px 12px 12px 12px;
-    border-radius: 10px;
+    padding: 20px 16px;
+    border-radius: 14px;
   }
   
   .section-title {
@@ -276,14 +354,14 @@
   
   .input, .select, .textarea {
     font-size: 13px;
-    padding: 8px 10px;
-    border-radius: 6px;
+    padding: 10px 12px;
+    border-radius: 8px;
   }
   
   .status-success, .status-error {
     font-size: 13px;
-    padding: 6px 10px;
-    border-radius: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
   }
 }
 
@@ -303,8 +381,8 @@
   }
   
   .card {
-    padding: 12px 8px 8px 8px;
-    border-radius: 8px;
+    padding: 16px 12px;
+    border-radius: 12px;
   }
   
   .section-title {
@@ -318,14 +396,14 @@
   
   .input, .select, .textarea {
     font-size: 12px;
-    padding: 6px 8px;
-    border-radius: 5px;
+    padding: 8px 10px;
+    border-radius: 6px;
   }
   
   .status-success, .status-error {
     font-size: 12px;
-    padding: 5px 8px;
-    border-radius: 5px;
+    padding: 6px 10px;
+    border-radius: 6px;
   }
 }
 

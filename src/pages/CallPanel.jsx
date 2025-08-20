@@ -2026,7 +2026,7 @@ export default function CallPanel() {
   return (
     <>
       <PageMeta 
-        title="Puhelut - Rascal AI"
+        title="📞 Puhelut - Rascal AI"
         description="Automatisoi puhelut ja seuraa puhelulokeja Rascal AI:ssä. Älykäs puhelinmarkkinointi ja asiakaspalvelu."
         image="/hero.png"
       />
@@ -2036,7 +2036,7 @@ export default function CallPanel() {
         {/* Tabs (3 per rivi) */}
         <div className="callpanel-tabs" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8, position: 'relative', zIndex: 3 }}>
           <div style={{ display: 'contents' }}>
-            <Button onClick={() => setActiveTab('calls')} variant={activeTab === 'calls' ? 'primary' : 'secondary'}>📞 Puhelut</Button>
+            <Button onClick={() => setActiveTab('calls')} variant={activeTab === 'calls' ? 'primary' : 'secondary'}>🚀 Puhelut</Button>
             <Button onClick={() => setActiveTab('logs')} variant={activeTab === 'logs' ? 'primary' : 'secondary'}>📊 Puheluloki</Button>
             <Button onClick={() => setActiveTab('messages')} variant={activeTab === 'messages' ? 'primary' : 'secondary'}>💬 Viestiloki</Button>
           </div>
@@ -2057,7 +2057,7 @@ export default function CallPanel() {
             {/* Aloita puhelut -kortti - näkyy kaikille */}
             {(
               <div className="card">
-              <h2 className="section-title">Aloita massapuhelut</h2>
+              <h2 className="section-title">Massapuhelut</h2>
               <p style={{ color: '#6b7280', marginBottom: 20, fontSize: 15 }}>
                 Aloita massapuhelut Google Sheets -datalle tai ajasta ne myöhemmäksi.
               </p>
@@ -2066,7 +2066,7 @@ export default function CallPanel() {
                   variant="primary"
                 style={{ width: '100%', padding: '16px 24px', fontSize: 16, fontWeight: 600 }}
                 >
-                🚀 Aloita massapuhelut
+                Aloita massapuhelut
                 </Button>
             </div>
             )}
@@ -2075,7 +2075,7 @@ export default function CallPanel() {
             
             {/* Tee puhelu -kortti: nappi avaa modaalin */}
             <div className="card">
-              <h2 className="section-title">Soita yksittäinen puhelu</h2>
+              <h2 className="section-title">Yksittäinen puhelu</h2>
               <p style={{ color: '#6b7280', marginBottom: 20, fontSize: 15 }}>
                 Valitse puhelun tyyppi ja tiedot modaalissa.
               </p>
@@ -2084,7 +2084,7 @@ export default function CallPanel() {
                 variant="primary"
                 style={{ width: '100%', padding: '16px 24px', fontSize: 16, fontWeight: 600 }}
               >
-                📞 Soita yksittäinen puhelu
+                Soita yksittäinen puhelu
               </Button>
             </div>
             {/* Toiminnot -kortti */}
@@ -3371,8 +3371,11 @@ export default function CallPanel() {
                 className="modal-container"
               >
               <div className="modal-header">
-                <h2 className="modal-title" style={{ fontSize: 20 }}>
-                  📞 Puhelun yksityiskohdat
+                <h2 className="modal-title" style={{ fontSize: 20, color: '#1f2937', fontWeight: 700, backgroundColor: 'transparent' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                  Puhelun yksityiskohdat
                 </h2>
                 <Button
                   onClick={() => setShowLogDetail(false)}
@@ -3667,8 +3670,11 @@ export default function CallPanel() {
               style={{ maxWidth: '600px' }}
             >
               <div className="modal-header">
-                <h2 className="modal-title" style={{ fontSize: 22 }}>
-                  🚀 Massapuhelut
+                <h2 className="modal-title" style={{ fontSize: 22, color: '#1f2937', fontWeight: '700', backgroundColor: 'transparent' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
+                    <path d="M4.5 16.5c-1.5 1.5-1.5 4 0 5.5s4 1.5 5.5 0L12 20l2-2M20 6l-8.5 8.5a2.83 2.83 0 0 1-4 0 2.83 2.83 0 0 1 0-4L16 2"/>
+                  </svg>
+                  Massapuhelut
                 </h2>
                 <Button
                   onClick={resetMassCallModal}
@@ -3684,8 +3690,15 @@ export default function CallPanel() {
                 {massCallStep === 1 && (
                   <div>
                     <div style={{ marginBottom: 20 }}>
-                      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937' }}>
-                        📊 Vaihe 1: Google Sheets -data
+                      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937', backgroundColor: 'transparent' }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14,2 14,8 20,8"/>
+                          <line x1="16" y1="13" x2="8" y2="13"/>
+                          <line x1="16" y1="17" x2="8" y2="17"/>
+                          <polyline points="10,9 9,9 8,9"/>
+                        </svg>
+                        Vaihe 1: Google Sheets -data
                       </h3>
                       <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 16 }}>
                         Syötä Google Sheets URL ja validoi data ennen jatkamista.
@@ -3730,8 +3743,12 @@ export default function CallPanel() {
                 {massCallStep === 2 && (
                   <div>
                     <div style={{ marginBottom: 20 }}>
-                      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937' }}>
-                        ⚙️ Vaihe 2: Puhelun asetukset
+                      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937', backgroundColor: 'transparent' }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
+                          <circle cx="12" cy="12" r="3"/>
+                          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                        Vaihe 2: Puhelun asetukset
                       </h3>
                       <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 16 }}>
                         Valitse puhelun tyyppi ja ääni.
@@ -3820,8 +3837,12 @@ export default function CallPanel() {
                 {massCallStep === 3 && (
                   <div>
                     <div style={{ marginBottom: 20 }}>
-                      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937' }}>
-                        🎯 Vaihe 3: Aloita tai ajasta puhelut
+                      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937', backgroundColor: 'transparent' }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
+                          <circle cx="12" cy="12" r="10"/>
+                          <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                        Vaihe 3: Aloita tai ajasta puhelut
                       </h3>
                       <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 16 }}>
                         Valitse haluatko aloittaa puhelut heti vai ajastaa ne myöhemmäksi.
@@ -3934,8 +3955,11 @@ export default function CallPanel() {
               style={{ maxWidth: '560px' }}
             >
               <div className="modal-header">
-                <h2 className="modal-title" style={{ fontSize: 22 }}>
-                  📞 Yksittäinen puhelu
+                <h2 className="modal-title" style={{ fontSize: 22, color: '#1f2937', fontWeight: '700', backgroundColor: 'transparent' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                  Yksittäinen puhelu
                 </h2>
                 <Button
                   onClick={() => { setShowSingleCallModal(false); setSingleCallStep(1) }}
@@ -3949,7 +3973,13 @@ export default function CallPanel() {
               <div className="modal-body">
                 {singleCallStep === 1 && (
                   <div>
-                    <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937' }}>⚙️ Vaihe 1: Puhelun asetukset</h3>
+                    <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937', backgroundColor: 'transparent' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                      </svg>
+                      Vaihe 1: Puhelun asetukset
+                    </h3>
                     <label className="label">Puhelun tyyppi</label>
                     <select 
                       value={callType} 
@@ -3984,7 +4014,13 @@ export default function CallPanel() {
 
                 {singleCallStep === 2 && (
                   <div>
-                    <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937' }}>👤 Vaihe 2: Asiakkaan tiedot</h3>
+                    <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937', backgroundColor: 'transparent' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                      </svg>
+                      Vaihe 2: Asiakkaan tiedot
+                    </h3>
                     <label className="label">Nimi</label>
                     <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Matti Meikäläinen" className="input" />
                     <label className="label">Puhelinnumero</label>

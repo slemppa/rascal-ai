@@ -23,14 +23,14 @@ export default function Button({
   // Väriteemat
   const variants = {
     primary: {
-      background: disabled ? '#9ca3af' : 'var(--brand-color, #2563eb)',
+      background: disabled ? '#9ca3af' : '#ff6600',
       color: '#fff',
       border: 'none',
     },
     secondary: {
       background: '#fff',
-      color: '#2563eb',
-      border: '1.5px solid #2563eb',
+      color: '#ff6600',
+      border: '1.5px solid #ff6600',
     },
     danger: {
       background: disabled ? '#fca5a5' : '#dc2626',

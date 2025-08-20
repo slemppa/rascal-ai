@@ -48,6 +48,7 @@
   visibility: visible !important;
   opacity: 1 !important;
   animation: modalFadeIn 0.3s ease-out !important;
+  color: #1f2937 !important; /* Pakota tumma väri koko modaalin sisällölle */
 }
 
 @keyframes modalFadeIn {
@@ -184,7 +185,7 @@
   margin: 0;
   font-size: 24px;
   font-weight: 700;
-  color: #1f2937;
+  color: #1f2937 !important;
   line-height: 1.2;
 }
 
@@ -317,7 +318,7 @@
   margin-bottom: 8px;
   font-weight: 500;
   font-size: 14px;
-  color: #374151;
+  color: #374151 !important;
 }
 
 .form-input,
@@ -564,6 +565,54 @@
   .modal-success {
     font-size: 12px;
   }
+}
+
+/* Varmistetaan että modal-otsikot näkyvät oikein */
+.modal-overlay .modal-title,
+.modal-container .modal-title,
+h2.modal-title {
+  color: #1f2937 !important;
+  font-weight: 700 !important;
+}
+
+/* Tarkemmat selektorit modaalien otsikoille */
+.modal-header h2,
+.modal-header .modal-title,
+.modal-body h3 {
+  color: #1f2937 !important;
+  font-weight: 700 !important;
+}
+
+/* Varmistetaan että modaalien tausta on valkoinen */
+.modal-container {
+  background: #ffffff !important;
+  color: #1f2937 !important; /* Pakota tumma tekstiväri modaalin sisällä */
+}
+
+/* Tarkemmat selektorit modaalien otsikoille - ohitetaan index.css:n valkoinen väri */
+.modal-overlay h2,
+.modal-overlay h3,
+.modal-overlay .modal-title,
+.modal-container h2,
+.modal-container h3,
+.modal-container .modal-title {
+  color: #1f2937 !important;
+  font-weight: 700 !important;
+}
+
+/* Varmistetaan että kaikki modaalien tekstit ovat tummia */
+.modal-overlay *,
+.modal-container * {
+  color: inherit;
+}
+
+.modal-overlay h2,
+.modal-overlay h3,
+.modal-overlay .modal-title,
+.modal-container h2,
+.modal-container h3,
+.modal-container .modal-title {
+  color: #1f2937 !important;
 }
 
 /* Touch-friendly elementit mobiililla */

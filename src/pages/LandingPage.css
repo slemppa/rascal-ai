@@ -351,12 +351,12 @@ html, body, #root, .landing-page {
   margin-bottom: 40px;
 }
 
-.section-title {
+.landing-page .section-title {
   font-size: 32px;
   font-weight: 900;
   line-height: 1.2;
   margin: 0 0 16px 0;
-  color: #ffffff !important;
+  color: #ffffff;
   width: 100%;
   max-width: none;
   letter-spacing: -0.02em;

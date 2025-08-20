@@ -25,6 +25,14 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  border-color: #ff6600;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.10);
+  transform: translateY(-2px);
 }
 
 .form-group {
@@ -52,10 +60,51 @@
   box-sizing: border-box;
 }
 
+.form-input:focus {
+  outline: none;
+  border-color: #ff6600;
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.15);
+}
+
 .form-input.readonly {
   background: #f9fafb;
   color: #6b7280;
 }
+
+/* Brändätyt elementit */
+.page-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.btn {
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.btnPrimary { background: #ff6600; color: #ffffff; border-color: #ff6600; }
+.btnPrimary:hover { background: #e55e00; box-shadow: 0 4px 12px rgba(255,102,0,0.25); transform: translateY(-1px); }
+
+.btnSecondary { background: #ffffff; color: #ff6600; border-color: #ff6600; }
+.btnSecondary:hover { background: #fff5f0; color: #e55e00; border-color: #e55e00; transform: translateY(-1px); }
+
+.btnNeutral { background: #f3f4f6; color: #374151; border-color: #e5e7eb; }
+.btnNeutral:hover { background: #e5e7eb; }
+
+.message { padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; font-size: 14px; border: 1px solid transparent; }
+.messageSuccess { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+.messageError { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
 
 .avatar-grid {
   display: grid;

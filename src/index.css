@@ -48,8 +48,8 @@ html, body, #root {
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: #213547; /* oletus: vaalea teema */
+  background-color: #ffffff; /* oletus: vaalea teema */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -106,18 +106,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
+/* light-mode on oletus (:root). Siirretään tumma teema media-kyselyyn */
 
 /* Mobiiliyhteensopivuuden perustyylit */
 @media (max-width: 768px) {

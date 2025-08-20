@@ -210,7 +210,7 @@ export default function SettingsPage() {
     <>
       <div className={styles['settings-container']}>
         <div className={styles['settings-header']}>
-          <h2 style={{ fontSize: 24, fontWeight: 700, color: '#1f2937', margin: 0 }}>Asetukset</h2>
+          <h2 className={styles['page-title']}>Asetukset</h2>
         </div>
         <div className={styles['settings-bentogrid']}>
           {/* Vasen sarake: Käyttäjätiedot */}
@@ -224,50 +224,15 @@ export default function SettingsPage() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                   <h2 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#1f2937' }}>Käyttäjätiedot</h2>
                   {!isEditing ? (
-                    <button 
-                      onClick={() => setIsEditing(true)}
-                      style={{
-                        background: '#3b82f6',
-                        color: 'white',
-                        border: 'none',
-                        padding: '8px 16px',
-                        borderRadius: '6px',
-                        fontSize: '14px',
-                        cursor: 'pointer'
-                      }}
-                    >
+                    <button onClick={() => setIsEditing(true)} className={`${styles.btn} ${styles.btnSecondary}`}>
                       Muokkaa
                     </button>
                   ) : (
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      <button 
-                        onClick={handleSave}
-                        disabled={loading}
-                        style={{
-                          background: '#10b981',
-                          color: 'white',
-                          border: 'none',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          cursor: loading ? 'not-allowed' : 'pointer',
-                          opacity: loading ? 0.6 : 1
-                        }}
-                      >
+                      <button onClick={handleSave} disabled={loading} className={`${styles.btn} ${styles.btnPrimary}`}>
                         {loading ? 'Tallennetaan...' : 'Tallenna'}
                       </button>
-                      <button 
-                        onClick={handleCancel}
-                        style={{
-                          background: '#6b7280',
-                          color: 'white',
-                          border: 'none',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          cursor: 'pointer'
-                        }}
-                      >
+                      <button onClick={handleCancel} className={`${styles.btn} ${styles.btnNeutral}`}>
                         Peruuta
                       </button>
                     </div>
@@ -275,15 +240,7 @@ export default function SettingsPage() {
                 </div>
             
                 {message && (
-                  <div style={{ 
-                    padding: '8px 12px', 
-                    borderRadius: '6px', 
-                    marginBottom: '12px',
-                    fontSize: '14px',
-                    background: message.includes('Virhe') ? '#fef2f2' : '#f0fdf4',
-                    color: message.includes('Virhe') ? '#dc2626' : '#16a34a',
-                    border: `1px solid ${message.includes('Virhe') ? '#fecaca' : '#bbf7d0'}`
-                  }}>
+                  <div className={`${styles.message} ${message.includes('Virhe') ? styles.messageError : styles.messageSuccess}`}>
                     {message}
                   </div>
                 )}
@@ -377,50 +334,15 @@ export default function SettingsPage() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                     <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', margin: 0 }}>Salasanan vaihto</h3>
                     {!showPasswordChange ? (
-                      <button 
-                        onClick={() => setShowPasswordChange(true)}
-                        style={{
-                          background: '#f59e0b',
-                          color: 'white',
-                          border: 'none',
-                          padding: '6px 12px',
-                          borderRadius: '6px',
-                          fontSize: '12px',
-                          cursor: 'pointer'
-                        }}
-                      >
+                      <button onClick={() => setShowPasswordChange(true)} className={`${styles.btn} ${styles.btnSecondary}`}>
                         Vaihda salasana
                       </button>
                     ) : (
                       <div style={{ display: 'flex', gap: '6px' }}>
-                        <button 
-                          onClick={handlePasswordSave}
-                          disabled={passwordLoading}
-                          style={{
-                            background: '#10b981',
-                            color: 'white',
-                            border: 'none',
-                            padding: '6px 12px',
-                            borderRadius: '6px',
-                            fontSize: '12px',
-                            cursor: passwordLoading ? 'not-allowed' : 'pointer',
-                            opacity: passwordLoading ? 0.6 : 1
-                          }}
-                        >
+                        <button onClick={handlePasswordSave} disabled={passwordLoading} className={`${styles.btn} ${styles.btnPrimary}`}>
                           {passwordLoading ? 'Tallennetaan...' : 'Tallenna'}
                         </button>
-                        <button 
-                          onClick={handlePasswordCancel}
-                          style={{
-                            background: '#6b7280',
-                            color: 'white',
-                            border: 'none',
-                            padding: '6px 12px',
-                            borderRadius: '6px',
-                            fontSize: '12px',
-                            cursor: 'pointer'
-                          }}
-                        >
+                        <button onClick={handlePasswordCancel} className={`${styles.btn} ${styles.btnNeutral}`}>
                           Peruuta
                         </button>
                       </div>

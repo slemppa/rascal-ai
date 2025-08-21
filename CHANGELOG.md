@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.42.0](https://github.com/slemppa/rascal-ai/compare/v1.41.0...v1.42.0) (2025-08-21)
+
+
+### ✨ Features
+
+* add remaining blog API endpoints and test utilities ([22868f8](https://github.com/slemppa/rascal-ai/commit/22868f8ee5a3b0b8034ecb73483d1fce9eccaa80))
+* complete blog system and other feature updates ([da66595](https://github.com/slemppa/rascal-ai/commit/da66595e40671260adfbd678247bd169875eac87))
+* migrate blog APIs from N8N to direct Supabase queries ([993eff8](https://github.com/slemppa/rascal-ai/commit/993eff81099f9f5afce5ba6a78e568325f8b08ba))
+
 ## [1.41.0](https://github.com/slemppa/rascal-ai/compare/v1.40.1...v1.41.0) (2025-08-21)
 
 

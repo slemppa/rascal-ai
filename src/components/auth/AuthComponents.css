@@ -2,7 +2,7 @@
 
 .auth-container {
   background: #24170f;
-  color: #fff;
+  color: #fff !important;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.25);
   padding: 32px;
@@ -11,6 +11,21 @@
   width: 100%;
   border: 1px solid #4b3120;
 }
+
+/* Varmista vaaleat tekstit auth-modaalissa, ohittaa globaalit modal-säännöt */
+.auth-container h1,
+.auth-container h2,
+.auth-container h3,
+.auth-container p { color: #ffffff !important; }
+
+.auth-container .auth-link { color: #cea78d !important; }
+.auth-container .auth-link:hover { color: #b8946f !important; }
+
+.auth-container .auth-input::placeholder,
+.auth-container .auth-magic-input::placeholder { color: #9ca3af !important; }
+
+/* Varmuuden vuoksi: pakota otsikon väri valkoiseksi riippumatta ympäristöstä */
+h2.auth-title { color: #ffffff !important; }
 
 .auth-close-btn {
   position: absolute;
@@ -35,12 +50,12 @@
   color: #cea78d;
 }
 
-.auth-title {
+.auth-container .auth-title {
   font-size: 26px;
   font-weight: 700;
   margin-bottom: 24px;
   text-align: center;
-  color: #fff;
+  color: #fff !important;
 }
 
 .auth-form {
@@ -53,21 +68,21 @@
   position: relative;
 }
 
-.auth-label {
+.auth-container .auth-label {
   display: block;
   margin-bottom: 6px;
   font-weight: 500;
-  color: #cbd5e1;
+  color: #cbd5e1 !important;
   font-size: 14px;
 }
 
-.auth-input {
+.auth-container .auth-input {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid #374151;
   border-radius: 8px;
   background: #181B20;
-  color: #fff;
+  color: #fff !important;
   font-size: 15px;
   outline: none;
   margin-bottom: 2px;
@@ -214,13 +229,13 @@
   gap: 16px;
 }
 
-.auth-magic-input {
+.auth-container .auth-magic-input {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid #374151;
   border-radius: 8px;
   background: #181B20;
-  color: #fff;
+  color: #fff !important;
   font-size: 15px;
   outline: none;
   transition: border-color 0.2s;

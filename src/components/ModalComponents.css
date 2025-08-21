@@ -589,6 +589,26 @@ h2.modal-title {
   color: #1f2937 !important; /* Pakota tumma tekstiväri modaalin sisällä */
 }
 
+/* Auth-modalin poikkeus: käytä tummaa taustaa ja vaaleaa tekstiä */
+.modal-overlay:has(.auth-container),
+.modal-container:has(.auth-container) {
+  color: #ffffff !important;
+}
+.modal-overlay .auth-container h1,
+.modal-overlay .auth-container h2,
+.modal-overlay .auth-container h3,
+.modal-container .auth-container h1,
+.modal-container .auth-container h2,
+.modal-container .auth-container h3 {
+  color: #ffffff !important;
+}
+.modal-overlay .auth-container p,
+.modal-overlay .auth-container label,
+.modal-container .auth-container p,
+.modal-container .auth-container label {
+  color: #cbd5e1 !important;
+}
+
 /* Tarkemmat selektorit modaalien otsikoille - ohitetaan index.css:n valkoinen väri */
 .modal-overlay h2,
 .modal-overlay h3,
@@ -598,6 +618,12 @@ h2.modal-title {
 .modal-container .modal-title {
   color: #1f2937 !important;
   font-weight: 700 !important;
+}
+
+/* Auth-modaalin otsikon poikkeus – sijoitettu tiedoston loppuun ohittamaan yleiset säännöt */
+.modal-overlay .auth-container h2.auth-title,
+.modal-container .auth-container h2.auth-title {
+  color: #ffffff !important;
 }
 
 /* Varmistetaan että kaikki modaalien tekstit ovat tummia */

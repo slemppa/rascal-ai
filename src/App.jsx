@@ -19,6 +19,7 @@ import ManagePostsPage from './pages/ManagePostsPage'
 import AdminPage from './pages/AdminPage'
 import ContentStrategyPage from './pages/ContentStrategyPage'
 import AIChatPage from './pages/AIChatPage'
+import DevPage from './pages/DevPage'
 import HelpPage from './pages/HelpPage'
 import CallPanel from './pages/CallPanel'
 import SettingsPage from './pages/SettingsPage'
@@ -103,6 +104,15 @@ export default function App() {
             <MobileNavigation />
             <div className="main-content">
               <ProtectedRoute><AIChatPage /></ProtectedRoute>
+            </div>
+          </div>
+        } />
+        <Route path="/dev" element={
+          <div className="app-layout">
+            <Sidebar />
+            <MobileNavigation />
+            <div className="main-content">
+              <ProtectedRoute><DevPage /></ProtectedRoute>
             </div>
           </div>
         } />

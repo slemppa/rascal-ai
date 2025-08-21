@@ -354,7 +354,7 @@
 }
 
 /* CTA Section */
-.cta-section {
+.pricing-page .cta-section {
   text-align: center;
   padding: 80px 48px;
   background: linear-gradient(135deg, #4ADE80 0%, #22c55e 100%);
@@ -362,21 +362,21 @@
   border-radius: 16px;
 }
 
-.cta-section h2 {
+.pricing-page .cta-section h2 {
   font-size: 36px;
   font-weight: 700;
   margin-bottom: 16px;
   color: #000;
 }
 
-.cta-section p {
+.pricing-page .cta-section p {
   font-size: 18px;
   margin-bottom: 32px;
   color: #000;
   opacity: 0.9;
 }
 
-.cta-button {
+.pricing-page .cta-button {
   background: #000;
   color: #fff;
   border: none;
@@ -388,7 +388,7 @@
   transition: all 0.2s;
 }
 
-.cta-button:hover {
+.pricing-page .cta-button:hover {
   background: #1f2937;
   transform: translateY(-1px);
 }
@@ -495,11 +495,11 @@
     font-size: 28px;
   }
 
-  .cta-section {
+  .pricing-page .cta-section {
     padding: 48px 24px;
   }
 
-  .cta-section h2 {
+  .pricing-page .cta-section h2 {
     font-size: 28px;
   }
 
@@ -563,11 +563,11 @@
     padding: 20px;
   }
 
-  .cta-section h2 {
+  .pricing-page .cta-section h2 {
     font-size: 24px;
   }
 
-  .cta-section p {
+  .pricing-page .cta-section p {
     font-size: 16px;
   }
 }

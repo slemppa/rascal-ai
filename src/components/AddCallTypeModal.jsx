@@ -250,11 +250,30 @@ const AddCallTypeModal = ({
                   <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
                     Aloitusrepliikki
                   </label>
+                  <input
+                    type="text"
+                    value={newCallType.first_line || ''}
+                    onChange={e => setNewCallType({ ...newCallType, first_line: e.target.value })}
+                    placeholder="Tämä on mitä assari sanoo ensimmäisenä kun puhelu alkaa"
+                    style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
+                  />
+                </div>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
+                  <div>Tämä on mitä assari sanoo ensimmäisenä kun puhelu alkaa.</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                    Intro
+                  </label>
                   <textarea
                     value={newCallType.intro || ''}
                     onChange={e => setNewCallType({ ...newCallType, intro: e.target.value })}
                     placeholder={
-`• Tervehdys + esittely + syy yhteyteen.\n• Aseta odotukset (kysyn muutaman kysymyksen).\n• Kutsu jatkamaan.`
+                    `• Tervehdys + esittely + syy yhteyteen.\n• Aseta odotukset (kysyn muutaman kysymyksen).\n• Kutsu jatkamaan.`
                     }
                     rows={4}
                     style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, resize: 'vertical' }}

@@ -11,6 +11,7 @@ const menuItems = [
   { label: 'Sisältöstrategia', path: '/strategy', feature: 'Social Media' },
   { label: 'Puhelut', path: '/calls', feature: 'Phone Calls' },
   { label: 'Assistentti', path: '/ai-chat', feature: 'Marketing assistant' },
+  { label: 'Dev', path: '/dev', feature: null, adminOnly: true },
   { label: 'Admin', path: '/admin', feature: null, adminOnly: true },
 ]
 

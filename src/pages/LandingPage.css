@@ -519,7 +519,7 @@ html, body, #root, .landing-page {
 .cta-section {
   text-align: center;
   padding: 60px 40px;
-  background: linear-gradient(135deg, rgba(36,23,15,0.8) 0%, rgba(75,49,32,0.8) 100%);
+  background: #ff6600 !important;
   border-radius: 16px;
   margin: 40px 0;
 }
@@ -609,12 +609,22 @@ html, body, #root, .landing-page {
   
   .social-icon {
     color: #cea78d;
-    width: 24px;
-    height: 24px;
+    width: 40px;
+    height: 40px;
     transition: all 0.3s ease;
     padding: 8px;
     border-radius: 6px;
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Varmista yhtenäinen SVG-koko */
+  .footer-social .social-icon svg {
+    width: 28px;
+    height: 28px;
+    display: block;
   }
 
 .social-icon:hover {

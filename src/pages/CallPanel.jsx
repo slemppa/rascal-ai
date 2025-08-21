@@ -55,6 +55,7 @@ export default function CallPanel() {
     style: '', 
     guidelines: '', 
     goals: '', 
+    first_line: '',
     intro: '', 
     questions: '', 
     outro: '', 
@@ -659,6 +660,7 @@ export default function CallPanel() {
           style: editingCallType.style || '',
           guidelines: editingCallType.guidelines || '',
           goals: editingCallType.goals || '',
+          first_line: editingCallType.first_line || '',
           intro: editingCallType.intro || '',
           questions: editingCallType.questions || '',
           outro: editingCallType.outro || '',
@@ -904,6 +906,7 @@ export default function CallPanel() {
         style: newCallType.style || '',
         guidelines: newCallType.guidelines || '',
         goals: newCallType.goals || '',
+        first_line: newCallType.first_line || '',
         intro: newCallType.intro || '',
         questions: newCallType.questions || '',
         outro: newCallType.outro || '',
@@ -917,7 +920,7 @@ export default function CallPanel() {
       const { error } = await supabase.from('call_types').insert([insertData])
       if (error) throw error
       setAddTypeSuccess('Puhelutyyppi lisätty!')
-      setNewCallType({ callType: '', label: '', description: '', identity: '', style: '', guidelines: '', goals: '', intro: '', questions: '', outro: '', notes: '', version: '', status: 'Active' })
+      setNewCallType({ callType: '', label: '', description: '', identity: '', style: '', guidelines: '', goals: '', first_line: '', intro: '', questions: '', outro: '', notes: '', version: '', status: 'Active' })
       fetchCallTypes() // Päivitä lista
     } catch (e) {
       setAddTypeError('Lisäys epäonnistui: ' + (e.message || e))
@@ -938,6 +941,7 @@ export default function CallPanel() {
       style: '', 
       guidelines: '', 
       goals: '', 
+      first_line: '',
       intro: '', 
       questions: '', 
       outro: '', 

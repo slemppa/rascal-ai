@@ -1093,8 +1093,12 @@
   /* Modal buttons - käytetään Button komponenttia */
   
   /* Mobile adjustments for new elements */
+  /* Poistettu kiinteä kuvasuhde mobiililla, säilytetään alkuperäinen */
   .video-container {
-    aspect-ratio: 9 / 16; /* Pysty video mobiililla */
+    max-height: 50vh;
+  }
+  .video-element {
+    max-height: 50vh;
   }
   
   .content-tabs {
@@ -1551,19 +1555,53 @@
   margin-bottom: 24px;
 }
 
+/* Edit modal – kaksi saraketta */
+.edit-post-modal {
+  max-width: 1100px !important;
+  height: 88vh !important;
+}
+
+.edit-modal-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+}
+
+.edit-modal-media {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-modal-fields {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 1024px) {
+  .edit-post-modal {
+    max-width: 95vw !important;
+    height: 88vh !important;
+  }
+  .edit-modal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .video-container {
   width: 100%;
   border-radius: 16px;
   overflow: hidden;
   background: #000;
   position: relative;
-  aspect-ratio: 16 / 9;
+  max-height: 65vh; /* Rajoitetaan maksimikorkeus, säilytetään kuvasuhde */
+  /* Poistettu kiinteä kuvasuhde, säilytetään alkuperäinen */
 }
 
 .video-element {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
+  max-height: 65vh; /* Sama rajoitus kuin kontissa */
 }
 
 .video-placeholder {
@@ -1602,6 +1640,44 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+/* Julkaisupäivä + buttonit samalle riville */
+.publish-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.publish-row .publish-date {
+  flex: 1 1 320px;
+}
+
+.modal-actions.inline-actions {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  gap: 12px;
+}
+
+.modal-actions.inline-actions .modal-actions-left,
+.modal-actions.inline-actions .modal-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .publish-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .modal-actions.inline-actions {
+    justify-content: flex-start;
+  }
 }
 
 /* Character Counter */

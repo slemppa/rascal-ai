@@ -224,11 +224,28 @@ const EditCallTypeModal = ({
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
                   <label className="form-label">Aloitusrepliikki</label>
+                  <input
+                    type="text"
+                    value={editingCallType.first_line || ''}
+                    onChange={e => setEditingCallType({ ...editingCallType, first_line: e.target.value })}
+                    className="form-input"
+                    placeholder="Tämä on mitä assari sanoo ensimmäisenä kun puhelu alkaa"
+                  />
+                </div>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
+                  <div>Tämä on mitä assari sanoo ensimmäisenä kun puhelu alkaa.</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
+                <div className="form-group">
+                  <label className="form-label">Intro</label>
                   <textarea
                     value={editingCallType.intro || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, intro: e.target.value })}
                     placeholder={
-`• Tervehdys + esittely + syy yhteyteen.\n• Aseta odotukset (kysyn muutaman kysymyksen).\n• Kutsu jatkamaan.`
+                    `• Tervehdys + esittely + syy yhteyteen.\n• Aseta odotukset (kysyn muutaman kysymyksen).\n• Kutsu jatkamaan.`
                     }
                     rows={4}
                     className="form-textarea"

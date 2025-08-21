@@ -1398,7 +1398,7 @@ export default function ManagePostsPage() {
             }
           }}
         >
-          <div className="modal-container" style={{ maxWidth: '900px', height: '80vh' }}>
+          <div className="modal-container edit-post-modal">
             <div className="modal-header">
               <h2 className="modal-title">
                 {editingPost.status === 'Kesken' && editingPost.type === 'Carousel' ? 'Kuvaus-tarkistus' : 
@@ -1433,9 +1433,11 @@ export default function ManagePostsPage() {
                })
             }}>
               
-              {/* Video Player / Thumbnail */}
-              <div className="video-player">
-                <div className="video-container">
+              {/* Kaksi saraketta: media vasemmalle, kentät oikealle */}
+              <div className="edit-modal-grid">
+                <div className="edit-modal-media">
+                  <div className="video-player">
+                    <div className="video-container">
                   {(() => {
                     // Carousel: Näytä slideshow segments-taulusta
                     if (editingPost.type === 'Carousel' && editingPost.segments && editingPost.segments.length > 0) {
@@ -1585,7 +1587,6 @@ export default function ManagePostsPage() {
                           src={editingPost.thumbnail} 
                           alt="thumbnail"
                           className="video-element"
-                          style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                         />
                       );
                     }
@@ -1598,10 +1599,12 @@ export default function ManagePostsPage() {
                       </div>
                     );
                   })()}
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-                             {/* Tabs */}
+                <div className="edit-modal-fields">
+                              {/* Tabs */}
                <div className="content-tabs">
                  <Button 
                    type="button" 
@@ -1726,7 +1729,7 @@ export default function ManagePostsPage() {
                    />
                  </div>
                </div>
-              <div className="modal-actions">
+             <div className="modal-actions">
                 <div className="modal-actions-left">
                   <Button
                     type="button"
@@ -1744,7 +1747,7 @@ export default function ManagePostsPage() {
                     type="submit"
                     variant="primary"
                   >
-                    Tallenna
+                    Tallenna muutokset
                   </Button>
                   {/* Julkaisu-nappi vain jos status on "Valmiina julkaisuun" (Tarkistuksessa) tai "Aikataulutettu" */}
                   {(editingPost.status === 'Tarkistuksessa' || editingPost.status === 'Aikataulutettu') && (
@@ -1770,39 +1773,31 @@ export default function ManagePostsPage() {
                           updatedPost.scheduledDate = dateTime.toISOString().split('T')[0]
                           // Lisää myös alkuperäinen publishDate ajan käsittelyä varten
                           updatedPost.publishDate = publishDate
-                        } else {
-                          updatedPost.scheduledDate = null
-                          updatedPost.publishDate = null
                         }
                         
+                        // Sulje modaali ja avaa julkaisu-modaali
+                        setShowEditModal(false)
+                        setEditingPost(null)
                         handlePublishPost(updatedPost)
                       }}
-                      style={{ backgroundColor: '#22c55e' }}
+                      style={{ 
+                        backgroundColor: '#22c55e', 
+                        marginLeft: '8px' 
+                      }}
                     >
                       📤 Julkaise
                     </Button>
                   )}
-                  <Button
-                    type="button"
-                    variant="danger"
-                    onClick={() => {
-                      if (window.confirm('Oletko varma, että haluat poistaa tämän some-sisällön?')) {
-                        handleDeletePost(editingPost)
-                        setShowEditModal(false)
-                        setEditingPost(null)
-                      }
-                    }}
-                  >
-                    Poista
-                  </Button>
                 </div>
               </div>
-            </form>
-          </div>
+            </div>
+              </div>
+              </form>
+            </div>
           </div>
         </div>,
         document.body
-        )}
+      )}
 
       {/* Publish Modal - Somekanavien valinta */}
       {showPublishModal && publishingPost && createPortal(
@@ -2030,7 +2025,6 @@ export default function ManagePostsPage() {
         </div>,
         document.body
       )}
-
     </div>
   )
 }

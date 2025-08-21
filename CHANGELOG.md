@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.40.1](https://github.com/slemppa/rascal-ai/compare/v1.40.0...v1.40.1) (2025-08-21)
+
+
+### 🐛 Bug Fixes
+
+* **auth:** pakota auth-modalin otsikon ja tekstien väri valkoiseksi ([7985400](https://github.com/slemppa/rascal-ai/commit/79854001844228e4a40e91da39404289579ed04f))
+* **posts:** korjaa JSX syntaksivirheet ja palauta julkaisu-modaali ([3b56bbd](https://github.com/slemppa/rascal-ai/commit/3b56bbd464e5cab9bd23e924666f8a90386ad6b0))
+
 ## [1.40.0](https://github.com/slemppa/rascal-ai/compare/v1.39.1...v1.40.0) (2025-08-20)
 
 

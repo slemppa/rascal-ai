@@ -266,7 +266,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
             return (
               <div className="placeholder-content">
                 <div className="placeholder-fallback">
-                  <div className="placeholder-icon">📸</div>
+                  <div className="placeholder-icon">Kuva</div>
                   <div className="placeholder-text">Ei kuvaa</div>
                 </div>
               </div>
@@ -280,10 +280,10 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
               </h3>
               <div className="post-badges">
                 <span className="post-type">
-                  {post.type === 'Carousel' ? '🎠 Carousel' : 
-                   post.type === 'Reels' ? '🎬 Reels' : 
-                   post.type === 'Blog' ? '📝 Blog' : 
-                   post.type === 'Newsletter' ? '📧 Newsletter' : 
+                                      {post.type === 'Carousel' ? 'Carousel' :  
+                                   post.type === 'Reels' ? 'Reels' :
+                post.type === 'Blog' ? 'Blog' : 
+                                        post.type === 'Newsletter' ? 'Newsletter' :  
                    post.type}
                 </span>
                 <span className={`post-source ${post.source}`}>{post.source}</span>
@@ -294,54 +294,59 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
             </p>
           <div className="post-footer">
             <span className="post-date">
-              {post.scheduledDate ? `📅 ${post.scheduledDate}` : post.createdAt || post.publishedAt}
+              {post.scheduledDate ? `${post.scheduledDate}` : post.createdAt || post.publishedAt}
             </span>
             <div className="post-actions">
-              <Button 
-                variant="secondary" 
-                onClick={() => onEdit(post)}
-                style={{ fontSize: '11px', padding: '6px 10px' }}
-              >
-                ✏️ Muokkaa
-              </Button>
-              
-              {/* Siirtymispainikkeet */}
-              {post.status === 'Kesken' && post.source === 'supabase' && (
-                <Button
-                  variant="primary"
-                  onClick={() => onMoveToNext(post, 'Tarkistuksessa')}
-                  style={{ 
-                    backgroundColor: '#3b82f6', 
-                    fontSize: '11px', 
-                    padding: '6px 10px' 
-                  }}
-                >
-                  ➡️ Valmiina julkaisuun
-                </Button>
+              {/* Näytä napit vain jos ei ole "Julkaistu" sarakkeessa */}
+              {post.status !== 'Julkaistu' && (
+                <>
+                  <Button 
+                    variant="secondary" 
+                    onClick={() => onEdit(post)}
+                    style={{ fontSize: '11px', padding: '6px 10px' }}
+                  >
+                    Muokkaa
+                  </Button>
+                  
+                  {/* Siirtymispainikkeet */}
+                  {post.status === 'Kesken' && post.source === 'supabase' && (
+                    <Button
+                      variant="primary"
+                      onClick={() => onMoveToNext(post, 'Tarkistuksessa')}
+                      style={{ 
+                        backgroundColor: '#3b82f6', 
+                        fontSize: '11px', 
+                        padding: '6px 10px' 
+                      }}
+                    >
+                      Valmiina julkaisuun
+                    </Button>
+                  )}
+                  
+                  {/* Julkaisu-nappi vain jos status on "Valmiina julkaisuun" (Tarkistuksessa) */}
+                  {post.status === 'Tarkistuksessa' && (
+                    <Button
+                      variant="primary"
+                      onClick={() => onPublish(post)}
+                      style={{ 
+                        backgroundColor: '#22c55e', 
+                        fontSize: '11px', 
+                        padding: '6px 10px' 
+                      }}
+                    >
+                      Julkaise
+                    </Button>
+                  )}
+                  
+                  <Button 
+                    variant="danger" 
+                    onClick={() => onDelete(post)}
+                    style={{ fontSize: '11px', padding: '6px 10px' }}
+                  >
+                    Poista
+                  </Button>
+                </>
               )}
-              
-              {/* Julkaisu-nappi vain jos status on "Valmiina julkaisuun" (Tarkistuksessa) */}
-              {post.status === 'Tarkistuksessa' && (
-                <Button
-                  variant="primary"
-                  onClick={() => onPublish(post)}
-                  style={{ 
-                    backgroundColor: '#22c55e', 
-                    fontSize: '11px', 
-                    padding: '6px 10px' 
-                  }}
-                >
-                  📤 Julkaise
-                </Button>
-              )}
-              
-              <Button 
-                variant="danger" 
-                onClick={() => onDelete(post)}
-                style={{ fontSize: '11px', padding: '6px 10px' }}
-              >
-                🗑️ Poista
-              </Button>
             </div>
           </div>
         </div>
@@ -1183,7 +1188,7 @@ export default function ManagePostsPage() {
       {/* Error State */}
       {(currentError || reelsError) && (
         <div className="error-state">
-          <p>❌ {currentError || reelsError}</p>
+                          <p>Virhe: {currentError || reelsError}</p>
           <Button
             variant="secondary"
             onClick={() => {
@@ -1316,7 +1321,7 @@ export default function ManagePostsPage() {
                 onClick={() => setShowCreateModal(false)}
                 className="modal-close-btn"
               >
-                ✕
+                Sulje
               </button>
             </div>
             <div className="modal-content">
@@ -1346,10 +1351,10 @@ export default function ManagePostsPage() {
                     required
                     className="form-select"
                   >
-                    <option value="Photo">📸 Photo</option>
-                    <option value="Carousel">🎠 Carousel</option>
-                    <option value="Reels">🎬 Reels</option>
-                    <option value="LinkedIn">💼 LinkedIn</option>
+                                          <option value="Photo">Photo</option>
+                                          <option value="Carousel">Carousel</option>
+                    <option value="Reels">Reels</option>
+                                          <option value="LinkedIn">LinkedIn</option>
                   </select>
                 </div>
                 <div className="form-group">
@@ -1415,7 +1420,7 @@ export default function ManagePostsPage() {
                 }}
                 className="modal-close-btn"
               >
-                ✕
+                Sulje
               </button>
             </div>
             <div className="modal-content">
@@ -1445,7 +1450,7 @@ export default function ManagePostsPage() {
                       if (slidesWithMedia.length === 0) {
                         return (
                           <div className="no-media-message">
-                            <span>📄</span>
+                            <span>Dokumentti</span>
                             <p>Ei mediaa saatavilla segments-taulusta</p>
                           </div>
                         );
@@ -1514,7 +1519,7 @@ export default function ManagePostsPage() {
                                         Your browser does not support the video tag.
                                       </video>
                                       <div className="video-fallback" style={{ display: 'none' }}>
-                                        <div className="placeholder-icon">🎥</div>
+                                        <div className="placeholder-icon">Video</div>
                                         <div className="placeholder-text">Video ei saatavilla</div>
                                       </div>
                                     </div>
@@ -1536,7 +1541,7 @@ export default function ManagePostsPage() {
                                         }}
                                       />
                                       <div className="video-fallback" style={{ display: 'none' }}>
-                                        <div className="placeholder-icon">📸</div>
+                                        <div className="placeholder-icon">Kuva</div>
                                         <div className="placeholder-text">Kuva ei saatavilla</div>
                                       </div>
                                     </div>
@@ -1594,7 +1599,7 @@ export default function ManagePostsPage() {
                     // Placeholder jos ei mediaa
                     return (
                       <div className="video-placeholder">
-                        <span className="video-icon">🎥</span>
+                        <span className="video-icon">Video</span>
                         <p>Ei videota saatavilla</p>
                       </div>
                     );
@@ -1615,7 +1620,7 @@ export default function ManagePostsPage() {
                      backgroundColor: '#3b82f6'
                    }}
                  >
-                   {editingPost.source === 'reels' ? '🎬 Reels' : `📸 ${editingPost.type || 'Post'}`}
+                                       {editingPost.source === 'reels' ? 'Reels' : `${editingPost.type || 'Post'}`}
                  </Button>
                  <Button 
                    type="button" 
@@ -1625,7 +1630,7 @@ export default function ManagePostsPage() {
                      fontSize: '14px'
                    }}
                  >
-                   {editingPost.source === 'reels' ? '🎙️ Voiceover' : '📊 Status'}
+                                       {editingPost.source === 'reels' ? 'Voiceover' : 'Status'}
                  </Button>
                </div>
 
@@ -1785,7 +1790,7 @@ export default function ManagePostsPage() {
                         marginLeft: '8px' 
                       }}
                     >
-                      📤 Julkaise
+                      Julkaise
                     </Button>
                   )}
                 </div>
@@ -1822,7 +1827,7 @@ export default function ManagePostsPage() {
                 }}
                 className="modal-close-btn"
               >
-                ✕
+                Sulje
               </button>
             </div>
             <div className="modal-content">
@@ -1959,9 +1964,9 @@ export default function ManagePostsPage() {
                             border: '2px solid #e0e0e0',
                             flexShrink: 0
                           }}>
-                            {account.provider === 'instagram' ? '📷' :
-                             account.provider === 'facebook' ? '📘' :
-                             account.provider === 'linkedin' ? '💼' : '👤'}
+                            {account.provider === 'instagram' ? 'Instagram' :
+                             account.provider === 'facebook' ? 'Facebook' :
+                                                            account.provider === 'linkedin' ? 'LinkedIn' : 'Yleinen'}
                           </div>
                         )}
                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -1984,9 +1989,9 @@ export default function ManagePostsPage() {
                             gap: '6px',
                             fontWeight: 500
                           }}>
-                            {account.provider === 'instagram' && <>📷 Instagram</>}
-                            {account.provider === 'facebook' && <>📘 Facebook</>}
-                            {account.provider === 'linkedin' && <>💼 LinkedIn</>}
+                            {account.provider === 'instagram' && <>Instagram</>}
+                                                          {account.provider === 'facebook' && <>Facebook</>}
+                              {account.provider === 'linkedin' && <>LinkedIn</>}
                             {!['instagram','facebook','linkedin'].includes(account.provider) && account.provider}
                           </div>
                         </div>
@@ -2016,7 +2021,7 @@ export default function ManagePostsPage() {
                     onClick={handleConfirmPublish}
                     disabled={selectedAccounts.length === 0 || loadingAccounts}
                   >
-                    📤 Julkaise valituille kanaville
+                    Julkaise valituille kanaville
                   </Button>
                 </div>
               </div>

@@ -29,6 +29,9 @@ import PricingPage from './pages/PricingPage'
 import FeaturesPage from './pages/FeaturesPage'
 import ContactPage from './pages/ContactPage'
 import BlogNewsletterPage from './pages/BlogNewsletterPage'
+import BlogPage from './pages/BlogPage'
+import BlogArticlePage from './pages/BlogArticlePage'
+import AdminBlogPage from './pages/AdminBlogPage'
 // MixpostAnalyticsDashboard poistettu
 
 
@@ -51,6 +54,8 @@ export default function App() {
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/features" element={<FeaturesPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:slug" element={<BlogArticlePage />} />
         {/* Suojatut reitit sidebarin kanssa */}
         <Route path="/dashboard" element={
           <div className="app-layout">
@@ -86,6 +91,15 @@ export default function App() {
             <MobileNavigation />
             <div className="main-content">
               <ProtectedRoute><AdminPage /></ProtectedRoute>
+            </div>
+          </div>
+        } />
+        <Route path="/admin-blog" element={
+          <div className="app-layout">
+            <Sidebar />
+            <MobileNavigation />
+            <div className="main-content">
+              <ProtectedRoute><AdminBlogPage /></ProtectedRoute>
             </div>
           </div>
         } />

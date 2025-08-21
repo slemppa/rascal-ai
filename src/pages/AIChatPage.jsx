@@ -579,7 +579,7 @@ export default function AIChatPage() {
                       {pendingFiles.map(f => (
                         <div key={f.name + f.size} className="ai-chat-pending-file">
                           <span className="ai-chat-pending-file-name">{f.name}</span>
-                          <span className="ai-chat-remove-file" onClick={() => handleRemovePending(f.name, f.size)}>❌</span>
+                          <span className="ai-chat-remove-file" onClick={() => handleRemovePending(f.name, f.size)}>Poista</span>
                         </div>
                       ))}
                     </div>

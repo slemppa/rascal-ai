@@ -2030,7 +2030,7 @@ export default function CallPanel() {
   return (
     <>
       <PageMeta 
-        title="📞 Puhelut - Rascal AI"
+        title="Puhelut - Rascal AI"
         description="Automatisoi puhelut ja seuraa puhelulokeja Rascal AI:ssä. Älykäs puhelinmarkkinointi ja asiakaspalvelu."
         image="/hero.png"
       />
@@ -2040,15 +2040,46 @@ export default function CallPanel() {
         {/* Tabs (3 per rivi) */}
         <div className="callpanel-tabs" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8, position: 'relative', zIndex: 3 }}>
           <div style={{ display: 'contents' }}>
-            <Button onClick={() => setActiveTab('calls')} variant={activeTab === 'calls' ? 'primary' : 'secondary'}>🚀 Puhelut</Button>
-            <Button onClick={() => setActiveTab('logs')} variant={activeTab === 'logs' ? 'primary' : 'secondary'}>📊 Puheluloki</Button>
-            <Button onClick={() => setActiveTab('messages')} variant={activeTab === 'messages' ? 'primary' : 'secondary'}>💬 Viestiloki</Button>
+            <Button onClick={() => setActiveTab('calls')} variant={activeTab === 'calls' ? 'primary' : 'secondary'}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '8px' }}>
+                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+              </svg>
+              Puhelut
+            </Button>
+            <Button onClick={() => setActiveTab('logs')} variant={activeTab === 'logs' ? 'primary' : 'secondary'}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '8px' }}>
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+              </svg>
+              Puheluloki
+            </Button>
+            <Button onClick={() => setActiveTab('messages')} variant={activeTab === 'messages' ? 'primary' : 'secondary'}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '8px' }}>
+                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"/>
+              </svg>
+              Viestiloki
+            </Button>
           </div>
           <div style={{ display: 'contents' }}>
-            <Button onClick={() => setActiveTab('textmessages')} variant={activeTab === 'textmessages' ? 'primary' : 'secondary'}>📱 Tekstiviestit</Button>
-            <Button onClick={() => setActiveTab('manage')} variant={activeTab === 'manage' ? 'primary' : 'secondary'}>⚙️ Hallinta</Button>
+            <Button onClick={() => setActiveTab('textmessages')} variant={activeTab === 'textmessages' ? 'primary' : 'secondary'}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '8px' }}>
+                <path d="M17 1.01L3 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H3V5h14v14z"/>
+                <path d="M7 7h10v2H7zM7 11h7v2H7z"/>
+              </svg>
+              Tekstiviestit
+            </Button>
+            <Button onClick={() => setActiveTab('manage')} variant={activeTab === 'manage' ? 'primary' : 'secondary'}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '8px' }}>
+                <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+              </svg>
+              Hallinta
+            </Button>
             {isMika ? (
-              <Button onClick={() => setActiveTab('mika')} variant={activeTab === 'mika' ? 'primary' : 'secondary'}>🎯 Mika Special</Button>
+              <Button onClick={() => setActiveTab('mika')} variant={activeTab === 'mika' ? 'primary' : 'secondary'}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '8px' }}>
+                  <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z"/>
+                </svg>
+                Mika Special
+              </Button>
             ) : (
               <span />
             )}
@@ -2096,7 +2127,9 @@ export default function CallPanel() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                 <h2 className="section-title" style={{ marginBottom: 0 }}>Asetukset</h2>
                 {callType && script.trim() && selectedVoice && (
-                  <div style={{ background: '#e6fbe8', color: '#1a7f37', padding: '4px 12px', borderRadius: 12, fontSize: 13, fontWeight: 600 }}>✅ Valmis</div>
+                  <div style={{ background: '#e6fbe8', color: '#1a7f37', padding: '4px 12px', borderRadius: 12, fontSize: 13, fontWeight: 600 }}>
+                    Valmis
+                  </div>
                 )}
               </div>
               <label className="label">Puhelun tyyppi</label>
@@ -2109,7 +2142,7 @@ export default function CallPanel() {
                   onClick={() => setActiveTab('manage')}
                   style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
                 >
-                  ➕ Lisää uusi
+                  Lisää uusi
                 </Button>
               </div>
               <label className="label">Ääni</label>
@@ -2122,7 +2155,7 @@ export default function CallPanel() {
                   onClick={() => playVoiceSample(selectedVoice)}
                   style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
                 >
-                  {isPlaying ? '⏹️ Pysäytä' : '🔊 Testaa ääni'}
+                  {isPlaying ? 'Pysäytä' : 'Testaa ääni'}
                 </Button>
               </div>
               <label className="label">Skripti</label>
@@ -2140,7 +2173,7 @@ export default function CallPanel() {
                   onClick={() => setShowInboundModal(true)}
                   style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
                 >
-                  📝 Muokkaa isossa ikkunassa
+                  Muokkaa isossa ikkunassa
                 </Button>
               </div>
               <label className="label">Ääni</label>
@@ -2153,7 +2186,7 @@ export default function CallPanel() {
                   onClick={() => playVoiceSample(inboundVoice)}
                   style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
                 >
-                  🔊 Testaa
+                  Testaa
                 </Button>
               </div>
               <label className="label">Aloitusviesti</label>
@@ -2167,7 +2200,7 @@ export default function CallPanel() {
                 onClick={handleSaveInboundSettings}
                 variant="primary"
               >
-                💾 Tallenna asetukset
+                Tallenna asetukset
               </Button>
             </div>
           </div>
@@ -2183,7 +2216,7 @@ export default function CallPanel() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
               <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
-                📊 Puheluloki
+                Puheluloki
               </h2>
               <div style={{ display: 'flex', gap: 12 }}>
                 <Button
@@ -2197,7 +2230,7 @@ export default function CallPanel() {
                     color: '#fff'
                   }}
                 >
-                  📥 Export CSV
+                  Export CSV
                 </Button>
                 <Button
                   type="button"
@@ -2211,7 +2244,7 @@ export default function CallPanel() {
                     color: '#fff'
                   }}
                 >
-                  {loadingCallLogs ? '🔄 Päivitetään...' : '🔄 Päivitä'}
+                  {loadingCallLogs ? 'Päivitetään...' : 'Päivitä'}
                 </Button>
               </div>
             </div>
@@ -2225,7 +2258,7 @@ export default function CallPanel() {
               marginBottom: 32
             }}>
               <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
-                🔍 Filtterit ja haku
+                Filtterit ja haku
               </h3>
               
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 16 }}>
@@ -2350,7 +2383,7 @@ export default function CallPanel() {
                   disabled={loadingCallLogs}
                   style={{ fontSize: 14, fontWeight: 500, marginRight: 8 }}
                 >
-                  🔍 Hae
+                  Hae
                 </Button>
                 <Button
                   onClick={clearFilters}
@@ -2668,7 +2701,7 @@ export default function CallPanel() {
                                   color: log.direction === 'outbound' ? '#1d4ed8' : '#92400e',
                                   minWidth: 80
                                 }}>
-                                  {log.direction === 'outbound' ? '📤 Lähtenyt' : '📥 Vastaanotettu'}
+                                  {log.direction === 'outbound' ? 'Lähtenyt' : 'Vastaanotettu'}
                                 </span>
                               </td>
                               <td style={{ padding: '8px', color: '#1f2937' }}>
@@ -2811,7 +2844,7 @@ export default function CallPanel() {
             )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
               <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
-                ⚙️ Puhelun tyyppien hallinta
+                Puhelun tyyppien hallinta
               </h2>
               <Button
                 type="button"
@@ -2869,7 +2902,7 @@ export default function CallPanel() {
                           color: '#374151'
                         }}
                       >
-                        🔄 Status
+                        Status
                       </button>
                       <button
                         onClick={() => setCallTypes([...callTypes].sort((a, b) => a.label.localeCompare(b.label)))}
@@ -2922,7 +2955,7 @@ export default function CallPanel() {
                             color: type.status === 'Active' ? '#166534' : type.status === 'Draft' ? '#92400e' : '#6b7280',
                             border: type.status === 'Active' ? '1px solid #bbf7d0' : type.status === 'Draft' ? '1px solid #fed7aa' : '1px solid #e5e7eb'
                           }}>
-                            {type.status === 'Active' ? '✅ Aktiivinen' : type.status === 'Draft' ? '📝 Luonnos' : '❓ Tuntematon'}
+                            {type.status === 'Active' ? 'Aktiivinen' : type.status === 'Draft' ? 'Luonnos' : 'Tuntematon'}
                           </span>
                         </div>
                         {type.description && (
@@ -2952,11 +2985,11 @@ export default function CallPanel() {
                               {deletingCallTypes.has(type.id) ? (
                                 <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
                               ) : (
-                                '🗑️'
+                                'Poista'
                               )}
                             </Button>
                       <div style={{ color: '#6b7280', fontSize: 14 }}>
-                        ✏️
+                        Muokkaa
                             </div>
                       </div>
                     </div>
@@ -2978,7 +3011,7 @@ export default function CallPanel() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
               <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
-                💬 Viestiloki
+                Viestiloki
               </h2>
               <div style={{ display: 'flex', gap: 12 }}>
                 <Button
@@ -2993,7 +3026,7 @@ export default function CallPanel() {
                     color: '#fff'
                   }}
                 >
-                  {loadingMessageLogs ? '🔄 Päivitetään...' : '🔄 Päivitä'}
+                  {loadingMessageLogs ? 'Päivitetään...' : 'Päivitä'}
                 </Button>
               </div>
             </div>
@@ -3073,9 +3106,9 @@ export default function CallPanel() {
                                      log.message_type === 'whatsapp' ? '#166534' : 
                                      log.message_type === 'email' ? '#92400e' : '#6b7280'
                             }}>
-                              {log.message_type === 'sms' ? '📱 SMS' : 
-                               log.message_type === 'whatsapp' ? '💬 WhatsApp' : 
-                               log.message_type === 'email' ? '📧 Email' : log.message_type}
+                              {log.message_type === 'sms' ? 'SMS' : 
+                               log.message_type === 'whatsapp' ? 'WhatsApp' : 
+                               log.message_type === 'email' ? 'Email' : log.message_type}
                             </span>
                           </td>
                           <td style={{ padding: '8px' }}>
@@ -3088,7 +3121,7 @@ export default function CallPanel() {
                               background: log.direction === 'outbound' ? '#dbeafe' : '#fef3c7',
                               color: log.direction === 'outbound' ? '#1d4ed8' : '#92400e'
                             }}>
-                              {log.direction === 'outbound' ? '📤 Lähetetty' : '📥 Vastaanotettu'}
+                              {log.direction === 'outbound' ? 'Lähetetty' : 'Vastaanotettu'}
                             </span>
                           </td>
                           <td style={{ padding: '8px', textAlign: 'center' }}>
@@ -3144,7 +3177,7 @@ export default function CallPanel() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
               <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
-                📱 Tekstiviestit
+                Tekstiviestit
               </h2>
               <div style={{ display: 'flex', gap: 12 }}>
                 <Button
@@ -3159,7 +3192,7 @@ export default function CallPanel() {
                     color: '#fff'
                   }}
                 >
-                  {loadingCallTypes ? '🔄 Päivitetään...' : '🔄 Päivitä'}
+                  {loadingCallTypes ? 'Päivitetään...' : 'Päivitä'}
                 </Button>
               </div>
             </div>
@@ -3215,7 +3248,7 @@ export default function CallPanel() {
                               color: type.status === 'Active' ? '#166534' : type.status === 'Draft' ? '#92400e' : '#6b7280',
                               border: type.status === 'Active' ? '1px solid #bbf7d0' : type.status === 'Draft' ? '1px solid #fed7aa' : '1px solid #e5e7eb'
                             }}>
-                              {type.status === 'Active' ? '✅ Aktiivinen' : type.status === 'Draft' ? '📝 Luonnos' : '❓ Tuntematon'}
+                              {type.status === 'Active' ? 'Aktiivinen' : type.status === 'Draft' ? 'Luonnos' : 'Tuntematon'}
                             </span>
                             <span style={{ fontSize: 12, color: '#6b7280' }}>
                               Tunniste: <code style={{ background: '#f3f4f6', padding: '2px 4px', borderRadius: 4 }}>{type.value || type.callType}</code>
@@ -3236,7 +3269,7 @@ export default function CallPanel() {
                             fontWeight: 500
                           }}
                         >
-                          ✏️ Muokkaa
+                          Muokkaa
                         </Button>
                       </div>
                       
@@ -3282,7 +3315,7 @@ export default function CallPanel() {
                           </span>
                           {type.first_sms && type.first_sms.length > 140 && (
                             <span style={{ color: '#f59e0b' }}>
-                              ⚠️ Pitkä viesti ({type.first_sms.length > 150 ? '2 viestiä' : '1 viesti'})
+                              Pitkä viesti ({type.first_sms.length > 150 ? '2 viestiä' : '1 viesti'})
                             </span>
                           )}
                         </div>
@@ -3292,11 +3325,11 @@ export default function CallPanel() {
                         <div style={{ fontSize: 12, color: '#6b7280' }}>
                           {type.first_sms ? (
                             <span style={{ color: '#059669' }}>
-                              ✅ SMS-viesti määritelty
+                              SMS-viesti määritelty
                             </span>
                           ) : (
                             <span style={{ color: '#dc2626' }}>
-                              ❌ SMS-viestiä ei ole määritelty
+                              SMS-viestiä ei ole määritelty
                             </span>
                           )}
                         </div>
@@ -3327,7 +3360,7 @@ export default function CallPanel() {
                             opacity: (!type.first_sms || type.first_sms.trim() === '') ? 0.5 : 1
                           }}
                         >
-                          💾 Tallenna
+                          Tallenna
                         </Button>
                       </div>
                     </div>
@@ -3386,7 +3419,7 @@ export default function CallPanel() {
                   variant="secondary"
                   className="modal-close-btn"
                 >
-                  ✕
+                  Sulje
                 </Button>
               </div>
               {loadingLogDetail ? (
@@ -3572,14 +3605,14 @@ export default function CallPanel() {
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                 <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
-                  📞 Inbound-asetukset
+                  Inbound-asetukset
                 </h2>
                 <Button
                   variant="secondary"
                   onClick={() => setShowInboundModal(false)}
                   style={{ width: 'auto', padding: '8px 16px' }}
                 >
-                  ✕ Sulje
+                  Sulje
                 </Button>
               </div>
               
@@ -3594,7 +3627,7 @@ export default function CallPanel() {
                     onClick={() => playVoiceSample(inboundVoice)}
                     style={{ width: 'auto', padding: '8px 16px' }}
                   >
-                    🔊 Testaa ääntä
+                    Testaa ääntä
                   </Button>
                 </div>
               </div>
@@ -3654,7 +3687,7 @@ export default function CallPanel() {
                   }}
                   variant="primary"
                 >
-                  💾 Tallenna asetukset
+                  Tallenna asetukset
                 </Button>
               </div>
             </div>
@@ -3685,7 +3718,7 @@ export default function CallPanel() {
                   variant="secondary"
                   className="modal-close-btn"
                 >
-                  ✕
+                  Sulje
                 </Button>
               </div>
               
@@ -3808,12 +3841,12 @@ export default function CallPanel() {
                       
                       {massCallValidationResult && (
                         <div className="status-success" style={{ marginTop: 8, marginBottom: 16 }}>
-                          <div style={{ fontWeight: 600 }}>✅ Validointi onnistui!</div>
-                          <div>📈 <strong>Löydetty {massCallValidationResult.phoneCount} puhelinnumeroa</strong></div>
+                          <div style={{ fontWeight: 600 }}>Validointi onnistui!</div>
+                                                      <div><strong>Löydetty {massCallValidationResult.phoneCount} puhelinnumeroa</strong></div>
                           {massCallValidationResult.emailCount > 0 && (
-                            <div>📧 <strong>Löydetty {massCallValidationResult.emailCount} sähköpostia</strong></div>
+                            <div><strong>Löydetty {massCallValidationResult.emailCount} sähköpostia</strong></div>
                           )}
-                          {massCallValidationResult.totalRows > 0 && <div>📋 Yhteensä {massCallValidationResult.totalRows} riviä</div>}
+                                                      {massCallValidationResult.totalRows > 0 && <div>Yhteensä {massCallValidationResult.totalRows} riviä</div>}
                         </div>
                       )}
                     </div>
@@ -3970,7 +4003,7 @@ export default function CallPanel() {
                   variant="secondary"
                   className="modal-close-btn"
                 >
-                  ✕
+                  Sulje
                 </Button>
               </div>
 
@@ -4037,7 +4070,7 @@ export default function CallPanel() {
                     <div style={{ display: 'flex', gap: 12, justifyContent: 'space-between' }}>
                       <Button onClick={() => setSingleCallStep(1)} variant="secondary">← Takaisin</Button>
                       <Button onClick={handleSingleCall} disabled={calling || !name.trim() || !phoneNumber.trim() || !callType || !script.trim() || !selectedVoice} variant="primary">
-                        {calling ? '📞 Soittaa…' : '📞 Soita'}
+                        {calling ? 'Soittaa…' : 'Soita'}
                       </Button>
                     </div>
 

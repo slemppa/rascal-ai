@@ -367,7 +367,7 @@ export default function ContentStrategyPage() {
     <>
       <div className="strategy-container">
         <div className="strategy-header">
-          <h2>🎯 Sisältöstrategia</h2>
+          <h2>Sisältöstrategia</h2>
         </div>
         
         <div className="strategy-bentogrid">
@@ -376,7 +376,7 @@ export default function ContentStrategyPage() {
             {/* Kohderyhmä-kortti */}
             {icpSummary && icpSummary.length > 0 && (
               <div className="strategy-card">
-                <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>👥 Kohderyhmä</div>
+                <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>Kohderyhmä</div>
               
               {editingIcp ? (
                 <div style={{ flex: 1 }}>
@@ -469,7 +469,7 @@ export default function ContentStrategyPage() {
             {/* Tavoitteet-kortti */}
             {kpiData && kpiData.length > 0 && (
               <div className="strategy-card">
-                <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🎯 Tavoitteet</div>
+                <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>Tavoitteet</div>
                 
                 {editingKpi ? (
                   <div style={{ flex: 1 }}>
@@ -562,7 +562,7 @@ export default function ContentStrategyPage() {
 
           {/* Sisältöstrategiat - otsikko */}
           <div className="strategy-section-header">
-            <h3>📋 Sisältöstrategiat</h3>
+            <h3>Sisältöstrategiat</h3>
           </div>
 
           {/* Strategiakortit */}

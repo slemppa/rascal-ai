@@ -38,6 +38,7 @@ export default function LandingPage() {
               <div className="nav-links desktop-nav">
                 <a className="nav-link" href="#solutions">Kyvykkyydet</a>
                 <a className="nav-link" href="#industries">Toimialat</a>
+                <a className="nav-link" href="/blog">Artikkelit</a>
                 <a className="nav-link" href="#cta">Demo</a>
                 <a className="nav-link" href="#contact">Yhteys</a>
               </div>
@@ -80,6 +81,7 @@ export default function LandingPage() {
                 <div className="mobile-nav-links">
                   <a className="mobile-nav-link" href="#solutions" onClick={() => setIsMobileMenuOpen(false)}>Kyvykkyydet</a>
                   <a className="mobile-nav-link" href="#industries" onClick={() => setIsMobileMenuOpen(false)}>Toimialat</a>
+                  <a className="mobile-nav-link" href="/blog" onClick={() => setIsMobileMenuOpen(false)}>Artikkelit</a>
                   <a className="mobile-nav-link" href="#cta" onClick={() => setIsMobileMenuOpen(false)}>Demo</a>
                   <a className="mobile-nav-link" href="#contact" onClick={() => setIsMobileMenuOpen(false)}>Yhteys</a>
                 </div>

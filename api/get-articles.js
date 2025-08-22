@@ -12,6 +12,15 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 export default async function handler(req, res) {
+	res.setHeader('Access-Control-Allow-Origin', '*')
+	res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
+	res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+	res.setHeader('Content-Type', 'application/json; charset=utf-8')
+
+	if (req.method === 'OPTIONS') {
+		return res.status(204).end()
+	}
+
 	if (req.method !== 'GET') {
 		return res.status(405).json({ error: 'Method not allowed' })
 	}
@@ -25,33 +34,18 @@ export default async function handler(req, res) {
 	}
 
 	try {
-		const { scope } = req.query
-		const isAdmin = scope === 'admin'
-		
-		let query = supabase
+		const { data: articles, error } = await supabase
 			.from('blog_posts')
 			.select('id,title,slug,excerpt,content,category,image_url,published_at,published')
+			.eq('published', true)
 			.order('published_at', { ascending: false })
-		
-		// Jos ei admin-scope, suodatetaan vain julkaistut
-		if (!isAdmin) {
-			query = query.eq('published', true)
-		}
-		
-		const { data: articles, error } = await query
 
 		if (error) {
 			console.error('Error fetching articles:', error)
 			return res.status(500).json({ error: 'Failed to fetch articles', details: error.message })
 		}
 
-		// Admin-scope: palauta { success: true, articles: [...] }
-		// Julkinen: palauta suoraan taulukko
-		if (isAdmin) {
-			res.status(200).json({ success: true, articles: articles || [] })
-		} else {
-			res.status(200).json(articles || [])
-		}
+		res.status(200).json(articles || [])
 	} catch (error) {
 		console.error('Unhandled error /api/get-articles:', error)
 		res.status(500).json({ error: 'Internal server error', details: error.message })

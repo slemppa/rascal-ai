@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import PageMeta from '../components/PageMeta'
 import './BlogPage.css'
+import SiteHeader from '../components/SiteHeader'
 import './LandingPage.css'
 import SignIn from '../components/auth/SignIn'
 import ForgotPassword from '../components/auth/ForgotPassword'
@@ -49,88 +50,8 @@ export default function BlogPage() {
       />
       
             <div className="blog-page">
-        {/* Landing Page Style Header */}
-        <header className="header">
-          <div className="logo-section">
-            <div className="logo-icon">
-              <img src="/favicon.png" alt="Rascal AI Logo" />
-            </div>
-            <h2 className="logo-text">Rascal AI</h2>
-          </div>
-          <div className="header-right">
-            <div className="nav-links desktop-nav">
-              <a className="nav-link" href="/#solutions">Kyvykkyydet</a>
-              <a className="nav-link" href="/#industries">Toimialat</a>
-              <a className="nav-link" href="/blog">Artikkelit</a>
-              <a className="nav-link" href="/#cta">Demo</a>
-              <a className="nav-link" href="/#contact">Yhteys</a>
-            </div>
-            <div className="header-buttons desktop-buttons">
-              <button
-                className="btn btn-primary"
-                onClick={() => setShowSignInModal(true)}
-              >
-                Varaa demo
-              </button>
-              <button
-                className="btn btn-secondary"
-                onClick={() => setShowSignInModal(true)}
-              >
-                Kirjaudu
-              </button>
-            </div>
-            
-            {/* Mobile Menu Button */}
-            <button 
-              className="mobile-menu-button"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label="Toggle mobile menu"
-            >
-              {isMobileMenuOpen ? (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              ) : (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              )}
-            </button>
-          </div>
-          
-          {/* Mobile Menu */}
-          {isMobileMenuOpen && (
-            <div className="mobile-menu">
-              <div className="mobile-nav-links">
-                <a className="mobile-nav-link" href="/#solutions" onClick={() => setIsMobileMenuOpen(false)}>Kyvykkyydet</a>
-                <a className="mobile-nav-link" href="/#industries" onClick={() => setIsMobileMenuOpen(false)}>Toimialat</a>
-                <a className="mobile-nav-link" href="/blog" onClick={() => setIsMobileMenuOpen(false)}>Artikkelit</a>
-                <a className="mobile-nav-link" href="/#cta" onClick={() => setIsMobileMenuOpen(false)}>Demo</a>
-                <a className="mobile-nav-link" href="/#contact" onClick={() => setIsMobileMenuOpen(false)}>Yhteys</a>
-              </div>
-              <div className="mobile-buttons">
-                <button
-                  className="btn btn-primary mobile-btn"
-                  onClick={() => {
-                    setShowSignInModal(true)
-                    setIsMobileMenuOpen(false)
-                  }}
-                >
-                  Varaa demo
-                </button>
-                                  <button
-                    className="btn btn-secondary mobile-btn"
-                    onClick={() => {
-                      setShowSignInModal(true)
-                      setIsMobileMenuOpen(false)
-                    }}
-                  >
-                    Kirjaudu
-                  </button>
-                </div>
-              </div>
-            )}
-        </header>
+        {/* Shared Site Header */}
+        <SiteHeader onOpenSignIn={() => setShowSignInModal(true)} />
 
         <div className="layout-container">
           {/* Page Title Section */}
@@ -173,6 +94,7 @@ export default function BlogPage() {
                           src={article.image_url || article.media_url} 
                           alt={article.title || 'Artikkeli'}
                           loading="lazy"
+                          onError={(e) => { e.currentTarget.src = '/placeholder.png' }}
                         />
                       ) : (
                         <div className="article-placeholder">
@@ -183,15 +105,16 @@ export default function BlogPage() {
                         </div>
                       )}
                     </div>
+                    {/* Meta right under image */}
+                    <div className="article-meta image-meta">
+                      <span className="article-date">
+                        {article.published_at ? new Date(article.published_at).toLocaleDateString('fi-FI') : 'Ei päivää'}
+                      </span>
+                      {article.category && (
+                        <span className="article-category">{article.category}</span>
+                      )}
+                    </div>
                     <div className="article-content">
-                      <div className="article-meta">
-                        <span className="article-date">
-                          {article.published_at ? new Date(article.published_at).toLocaleDateString('fi-FI') : 'Ei päivää'}
-                        </span>
-                        {article.category && (
-                          <span className="article-category">{article.category}</span>
-                        )}
-                      </div>
                       <h2 className="article-title">
                         <Link to={`/blog/${article.slug || 'ei-slugia'}`}>
                           {article.title || 'Ei otsikkoa'}
@@ -201,7 +124,7 @@ export default function BlogPage() {
                         {article.excerpt || (article.content ? article.content.substring(0, 150) + '...' : 'Ei kuvausta saatavilla')}
                       </p>
                       <div className="article-footer">
-                        <Link to={`/blog/${article.slug || 'ei-slugia'}`} className="read-more">
+                        <Link to={`/blog/${article.slug || 'ei-slugia'}`} className="read-more btn btn-primary">
                           Lue lisää →
                         </Link>
                       </div>

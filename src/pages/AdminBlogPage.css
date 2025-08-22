@@ -178,7 +178,7 @@
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #2c3e50;
 }
 
 .form-group textarea {
@@ -227,7 +227,7 @@
 .table-header {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
   color: white;
   font-weight: 600;
   font-size: 0.95rem;
@@ -269,7 +269,7 @@
 
 .article-slug {
   font-size: 0.85rem;
-  color: #667eea;
+  color: #2c3e50;
   margin: 0;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
 }
@@ -304,13 +304,13 @@
 }
 
 .btn-primary {
-  background: #ff6600;
+  background: #2c3e50;
   color: white;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 5px 15px rgba(44, 62, 80, 0.4);
 }
 
 .btn-secondary {
@@ -361,7 +361,7 @@
   width: 50px;
   height: 50px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #667eea;
+  border-top: 4px solid #2c3e50;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 20px;
@@ -388,14 +388,14 @@
 }
 
 .image-upload-area.drag-active {
-  border-color: #667eea;
-  background: #f0f4ff;
+  border-color: #2c3e50;
+  background: #f8f9fa;
   transform: scale(1.02);
 }
 
 .image-upload-area.uploading {
-  border-color: #667eea;
-  background: #f0f4ff;
+  border-color: #2c3e50;
+  background: #f8f9fa;
 }
 
 .upload-placeholder {
@@ -404,7 +404,7 @@
 }
 
 .upload-placeholder:hover {
-  color: #667eea;
+  color: #2c3e50;
 }
 
 .upload-icon {
@@ -446,7 +446,7 @@
   width: 40px;
   height: 40px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #667eea;
+  border-top: 4px solid #2c3e50;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -480,7 +480,7 @@
 .manual-url-section summary {
   cursor: pointer;
   font-weight: 500;
-  color: #667eea;
+  color: #2c3e50;
   margin-bottom: 10px;
 }
 

@@ -1,0 +1,90 @@
+.ai-dd-page {
+  min-height: 100vh;
+  background-color: #24170f;
+  color: white;
+}
+
+.logo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+}
+
+.ai-dd-main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+.ai-dd-hero {
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+.ai-dd-hero-inner {
+  background: #2a1d15;
+  border: 1px solid #4b3120;
+  border-radius: 16px;
+  padding: 32px;
+  text-align: left;
+}
+
+.ai-dd-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  color: #fff;
+}
+
+.ai-dd-subtitle {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #cea78d;
+  margin: 0;
+}
+
+.ai-dd-section {
+  background: #2a1d15;
+  border: 1px solid #4b3120;
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 16px;
+}
+
+.ai-dd-section h2 {
+  margin: 0 0 12px 0;
+  color: #fff;
+  font-size: 1.4rem;
+}
+
+.ai-dd-section p,
+.ai-dd-section li {
+  color: #f5f5f5;
+}
+
+.ai-dd-cta {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.ai-dd-cta-card {
+  background: #362317;
+  border: 1px solid #6b462e;
+  border-radius: 16px;
+  padding: 28px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px; /* väli tekstin ja napin väliin */
+}
+
+@media (max-width: 768px) {
+  .ai-dd-main {
+    padding: 16px 15px 40px;
+  }
+}
+
+

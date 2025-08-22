@@ -31,6 +31,7 @@ import ContactPage from './pages/ContactPage'
 import BlogNewsletterPage from './pages/BlogNewsletterPage'
 import BlogPage from './pages/BlogPage'
 import BlogArticlePage from './pages/BlogArticlePage'
+import AIDueDiligencePage from './pages/AIDueDiligencePage'
 import AdminBlogPage from './pages/AdminBlogPage'
 // MixpostAnalyticsDashboard poistettu
 
@@ -56,6 +57,7 @@ export default function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogArticlePage />} />
+        <Route path="/ai-due-diligence" element={<AIDueDiligencePage />} />
         {/* Suojatut reitit sidebarin kanssa */}
         <Route path="/dashboard" element={
           <div className="app-layout">
@@ -90,7 +92,7 @@ export default function App() {
             <Sidebar />
             <MobileNavigation />
             <div className="main-content">
-              <ProtectedRoute><AdminPage /></ProtectedRoute>
+              <ProtectedRoute requiredRole="admin"><AdminPage /></ProtectedRoute>
             </div>
           </div>
         } />
@@ -99,7 +101,7 @@ export default function App() {
             <Sidebar />
             <MobileNavigation />
             <div className="main-content">
-              <ProtectedRoute><AdminBlogPage /></ProtectedRoute>
+              <ProtectedRoute requiredRole="moderator"><AdminBlogPage /></ProtectedRoute>
             </div>
           </div>
         } />
@@ -126,7 +128,7 @@ export default function App() {
             <Sidebar />
             <MobileNavigation />
             <div className="main-content">
-              <ProtectedRoute><DevPage /></ProtectedRoute>
+              <ProtectedRoute requiredRole="admin"><DevPage /></ProtectedRoute>
             </div>
           </div>
         } />

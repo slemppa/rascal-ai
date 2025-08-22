@@ -93,7 +93,7 @@ const menuItems = [
   { 
     label: 'Blogi-hallinta', 
     path: '/admin-blog', 
-    adminOnly: true, 
+    moderatorOnly: true, 
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M4 19.5C4 18.1193 5.11929 17 6.5 17H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -112,11 +112,12 @@ export default function Sidebar() {
   const location = useLocation()
 
   const [isAdmin, setIsAdmin] = useState(false)
+  const [isModerator, setIsModerator] = useState(false)
   const { user, signOut } = useAuth()
 
-  // Tarkista admin-oikeudet
+  // Tarkista admin- ja moderator-oikeudet
   useEffect(() => {
-    const checkAdminStatus = async () => {
+    const checkUserRoles = async () => {
       if (!user) return
       
       try {
@@ -127,14 +128,18 @@ export default function Sidebar() {
           .single()
 
         if (!error && userData) {
-          setIsAdmin(userData.role === 'admin' || userData.company_id === 1)
+          const isAdminUser = userData.role === 'admin' || userData.company_id === 1
+          const isModeratorUser = userData.role === 'moderator' || isAdminUser
+          
+          setIsAdmin(isAdminUser)
+          setIsModerator(isModeratorUser)
         }
       } catch (error) {
-        console.error('Error checking admin status:', error)
+        console.error('Error checking user roles:', error)
       }
     }
 
-    checkAdminStatus()
+    checkUserRoles()
   }, [user])
 
   const handleLogout = async () => {
@@ -158,9 +163,10 @@ export default function Sidebar() {
       <ul className={styles['nav-menu']}>
         {menuItems.map(item => {
           const adminOnly = item.adminOnly && !isAdmin
+          const moderatorOnly = item.moderatorOnly && !isModerator
           
           // Piilota admin-välilehti jos ei ole admin-oikeuksia
-          if (adminOnly) return null
+          if (adminOnly || moderatorOnly) return null
           
           return (
             <li className={styles['nav-item']} key={item.path}>

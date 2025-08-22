@@ -3,13 +3,24 @@ import { useParams, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import PageMeta from '../components/PageMeta'
+import SignIn from '../components/auth/SignIn'
+import ForgotPassword from '../components/auth/ForgotPassword'
+import MagicLink from '../components/auth/MagicLink'
+import SiteHeader from '../components/SiteHeader'
 import './BlogArticlePage.css'
+import './BlogPage.css'
 
 export default function BlogArticlePage() {
   const { slug } = useParams()
   const [article, setArticle] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [prevArticle, setPrevArticle] = useState(null)
+  const [nextArticle, setNextArticle] = useState(null)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [showSignInModal, setShowSignInModal] = useState(false)
+  const [showForgotModal, setShowForgotModal] = useState(false)
+  const [showMagicModal, setShowMagicModal] = useState(false)
 
   useEffect(() => {
     if (slug) {
@@ -20,16 +31,83 @@ export default function BlogArticlePage() {
   const fetchArticle = async (articleSlug) => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/get-article/${articleSlug}`)
+      const response = await fetch(`/api/get-article/${encodeURIComponent(articleSlug)}`, {
+        headers: { 'Accept': 'application/json' }
+      })
+      const contentType = response.headers.get('content-type') || ''
       if (!response.ok) {
-        throw new Error('Artikkelia ei voitu ladata')
+        // 404: kokeile hakea listasta ja etsi slugilla
+        if (response.status === 404) {
+          try {
+            const listRes = await fetch('/api/get-articles', { headers: { 'Accept': 'application/json' } })
+            if (listRes.ok) {
+              const list = await listRes.json()
+              const found = Array.isArray(list) ? list.find(a => (a.slug || '').trim() === articleSlug.trim()) : null
+              if (found) {
+                setArticle(found)
+                return
+              }
+            }
+          } catch (_) {}
+        }
+
+        // Yritä lukea virheviesti JSON:na, muuten tekstinä
+        let message = 'Artikkeleia ei voitu ladata'
+        try {
+          if (contentType.includes('application/json')) {
+            const errJson = await response.json()
+            message = errJson?.error || errJson?.message || message
+          } else {
+            message = await response.text()
+          }
+        } catch (_) {}
+        throw new Error(message)
+      }
+      if (!contentType.includes('application/json')) {
+        // Palautettiin HTML tai muu sisältö → yritä dev-fallback suoraan Vercelin dev-palvelimeen
+        const text = await response.text()
+        if (import.meta.env.DEV) {
+          try {
+            const fb = await fetch(`http://localhost:3000/api/get-article/${encodeURIComponent(articleSlug)}`, {
+              headers: { 'Accept': 'application/json' }
+            })
+            const fbType = fb.headers.get('content-type') || ''
+            if (fb.ok && fbType.includes('application/json')) {
+              const data = await fb.json()
+              setArticle(data)
+              computeNeighbors(data.slug)
+              return
+            }
+          } catch (e) {
+            // jatka alla olevaan virheeseen
+          }
+        }
+        throw new Error(text?.slice(0, 200) || 'Odottamaton palvelinvastaus')
       }
       const data = await response.json()
       setArticle(data)
+      computeNeighbors(data.slug)
     } catch (err) {
       setError(err.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const computeNeighbors = async (currentSlug) => {
+    try {
+      const listRes = await fetch('/api/get-articles', { headers: { 'Accept': 'application/json' } })
+      if (!listRes.ok) return
+      const list = await listRes.json()
+      if (!Array.isArray(list)) return
+      const idx = list.findIndex(a => (a.slug || '').trim() === (currentSlug || '').trim())
+      if (idx === -1) return
+      const prev = idx > 0 ? list[idx - 1] : null // edellinen (uudempi)
+      const next = idx < list.length - 1 ? list[idx + 1] : null // seuraava (vanhempi)
+      setPrevArticle(prev)
+      setNextArticle(next)
+    } catch (_) {
+      // ignore
     }
   }
 
@@ -71,42 +149,28 @@ export default function BlogArticlePage() {
       />
       
       <div className="blog-article-page">
+        <SiteHeader onOpenSignIn={() => setShowSignInModal(true)} />
+
         <div className="layout-container">
-          {/* Back Button */}
           <div className="back-button-container">
-            <Link to="/blog" className="back-button">
-              ← Takaisin artikkeleihin
-            </Link>
+            <Link to="/blog" className="back-button">← Takaisin artikkeleihin</Link>
           </div>
 
-          {/* Article Header */}
           <header className="article-header">
-            <div className="article-meta">
-                                      <span className="article-date">
-                          {article.published_at ? new Date(article.published_at).toLocaleDateString('fi-FI') : 'Ei päivää'}
-                        </span>
-                        {article.category && (
-                          <span className="article-category">{article.category}</span>
-                        )}
-            </div>
             <h1 className="article-title">{article.title || 'Ei otsikkoa'}</h1>
-            {(article.excerpt || article.meta_description) && (
-              <p className="article-excerpt">{article.excerpt || article.meta_description}</p>
-            )}
           </header>
 
-          {/* Article Image */}
           {(article.image_url || article.media_url) && (
             <div className="article-hero-image">
               <img 
-                src={article.image_url || article.media_url} 
+                src={article.image_url || article.media_url}
                 alt={article.title || 'Artikkeli'}
                 loading="lazy"
+                onError={(e) => { e.currentTarget.src = '/placeholder.png' }}
               />
             </div>
           )}
 
-          {/* Article Content */}
           <main className="article-content">
             <div className="content-wrapper">
               <div className="article-body">
@@ -136,48 +200,46 @@ export default function BlogArticlePage() {
             </div>
           </main>
 
-          {/* Article Footer */}
-          <footer className="article-footer">
-            <div className="footer-content">
-              <div className="share-section">
-                <h3>Jaa artikkeli</h3>
-                <div className="share-buttons">
-                  <a 
-                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="share-button facebook"
-                  >
-                    Facebook
-                  </a>
-                  <a 
-                    href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(article.title || 'Artikkeli')}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="share-button twitter"
-                  >
-                    Twitter
-                  </a>
-                  <a 
-                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="share-button linkedin"
-                  >
-                    LinkedIn
-                  </a>
-                </div>
-              </div>
-              
-              <div className="back-to-blog">
-                <Link to="/blog" className="btn btn-secondary">
-                  Katso kaikki artikkelit
-                </Link>
-              </div>
+          {(prevArticle || nextArticle) && (
+            <div className="article-nav">
+              {prevArticle ? (
+                <Link to={`/blog/${prevArticle.slug}`} className="btn btn-secondary">← Edellinen artikkeli</Link>
+              ) : <span />}
+              {nextArticle && (
+                <Link to={`/blog/${nextArticle.slug}`} className="btn btn-primary">Seuraava artikkeli →</Link>
+              )}
             </div>
-          </footer>
+          )}
         </div>
       </div>
+
+      {showSignInModal && (
+        <div className="modal-overlay" onClick={(e)=>{ if(e.target===e.currentTarget) setShowSignInModal(false) }}>
+          <div className="modal-container">
+            <SignIn 
+              onClose={() => setShowSignInModal(false)}
+              onForgotClick={() => { setShowSignInModal(false); setShowForgotModal(true) }}
+              onMagicLinkClick={() => { setShowSignInModal(false); setShowMagicModal(true) }}
+            />
+          </div>
+        </div>
+      )}
+
+      {showForgotModal && (
+        <div className="modal-overlay" onClick={(e)=>{ if(e.target===e.currentTarget) { setShowForgotModal(false); setShowSignInModal(true) } }}>
+          <div className="modal-container">
+            <ForgotPassword onClose={() => { setShowForgotModal(false); setShowSignInModal(true) }} />
+          </div>
+        </div>
+      )}
+
+      {showMagicModal && (
+        <div className="modal-overlay" onClick={(e)=>{ if(e.target===e.currentTarget) { setShowMagicModal(false); setShowSignInModal(true) } }}>
+          <div className="modal-container">
+            <MagicLink onClose={() => { setShowMagicModal(false); setShowSignInModal(true) }} />
+          </div>
+        </div>
+      )}
     </>
   )
 }

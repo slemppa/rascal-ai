@@ -247,21 +247,36 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* CTA Section */}
-              <div className="section cta-section" id="cta">
-                <div className="cta-content">
-                  <h1 className="cta-title">
-                    Varaa 30 minuuttia
-                  </h1>
-                  <p className="cta-description">
-                    Näytämme, miten Rascal AI vapauttaa myyjäsi parhaaseen työhönsä ja nostaa tulokset uudelle tasolle.
-                  </p>
-                  <button
-                    className="btn btn-primary cta-button"
-                    onClick={() => setShowSignInModal(true)}
-                  >
-                    Varaa 30 min demo
-                  </button>
+              {/* CTA Section - kaksilaattainen */}
+              <div className="section" id="cta">
+                <div className="cta-section-grid">
+                  <div className="cta-section">
+                    <div className="cta-content">
+                      <h1 className="cta-title">
+                        Tekoäly Due Diligence
+                      </h1>
+                      <p className="cta-description">
+                        Veloitukseton 60 min kartoitus: missä tekoäly tuo nopeimmat ja suurimmat hyödyt – ilman hypeä ja hakuammuntaa.
+                      </p>
+                      <a className="btn btn-primary cta-button" href="/ai-due-diligence">Tutustu ja varaa</a>
+                    </div>
+                  </div>
+                  <div className="cta-section">
+                    <div className="cta-content">
+                      <h1 className="cta-title">
+                        Varaa 30 minuuttia
+                      </h1>
+                      <p className="cta-description">
+                        Näytämme, miten Rascal AI vapauttaa myyjäsi parhaaseen työhönsä ja nostaa tulokset uudelle tasolle.
+                      </p>
+                      <button
+                        className="btn btn-primary cta-button"
+                        onClick={() => setShowSignInModal(true)}
+                      >
+                        Varaa 30 min demo
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

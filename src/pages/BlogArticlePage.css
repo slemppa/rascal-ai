@@ -48,6 +48,9 @@
   margin-bottom: 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   text-align: center;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .article-meta {
@@ -93,10 +96,11 @@
 
 /* Article Hero Image */
 .article-hero-image {
-  margin-bottom: 30px;
+  margin: 0 auto 30px;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-width: 1000px;
 }
 
 .article-hero-image img {
@@ -111,8 +115,9 @@
   border: 1px solid #4b3120;
   border-radius: 20px;
   padding: 40px;
-  margin-bottom: 30px;
+  margin: 0 auto 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 800px;
 }
 
 .content-wrapper {
@@ -128,23 +133,23 @@
 .article-body h2 {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #333;
+  color: #fff;
   margin: 40px 0 20px;
-  padding-top: 20px;
-  border-top: 2px solid #f0f0f0;
+  padding-top: 0;
+  border-top: none;
 }
 
 .article-body h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #444;
+  color: #fff;
   margin: 30px 0 15px;
 }
 
 .article-body h4 {
   font-size: 1.3rem;
   font-weight: 600;
-  color: #555;
+  color: #fff;
   margin: 25px 0 12px;
 }
 
@@ -216,7 +221,7 @@
 .markdown-h6 {
   margin-top: 2rem;
   margin-bottom: 1rem;
-  color: #cea78d;
+  color: #ffffff;
   font-weight: 600;
 }
 
@@ -231,6 +236,11 @@
   margin-bottom: 1.5rem;
   text-align: justify;
   color: white;
+}
+
+/* Poista vaakaviivat (hr) kappaleiden välistä */
+.article-body hr {
+  display: none;
 }
 
 .markdown-ul,
@@ -331,10 +341,20 @@
 
 /* Article Footer */
 .article-footer {
-  background: white;
+  align-items: center;
   border-radius: 20px;
   padding: 40px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Article Bottom Navigation */
+.article-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  max-width: 800px;
+  margin: 0 auto 40px;
 }
 
 .footer-content {

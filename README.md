@@ -171,6 +171,7 @@ docker run -p 3000:3000 rascal-ai
 - **CSS_ARCHITECTURE.md** - CSS-arkkitehtuuri
 - **VERSIONING.md** - Versionhallinta
 - **AUTO_LOGOUT_README.md** - Automaattinen uloskirjautuminen
+- **SEO_README.md** - SEO-optimointi ja sitemap-hallinta
 
 ## 🤝 Contributing
 

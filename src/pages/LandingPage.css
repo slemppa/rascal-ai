@@ -580,6 +580,9 @@ html, body, #root, .landing-page {
   padding: 40px 20px;
   text-align: center;
   border-top: 1px solid #4b3120;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .footer-content {
@@ -596,6 +599,15 @@ html, body, #root, .landing-page {
   flex-wrap: wrap;
   justify-content: center;
   gap: 32px;
+}
+
+.footer-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 16px;
 }
 
 .footer-link {

@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+
+# Estetään admin-sivut ja API-endpointit
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /posts
+Disallow: /api/
+Disallow: /settings
+
+# Sallitaan julkiset sivut
+Allow: /
+Allow: /blog
+Allow: /features
+Allow: /pricing
+Allow: /contact
+Allow: /terms
+Allow: /privacy
+Allow: /ai-due-diligence
+
+# Sitemap sijainti (dynaaminen)
+Sitemap: https://rascal-ai.vercel.app/api/sitemap
+
+# Crawl-delay (ei pakollinen, mutta hyvä käytäntö)
+Crawl-delay: 1

@@ -79,6 +79,13 @@ export default function AdminBlogPage() {
       setUploading(true)
       
       if (editingArticle) {
+        // MUOKKAUS: Tarkista että kuva on edelleen olemassa
+        if (!formData.image_url && !tempImageFile?.file) {
+          alert('Kuva on pakollinen! Et voi tallentaa artikkelia ilman kuvaa.')
+          setUploading(false)
+          return
+        }
+
         // MUOKKAUS: Suora Supabase päivitys
         const { error } = await supabase
           .from('blog_posts')
@@ -101,6 +108,13 @@ export default function AdminBlogPage() {
 
         alert('Artikkeli päivitetty!')
       } else {
+        // UUSI ARTIKKELI: Tarkista että kuva on valittu
+        if (!tempImageFile?.file) {
+          alert('Kuva on pakollinen uuden artikkelin lisäämisessä!')
+          setUploading(false)
+          return
+        }
+
         // UUSI ARTIKKELI: N8N webhook (kuvan lataus + luonti)
         const fd = new FormData()
         fd.append('action', 'create')
@@ -413,11 +427,11 @@ export default function AdminBlogPage() {
                   </div>
 
                   <div className="form-group">
-                    <label>Artikkelin kuva</label>
+                    <label>Artikkelin kuva *</label>
                     
                     {/* Drag & Drop Area */}
                     <div 
-                      className={`image-upload-area ${dragActive ? 'drag-active' : ''} ${uploading ? 'uploading' : ''}`}
+                      className={`image-upload-area ${dragActive ? 'drag-active' : ''} ${uploading ? 'uploading' : ''} ${!formData.image_url && !tempImageFile ? 'required-field' : ''}`}
                       onDragEnter={handleDrag}
                       onDragLeave={handleDrag}
                       onDragOver={handleDrag}
@@ -434,7 +448,12 @@ export default function AdminBlogPage() {
                           <div className="image-actions">
                             <button 
                               type="button" 
-                              onClick={() => setFormData(prev => ({ ...prev, image_url: '' }))}
+                              onClick={() => {
+                                if (confirm('Oletko varma, että haluat poistaa kuvan? Kuva on pakollinen artikkelin tallentamiseen!')) {
+                                  setFormData(prev => ({ ...prev, image_url: '' }))
+                                  setTempImageFile(null)
+                                }
+                              }}
                               className="btn btn-small btn-danger"
                             >
                               Poista kuva
@@ -445,6 +464,7 @@ export default function AdminBlogPage() {
                         <div className="upload-placeholder">
                           <div className="upload-icon">📷</div>
                           <h3>Raahaa kuva tähän tai klikkaa valitaksesi</h3>
+                          <p className="required-text">⚠️ Kuva on pakollinen uuden artikkelin lisäämisessä!</p>
                           <p>Tuetut formaatit: JPG, PNG, GIF (max 5MB)</p>
                           <input
                             type="file"
@@ -471,7 +491,7 @@ export default function AdminBlogPage() {
                     </details>
                     
                     <small className="form-help">
-                      Kuvat ladataan automaattisesti Supabase Storage:en blog-covers bucketiin
+                      <strong>Kuva on pakollinen!</strong> Kuvat ladataan automaattisesti Supabase Storage:en blog-covers bucketiin
                     </small>
                   </div>
 

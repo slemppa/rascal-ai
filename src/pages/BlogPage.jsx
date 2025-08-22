@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import PageMeta from '../components/PageMeta'
-import './BlogPage.css'
 import SiteHeader from '../components/SiteHeader'
-import './LandingPage.css'
-import SignIn from '../components/auth/SignIn'
-import ForgotPassword from '../components/auth/ForgotPassword'
-import MagicLink from '../components/auth/MagicLink'
+import SignIn from '../components/auth/SignIn' // Keep for modal rendering
+import ForgotPassword from '../components/auth/ForgotPassword' // Keep for modal rendering
+import MagicLink from '../components/auth/MagicLink' // Keep for modal rendering
+import { supabase } from '../lib/supabase'
+import '../pages/LandingPage.css' // Import global styles for header
+import './BlogPage.css' // Page specific styles
 
 export default function BlogPage() {
   const [articles, setArticles] = useState([])
@@ -24,16 +25,23 @@ export default function BlogPage() {
   const fetchArticles = async () => {
     try {
       setLoading(true)
-      setError(null) // Tyhjennetään mahdollinen aiempi virhe
-      const response = await fetch('/api/get-articles')
-      if (!response.ok) {
-        throw new Error('Artikkeleita ei voitu ladata')
+      setError(null)
+      
+      // Käytä Supabase clientia suoraan, kuten muutkin sivut
+      const { data: articles, error } = await supabase
+        .from('blog_posts')
+        .select('id,title,slug,excerpt,content,category,image_url,published_at,published')
+        .eq('published', true)
+        .order('published_at', { ascending: false })
+
+      if (error) {
+        throw new Error('Virhe artikkeleiden haussa: ' + error.message)
       }
-      const data = await response.json()
-      setArticles(data || []) // Varmistetaan että data on array
+      
+      setArticles(articles || [])
     } catch (err) {
       console.error('Error fetching articles:', err)
-      setError(err.message)
+      setError('Artikkeleita ei voitu ladata. Yritä uudelleen myöhemmin.')
     } finally {
       setLoading(false)
     }

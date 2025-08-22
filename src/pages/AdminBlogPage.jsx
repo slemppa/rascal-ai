@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import ProtectedRoute from '../components/ProtectedRoute'
 import PageMeta from '../components/PageMeta'
+import { supabase } from '../lib/supabase'
 import './AdminBlogPage.css'
 
 export default function AdminBlogPage() {
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [showForm, setShowForm] = useState(false)
   const [editingArticle, setEditingArticle] = useState(null)
   const [formData, setFormData] = useState({
@@ -30,25 +32,22 @@ export default function AdminBlogPage() {
   const fetchArticles = async () => {
     try {
       setLoading(true)
+      setError(null)
       
-      const response = await fetch('/api/get-articles?scope=admin')
-      
-      if (!response.ok) {
-        throw new Error('Artikkeleita ei voitu ladata')
+      // Käytä Supabase clientia suoraan, kuten muutkin sivut
+      const { data: articles, error } = await supabase
+        .from('blog_posts')
+        .select('id,title,slug,excerpt,content,category,image_url,published_at,published')
+        .order('published_at', { ascending: false })
+
+      if (error) {
+        throw new Error('Virhe artikkeleiden haussa: ' + error.message)
       }
       
-      const data = await response.json()
-      if (data.success) {
-        setArticles(data.articles || [])
-      } else if (Array.isArray(data)) {
-        // fallback jos backend palauttaa suoraan taulukon
-        setArticles(data)
-      } else {
-        throw new Error(data.error || 'Virhe artikkeleiden haussa')
-      }
+      setArticles(articles || [])
     } catch (err) {
-      console.error('Virhe artikkeleiden haussa:', err)
-      setArticles([])
+      console.error('Error fetching articles:', err)
+      setError('Artikkeleita ei voitu ladata. Yritä uudelleen myöhemmin.')
     } finally {
       setLoading(false)
     }
@@ -96,8 +95,15 @@ export default function AdminBlogPage() {
         fd.append('image', tempImageFile.file, tempImageFile.fileName || tempImageFile.file.name)
       }
 
-      const response = await fetch('/api/blog-article-management', {
+      // Lähetä suoraan N8N webhookiin
+      const n8nUrl = import.meta.env.VITE_N8N_CMS_URL || 'https://samikiias.app.n8n.cloud/webhook/cms'
+      const n8nSecretKey = import.meta.env.VITE_N8N_SECRET_KEY
+      
+      const response = await fetch(n8nUrl, {
         method: 'POST',
+        headers: {
+          ...(n8nSecretKey ? { 'x-api-key': n8nSecretKey } : {}),
+        },
         body: fd
       })
 
@@ -146,10 +152,15 @@ export default function AdminBlogPage() {
     }
 
     try {
-      const response = await fetch('/api/blog-article-management', {
+      // Lähetä suoraan N8N webhookiin
+      const n8nUrl = import.meta.env.VITE_N8N_CMS_URL || 'https://samikiias.app.n8n.cloud/webhook/cms'
+      const n8nSecretKey = import.meta.env.VITE_N8N_SECRET_KEY
+      
+      const response = await fetch(n8nUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...(n8nSecretKey ? { 'x-api-key': n8nSecretKey } : {}),
         },
         body: JSON.stringify({
           action: 'delete',

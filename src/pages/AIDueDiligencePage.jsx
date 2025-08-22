@@ -86,7 +86,14 @@ export default function AIDueDiligencePage() {
             <div className="ai-dd-cta-card">
               <h3>Aloitetaan veloituksettomalla 60 min kartoituksella</h3>
               <p>Varmistetaan, että tekoälystä tulee teille uusi tiimin jäsen, joka vauhdittaa kasvua ja tehostaa arkea.</p>
-              <button className="btn btn-primary" onClick={() => setShowSignInModal(true)}>Varaa kartoitus</button>
+              <a 
+                href="https://calendar.app.google/LiXrLDnPEGMb4eoS9" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+              >
+                Varaa kartoitus
+              </a>
             </div>
           </section>
         </main>

@@ -17,8 +17,8 @@ Projekti on optimoitu SEO:lle seuraavilla tavoilla:
 ### 1. robots.txt
 - **Sijainti**: `public/robots.txt`
 - **Tarkoitus**: Ohjaa hakukoneita ja määrittelee sitemapin sijainnin
-- **Estetyt sivut**: Admin-sivut, dashboard, API-endpointit
-- **Sallitut sivut**: Julkiset sivut, blogi, ominaisuudet
+- **Estetyt sivut**: Kaikki kirjautumista vaativat sivut (admin, dashboard, posts, strategy, ai-chat, dev, help, calls, settings, blog-newsletter, admin-blog) ja API-endpointit
+- **Sallitut sivut**: Julkiset sivut, blogi, ominaisuudet, pricing, contact, terms, privacy
 
 ### 2. sitemap.xml (staattinen)
 - **Sijainti**: `public/sitemap.xml`

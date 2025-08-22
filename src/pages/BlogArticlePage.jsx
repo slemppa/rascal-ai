@@ -3,10 +3,11 @@ import { useParams, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import PageMeta from '../components/PageMeta'
+import SiteHeader from '../components/SiteHeader'
 import SignIn from '../components/auth/SignIn'
 import ForgotPassword from '../components/auth/ForgotPassword'
 import MagicLink from '../components/auth/MagicLink'
-import SiteHeader from '../components/SiteHeader'
+import { supabase } from '../lib/supabase'
 import './BlogArticlePage.css'
 import './BlogPage.css'
 
@@ -31,62 +32,24 @@ export default function BlogArticlePage() {
   const fetchArticle = async (articleSlug) => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/get-article/${encodeURIComponent(articleSlug)}`, {
-        headers: { 'Accept': 'application/json' }
-      })
-      const contentType = response.headers.get('content-type') || ''
-      if (!response.ok) {
-        // 404: kokeile hakea listasta ja etsi slugilla
-        if (response.status === 404) {
-          try {
-            const listRes = await fetch('/api/get-articles', { headers: { 'Accept': 'application/json' } })
-            if (listRes.ok) {
-              const list = await listRes.json()
-              const found = Array.isArray(list) ? list.find(a => (a.slug || '').trim() === articleSlug.trim()) : null
-              if (found) {
-                setArticle(found)
-                return
-              }
-            }
-          } catch (_) {}
-        }
+      
+      // Käytä Supabase clientia suoraan, kuten muutkin sivut
+      const { data: article, error } = await supabase
+        .from('blog_posts')
+        .select('id,title,slug,excerpt,content,category,image_url,published_at,published,created_at,updated_at')
+        .eq('slug', articleSlug)
+        .eq('published', true)
+        .single()
 
-        // Yritä lukea virheviesti JSON:na, muuten tekstinä
-        let message = 'Artikkeleia ei voitu ladata'
-        try {
-          if (contentType.includes('application/json')) {
-            const errJson = await response.json()
-            message = errJson?.error || errJson?.message || message
-          } else {
-            message = await response.text()
-          }
-        } catch (_) {}
-        throw new Error(message)
-      }
-      if (!contentType.includes('application/json')) {
-        // Palautettiin HTML tai muu sisältö → yritä dev-fallback suoraan Vercelin dev-palvelimeen
-        const text = await response.text()
-        if (import.meta.env.DEV) {
-          try {
-            const fb = await fetch(`http://localhost:3000/api/get-article/${encodeURIComponent(articleSlug)}`, {
-              headers: { 'Accept': 'application/json' }
-            })
-            const fbType = fb.headers.get('content-type') || ''
-            if (fb.ok && fbType.includes('application/json')) {
-              const data = await fb.json()
-              setArticle(data)
-              computeNeighbors(data.slug)
-              return
-            }
-          } catch (e) {
-            // jatka alla olevaan virheeseen
-          }
+      if (error) {
+        if (error.code === 'PGRST116') {
+          throw new Error('Artikkelia ei löytynyt')
         }
-        throw new Error(text?.slice(0, 200) || 'Odottamaton palvelinvastaus')
+        throw new Error('Virhe artikkelin haussa: ' + error.message)
       }
-      const data = await response.json()
-      setArticle(data)
-      computeNeighbors(data.slug)
+
+      setArticle(article)
+      computeNeighbors(article.slug)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -96,14 +59,20 @@ export default function BlogArticlePage() {
 
   const computeNeighbors = async (currentSlug) => {
     try {
-      const listRes = await fetch('/api/get-articles', { headers: { 'Accept': 'application/json' } })
-      if (!listRes.ok) return
-      const list = await listRes.json()
-      if (!Array.isArray(list)) return
-      const idx = list.findIndex(a => (a.slug || '').trim() === (currentSlug || '').trim())
+      // Käytä Supabase clientia suoraan
+      const { data: articles, error } = await supabase
+        .from('blog_posts')
+        .select('id,title,slug')
+        .eq('published', true)
+        .order('published_at', { ascending: false })
+
+      if (error || !Array.isArray(articles)) return
+      
+      const idx = articles.findIndex(a => (a.slug || '').trim() === (currentSlug || '').trim())
       if (idx === -1) return
-      const prev = idx > 0 ? list[idx - 1] : null // edellinen (uudempi)
-      const next = idx < list.length - 1 ? list[idx + 1] : null // seuraava (vanhempi)
+      
+      const prev = idx > 0 ? articles[idx - 1] : null // edellinen (uudempi)
+      const next = idx < articles.length - 1 ? articles[idx + 1] : null // seuraava (vanhempi)
       setPrevArticle(prev)
       setNextArticle(next)
     } catch (_) {

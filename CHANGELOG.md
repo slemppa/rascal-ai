@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.43.0](https://github.com/slemppa/rascal-ai/compare/v1.42.0...v1.43.0) (2025-08-22)
+
+
+### ✨ Features
+
+* shared header; AI Due Diligence page & CTA ([9f5df30](https://github.com/slemppa/rascal-ai/commit/9f5df30c57d5b037f16ada5d38dcd1f98da8b098))
+
 ## [1.42.0](https://github.com/slemppa/rascal-ai/compare/v1.41.0...v1.42.0) (2025-08-21)
 
 

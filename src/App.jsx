@@ -14,6 +14,7 @@ import { PostsProvider } from './contexts/PostsContext'
 import Sidebar from './components/Sidebar'
 import MobileNavigation from './components/MobileNavigation'
 import InactivityWarningModal from './components/InactivityWarningModal'
+import UpdateNotification from './components/UpdateNotification'
 import { supabase } from './lib/supabase'
 import ManagePostsPage from './pages/ManagePostsPage'
 import AdminPage from './pages/AdminPage'
@@ -164,6 +165,7 @@ export default function App() {
       </Routes>
         </PostsProvider>
         <InactivityWarningModal />
+        <UpdateNotification />
       </AutoLogoutProvider>
     </AuthProvider>
   )

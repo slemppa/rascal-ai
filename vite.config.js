@@ -5,6 +5,16 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
+    // Automaattinen päivitys ja HMR
+    hmr: {
+      overlay: true, // Näyttää virheet overlayllä
+    },
+    watch: {
+      usePolling: true, // Käytä polling:ia tiedostojen seurantaan
+      interval: 100, // Tarkista muutokset 100ms välein
+    },
+    // Automaattinen sivu päivitys
+    liveReload: true,
     proxy: {
       '/api': {
         target: 'http://localhost:3000',

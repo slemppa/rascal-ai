@@ -153,7 +153,7 @@
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .form-group label {
@@ -162,6 +162,50 @@
   color: #333;
   margin-bottom: 8px;
   font-size: 0.95rem;
+}
+
+/* Radio Button Group Styles */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  background: #fafbfc;
+}
+
+.radio-label:hover {
+  border-color: #cea78d;
+  background: #f8f5ed;
+}
+
+.radio-label input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #ff6600;
+  cursor: pointer;
+}
+
+.radio-label input[type="radio"]:checked + .radio-text {
+  color: #ff6600;
+  font-weight: 600;
+}
+
+.radio-text {
+  font-size: 0.95rem;
+  color: #555;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 .form-group input,
@@ -188,9 +232,9 @@
 
 .form-help {
   display: block;
-  margin-top: 8px;
   font-size: 0.85rem;
   color: #666;
+  margin-top: 6px;
   font-style: italic;
 }
 
@@ -217,11 +261,35 @@
   margin-bottom: 30px;
 }
 
-/* Articles Table */
+/* Status Badge Styles */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.published {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-badge.draft {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+/* Table Styles */
 .articles-table {
-  border: 2px solid #f0f0f0;
-  border-radius: 15px;
+  background: white;
+  border-radius: 20px;
   overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .table-header {

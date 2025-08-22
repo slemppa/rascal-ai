@@ -78,51 +78,70 @@ export default function AdminBlogPage() {
     try {
       setUploading(true)
       
-      // Rakennetaan FormData (artikkelikentät + mahdollinen kuva)
-      const fd = new FormData()
-      fd.append('action', editingArticle ? 'update' : 'create')
-      if (editingArticle?.id) fd.append('articleId', String(editingArticle.id))
-      fd.append('title', formData.title || '')
-      fd.append('slug', formData.slug || '')
-      fd.append('excerpt', formData.excerpt || '')
-      fd.append('content', formData.content || '')
-      fd.append('category', formData.category || '')
-      fd.append('published_at', formData.published_at || '')
-      fd.append('published', String(formData.published ?? true))
+      if (editingArticle) {
+        // MUOKKAUS: Suora Supabase päivitys
+        const { error } = await supabase
+          .from('blog_posts')
+          .update({
+            title: formData.title,
+            slug: formData.slug,
+            excerpt: formData.excerpt,
+            content: formData.content,
+            category: formData.category,
+            image_url: formData.image_url,
+            published_at: formData.published_at,
+            published: formData.published,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', editingArticle.id)
 
-      // Jos käyttäjä valitsi kuvan, lähetetään binarynä
-      if (tempImageFile?.file) {
-        fd.append('image', tempImageFile.file, tempImageFile.fileName || tempImageFile.file.name)
-      }
+        if (error) {
+          throw new Error('Virhe artikkelin päivityksessä: ' + error.message)
+        }
 
-      // Lähetä suoraan N8N webhookiin
-      const n8nUrl = import.meta.env.VITE_N8N_CMS_URL || 'https://samikiias.app.n8n.cloud/webhook/cms'
-      const n8nSecretKey = import.meta.env.VITE_N8N_SECRET_KEY
-      
-      const response = await fetch(n8nUrl, {
-        method: 'POST',
-        headers: {
-          ...(n8nSecretKey ? { 'x-api-key': n8nSecretKey } : {}),
-        },
-        body: fd
-      })
-
-      if (!response.ok) {
-        throw new Error('Artikkelia ei voitu tallentaa')
-      }
-
-      const result = await response.json()
-      
-      if (result.success) {
-        resetForm()
-        setTempImageFile(null)
-        await fetchArticles()
-        setShowForm(false)
-        
-        alert(editingArticle ? 'Artikkeli päivitetty!' : 'Artikkeli lisätty!')
+        alert('Artikkeli päivitetty!')
       } else {
-        throw new Error(result.error || 'Tuntematon virhe')
+        // UUSI ARTIKKELI: N8N webhook (kuvan lataus + luonti)
+        const fd = new FormData()
+        fd.append('action', 'create')
+        fd.append('title', formData.title || '')
+        fd.append('slug', formData.slug || '')
+        fd.append('excerpt', formData.excerpt || '')
+        fd.append('content', formData.content || '')
+        fd.append('category', formData.category || '')
+        fd.append('published_at', formData.published_at || '')
+        fd.append('published', String(formData.published ?? true))
+
+        // Jos käyttäjä valitsi kuvan, lähetetään binarynä
+        if (tempImageFile?.file) {
+          fd.append('image', tempImageFile.file, tempImageFile.fileName || tempImageFile.file.name)
+        }
+
+        // Lähetä backend API:n kautta proxy:nä
+        const response = await fetch('/api/blog-article-management', {
+          method: 'POST',
+          body: fd
+        })
+
+        if (!response.ok) {
+          throw new Error('Artikkelia ei voitu tallentaa')
+        }
+
+        const result = await response.json()
+        
+        if (result.success) {
+          alert('Artikkeli lisätty!')
+        } else {
+          throw new Error(result.error || 'Tuntematon virhe')
+        }
       }
+
+      // Päivitä lista ja sulje form
+      resetForm()
+      setTempImageFile(null)
+      await fetchArticles()
+      setShowForm(false)
+      
     } catch (err) {
       console.error('Virhe artikkelin tallennuksessa:', err)
       alert('Virhe: ' + err.message)
@@ -152,33 +171,18 @@ export default function AdminBlogPage() {
     }
 
     try {
-      // Lähetä suoraan N8N webhookiin
-      const n8nUrl = import.meta.env.VITE_N8N_CMS_URL || 'https://samikiias.app.n8n.cloud/webhook/cms'
-      const n8nSecretKey = import.meta.env.VITE_N8N_SECRET_KEY
-      
-      const response = await fetch(n8nUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(n8nSecretKey ? { 'x-api-key': n8nSecretKey } : {}),
-        },
-        body: JSON.stringify({
-          action: 'delete',
-          articleId: articleId
-        })
-      })
+      // Suora Supabase poisto
+      const { error } = await supabase
+        .from('blog_posts')
+        .delete()
+        .eq('id', articleId)
 
-      if (!response.ok) {
-        throw new Error('Artikkelia ei voitu poistaa')
+      if (error) {
+        throw new Error('Virhe artikkelin poistossa: ' + error.message)
       }
 
-      const result = await response.json()
-      if (result.success) {
-        await fetchArticles()
-        alert('Artikkeli poistettu!')
-      } else {
-        throw new Error(result.error || 'Virhe artikkelin poistossa')
-      }
+      await fetchArticles()
+      alert('Artikkeli poistettu!')
     } catch (err) {
       console.error('Virhe artikkelin poistossa:', err)
       alert('Virhe: ' + err.message)
@@ -380,6 +384,35 @@ export default function AdminBlogPage() {
                   </div>
 
                   <div className="form-group">
+                    <label htmlFor="published">Julkaisustatus</label>
+                    <div className="radio-group">
+                      <label className="radio-label">
+                        <input
+                          type="radio"
+                          name="published"
+                          value="true"
+                          checked={formData.published === true}
+                          onChange={(e) => setFormData(prev => ({ ...prev, published: e.target.value === 'true' }))}
+                        />
+                        <span className="radio-text">Julkaistu (näkyy julkisesti)</span>
+                      </label>
+                      <label className="radio-label">
+                        <input
+                          type="radio"
+                          name="published"
+                          value="false"
+                          checked={formData.published === false}
+                          onChange={(e) => setFormData(prev => ({ ...prev, published: e.target.value === 'true' }))}
+                        />
+                        <span className="radio-text">Luonnos (ei näy julkisesti)</span>
+                      </label>
+                    </div>
+                    <small className="form-help">
+                      Julkaistut artikkelit näkyvät blogi-sivulla, luonnokset vain hallintapaneelissa
+                    </small>
+                  </div>
+
+                  <div className="form-group">
                     <label>Artikkelin kuva</label>
                     
                     {/* Drag & Drop Area */}
@@ -504,6 +537,7 @@ export default function AdminBlogPage() {
                       <div className="header-cell">Otsikko</div>
                       <div className="header-cell">Kategoria</div>
                       <div className="header-cell">Julkaistu</div>
+                      <div className="header-cell">Status</div>
                       <div className="header-cell">Toiminnot</div>
                     </div>
                     
@@ -520,6 +554,11 @@ export default function AdminBlogPage() {
                         </div>
                         <div className="cell date-cell">
                           {article.published_at ? new Date(article.published_at).toLocaleDateString('fi-FI') : 'Ei päivää'}
+                        </div>
+                        <div className="cell status-cell">
+                          <span className={`status-badge ${article.published ? 'published' : 'draft'}`}>
+                            {article.published ? 'Julkaistu' : 'Luonnos'}
+                          </span>
                         </div>
                         <div className="cell actions-cell">
                           <button 

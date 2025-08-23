@@ -1,10 +1,10 @@
 // Service Worker for automatic updates
-const CACHE_NAME = 'rascal-ai-v1';
+const CACHE_NAME = 'rascal-ai-v2'; // Päivitetty versio
 const urlsToCache = [
   '/',
   '/index.html',
-  '/static/js/bundle.js',
-  '/static/css/main.css'
+  '/favicon.png',
+  '/hero.png'
 ];
 
 // Install event - cache resources
@@ -17,6 +17,12 @@ self.addEventListener('install', event => {
 
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', event => {
+  // Älä cachea JavaScript/CSS tiedostoja, koska ne muuttuvat joka buildissa
+  if (event.request.url.includes('/assets/') || event.request.url.includes('.js') || event.request.url.includes('.css')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then(response => {

@@ -60,11 +60,8 @@
                 const newWorker = registration.installing;
                 newWorker.addEventListener('statechange', () => {
                   if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    // New version available
-                    if (confirm('Uusi versio on saatavilla! Haluatko päivittää sivun?')) {
-                      newWorker.postMessage({ type: 'SKIP_WAITING' });
-                      window.location.reload();
-                    }
+                    // New version available - ei automaattista päivitystä
+                    console.log('Uusi versio saatavilla, mutta ei pakoteta päivitystä');
                   }
                 });
               });

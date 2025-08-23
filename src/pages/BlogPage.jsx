@@ -5,8 +5,8 @@ import SiteHeader from '../components/SiteHeader'
 import SignIn from '../components/auth/SignIn' // Keep for modal rendering
 import ForgotPassword from '../components/auth/ForgotPassword' // Keep for modal rendering
 import MagicLink from '../components/auth/MagicLink' // Keep for modal rendering
-import { supabase } from '../lib/supabase'
-import './BlogPage.css' // Page specific styles
+import './BlogPage.css'
+import '../styles/article-cards.css' // Page specific styles
 
 export default function BlogPage() {
   const [articles, setArticles] = useState([])
@@ -26,17 +26,14 @@ export default function BlogPage() {
       setLoading(true)
       setError(null)
       
-      // Käytä Supabase clientia suoraan, kuten muutkin sivut
-      const { data: articles, error } = await supabase
-        .from('blog_posts')
-        .select('id,title,slug,excerpt,content,category,image_url,published_at,published')
-        .eq('published', true)
-        .order('published_at', { ascending: false })
-
-      if (error) {
-        throw new Error('Virhe artikkeleiden haussa: ' + error.message)
+      // Käytä backend-endpointtia Supabase-kutsun sijaan
+      const response = await fetch('/api/get-articles')
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
       
+      const articles = await response.json()
       setArticles(articles || [])
     } catch (err) {
       console.error('Error fetching articles:', err)
@@ -111,20 +108,36 @@ export default function BlogPage() {
                           </svg>
                         </div>
                       )}
-                      <div className="article-category">
-                        {Array.isArray(article.category) 
-                          ? (article.category.length > 2 
-                              ? article.category.slice(0, 2).join(' • ') + ' +' + (article.category.length - 2)
-                              : article.category.join(' • '))
-                          : article.category || 'Yleinen'}
-                      </div>
+                      
+                      {/* Kategoriat omissa laatikoissaan (max 3) */}
+                      {Array.isArray(article.category) && article.category.length > 0 ? (
+                        <div className="article-categories-container">
+                          {article.category.slice(0, 3).map((cat, index) => (
+                            <div key={index} className="article-category-badge">
+                              {cat}
+                            </div>
+                          ))}
+                        </div>
+                      ) : article.category ? (
+                        <div className="article-category">
+                          {article.category}
+                        </div>
+                      ) : (
+                        <div className="article-category">
+                          YLEINEN
+                        </div>
+                      )}
                     </div>
                     <div className="article-content">
-                      <h2 className="article-title">
-                        <Link to={`/blog/${article.slug || 'ei-slugia'}`}>
+                      <h3 className="article-title" style={{
+                        fontSize: article.title && article.title.length > 20 
+                          ? `${Math.max(1.2, 1.9 - (article.title.length * 0.015))}rem`
+                          : '1.8rem'
+                      }}>
+                        <a href={`/blog/${article.slug || 'ei-slugia'}`} className="article-link">
                           {article.title || 'Ei otsikkoa'}
-                        </Link>
-                      </h2>
+                        </a>
+                      </h3>
                       <p className="article-excerpt">
                         {article.excerpt || (article.content ? article.content.substring(0, 150) + '...' : 'Ei kuvausta saatavilla')}
                       </p>
@@ -132,9 +145,9 @@ export default function BlogPage() {
                         <span className="article-date">
                           {article.published_at ? new Date(article.published_at).toLocaleDateString('fi-FI') : 'Ei päivää'}
                         </span>
-                        <Link to={`/blog/${article.slug || 'ei-slugia'}`} className="read-more-link">
+                        <a href={`/blog/${article.slug || 'ei-slugia'}`} className="read-more-link">
                           Lue lisää →
-                        </Link>
+                        </a>
                       </div>
                     </div>
                   </article>

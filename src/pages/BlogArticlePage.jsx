@@ -8,8 +8,8 @@ import SignIn from '../components/auth/SignIn'
 import ForgotPassword from '../components/auth/ForgotPassword'
 import MagicLink from '../components/auth/MagicLink'
 import { supabase } from '../lib/supabase'
-import './BlogArticlePage.css'
-import './BlogPage.css'
+import '../styles/blog-article.css'
+console.log('BlogArticlePage CSS imported:', new Date().toISOString())
 
 export default function BlogArticlePage() {
   const { slug } = useParams()
@@ -33,7 +33,8 @@ export default function BlogArticlePage() {
     try {
       setLoading(true)
       
-      // Käytä Supabase clientia suoraan, kuten muutkin sivut
+      // TODO: Tuotannossa käytä backend-endpointtia: /api/get-article/${articleSlug}
+      // Kehitysympäristössä käytetään Supabase:ta suoraan
       const { data: article, error } = await supabase
         .from('blog_posts')
         .select('id,title,slug,excerpt,content,category,image_url,published_at,published,created_at,updated_at')
@@ -48,9 +49,11 @@ export default function BlogArticlePage() {
         throw new Error('Virhe artikkelin haussa: ' + error.message)
       }
 
+      console.log('DEBUG: Artikkeli haettu:', article)
       setArticle(article)
       computeNeighbors(article.slug)
     } catch (err) {
+      console.error('DEBUG: Virhe artikkelin haussa:', err)
       setError(err.message)
     } finally {
       setLoading(false)
@@ -59,7 +62,8 @@ export default function BlogArticlePage() {
 
   const computeNeighbors = async (currentSlug) => {
     try {
-      // Käytä Supabase clientia suoraan
+      // TODO: Tuotannossa käytä backend-endpointtia: /api/get-articles
+      // Kehitysympäristössä käytetään Supabase:ta suoraan
       const { data: articles, error } = await supabase
         .from('blog_posts')
         .select('id,title,slug')
@@ -143,28 +147,32 @@ export default function BlogArticlePage() {
           <main className="article-content">
             <div className="content-wrapper">
               <div className="article-body">
-                <ReactMarkdown 
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    h1: ({node, ...props}) => <h1 className="markdown-h1" {...props} />,
-                    h2: ({node, ...props}) => <h2 className="markdown-h2" {...props} />,
-                    h3: ({node, ...props}) => <h3 className="markdown-h3" {...props} />,
-                    p: ({node, ...props}) => <p className="markdown-p" {...props} />,
-                    ul: ({node, ...props}) => <ul className="markdown-ul" {...props} />,
-                    ol: ({node, ...props}) => <ol className="markdown-ol" {...props} />,
-                    li: ({node, ...props}) => <li className="markdown-li" {...props} />,
-                    strong: ({node, ...props}) => <strong className="markdown-strong" {...props} />,
-                    em: ({node, ...props}) => <em className="markdown-em" {...props} />,
-                    a: ({node, ...props}) => <a className="markdown-link" target="_blank" rel="noopener noreferrer" {...props} />,
-                    blockquote: ({node, ...props}) => <blockquote className="markdown-blockquote" {...props} />,
-                    code: ({node, inline, ...props}) => 
-                      inline ? 
-                        <code className="markdown-inline-code" {...props} /> : 
-                        <pre className="markdown-pre"><code className="markdown-code" {...props} /></pre>,
-                  }}
-                >
-                  {article.content || ''}
-                </ReactMarkdown>
+                {article.content ? (
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      h1: ({node, ...props}) => <h1 {...props} />,
+                      h2: ({node, ...props}) => <h2 {...props} />,
+                      h3: ({node, ...props}) => <h3 {...props} />,
+                      p: ({node, ...props}) => <p {...props} />,
+                      ul: ({node, ...props}) => <ul {...props} />,
+                      ol: ({node, ...props}) => <ol {...props} />,
+                      li: ({node, ...props}) => <li {...props} />,
+                      strong: ({node, ...props}) => <strong {...props} />,
+                      em: ({node, ...props}) => <em {...props} />,
+                      a: ({node, ...props}) => <a {...props} target="_blank" rel="noopener noreferrer" />,
+                      blockquote: ({node, ...props}) => <blockquote {...props} />,
+                      code: ({node, inline, ...props}) => 
+                        inline ? 
+                          <code {...props} /> : 
+                          <pre><code {...props} /></pre>,
+                    }}
+                  >
+                    {article.content}
+                  </ReactMarkdown>
+                ) : (
+                  <p>Artikkelin sisältö puuttuu.</p>
+                )}
               </div>
             </div>
           </main>
@@ -172,10 +180,10 @@ export default function BlogArticlePage() {
           {(prevArticle || nextArticle) && (
             <div className="article-nav">
               {prevArticle ? (
-                <Link to={`/blog/${prevArticle.slug}`} className="btn btn-secondary">← Edellinen artikkeli</Link>
+                <Link to={`/blog/${prevArticle.slug}`} className="nav-button prev">← Edellinen artikkeli</Link>
               ) : <span />}
               {nextArticle && (
-                <Link to={`/blog/${nextArticle.slug}`} className="btn btn-primary">Seuraava artikkeli →</Link>
+                <Link to={`/blog/${nextArticle.slug}`} className="nav-button">Seuraava artikkeli →</Link>
               )}
             </div>
           )}

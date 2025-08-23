@@ -382,9 +382,9 @@
 }
 
 .btn-secondary {
-  background: #f8f9fa;
+  background: #ff6600;
   color: #333;
-  border: 2px solid #e0e0e0;
+  border: 2px solid #ff6600;
 }
 
 .btn-secondary:hover {

@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import '../pages/LandingPage.css'
 
 export default function SiteHeader({ onOpenSignIn }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)

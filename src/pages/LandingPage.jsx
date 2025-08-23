@@ -6,6 +6,7 @@ import MagicLink from '../components/auth/MagicLink'
 import PageMeta from '../components/PageMeta'
 import { supabase } from '../lib/supabase'
 import './LandingPage.css'
+import '../styles/article-cards.css'
 
 export default function LandingPage() {
   const navigate = useNavigate()

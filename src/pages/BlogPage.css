@@ -123,45 +123,65 @@
 
 /* Articles Grid - Bentogrid Layout */
 .articles-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
-  margin-top: 40px;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)) !important;
+  gap: 30px !important;
+  margin-top: 40px !important;
+  align-items: start !important;
+}
+
+@media (max-width: 1200px) {
+  .articles-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+  }
+}
+
+@media (max-width: 900px) {
+  .articles-grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+  }
 }
 
 .article-card {
-  background: #2a1d15;
-  border: 1px solid #4b3120;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
-  position: relative;
-  height: fit-content;
+  background: linear-gradient(135deg, #2d1b0f 0%, #3d2515 100%) !important;
+  border: 1px solid #4b3120 !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  height: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 .article-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-  border-color: #cea78d;
+  transform: translateY(-8px) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+  border-color: #cea78d !important;
 }
 
 .article-image {
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-  position: relative;
+  width: 100% !important;
+  height: 220px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  background: linear-gradient(135deg, #2d1b0f 0%, #3d2515 100%) !important;
 }
 
 .article-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s ease;
+  filter: brightness(0.9) contrast(1.1);
 }
 
 .article-card:hover .article-image img {
-  transform: scale(1.05);
+  transform: scale(1.08);
+  filter: brightness(1) contrast(1.05);
 }
 
 .article-placeholder {
@@ -175,7 +195,12 @@
 }
 
 .article-content {
-  padding: 25px;
+  padding: 28px !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  background: linear-gradient(180deg, rgba(45, 27, 15, 0.8) 0%, rgba(61, 37, 21, 0.95) 100%) !important;
 }
 
 .article-meta {
@@ -190,66 +215,111 @@
   margin-bottom: 0;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 }
 
 .article-date {
-  color: #666;
+  color: #9ca3af;
   font-weight: 500;
 }
 
 .article-category {
-  background: rgba(255, 102, 0, 0.12);
-  color: #ff8740;
-  padding: 4px 10px;
-  border: 1px solid rgba(255, 102, 0, 0.3);
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  position: absolute !important;
+  top: 16px !important;
+  left: 16px !important;
+  background: linear-gradient(135deg, #ff6600 0%, #e55a00 100%) !important;
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: 25px !important;
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3) !important;
+  max-width: calc(100% - 32px) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.2 !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 .article-title {
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 15px;
-  line-height: 1.3;
+  font-size: clamp(1.1rem, 3.5vw, 1.4rem) !important;
+  font-weight: 700 !important;
+  margin-bottom: 16px !important;
+  line-height: 1.2 !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
 }
 
 .article-title a {
-  color: #cea78d;
-  text-decoration: none;
-  transition: color 0.3s ease;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  transition: color 0.3s ease !important;
 }
 
 .article-title a:hover {
-  color: #ff6600;
+  color: #ff6600 !important;
 }
 
 .article-excerpt {
-  color: #cea78d;
-  line-height: 1.6;
-  margin-bottom: 20px;
-  font-size: 0.95rem;
-  opacity: 0.9;
+  color: #d1d5db !important;
+  line-height: 1.6 !important;
+  margin-bottom: 20px !important;
+  font-size: 0.95rem !important;
+  flex: 1 !important;
 }
 
 .article-footer {
-  display: flex;
-  justify-content: center;
+  margin-top: auto !important;
+  padding-top: 20px !important;
+  border-top: 1px solid rgba(75, 49, 32, 0.6) !important;
+}
+
+.read-more {
+  background: linear-gradient(135deg, #ff6600 0%, #e55a00 100%) !important;
+  color: white !important;
+  padding: 12px 20px !important;
+  border-radius: 25px !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.3s ease !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  width: fit-content !important;
+  white-space: nowrap !important;
+}
+
+.read-more:hover {
+  background: linear-gradient(135deg, #e55a00 0%, #cc4d00 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 102, 0, 0.4);
 }
 
 .read-more.btn.btn-primary {
-  padding: 10px 14px;
-  font-size: 0.95rem;
-  background-color: #ff6600 !important;
-  color: #ffffff !important;
-  border: 1px solid #e55e00;
-  text-decoration: none;
+  background: linear-gradient(135deg, #ff6600 0%, #e55a00 100%) !important;
+  color: white !important;
+  padding: 12px 20px !important;
+  border-radius: 25px !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.3s ease !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  width: fit-content !important;
+  white-space: nowrap !important;
 }
 
 .read-more.btn.btn-primary:hover {
-  background-color: #e55e00 !important;
-  transform: translateX(3px);
+  background: linear-gradient(135deg, #e55a00 0%, #cc4d00 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(255, 102, 0, 0.4) !important;
 }
 
 .read-more.btn.btn-primary::before {

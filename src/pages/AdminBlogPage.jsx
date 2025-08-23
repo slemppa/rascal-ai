@@ -44,6 +44,8 @@ export default function AdminBlogPage() {
         throw new Error('Virhe artikkeleiden haussa: ' + error.message)
       }
       
+      console.log('Fetched articles after update:', articles)
+      console.log('Article details:', articles?.map(a => ({ id: a.id, title: a.title, published: a.published })))
       setArticles(articles || [])
     } catch (err) {
       console.error('Error fetching articles:', err)
@@ -86,6 +88,9 @@ export default function AdminBlogPage() {
           return
         }
 
+        console.log('Updating article with data:', formData)
+        console.log('Published status:', formData.published, 'Type:', typeof formData.published)
+
         // MUOKKAUS: Suora Supabase päivitys
         const { error } = await supabase
           .from('blog_posts')
@@ -103,9 +108,11 @@ export default function AdminBlogPage() {
           .eq('id', editingArticle.id)
 
         if (error) {
+          console.error('Supabase update error:', error)
           throw new Error('Virhe artikkelin päivityksessä: ' + error.message)
         }
 
+        console.log('Article updated successfully')
         alert('Artikkeli päivitetty!')
       } else {
         // UUSI ARTIKKELI: Tarkista että kuva on valittu
@@ -165,8 +172,10 @@ export default function AdminBlogPage() {
   }
 
   const handleEdit = (article) => {
-    setEditingArticle(article)
-    setFormData({
+    console.log('Editing article:', article)
+    console.log('Article published status:', article.published)
+    
+    const newFormData = {
       title: article.title || '',
       slug: article.slug || '',
       excerpt: article.excerpt || '',
@@ -175,7 +184,11 @@ export default function AdminBlogPage() {
       image_url: article.image_url || article.media_url || '',
       published_at: article.published_at ? new Date(article.published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       published: article.published !== false
-    })
+    }
+    
+    console.log('New form data:', newFormData)
+    setEditingArticle(article)
+    setFormData(newFormData)
     setShowForm(true)
   }
 
@@ -406,7 +419,10 @@ export default function AdminBlogPage() {
                           name="published"
                           value="true"
                           checked={formData.published === true}
-                          onChange={(e) => setFormData(prev => ({ ...prev, published: e.target.value === 'true' }))}
+                          onChange={(e) => {
+                            console.log('Setting published to true')
+                            setFormData(prev => ({ ...prev, published: true }))
+                          }}
                         />
                         <span className="radio-text">Julkaistu (näkyy julkisesti)</span>
                       </label>
@@ -416,7 +432,10 @@ export default function AdminBlogPage() {
                           name="published"
                           value="false"
                           checked={formData.published === false}
-                          onChange={(e) => setFormData(prev => ({ ...prev, published: e.target.value === 'true' }))}
+                          onChange={(e) => {
+                            console.log('Setting published to false')
+                            setFormData(prev => ({ ...prev, published: false }))
+                          }}
                         />
                         <span className="radio-text">Luonnos (ei näy julkisesti)</span>
                       </label>

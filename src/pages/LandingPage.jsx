@@ -4,6 +4,7 @@ import SignIn from '../components/auth/SignIn'
 import ForgotPassword from '../components/auth/ForgotPassword'
 import MagicLink from '../components/auth/MagicLink'
 import PageMeta from '../components/PageMeta'
+import { supabase } from '../lib/supabase'
 import './LandingPage.css'
 
 export default function LandingPage() {
@@ -13,12 +14,98 @@ export default function LandingPage() {
   const [showForgotModal, setShowForgotModal] = useState(false)
   const [showMagicModal, setShowMagicModal] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [articles, setArticles] = useState([])
+  const [articlesLoading, setArticlesLoading] = useState(true)
 
   useEffect(() => {
     if (location.state?.showLogoutMessage) {
       navigate(location.pathname, { replace: true })
     }
   }, [location.state, navigate, location.pathname])
+
+  // Hae uusimmat artikkelit
+  useEffect(() => {
+    const fetchLatestArticles = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('blog_posts')
+          .select('id, title, slug, category, image_url, published_at')
+          .eq('published', true)
+          .order('published_at', { ascending: false })
+          .limit(6)
+
+        if (error) {
+          console.error('Error fetching articles:', error)
+        } else {
+          console.log('Fetched articles:', data)
+          
+          // Jos artikkeleita ei ole, näytä testidataa
+          if (!data || data.length === 0) {
+            console.log('No articles found, showing test data')
+            const testArticles = [
+              {
+                id: 1,
+                title: 'Kun myynti nostetaan tekoälyn avulla',
+                slug: 'myynti-tekoalyn-avulla',
+                category: ['MYYNTI', 'AI'],
+                image_url: '/hero-v3.jpg',
+                published_at: '2025-08-21'
+              },
+              {
+                id: 2,
+                title: 'Automaattinen asiakaspalvelu AI:n avulla',
+                slug: 'automaattinen-asiakaspalvelu',
+                category: ['PALVELU', 'AUTOMAATIO'],
+                image_url: '/hero-v3.jpg',
+                published_at: '2025-08-20'
+              },
+              {
+                id: 3,
+                title: 'Markkinointiautomaatio joka tuottaa tuloksia',
+                slug: 'markkinointiautomaatio',
+                category: ['MARKKINAT', 'AUTOMAATIO', 'TULOKSET'],
+                image_url: '/hero-v3.jpg',
+                published_at: '2025-08-19'
+              },
+              {
+                id: 4,
+                title: 'Tekoälyn rooli nykypäivän myynnissä',
+                slug: 'tekoalyn-rooli-myyndissa',
+                category: 'MYYNTI',
+                image_url: '/hero-v3.jpg',
+                published_at: '2025-08-18'
+              },
+              {
+                id: 5,
+                title: 'Asiakaskokemus automaation avulla',
+                slug: 'asiakaskokemus-automaatio',
+                category: ['KOKEMUS', 'AUTOMAATIO'],
+                image_url: '/hero-v3.jpg',
+                published_at: '2025-08-17'
+              },
+              {
+                id: 6,
+                title: 'Tulokset AI-pohjaisella strategialla',
+                slug: 'tulokset-ai-strategialla',
+                category: ['STRATEGIA', 'AI', 'TULOKSET'],
+                image_url: '/hero-v3.jpg',
+                published_at: '2025-08-16'
+              }
+            ]
+            setArticles(testArticles)
+          } else {
+            setArticles(data)
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching articles:', err)
+      } finally {
+        setArticlesLoading(false)
+      }
+    }
+
+    fetchLatestArticles()
+  }, [])
 
   return (
     <>
@@ -133,6 +220,79 @@ export default function LandingPage() {
                     </button>
                   </div>
                 </div>
+              </div>
+
+              {/* Uusimmat artikkelit */}
+              <div className="section" id="latest-articles">
+                <div className="section-header">
+                  <h2 className="section-title">Uusimmat artikkelit</h2>
+                  <p className="section-description">
+                    Pysy ajan tasalla tekoälyn ja automaation trendeistä
+                  </p>
+                </div>
+                
+                {articlesLoading ? (
+                  <div className="articles-loading">
+                    <div className="loading-spinner"></div>
+                    <p>Ladataan artikkeleita...</p>
+                  </div>
+                ) : articles.length > 0 ? (
+                  <>
+                    <div className="articles-grid">
+                      {articles.map((article) => (
+                        <article key={article.id} className="article-card">
+                          <div className="article-image">
+                            <img 
+                              src={article.image_url || '/placeholder-blog.jpg'} 
+                              alt={article.title}
+                              onError={(e) => {
+                                e.target.src = '/placeholder-blog.jpg'
+                                e.target.onerror = null // Estetään ikuinen silmukka
+                              }}
+                              loading="lazy"
+                            />
+                            <div className="article-category">
+                              {Array.isArray(article.category) 
+                                ? (article.category.length > 2 
+                                    ? article.category.slice(0, 2).join(' • ') + ' +' + (article.category.length - 2)
+                                    : article.category.join(' • '))
+                                : article.category || 'Yleinen'}
+                            </div>
+                          </div>
+                          <div className="article-content">
+                            <h3 className="article-title" style={{
+                              fontSize: article.title && article.title.length > 20 
+                                ? `${Math.max(1.2, 1.9 - (article.title.length * 0.015))}rem`
+                                : '1.8rem'
+                            }}>
+                              <a href={`/blog/${article.slug}`} className="article-link">
+                                {article.title}
+                              </a>
+                            </h3>
+                            <div className="article-meta">
+                              <span className="article-date">
+                                {article.published_at 
+                                  ? new Date(article.published_at).toLocaleDateString('fi-FI', {
+                                      year: 'numeric',
+                                      month: '2-digit',
+                                      day: '2-digit'
+                                    })
+                                  : 'Ei päivää'}
+                              </span>
+                              <a href={`/blog/${article.slug}`} className="read-more-link">
+                                Lue lisää →
+                              </a>
+                            </div>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div className="no-articles">
+                    <p>Ei artikkeleita vielä saatavilla.</p>
+                  </div>
+                )}
               </div>
 
               {/* AI Solutions Section */}

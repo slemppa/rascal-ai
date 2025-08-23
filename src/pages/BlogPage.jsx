@@ -6,7 +6,6 @@ import SignIn from '../components/auth/SignIn' // Keep for modal rendering
 import ForgotPassword from '../components/auth/ForgotPassword' // Keep for modal rendering
 import MagicLink from '../components/auth/MagicLink' // Keep for modal rendering
 import { supabase } from '../lib/supabase'
-import '../pages/LandingPage.css' // Import global styles for header
 import './BlogPage.css' // Page specific styles
 
 export default function BlogPage() {
@@ -112,15 +111,13 @@ export default function BlogPage() {
                           </svg>
                         </div>
                       )}
-                    </div>
-                    {/* Meta right under image */}
-                    <div className="article-meta image-meta">
-                      <span className="article-date">
-                        {article.published_at ? new Date(article.published_at).toLocaleDateString('fi-FI') : 'Ei päivää'}
-                      </span>
-                      {article.category && (
-                        <span className="article-category">{article.category}</span>
-                      )}
+                      <div className="article-category">
+                        {Array.isArray(article.category) 
+                          ? (article.category.length > 2 
+                              ? article.category.slice(0, 2).join(' • ') + ' +' + (article.category.length - 2)
+                              : article.category.join(' • '))
+                          : article.category || 'Yleinen'}
+                      </div>
                     </div>
                     <div className="article-content">
                       <h2 className="article-title">
@@ -131,8 +128,11 @@ export default function BlogPage() {
                       <p className="article-excerpt">
                         {article.excerpt || (article.content ? article.content.substring(0, 150) + '...' : 'Ei kuvausta saatavilla')}
                       </p>
-                      <div className="article-footer">
-                        <Link to={`/blog/${article.slug || 'ei-slugia'}`} className="read-more btn btn-primary">
+                      <div className="article-meta">
+                        <span className="article-date">
+                          {article.published_at ? new Date(article.published_at).toLocaleDateString('fi-FI') : 'Ei päivää'}
+                        </span>
+                        <Link to={`/blog/${article.slug || 'ei-slugia'}`} className="read-more-link">
                           Lue lisää →
                         </Link>
                       </div>

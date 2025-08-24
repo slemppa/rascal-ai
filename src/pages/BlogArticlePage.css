@@ -120,10 +120,7 @@
 }
 
 /* Article Content */
-.article-content {
-  width: 100%;
-  margin-bottom: 40px;
-}
+/* .article-content luokka poistettu - käytetään article-cards.css:n tyylejä */
 
 .content-wrapper {
   width: 100%;

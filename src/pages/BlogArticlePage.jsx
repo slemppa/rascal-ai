@@ -151,21 +151,24 @@ export default function BlogArticlePage() {
                   <ReactMarkdown 
                     remarkPlugins={[remarkGfm]}
                     components={{
-                      h1: ({node, ...props}) => <h1 {...props} />,
-                      h2: ({node, ...props}) => <h2 {...props} />,
-                      h3: ({node, ...props}) => <h3 {...props} />,
-                      p: ({node, ...props}) => <p {...props} />,
-                      ul: ({node, ...props}) => <ul {...props} />,
-                      ol: ({node, ...props}) => <ol {...props} />,
-                      li: ({node, ...props}) => <li {...props} />,
-                      strong: ({node, ...props}) => <strong {...props} />,
-                      em: ({node, ...props}) => <em {...props} />,
-                      a: ({node, ...props}) => <a {...props} target="_blank" rel="noopener noreferrer" />,
-                      blockquote: ({node, ...props}) => <blockquote {...props} />,
+                      h1: ({node, ...props}) => <h1 className="article-body-h1" {...props} />,
+                      h2: ({node, ...props}) => <h2 className="article-body-h2" {...props} />,
+                      h3: ({node, ...props}) => <h3 className="article-body-h3" {...props} />,
+                      h4: ({node, ...props}) => <h4 className="article-body-h4" {...props} />,
+                      h5: ({node, ...props}) => <h5 className="article-body-h5" {...props} />,
+                      h6: ({node, ...props}) => <h6 className="article-body-h6" {...props} />,
+                      p: ({node, ...props}) => <p className="article-body-p" {...props} />,
+                      ul: ({node, ...props}) => <ul className="article-body-ul" {...props} />,
+                      ol: ({node, ...props}) => <ol className="article-body-ol" {...props} />,
+                      li: ({node, ...props}) => <li className="article-body-li" {...props} />,
+                      strong: ({node, ...props}) => <strong className="article-body-strong" {...props} />,
+                      em: ({node, ...props}) => <em className="article-body-em" {...props} />,
+                      a: ({node, ...props}) => <a className="article-body-a" {...props} target="_blank" rel="noopener noreferrer" />,
+                      blockquote: ({node, ...props}) => <blockquote className="article-body-blockquote" {...props} />,
                       code: ({node, inline, ...props}) => 
                         inline ? 
-                          <code {...props} /> : 
-                          <pre><code {...props} /></pre>,
+                          <code className="article-body-code-inline" {...props} /> : 
+                          <pre className="article-body-pre"><code className="article-body-code" {...props} /></pre>,
                     }}
                   >
                     {article.content}

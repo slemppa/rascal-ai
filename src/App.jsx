@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import LandingPage from './pages/LandingPage'
 import DashboardPage from './pages/DashboardPage'
 import SignIn from './components/auth/SignIn'
@@ -35,6 +35,43 @@ import AIDueDiligencePage from './pages/AIDueDiligencePage'
 import AdminBlogPage from './pages/AdminBlogPage'
 // MixpostAnalyticsDashboard poistettu
 
+// Komponentti joka näyttää ChatbotWidget:n vain julkkisilla sivuilla
+function ConditionalChatbotWidget() {
+  const location = useLocation();
+  
+  // Julkiset reitit missä ChatbotWidget näkyy
+  const publicRoutes = [
+    '/',
+    '/signin',
+    '/signup', 
+    '/forgot-password',
+    '/reset-password',
+    '/magic-link',
+    '/auth/callback',
+    '/terms',
+    '/privacy',
+    '/pricing',
+    '/features',
+    '/blog',
+    '/ai-due-diligence'
+  ];
+  
+  // Tarkista onko nykyinen reitti julkinen
+  const isPublicRoute = publicRoutes.some(route => {
+    if (route === '/blog') {
+      return location.pathname === '/blog';
+    }
+    if (route.includes(':')) {
+      // Dynamic route, tarkista base path
+      const basePath = route.split('/:')[0];
+      return location.pathname.startsWith(basePath);
+    }
+    return location.pathname === route;
+  });
+  
+  // Näytä ChatbotWidget vain julkkisilla sivuilla
+  return isPublicRoute ? <ChatbotWidget /> : null;
+}
 
 export default function App() {
   return (
@@ -162,7 +199,7 @@ export default function App() {
         {/* Lisää muut suojatut reitit tähän samalla tavalla, jos haluat menun näkyvän niilläkin */}
       </Routes>
         </PostsProvider>
-        <ChatbotWidget />
+        <ConditionalChatbotWidget />
         <InactivityWarningModal />
       </AutoLogoutProvider>
     </AuthProvider>

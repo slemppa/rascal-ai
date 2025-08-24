@@ -219,7 +219,7 @@
 /* Mobiilioptimointi */
 @media (max-width: 768px) {
   .chatbot-widget {
-    bottom: 15px;
+    bottom: 80px; /* Nostetaan ylemmäs browser navigation barin yläpuolelle */
     right: 15px;
   }
   
@@ -232,7 +232,7 @@
   .chatbot-window {
     width: calc(100vw - 30px);
     right: -15px;
-    bottom: 75px;
+    bottom: 140px; /* Nostetaan ylemmäs toggle-napin yläpuolelle */
   }
   
   .chatbot-content {
@@ -251,14 +251,14 @@
 
 @media (max-width: 480px) {
   .chatbot-widget {
-    bottom: 10px;
+    bottom: 90px; /* Vielä ylemmäs pieniin näyttöihin */
     right: 10px;
   }
   
   .chatbot-window {
     width: calc(100vw - 20px);
     right: -10px;
-    bottom: 70px;
+    bottom: 150px; /* Ylemmäs toggle-napin yläpuolelle */
   }
   
   .chatbot-content {

@@ -432,9 +432,9 @@ export default function LandingPage() {
                       </p>
                       <button
                         className="btn btn-primary cta-button"
-                        onClick={() => setShowSignInModal(true)}
+                        disabled
                       >
-                        Varaa 30 min demo
+                        Tulee pian
                       </button>
                     </div>
                   </div>

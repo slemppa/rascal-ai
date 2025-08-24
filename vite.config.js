@@ -8,11 +8,12 @@ export default defineConfig({
     // Automaattinen päivitys ja HMR
     hmr: {
       overlay: true, // Näyttää virheet overlayllä
-      host: '0.0.0.0', // Salli yhteys mistä tahansa IP:stä (mobiili)
-      port: 5173, // Vite:n HMR portti
+      // HMR asetukset
+      protocol: 'ws', // WebSocket protokolla
+      host: 'localhost', // HMR host
     },
     watch: {
-      usePolling: false, // Poista polling mobiililla
+      usePolling: false, // Ei polling:ia
       interval: 100, // Tarkista muutokset 100ms välein
     },
     // Automaattinen sivu päivitys

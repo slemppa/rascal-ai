@@ -55,46 +55,6 @@
 
       gtag('config', 'G-NNZDCY3R2Y');
     </script>
-
-    <!-- Service Worker Registration - Vain tuotannossa -->
-    <script>
-      // Service Worker vain tuotannossa
-      if ('serviceWorker' in navigator && window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1')) {
-        window.addEventListener('load', () => {
-          // Poista vanha Service Worker ensin
-          navigator.serviceWorker.getRegistrations().then(registrations => {
-            for(let registration of registrations) {
-              registration.unregister();
-              console.log('Vanha Service Worker poistettu');
-            }
-          }).then(() => {
-            // Rekisteröi uusi Service Worker
-            return navigator.serviceWorker.register('/service-worker.js?v=' + Date.now());
-          }).then(registration => {
-            console.log('Uusi SW rekisteröity: ', registration);
-            
-            // Check for updates
-            registration.addEventListener('updatefound', () => {
-              const newWorker = registration.installing;
-              newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // Uusi versio saatavilla - pakota päivitys
-                  console.log('Uusi versio saatavilla, pakotetaan päivitys...');
-                  newWorker.postMessage({ type: 'SKIP_WAITING' });
-                  
-                  // Päivitä sivu automaattisesti
-                  window.location.reload();
-                }
-              });
-            });
-          }).catch(registrationError => {
-            console.log('SW registration failed: ', registrationError);
-          });
-        });
-      } else {
-        console.log('Service Worker ei käytössä kehitysympäristössä');
-      }
-    </script>
   </head>
   <body>
     <div id="root"></div>

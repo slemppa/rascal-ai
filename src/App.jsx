@@ -14,7 +14,6 @@ import { PostsProvider } from './contexts/PostsContext'
 import Sidebar from './components/Sidebar'
 import MobileNavigation from './components/MobileNavigation'
 import InactivityWarningModal from './components/InactivityWarningModal'
-import UpdateNotification from './components/UpdateNotification'
 import ChatbotWidget from './components/ChatbotWidget'
 import { supabase } from './lib/supabase'
 import ManagePostsPage from './pages/ManagePostsPage'
@@ -165,7 +164,6 @@ export default function App() {
         </PostsProvider>
         <ChatbotWidget />
         <InactivityWarningModal />
-        <UpdateNotification />
       </AutoLogoutProvider>
     </AuthProvider>
   )

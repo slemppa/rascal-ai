@@ -8,13 +8,18 @@ export default defineConfig({
     // Automaattinen päivitys ja HMR
     hmr: {
       overlay: true, // Näyttää virheet overlayllä
+      host: '0.0.0.0', // Salli yhteys mistä tahansa IP:stä (mobiili)
+      port: 5173, // Vite:n HMR portti
     },
     watch: {
-      usePolling: true, // Käytä polling:ia tiedostojen seurantaan
+      usePolling: false, // Poista polling mobiililla
       interval: 100, // Tarkista muutokset 100ms välein
     },
     // Automaattinen sivu päivitys
     liveReload: true,
+    // Salli yhteys mistä tahansa IP:stä (mobiili)
+    host: '0.0.0.0',
+    port: 5173,
     proxy: {
       '/api': {
         target: 'http://localhost:3000',

@@ -219,8 +219,9 @@
 /* Mobiilioptimointi */
 @media (max-width: 768px) {
   .chatbot-widget {
-    bottom: 80px; /* Nostetaan ylemmäs browser navigation barin yläpuolelle */
+    bottom: 80px; /* Nostetaan ylemmäs että näkyy */
     right: 15px;
+    z-index: 9999; /* Varmistetaan että näkyy */
   }
   
   .chatbot-toggle {
@@ -253,6 +254,7 @@
   .chatbot-widget {
     bottom: 90px; /* Vielä ylemmäs pieniin näyttöihin */
     right: 10px;
+    z-index: 9999; /* Varmistetaan että näkyy */
   }
   
   .chatbot-window {

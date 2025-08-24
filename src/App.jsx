@@ -15,6 +15,7 @@ import Sidebar from './components/Sidebar'
 import MobileNavigation from './components/MobileNavigation'
 import InactivityWarningModal from './components/InactivityWarningModal'
 import UpdateNotification from './components/UpdateNotification'
+import ChatbotWidget from './components/ChatbotWidget'
 import { supabase } from './lib/supabase'
 import ManagePostsPage from './pages/ManagePostsPage'
 import AdminPage from './pages/AdminPage'
@@ -28,7 +29,6 @@ import TermsOfServicePage from './pages/TermsOfServicePage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 import PricingPage from './pages/PricingPage'
 import FeaturesPage from './pages/FeaturesPage'
-import ContactPage from './pages/ContactPage'
 import BlogNewsletterPage from './pages/BlogNewsletterPage'
 import BlogPage from './pages/BlogPage'
 import BlogArticlePage from './pages/BlogArticlePage'
@@ -55,7 +55,6 @@ export default function App() {
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/features" element={<FeaturesPage />} />
-        <Route path="/contact" element={<ContactPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogArticlePage />} />
         <Route path="/ai-due-diligence" element={<AIDueDiligencePage />} />
@@ -164,6 +163,7 @@ export default function App() {
         {/* Lisää muut suojatut reitit tähän samalla tavalla, jos haluat menun näkyvän niilläkin */}
       </Routes>
         </PostsProvider>
+        <ChatbotWidget />
         <InactivityWarningModal />
         <UpdateNotification />
       </AutoLogoutProvider>

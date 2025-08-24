@@ -409,7 +409,7 @@ export default function LandingPage() {
               </div>
 
               {/* CTA Section - kaksilaattainen */}
-              <div className="section" id="cta">
+              <div className="section" id="contact">
                 <div className="cta-section-grid">
                   <div className="cta-section">
                     <div className="cta-content">
@@ -449,7 +449,7 @@ export default function LandingPage() {
               <div className="footer-links">
                 <a className="footer-link" href="#solutions">Kyvykkyydet</a>
                 <a className="footer-link" href="#industries">Toimialat</a>
-                <a className="footer-link" href="#cta">Demo</a>
+                <a className="footer-link" href="#contact">Demo</a>
                 <a className="footer-link" href="#contact">Yhteys</a>
                 <a className="footer-link" href="mailto:info@rascalai.fi">Ota yhteyttä</a>
               </div>

@@ -69,6 +69,39 @@ export default function AdminTestimonialsPage({ embedded = false }) {
     }
   }
 
+  // Funktio joka muuttaa ääkköset ASCII-merkeiksi filenamessa
+  const sanitizeFilename = (filename) => {
+    const replacements = {
+      'ä': 'a', 'ö': 'o', 'å': 'a',
+      'Ä': 'A', 'Ö': 'O', 'Å': 'A',
+      'é': 'e', 'è': 'e', 'ë': 'e',
+      'É': 'E', 'È': 'E', 'Ë': 'E',
+      'ü': 'u', 'Ü': 'U',
+      'ñ': 'n', 'Ñ': 'N',
+      'ç': 'c', 'Ç': 'C',
+      'ß': 'ss',
+      ' ': '-', '_': '-'
+    }
+    
+    let sanitized = filename
+    Object.entries(replacements).forEach(([from, to]) => {
+      sanitized = sanitized.replace(new RegExp(from, 'g'), to)
+    })
+    
+    // Poista kaikki muut erikoismerkit paitsi piste, viiva ja alaviiva
+    sanitized = sanitized.replace(/[^a-zA-Z0-9.-]/g, '')
+    
+    // Varmista että tiedostopääte säilyy
+    const lastDotIndex = filename.lastIndexOf('.')
+    if (lastDotIndex !== -1) {
+      const extension = filename.substring(lastDotIndex)
+      const nameWithoutExtension = sanitized.substring(0, sanitized.lastIndexOf('.'))
+      sanitized = nameWithoutExtension + extension
+    }
+    
+    return sanitized
+  }
+
   const content = (
     <div className="admin-main">
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 20 }}>
@@ -186,7 +219,10 @@ export default function AdminTestimonialsPage({ embedded = false }) {
                   fd.append('quote', form.quote || '')
                   fd.append('published', String(!!form.published))
                   if (form.avatar_url) fd.append('avatar_url', form.avatar_url)
-                  if (form.avatar_file) fd.append('avatar', form.avatar_file)
+                  if (form.avatar_file) {
+                    const sanitizedFilename = sanitizeFilename(form.avatar_file.name)
+                    fd.append('avatar', form.avatar_file, sanitizedFilename)
+                  }
                   try {
                     setLoading(true)
                     const resp = await fetch('/api/testimonials-management', { method: 'POST', body: fd })

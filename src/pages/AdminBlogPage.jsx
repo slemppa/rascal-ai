@@ -137,7 +137,9 @@ export default function AdminBlogPage() {
 
         // Jos käyttäjä valitsi kuvan, lähetetään binarynä
         if (tempImageFile?.file) {
-          fd.append('image', tempImageFile.file, tempImageFile.fileName || tempImageFile.file.name)
+          const originalName = tempImageFile.fileName || tempImageFile.file.name
+          const sanitizedName = sanitizeFilename(originalName)
+          fd.append('image', tempImageFile.file, sanitizedName)
         }
 
         // Lähetä backend API:n kautta proxy:nä
@@ -230,7 +232,39 @@ export default function AdminBlogPage() {
       published: true
     })
     setEditingArticle(null)
-    setTempImageFile(null) // Clear temporary image
+  }
+
+  // Funktio joka muuttaa ääkköset ASCII-merkeiksi filenamessa
+  const sanitizeFilename = (filename) => {
+    const replacements = {
+      'ä': 'a', 'ö': 'o', 'å': 'a',
+      'Ä': 'A', 'Ö': 'O', 'Å': 'A',
+      'é': 'e', 'è': 'e', 'ë': 'e',
+      'É': 'E', 'È': 'E', 'Ë': 'E',
+      'ü': 'u', 'Ü': 'U',
+      'ñ': 'n', 'Ñ': 'N',
+      'ç': 'c', 'Ç': 'C',
+      'ß': 'ss',
+      ' ': '-', '_': '-'
+    }
+    
+    let sanitized = filename
+    Object.entries(replacements).forEach(([from, to]) => {
+      sanitized = sanitized.replace(new RegExp(from, 'g'), to)
+    })
+    
+    // Poista kaikki muut erikoismerkit paitsi piste, viiva ja alaviiva
+    sanitized = sanitized.replace(/[^a-zA-Z0-9.-]/g, '')
+    
+    // Varmista että tiedostopääte säilyy
+    const lastDotIndex = filename.lastIndexOf('.')
+    if (lastDotIndex !== -1) {
+      const extension = filename.substring(lastDotIndex)
+      const nameWithoutExtension = sanitized.substring(0, sanitized.lastIndexOf('.'))
+      sanitized = nameWithoutExtension + extension
+    }
+    
+    return sanitized
   }
 
   const openNewForm = () => {

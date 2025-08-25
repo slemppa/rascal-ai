@@ -91,7 +91,7 @@ const menuItems = [
     )
   },
   { 
-    label: 'Blogi-hallinta', 
+    label: 'Hallinta', 
     path: '/admin-blog', 
     moderatorOnly: true, 
     icon: (

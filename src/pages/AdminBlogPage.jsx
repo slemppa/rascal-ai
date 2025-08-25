@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import AdminTestimonialsPage from './AdminTestimonialsPage'
 import { Link } from 'react-router-dom'
 import ProtectedRoute from '../components/ProtectedRoute'
 import PageMeta from '../components/PageMeta'
@@ -7,6 +8,7 @@ import './AdminBlogPage.css'
 
 export default function AdminBlogPage() {
   const [articles, setArticles] = useState([])
+  const [activeTab, setActiveTab] = useState('articles')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [showForm, setShowForm] = useState(false)
@@ -323,28 +325,25 @@ export default function AdminBlogPage() {
 
   return (
     <>
-      <PageMeta 
-        title="Blogi-hallinta - RascalAI.fi" 
-        description="Hallitse blogi-artikkeleita" 
-      />
+      <PageMeta title="Hallinta - RascalAI.fi" description="Hallitse artikkeleita ja testimoniaaleja" />
       
       <div className="admin-blog-page">
         <div className="layout-container">
           {/* Header */}
           <header className="admin-header">
             <div className="header-content">
-              <h1 className="page-title">Blogi-hallinta</h1>
-              <p className="page-description">
-                Hallitse blogi-artikkeleita ja sisältöä
-              </p>
+              <h1 className="page-title">Hallinta</h1>
+              <p className="page-description">Artikkelit ja Testimonials</p>
             </div>
-            <button 
-              onClick={openNewForm}
-              className="btn btn-primary add-article-btn"
-            >
-              + Lisää uusi artikkeli
-            </button>
+            {activeTab === 'articles' && (
+              <button onClick={openNewForm} className="btn btn-primary add-article-btn">+ Lisää uusi artikkeli</button>
+            )}
           </header>
+
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+            <button className={`btn ${activeTab === 'articles' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setActiveTab('articles')}>Artikkelit</button>
+            <button className={`btn ${activeTab === 'testimonials' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setActiveTab('testimonials')}>Testimonials</button>
+          </div>
 
           {/* Form Modal */}
           {showForm && (
@@ -555,71 +554,58 @@ export default function AdminBlogPage() {
             </div>
           )}
 
-          {/* Articles List */}
-          <main className="admin-main">
-            {loading ? (
-              <div className="loading-container">
-                <div className="loading-spinner"></div>
-                <p>Ladataan artikkeleita...</p>
-              </div>
-            ) : (
-              <div className="articles-list">
-                <h2>Artikkelit ({articles.length})</h2>
-                
-                {articles.length === 0 ? (
-                  <div className="no-articles">
-                    <p>Ei artikkeleita vielä. Lisää ensimmäinen artikkeli yllä olevalla painikkeella.</p>
-                  </div>
-                ) : (
-                  <div className="articles-table">
-                    <div className="table-header">
-                      <div className="header-cell">Otsikko</div>
-                      <div className="header-cell">Kategoria</div>
-                      <div className="header-cell">Julkaistu</div>
-                      <div className="header-cell">Status</div>
-                      <div className="header-cell">Toiminnot</div>
+          {activeTab === 'articles' ? (
+            <main className="admin-main">
+              {loading ? (
+                <div className="loading-container">
+                  <div className="loading-spinner"></div>
+                  <p>Ladataan artikkeleita...</p>
+                </div>
+              ) : (
+                <div className="articles-list">
+                  <h2>Artikkelit ({articles.length})</h2>
+                  {articles.length === 0 ? (
+                    <div className="no-articles">
+                      <p>Ei artikkeleita vielä. Lisää ensimmäinen artikkeli yllä olevalla painikkeella.</p>
                     </div>
-                    
-                    {articles.map((article) => (
-                      <div key={article.id} className="table-row">
-                        <div className="cell title-cell">
-                          <div className="article-info">
-                            <h3>{article.title || 'Ei otsikkoa'}</h3>
-                            <p className="article-slug">/{article.slug || 'ei-slugia'}</p>
+                  ) : (
+                    <div className="articles-table">
+                      <div className="table-header">
+                        <div className="header-cell">Otsikko</div>
+                        <div className="header-cell">Kategoria</div>
+                        <div className="header-cell">Julkaistu</div>
+                        <div className="header-cell">Status</div>
+                        <div className="header-cell">Toiminnot</div>
+                      </div>
+                      {articles.map((article) => (
+                        <div key={article.id} className="table-row">
+                          <div className="cell title-cell">
+                            <div className="article-info">
+                              <h3>{article.title || 'Ei otsikkoa'}</h3>
+                              <p className="article-slug">/{article.slug || 'ei-slugia'}</p>
+                            </div>
+                          </div>
+                          <div className="cell category-cell">{article.category || '-'}</div>
+                          <div className="cell date-cell">{article.published_at ? new Date(article.published_at).toLocaleDateString('fi-FI') : 'Ei päivää'}</div>
+                          <div className="cell status-cell">
+                            <span className={`status-badge ${article.published ? 'published' : 'draft'}`}>{article.published ? 'Julkaistu' : 'Luonnos'}</span>
+                          </div>
+                          <div className="cell actions-cell">
+                            <button onClick={() => handleEdit(article)} className="btn btn-small btn-secondary">Muokkaa</button>
+                            <button onClick={() => handleDelete(article.id)} className="btn btn-small btn-danger">Poista</button>
                           </div>
                         </div>
-                        <div className="cell category-cell">
-                          {article.category || '-'}
-                        </div>
-                        <div className="cell date-cell">
-                          {article.published_at ? new Date(article.published_at).toLocaleDateString('fi-FI') : 'Ei päivää'}
-                        </div>
-                        <div className="cell status-cell">
-                          <span className={`status-badge ${article.published ? 'published' : 'draft'}`}>
-                            {article.published ? 'Julkaistu' : 'Luonnos'}
-                          </span>
-                        </div>
-                        <div className="cell actions-cell">
-                          <button 
-                            onClick={() => handleEdit(article)}
-                            className="btn btn-small btn-secondary"
-                          >
-                            Muokkaa
-                          </button>
-                          <button 
-                            onClick={() => handleDelete(article.id)}
-                            className="btn btn-small btn-danger"
-                          >
-                            Poista
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </main>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </main>
+          ) : (
+            <div style={{ marginTop: 16 }}>
+              <AdminTestimonialsPage embedded />
+            </div>
+          )}
         </div>
       </div>
     </>

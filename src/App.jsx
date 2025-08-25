@@ -32,7 +32,9 @@ import BlogNewsletterPage from './pages/BlogNewsletterPage'
 import BlogPage from './pages/BlogPage'
 import BlogArticlePage from './pages/BlogArticlePage'
 import AIDueDiligencePage from './pages/AIDueDiligencePage'
+import CustomersPage from './pages/CustomersPage'
 import AdminBlogPage from './pages/AdminBlogPage'
+import AdminTestimonialsPage from './pages/AdminTestimonialsPage'
 // MixpostAnalyticsDashboard poistettu
 
 // Komponentti joka näyttää ChatbotWidget:n vain julkkisilla sivuilla
@@ -53,7 +55,8 @@ function ConditionalChatbotWidget() {
     '/pricing',
     '/features',
     '/blog',
-    '/ai-due-diligence'
+    '/ai-due-diligence',
+    '/asiakkaat'
   ];
   
   // Tarkista onko nykyinen reitti julkinen
@@ -94,6 +97,16 @@ export default function App() {
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogArticlePage />} />
         <Route path="/ai-due-diligence" element={<AIDueDiligencePage />} />
+        <Route path="/asiakkaat" element={<CustomersPage />} />
+        <Route path="/admin-testimonials" element={
+          <div className="app-layout">
+            <Sidebar />
+            <MobileNavigation />
+            <div className="main-content">
+              <ProtectedRoute requiredRole="moderator"><AdminTestimonialsPage /></ProtectedRoute>
+            </div>
+          </div>
+        } />
         {/* Suojatut reitit sidebarin kanssa */}
         <Route path="/dashboard" element={
           <div className="app-layout">

@@ -126,6 +126,7 @@ export default function LandingPage() {
               <div className="nav-links desktop-nav">
                 <a className="nav-link" href="/blog">Artikkelit</a>
                 <a className="nav-link" href="#cta">Demo</a>
+                <a className="nav-link" href="/asiakkaat">Asiakkaat</a>
                 <a className="nav-link" href="#team">Tiimi</a>
                 <a className="nav-link" href="#contact">Ota yhteyttä</a>
               </div>
@@ -168,6 +169,7 @@ export default function LandingPage() {
                 <div className="mobile-nav-links">
                   <a className="mobile-nav-link" href="/blog" onClick={() => setIsMobileMenuOpen(false)}>Artikkelit</a>
                   <a className="mobile-nav-link" href="#cta" onClick={() => setIsMobileMenuOpen(false)}>Demo</a>
+                  <a className="mobile-nav-link" href="/asiakkaat" onClick={() => setIsMobileMenuOpen(false)}>Asiakkaat</a>
                   <a className="mobile-nav-link" href="#team" onClick={() => setIsMobileMenuOpen(false)}>Tiimi</a>
                   <a className="mobile-nav-link" href="#contact" onClick={() => setIsMobileMenuOpen(false)}>Ota yhteyttä</a>
                 </div>

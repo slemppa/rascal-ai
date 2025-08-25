@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.43.3](https://github.com/slemppa/rascal-ai/compare/v1.43.2...v1.43.3) (2025-08-25)
+
+
+### 🐛 Bug Fixes
+
+* **mobile:** use 100svh and flex layout for proper stretching ([44dfb1b](https://github.com/slemppa/rascal-ai/commit/44dfb1bf33c8f4580f1f0a2d2f40d5c29f69d503))
+
 ### [1.43.2](https://github.com/slemppa/rascal-ai/compare/v1.43.1...v1.43.2) (2025-08-25)
 
 

@@ -1,8 +1,8 @@
 /* Blog Article Page Styles - Rascal AI Brand */
 
 .blog-article-page {
-  /* Anna sivun kasvaa sisällön mukaan ja täytä viewport */
-  min-height: 100svh; /* iOS-yhteensopiva viewport korkeus */
+  /* Desktopilla anna sisällön määrittää korkeus */
+  min-height: fit-content;
   background-color: #24170f;
   color: white;
   padding-bottom: 60px;

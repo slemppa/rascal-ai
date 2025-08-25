@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.43.1](https://github.com/slemppa/rascal-ai/compare/v1.43.0...v1.43.1) (2025-08-25)
+
+
+### 🔧 Chores
+
+* remove unused image files from public directory ([cd9bd12](https://github.com/slemppa/rascal-ai/commit/cd9bd122b759bc95317a832ec85645470e277955))
+
+
+### ✨ Features
+
+* add automatic update system and improve Vite dev server ([5c58612](https://github.com/slemppa/rascal-ai/commit/5c58612f0e22089a075fca7c586b949c32f56b7c))
+* add blog system, shared header and AI due diligence page ([60e0c9c](https://github.com/slemppa/rascal-ai/commit/60e0c9c28f00356b66e8531d0091439ed60e5845))
+* add chatbot widget with contact form and remove unused ContactPage ([9fd3bad](https://github.com/slemppa/rascal-ai/commit/9fd3badada83140bac6136a26d2c0dbe9a62a2b6))
+* add published status toggle and improve blog CRUD operations ([4527c46](https://github.com/slemppa/rascal-ai/commit/4527c46d6cb1acb94ca4d77be3a9797dd7ca9438))
+* change social media image to favicon.png ([ca6431f](https://github.com/slemppa/rascal-ai/commit/ca6431fd67cd2aac83151ed4ecc6427b8722844c))
+* ChatbotWidget vain julkkisilla + korjattu padding ([c60785c](https://github.com/slemppa/rascal-ai/commit/c60785ceb6cb92fb95059643c0de269ccad7c0e9))
+* korjaa artikkelikorttien tyylit ja ulkoasu ([09a3ff4](https://github.com/slemppa/rascal-ai/commit/09a3ff4cec24162edc17b07c464402313f105dbd))
+* make image upload required for blog articles ([4386db9](https://github.com/slemppa/rascal-ai/commit/4386db93d751779fc36b1679927dfc38608169c8))
+* poista Service Worker kokonaan ja korjaa mobiiliongelmat ([4d459f6](https://github.com/slemppa/rascal-ai/commit/4d459f6ef97170c80759baffe31fbf635e1ff2f8))
+* update SEO meta tags with marketing and sales focus ([b61263d](https://github.com/slemppa/rascal-ai/commit/b61263de4a8b5815cf0798c54f019af5ce625f16))
+
+
+### 🐛 Bug Fixes
+
+* add missing error state to AdminBlogPage ([92461ea](https://github.com/slemppa/rascal-ai/commit/92461ead3419ad8f91f6f93a521716871ddfd183))
+* BlogArticlePage CSS-ristiriidat ja mobiili-tyylit ([c91cbdb](https://github.com/slemppa/rascal-ai/commit/c91cbdb0e28fde4764815e72cbeca9662bedf25b))
+* BlogArticlePage mobiili-ongelmat ja nappien venytys ([12405d1](https://github.com/slemppa/rascal-ai/commit/12405d1760b1877ec7e521ee729e7a71dfa2bb31))
+* improve mobile layout and fix demo button ([55eb871](https://github.com/slemppa/rascal-ai/commit/55eb871b6e5b8f7d23a916ad59e129190b28e35d))
+* korjaa mobiiliongelmat ja Service Worker MIME type -virhe ([b1ad697](https://github.com/slemppa/rascal-ai/commit/b1ad69778aeb3622923a1c6c4ef5b1faadbaf6de))
+* **layout:** allow pages to grow with content; remove root 100% height ([6f69c99](https://github.com/slemppa/rascal-ai/commit/6f69c997d298ed27522fdc94e2d14da48578e319))
+* mobiili-skaalaus — poistettu fit-content ja napin 100% leveys ([6fd48fb](https://github.com/slemppa/rascal-ai/commit/6fd48fb5d16bff05901c7e5a3511db15c4a45fdb))
+* resolve JavaScript module loading issue and update blog styling ([1e92548](https://github.com/slemppa/rascal-ai/commit/1e92548b9ab00bc582c7a7c99f99444722cd7d36))
+* resolve Service Worker causing JS module loading issues ([dbc283a](https://github.com/slemppa/rascal-ai/commit/dbc283a5e9678d36ae0b39e0adc7b52bda36bc43))
+* update vercel.json for proper frontend build and SPA routing ([a0ec6aa](https://github.com/slemppa/rascal-ai/commit/a0ec6aa3e2548835098061e19cecf3a896e8834f))
+
 ## [1.43.0](https://github.com/slemppa/rascal-ai/compare/v1.42.0...v1.43.0) (2025-08-22)
 
 

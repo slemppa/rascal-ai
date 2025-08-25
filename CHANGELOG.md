@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.44.0](https://github.com/slemppa/rascal-ai/compare/v1.43.4...v1.44.0) (2025-08-25)
+
+
+### ✨ Features
+
+* **landing:** add Team section; add header link; nav updates ([c426ee9](https://github.com/slemppa/rascal-ai/commit/c426ee9f40b2115e59eb4c4c58759af7f72ee42e))
+
 ### [1.43.4](https://github.com/slemppa/rascal-ai/compare/v1.43.3...v1.43.4) (2025-08-25)
 
 

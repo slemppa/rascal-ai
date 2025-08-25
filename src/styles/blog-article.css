@@ -1,16 +1,10 @@
 /* Blog Article Page Styles - Rascal AI Brand */
 
 .blog-article-page {
-  /* Desktopilla anna sisällön määrittää korkeus */
-  min-height: fit-content;
+  /* Yksinkertainen block-layout - sisältö määrittää korkeuden */
   background-color: #24170f;
   color: white;
   padding-bottom: 60px;
-  /* Kompensoi sticky headerin korkeus */
-  padding-top: 80px;
-  /* Varmista että sivu venyy ainakin täyteen */
-  display: flex;
-  flex-direction: column;
 }
 
 .layout-container {
@@ -19,9 +13,6 @@
   padding: 0 20px;
   width: 100%;
   box-sizing: border-box;
-  flex: 1; /* Kasvaa täyttämään koko tilan */
-  display: flex;
-  flex-direction: column;
 }
 
 /* Back Button */
@@ -58,7 +49,7 @@
   background: #2a1d15;
   border: 1px solid #4b3120;
   border-radius: 20px;
-  padding: 25px 40px;
+  padding: 18px 28px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   text-align: center;
   margin: 0 auto 20px;
@@ -118,7 +109,7 @@
 /* Article Content */
 .article-content {
   background: #2a1d15;
-  padding: 40px 40px 0 40px; /* Poistettu bottom padding */
+  padding: 40px 40px 0 40px;
   margin: 0 auto 20px;
   max-width: 800px;
   border: 1px solid #4b3120;
@@ -126,9 +117,6 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   position: relative;
   width: 100%;
-  display: block; /* Ei tarvita flexiä tähän konttiin */
-  /* iOS-yhteensopivuus: anna sisällön määrittää korkeus */
-  min-height: fit-content;
   box-sizing: border-box;
 }
 
@@ -136,8 +124,6 @@
 .content-wrapper {
   width: 100%;
   max-width: 100%;
-  flex: 1;
-  min-height: auto;
   box-sizing: border-box;
 }
 
@@ -571,7 +557,7 @@
 @media (max-width: 768px) {
   .blog-article-page {
     /* Mobiilissa pienempi padding-top */
-    padding-top: 60px;
+    padding-top: 48px;
   }
   
   .layout-container {
@@ -581,7 +567,7 @@
   }
   
   .article-header {
-    padding: 30px 25px;
+    padding: 20px 20px;
     width: 100%;
     box-sizing: border-box;
   }
@@ -742,7 +728,7 @@
 @media (max-width: 480px) {
   .blog-article-page {
     /* Pienissä mobiileissa vielä pienempi padding-top */
-    padding-top: 50px;
+    padding-top: 40px;
   }
   
   .layout-container {
@@ -752,7 +738,7 @@
   }
   
   .article-header {
-    padding: 25px 20px;
+    padding: 16px 16px;
     width: 100%;
     box-sizing: border-box;
   }

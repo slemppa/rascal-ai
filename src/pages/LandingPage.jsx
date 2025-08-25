@@ -124,11 +124,10 @@ export default function LandingPage() {
             </div>
             <div className="header-right">
               <div className="nav-links desktop-nav">
-                <a className="nav-link" href="#solutions">Kyvykkyydet</a>
-                <a className="nav-link" href="#industries">Toimialat</a>
                 <a className="nav-link" href="/blog">Artikkelit</a>
                 <a className="nav-link" href="#cta">Demo</a>
-                <a className="nav-link" href="#contact">Yhteys</a>
+                <a className="nav-link" href="#team">Tiimi</a>
+                <a className="nav-link" href="#contact">Ota yhteyttä</a>
               </div>
               <div className="header-buttons desktop-buttons">
                 <button
@@ -167,11 +166,10 @@ export default function LandingPage() {
             {isMobileMenuOpen && (
               <div className="mobile-menu">
                 <div className="mobile-nav-links">
-                  <a className="mobile-nav-link" href="#solutions" onClick={() => setIsMobileMenuOpen(false)}>Kyvykkyydet</a>
-                  <a className="mobile-nav-link" href="#industries" onClick={() => setIsMobileMenuOpen(false)}>Toimialat</a>
                   <a className="mobile-nav-link" href="/blog" onClick={() => setIsMobileMenuOpen(false)}>Artikkelit</a>
                   <a className="mobile-nav-link" href="#cta" onClick={() => setIsMobileMenuOpen(false)}>Demo</a>
-                  <a className="mobile-nav-link" href="#contact" onClick={() => setIsMobileMenuOpen(false)}>Yhteys</a>
+                  <a className="mobile-nav-link" href="#team" onClick={() => setIsMobileMenuOpen(false)}>Tiimi</a>
+                  <a className="mobile-nav-link" href="#contact" onClick={() => setIsMobileMenuOpen(false)}>Ota yhteyttä</a>
                 </div>
                 <div className="mobile-buttons">
                   <button
@@ -438,6 +436,34 @@ export default function LandingPage() {
                       </button>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Team Section */}
+            <div className="section" id="team">
+              <div className="section-header">
+                <h2 className="section-title">Tiimi</h2>
+                <p className="section-description">Tutustu ihmisiin Rascal AI:n takana.</p>
+              </div>
+              <div className="team-grid">
+                <div className="team-card">
+                  <div className="team-photo">
+                    <img src="/Mika-Jarvinen-BW.jpg" alt="Mika Järvinen" loading="lazy" />
+                  </div>
+                  <div className="team-name">Mika Järvinen</div>
+                </div>
+                <div className="team-card">
+                  <div className="team-photo">
+                    <img src="/Henri-Rantanen-BW3.jpg" alt="Henri Rantanen" loading="lazy" />
+                  </div>
+                  <div className="team-name">Henri Rantanen</div>
+                </div>
+                <div className="team-card">
+                  <div className="team-photo">
+                    <img src="/rascal-sami-768x768.jpg" alt="Sami" loading="lazy" />
+                  </div>
+                  <div className="team-name">Sami</div>
                 </div>
               </div>
             </div>

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.46.0](https://github.com/slemppa/rascal-ai/compare/v1.45.0...v1.46.0) (2025-08-25)
+
+
+### ✨ Features
+
+* implement testimonials management and customer page ([9c33c28](https://github.com/slemppa/rascal-ai/commit/9c33c288ffd5f2c44e62f1fc42c119ea281f6a13))
+
 ## [1.45.0](https://github.com/slemppa/rascal-ai/compare/v1.44.0...v1.45.0) (2025-08-25)
 
 

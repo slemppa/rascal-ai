@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.43.2](https://github.com/slemppa/rascal-ai/compare/v1.43.1...v1.43.2) (2025-08-25)
+
+
+### 🐛 Bug Fixes
+
+* **mobile:** add padding-top for sticky header compensation ([a90e239](https://github.com/slemppa/rascal-ai/commit/a90e23995f4d43bc93bbd1290609ebe6d87583a1))
+
 ### [1.43.1](https://github.com/slemppa/rascal-ai/compare/v1.43.0...v1.43.1) (2025-08-25)
 
 

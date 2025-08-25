@@ -1,4 +1,5 @@
 /* Blog Article Page Styles - Rascal AI Brand */
+
 .blog-article-page {
   min-height: 100vh;
   background-color: #24170f;
@@ -12,8 +13,6 @@
   max-width: 900px;
   margin: 0 auto;
   padding: 0 20px;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 /* Back Button */
@@ -50,14 +49,13 @@
   border: 1px solid #4b3120;
   border-radius: 20px;
   padding: 40px;
-  margin-bottom: 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   text-align: center;
+  margin-bottom: 30px;
   max-width: 1000px;
+  width: auto; /* Muutettu 100% -> auto */
   margin-left: auto;
   margin-right: auto;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .article-meta {
@@ -108,7 +106,7 @@
   margin: 0 auto 30px;
   border-radius: 20px;
   width: 100%;
-  max-width: 100%;
+  max-width: 600px; /* Pienennetty 1000px -> 600px */
   overflow: hidden;
 }
 
@@ -120,7 +118,10 @@
 }
 
 /* Article Content */
-/* .article-content luokka poistettu - käytetään article-cards.css:n tyylejä */
+.article-content {
+  width: 100%;
+  margin-bottom: 40px;
+}
 
 .content-wrapper {
   width: 100%;
@@ -211,7 +212,6 @@
   border-left: 4px solid #ff6600;
   padding-left: 1.5rem;
   margin: 2rem 0;
-  font-style: italic;
   color: #cea78d;
   background: rgba(255, 102, 0, 0.1);
   padding: 1.5rem;
@@ -244,17 +244,15 @@
 
 /* Article Navigation */
 .article-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: block; /* Muutettu flex -> block */
+  text-align: center;
   margin-top: 40px;
   padding: 20px 0;
   border-top: 1px solid #4b3120;
-  flex-wrap: wrap;
-  gap: 20px;
 }
 
 .nav-button {
+  display: inline-block;
   color: #cea78d;
   text-decoration: none;
   font-weight: 600;
@@ -264,13 +262,19 @@
   border: 1px solid #cea78d;
   transition: all 0.3s ease;
   white-space: nowrap;
+  width: fit-content; /* Muutettu auto -> fit-content */
+  max-width: 200px; /* Lisätty maksimileveys */
+  min-width: 120px;
+  margin: 0 10px;
+  text-align: center; /* Varmistetaan tekstin keskitys */
+  box-sizing: border-box; /* Varmistetaan että padding ei lisää leveyttä */
 }
 
 .nav-button:hover {
   color: #ff6600;
   background: rgba(255, 102, 0, 0.15);
   border-color: #ff6600;
-  transform: translateY(-2px);
+  transform: translateX(-3px);
 }
 
 .nav-button.prev:hover {
@@ -353,7 +357,7 @@
   .article-header {
     padding: 25px 20px;
     margin-bottom: 20px;
-    width: 100%;
+    width: auto; /* Muutettu 100% -> auto */
     max-width: 100%;
     border-radius: 15px;
   }
@@ -368,7 +372,7 @@
   .article-hero-image {
     margin-bottom: 20px;
     width: 100%;
-    max-width: 100%;
+    max-width: 100%; /* Mobiililla kuva voi olla leveämpi */
   }
 
   .article-body h1 {
@@ -389,16 +393,34 @@
     line-height: 1.6;
   }
 
+  .article-body ul,
+  .article-body ol {
+    padding-left: 1.5rem;
+  }
+
+  .article-body blockquote {
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .article-body pre {
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
+
   .article-nav {
-    flex-direction: column;
-    gap: 15px;
+    display: block; /* Varmistetaan että mobiililla on block */
     text-align: center;
   }
 
   .nav-button {
-    width: 100%;
+    display: block;
+    width: fit-content; /* Muutettu auto -> fit-content */
+    max-width: 200px; /* Säilytetään maksimileveys */
     text-align: center;
     white-space: normal;
+    min-width: 120px;
+    margin: 10px auto;
   }
 }
 
@@ -418,7 +440,7 @@
   .article-header {
     padding: 20px 15px;
     margin-bottom: 15px;
-    width: 100%;
+    width: auto; /* Muutettu 100% -> auto */
     max-width: 100%;
     border-radius: 12px;
   }
@@ -470,5 +492,17 @@
   .article-body pre {
     padding: 1rem;
     margin: 1.5rem 0;
+  }
+
+  .nav-button {
+    display: block;
+    width: fit-content;
+    max-width: 180px; /* Pienennetty maksimileveys mobiililla */
+    min-width: 100px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    margin: 10px auto;
+    text-align: center;
+    white-space: normal;
   }
 }

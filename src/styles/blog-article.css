@@ -54,7 +54,7 @@
   text-align: center;
   margin: 0 auto 20px;
   max-width: 100%;
-  width: 100%;
+  width: auto;
   box-sizing: border-box;
 }
 
@@ -489,7 +489,6 @@
   overflow-wrap: break-word;
   white-space: normal;
   text-align: center;
-  flex: 1;
   min-width: 0;
 }
 

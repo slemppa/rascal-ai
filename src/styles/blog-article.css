@@ -1,7 +1,8 @@
 /* Blog Article Page Styles - Rascal AI Brand */
 
 .blog-article-page {
-  min-height: 100vh;
+  /* Anna sivun kasvaa sisällön mukaan; 100vh aiheuttaa iOS:ssa leikkausta */
+  min-height: auto;
   background-color: #24170f;
   color: white;
   padding-bottom: 60px;
@@ -117,10 +118,9 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   position: relative;
   width: 100%;
-  display: flex;
-  flex-direction: column;
+  display: block; /* Ei tarvita flexiä tähän konttiin */
   /* iOS-yhteensopivuus: anna sisällön määrittää korkeus */
-  min-height: auto;
+  min-height: fit-content;
   box-sizing: border-box;
 }
 

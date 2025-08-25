@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.43.4](https://github.com/slemppa/rascal-ai/compare/v1.43.3...v1.43.4) (2025-08-25)
+
+
+### 🐛 Bug Fixes
+
+* use fit-content for all screen sizes, content-driven height ([33e3749](https://github.com/slemppa/rascal-ai/commit/33e3749b084e0408b7c9f5da02aec9758e2a54cf))
+
 ### [1.43.3](https://github.com/slemppa/rascal-ai/compare/v1.43.2...v1.43.3) (2025-08-25)
 
 

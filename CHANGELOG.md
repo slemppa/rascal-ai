@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.45.0](https://github.com/slemppa/rascal-ai/compare/v1.44.0...v1.45.0) (2025-08-25)
+
+
+### ✨ Features
+
+* **admin:** add Testimonials management and Hallinta tabs ([65b0013](https://github.com/slemppa/rascal-ai/commit/65b00133f66eec35f3c766a1fa8865c784643ae4))
+
 ## [1.44.0](https://github.com/slemppa/rascal-ai/compare/v1.43.4...v1.44.0) (2025-08-25)
 
 

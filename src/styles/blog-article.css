@@ -119,7 +119,8 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  min-height: fit-content;
+  /* iOS-yhteensopivuus: anna sisällön määrittää korkeus */
+  min-height: auto;
   box-sizing: border-box;
 }
 
@@ -128,7 +129,7 @@
   width: 100%;
   max-width: 100%;
   flex: 1;
-  min-height: fit-content;
+  min-height: auto;
   box-sizing: border-box;
 }
 
@@ -139,7 +140,7 @@
   color: white;
   max-width: 100%;
   width: 100%;
-  min-height: fit-content;
+  min-height: auto;
   box-sizing: border-box;
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -700,12 +701,13 @@
   }
   
   .nav-button {
-    width: 100%;
+    width: auto; /* Estä 100% venymä mobiilissa */
     justify-content: center;
     text-align: center;
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: normal;
+    align-self: center;
   }
   
   .article-body blockquote {

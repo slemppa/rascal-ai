@@ -2,10 +2,12 @@
 
 .blog-article-page {
   /* Anna sivun kasvaa sisällön mukaan; 100vh aiheuttaa iOS:ssa leikkausta */
-  min-height: auto;
+  min-height: 100vh;
   background-color: #24170f;
   color: white;
   padding-bottom: 60px;
+  /* Kompensoi sticky headerin korkeus */
+  padding-top: 80px;
 }
 
 .layout-container {
@@ -561,6 +563,11 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .blog-article-page {
+    /* Mobiilissa pienempi padding-top */
+    padding-top: 60px;
+  }
+  
   .layout-container {
     padding: 0 15px;
     width: 100%;
@@ -727,6 +734,11 @@
 }
 
 @media (max-width: 480px) {
+  .blog-article-page {
+    /* Pienissä mobiileissa vielä pienempi padding-top */
+    padding-top: 50px;
+  }
+  
   .layout-container {
     padding: 0 10px;
     width: 100%;

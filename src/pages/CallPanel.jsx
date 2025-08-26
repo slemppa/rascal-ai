@@ -36,6 +36,7 @@ export default function CallPanel() {
   const [phoneNumber, setPhoneNumber] = useState('')
   const [name, setName] = useState('')
   const [calling, setCalling] = useState(false)
+  const [singleCallSmsFirst, setSingleCallSmsFirst] = useState(false)
   const [inboundVoice, setInboundVoice] = useState('rascal-nainen-1')
   const [inboundScript, setInboundScript] = useState('Kiitos soitostasi! Olen AI-assistentti ja autan sinua mielellään...')
   const [inboundWelcomeMessage, setInboundWelcomeMessage] = useState('Kiitos soitostasi! Olen AI-assistentti ja autan sinua mielellään...')
@@ -572,7 +573,8 @@ export default function CallPanel() {
         callTypeId: call_type_id,
         script,
         voiceId: voiceId,
-        userId: user?.id
+        userId: user?.id,
+        sms_first: singleCallSmsFirst === true
       })
       
       const result = response.data
@@ -4067,7 +4069,33 @@ export default function CallPanel() {
                       Skripti: {script ? <span style={{ color: '#111827' }}>{script.slice(0, 140)}{script.length > 140 ? '…' : ''}</span> : 'Valitse puhelun tyyppi niin skripti tulee näkyviin.'}
                     </div>
 
-                    <div style={{ display: 'flex', gap: 12, justifyContent: 'space-between' }}>
+                    {/* Tekstari ensin -kytkin ja esikatselu */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8, marginBottom: 8 }}>
+                      <label style={{ fontWeight: 600 }}>Tekstari ensin</label>
+                      <label className="switch">
+                        <input
+                          type="checkbox"
+                          checked={singleCallSmsFirst}
+                          onChange={e => setSingleCallSmsFirst(e.target.checked)}
+                          disabled={!(() => { const t = callTypes.find(t => t.value === callType); return t?.first_sms && t.first_sms.trim().length > 0 })()}
+                        />
+                        <span className="slider round"></span>
+                      </label>
+                      {(() => { const t = callTypes.find(t => t.value === callType); return !(t?.first_sms && t.first_sms.trim().length > 0) })() && (
+                        <span style={{ fontSize: 12, color: '#dc2626' }}>Lisää ensin SMS teksti puhelutyypille</span>
+                      )}
+                    </div>
+
+                    {singleCallSmsFirst && (() => { const t = callTypes.find(t => t.value === callType); return t?.first_sms && t.first_sms.trim().length > 0 })() && (
+                      <div className="sms-preview-container">
+                        <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>Ensimmäinen SMS (vain luku)</div>
+                        <div className="sms-preview-text">
+                          {(() => { const t = callTypes.find(t => t.value === callType); return t?.first_sms || '' })()}
+                        </div>
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', gap: 12, justifyContent: 'space-between', marginTop: 12 }}>
                       <Button onClick={() => setSingleCallStep(1)} variant="secondary">← Takaisin</Button>
                       <Button onClick={handleSingleCall} disabled={calling || !name.trim() || !phoneNumber.trim() || !callType || !script.trim() || !selectedVoice} variant="primary">
                         {calling ? 'Soittaa…' : 'Soita'}

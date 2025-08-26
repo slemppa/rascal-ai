@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.47.0](https://github.com/slemppa/rascal-ai/compare/v1.46.1...v1.47.0) (2025-08-26)
+
+
+### ✨ Features
+
+* **calls:** single-call 'SMS first' toggle + API support ([4011899](https://github.com/slemppa/rascal-ai/commit/4011899031453c01e0d053429e2390513051b228))
+
 ### [1.46.1](https://github.com/slemppa/rascal-ai/compare/v1.46.0...v1.46.1) (2025-08-25)
 
 

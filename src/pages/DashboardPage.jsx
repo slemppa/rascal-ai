@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 // Analytics data haetaan nyt iframe:n kautta
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, Tooltip, Legend, CartesianGrid } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar, ScatterChart, Scatter, ZAxis, Tooltip, Legend, CartesianGrid } from 'recharts'
 import PageHeader from '../components/PageHeader'
 import { supabase } from '../lib/supabase'
 import styles from './DashboardPage.module.css'
@@ -288,6 +288,10 @@ export default function DashboardPage() {
   // Chart data - käytetään oikeita tietoja Supabase:sta
   const [chartData, setChartData] = useState([])
   const [chartLoading, setChartLoading] = useState(true)
+  const [successStats, setSuccessStats] = useState({ total: 0, answered: 0, success: 0, answerRate: 0, successRate: 0, perDay: [] })
+  const [campaignMetrics, setCampaignMetrics] = useState([])
+  const [scatterData, setScatterData] = useState([])
+  const [heatmapData, setHeatmapData] = useState([])
   
   // Hae chart data Supabase:sta
   const fetchChartData = async (timeFilter) => {
@@ -429,6 +433,73 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchChartData(selectedTimeFilter)
   }, [selectedTimeFilter, user])
+
+  // Hae onnistumisanalytiikka backendistä
+  useEffect(() => {
+    const fetchSuccess = async () => {
+      if (!user) return
+      try {
+        const session = await supabase.auth.getSession()
+        const token = session?.data?.session?.access_token
+        if (!token) return
+        const res = await fetch(`/api/dashboard-success?days=30`, { headers: { Authorization: `Bearer ${token}` } })
+        const json = await res.json()
+        if (res.ok) setSuccessStats(json)
+      } catch (e) {}
+    }
+    fetchSuccess()
+  }, [user])
+
+  // Hae scatter- ja heatmap-data backendistä
+  useEffect(() => {
+    const fetchAdvanced = async () => {
+      if (!user) return
+      try {
+        const session = await supabase.auth.getSession()
+        const token = session?.data?.session?.access_token
+        if (!token) return
+        const [scRes, hmRes] = await Promise.all([
+          fetch(`/api/dashboard-calls-scatter?days=30`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`/api/dashboard-calls-heatmap?days=30`, { headers: { Authorization: `Bearer ${token}` } })
+        ])
+        const scJson = await scRes.json().catch(() => [])
+        const hmJson = await hmRes.json().catch(() => [])
+        if (Array.isArray(scJson)) setScatterData(scJson)
+        if (Array.isArray(hmJson)) setHeatmapData(hmJson)
+      } catch (_) {}
+    }
+    fetchAdvanced()
+  }, [user])
+
+  // Hae kampanjametriikat backendista (nimi, puhelut, onnistumis%)
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      if (!user) return
+      try {
+        const session = await supabase.auth.getSession()
+        const token = session?.data?.session?.access_token
+        if (!token) return
+        const res = await fetch(`/api/campaigns?user_id=${encodeURIComponent(user.id)}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        const json = await res.json()
+        if (!res.ok || !Array.isArray(json)) {
+          setCampaignMetrics([])
+          return
+        }
+        const rows = json.map(c => {
+          const total = Number(c.total_calls || 0)
+          const success = Number(c.successful_calls || 0)
+          const successRate = total > 0 ? Math.round((success / total) * 100) : 0
+          return { id: c.id, name: c.name, total, successRate }
+        })
+        setCampaignMetrics(rows)
+      } catch (_) {
+        setCampaignMetrics([])
+      }
+    }
+    fetchCampaigns()
+  }, [user])
 
   // Platform värit
   const getPlatformColor = (platform) => {
@@ -1120,7 +1191,7 @@ export default function DashboardPage() {
         {/* Metrics Section - VAPIn tyylillä */}
         <div className={styles['metrics-section']}>
           <div className={styles['metrics-header']}>
-            <h2>Metrics</h2>
+            <h2>Avainluvut</h2>
             <div className={styles['metrics-filters']}>
               <button 
                 className={styles['filter-btn'] + ' ' + (selectedFilter === 'all' ? styles['filter-active'] : '')}
@@ -1155,7 +1226,10 @@ export default function DashboardPage() {
                 </div>
               ))
             ) : (
-              dashboardStats.map((stat, i) => (
+              [...dashboardStats,
+                { label: 'Puhelut (onnistuneet)', value: successStats.success, trend: successStats.successRate, color: '#22c55e' },
+                { label: 'Vastausprosentti', value: `${successStats.answerRate}%`, trend: successStats.answerRate, color: '#2563eb' }
+              ].map((stat, i) => (
                 <div key={i} className={styles['metric-card']}>
                   <div className={styles['metric-label']}>{stat.label}</div>
                   <div className={styles['metric-value']}>{stat.value}</div>
@@ -1224,7 +1298,90 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Analytics poistettu - tehdään myöhemmin */}
+          {/* Kampanjat – onnistumiset */}
+          <div className={styles.card} style={{ gridColumn: 'span 3', minHeight: 180, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>Kampanjoiden onnistumiset</div>
+            <div className="table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'clamp(13px, 3vw, 15px)', minWidth: 520 }}>
+                <thead>
+                  <tr style={{ color: '#1f2937', fontWeight: 600, background: '#f7f8fc' }}>
+                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Kampanja</th>
+                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Puhelut</th>
+                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Onnistumis%</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {campaignMetrics.length === 0 ? (
+                    <tr><td colSpan={3} style={{ color: '#888', padding: 16, textAlign: 'center' }}>Ei kampanjoita</td></tr>
+                  ) : (
+                    campaignMetrics.slice(0, 6).map(row => (
+                      <tr key={row.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '8px 4px', verticalAlign: 'top' }}>{row.name}</td>
+                        <td style={{ padding: '8px 4px', verticalAlign: 'top' }}>{row.total}</td>
+                        <td style={{ padding: '8px 4px', verticalAlign: 'top' }}>{row.successRate}%</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        {/* Split-row: 3/5 (scatter) + 2/5 (heatmap) */}
+        <div style={{ gridColumn: '1 / -1', paddingTop: 16, paddingBottom: 8 }}>
+          <div className={styles['split-row']}>
+            <div className={styles.card} style={{ minHeight: 220, display: 'flex', flexDirection: 'column' }}>
+              <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>Kesto vs. onnistumisaste</div>
+              <div style={{ width: '100%', height: 220 }}>
+                <ResponsiveContainer width="100%" height={220}>
+                  <ScatterChart>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="avgDurationSec" name="Kesto (s)" unit="s" stroke="#6b7280" fontSize={12} />
+                    <YAxis dataKey="successRate" name="Onnistumis%" unit="%" stroke="#6b7280" fontSize={12} />
+                    <ZAxis dataKey="count" range={[40, 200]} name="Lukumäärä" />
+                    <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value, name) => [value, name]} />
+                    <Legend />
+                    <Scatter name="Bin" data={scatterData} fill="#2563eb" />
+                  </ScatterChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            <div className={styles.card} style={{ minHeight: 260, display: 'flex', flexDirection: 'column' }}>
+              <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>Parhaiten toimivat puheluajat</div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: 720, borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ color: '#1f2937', fontWeight: 600, background: '#f7f8fc' }}>
+                      <th style={{ padding: 6, textAlign: 'left' }}>Päivä</th>
+                      {Array.from({ length: 24 }).map((_, h) => (
+                        <th key={h} style={{ padding: 4, fontSize: 11 }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Array.from({ length: 7 }).map((_, d) => {
+                      const dayLabel = ['Ma','Ti','Ke','To','Pe','La','Su'][d]
+                      return (
+                        <tr key={d}>
+                          <td style={{ padding: 6, fontWeight: 600, color: '#374151' }}>{dayLabel}</td>
+                          {Array.from({ length: 24 }).map((_, h) => {
+                            const cell = heatmapData.find(x => x.day === d && x.hour === h) || { total: 0, success: 0 }
+                            const rate = cell.total > 0 ? Math.round((cell.success / cell.total) * 100) : 0
+                            const alpha = rate === 0 ? 0.05 : Math.min(0.85, 0.15 + rate / 100)
+                            const bg = `rgba(34,197,94,${alpha})`
+                            return (
+                              <td key={h} title={`${rate}% (${cell.success}/${cell.total})`} style={{ width: 24, height: 18, background: bg, border: '1px solid #fff' }} />
+                            )
+                          })}
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
         
         {/* Grafiikki Section - VAPIn tyylillä */}

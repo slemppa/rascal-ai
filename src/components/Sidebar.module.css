@@ -11,6 +11,8 @@
   z-index: 20;
   border-right: 1px solid #6b462e;
   box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .profile-section {
@@ -43,10 +45,11 @@
 }
 
 .nav-menu {
-  flex: 1;
+  /* Ei venytetä listoja täyttämään sivupalkkia */
+  flex: 0 0 auto;
   margin: 0;
   list-style: none;
-  padding: 16px 0;
+  padding: 8px 0;
 }
 
 .nav-item {
@@ -67,7 +70,8 @@
   gap: 12px;
   text-decoration: none;
   border: none;
-  width: 100%;
+  width: calc(100% - 16px);
+  box-sizing: border-box;
   text-align: left;
   margin: 2px 8px;
 }
@@ -91,6 +95,43 @@
   color: #ffffff;
 }
 
+.section-title {
+  color: #cea78d;
+  opacity: 0.9;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 20px 0 20px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #cea78d;
+  opacity: 0.9;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  margin: 6px 0;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.chevron {
+  transition: transform 0.15s ease;
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
 .settings-section {
   margin-top: auto;
   padding: 16px 20px;
@@ -98,6 +139,9 @@
   flex-direction: column;
   gap: 4px;
   border-top: 1px solid #6b462e;
+  position: sticky;
+  bottom: 0;
+  background: #24170f;
 }
 
 .logout-btn {

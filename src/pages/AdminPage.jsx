@@ -505,6 +505,7 @@ export default function AdminPage() {
                          {showUserIds && <th>User ID</th>}
                          <th>Rooli</th>
                          <th>Yritys</th>
+                         <th>CRM yhdistetty</th>
                          <th>Rekisteröitynyt</th>
                          <th>Toiminnot</th>
                        </tr>
@@ -526,6 +527,22 @@ export default function AdminPage() {
                              </select>
                            </td>
                            <td>{user.company_name || 'Ei yritystä'}</td>
+                           <td>
+                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                               <label className="switch" title="CRM yhdistetty">
+                                 <input
+                                   type="checkbox"
+                                   checked={Boolean(user.crm_connected)}
+                                   onChange={(e) => updateUserField(user.id, 'crm_connected', e.target.checked)}
+                                   aria-label="CRM yhdistetty"
+                                 />
+                                 <span className="slider" />
+                               </label>
+                               <span style={{ fontSize: 12, color: user.crm_connected ? '#166534' : '#6b7280' }}>
+                                 {user.crm_connected ? 'Kytketty' : 'Ei kytketty'}
+                               </span>
+                             </div>
+                           </td>
                            <td>{new Date(user.created_at).toLocaleDateString('fi-FI')}</td>
                            <td>
                              <div className="action-buttons">

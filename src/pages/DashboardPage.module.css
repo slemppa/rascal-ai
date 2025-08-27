@@ -30,6 +30,21 @@
   width: 100%;
 }
 
+/* Kiinteä 3fr/2fr split-rivi scatter + heatmap -kortteja varten */
+.split-row {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .split-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
 .card {
   background: #fff;
   border-radius: 16px;

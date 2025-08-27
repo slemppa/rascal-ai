@@ -30,7 +30,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { sheetUrl, callType, script, voice, voice_id, user_id, scheduledDate, scheduledTime, sms_first } = req.body
+    const { sheetUrl, callType, script, voice, voice_id, user_id, scheduledDate, scheduledTime, sms_first, newCampaignId, contactSegmentId } = req.body
     const access_token = req.headers['authorization']?.replace('Bearer ', '')
 
     console.log('🔍 Mass-call endpoint sai dataa:', { sheetUrl, callType, scriptExists: Boolean(script), voice, voice_idExists: Boolean(voice_id), user_id, scheduledDate, scheduledTime, sms_first: Boolean(sms_first), hasAccessToken: Boolean(access_token), usingServiceRole: Boolean(supabaseServiceKey) })
@@ -327,6 +327,8 @@ export default async function handler(req, res) {
             call_time: effectiveTime,
             call_status: 'pending',
             campaign_id: `mass-call-${Date.now()}`,
+            new_campaign_id: newCampaignId || null,
+            contact_segment_id: contactSegmentId || null,
             summary: script && script.trim() ? `Mass-call: ${script.trim().substring(0, 100)}...` : `Mass-call: ${callType}`,
             sms_first: Boolean(sms_first)
           })

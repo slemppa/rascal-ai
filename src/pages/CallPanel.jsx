@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import AddCallTypeModal from '../components/AddCallTypeModal'
 import EditCallTypeModal from '../components/EditCallTypeModal'
-import MikaSpecialTab from '../components/MikaSpecialTab.jsx'
+import CRM from '../components/crm.jsx'
 import './CallPanel.css'
 import CallStats from './CallStats'
 import Button from '../components/Button'
@@ -11,12 +11,15 @@ import { useAuth } from '../contexts/AuthContext'
 import axios from 'axios'
 import PageMeta from '../components/PageMeta'
 import '../components/ModalComponents.css'
+import { useFeatures } from '../hooks/useFeatures'
 
 export default function CallPanel() {
   const { user } = useAuth()
+  const { has: hasFeature, crmConnected } = useFeatures()
   
   // Kovakoodatut tarkistukset
   const isMika = user?.email === 'mika.jarvinen@kuudesaisti.fi'
+  const hasCRM = hasFeature('CRM') && (crmConnected === true || Boolean(user?.crm_connected))
   const isAdmin = user?.email === 'sami@mak8r.fi'
   const [sheetUrl, setSheetUrl] = useState('')
   const [validating, setValidating] = useState(false)
@@ -148,6 +151,10 @@ export default function CallPanel() {
   const [massCallStarting, setMassCallStarting] = useState(false)
   const [massCallScheduling, setMassCallScheduling] = useState(false)
   const [massCallSmsFirst, setMassCallSmsFirst] = useState(false)
+  const [massCallCampaignId, setMassCallCampaignId] = useState('')
+  const [massCallSegmentId, setMassCallSegmentId] = useState('')
+  const [massCallCampaigns, setMassCallCampaigns] = useState([])
+  const [massCallSegments, setMassCallSegments] = useState([])
   
   // Yksittäisen puhelun modaali
   const [showSingleCallModal, setShowSingleCallModal] = useState(false)
@@ -1569,6 +1576,28 @@ export default function CallPanel() {
     }
   }, [callTypes, massCallCallType])
 
+  // Lataa kampanjat ja segmentit mass-call valitsimiin
+  useEffect(() => {
+    let mounted = true
+    async function loadLists() {
+      try {
+        const session = await supabase.auth.getSession()
+        const token = session?.data?.session?.access_token
+        const [cRes, sRes] = await Promise.all([
+          fetch(`/api/campaigns?user_id=${encodeURIComponent(user?.id)}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} }),
+          fetch(`/api/segments?user_id=${encodeURIComponent(user?.id)}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+        ])
+        const [camps, segs] = await Promise.all([cRes.json(), sRes.json()])
+        if (mounted) {
+          setMassCallCampaigns(Array.isArray(camps) ? camps : [])
+          setMassCallSegments(Array.isArray(segs) ? segs : [])
+        }
+      } catch (e) {}
+    }
+    if (user?.id) loadLists()
+    return () => { mounted = false }
+  }, [user?.id])
+
   // Massapuhelumodaalin funktiot
   const handleMassCallValidate = async () => {
     setMassCallValidating(true)
@@ -1622,7 +1651,9 @@ export default function CallPanel() {
           voice: massCallSelectedVoice,
           voice_id: selectedVoiceObj?.id,
           user_id: user?.id,
-          sms_first: massCallSmsFirst === true
+          sms_first: massCallSmsFirst === true,
+          newCampaignId: massCallCampaignId || null,
+          contactSegmentId: massCallSegmentId || null
         })
       })
       const data = await res.json().catch(() => ({}))
@@ -2075,12 +2106,12 @@ export default function CallPanel() {
               </svg>
               Hallinta
             </Button>
-            {isMika ? (
+            {hasCRM ? (
               <Button onClick={() => setActiveTab('mika')} variant={activeTab === 'mika' ? 'primary' : 'secondary'}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '8px' }}>
                   <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z"/>
                 </svg>
-                Mika Special
+                CRM
               </Button>
             ) : (
               <span />
@@ -2137,7 +2168,15 @@ export default function CallPanel() {
               <label className="label">Puhelun tyyppi</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                 <select value={callType} onChange={e => { setCallType(e.target.value); updateScriptFromCallType(e.target.value); }} disabled={loadingCallTypes} className="select">
-                  {loadingCallTypes ? <option>Ladataan puhelun tyyppejä...</option> : callTypes.length === 0 ? <option>Ei puhelun tyyppejä saatavilla</option> : callTypes.map(type => <option key={type.value} value={type.value}>{type.label}</option>)}
+                  {loadingCallTypes ? (
+                    <option>Ladataan puhelun tyyppejä...</option>
+                  ) : callTypes.length === 0 ? (
+                    <option>Ei puhelun tyyppejä saatavilla</option>
+                  ) : (
+                    callTypes.map((type, idx) => (
+                      <option key={type.value || type.id || idx} value={type.value}>{type.label}</option>
+                    ))
+                  )}
                 </select>
                 <Button
                   variant="secondary"
@@ -3374,7 +3413,7 @@ export default function CallPanel() {
         )}
         
         {activeTab === 'mika' && (
-          <MikaSpecialTab
+          <CRM
             user={user}
             callTypes={callTypes}
             selectedVoice={selectedVoice}
@@ -3715,13 +3754,15 @@ export default function CallPanel() {
                   </svg>
                   Massapuhelut
                 </h2>
-                <Button
+                <button
                   onClick={resetMassCallModal}
-                  variant="secondary"
                   className="modal-close-btn"
+                  type="button"
+                  aria-label="Sulje"
+                  title="Sulje"
                 >
-                  Sulje
-                </Button>
+                  ×
+                </button>
               </div>
               
               <div className="modal-body">
@@ -3790,10 +3831,24 @@ export default function CallPanel() {
                         Vaihe 2: Puhelun asetukset
                       </h3>
                       <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 16 }}>
-                        Valitse puhelun tyyppi ja ääni.
+                        Valitse kampanja, (valinnainen) segmentti, puhelun tyyppi ja ääni.
                       </p>
 
                       <div style={{ display: 'grid', gap: 16, marginTop: 8 }}>
+                        <div>
+                          <label className="label">Kampanja *</label>
+                          <select value={massCallCampaignId} onChange={e => setMassCallCampaignId(e.target.value)} className="select">
+                            <option value="">Valitse kampanja</option>
+                            {massCallCampaigns.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="label">Segmentti (valinnainen)</label>
+                          <select value={massCallSegmentId} onChange={e => setMassCallSegmentId(e.target.value)} className="select">
+                            <option value="">Ei segmenttiä</option>
+                            {massCallSegments.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                          </select>
+                        </div>
                         <div>
                           <label className="label">Puhelun tyyppi</label>
                           <select 

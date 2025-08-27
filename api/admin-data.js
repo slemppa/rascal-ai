@@ -70,7 +70,8 @@ export default async function handler(req, res) {
             vapi_assistant_id,
             vector_store_id,
             voice_id,
-            assistant_id
+            assistant_id,
+            crm_connected
           `)
           .order('created_at', { ascending: false })
 

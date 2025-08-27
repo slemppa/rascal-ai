@@ -1,32 +1,35 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error('Missing Supabase environment variables')
-}
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
 
 export default async function handler(req, res) {
-  // Vain GET-metodit sallittu
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Vain GET-metodit sallittu' })
   }
 
   try {
-    const { user_id } = req.query
-
-    if (!user_id) {
-      return res.status(400).json({ error: 'user_id on pakollinen' })
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return res.status(500).json({ error: 'Supabase config missing' })
     }
 
-    // Hae call_types käyttäjän user_id:n perusteella
-    const { data: callTypes, error } = await supabase
+    const authHeader = req.headers.authorization || req.headers.Authorization
+    if (!authHeader?.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Authorization token required' })
+    }
+    const token = authHeader.slice(7)
+    const userClient = createClient(supabaseUrl, supabaseAnonKey, { global: { headers: { Authorization: `Bearer ${token}` } } })
+
+    const { data: authResult, error: authError } = await userClient.auth.getUser(token)
+    if (authError || !authResult?.user) {
+      return res.status(401).json({ error: 'Invalid token' })
+    }
+    const authUserId = authResult.user.id
+
+    const { data: callTypes, error } = await userClient
       .from('call_types')
       .select('*')
-      .eq('user_id', user_id)
+      .eq('user_id', authUserId)
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -34,8 +37,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Virhe call_types haussa' })
     }
 
-    // Muunna data Airtable-tyyliseen muotoon frontendin yhteensopivuuden vuoksi
-    const records = callTypes.map(callType => ({
+    const records = (callTypes || []).map(callType => ({
       id: callType.id,
       fields: {
         Name: callType.name,
@@ -60,4 +62,4 @@ export default async function handler(req, res) {
     console.error('Error in call-types endpoint:', error)
     res.status(500).json({ error: 'Sisäinen palvelinvirhe' })
   }
-} 
+}

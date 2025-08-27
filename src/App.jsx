@@ -36,6 +36,12 @@ import CustomersPage from './pages/CustomersPage'
 import AdminBlogPage from './pages/AdminBlogPage'
 import AdminTestimonialsPage from './pages/AdminTestimonialsPage'
 // MixpostAnalyticsDashboard poistettu
+import CampaignsPage from './pages/CampaignsPage'
+import SegmentsPage from './pages/SegmentsPage'
+import CampaignCreatePage from './pages/CampaignCreatePage'
+import CampaignDetailPage from './pages/CampaignDetailPage'
+import SegmentCreatePage from './pages/SegmentCreatePage'
+import SegmentDetailPage from './pages/SegmentDetailPage'
 
 // Komponentti joka näyttää ChatbotWidget:n vain julkkisilla sivuilla
 function ConditionalChatbotWidget() {
@@ -114,6 +120,60 @@ export default function App() {
             <MobileNavigation />
             <div className="main-content">
               <ProtectedRoute><DashboardPage /></ProtectedRoute>
+            </div>
+          </div>
+        } />
+        <Route path="/campaigns" element={
+          <div className="app-layout">
+            <Sidebar />
+            <MobileNavigation />
+            <div className="main-content">
+              <ProtectedRoute><CampaignsPage /></ProtectedRoute>
+            </div>
+          </div>
+        } />
+        <Route path="/segments" element={
+          <div className="app-layout">
+            <Sidebar />
+            <MobileNavigation />
+            <div className="main-content">
+              <ProtectedRoute><SegmentsPage /></ProtectedRoute>
+            </div>
+          </div>
+        } />
+        <Route path="/campaigns/create" element={
+          <div className="app-layout">
+            <Sidebar />
+            <MobileNavigation />
+            <div className="main-content">
+              <ProtectedRoute><CampaignCreatePage /></ProtectedRoute>
+            </div>
+          </div>
+        } />
+        <Route path="/campaigns/:id" element={
+          <div className="app-layout">
+            <Sidebar />
+            <MobileNavigation />
+            <div className="main-content">
+              <ProtectedRoute><CampaignDetailPage /></ProtectedRoute>
+            </div>
+          </div>
+        } />
+        <Route path="/segments/create" element={
+          <div className="app-layout">
+            <Sidebar />
+            <MobileNavigation />
+            <div className="main-content">
+              <ProtectedRoute><SegmentCreatePage /></ProtectedRoute>
+            </div>
+          </div>
+        } />
+        <Route path="/segments/:id" element={
+          <div className="app-layout">
+            <Sidebar />
+            <MobileNavigation />
+            <div className="main-content">
+              <ProtectedRoute><SegmentDetailPage /></ProtectedRoute>
             </div>
           </div>
         } />

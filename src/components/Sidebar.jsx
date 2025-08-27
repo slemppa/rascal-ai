@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import styles from './Sidebar.module.css'
 import { useAuth } from '../contexts/AuthContext'
+import { useFeatures } from '../hooks/useFeatures'
 
 const menuItems = [
   { 
@@ -51,6 +52,28 @@ const menuItems = [
     )
   },
   { 
+    label: 'Kampanjat', 
+    path: '/campaigns', 
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 3h18v4H3V3zM3 10h18v11H3V10z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M7 14h6M7 18h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    )
+  },
+  { 
+    label: 'Segmentit', 
+    path: '/segments', 
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3v18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M3 12h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="7" cy="7" r="2" stroke="currentColor" strokeWidth="2"/>
+        <circle cx="17" cy="17" r="2" stroke="currentColor" strokeWidth="2"/>
+      </svg>
+    )
+  },
+  { 
     label: 'Puhelut', 
     path: '/calls', 
     icon: (
@@ -69,7 +92,7 @@ const menuItems = [
     )
   },
   { 
-    label: 'Dev', 
+    label: 'Kehitys', 
     path: '/dev', 
     adminOnly: true,
     icon: (
@@ -80,7 +103,7 @@ const menuItems = [
     )
   },
   { 
-    label: 'Admin', 
+    label: 'Ylläpito', 
     path: '/admin', 
     adminOnly: true, 
     icon: (
@@ -91,7 +114,7 @@ const menuItems = [
     )
   },
   { 
-    label: 'Hallinta', 
+    label: 'Admin', 
     path: '/admin-blog', 
     moderatorOnly: true, 
     icon: (
@@ -114,6 +137,27 @@ export default function Sidebar() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [isModerator, setIsModerator] = useState(false)
   const { user, signOut } = useAuth()
+  const { has: hasFeature } = useFeatures()
+  const [openSections, setOpenSections] = useState({
+    markkinointi: true,
+    myynti: true,
+    tyokalut: true,
+    jarjestelma: true
+  })
+
+  const toggleSection = (key) => {
+    setOpenSections(prev => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  // Apufunktiot näkyvyyden arviointiin
+  const isItemVisible = (item) => {
+    const adminOnly = item.adminOnly && !isAdmin
+    const moderatorOnly = item.moderatorOnly && !isModerator
+    return !(adminOnly || moderatorOnly)
+  }
+
+  const toolItems = menuItems.filter(i => ['/dev','/admin','/admin-blog','/admin-testimonials'].includes(i.path))
+  const canShowTools = toolItems.some(isItemVisible)
 
   // Tarkista admin- ja moderator-oikeudet
   useEffect(() => {
@@ -160,20 +204,16 @@ export default function Sidebar() {
         </div>
         <span className={styles['profile-name']}>{user?.email || 'user@example.com'}</span>
       </div>
+      {/* Dashboard */}
       <ul className={styles['nav-menu']}>
-        {menuItems.map(item => {
+        {menuItems.filter(i => i.path === '/dashboard').map(item => {
           const adminOnly = item.adminOnly && !isAdmin
           const moderatorOnly = item.moderatorOnly && !isModerator
-          
-          // Piilota admin-välilehti jos ei ole admin-oikeuksia
           if (adminOnly || moderatorOnly) return null
-          
           return (
             <li className={styles['nav-item']} key={item.path}>
               <button
-                className={
-                  `${styles['nav-link']} ${location.pathname.startsWith(item.path) ? styles['active'] : ''}`
-                }
+                className={`${styles['nav-link']} ${location.pathname.startsWith(item.path) ? styles['active'] : ''}`}
                 onClick={() => navigate(item.path)}
               >
                 <span className={styles['nav-icon']}>{item.icon}</span>
@@ -183,6 +223,88 @@ export default function Sidebar() {
           )
         })}
       </ul>
+
+      {/* Markkinointi */}
+      <button className={styles['section-header']} onClick={() => toggleSection('markkinointi')} type="button">
+        <span>Markkinointi</span>
+        <span className={`${styles['chevron']} ${openSections.markkinointi ? styles['open'] : ''}`}>▾</span>
+      </button>
+      {openSections.markkinointi && (<ul className={styles['nav-menu']}>
+        {menuItems.filter(i => ['/posts','/blog-newsletter','/strategy'].includes(i.path)).map(item => {
+          const adminOnly = item.adminOnly && !isAdmin
+          const moderatorOnly = item.moderatorOnly && !isModerator
+          if (adminOnly || moderatorOnly) return null
+          // Feature-gating: Markkinointi
+          if (item.path === '/posts' && !hasFeature('Social Media')) return null
+          if (item.path === '/blog-newsletter' && !hasFeature('Email marketing integration')) return null
+          if (item.path === '/strategy' && !hasFeature('Marketing assistant')) return null
+          return (
+            <li className={styles['nav-item']} key={item.path}>
+              <button
+                className={`${styles['nav-link']} ${location.pathname.startsWith(item.path) ? styles['active'] : ''}`}
+                onClick={() => navigate(item.path)}
+              >
+                <span className={styles['nav-icon']}>{item.icon}</span>
+                {item.label}
+              </button>
+            </li>
+          )
+        })}
+      </ul>)}
+
+      {/* Myynti */}
+      <button className={styles['section-header']} onClick={() => toggleSection('myynti')} type="button">
+        <span>Myynti</span>
+        <span className={`${styles['chevron']} ${openSections.myynti ? styles['open'] : ''}`}>▾</span>
+      </button>
+      {openSections.myynti && (<ul className={styles['nav-menu']}>
+        {menuItems.filter(i => ['/campaigns','/segments','/calls','/ai-chat'].includes(i.path)).map(item => {
+          const adminOnly = item.adminOnly && !isAdmin
+          const moderatorOnly = item.moderatorOnly && !isModerator
+          if (adminOnly || moderatorOnly) return null
+          // Feature-gating: Myynti
+          if (item.path === '/campaigns' && !hasFeature('Campaigns')) return null
+          if (item.path === '/segments' && !hasFeature('Segments')) return null
+          if (item.path === '/calls' && !hasFeature('Phone Calls')) return null
+          if (item.path === '/ai-chat' && !hasFeature('Marketing assistant')) return null
+          return (
+            <li className={styles['nav-item']} key={item.path}>
+              <button
+                className={`${styles['nav-link']} ${location.pathname.startsWith(item.path) ? styles['active'] : ''}`}
+                onClick={() => navigate(item.path)}
+              >
+                <span className={styles['nav-icon']}>{item.icon}</span>
+                {item.label}
+              </button>
+            </li>
+          )
+        })}
+      </ul>)}
+
+      {/* Työkalut */}
+      {canShowTools && (
+        <>
+          <button className={styles['section-header']} onClick={() => toggleSection('tyokalut')} type="button">
+            <span>Työkalut</span>
+            <span className={`${styles['chevron']} ${openSections.tyokalut ? styles['open'] : ''}`}>▾</span>
+          </button>
+          {openSections.tyokalut && (
+            <ul className={styles['nav-menu']}>
+              {toolItems.filter(isItemVisible).map(item => (
+                <li className={styles['nav-item']} key={item.path}>
+                  <button
+                    className={`${styles['nav-link']} ${location.pathname.startsWith(item.path) ? styles['active'] : ''}`}
+                    onClick={() => navigate(item.path)}
+                  >
+                    <span className={styles['nav-icon']}>{item.icon}</span>
+                    {item.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
       <div className={styles['settings-section']}>
         <button className={styles['nav-link']} onClick={() => navigate('/settings')}>
           <span className={styles['nav-icon']}>
@@ -201,7 +323,7 @@ export default function Sidebar() {
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </span>
-          Help Center
+          Ohjekeskus
         </button>
         <button 
           onClick={handleLogout} 

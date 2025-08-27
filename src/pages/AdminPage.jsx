@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import pkg from '../../package.json'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
@@ -25,6 +25,27 @@ export default function AdminPage() {
   const [modalChanges, setModalChanges] = useState({})
   const [isSaving, setIsSaving] = useState(false)
   const [showUserIds, setShowUserIds] = useState(false)
+  const [featureAddSelection, setFeatureAddSelection] = useState({})
+  const [featuresOpen, setFeaturesOpen] = useState({})
+
+  const ALL_FEATURES = [
+    'Campaigns',
+    'Segments',
+    'CRM',
+    'Phone Calls',
+    'Social Media',
+    'Marketing assistant',
+    'Email marketing integration'
+  ]
+
+  const KNOWN_FEATURES = useMemo(() => {
+    const set = new Set(ALL_FEATURES)
+    for (const u of users || []) {
+      const arr = Array.isArray(u.features) ? u.features : []
+      for (const f of arr) set.add(f)
+    }
+    return Array.from(set).sort()
+  }, [users])
 
   useEffect(() => {
     checkAdminStatus()
@@ -506,6 +527,7 @@ export default function AdminPage() {
                          <th>Rooli</th>
                          <th>Yritys</th>
                          <th>CRM yhdistetty</th>
+                         <th>Featuret</th>
                          <th>Rekisteröitynyt</th>
                          <th>Toiminnot</th>
                        </tr>
@@ -543,6 +565,39 @@ export default function AdminPage() {
                                </span>
                              </div>
                            </td>
+                           <td>
+                            <div style={{ position: 'relative', marginTop: 8 }}>
+                              <button
+                                className="admin-btn admin-btn-secondary"
+                                onClick={() => setFeaturesOpen(prev => ({ ...prev, [user.id]: !prev[user.id] }))}
+                              >Näytä</button>
+                              <div className="feature-popover" style={{ display: featuresOpen[user.id] ? 'block' : 'none', position: 'absolute', top: 36, left: 0, background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', zIndex: 10, minWidth: 260 }}>
+                                <div style={{ display: 'grid', gap: 10, maxHeight: 260, overflow: 'auto', paddingRight: 4 }}>
+                                  {KNOWN_FEATURES.map(f => {
+                                    const enabled = (Array.isArray(user.features) ? user.features : []).includes(f)
+                                    return (
+                                      <div key={f} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span style={{ fontSize: 13, color: '#374151' }}>{f}</span>
+                                        <label className="switch">
+                                          <input
+                                            type="checkbox"
+                                            checked={enabled}
+                                            onChange={(e) => {
+                                              const current = Array.isArray(user.features) ? user.features : []
+                                              const next = e.target.checked ? Array.from(new Set([...current, f])) : current.filter(x => x !== f)
+                                              updateUserField(user.id, 'features', next)
+                                            }}
+                                            aria-label={f}
+                                          />
+                                          <span className="slider" />
+                                        </label>
+                                      </div>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
                            <td>{new Date(user.created_at).toLocaleDateString('fi-FI')}</td>
                            <td>
                              <div className="action-buttons">

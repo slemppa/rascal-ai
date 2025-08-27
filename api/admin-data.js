@@ -71,7 +71,8 @@ export default async function handler(req, res) {
             vector_store_id,
             voice_id,
             assistant_id,
-            crm_connected
+            crm_connected,
+            features
           `)
           .order('created_at', { ascending: false })
 

@@ -106,11 +106,15 @@ const transformSupabaseData = (supabaseData) => {
       publishedAt: item.publish_date && publishDate <= now ? new Date(item.publish_date).toISOString().split('T')[0] : null,
       publishDate: item.publish_date ? new Date(item.publish_date).toISOString().slice(0, 16) : null,
       mediaUrls: item.media_urls || [],
+      media_urls: item.media_urls || [], // Lisätään myös media_urls kenttä
       hashtags: item.hashtags || [],
       voiceover: item.voiceover || '',
       voiceoverReady: item.voiceover_ready || false,
       segments: item.segments || [], // Lisätään segments data!
-      originalData: item, // Säilytetään alkuperäinen data
+      originalData: {
+        ...item,
+        media_urls: item.media_urls || [] // Varmistetaan että media_urls on originalData:ssa
+      },
       source: 'supabase'
     }
   })
@@ -428,6 +432,8 @@ export default function ManagePostsPage() {
         }
       }
       
+
+      
       // Yhdistetään content ja segments data
       const contentWithSegments = data.map(contentItem => {
         if (contentItem.type === 'Carousel') {
@@ -678,10 +684,14 @@ export default function ManagePostsPage() {
       }
     }
     
-    // Varmistetaan että originalData on mukana
+    // Varmistetaan että originalData on mukana ja media_urls löytyy
     const postWithOriginalData = {
       ...post,
-      originalData: post.originalData || post // Fallback jos originalData puuttuu
+      media_urls: post.media_urls || post.mediaUrls || post.originalData?.media_urls || [],
+      originalData: {
+        ...post,
+        media_urls: post.media_urls || post.mediaUrls || post.originalData?.media_urls || []
+      }
     }
     
     setEditingPost(postWithOriginalData)
@@ -1085,6 +1095,165 @@ export default function ManagePostsPage() {
       alert('Siirtyminen epäonnistui: ' + error.message)
     }
   }
+
+  // Kuvien hallinta content-media bucket:iin
+  const handleDeleteImage = async (imageUrl, contentId) => {
+    try {
+      // Haetaan käyttäjän user_id users taulusta
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (userError || !userData?.id) {
+        throw new Error('User ID not found')
+      }
+
+      const response = await fetch('/api/content-media-management', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        },
+        body: JSON.stringify({
+          contentId,
+          imageUrl
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Image deletion failed')
+      }
+
+      const result = await response.json()
+      
+      // Update editingPost if modal is open
+      if (editingPost && editingPost.id === contentId) {
+        const currentMediaUrls = editingPost.originalData?.media_urls || editingPost.media_urls || editingPost.mediaUrls || [];
+        const newMediaUrls = currentMediaUrls.filter(url => url !== imageUrl);
+        
+        setEditingPost(prev => ({
+          ...prev,
+          originalData: {
+            ...prev.originalData,
+            media_urls: newMediaUrls
+          },
+          media_urls: newMediaUrls,
+          mediaUrls: newMediaUrls,
+          // Päivitä myös thumbnail jos se oli sama kuin poistettu kuva
+          thumbnail: prev.thumbnail === imageUrl ? (newMediaUrls[0] || null) : prev.thumbnail
+        }));
+      }
+      
+      // Päivitä myös posts lista
+      setPosts(prevPosts => 
+        prevPosts.map(post => 
+          post.id === contentId 
+            ? { ...post, media_urls: result.mediaUrls }
+            : post
+        )
+      );
+      
+      alert('Image deleted successfully!')
+      
+    } catch (error) {
+      console.error('Error deleting image:', error)
+      alert('Image deletion failed: ' + error.message)
+    }
+  }
+
+  const handleAddImage = async (file, contentId) => {
+    try {
+      // Haetaan käyttäjän user_id users taulusta
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (userError || !userData?.id) {
+        throw new Error('User ID not found')
+      }
+
+      const formData = new FormData()
+      formData.append('image', file)
+      formData.append('contentId', contentId)
+      formData.append('userId', userData.id)
+
+      const response = await fetch('/api/content-media-management', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        },
+        body: formData
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Image addition failed')
+      }
+
+      const result = await response.json()
+      
+      // Update editingPost if modal is open
+      if (editingPost && editingPost.id === contentId) {
+        const currentMediaUrls = editingPost.originalData?.media_urls || editingPost.media_urls || editingPost.mediaUrls || [];
+        const newMediaUrls = [...currentMediaUrls, result.publicUrl];
+        
+        setEditingPost(prev => ({
+          ...prev,
+          originalData: {
+            ...prev.originalData,
+            media_urls: newMediaUrls
+          },
+          media_urls: newMediaUrls,
+          mediaUrls: newMediaUrls
+        }));
+      }
+      
+      // Päivitä myös posts lista
+      setPosts(prevPosts => 
+        prevPosts.map(post => 
+          post.id === contentId 
+            ? { ...post, media_urls: newMediaUrls }
+            : post
+        )
+      );
+      
+      alert('Image added successfully!')
+      
+    } catch (error) {
+      console.error('Error adding image:', error)
+      alert('Image addition failed: ' + error.message)
+    }
+  }
+
+  // Drag & drop handlers
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.currentTarget.classList.add('drag-over');
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+  };
+
+  const handleDrop = (e, contentId) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+    
+    const files = Array.from(e.dataTransfer.files);
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    
+    if (imageFiles.length > 0) {
+      imageFiles.forEach(file => {
+        handleAddImage(file, contentId);
+      });
+    }
+  };
 
   // ESC-näppäimellä sulkeutuminen
   useEffect(() => {
@@ -1571,6 +1740,96 @@ export default function ManagePostsPage() {
                         </div>
                       );
                     }
+                    
+                                         // Photo/Reels/LinkedIn: Show images and management
+                     if (['Photo', 'Reels', 'LinkedIn'].includes(editingPost.type)) {
+                       // Get media URLs from the correct source - use thumbnail if media_urls is empty
+                       let mediaUrls = editingPost.originalData?.media_urls || 
+                                      editingPost.originalData?.mediaUrls ||
+                                      editingPost.media_urls || 
+                                      editingPost.mediaUrls || 
+                                      [];
+                       
+                       // If mediaUrls is empty but thumbnail exists, use thumbnail
+                       if (mediaUrls.length === 0 && editingPost.thumbnail) {
+                         mediaUrls = [editingPost.thumbnail];
+                       }
+                       
+                       if (mediaUrls.length === 0) {
+                         return (
+                           <div className="content-media-management">
+                             <div 
+                               className="drag-drop-zone"
+                               onDragOver={handleDragOver}
+                               onDragLeave={handleDragLeave}
+                               onDrop={(e) => handleDrop(e, editingPost.id)}
+                             >
+                               <div className="drag-drop-content">
+                                 <div className="drag-drop-icon">📁</div>
+                                 <h3>No images yet</h3>
+                                 <p>Drag & drop images here or click to browse</p>
+                                 <input
+                                   type="file"
+                                   accept="image/*"
+                                   multiple
+                                   onChange={(e) => {
+                                     if (e.target.files?.length > 0) {
+                                       Array.from(e.target.files).forEach(file => {
+                                         handleAddImage(file, editingPost.id);
+                                       });
+                                     }
+                                   }}
+                                   className="file-input-hidden"
+                                   id="image-upload"
+                                 />
+                                 <label htmlFor="image-upload" className="upload-button">
+                                   Browse Files
+                                 </label>
+                               </div>
+                             </div>
+                           </div>
+                         );
+                       }
+                       
+                       return (
+                         <div className="content-media-management">
+                           <div className="media-gallery">
+                             {mediaUrls.map((imageUrl, index) => (
+                               <div key={index} className="media-item">
+                                 <img 
+                                   src={imageUrl} 
+                                   alt={`Image ${index + 1}`}
+                                   className="media-image"
+                                   onError={(e) => {
+                                     if (e.target && e.target.style) {
+                                       e.target.style.display = 'none';
+                                     }
+                                     if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
+                                       e.target.nextSibling.style.display = 'flex';
+                                     }
+                                   }}
+                                 />
+                                 <div className="media-fallback" style={{ display: 'none' }}>
+                                   <div className="placeholder-icon">Image</div>
+                                   <div className="placeholder-text">Image not available</div>
+                                 </div>
+                                                                    <button
+                                     type="button"
+                                     className="delete-image-btn"
+                                     onClick={() => handleDeleteImage(imageUrl, editingPost.id)}
+                                     title="Delete image"
+                                   >
+                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                       <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14Z"/>
+                                       <path d="M10 11v6M14 11v6"/>
+                                     </svg>
+                                   </button>
+                               </div>
+                             ))}
+                           </div>
+                         </div>
+                       );
+                     }
                     
                     // Video: Toisto
                     if (editingPost.thumbnail && (editingPost.thumbnail.includes('.mp4') || editingPost.thumbnail.includes('.webm') || editingPost.thumbnail.includes('.mov') || editingPost.thumbnail.includes('.avi'))) {

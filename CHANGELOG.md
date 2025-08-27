@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.48.0](https://github.com/slemppa/rascal-ai/compare/v1.47.0...v1.48.0) (2025-08-27)
+
+
+### ✨ Features
+
+* dashboard scatter+heatmap; success=answered; CRM gating ([085daed](https://github.com/slemppa/rascal-ai/commit/085daed0941fd1836388b1b9e893bfe65eb07b87))
+
 ## [1.47.0](https://github.com/slemppa/rascal-ai/compare/v1.46.1...v1.47.0) (2025-08-26)
 
 

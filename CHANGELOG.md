@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.49.0](https://github.com/slemppa/rascal-ai/compare/v1.48.0...v1.49.0) (2025-08-27)
+
+
+### ✨ Features
+
+* implement image management for posts with drag & drop UI ([456829d](https://github.com/slemppa/rascal-ai/commit/456829d398d4d4856cf77a1ee8fc8909d498faba))
+
 ## [1.48.0](https://github.com/slemppa/rascal-ai/compare/v1.47.0...v1.48.0) (2025-08-27)
 
 

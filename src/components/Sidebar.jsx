@@ -94,7 +94,8 @@ const menuItems = [
   { 
     label: 'Kehitys', 
     path: '/dev', 
-    adminOnly: true,
+    moderatorOnly: true,
+    feature: 'Dev',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M16 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -290,17 +291,21 @@ export default function Sidebar() {
           </button>
           {openSections.tyokalut && (
             <ul className={styles['nav-menu']}>
-              {toolItems.filter(isItemVisible).map(item => (
-                <li className={styles['nav-item']} key={item.path}>
-                  <button
-                    className={`${styles['nav-link']} ${location.pathname.startsWith(item.path) ? styles['active'] : ''}`}
-                    onClick={() => navigate(item.path)}
-                  >
-                    <span className={styles['nav-icon']}>{item.icon}</span>
-                    {item.label}
-                  </button>
-                </li>
-              ))}
+              {toolItems.filter(isItemVisible).map(item => {
+                // Feature-gating Työkalut -osioon
+                if (item.path === '/dev' && !hasFeature('Dev')) return null
+                return (
+                  <li className={styles['nav-item']} key={item.path}>
+                    <button
+                      className={`${styles['nav-link']} ${location.pathname.startsWith(item.path) ? styles['active'] : ''}`}
+                      onClick={() => navigate(item.path)}
+                    >
+                      <span className={styles['nav-icon']}>{item.icon}</span>
+                      {item.label}
+                    </button>
+                  </li>
+                )
+              })}
             </ul>
           )}
         </>

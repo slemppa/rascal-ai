@@ -27,6 +27,8 @@ export default function AdminPage() {
   const [showUserIds, setShowUserIds] = useState(false)
   const [featureAddSelection, setFeatureAddSelection] = useState({})
   const [featuresOpen, setFeaturesOpen] = useState({})
+  const [featuresPlacement, setFeaturesPlacement] = useState({}) // 'up' | 'down'
+  const [featuresMaxHeight, setFeaturesMaxHeight] = useState({})
 
   const ALL_FEATURES = [
     'Campaigns',
@@ -35,7 +37,8 @@ export default function AdminPage() {
     'Phone Calls',
     'Social Media',
     'Marketing assistant',
-    'Email marketing integration'
+    'Email marketing integration',
+    'Dev'
   ]
 
   const KNOWN_FEATURES = useMemo(() => {
@@ -569,10 +572,21 @@ export default function AdminPage() {
                             <div style={{ position: 'relative', marginTop: 8 }}>
                               <button
                                 className="admin-btn admin-btn-secondary"
-                                onClick={() => setFeaturesOpen(prev => ({ ...prev, [user.id]: !prev[user.id] }))}
+                                onClick={(e) => {
+                                  const rect = e.currentTarget.getBoundingClientRect()
+                                  const verticalPadding = 24 // popover padding yhteensä
+                                  const desiredHeight = 260 + verticalPadding
+                                  const spaceBelow = window.innerHeight - rect.bottom
+                                  const spaceAbove = rect.top
+                                  const placeUp = spaceBelow < desiredHeight && spaceAbove > spaceBelow
+                                  setFeaturesPlacement(prev => ({ ...prev, [user.id]: placeUp ? 'up' : 'down' }))
+                                  const maxH = placeUp ? Math.max(160, Math.min(260, spaceAbove - 24)) : Math.max(160, Math.min(260, spaceBelow - 24))
+                                  setFeaturesMaxHeight(prev => ({ ...prev, [user.id]: maxH }))
+                                  setFeaturesOpen(prev => ({ ...prev, [user.id]: !prev[user.id] }))
+                                }}
                               >Näytä</button>
-                              <div className="feature-popover" style={{ display: featuresOpen[user.id] ? 'block' : 'none', position: 'absolute', top: 36, left: 0, background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', zIndex: 10, minWidth: 260 }}>
-                                <div style={{ display: 'grid', gap: 10, maxHeight: 260, overflow: 'auto', paddingRight: 4 }}>
+                              <div className="feature-popover" style={{ display: featuresOpen[user.id] ? 'block' : 'none', position: 'absolute', [featuresPlacement[user.id] === 'up' ? 'bottom' : 'top']: 36, left: 0, background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 12, boxShadow: '0 12px 30px rgba(0,0,0,0.12)', zIndex: 1000, minWidth: 260 }}>
+                                <div style={{ display: 'grid', gap: 10, maxHeight: featuresMaxHeight[user.id] || 260, overflow: 'auto', paddingRight: 4 }}>
                                   {KNOWN_FEATURES.map(f => {
                                     const enabled = (Array.isArray(user.features) ? user.features : []).includes(f)
                                     return (

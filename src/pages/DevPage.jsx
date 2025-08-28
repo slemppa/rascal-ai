@@ -25,7 +25,9 @@ export default function DevPage() {
         if (error) {
           setIsAdmin(false)
         } else {
-          setIsAdmin(userData?.role === 'admin' || userData?.company_id === 1)
+          const isAdminUser = userData?.role === 'admin' || userData?.company_id === 1
+          const isModeratorUser = userData?.role === 'moderator' || isAdminUser
+          setIsAdmin(isModeratorUser)
         }
       } catch (_err) {
         setIsAdmin(false)
@@ -46,7 +48,7 @@ export default function DevPage() {
       <div className="admin-container">
         <div className="admin-access-denied">
           <h2>Pääsy estetty</h2>
-          <p>Dev-sivu on näkyvissä vain ylläpidolle.</p>
+          <p>Dev-sivu on näkyvissä ylläpidolle ja moderaattoreille.</p>
         </div>
       </div>
     )

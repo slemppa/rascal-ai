@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useFeatures } from '../hooks/useFeatures'
 import './MobileNavigation.css'
 
 const menuItems = [
@@ -25,8 +26,9 @@ export default function MobileNavigation() {
   const location = useLocation()
   const [isOpen, setIsOpen] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [isModerator, setIsModerator] = useState(false)
   const { user, signOut } = useAuth()
-  const features = user?.features || []
+  const { has: hasFeature } = useFeatures()
 
   // Tarkista admin-oikeudet
   useEffect(() => {
@@ -41,7 +43,10 @@ export default function MobileNavigation() {
           .single()
 
         if (!error && userData) {
-          setIsAdmin(userData.role === 'admin' || userData.company_id === 1)
+          const admin = userData.role === 'admin' || userData.company_id === 1
+          const moderator = userData.role === 'moderator' || admin
+          setIsAdmin(admin)
+          setIsModerator(moderator)
         }
       } catch (error) {
         console.error('Error checking admin status:', error)
@@ -121,19 +126,20 @@ export default function MobileNavigation() {
             {/* Navigaatiovalikko */}
             <nav className="mobile-nav-list">
               {menuItems.map(item => {
-                const disabled = item.feature && !features.includes(item.feature)
-                const adminOnly = item.adminOnly && !isAdmin
-                
+                const adminOnly = item.adminOnly && !(isAdmin || isModerator)
                 if (adminOnly) return null
-                
+
+                // Feature-gating mobiilissa
+                if (item.feature && !hasFeature(item.feature)) return null
+                if (item.path === '/dev' && !hasFeature('Dev')) return null
+
+                const active = location.pathname.startsWith(item.path)
+
                 return (
                   <button
                     key={item.path}
-                    className={`mobile-nav-item ${
-                      location.pathname.startsWith(item.path) ? 'active' : ''
-                    } ${disabled ? 'disabled' : ''}`}
-                    onClick={() => !disabled && handleNavigation(item.path)}
-                    disabled={disabled}
+                    className={`mobile-nav-item ${active ? 'active' : ''}`}
+                    onClick={() => handleNavigation(item.path)}
                   >
                     {item.label}
                   </button>

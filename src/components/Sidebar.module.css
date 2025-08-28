@@ -1,7 +1,7 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh; /* Kiinteä korkeus, ettei valu yli */
   position: fixed;
   left: 0;
   top: 0;
@@ -11,7 +11,7 @@
   z-index: 20;
   border-right: 1px solid #6b462e;
   box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  overflow-y: auto;
+  overflow-y: auto; /* Sisäinen scroll sivupalkille */
   overflow-x: hidden;
 }
 

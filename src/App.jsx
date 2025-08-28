@@ -237,7 +237,7 @@ export default function App() {
             <Sidebar />
             <MobileNavigation />
             <div className="main-content">
-              <ProtectedRoute requiredRole="admin"><DevPage /></ProtectedRoute>
+              <ProtectedRoute requiredRole="moderator" requiredFeatures={["Dev"]}><DevPage /></ProtectedRoute>
             </div>
           </div>
         } />

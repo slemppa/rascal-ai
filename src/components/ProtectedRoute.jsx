@@ -2,6 +2,7 @@ import React from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import { useFeatures } from '../hooks/useFeatures'
 import './ProtectedRoute.css'
 
 const featureMap = {
@@ -15,8 +16,9 @@ const ProtectedRoute = ({ children, requiredFeatures = [], requiredRole = null }
   const auth = useAuth()
   const { user, loading } = auth
   const navigate = useNavigate()
+  const { has: hasFeature, loading: featuresLoading } = useFeatures()
 
-  if (loading) {
+  if (loading || featuresLoading) {
     return <div className="protected-route-loading">Ladataan...</div>
   }
 
@@ -65,11 +67,7 @@ const ProtectedRoute = ({ children, requiredFeatures = [], requiredRole = null }
 
   // Tarkista features
   if (requiredFeatures.length > 0) {
-    const userFeatures = user.features || []
-    const hasRequiredFeatures = requiredFeatures.every(feature => 
-      userFeatures.includes(feature)
-    )
-
+    const hasRequiredFeatures = requiredFeatures.every(feature => hasFeature(feature))
     if (!hasRequiredFeatures) {
       return <div className="protected-route-error">Sinulla ei ole tarvittavia oikeuksia tälle sivulle.</div>
     }

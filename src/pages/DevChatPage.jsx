@@ -13,6 +13,8 @@ export default function DevChatPage() {
   }
   const savePendingQueue = (q) => { try { localStorage.setItem(PENDING_KEY, JSON.stringify(q)) } catch {} }
   const pendingQueueRef = useRef(loadPendingQueue())
+  const inFlightIdsRef = useRef(new Set())
+  const isSendingRef = useRef(false)
   const enqueuePending = (item) => { pendingQueueRef.current = [...pendingQueueRef.current, item]; savePendingQueue(pendingQueueRef.current) }
   const dequeuePending = (id) => { pendingQueueRef.current = pendingQueueRef.current.filter(i => i.id !== id); savePendingQueue(pendingQueueRef.current) }
   const [messages, setMessages] = useState(() => {
@@ -141,6 +143,8 @@ export default function DevChatPage() {
   const handleSendMessage = async (e) => {
     e.preventDefault()
     if (!input.trim() || loading || loadingUserData) return
+    if (isSendingRef.current) return
+    isSendingRef.current = true
 
     if (!assistantId) {
       const errorMessage = { role: 'assistant', content: 'Assistentin ID puuttuu. Ota yhteyttä ylläpitoon.' }
@@ -154,14 +158,38 @@ export default function DevChatPage() {
     setLoading(true)
 
     try {
-      const payload = { message: input, threadId, companyId, assistantId }
-      const pendingId = `msg_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
-      enqueuePending({ id: pendingId, payload })
+      const clientMessageId = `msg_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
+      if (inFlightIdsRef.current.has(clientMessageId)) return
+      inFlightIdsRef.current.add(clientMessageId)
+      const payload = { message: input, threadId, companyId, assistantId, mode: 'dev', clientMessageId }
       const response = await axios.post('/api/chat', payload)
-      const data = Array.isArray(response.data) ? response.data[0] : response.data
-      const assistantMessage = { role: 'assistant', content: data.output || data.response }
-      setMessages(prev => [...prev, assistantMessage])
-      dequeuePending(pendingId)
+      const raw = response.data
+      const items = Array.isArray(raw) ? raw : [raw]
+
+      // Suodata: jos mukana on onnistuneita itemeitä (output/response), näytä vain ne.
+      // Jos ei yhtään onnistunutta, näytä virhe selkokielisesti. Ohita duplikaatti-indikaattorit.
+      const successMessages = []
+      let firstErrorText = null
+      for (const it of items) {
+        if (it && it.duplicated) continue
+        const okText = it?.output || it?.response
+        if (okText) {
+          successMessages.push({ role: 'assistant', content: okText })
+          continue
+        }
+        if (it && it.error) {
+          const details = typeof it.details === 'string' ? it.details : (it.details ? JSON.stringify(it.details) : '')
+          const status = it.status ? ` (${it.status})` : ''
+          firstErrorText = `Virhe: ${it.error}${status}${details ? `\n${details}` : ''}`
+        }
+      }
+
+      if (successMessages.length > 0) {
+        setMessages(prev => [...prev, ...successMessages])
+      } else if (firstErrorText) {
+        setMessages(prev => [...prev, { role: 'assistant', content: firstErrorText }])
+      }
+      // Ei lisätä pending-jonoa onnistuneessa lähetyksessä
       if (data.threadId && !threadId) {
         setThreadId(data.threadId)
         localStorage.setItem('rascalai_dev_threadId', data.threadId)
@@ -169,7 +197,11 @@ export default function DevChatPage() {
     } catch (_error) {
       const errorMessage = { role: 'assistant', content: 'Virhe viestin lähettämisessä. Yritä uudelleen.' }
       setMessages(prev => [...prev, errorMessage])
+      // Varmista että viesti yritetään lähettää myöhemmin
+      enqueuePending({ id: clientMessageId, payload: { message: input, threadId, companyId, assistantId, mode: 'dev', clientMessageId } })
     } finally {
+      inFlightIdsRef.current.clear()
+      isSendingRef.current = false
       setLoading(false)
     }
   }

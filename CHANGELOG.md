@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.49.1](https://github.com/slemppa/rascal-ai/compare/v1.49.0...v1.49.1) (2025-08-28)
+
+
+### ✨ Features
+
+* **dev:** Dev-sivu näkyy admin+moderator; lisää Dev-feature gating ([8779736](https://github.com/slemppa/rascal-ai/commit/8779736494279379d30ce70a570a1bb9f91bc91e))
+
 ## [1.49.0](https://github.com/slemppa/rascal-ai/compare/v1.48.0...v1.49.0) (2025-08-27)
 
 

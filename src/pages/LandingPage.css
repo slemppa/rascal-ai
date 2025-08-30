@@ -26,9 +26,10 @@ html, body, #root, .landing-page {
   max-width: 100vw !important;
 }
 
-/* Poista sidebar-margin LandingPagella */
+/* Poista sidebar-margin ja padding LandingPagella */
 .landing-page .main-content {
   margin-left: 0 !important;
+  padding: 0 !important;
 }
 
 .layout-container {
@@ -277,6 +278,39 @@ html, body, #root, .landing-page {
   margin: 0 auto;
 }
 
+/* Solutions section käyttää koko leveyttä */
+#solutions {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#solutions .section-header {
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px;
+  margin-bottom: 40px;
+}
+
+#solutions .features-grid-full-width {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  margin-bottom: 60px;
+}
+
+/* Poista landing-main-content rajoitukset solutions-osiolle */
+.landing-main-content {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 20px !important;
+}
+
 /* Hero Section - Ammattimainen ja dramaattinen */
 .hero-section {
   margin-bottom: 100px;
@@ -405,6 +439,10 @@ html, body, #root, .landing-page {
 
 .section-header {
   margin-bottom: 40px;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px;
 }
 
 .landing-page .section-title {
@@ -434,13 +472,68 @@ html, body, #root, .landing-page {
   position: relative;
 }
 
+.section-description p {
+  margin: 0 0 8px 0;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.section-description p:last-child {
+  margin-bottom: 0;
+}
+
+.feature-description em {
+  font-style: italic;
+  font-weight: 600;
+  color: #ff6600 !important;
+  display: block;
+  margin-bottom: 8px;
+}
+
 /* Features Grid - Ammattimainen card-design */
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
-  max-width: 900px;
+  max-width: none;
+  margin: 0;
+  width: 100%;
+}
+
+/* Features Grid Full Width - ohittaa content-container rajoitukset */
+.features-grid-full-width {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  max-width: 1400px;
   margin: 0 auto;
+  width: 100%;
+  padding: 0 20px;
+  margin-bottom: 60px;
+}
+
+@media (max-width: 1200px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 900px;
+  }
+  
+  .features-grid-full-width {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 900px;
+  }
+}
+
+@media (max-width: 768px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
+  
+  .features-grid-full-width {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
 }
 
 .feature-card {
@@ -454,6 +547,8 @@ html, body, #root, .landing-page {
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  min-width: 0;
+  width: 100%;
 }
 
 .feature-card::before {
@@ -514,6 +609,10 @@ html, body, #root, .landing-page {
   color: #573723 !important;
   z-index: 10;
   position: relative;
+}
+
+.feature-description p {
+  white-space: nowrap;
 }
 
 /* Industries Grid - Ammattimainen image-cards */

@@ -428,6 +428,16 @@ html, body, #root, .landing-page {
   font-size: 18px;
   font-weight: 700;
   color: #ffffff;
+  margin-bottom: 16px;
+}
+
+.team-description {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #cea78d;
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 
 @media (max-width: 768px) {

@@ -516,18 +516,27 @@ export default function LandingPage() {
                     <img src="/Mika-Jarvinen-BW.jpg" alt="Mika Järvinen" loading="lazy" />
                   </div>
                   <div className="team-name">Mika Järvinen</div>
+                  <div className="team-description">
+                    Kuudes Aisti Oy:n perustaja ja toimitusjohtaja, joka tunnetaan inspiroivana ja energisoivana valmentajana. Hän auttaa yrityksiä ja yksilöitä saavuttamaan parempia tuloksia haastamalla vakiintuneita ajattelu- ja toimintatapoja sekä tuomalla tuoreita näkökulmia ja työvälineitä, jotka inspiroivat ja energisoivat kehittymiseen ja henkilökohtaiseen tuloskasvuun.
+                  </div>
                 </div>
                 <div className="team-card">
                   <div className="team-photo">
                     <img src="/Henri-Rantanen-BW3.jpg" alt="Henri Rantanen" loading="lazy" />
                   </div>
                   <div className="team-name">Henri Rantanen</div>
+                  <div className="team-description">
+                    Henri on omistanut yli kaksi vuosikymmentä ihmisten potentiaalin vapauttamiseen. Hän auttaa yksilöitä ja organisaatioita tunnistamaan ja ylittämään mentaaliset esteet, jotka estävät heitä saavuttamasta tavoitteitaan. Hän yhdistää käytännön kokemuksen yrittäjyydestä, myynnistä ja johtamisesta syvälliseen ymmärrykseen ihmismielen toiminnasta.
+                  </div>
                 </div>
                 <div className="team-card">
                   <div className="team-photo">
                     <img src="/rascal-sami-768x768.jpg" alt="Sami" loading="lazy" />
                   </div>
                   <div className="team-name">Sami Kiias</div>
+                  <div className="team-description">
+                    Sami on erikoistunut yritysten arjen helpottamiseen teknologian avulla. Hän auttaa asiakkaitaan ottamaan tekoälyn ja automaation käyttöön konkreettisilla, aikaa säästävillä ratkaisuilla, jotka tehostavat markkinointia ja viestintää. Hän yhdistää sisällöntuotannon ja visuaalisen suunnittelun kokemuksen syvälliseen ymmärrykseen no-code-automaation ja tekoälyratkaisujen mahdollisuuksista.
+                  </div>
                 </div>
               </div>
             </div>

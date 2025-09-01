@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.49.2](https://github.com/slemppa/rascal-ai/compare/v1.49.1...v1.49.2) (2025-09-01)
+
+
+### ✨ Features
+
+* i18n for Settings page, Assistant, and call-type modals ([debaa94](https://github.com/slemppa/rascal-ai/commit/debaa94f6459c20bb8a18783641e3bc0221a115d))
+* lisää henkilöiden kuvaukset LandingPagen team-osioon ([cdbc85e](https://github.com/slemppa/rascal-ai/commit/cdbc85e604b9b2f705bdb0b12d564e5f3df035c8))
+* paranna LandingPagen features-grid asettelua 4x2 grid:iin ([7ec0af2](https://github.com/slemppa/rascal-ai/commit/7ec0af201a91d4be7414392ace0fd5530db8288a))
+
 ### [1.49.1](https://github.com/slemppa/rascal-ai/compare/v1.49.0...v1.49.1) (2025-08-28)
 
 

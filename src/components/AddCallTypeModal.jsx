@@ -46,10 +46,10 @@ const AddCallTypeModal = ({
   if (!showModal) return null
 
   const steps = [
-    { id: 1, label: 'Perustiedot' },
-    { id: 2, label: 'Sisältö' },
-    { id: 3, label: 'Lisäasetukset' },
-    { id: 4, label: 'Yhteenveto' }
+    { id: 1, label: 'Basics' },
+    { id: 2, label: 'Content' },
+    { id: 3, label: 'Advanced' },
+    { id: 4, label: 'Summary' }
   ]
 
   // Tyhjän tilan klikkaus
@@ -80,7 +80,7 @@ const AddCallTypeModal = ({
       <div className="modal-container">
         <div className="modal-header">
           <h2 className="modal-title">
-            Lisää uusi puhelun tyyppi
+            Add new call type
           </h2>
           <Button
             onClick={onClose}
@@ -110,39 +110,39 @@ const AddCallTypeModal = ({
           ))}
         </div>
 
-        {/* Sisältö */}
+        {/* Content */}
         <div className="modal-content">
           {currentStep === 1 && (
             <div className="form-grid">
               <div className="form-group">
                 <label className="form-label">
-                  Nimi *
+                  Name *
                 </label>
                 <input
                   type="text"
                   value={newCallType.callType}
                   onChange={e => setNewCallType({ ...newCallType, callType: e.target.value })}
-                  placeholder="esim. myynti, asiakaspalvelu"
+                  placeholder="e.g. sales, customer support"
                   className="form-input"
                 />
               </div>
               <div className="form-group">
                 <label className="form-label">
-                  Tila
+                  Status
                 </label>
                 <select
                   value={newCallType.status || 'Active'}
                   onChange={e => setNewCallType({ ...newCallType, status: e.target.value })}
                   className="form-select"
                 >
-                  <option value="Active">Aktiivinen</option>
-                  <option value="Draft">Luonnos</option>
-                  <option value="Archived">Arkistoitu</option>
+                  <option value="Active">Active</option>
+                  <option value="Draft">Draft</option>
+                  <option value="Archived">Archived</option>
                 </select>
               </div>
               <div className="form-group">
                 <label className="form-label">
-                  Versio
+                  Version
                 </label>
                 <input
                   type="text"
@@ -160,84 +160,84 @@ const AddCallTypeModal = ({
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-                    AI-rooli
+                    AI role
                   </label>
                   <textarea
                     value={newCallType.identity || ''}
                     onChange={e => setNewCallType({ ...newCallType, identity: e.target.value })}
                     placeholder={
-`• Kuka assistentti on (nimi + rooli)?\n• Minkä brändin nimissä toimii?\n• Mitä ongelmaa/tilannetta auttaa ratkaisemaan?\n• Mitä korkeantason tavoitetta palvelee?`
+`• Who is the assistant (name + role)?\n• Under which brand does it operate?\n• What problem/situation does it help solve?\n• What high-level goal does it serve?`
                     }
                     rows={5}
                     style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, resize: 'vertical' }}
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Kuka olet</div>
-                  <div>Olet [Yritys]n AI‑assistentti [Nimi]. Autat [kohdeyleisöä] [aihe]‑asioissa ja ohjaat tarvittaessa ihmisasiantuntijalle.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Who you are</div>
+                  <div>You are [Name], [Company]'s AI assistant. You help [target audience] with [topic] and hand over to a human expert when needed.</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-                    Puhumistyylin kuvaus
+                    Speaking style
                   </label>
                   <textarea
                     value={newCallType.style || ''}
                     onChange={e => setNewCallType({ ...newCallType, style: e.target.value })}
                     placeholder={
-`• Kieli ja puhuttelu (sinä/te).\n• Sävyt: ystävällinen/napakka/ammatillinen.\n• Vältettävät asiat (jargoni, pitkät lauseet).\n• Rytmivinkit (lyhyet lauseet, tauot … / –).`
+`• Language and mode of address.\n• Tone: friendly/concise/professional.\n• Avoid: jargon, long sentences.\n• Rhythm: short sentences, natural pauses (… or –).`
                     }
                     rows={4}
                     style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, resize: 'vertical' }}
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Miten toimit</div>
-                  <div>Puhu selkeää suomea, sinuttele, ole lämmin ja napakka. Vältä jargonia. Käytä lyhyitä lauseita ja luonnollisia taukoja (… tai –).</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>How you behave</div>
+                  <div>Speak clearly and warmly; keep it concise. Avoid jargon. Use short sentences and natural pauses (… or –).</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-                    Puhelun tavoitteet
+                    Call goals
                   </label>
                   <textarea
                     value={newCallType.goals || ''}
                     onChange={e => setNewCallType({ ...newCallType, goals: e.target.value })}
                     placeholder={
-`• Listaa 3–5 konkreettista tavoitetta tälle kontaktityypille.\n• Mitä tietoa pitää kerätä?\n• Mitä lopputulos/next step on?`
+`• List 3–5 concrete goals for this call type.\n• What information must be collected?\n• What is the outcome/next step?`
                     }
                     rows={4}
                     style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, resize: 'vertical' }}
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>1) Selvitä [X]. 2) Kartoita [kiinnostus/haasteet]. 3) Tarjoa apuvaihtoehto. 4) Kysy jatkoyhteydenotto. 5) Kerää paras aika ja yhteystapa.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>1) Find out [X]. 2) Map [interests/challenges]. 3) Offer a helpful option. 4) Ask for follow-up. 5) Collect best time and contact method.</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-                    Keskusteluohjeet
+                    Conversation guidelines
                   </label>
                   <textarea
                     value={newCallType.guidelines || ''}
                     onChange={e => setNewCallType({ ...newCallType, guidelines: e.target.value })}
                     placeholder={
-`• Miten keskustelua rytmitetään.\n• Yksi kysymys kerrallaan, odota vastaus.\n• Täsmennykset, jos vastaus on epäselvä.\n• Jos asiakas kysyy → vastaa lyhyesti ja palaa runkoon.\n• Empatia ja keskeyttämättömyys.`
+`• How to pace the conversation.\n• One question at a time, wait for answer.\n• Clarify if the answer is unclear.\n• If customer asks → answer briefly then return to script.\n• Show empathy and do not interrupt.`
                     }
                     rows={4}
                     style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, resize: 'vertical' }}
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Esitä vain yksi kysymys kerrallaan ja odota vastaus. Jos vastaus on epäselvä, pyydä esimerkki. Vastaa asiakkaan kysymyksiin ytimekkäästi ja jatka runkoa.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>Ask one question at a time and wait. If unclear, ask for an example. Answer briefly and continue the script.</div>
                 </div>
               </div>
             </div>
@@ -248,19 +248,19 @@ const AddCallTypeModal = ({
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-                    Aloitusrepliikki
+                    Opening line
                   </label>
                   <input
                     type="text"
                     value={newCallType.first_line || ''}
                     onChange={e => setNewCallType({ ...newCallType, first_line: e.target.value })}
-                    placeholder="Tämä on mitä assari sanoo ensimmäisenä kun puhelu alkaa"
+                    placeholder="What the assistant says first when the call starts"
                     style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Tämä on mitä assari sanoo ensimmäisenä kun puhelu alkaa.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>This is what the assistant says first when the call starts.</div>
                 </div>
               </div>
 
@@ -273,78 +273,78 @@ const AddCallTypeModal = ({
                     value={newCallType.intro || ''}
                     onChange={e => setNewCallType({ ...newCallType, intro: e.target.value })}
                     placeholder={
-                    `• Tervehdys + esittely + syy yhteyteen.\n• Aseta odotukset (kysyn muutaman kysymyksen).\n• Kutsu jatkamaan.`
+                    `• Greeting + introduction + reason for contact.\n• Set expectations (I'll ask a few questions).\n• Invite to continue.`
                     }
                     rows={4}
                     style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, resize: 'vertical' }}
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Moikka! Täällä [Nimi], [Yritys]n AI‑assistentti. Soitan/ vastaan, koska [syy]. Jos sopii, kysyn pari ytimekästä kysymystä — aloitetaanko?</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>Hello! This is [Name], [Company]'s AI assistant. I'm calling/answering because [reason]. If it's okay, I'll ask a couple of concise questions — shall we begin?</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-                    Kysymyslista
+                    Question list
                   </label>
                   <textarea
                     value={newCallType.questions || ''}
                     onChange={e => setNewCallType({ ...newCallType, questions: e.target.value })}
                     placeholder={
-`• Numeroi 4–7 ydinkysymystä.\n• Kirjoita jokainen omalle rivilleen.\n• Lisää haarat: “Jos ei/kyllä → tee X”.\n• Lisää “odota vastausta” joka väliin.`
+                    `• Number 4–7 core questions.\n• Write each on its own line.\n• Add branches: “If no/yes → do X”.\n• Add “wait for answer” between questions.`
                     }
                     rows={8}
                     style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, resize: 'vertical' }}
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151', whiteSpace: 'pre-wrap' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>{`1) Olitko mukana [tapahtuma]?\nodota vastausta\nJos ei → kysy haluaako linkin tai tallenteen.\nodota vastausta\n2) Mikä sai kiinnostumaan [aiheesta]?\nodota vastausta\n3) Missä koet eniten haastetta: [vaihtoehdot]?\nodota vastausta\n4) Haluatko, että asiantuntija on yhteydessä?\nodota vastausta\nJos kyllä → kysy paras aika ja tapa (soitto/sähköposti).`}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>{`1) Did you attend [event]?\nwait for answer\nIf no → ask if they'd like a link or recording.\nwait for answer\n2) What got you interested in [topic]?\nwait for answer\n3) Where do you see the biggest challenge: [options]?\nwait for answer\n4) Would you like a specialist to contact you?\nwait for answer\nIf yes → ask for the best time and method (call/email).`}</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-                    Lopetusrepliikki
+                    Closing line
                   </label>
                   <textarea
                     value={newCallType.outro || ''}
                     onChange={e => setNewCallType({ ...newCallType, outro: e.target.value })}
                     placeholder={
-`• Kiitä ja tarkista, onko muuta.\n• Tarjoa yhteenveto/linkit sähköpostiin.\n• Vahvista seuraavat askeleet.\n• Päätä ystävällisesti.`
+                    `• Thank them and ask if there's anything else.\n• Offer to send a summary/links by email.\n• Confirm the next steps.\n• End politely.`
                     }
                     rows={4}
                     style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, resize: 'vertical' }}
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151', whiteSpace: 'pre-wrap' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>{`Kiitos juttutuokiosta! Laitanko yhteenvedon ja linkit sähköpostilla?\nodota vastausta\nSovitaan näin: [seuraava askel]. Mukavaa päivää ja kuulemiin!`}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>{`Thanks for the chat! Shall I send a short summary and links by email?\nwait for answer\nLet's agree on this: [next step]. Have a great day – goodbye!`}</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-                    Lisämuistiinpanot
+                    Additional notes
                   </label>
                   <textarea
                     value={newCallType.notes || ''}
                     onChange={e => setNewCallType({ ...newCallType, notes: e.target.value })}
                     placeholder={
-`• Mitä metatietoa tulee kirjata (aika, tapa, lupa, sähköposti, toiveet).\n• Erityiset liput/etiketit (kiireellinen, palautetta, eskalointi).`
+                    `• What metadata should be recorded (time, method, consent, email, preferences).\n• Special flags/labels (urgent, feedback, escalation).`
                     }
                     rows={4}
                     style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, resize: 'vertical' }}
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Tallenna: suosittu yhteydenottoaika, yhteystapa, sähköposti, webinaarilinkin/tallenteen pyyntö, lyhyt yhteenveto haasteista/tavoitteista.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>Record: preferred contact time, method, email, request for webinar link/recording, short summary of challenges/goals.</div>
                 </div>
               </div>
 
@@ -357,42 +357,42 @@ const AddCallTypeModal = ({
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-                    Yhteenveto (analytiikka)
+                    Summary (analytics)
                   </label>
                   <textarea
                     ref={summaryRef}
                     value={newCallType.summary || ''}
                     onChange={e => setNewCallType({ ...newCallType, summary: e.target.value })}
                     placeholder={
-`• 2–3 virkkeen tiivistelmä suomeksi.\n• Kerro mitä selvisi + sovitut jatkotoimet.`
+`• 2–3 sentence summary in English.\n• What was discovered + agreed next steps.`
                     }
                     rows={1}
                     style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, resize: 'none', overflow: 'hidden' }}
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Tiivistä 2–3 virkkeeseen: osallistuiko [tapahtuma], tärkeimmät kiinnostukset/haasteet, sovitut next steps (soittoaika/tapa).</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>Summarize in 2–3 sentences: whether they attended [event], key interests/challenges, agreed next steps (time/method).</div>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-                    Menestyksen arviointi (analytiikka)
+                    Success assessment (analytics)
                   </label>
                   <textarea
                     value={newCallType.success_assessment || ''}
                     onChange={e => setNewCallType({ ...newCallType, success_assessment: e.target.value })}
                     placeholder={
-`• Arvioi 2–3 virkkeessä, täyttyivätkö Goals‑kohdan tavoitteet.\n• Kerro miksi onnistui/ei onnistunut ja mainitse puuttuvat kohdat.`
+`• In 2–3 sentences, assess whether the goals were met.\n• Why it succeeded/failed and what's missing.`
                     }
                     rows={5}
                     style={{ width: '100%', padding: '12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, resize: 'vertical' }}
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Arvioi, saavutettiinko: 1) osallistumistieto, 2) kiinnostukset/haasteet, 3) jatkoyhteydenotto, 4) yhteydenoton aika/tapa. Perustele lyhyesti.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>Assess whether these were achieved: 1) attendance info, 2) interests/challenges, 3) follow-up agreement, 4) time/method of contact. Justify briefly.</div>
                 </div>
               </div>
             </div>
@@ -406,7 +406,7 @@ const AddCallTypeModal = ({
               onClick={onClose}
               variant="secondary"
             >
-              Peruuta
+              Cancel
             </Button>
             {currentStep > 1 && (
               <Button
@@ -414,7 +414,7 @@ const AddCallTypeModal = ({
                 onClick={handlePrevious}
                 variant="secondary"
               >
-                Edellinen
+                Previous
               </Button>
             )}
           </div>
@@ -426,7 +426,7 @@ const AddCallTypeModal = ({
                 onClick={handleNext}
                 disabled={!newCallType.callType}
               >
-                Seuraava
+                Next
               </Button>
             ) : (
               <Button
@@ -434,7 +434,7 @@ const AddCallTypeModal = ({
                 onClick={handleSubmit}
                 disabled={loading || !newCallType.callType}
               >
-                {loading ? 'Lisätään...' : 'Lisää puhelutyyppi'}
+                {loading ? 'Adding…' : 'Add call type'}
               </Button>
             )}
           </div>

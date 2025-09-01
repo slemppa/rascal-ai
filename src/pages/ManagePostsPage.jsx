@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -360,6 +361,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
 }
 
 export default function ManagePostsPage() {
+  const { t } = useTranslation('common')
   const { user } = useAuth()
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(false)
@@ -1308,14 +1310,14 @@ export default function ManagePostsPage() {
     <div className="posts-container">
       {/* Page Header */}
       <div className="posts-header">
-        <h2>Sosiaalisen median sisältö</h2>
+        <h2>{t('posts.header')}</h2>
       </div>
 
       {/* Search and Filters */}
       <div className="search-filters">
         <input
           type="text"
-          placeholder="Etsi sosiaalisen median sisältöä..."
+          placeholder={t('posts.searchPlaceholder')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
@@ -1325,17 +1327,17 @@ export default function ManagePostsPage() {
           onChange={(e) => setStatusFilter(e.target.value)}
           className="status-filter"
         >
-          <option value="">Kaikki statukset</option>
-          <option value="Kesken">Kesken</option>
-          <option value="Tarkistuksessa">Valmiina julkaisuun</option>
-          <option value="Aikataulutettu">Aikataulutettu</option>
-          <option value="Julkaistu">Julkaistu</option>
+          <option value="">{t('posts.filters.allStatuses')}</option>
+          <option value="Kesken">{t('posts.status.Kesken')}</option>
+          <option value="Tarkistuksessa">{t('posts.status.Tarkistuksessa')}</option>
+          <option value="Aikataulutettu">{t('posts.status.Aikataulutettu')}</option>
+          <option value="Julkaistu">{t('posts.status.Julkaistu')}</option>
         </select>
         <Button 
           variant="primary"
           onClick={() => setShowCreateModal(true)}
         >
-          + Luo uusi sisältö
+          {t('posts.actions.createNew')}
         </Button>
       </div>
 
@@ -1357,14 +1359,14 @@ export default function ManagePostsPage() {
       {/* Error State */}
       {(currentError || reelsError) && (
         <div className="error-state">
-                          <p>Virhe: {currentError || reelsError}</p>
+          <p>Virhe: {currentError || reelsError}</p>
           <Button
             variant="secondary"
             onClick={() => {
               window.location.reload()
             }}
           >
-            Yritä uudelleen
+            {t('posts.actions.retry')}
           </Button>
         </div>
       )}
@@ -1395,14 +1397,14 @@ export default function ManagePostsPage() {
               
               return (
                 <div key={column.status} className="kanban-column">
-                  <h3 className="column-title">{column.title}</h3>
+                  <h3 className="column-title">{column.title === 'Avatar' ? t('posts.columns.avatar') : column.title === 'Kesken' ? t('posts.columns.inProgress') : column.title === 'Valmiina julkaisuun' ? t('posts.columns.readyToPublish') : column.title === 'Aikataulutettu' ? t('posts.columns.scheduled') : column.title}</h3>
                   <div className="column-content">
                     {columnPosts.map(post => {
                       // Varmistetaan että post on oikeassa muodossa
                       const safePost = {
                         id: post.id || 'unknown',
-                        title: post.title || 'Nimetön julkaisu',
-                        caption: post.caption || 'Ei kuvausta',
+                        title: post.title || 'Untitled',
+                        caption: post.caption || t('posts.placeholders.noImage'),
                         type: post.type || 'Photo',
                         source: post.source || 'supabase',
                         thumbnail: post.thumbnail || null,
@@ -1437,13 +1439,13 @@ export default function ManagePostsPage() {
               
               return (
                 <div className="kanban-column kanban-column-full-width">
-                  <h3 className="column-title">{publishedColumn.title}</h3>
+                  <h3 className="column-title">{t('posts.columns.published')}</h3>
                   <div className="column-content">
                     {supabasePublishedPosts.map(post => {
                       const safePost = {
                         id: post.id || 'unknown',
-                        title: post.title || 'Nimetön julkaisu',
-                        caption: post.caption || 'Ei kuvausta',
+                        title: post.title || 'Untitled',
+                        caption: post.caption || t('posts.placeholders.noImage'),
                         type: post.type || 'Photo',
                         source: post.source || 'supabase',
                         thumbnail: post.thumbnail || null,

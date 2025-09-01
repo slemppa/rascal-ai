@@ -1,4 +1,5 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import LandingPage from './pages/LandingPage'
 import DashboardPage from './pages/DashboardPage'
 import SignIn from './components/auth/SignIn'
@@ -42,6 +43,7 @@ import CampaignCreatePage from './pages/CampaignCreatePage'
 import CampaignDetailPage from './pages/CampaignDetailPage'
 import SegmentCreatePage from './pages/SegmentCreatePage'
 import SegmentDetailPage from './pages/SegmentDetailPage'
+import LinkedInTest from './components/LinkedInTest'
 
 // Komponentti joka näyttää ChatbotWidget:n vain julkkisilla sivuilla
 function ConditionalChatbotWidget() {
@@ -50,6 +52,14 @@ function ConditionalChatbotWidget() {
   // Julkiset reitit missä ChatbotWidget näkyy
   const publicRoutes = [
     '/',
+    '/fi',
+    '/en',
+    '/fi/blog',
+    '/en/blog',
+    '/fi/ai-due-diligence',
+    '/en/ai-due-diligence',
+    '/fi/asiakkaat',
+    '/en/asiakkaat',
     '/signin',
     '/signup', 
     '/forgot-password',
@@ -82,6 +92,29 @@ function ConditionalChatbotWidget() {
   return isPublicRoute ? <ChatbotWidget /> : null;
 }
 
+// Uudelleenohjaus juuresta evästeen/navigaattorin kielen mukaan -> /fi tai /en
+function LanguageRedirect() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Älä uudelleenohjaa jos ollaan jo kieliprefiksissä
+    if (location.pathname.startsWith('/fi') || location.pathname.startsWith('/en')) return;
+
+    const getCookie = (name) => {
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? decodeURIComponent(match[2]) : null;
+    };
+
+    const cookieLang = getCookie('rascal.lang');
+    const navLang = (navigator.language || 'fi').toLowerCase();
+    const lang = (cookieLang || navLang).startsWith('en') ? 'en' : 'fi';
+    navigate('/' + lang, { replace: true });
+  }, [location.pathname, navigate]);
+
+  return null;
+}
+
 export default function App() {
   return (
     <AuthProvider>
@@ -89,7 +122,17 @@ export default function App() {
         <PostsProvider>
           <Routes>
         {/* Julkiset reitit */}
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<LanguageRedirect />} />
+        <Route path="/fi" element={<LandingPage />} />
+        <Route path="/en" element={<LandingPage />} />
+        <Route path="/fi/blog" element={<BlogPage />} />
+        <Route path="/en/blog" element={<BlogPage />} />
+        <Route path="/fi/blog/:slug" element={<BlogArticlePage />} />
+        <Route path="/en/blog/:slug" element={<BlogArticlePage />} />
+        <Route path="/fi/ai-due-diligence" element={<AIDueDiligencePage />} />
+        <Route path="/en/ai-due-diligence" element={<AIDueDiligencePage />} />
+        <Route path="/fi/asiakkaat" element={<CustomersPage />} />
+        <Route path="/en/asiakkaat" element={<CustomersPage />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -115,158 +158,203 @@ export default function App() {
         } />
         {/* Suojatut reitit sidebarin kanssa */}
         <Route path="/dashboard" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute><DashboardPage /></ProtectedRoute>
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <DashboardPage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/campaigns" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute><CampaignsPage /></ProtectedRoute>
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <CampaignsPage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/segments" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute><SegmentsPage /></ProtectedRoute>
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <SegmentsPage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/campaigns/create" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute><CampaignCreatePage /></ProtectedRoute>
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <CampaignCreatePage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/campaigns/:id" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute><CampaignDetailPage /></ProtectedRoute>
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <CampaignDetailPage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/segments/create" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute><SegmentCreatePage /></ProtectedRoute>
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <SegmentCreatePage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/segments/:id" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute><SegmentDetailPage /></ProtectedRoute>
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <SegmentDetailPage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
+        } />
+        <Route path="/linkedin-test" element={
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <LinkedInTest />
+              </div>
+            </div>
+          </ProtectedRoute>
         } />
         {/* /mixpost-analytics reitti poistettu */}
         <Route path="/posts" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute><ManagePostsPage /></ProtectedRoute>
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <ManagePostsPage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/blog-newsletter" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute><BlogNewsletterPage /></ProtectedRoute>
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <BlogNewsletterPage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/admin" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute requiredRole="admin"><AdminPage /></ProtectedRoute>
+          <ProtectedRoute requiredRole="admin">
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <AdminPage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/admin-blog" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute requiredRole="moderator"><AdminBlogPage /></ProtectedRoute>
+          <ProtectedRoute requiredRole="moderator">
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <AdminBlogPage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/strategy" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute><ContentStrategyPage /></ProtectedRoute>
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <ContentStrategyPage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/ai-chat" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute><AIChatPage /></ProtectedRoute>
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <AIChatPage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/dev" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute requiredRole="moderator" requiredFeatures={["Dev"]}><DevPage /></ProtectedRoute>
+          <ProtectedRoute requiredRole="moderator" requiredFeatures={["Dev"]}>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <DevPage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/help" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute><HelpPage /></ProtectedRoute>
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <HelpPage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/calls" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute><CallPanel /></ProtectedRoute>
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <CallPanel />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
         <Route path="/settings" element={
-          <div className="app-layout">
-            <Sidebar />
-            <MobileNavigation />
-            <div className="main-content">
-              <ProtectedRoute><SettingsPage /></ProtectedRoute>
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <SettingsPage />
+              </div>
             </div>
-          </div>
+          </ProtectedRoute>
         } />
 
         {/* Lisää muut suojatut reitit tähän samalla tavalla, jos haluat menun näkyvän niilläkin */}

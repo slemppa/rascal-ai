@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import CampaignDetailModal from './CampaignDetailModal'
 
 export default function CampaignCard({ campaign }) {
+  const { t } = useTranslation('common')
   const [open, setOpen] = useState(false)
   const totalCalls = campaign.total_calls || 0
   const answeredCalls = campaign.answered_calls || 0
@@ -9,10 +11,10 @@ export default function CampaignCard({ campaign }) {
   const answerRate = totalCalls > 0 ? Math.round((answeredCalls / totalCalls) * 100) : 0
 
   const statusLabelMap = {
-    active: 'Aktiivinen',
-    paused: 'Keskeytetty',
-    completed: 'Valmis',
-    archived: 'Arkistoitu'
+    active: t('campaigns.status.active'),
+    paused: t('campaigns.status.paused'),
+    completed: t('campaigns.status.completed'),
+    archived: t('campaigns.status.archived')
   }
 
   const status = campaign.status || 'active'
@@ -47,21 +49,21 @@ export default function CampaignCard({ campaign }) {
         <div style={{ padding: 16, borderTop: '1px solid #f3f4f6' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, fontSize: 14 }}>
             <div>
-              <div style={{ color: '#6b7280' }}>Puhelut</div>
+              <div style={{ color: '#6b7280' }}>{t('campaigns.card.calls')}</div>
               <div style={{ fontWeight: 600 }}>{totalCalls}</div>
             </div>
             <div>
-              <div style={{ color: '#6b7280' }}>Vastaus%</div>
+              <div style={{ color: '#6b7280' }}>{t('campaigns.card.answerRateShort')}</div>
               <div style={{ fontWeight: 600 }}>{answerRate}%</div>
             </div>
             <div>
-              <div style={{ color: '#6b7280' }}>Onnistuneet</div>
+              <div style={{ color: '#6b7280' }}>{t('campaigns.card.successful')}</div>
               <div style={{ fontWeight: 600 }}>{successfulCalls}</div>
             </div>
           </div>
           {campaign.call_types?.name && (
             <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #f3f4f6' }}>
-              <div style={{ fontSize: 12, color: '#6b7280' }}>Skripti: {campaign.call_types.name}</div>
+              <div style={{ fontSize: 12, color: '#6b7280' }}>{t('campaigns.card.script')}: {campaign.call_types.name}</div>
             </div>
           )}
         </div>

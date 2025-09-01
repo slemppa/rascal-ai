@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../../lib/supabase'
 import { Link } from 'react-router-dom'
 
 export default function MagicLink({ onClose }) {
+  const { t } = useTranslation('common')
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -37,21 +39,21 @@ export default function MagicLink({ onClose }) {
         <button
           onClick={onClose}
           style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', fontSize: 28, color: '#cbd5e1', cursor: 'pointer', transition: 'color 0.2s' }}
-          aria-label="Sulje"
+          aria-label={t('auth.close')}
           onMouseOver={e => e.currentTarget.style.color = '#4ADE80'}
           onMouseOut={e => e.currentTarget.style.color = '#cbd5e1'}
         >
           ×
         </button>
       )}
-      <h2 style={{ fontSize: 26, fontWeight: 700, marginBottom: 18, textAlign: 'center', color: '#fff' }}>Taikalinkki</h2>
+      <h2 style={{ fontSize: 26, fontWeight: 700, marginBottom: 18, textAlign: 'center', color: '#fff' }}>{t('auth.magicLink')}</h2>
       <p style={{ color: '#cbd5e1', textAlign: 'center', marginBottom: 18, fontSize: 15 }}>
-        Syötä sähköpostiosoitteesi, niin lähetämme sinulle taikalinkin kirjautumista varten.
+        {t('auth.magicLinkDesc')}
       </p>
       <form onSubmit={handleMagicLink} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
         <div>
           <label htmlFor="email" style={{ display: 'block', marginBottom: 6, fontWeight: 500, color: '#cbd5e1' }}>
-            Sähköposti
+            {t('auth.email')}
           </label>
           <input
             id="email"
@@ -70,7 +72,7 @@ export default function MagicLink({ onClose }) {
               outline: 'none',
               marginBottom: 2
             }}
-            placeholder="sähköposti@esimerkki.fi"
+            placeholder={t('auth.emailPlaceholder')}
             autoComplete="email"
           />
         </div>
@@ -91,7 +93,7 @@ export default function MagicLink({ onClose }) {
             marginTop: 4
           }}
         >
-          {loading ? 'Lähetetään taikalinkkiä...' : 'Lähetä taikalinkki'}
+          {loading ? t('auth.sendingMagicLink') : t('auth.sendMagicLink')}
         </button>
         {message && (
           <div style={{
@@ -109,9 +111,9 @@ export default function MagicLink({ onClose }) {
       </form>
       <div style={{ marginTop: 18, textAlign: 'center' }}>
         <p style={{ fontSize: 15, color: '#cbd5e1' }}>
-          Haluatko käyttää salasanaa?{' '}
+          {t('auth.wantPassword')}{' '}
           <a href="#" style={{ color: '#4ADE80', textDecoration: 'underline' }} onClick={onClose}>
-            Kirjaudu salasanalla
+            {t('auth.loginWithPassword')}
           </a>
         </p>
       </div>

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { fetchSegmentById, fetchSegmentStats } from '../../services/segmentsApi'
 import '../ModalComponents.css'
 
 export default function SegmentDetailModal({ segmentId, onClose }) {
+  const { t } = useTranslation('common')
   const [segment, setSegment] = useState(null)
   const [stats, setStats] = useState([])
   const [loading, setLoading] = useState(true)
@@ -38,12 +40,12 @@ export default function SegmentDetailModal({ segmentId, onClose }) {
     <div className="modal-overlay modal-overlay--light" role="dialog" aria-modal="true">
       <div className="modal-container" style={{ maxWidth: 900 }}>
         <div className="modal-header">
-          <h2 className="modal-title">Segmentin tiedot</h2>
+          <h2 className="modal-title">{t('segments.details.title')}</h2>
           <button className="modal-close-btn" onClick={onClose} type="button">×</button>
         </div>
         <div className="modal-content">
-          {loading && <div>Ladataan...</div>}
-          {error && <div style={{ color: '#dc2626' }}>{error}</div>}
+          {loading && <div>{t('segments.details.loading')}</div>}
+          {error && <div style={{ color: '#dc2626' }}>{t('segments.details.error')}</div>}
           {!loading && !error && segment && (
             <div style={{ display: 'grid', gap: 16 }}>
               <div>
@@ -53,15 +55,15 @@ export default function SegmentDetailModal({ segmentId, onClose }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 12 }}>
                 <div>
-                  <div style={{ color: '#6b7280' }}>Puhelut</div>
+                  <div style={{ color: '#6b7280' }}>{t('segments.details.metrics.calls')}</div>
                   <div style={{ fontWeight: 600 }}>{totalCalls}</div>
                 </div>
                 <div>
-                  <div style={{ color: '#6b7280' }}>Vastaus%</div>
+                  <div style={{ color: '#6b7280' }}>{t('segments.details.metrics.answerRateShort')}</div>
                   <div style={{ fontWeight: 600 }}>{answerRate}%</div>
                 </div>
                 <div>
-                  <div style={{ color: '#6b7280' }}>Onnistuneet</div>
+                  <div style={{ color: '#6b7280' }}>{t('segments.details.metrics.successful')}</div>
                   <div style={{ fontWeight: 600 }}>{successCount}</div>
                 </div>
               </div>

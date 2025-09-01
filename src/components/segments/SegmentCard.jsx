@@ -1,7 +1,9 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 export default function SegmentCard({ segment }) {
+  const { t, i18n } = useTranslation('common')
   return (
     <Link to={`/segments/${segment.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div style={{
@@ -21,12 +23,12 @@ export default function SegmentCard({ segment }) {
         </div>
         <div style={{ padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ color: '#6b7280', fontSize: 14 }}>Kontaktit</div>
+            <div style={{ color: '#6b7280', fontSize: 14 }}>{t('segments.card.contacts')}</div>
             <div style={{ fontWeight: 600, fontSize: 16 }}>{segment.total_contacts || 0}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ color: '#6b7280', fontSize: 12 }}>Luotu</div>
-            <div style={{ fontSize: 14 }}>{segment.created_at ? new Date(segment.created_at).toLocaleDateString('fi-FI') : '-'}</div>
+            <div style={{ color: '#6b7280', fontSize: 12 }}>{t('segments.card.created')}</div>
+            <div style={{ fontSize: 14 }}>{segment.created_at ? new Date(segment.created_at).toLocaleDateString(i18n.language === 'fi' ? 'fi-FI' : 'en-US') : '-'}</div>
           </div>
         </div>
       </div>

@@ -32,10 +32,10 @@ const EditCallTypeModal = ({
   if (!showModal || !editingCallType) return null
 
   const steps = [
-    { id: 1, label: 'Perustiedot' },
-    { id: 2, label: 'Sisältö' },
-    { id: 3, label: 'Lisäasetukset' },
-    { id: 4, label: 'Yhteenveto' }
+    { id: 1, label: 'Basics' },
+    { id: 2, label: 'Content' },
+    { id: 3, label: 'Advanced' },
+    { id: 4, label: 'Summary' }
   ]
 
   // Tyhjän tilan klikkaus
@@ -66,7 +66,7 @@ const EditCallTypeModal = ({
       <div className="modal-container edit-call-type-modal">
         <div className="modal-header">
           <h2 className="modal-title">
-            Muokkaa puhelun tyyppiä
+            Edit call type
           </h2>
           <Button
             onClick={onClose}
@@ -102,7 +102,7 @@ const EditCallTypeModal = ({
             <div className="form-grid">
               <div className="form-group">
                 <label className="form-label">
-                  Nimi
+                  Name
                 </label>
                 <input
                   type="text"
@@ -113,21 +113,21 @@ const EditCallTypeModal = ({
               </div>
               <div className="form-group">
                 <label className="form-label">
-                  Tila
+                  Status
                 </label>
                 <select
                   value={editingCallType.status || 'Active'}
                   onChange={e => setEditingCallType({ ...editingCallType, status: e.target.value })}
                   className="form-select"
                 >
-                  <option value="Active">Aktiivinen</option>
-                  <option value="Draft">Luonnos</option>
-                  <option value="Archived">Arkistoitu</option>
+                  <option value="Active">Active</option>
+                  <option value="Draft">Draft</option>
+                  <option value="Archived">Archived</option>
                 </select>
               </div>
               <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                 <label className="form-label">
-                  Versio
+                  Version
                 </label>
                 <input
                   type="text"
@@ -143,77 +143,77 @@ const EditCallTypeModal = ({
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">AI-rooli</label>
+                  <label className="form-label">AI role</label>
                   <textarea
                     value={editingCallType.identity || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, identity: e.target.value })}
                     placeholder={
-`• Kuka assistentti on (nimi + rooli)?\n• Minkä brändin nimissä toimii?\n• Mitä ongelmaa/tilannetta auttaa ratkaisemaan?\n• Mitä korkeantason tavoitetta palvelee?`
+`• Who is the assistant (name + role)?\n• Under which brand does it operate?\n• What problem/situation does it help solve?\n• What high-level goal does it serve?`
                     }
                     rows={5}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Olet [Yritys]n AI‑assistentti [Nimi]. Autat [kohdeyleisöä] [aihe]‑asioissa ja ohjaat tarvittaessa ihmisasiantuntijalle.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>You are [Name], [Company]'s AI assistant. You help [target audience] with [topic] and hand over to a human expert when needed.</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Puhumistyylin kuvaus</label>
+                  <label className="form-label">Speaking style</label>
                   <textarea
                     value={editingCallType.style || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, style: e.target.value })}
                     placeholder={
-`• Kieli ja puhuttelu (sinä/te).\n• Sävyt: ystävällinen/napakka/ammatillinen.\n• Vältettävät asiat (jargoni, pitkät lauseet).\n• Rytmivinkit (lyhyet lauseet, tauot … / –).`
+`• Language and mode of address.\n• Tone: friendly/concise/professional.\n• Avoid: jargon, long sentences.\n• Rhythm: short sentences, natural pauses (… or –).`
                     }
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Puhu selkeää suomea, sinuttele, ole lämmin ja napakka. Vältä jargonia. Käytä lyhyitä lauseita ja luonnollisia taukoja (… tai –).</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>Speak clearly and warmly; keep it concise. Avoid jargon. Use short sentences and natural pauses (… or –).</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Puhelun tavoitteet</label>
+                  <label className="form-label">Call goals</label>
                   <textarea
                     value={editingCallType.goals || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, goals: e.target.value })}
                     placeholder={
-`• Listaa 3–5 konkreettista tavoitetta tälle kontaktityypille.\n• Mitä tietoa pitää kerätä?\n• Mitä lopputulos/next step on?`
+`• List 3–5 concrete goals for this call type.\n• What information must be collected?\n• What is the outcome/next step?`
                     }
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>1) Selvitä [X]. 2) Kartoita [kiinnostus/haasteet]. 3) Tarjoa apuvaihtoehto. 4) Kysy jatkoyhteydenotto. 5) Kerää paras aika ja yhteystapa.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>1) Find out [X]. 2) Map [interests/challenges]. 3) Offer a helpful option. 4) Ask for follow-up. 5) Collect best time and contact method.</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Keskusteluohjeet</label>
+                  <label className="form-label">Conversation guidelines</label>
                   <textarea
                     value={editingCallType.guidelines || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, guidelines: e.target.value })}
                     placeholder={
-`• Miten keskustelua rytmitetään.\n• Yksi kysymys kerrallaan, odota vastaus.\n• Täsmennykset, jos vastaus on epäselvä.\n• Jos asiakas kysyy → vastaa lyhyesti ja palaa runkoon.\n• Empatia ja keskeyttämättömyys.`
+`• How to pace the conversation.\n• One question at a time, wait for answer.\n• Clarify if the answer is unclear.\n• If customer asks → answer briefly then return to script.\n• Show empathy and do not interrupt.`
                     }
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Esitä vain yksi kysymys kerrallaan ja odota vastaus. Jos vastaus on epäselvä, pyydä esimerkki. Vastaa asiakkaan kysymyksiin ytimekkäästi ja jatka runkoa.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>Ask one question at a time and wait. If unclear, ask for an example. Answer briefly and continue the script.</div>
                 </div>
               </div>
             </div>
@@ -223,18 +223,18 @@ const EditCallTypeModal = ({
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Aloitusrepliikki</label>
+                  <label className="form-label">Opening line</label>
                   <input
                     type="text"
                     value={editingCallType.first_line || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, first_line: e.target.value })}
                     className="form-input"
-                    placeholder="Tämä on mitä assari sanoo ensimmäisenä kun puhelu alkaa"
+                    placeholder="What the assistant says first when the call starts"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Tämä on mitä assari sanoo ensimmäisenä kun puhelu alkaa.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>This is what the assistant says first when the call starts.</div>
                 </div>
               </div>
 
@@ -245,78 +245,78 @@ const EditCallTypeModal = ({
                     value={editingCallType.intro || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, intro: e.target.value })}
                     placeholder={
-                    `• Tervehdys + esittely + syy yhteyteen.\n• Aseta odotukset (kysyn muutaman kysymyksen).\n• Kutsu jatkamaan.`
+                    `• Greeting + introduction + reason for contact.\n• Set expectations (I'll ask a few questions).\n• Invite to continue.`
                     }
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Moikka! Täällä [Nimi], [Yritys]n AI‑assistentti. Soitan/ vastaan, koska [syy]. Jos sopii, kysyn pari ytimekästä kysymystä — aloitetaanko?</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>Hello! This is [Name], [Company]'s AI assistant. I'm calling/answering because [reason]. If it's okay, I'll ask a couple of concise questions — shall we begin?</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Kysymyslista</label>
+                  <label className="form-label">Question list</label>
                   <textarea
                     value={editingCallType.questions || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, questions: e.target.value })}
                     placeholder={
-`• Numeroi 4–7 ydinkysymystä.\n• Kirjoita jokainen omalle rivilleen.\n• Lisää haarat: Jos ei/kyllä → tee X.\n• Lisää: odota vastausta joka väliin.`
+`• Number 4–7 core questions.\n• Write each on its own line.\n• Add branches: If no/yes → do X.\n• Add: wait for answer between questions.`
                     }
                     rows={8}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151', whiteSpace: 'pre-wrap' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>{`1) Olitko mukana [tapahtuma]?\nodota vastausta\nJos ei → kysy haluaako linkin tai tallenteen.\nodota vastausta\n2) Mikä sai kiinnostumaan [aiheesta]?\nodota vastausta\n3) Missä koet eniten haastetta: [vaihtoehdot]?\nodota vastausta\n4) Haluatko, että asiantuntija on yhteydessä?\nodota vastausta\nJos kyllä → kysy paras aika ja tapa (soitto/sähköposti).`}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>{`1) Did you attend [event]?\nwait for answer\nIf no → ask if they'd like a link or recording.\nwait for answer\n2) What got you interested in [topic]?\nwait for answer\n3) Where do you see the biggest challenge: [options]?\nwait for answer\n4) Would you like a specialist to contact you?\nwait for answer\nIf yes → ask for the best time and method (call/email).`}</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Lopetusrepliikki</label>
+                  <label className="form-label">Closing line</label>
                   <textarea
                     value={editingCallType.outro || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, outro: e.target.value })}
                     placeholder={
-`• Kiitä ja tarkista, onko muuta.\n• Tarjoa yhteenveto/linkit sähköpostiin.\n• Vahvista seuraavat askeleet.\n• Päätä ystävällisesti.`
+`• Thank them and ask if there's anything else.\n• Offer to send a summary/links by email.\n• Confirm the next steps.\n• End politely.`
                     }
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151', whiteSpace: 'pre-wrap' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>{`Kiitos juttutuokiosta! Laitanko yhteenvedon ja linkit sähköpostilla?\nodota vastausta\nSovitaan näin: [seuraava askel]. Mukavaa päivää ja kuulemiin!`}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>{`Thanks for the chat! Shall I send a short summary and links by email?\nwait for answer\nLet's agree on this: [next step]. Have a great day – goodbye!`}</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Lisämuistiinpanot</label>
+                  <label className="form-label">Additional notes</label>
                   <textarea
                     value={editingCallType.notes || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, notes: e.target.value })}
                     placeholder={
-`• Mitä metatietoa tulee kirjata (aika, tapa, lupa, sähköposti, toiveet).\n• Erityiset liput/etiketit (kiireellinen, palautetta, eskalointi).`
+`• What metadata should be recorded (time, method, consent, email, preferences).\n• Special flags/labels (urgent, feedback, escalation).`
                     }
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Tallenna: suosittu yhteydenottoaika, yhteystapa, sähköposti, webinaarilinkin/tallenteen pyyntö, lyhyt yhteenveto haasteista/tavoitteista.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>Record: preferred contact time, method, email, request for webinar link/recording, short summary of challenges/goals.</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Ensimmäinen tekstiviesti (SMS)</label>
+                  <label className="form-label">First text message (SMS)</label>
                   <textarea
                     value={editingCallType.first_sms || ''}
                     onChange={e => {
@@ -326,7 +326,7 @@ const EditCallTypeModal = ({
                         setEditingCallType({ ...editingCallType, first_sms: value })
                       }
                     }}
-                    placeholder="SMS-viesti joka lähetetään asiakkaalle ennen puhelua... (max 160 merkkiä)"
+                    placeholder="SMS message sent to the customer before the call... (max 160 characters)"
                     rows={4}
                     maxLength={160}
                     className="form-textarea"
@@ -344,18 +344,18 @@ const EditCallTypeModal = ({
                     fontSize: 12 
                   }}>
                     <span style={{ color: '#6b7280' }}>
-                      {editingCallType.first_sms ? `${editingCallType.first_sms.length}/160 merkkiä` : '0/160 merkkiä'}
+                      {editingCallType.first_sms ? `${editingCallType.first_sms.length}/160 characters` : '0/160 characters'}
                     </span>
                     {editingCallType.first_sms && editingCallType.first_sms.length > 140 && (
                       <span style={{ color: '#f59e0b' }}>
-                        ⚠️ Pitkä viesti ({editingCallType.first_sms.length > 150 ? '2 viestiä' : '1 viesti'})
+                        ⚠️ Long message ({editingCallType.first_sms.length > 150 ? '2 messages' : '1 message'})
                       </span>
                     )}
                   </div>
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Kirjoita lyhyt ja ytimekäs viesti joka esittelee puhelun ja asettaa odotukset. Viesti lähetetään automaattisesti ennen soittoa.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>Write a concise and warm message that introduces the call and sets expectations. This message is sent automatically before the call.</div>
                 </div>
               </div>
 
@@ -367,38 +367,38 @@ const EditCallTypeModal = ({
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Yhteenveto (analytiikka)</label>
+                  <label className="form-label">Summary (analytics)</label>
                   <textarea
                     value={editingCallType.summary || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, summary: e.target.value })}
                     placeholder={
-`• 2–3 virkkeen tiivistelmä suomeksi.\n• Kerro mitä selvisi + sovitut jatkotoimet.`
+`• 2–3 sentence summary in Finnish.\n• Describe what was learned + agreed next steps.`
                     }
                     rows={5}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Tiivistä 2–3 virkkeeseen: osallistuiko [tapahtuma], tärkeimmät kiinnostukset/haasteet, sovitut next steps (soittoaika/tapa).</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>Summarize in 2–3 sentences: did [event] participate, key interests/challenges, agreed next steps (call time/method).</div>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Menestyksen arviointi (analytiikka)</label>
+                  <label className="form-label">Success assessment (analytics)</label>
                   <textarea
                     value={editingCallType.success_assessment || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, success_assessment: e.target.value })}
                     placeholder={
-`• Arvioi 2–3 virkkeessä, täyttyivätkö Goals‑kohdan tavoitteet.\n• Kerro miksi onnistui/ei onnistunut ja mainitse puuttuvat kohdat.`
+`• Assess in 2–3 sentences, did the goals of the Goals section meet.\n• Describe why it succeeded/did not succeed and mention missing points.`
                     }
                     rows={5}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div>Arvioi, saavutettiinko: 1) osallistumistieto, 2) kiinnostukset/haasteet, 3) jatkoyhteydenotto, 4) yhteydenoton aika/tapa. Perustele lyhyesti.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>Assess, did it achieve: 1) information intake, 2) interests/challenges, 3) follow-up, 4) contact method/time. Briefly justify.</div>
                 </div>
               </div>
             </div>
@@ -412,7 +412,7 @@ const EditCallTypeModal = ({
               onClick={onClose}
               variant="secondary"
             >
-              Peruuta
+              Cancel
             </Button>
             {currentStep > 1 && (
               <Button
@@ -420,7 +420,7 @@ const EditCallTypeModal = ({
                 onClick={handlePrevious}
                 variant="secondary"
               >
-                Edellinen
+                Previous
               </Button>
             )}
           </div>
@@ -431,14 +431,14 @@ const EditCallTypeModal = ({
                 type="button"
                 onClick={handleNext}
               >
-                Seuraava
+                Next
               </Button>
             ) : (
               <Button
                 type="button"
                 onClick={handleSubmit}
               >
-                Tallenna muutokset
+                Save changes
               </Button>
             )}
           </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import axios from 'axios'
 import './ContentStrategyPage.css'
 import { supabase } from '../lib/supabase'
@@ -55,6 +56,7 @@ const getStrategy = async () => {
 }
 
 export default function ContentStrategyPage() {
+  const { t, i18n } = useTranslation('common')
   const [strategy, setStrategy] = useState([])
   const [icpSummary, setIcpSummary] = useState([])
   const [kpiData, setKpiData] = useState([])
@@ -358,7 +360,7 @@ export default function ContentStrategyPage() {
     return (
       <div className="strategy-loading">
         <div className="loading-spinner"></div>
-        <p>Ladataan sisältöstrategiaa...</p>
+        <p>{t('strategy.loading')}</p>
       </div>
     )
   }
@@ -367,7 +369,7 @@ export default function ContentStrategyPage() {
     <>
       <div className="strategy-container">
         <div className="strategy-header">
-          <h2>Sisältöstrategia</h2>
+          <h2>{t('strategy.header')}</h2>
         </div>
         
         <div className="strategy-bentogrid">
@@ -376,7 +378,7 @@ export default function ContentStrategyPage() {
             {/* Kohderyhmä-kortti */}
             {icpSummary && icpSummary.length > 0 && (
               <div className="strategy-card">
-                <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>Kohderyhmä</div>
+                <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>{t('strategy.icp.title')}</div>
               
               {editingIcp ? (
                 <div style={{ flex: 1 }}>
@@ -397,7 +399,7 @@ export default function ContentStrategyPage() {
                       background: '#f9fafb',
                       boxSizing: 'border-box'
                     }}
-                    placeholder="Kirjoita kohderyhmäprofiilit tähän (yksi per rivi)..."
+                    placeholder={t('strategy.icp.placeholder')}
                   />
                   <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
                     <button 
@@ -413,7 +415,7 @@ export default function ContentStrategyPage() {
                       }}
                       onClick={handleSaveIcp}
                     >
-                      Tallenna
+                      {t('strategy.buttons.save')}
                     </button>
                     <button 
                       style={{
@@ -428,7 +430,7 @@ export default function ContentStrategyPage() {
                       }}
                       onClick={handleCancelIcp}
                     >
-                      Peruuta
+                      {t('strategy.buttons.cancel')}
                     </button>
                   </div>
                 </div>
@@ -458,7 +460,7 @@ export default function ContentStrategyPage() {
                           setIcpEditText(icpSummary.join('\n'))
                         }}
                     >
-                      Muokkaa ICP
+                      {t('strategy.icp.edit')}
                     </button>
                   </div>
                 </div>
@@ -469,7 +471,7 @@ export default function ContentStrategyPage() {
             {/* Tavoitteet-kortti */}
             {kpiData && kpiData.length > 0 && (
               <div className="strategy-card">
-                <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>Tavoitteet</div>
+                <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>{t('strategy.kpi.title')}</div>
                 
                 {editingKpi ? (
                   <div style={{ flex: 1 }}>
@@ -490,7 +492,7 @@ export default function ContentStrategyPage() {
                         background: '#f9fafb',
                         boxSizing: 'border-box'
                       }}
-                      placeholder="Kirjoita tavoitteet tähän..."
+                      placeholder={t('strategy.kpi.placeholder')}
                     />
                     <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
                       <button 
@@ -506,7 +508,7 @@ export default function ContentStrategyPage() {
                         }}
                         onClick={handleSaveKpi}
                       >
-                        Tallenna
+                        {t('strategy.buttons.save')}
                       </button>
                       <button 
                         style={{
@@ -521,7 +523,7 @@ export default function ContentStrategyPage() {
                         }}
                         onClick={handleCancelKpi}
                       >
-                        Peruuta
+                        {t('strategy.buttons.cancel')}
                       </button>
                     </div>
                   </div>
@@ -551,7 +553,7 @@ export default function ContentStrategyPage() {
                           setKpiEditText(kpiData.join('\n'))
                         }}
                       >
-                        Muokkaa tavoitteita
+                        {t('strategy.kpi.edit')}
                       </button>
                     </div>
                   </div>
@@ -562,7 +564,7 @@ export default function ContentStrategyPage() {
 
           {/* Sisältöstrategiat - otsikko */}
           <div className="strategy-section-header">
-            <h3>Sisältöstrategiat</h3>
+            <h3>{t('strategy.list.title')}</h3>
           </div>
 
           {/* Strategiakortit */}
@@ -607,7 +609,7 @@ export default function ContentStrategyPage() {
                       background: '#f9fafb',
                       boxSizing: 'border-box'
                     }}
-                    placeholder="Kirjoita kuukauden sisältöstrategia tähän..."
+                    placeholder={t('strategy.strategyCard.placeholder')}
                   />
                   <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
                     <button 
@@ -623,7 +625,7 @@ export default function ContentStrategyPage() {
                       }}
                       onClick={() => handleSave(item)}
                     >
-                      Tallenna
+                      {t('strategy.buttons.save')}
                     </button>
                     <button 
                       style={{
@@ -638,7 +640,7 @@ export default function ContentStrategyPage() {
                       }}
                       onClick={handleCancel}
                     >
-                      Peruuta
+                      {t('strategy.buttons.cancel')}
                     </button>
                   </div>
                 </div>
@@ -655,7 +657,7 @@ export default function ContentStrategyPage() {
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: 12, color: '#9ca3af' }}>
-                      {new Date(item.created_at || item.createdTime).toLocaleDateString('fi-FI')}
+                      {new Date(item.created_at || item.createdTime).toLocaleDateString(i18n.language === 'fi' ? 'fi-FI' : 'en-US')}
                     </span>
                     <button 
                       style={{
@@ -670,7 +672,7 @@ export default function ContentStrategyPage() {
                       }}
                       onClick={() => handleEdit(item)}
                     >
-                      Muokkaa
+                      {t('strategy.buttons.edit')}
                     </button>
                   </div>
                 </div>
@@ -685,17 +687,17 @@ export default function ContentStrategyPage() {
         {strategy.length === 0 && (
           <div className="strategy-card" style={{ textAlign: 'center', padding: 48 }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>📋</div>
-            <h3 style={{ margin: '0 0 8px 0', color: '#374151' }}>Ei sisältöstrategioita vielä</h3>
-            <p style={{ margin: 0, color: '#6b7280' }}>Aloita luomalla ensimmäinen kuukausistrategia</p>
+            <h3 style={{ margin: '0 0 8px 0', color: '#374151' }}>{t('strategy.empty.title')}</h3>
+            <p style={{ margin: 0, color: '#6b7280' }}>{t('strategy.empty.description')}</p>
           </div>
         )}
 
         {/* Kohderyhmä jos ei ole vielä olemassa */}
         {(!icpSummary || icpSummary.length === 0) && (
           <div className="strategy-card">
-            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>👥 Kohderyhmä</div>
+            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>👥 {t('strategy.icp.title')}</div>
             <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
-              <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Ei kohderyhmäprofiileja vielä</p>
+              <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>{t('strategy.icp.empty')}</p>
               <button 
                 style={{
                   background: '#22c55e',
@@ -712,7 +714,7 @@ export default function ContentStrategyPage() {
                   setIcpEditText('')
                 }}
               >
-                Luo kohderyhmäprofiili
+                {t('strategy.icp.create')}
               </button>
             </div>
           </div>
@@ -721,9 +723,9 @@ export default function ContentStrategyPage() {
         {/* Tavoitteet jos ei ole vielä olemassa */}
         {(!kpiData || kpiData.length === 0) && (
           <div className="strategy-card">
-            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🎯 Tavoitteet</div>
+            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🎯 {t('strategy.kpi.title')}</div>
             <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
-              <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Ei tavoitteita vielä</p>
+              <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>{t('strategy.kpi.empty')}</p>
               <button 
                 style={{
                   background: '#22c55e',
@@ -740,7 +742,7 @@ export default function ContentStrategyPage() {
                   setKpiEditText('')
                 }}
               >
-                Luo tavoitteet
+                {t('strategy.kpi.create')}
               </button>
             </div>
           </div>

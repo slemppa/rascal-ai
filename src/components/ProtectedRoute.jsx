@@ -23,8 +23,7 @@ const ProtectedRoute = ({ children, requiredFeatures = [], requiredRole = null }
   }
 
   if (!user) {
-    navigate('/')
-    return null
+    return <Navigate to="/" replace />
   }
 
   // Tarkista rooli-vaatimukset

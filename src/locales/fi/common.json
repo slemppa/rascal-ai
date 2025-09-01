@@ -1,0 +1,917 @@
+{
+  "lang": { "fi": "Suomeksi", "en": "In English", "shortFi": "FI", "shortEn": "EN" },
+  "meta": {
+    "title": "RascalAI.fi – Myyjän paras työpari",
+    "description": "Rascal AI vapauttaa myyjien ajan rutiineista ja valmistelusta, jotta voit keskittyä voittaviin asiakaskohtaamisiin."
+  },
+  "nav": {
+    "articles": "Artikkelit",
+    "demo": "Demo",
+    "customers": "Asiakkaat",
+    "team": "Tiimi",
+    "contact": "Ota yhteyttä",
+    "signin": "Kirjaudu",
+    "bookDemo": "Varaa demo"
+  },
+  "hero": {
+    "title": "Myynnin, markkinoinnin ja johdon assistentti",
+    "subtitle": "Olen siis uusi työkaverisi",
+    "cta": "Varaa demo"
+  },
+  "sections": {
+    "latestArticles": "Uusimmat artikkelit",
+    "latestArticlesDescription": "Pysy ajan tasalla tekoälyn ja automaation trendeistä",
+    "whatRascalDoes": "Mitä Rascal AI tekee?",
+    "whyRascal": "Miksi Rascal AI?",
+    "team": "Tiimi",
+    "dueDiligence": "Tekoäly Due Diligence",
+    "book30min": "Varaa 30 minuuttia"
+  },
+  "cta": {
+    "learnAndBook": "Tutustu ja varaa",
+    "comingSoon": "Tulee pian",
+    "dueDiligenceDesc": "Veloitukseton 60 min kartoitus: missä tekoäly tuo nopeimmat ja suurimmat hyödyt – ilman hypeä ja hakuammuntaa.",
+    "book30minDesc": "Näytämme, miten Rascal AI vapauttaa myyjäsi parhaaseen työhönsä ja nostaa tulokset uudelle tasolle."
+  },
+  "articles": {
+    "loading": "Ladataan artikkeleita...",
+    "general": "Yleinen",
+    "noDate": "Ei päivää",
+    "readMore": "Lue lisää →",
+    "none": "Ei artikkeleita vielä saatavilla."
+  },
+  "blog": {
+    "title": "Artikkelit",
+    "description": "Ajankohtaisia näkemyksiä myynnistä, markkinoinnista ja tekoälyn mahdollisuuksista",
+    "loading": "Ladataan artikkeleita...",
+    "errorTitle": "Virhe",
+    "error": "Artikkeleita ei voitu ladata. Yritä uudelleen myöhemmin.",
+    "retry": "Yritä uudelleen",
+    "emptyTitle": "Ei artikkeleita vielä",
+    "emptyDesc": "Artikkeleita lisätään pian!",
+    "noTitle": "Ei otsikkoa",
+    "noExcerpt": "Ei kuvausta saatavilla"
+  },
+  "article": {
+    "loading": "Ladataan artikkelia...",
+    "errorTitle": "Virhe",
+    "notFound": "Artikkelia ei löytynyt",
+    "backToArticles": "Takaisin artikkeleihin",
+    "contentMissing": "Artikkelin sisältö puuttuu.",
+    "prev": "← Edellinen artikkeli",
+    "next": "Seuraava artikkeli →"
+  },
+  "features": {
+    "intro": {
+      "p1": "Rascal AI hahmottaa myynnin ja markkinoinnin kokonaisuuden",
+      "p2": "Se rakentaa sisältösuunnitelman, tuottaa ja julkaisee somepostaukset, blogit ja uutiskirjeet.",
+      "p3": "Rascal AI soittaa, kartoittaa, buukkaa tapaamisia ja vastaanottaa puheluita.",
+      "p4": "Kaikki tämä - automaattisesti ja omalla tyylilläsi."
+    },
+    "cards": {
+      "social": {
+        "title": "SOME",
+        "lead": "Rakenna luottamusta, brändiä ja myyntiä – automaattisesti.",
+        "body": "Rascal AI luo kohderyhmääsi puhuttelevaa sisältöä Facebookiin, Instagramiin ja LinkedIniin. Se oppii tyylisi, äänesi ja tavoitteesi – ja tuottaa sisällöt puolestasi."
+      },
+      "avatar": {
+        "title": "AVATAR-TEKNOLOGIA",
+        "lead": "Sinun näköisesi – tekoälyn voimalla.",
+        "body": "Avatar-teknologia luo sinusta digitaalikopion, joka esiintyy videoilla ja tuottaa sisältöä kasvoillasi. Aidon oloinen, vaikuttava ja ennen kaikkea tehokas."
+      },
+      "blog": {
+        "title": "BLOGIT & ARTIKKELIT",
+        "lead": "Asiantuntevaa sisältöä, joka ei unohda mitään.",
+        "body": "Rascal AI kirjoittaa artikkeleita ja blogeja juuri sinun kohdeyleisöllesi – strategian ja sisältösuunnitelman mukaisesti. Se muistaa kaiken oleellisen ja kirjoittaa kuin sinä, parhaimmillasi."
+      },
+      "newsletter": {
+        "title": "UUTISKIRJEET",
+        "lead": "Sisältö + jakelu – yhdessä paketissa.",
+        "body": "Kun artikkeli on valmis, Rascal AI tiivistää siitä kiinnostavan uutiskirjeen ja lähettää sen automaattisesti oikealle kohderyhmälle."
+      },
+      "generator": {
+        "title": "SISÄLTÖGENERAATTORI",
+        "lead": "Kysy – saat sisällön muutamassa minuutissa.",
+        "body": "Tarvitsetko postauksen, artikkelin tai kampanjaviestit nopeasti? Rascal AI rakentaa relevantin sisällön lennosta – aina sinun tyylilläsi."
+      },
+      "calls": {
+        "title": "PUHELUT",
+        "lead": "Tekoäly myy ja kartoittaa – ihmisen tavoin.",
+        "body": "Rascal AI soittaa, kartoittaa tarpeet ja buukkaa tapaamiset suoraan kalenteriisi. Se hoitaa myös asiakaspalvelupuhelut – inhimillisesti ja tehokkaasti."
+      },
+      "sms": {
+        "title": "TEKSTIVIESTIT",
+        "lead": "Henkilökohtaista viestintää skaalautuvasti.",
+        "body": "Tavoita kohderyhmäsi suoraan puhelimeen. Rascal AI lähettää viestejä, sopii soittoja ja seuraa liidejä – ilman, että sinä nostat sormeakaan."
+      },
+      "crm": {
+        "title": "CRM-INTEGRAATIOT",
+        "lead": "Yhdistyy suoraan järjestelmiisi.",
+        "body": "Rascal AI kytkeytyy CRM:ään, jolloin kaikki asiakasdata ja viestintä pysyy automaattisesti ajan tasalla."
+      }
+    }
+  },
+  "why": {
+    "description": "Poista rutiinit, vapauta myyjät kohtaamisiin ja nosta tulokset uudelle tasolle. Rascal Company syntyi yhdestä kysymyksestä: Mitä tapahtuisi, jos myyjäsi käyttäisivät 30–50 % enemmän ajasta asiakkaiden kanssa – jo ensi kuussa?"
+  },
+  "industries": {
+    "cards": {
+      "salesMarketing": {
+        "title": "Myynti ja markkinointi",
+        "description": "Vapauta myyjäsi rutiineista ja anna heidän keskittyä asiakaskohtaamisiin, joissa syntyy liikevaihto."
+      },
+      "contentProduction": {
+        "title": "Sisällön tuotanto",
+        "description": "AI laatii markkinointisisältöä eri kanaviin, uutiskirjeisiin, blogeihin ja sähköpostisuoriin."
+      },
+      "processOptimization": {
+        "title": "Prosessien optimointi",
+        "description": "Oppii jatkuvasti julkaistuista sisällöistä ja toteutetuista toimenpiteistä, parantaen suoritusta."
+      }
+    }
+  },
+  "team": {
+    "description": "Tutustu ihmisiin Rascal AI:n takana."
+  },
+  "footer": {
+    "capabilities": "Kyvykkyydet",
+    "industries": "Toimialat",
+    "demo": "Demo",
+    "contact": "Yhteys",
+    "email": "Ota yhteyttä"
+  },
+  "a11y": {
+    "toggleMobileMenu": "Vaihda mobiilivalikko"
+  }
+  ,
+  "auth": {
+    "close": "Sulje",
+    "signIn": "Kirjaudu sisään",
+    "signingIn": "Kirjaudutaan...",
+    "email": "Sähköposti",
+    "password": "Salasana",
+    "emailPlaceholder": "sähköposti@esimerkki.fi",
+    "passwordPlaceholder": "Salasanasi",
+    "showPassword": "Näytä salasana",
+    "hidePassword": "Piilota salasana",
+    "forgotPassword": "Unohditko salasanan?",
+    "loginWithMagicLink": "Kirjaudu taikalinkillä",
+    "signInFailed": "Kirjautuminen epäonnistui",
+    "sendReset": "Lähetä palautuslinkki",
+    "sendingReset": "Lähetetään palautuslinkkiä...",
+    "resetSent": "Tarkista sähköpostisi salasanan palautuslinkki!",
+    "unexpectedError": "Odottamaton virhe tapahtui",
+    "rememberPassword": "Muistatko salasanasi?",
+    "login": "Kirjaudu sisään",
+    "magicLink": "Taikalinkki",
+    "magicLinkDesc": "Syötä sähköpostiosoitteesi, niin lähetämme sinulle taikalinkin kirjautumista varten.",
+    "sendMagicLink": "Lähetä taikalinkki",
+    "sendingMagicLink": "Lähetetään taikalinkkiä...",
+    "magicLinkSent": "Tarkista sähköpostisi taikalinkkiä varten!",
+    "wantPassword": "Haluatko käyttää salasanaa?",
+    "loginWithPassword": "Kirjaudu salasanalla",
+    "verifyingRecovery": "Vahvistetaan palautuslinkkiä...",
+    "invalidLinkTitle": "Virheellinen linkki",
+    "invalidLink": "Tämä salasanan palautuslinkki on virheellinen tai vanhentunut.",
+    "backToSignin": "Takaisin kirjautumiseen",
+    "setNewPassword": "Aseta uusi salasana",
+    "newPassword": "Uusi salasana",
+    "confirmNewPassword": "Vahvista uusi salasana",
+    "min6chars": "Vähintään 6 merkkiä",
+    "confirmNewPasswordPlaceholder": "Vahvista uusi salasanasi",
+    "updatingPassword": "Päivitetään salasanaa...",
+    "updatePassword": "Päivitä salasana",
+    "passwordsDontMatch": "Salasanat eivät täsmää",
+    "passwordTooShort": "Salasanan tulee olla vähintään 6 merkkiä pitkä",
+    "passwordUpdated": "Salasana päivitetty onnistuneesti!"
+  },
+  
+  "aiDD": {
+    "meta": {
+      "title": "Tekoäly Due Diligence – RascalAI",
+      "description": "Yhden tunnin veloitukseton kartoitus: missä tekoäly tuo nopeimmat ja suurimmat hyödyt myynnissä, markkinoinnissa, asiakaspalvelussa, tuotekehityksessä ja johtamisessa."
+    },
+    "hero": {
+      "title": "Tekoäly Due Diligence",
+      "subtitle": "Veloitukseton 60 min kartoitus: missä tekoäly tuo nopeimmat ja suurimmat hyödyt – ilman hypeä ja hakuammuntaa."
+    },
+    "sections": {
+      "whatIs": {
+        "title": "Mikä se on?",
+        "p": "RascalAI:n Tekoäly Due Diligence on yhden tunnin veloitukseton kartoitus, joka näyttää, missä tekoäly tuo teidän liiketoiminnassa nopeimmat ja suurimmat hyödyt. Se tunnistaa kriittiset kohdat myynnissä, markkinoinnissa, asiakaspalvelussa, tuotekehityksessä ja johtamisessa – ilman hypeä ja hakuammuntaa."
+      },
+      "problem": {
+        "title": "Mitä ongelmaa se ratkaisee?",
+        "items": [
+          "Poistaa arvailun: mihin tekoäly kannattaa viedä ensin",
+          "Yhdistää hajanaiset kokeilut yhdeksi etenemissuunnitelmaksi",
+          "Varmistaa, että AI-hankkeet kytkeytyvät KPI/OKR-mittareihin",
+          "Ehkäisee turhat investoinnit ja riskit"
+        ]
+      },
+      "deliverables": {
+        "title": "Mitä saat?",
+        "items": [
+          "AI-Heatmap: selkeä kuva, missä tekoäly tuo eniten hyötyä",
+          "Top 10 -mahdollisuutta: one-pager-kuvaus arvoista ja vaikutuksista",
+          "90 päivän etenemissuunnitelma: konkreettiset seuraavat askeleet",
+          "Data- ja riskiprofiili: GDPR, tietosuoja ja laadunvarmistus",
+          "Koulutus- ja muutosmalli: miten tiimi saa AI:sta täyden hyödyn"
+        ]
+      },
+      "process": {
+        "title": "Miten se tehdään – 5 vaihetta",
+        "items": [
+          "Align – kirkastetaan tavoitteet ja mittarit",
+          "Map – kartoitetaan prosessit ja rutiinit",
+          "Measure – arvioidaan nykytila ja datavalmius",
+          "Prioritize – pisteytetään hyödyt, riskit ja toteutettavuus",
+          "Plan – rakennetaan selkeä etenemissuunnitelma"
+        ]
+      },
+      "benefits": {
+        "title": "Hyödyt liiketoiminnalle",
+        "items": [
+          "Myynti: nopeammat kaupat, parempi voittoprosentti",
+          "Markkinointi: tarkempi kohdentaminen, parempi ROI",
+          "Asiakaspalvelu: lyhyemmät vasteajat, tyytyväisemmät asiakkaat",
+          "Tuotekehitys: ideasta markkinoille nopeammin",
+          "Johtaminen: ajantasaiset raportit, parempi päätöksenteko"
+        ]
+      }
+    },
+    "cta": {
+      "title": "Aloitetaan veloituksettomalla 60 min kartoituksella",
+      "body": "Varmistetaan, että tekoälystä tulee teille uusi tiimin jäsen, joka vauhdittaa kasvua ja tehostaa arkea.",
+      "button": "Varaa kartoitus"
+    }
+  }
+  ,
+  "dashboard": {
+    "meta": {
+      "title": "Dashboard - Rascal AI",
+      "description": "Hallitse sisältöäsi ja seuraa tuloksia Rascal AI Dashboardissa. Julkaisut, tilastot ja aikataulut yhdellä silmäyksellä."
+    },
+    "header": {
+      "title": "Kojelauta",
+      "subtitle": "Hallitse sisältöäsi ja seuraa tuloksia yhdellä silmäyksellä"
+    },
+    "metrics": {
+      "title": "Avainluvut",
+      "filters": {
+        "all": "Kaikki",
+        "week": "Viime viikko",
+        "month": "Viime kuukausi",
+        "days7": "Viime 7 päivää",
+        "days30": "Viime 30 päivää"
+      },
+      "stats": {
+        "upcomingPosts": "Tulevat postaukset",
+        "publishedContent": "Sisältö julkaistu",
+        "messageCosts": "Kustannukset (viestit)",
+        "callCosts": "Puhelinkustannukset",
+        "successCalls": "Puhelut (onnistuneet)",
+        "answerRate": "Vastausprosentti",
+        "trendUpSuffix": "kasvu edelliseen",
+        "trendDownSuffix": "lasku edelliseen"
+      }
+    },
+    "upcoming": {
+      "title": "Tulevat julkaisut",
+      "headers": { "media": "Media", "caption": "Caption", "status": "Status", "date": "Pvm" },
+      "empty": "Ei tulevia julkaisuja",
+      "today": "Tänään"
+    },
+    "campaigns": {
+      "title": "Kampanjoiden onnistumiset",
+      "headers": { "campaign": "Kampanja", "calls": "Puhelut", "successRate": "Onnistumis%" },
+      "empty": "Ei kampanjoita"
+    },
+    "charts": {
+      "title": "Puhelut ja viestit aikajärjestyksessä",
+      "scatter": "Kesto vs. onnistumisaste",
+      "heatmap": "Parhaiten toimivat puheluajat",
+      "day": "Päivä",
+      "axis": {
+        "duration": "Kesto (s)",
+        "successRate": "Onnistumis%",
+        "count": "Lukumäärä"
+      }
+    },
+    "status": {
+      "Draft": "Luonnos",
+      "In Progress": "Työn alla",
+      "Under Review": "Tarkastuksessa",
+      "Scheduled": "Aikataulutettu",
+      "Done": "Valmis",
+      "Deleted": "Poistettu",
+      "Pending": "Odottaa",
+      "Odottaa": "Odottaa"
+    },
+    "edit": {
+      "title": "Muokkaa julkaisua",
+      "ideaLabel": "Idean kuvaus",
+      "ideaPlaceholder": "Kuvaile julkaisun idea...",
+      "captionLabel": "Julkaisun teksti",
+      "captionPlaceholder": "Kirjoita julkaisun teksti...",
+      "publishDateLabel": "Julkaisupäivä",
+      "saveSuccess": "Tallennettu onnistuneesti!",
+      "saveError": "Tallennus epäonnistui",
+      "cancel": "Peruuta",
+      "save": "Tallenna",
+      "saving": "Tallennetaan..."
+    }
+  }
+  ,
+  "sidebar": {
+    "sections": {
+      "marketing": "Markkinointi",
+      "sales": "Myynti",
+      "tools": "Työkalut"
+    },
+    "labels": {
+      "dashboard": "Etusivu",
+      "posts": "Some",
+      "blogNewsletter": "Blogit ja uutiskirjeet",
+      "strategy": "Strategia",
+      "campaigns": "Kampanjat",
+      "segments": "Segmentit",
+      "calls": "Puhelut",
+      "aiChat": "Assistentti",
+      "dev": "Kehitys",
+      "admin": "Ylläpito",
+      "adminBlog": "Admin"
+    },
+    "settings": "Asetukset",
+    "helpCenter": "Ohjekeskus",
+    "logout": "Kirjaudu ulos"
+  }
+  ,
+  "posts": {
+    "header": "Sosiaalisen median sisältö",
+    "searchPlaceholder": "Etsi sosiaalisen median sisältöä...",
+    "filters": { "allStatuses": "Kaikki statukset" },
+    "status": {
+      "Kesken": "Luonnos",
+      "Tarkistuksessa": "Valmiina julkaisuun",
+      "Aikataulutettu": "Aikataulutettu",
+      "Julkaistu": "Julkaistu"
+    },
+    "columns": {
+      "avatar": "Avatar",
+      "inProgress": "Luonnos",
+      "readyToPublish": "Valmiina julkaisuun",
+      "scheduled": "Aikataulutettu",
+      "published": "Julkaistu"
+    },
+    "actions": {
+      "createNew": "+ Luo uusi sisältö",
+      "edit": "Muokkaa",
+      "moveToNext": "Siirrä seuraavaan",
+      "publish": "Julkaise",
+      "delete": "Poista",
+      "cancel": "Peruuta",
+      "saveChanges": "Tallenna muutokset",
+      "publishToSelectedChannels": "Julkaise valituille kanaville",
+      "retry": "Yritä uudelleen"
+    },
+    "loading": {
+      "fetchingAccounts": "Haetaan somekanavia..."
+    },
+    "placeholders": {
+      "image": "Kuva",
+      "noImage": "Ei kuvaa",
+      "noDescription": "Ei kuvausta",
+      "video": "Video",
+      "noVideo": "Video ei saatavilla"
+    },
+    "untitled": "Nimetön julkaisu",
+    "createModal": {
+      "title": "Luo uusi some-sisältö",
+      "close": "Sulje",
+      "fields": {
+        "title": "Otsikko",
+        "type": "Tyyppi",
+        "description": "Kuvaus"
+      },
+      "placeholders": {
+        "title": "Syötä some-sisällön otsikko...",
+        "description": "Kirjoita some-sisällön kuvaus..."
+      },
+      "cancel": "Peruuta",
+      "create": "Luo some-sisältö"
+    },
+    "editModal": {
+      "title": "Muokkaa some-sisältöä",
+      "titleVoiceover": "Voiceover-tarkistus",
+      "titleCaption": "Kuvaus-tarkistus",
+      "labels": {
+        "description": "Kuvaus",
+        "voiceover": "Voiceover (vain luku)",
+        "voiceoverEdit": "Voiceover",
+        "confirmVoiceover": "Vahvistan että {field} on valmis ja tarkistettu",
+        "publishDate": "Julkaisupäivä",
+        "status": "Status",
+        "source": "Lähde"
+      },
+      "placeholders": {
+        "description": "Kirjoita some-sisällön kuvaus...",
+        "voiceover": "Kirjoita voiceover-teksti...",
+        "date": "pp.kk.vvvv klo --:--"
+      },
+      "charCounter": "merkkiä"
+    },
+    "publishModal": {
+      "title": "Valitse somekanavat julkaisua varten",
+      "close": "Sulje",
+      "contentToPublish": "Julkaistava sisältö",
+      "selectChannels": "Valitse somekanavat",
+      "noAccounts": "Ei yhdistettyjä somekanavia.",
+      "connectInSettings": "Yhdistä somekanavat asetuksissa"
+    },
+    "schedule": {
+      "prompt": "Syötä ajastuspäivä (YYYY-MM-DD HH:MM):"
+    },
+    "alerts": {
+      "ideaSent": "Idea lähetetty AI:lle! Some-sisältö generoidaan taustalla.",
+      "ideaError": "Virhe: Ei voitu luoda some-sisältöä. Yritä uudelleen.",
+      "deleteConfirm": "Oletko varma, että haluat poistaa tämän some-sisällön?",
+      "deleted": "Some-sisältö merkitty poistetuksi!",
+      "deleteFailed": "Some-sisällön poisto epäonnistui: {message}",
+      "scheduleSuccess": "Some-sisällön ajastus onnistui!",
+      "scheduleFailed": "Ajastus epäonnistui: {message}",
+      "publishSuccess": "Some-sisällön julkaisu onnistui!",
+      "publishFailed": "Some-sisällön julkaisu epäonnistui: {message}",
+      "selectAtLeastOne": "Valitse vähintään yksi somekanava",
+      "moveSuccess": "Postaus siirretty sarakkeeseen: {status}",
+      "moveFailed": "Siirtyminen epäonnistui: {message}",
+      "reelsOnly": "Siirtyminen on mahdollista vain Supabase-postauksille"
+    }
+  }
+  ,
+  "blogNewsletter": {
+    "header": "Blogit ja uutiskirjeet",
+    "searchPlaceholder": "Etsi blogeja ja newslettereja...",
+    "filters": { "allStatuses": "Kaikki statukset", "allTypes": "Kaikki sisältötyypit" },
+    "types": { "blog": "📝 Blog-artikkelit", "newsletter": "📧 Newsletterit" },
+    "status": {
+      "Luonnos": "Luonnos",
+      "Kesken": "Kesken",
+      "Tarkistuksessa": "Tarkistuksessa",
+      "Aikataulutettu": "Aikataulutettu",
+      "Valmis": "Valmis",
+      "Julkaistu": "Julkaistu"
+    },
+    "actions": {
+      "view": "Näytä",
+      "publish": "Julkaise",
+      "createNew": "+ Luo sisältö",
+      "cancel": "Peruuta",
+      "delete": "Poista",
+      "retry": "Yritä uudelleen",
+      "close": "Sulje"
+    },
+    "loading": { "loadingContent": "Ladataan sisältöä..." },
+    "empty": {
+      "title": "Ei sisältöä vielä",
+      "description": "Aloita luomalla uusi blog-artikkeli tai newsletter",
+      "createFirst": "Luo ensimmäinen sisältö"
+    },
+    "placeholders": {
+      "noImage": "Ei kuvaa",
+      "noMedia": "Ei mediaa saatavilla",
+      "noContent": "Ei sisältöä saatavilla",
+      "noDate": "Ei päivämäärää"
+    },
+    "createModal": {
+      "title": "Luo sisältö",
+      "fields": { "title": "Otsikko", "type": "Tyyppi", "content": "Sisältö" },
+      "placeholders": { "title": "Syötä sisällön otsikko...", "content": "Kirjoita sisältö..." },
+      "cancel": "Peruuta",
+      "create": "Luo sisältö"
+    },
+    "viewModal": {
+      "originalIdea": "Alkuperäinen idea:",
+      "status": "Status:",
+      "close": "Sulje"
+    },
+    "alerts": {
+      "ideaSent": "Idea lähetetty AI:lle! Sisältö generoidaan taustalla.",
+      "ideaError": "Virhe: Ei voitu luoda sisältöä. Yritä uudelleen.",
+      "publishSuccess": "Julkaisu onnistui!",
+      "publishFailed": "Julkaisu epäonnistui: {message}",
+      "deleteConfirm": "Oletko varma, että haluat poistaa tämän sisällön?",
+      "deleted": "Sisältö poistettu onnistuneesti!",
+      "deleteFailed": "Poisto epäonnistui: {message}"
+    }
+  }
+  ,
+  "strategy": {
+    "header": "Kohderyhmä, tavoitteet ja sisältösuunnitelma",
+    "loading": "Ladataan sisältöstrategiaa...",
+    "status": { "current": "Tässä kuussa", "upcoming": "Tulossa", "old": "Menneet" },
+    "icp": {
+      "title": "Kohderyhmä",
+      "placeholder": "Kirjoita kohderyhmäprofiilit tähän (yksi per rivi)...",
+      "edit": "Muokkaa ICP",
+      "empty": "Ei kohderyhmäprofiileja vielä",
+      "create": "Luo kohderyhmäprofiili"
+    },
+    "kpi": {
+      "title": "Tavoitteet",
+      "placeholder": "Kirjoita tavoitteet tähän...",
+      "edit": "Muokkaa tavoitteita",
+      "empty": "Ei tavoitteita vielä",
+      "create": "Luo tavoitteet"
+    },
+    "list": { "title": "Sisältöstrategiat" },
+    "strategyCard": { "placeholder": "Kirjoita kuukauden sisältöstrategia tähän..." },
+    "buttons": { "save": "Tallenna", "cancel": "Peruuta", "edit": "Muokkaa" },
+    "empty": { "title": "Ei sisältöstrategioita vielä", "description": "Aloita luomalla ensimmäinen kuukausistrategia" }
+  }
+  ,
+  "campaigns": {
+    "header": { "title": "Kampanjat", "description": "Hallitse puhelukampanjoitasi ja seuraa niiden suorituskykyä" },
+    "actions": { "create": "Luo kampanja", "creating": "Luodaan...", "cancel": "Peruuta" },
+    "loading": "Ladataan kampanjoita...",
+    "error": "Virhe ladattaessa kampanjoita",
+    "empty": "Ei kampanjoita vielä",
+    "stats": {
+      "active": "Aktiiviset kampanjat",
+      "totalCalls": "Yhteensä puheluja",
+      "answerRate": "Vastausprosentti",
+      "successful": "Onnistuneita"
+    },
+    "card": {
+      "calls": "Puhelut",
+      "answerRateShort": "Vastaus%",
+      "successful": "Onnistuneet",
+      "script": "Skripti"
+    },
+    "details": {
+      "title": "Kampanjan tiedot",
+      "loading": "Ladataan...",
+      "error": "Virhe"
+    },
+    "form": {
+      "nameLabel": "Kampanjan nimi *",
+      "namePlaceholder": "Esim. Q3 Follow-up kampanja",
+      "descriptionLabel": "Kuvaus",
+      "descriptionPlaceholder": "Lyhyt kuvaus kampanjan tarkoituksesta...",
+      "scriptLabel": "Soittoskripti",
+      "scriptPlaceholder": "Valitse soittoskripti",
+      "dailyLimitLabel": "Päivittäinen raja",
+      "maxAttemptsLabel": "Max yritykset per kontakti",
+      "submit": "Luo kampanja",
+      "submitting": "Luodaan...",
+      "cancel": "Peruuta",
+      "saveError": "Virhe tallennuksessa"
+    },
+    "status": {
+      "active": "Aktiivinen",
+      "paused": "Keskeytetty",
+      "completed": "Valmis",
+      "archived": "Arkistoitu"
+    },
+    "charts": {
+      "dailyCalls": "Päivittäiset puhelut",
+      "dailyAnswerRate": "Vastausprosentti päivittäin",
+      "seriesCalls": "Puhelut",
+      "seriesAnswered": "Vastatut",
+      "tooltipAnswer": "Vastaus%"
+    }
+  }
+  ,
+  "segments": {
+    "header": { "title": "Segmentit", "description": "Organisoi kontaktisi ja seuraa segmenttien suorituskykyä" },
+    "actions": { "create": "Luo segmentti", "creating": "Luodaan...", "cancel": "Peruuta" },
+    "loading": "Ladataan segmenttejä...",
+    "error": "Virhe ladattaessa segmenttejä",
+    "empty": "Ei segmenttejä vielä",
+    "stats": {
+      "totalSegments": "Segmenttejä yhteensä",
+      "totalContacts": "Kontakteja yhteensä",
+      "avgPerSegment": "Keskimäärin per segmentti"
+    },
+    "card": {
+      "contacts": "Kontaktit",
+      "created": "Luotu"
+    },
+    "form": {
+      "nameLabel": "Segmentin nimi *",
+      "namePlaceholder": "Esim. Lämpimät liidit",
+      "descriptionLabel": "Kuvaus",
+      "descriptionPlaceholder": "Kuvaile segmenttiä...",
+      "colorLabel": "Väri",
+      "submit": "Luo segmentti",
+      "submitting": "Luodaan...",
+      "cancel": "Peruuta",
+      "saveError": "Virhe tallennuksessa"
+    },
+    "details": {
+      "title": "Segmentin tiedot",
+      "loading": "Ladataan...",
+      "error": "Virhe",
+      "metrics": { "calls": "Puhelut", "answerRateShort": "Vastaus%", "successful": "Onnistuneet" }
+    },
+    "statsBoard": {
+      "calls": "Puhelut",
+      "answered": "Vastatut",
+      "successful": "Onnistuneet",
+      "answerRateShort": "Vastaus%",
+      "loading": "Ladataan tilastoja..."
+    }
+  }
+  ,
+  "calls": {
+    "tabs": {
+      "calls": "Puhelut",
+      "logs": "Puheluloki",
+      "messages": "Viestiloki",
+      "textmessages": "Tekstiviestit",
+      "manage": "Hallinta",
+      "crm": "CRM"
+    },
+    "callsTab": {
+      "mass": {
+        "header": "Massapuhelut",
+        "description": "Aloita massapuhelut Google Sheets -datalle tai ajasta ne myöhemmäksi.",
+        "startButton": "Aloita massapuhelut"
+      },
+      "single": {
+        "header": "Yksittäinen puhelu",
+        "description": "Valitse puhelun tyyppi ja tiedot modaalissa.",
+        "startButton": "Soita yksittäinen puhelu"
+      },
+      "settings": {
+        "header": "Asetukset",
+        "ready": "Valmis",
+        "type": {
+          "label": "Puhelun tyyppi",
+          "loading": "Ladataan puhelun tyyppejä...",
+          "empty": "Ei puhelun tyyppejä saatavilla",
+          "addNew": "Lisää uusi"
+        },
+        "voice": {
+          "label": "Ääni",
+          "test": "Testaa ääni",
+          "stop": "Pysäytä"
+        },
+        "script": {
+          "label": "Skripti",
+          "placeholder": "Valitse puhelun tyyppi nähdäksesi skriptin",
+          "autoupdateHint": "Skripti päivittyy automaattisesti valitun puhelutyyppin mukaan"
+        }
+      },
+      "inbound": {
+        "header": "Inbound-asetukset",
+        "editLarge": "Muokkaa isossa ikkunassa",
+        "voice": { "label": "Ääni", "test": "Testaa" },
+        "welcome": {
+          "label": "Aloitusviesti",
+          "placeholder": "Kirjoita aloitusviesti...",
+          "hint": "Ensimmäinen viesti joka lähetetään asiakkaalle"
+        },
+        "script": {
+          "label": "Inbound-skripti",
+          "placeholder": "Kirjoita inbound-puhelujen skripti...",
+          "hint": "Tervehdys ja ohjeistus asiakkaille jotka soittavat sinulle"
+        },
+        "save": "Tallenna asetukset"
+      }
+    },
+    "logsTab": {
+      "buttons": { "refresh": "Päivitä", "refreshing": "Päivitetään..." },
+      "filters": {
+        "title": "Filtterit ja haku",
+        "searchLabel": "Hae nimeä, numeroa tai sähköpostia",
+        "searchPlaceholder": "Matti Meikäläinen, +358... tai matt@example.com",
+        "statusLabel": "Tila",
+        "typeLabel": "Puhelun tyyppi",
+        "dateFrom": "Päivämäärä alkaen",
+        "dateTo": "Päivämäärä asti",
+        "searchButton": "Hae",
+        "clearButton": "Tyhjennä filtterit",
+        "all": "Kaikki",
+        "statusOptions": {
+          "success": "Onnistuneet",
+          "failed": "Epäonnistuneet",
+          "pending": "Odottaa",
+          "inProgress": "Käynnissä"
+        }
+      }
+    },
+    "messagesTab": {
+      "buttons": { "refresh": "Päivitä", "refreshing": "Päivitetään..." },
+      "loading": "Ladataan viestilokia...",
+      "empty": "Ei viestejä löytynyt",
+      "history": { "title": "Viestihistoria", "showingCount": "Näytetään {count} viestiä" },
+      "table": {
+        "phone": "Puhelinnumero",
+        "type": "Tyyppi",
+        "direction": "Suunta",
+        "status": "Tila",
+        "aiText": "AI-teksti",
+        "customerText": "Asiakkaan vastaus",
+        "date": "Päivämäärä"
+      },
+      "direction": { "outbound": "Lähetetty", "inbound": "Vastaanotettu" },
+      "status": { "sent": "Lähetetty", "delivered": "Toimitettu", "read": "Luettu", "failed": "Epäonnistui", "pending": "Odottaa" }
+    }
+    ,
+    "common": {
+      "close": "Sulje",
+      "cancel": "Peruuta",
+      "back": "← Takaisin",
+      "continue": "Jatka →",
+      "save": "Tallenna"
+    },
+    "modals": {
+      "mass": {
+        "title": "Massapuhelut",
+        "step1": {
+          "title": "Vaihe 1: Google Sheets -data",
+          "desc": "Syötä Google Sheets -URL ja validoi data ennen jatkamista.",
+          "labelUrl": "Google Sheets URL",
+          "placeholderUrl": "https://docs.google.com/spreadsheets/d/...",
+          "cancel": "Peruuta",
+          "validate": "Validoi ja jatka",
+          "validating": "Validoidaan...",
+          "validationOk": "Validointi onnistui!",
+          "found": {
+            "phones": "Löydetty {{count}} puhelinnumeroa",
+            "emails": "Löydetty {{count}} sähköpostia",
+            "rows": "Yhteensä {{count}} riviä"
+          }
+        },
+        "step2": {
+          "title": "Vaihe 2: Puhelun asetukset",
+          "desc": "Valitse kampanja (valinnainen segmentti), puhelun tyyppi ja ääni.",
+          "campaign": { "label": "Kampanja *", "select": "Valitse kampanja" },
+          "segment": { "label": "Segmentti (valinnainen)", "none": "Ei segmenttiä" },
+          "type": { "label": "Puhelun tyyppi" },
+          "voice": { "label": "Ääni" },
+          "smsFirst": { "label": "Tekstari ensin", "readonly": "Ensimmäinen SMS (vain luku)", "missing": "Lisää ensin SMS-teksti puhelutyypille" },
+          "back": "← Takaisin",
+          "next": "Jatka →"
+        },
+        "step3": {
+          "title": "Vaihe 3: Aloita tai ajasta puhelut",
+          "desc": "Valitse aloitatko heti vai ajastatko myöhemmäksi.",
+          "startNow": { "label": "🚀 Aloita heti", "starting": "Käynnistetään..." },
+          "orSchedule": "📅 Tai ajasta puhelut",
+          "date": "Päivämäärä",
+          "time": "Kellonaika",
+          "schedule": { "label": "📅 Ajasta puhelut", "scheduling": "Ajastetaan..." },
+          "back": "← Takaisin"
+        }
+      },
+      "single": {
+        "title": "Yksittäinen puhelu",
+        "close": "Sulje",
+        "step1": {
+          "title": "Vaihe 1: Puhelun asetukset",
+          "type": { "label": "Puhelun tyyppi", "placeholder": "Valitse puhelun tyyppi..." },
+          "voice": { "label": "Ääni" },
+          "cancel": "Peruuta",
+          "next": "Jatka →"
+        },
+        "step2": {
+          "title": "Vaihe 2: Asiakkaan tiedot",
+          "name": { "label": "Nimi", "placeholder": "Matti Meikäläinen" },
+          "phone": { "label": "Puhelinnumero", "placeholder": "040 123 4567 tai +358401234567" },
+          "script": { "label": "Skripti:", "placeholder": "Valitse puhelun tyyppi niin skripti tulee näkyviin." },
+          "smsFirst": { "label": "Tekstari ensin", "readonly": "Ensimmäinen SMS (vain luku)", "missing": "Lisää ensin SMS teksti puhelutyypille" },
+          "back": "← Takaisin",
+          "call": { "label": "Soita", "calling": "Soittaa…" }
+        }
+      },
+      "inbound": {
+        "title": "Inbound-asetukset",
+        "close": "Sulje"
+      }
+    }
+    ,
+    "manageTab": {
+      "header": { "title": "Puhelun tyyppien hallinta" },
+      "cta": { "addNew": "➕ Lisää uusi tyyppi" },
+      "description": "Hallitse puhelun tyyppejä Supabase-tietokannassa. Vain Active-status olevat tyypit näkyvät puheluissa.",
+      "existing": { "title": "Olemassa olevat puhelun tyypit" },
+      "loading": "Ladataan puhelun tyyppejä...",
+      "empty": "Ei puhelun tyyppejä vielä lisätty",
+      "sort": { "label": "Järjestä:", "byStatus": "Status", "byName": "Nimi" },
+      "item": {
+        "identifier": "Tunniste:",
+        "statusActive": "Aktiivinen",
+        "statusDraft": "Luonnos",
+        "statusUnknown": "Tuntematon",
+        "delete": "Poista",
+        "deleteTitle": "Poista puhelun tyyppi",
+        "deletingTitle": "Poistetaan...",
+        "edit": "Muokkaa"
+      }
+    }
+  }
+  ,
+  "assistant": {
+    "loadingUser": "Ladataan käyttäjän tietoja...",
+    "tabs": { "chat": "Keskustelu", "files": "Tietokanta" },
+    "typing": "Kirjoittaa…",
+    "inputPlaceholder": "Kirjoita viestisi...",
+    "send": "Lähetä",
+    "newChatTitle": "Aloita uusi keskustelu",
+    "newChatAria": "Uusi keskustelu",
+    "missingAssistantId": "Assistentin ID puuttuu. Ota yhteyttä ylläpitoon.",
+    "sendError": "Virhe viestin lähettämisessä. Yritä uudelleen.",
+    "files": {
+      "uploadCard": {
+        "title": "Lisää tiedosto tietokantaan",
+        "desc": "Voit liittää PDF-, Word- tai tekstimuotoisen tiedoston. Tiedosto tallennetaan yrityksesi tietokantaan.",
+        "dragText": "Vedä ja pudota tiedostoja tähän tai",
+        "chooseFiles": "valitse tiedostot",
+        "remove": "Poista",
+        "uploadBtn": "Lähetä tiedostot ({count})",
+        "uploading": "Ladataan...",
+        "uploadError": "Virhe tiedostojen lataamisessa",
+        "uploadSuccess": "{count} tiedosto(a) ladattu onnistuneesti!",
+        "missingCompany": "Yrityksen ID puuttuu",
+        "missingAssistant": "Assistentin ID puuttuu"
+      },
+      "list": {
+        "title": "Tiedostot",
+        "loading": "Ladataan tiedostoja...",
+        "error": "Virhe haettaessa tiedostoja",
+        "emptyTitle": "Et ole vielä lisännyt tiedostoja",
+        "emptyAlt": "Ei tiedostoja",
+        "delete": "Poista"
+      }
+    }
+  }
+  ,
+  "settings": {
+    "title": "Asetukset",
+    "profile": { "title": "Käyttäjätiedot", "loading": "Ladataan käyttäjätietoja...", "notFoundSupport": "Käyttäjätietoja ei löytynyt. Ota yhteyttä tukeen.", "fetchError": "Virhe käyttäjätietojen haussa. Ota yhteyttä tukeen.", "updateSuccess": "Tiedot päivitetty onnistuneesti!" },
+    "fields": { "name": "Nimi", "email": "Sähköposti", "company": "Yritys", "industry": "Toimiala", "userId": "Käyttäjätunnus", "namePlaceholder": "Syötä nimesi", "emailPlaceholder": "Syötä sähköpostiosoitteesi", "companyPlaceholder": "Syötä yrityksesi nimi" },
+    "buttons": { "edit": "Muokkaa", "save": "Tallenna", "saving": "Tallennetaan...", "cancel": "Peruuta", "changePassword": "Vaihda salasana" },
+    "common": { "notSet": "Ei asetettu", "notAvailable": "Ei saatavilla", "error": "Virhe", "loadingImages": "Ladataan kuvia..." },
+    "password": { "title": "Salasanan vaihto", "saving": "Tallennetaan...", "save": "Tallenna", "cancel": "Peruuta", "mismatch": "Uudet salasanat eivät täsmää", "tooShort": "Uusi salasana on liian lyhyt (vähintään 6 merkkiä)", "currentRequired": "Nykyinen salasana vaaditaan", "currentWrong": "Nykyinen salasana on väärä", "changed": "Salasana vaihdettu onnistuneesti!", "currentPlaceholder": "Syötä nykyinen salasanasi", "newPlaceholder": "Syötä uusi salasana", "confirmPlaceholder": "Syötä uusi salasana uudelleen", "current": "Nykyinen salasana", "new": "Uusi salasana", "confirm": "Vahvista uusi salasana" },
+    "avatar": { "title": "Avatar-kuvat", "loading": "Ladataan kuvia...", "addNewAria": "Lisää uusi kuva", "add": "Lisää", "fetchError": "Kuvien haku epäonnistui", "uploadError": "Kuvan lähetys epäonnistui", "refreshError": "Kuvien päivitys epäonnistui", "deleteError": "Poisto epäonnistui", "deleting": "Poistetaan...", "delete": "Poista kuva", "info": "{count}/4 kuvaa lisätty. Voit lisätä max 4 kuvaa." },
+    "voice": { "title": "Äänitiedostot (Voice Clone)", "loading": "Ladataan äänitiedostoa...", "addNewAria": "Lisää uusi äänitiedosto", "add": "Lisää", "processing": "Käsitellään...", "added": "Ääni lisätty", "fetchError": "Äänitiedostojen haku epäonnistui", "uploadError": "Äänitiedoston lähetys epäonnistui", "infoNone": "{count}/1 äänitiedosto lisätty. Lisää äänitiedosto voice clone -ominaisuutta varten.", "infoSome": "{count}/1 äänitiedosto lisätty. Äänitiedosto pysyy pysyvästi ja sitä ei voi poistaa." },
+    "social": {
+      "title": "Sosiaalisen median yhdistäminen",
+      "errorTitle": "Virhe:",
+      "errorHelp": "Jos ongelma jatkuu, ota yhteyttä tukeen.",
+      "connectedTitle": "Yhdistetyt sometilit ({count})",
+      "refresh": "🔄 Päivitä",
+      "refreshing": "Päivitetään...",
+      "addedAt": "Lisätty {date}",
+      "unknownDate": "tuntematon",
+      "addAccount": "Lisää tili",
+      "connectTitle": "Yhdistä uusi tili",
+      "status": { "connected": "Yhdistetty", "connecting": "Yhdistetään...", "cta": "Klikkaa yhdistääksesi" },
+      "connectionErrorTitle": "Yhdistysvirhe:",
+      "helpTitle": "Ohjeet:",
+      "help": [
+        "Salli popup-ikkunat tälle sivustolle",
+        "Kirjaudu sisään some-tiliisi uudessa ikkunassa",
+        "Anna tarvittavat oikeudet Rascal AI:lle",
+        "Ikkuna sulkeutuu automaattisesti yhdistyksen jälkeen"
+      ],
+      "alerts": { "refreshFailed": "Virhe päivitettäessä sometilejä. Yritä uudelleen." },
+      "popupsBlocked": "Popup-ikkunat on estetty. Salli popup-ikkunat tälle sivustolle ja yritä uudelleen.",
+      "timeout": "Yhdistys aikakatkaistiin. Tarkista internet-yhteys ja yritä uudelleen.",
+      "connectError": "Virhe yhdistettäessä {platform}: {message}"
+    },
+    "timeout": {
+      "title": "Sessio-asetukset",
+      "description": "Määritä kuinka kauan sessio pysyy aktiivisena inaktiivisuuden jälkeen.",
+      "select": "Valitse timeout:",
+      "custom": "Mukautettu",
+      "customLabel": "Mukautettu timeout (minuutteina):",
+      "customNote": "Sallittu arvo: 5-120 minuuttia",
+      "current": "Nykyinen asetus:",
+      "pageDefault": "(Sivun oletusarvo: {minutes} minuuttia)",
+      "save": "Tallenna asetukset",
+      "reset": "Palauta oletukset",
+      "saved": "✓ Asetukset tallennettu",
+      "infoTitle": "Tietoa sessio-asetuksista",
+      "info": [
+        "Varoitus näkyy 5 minuuttia ennen sessio päättymistä",
+        "Kaikki aktiviteetit (hiiri, näppäimistö, kosketus) nollaa ajastimen",
+        "Asetukset tallentuvat selaimen localStorageen",
+        "Jos et aseta omaa timeoutia, käytetään sivun oletusarvoa"
+      ]
+    },
+    "carousel": {
+      "title": "Valitse karusellin ulkoasu",
+      "sending": "Lähetetään...",
+      "select": "Valitse",
+      "sent": "Valinta lähetetty!",
+      "userCompanyMissing": "Käyttäjän company ID ei löytynyt",
+      "sendError": "Virhe lähetyksessä",
+      "unknownError": "Tuntematon virhe"
+    }
+  }
+}
+
+

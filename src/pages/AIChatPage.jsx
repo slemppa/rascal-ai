@@ -2,11 +2,13 @@ import React, { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
 import ReactMarkdown from 'react-markdown'
 import PageHeader from '../components/PageHeader'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import './AIChatPage.css'
 
 export default function AIChatPage() {
+  const { t } = useTranslation('common')
   // Luotettava lähetystapa sivulta poistuttaessa
   const PENDING_KEY = 'rascalai_pending_msgs'
   const loadPendingQueue = () => {
@@ -82,7 +84,7 @@ export default function AIChatPage() {
   }, [user?.id])
 
   // Hae companyName, companyId, assistantId käyttäjän tiedoista
-  const companyName = userData?.company_name || 'Yrityksen'
+  const companyName = userData?.company_name || 'Company'
   const companyId = userData?.company_id
   const assistantId = userData?.assistant_id
 
@@ -118,11 +120,11 @@ export default function AIChatPage() {
   const fetchFiles = async () => {
     console.log('fetchFiles alkaa, loadingUserData:', loadingUserData, 'companyId:', companyId)
     if (loadingUserData) {
-      setFilesError('Ladataan käyttäjän tietoja...')
+      setFilesError(t('assistant.loadingUser'))
       return
     }
     if (!companyId) {
-      setFilesError('Yrityksen ID puuttuu')
+      setFilesError(t('assistant.files.uploadCard.missingCompany'))
       return
     }
     setFilesLoading(true)
@@ -150,7 +152,7 @@ export default function AIChatPage() {
       setFiles(arr)
     } catch (error) {
       console.error('Virhe haettaessa tiedostoja:', error)
-      setFilesError('Virhe haettaessa tiedostoja')
+      setFilesError(t('assistant.files.list.error'))
     } finally {
       setFilesLoading(false)
     }
@@ -161,7 +163,7 @@ export default function AIChatPage() {
     if (!input.trim() || loading || loadingUserData) return
     
     if (!assistantId) {
-      const errorMessage = { role: 'assistant', content: 'Assistentin ID puuttuu. Ota yhteyttä ylläpitoon.' }
+      const errorMessage = { role: 'assistant', content: t('assistant.missingAssistantId') }
       setMessages(prev => [...prev, errorMessage])
       return
     }
@@ -187,7 +189,7 @@ export default function AIChatPage() {
         localStorage.setItem('rascalai_threadId', data.threadId)
       }
     } catch (error) {
-      const errorMessage = { role: 'assistant', content: 'Virhe viestin lähettämisessä. Yritä uudelleen.' }
+      const errorMessage = { role: 'assistant', content: t('assistant.sendError') }
       setMessages(prev => [...prev, errorMessage])
     } finally {
       setLoading(false)
@@ -235,11 +237,11 @@ export default function AIChatPage() {
     const files = Array.from(e.target.files)
     if (files.length === 0) return
     if (!companyId) {
-      setUploadError('Yrityksen ID puuttuu')
+      setUploadError(t('assistant.files.uploadCard.missingCompany'))
       return
     }
     if (!assistantId) {
-      setUploadError('Assistentin ID puuttuu')
+      setUploadError(t('assistant.files.uploadCard.missingAssistant'))
       return
     }
 
@@ -262,7 +264,7 @@ export default function AIChatPage() {
         }
       })
 
-      setUploadSuccess(`${files.length} tiedosto ladattu onnistuneesti!`)
+      setUploadSuccess(t('assistant.files.uploadCard.uploadSuccess', { count: files.length }))
       // Päivitä tiedostolista heti uploadin jälkeen
       await fetchFiles()
     } catch (error) {
@@ -274,7 +276,7 @@ export default function AIChatPage() {
       
       const errorMessage = error.response?.data?.details || error.response?.data?.error || error.message
       console.log('Asetetaan virheviesti:', errorMessage)
-      setUploadError(`Virhe tiedostojen lataamisessa: ${errorMessage}`)
+      setUploadError(`${t('assistant.files.uploadCard.uploadError')}: ${errorMessage}`)
     } finally {
       console.log('Finally-lohko suoritettu')
       setUploadLoading(false)
@@ -356,12 +358,12 @@ export default function AIChatPage() {
     }
     if (!companyId) {
       console.log('companyId puuttuu')
-      setUploadError('Yrityksen ID puuttuu')
+      setUploadError(t('assistant.files.uploadCard.missingCompany'))
       return
     }
     if (!assistantId) {
       console.log('assistantId puuttuu')
-      setUploadError('Assistentin ID puuttuu')
+      setUploadError(t('assistant.files.uploadCard.missingAssistant'))
       return
     }
     console.log('Asetetaan uploadLoading = true (handleUploadPending)')
@@ -382,7 +384,7 @@ export default function AIChatPage() {
         }
       })
       console.log('Tiedostot lähetetty onnistuneesti')
-      setUploadSuccess(`${pendingFiles.length} tiedosto(a) ladattu onnistuneesti!`)
+      setUploadSuccess(t('assistant.files.uploadCard.uploadSuccess', { count: pendingFiles.length }))
       setPendingFiles([])
       // Päivitä tiedostolista heti uploadin jälkeen
       console.log('Päivitetään tiedostolista...')
@@ -390,7 +392,7 @@ export default function AIChatPage() {
       console.log('Tiedostolista päivitetty')
     } catch (error) {
       console.error('Virhe tiedostojen lataamisessa:', error)
-      setUploadError('Virhe tiedostojen lataamisessa')
+      setUploadError(t('assistant.files.uploadCard.uploadError'))
     } finally {
       console.log('Asetetaan uploadLoading = false (handleUploadPending)')
       setUploadLoading(false)
@@ -440,17 +442,17 @@ export default function AIChatPage() {
     <>
       {loadingUserData ? (
         <div className="ai-chat-loading">
-          Ladataan käyttäjän tietoja...
+          {t('assistant.loadingUser')}
         </div>
       ) : (
         <div className="ai-chat-wrapper">
           {/* Välilehdet */}
           <div className="ai-chat-tabs">
             <button onClick={() => setTab('chat')} className={`ai-chat-tab ${tab === 'chat' ? 'active' : ''}`}>
-              Keskustelu
+              {t('assistant.tabs.chat')}
             </button>
             <button onClick={() => setTab('files')} className={`ai-chat-tab ${tab === 'files' ? 'active' : ''}`}>
-              Tietokanta ({files.length})
+              {t('assistant.tabs.files')} ({files.length})
             </button>
           </div>
           {/* Sisältö */}
@@ -497,7 +499,7 @@ export default function AIChatPage() {
                     {(() => {
                       const list = [...messages]
                       if (loading) {
-                        list.push({ role: 'assistant', content: 'Kirjoittaa…', temp: true })
+                        list.push({ role: 'assistant', content: t('assistant.typing'), temp: true })
                       }
                       return list.slice().reverse().map((message, index) => (
                         <div key={index} className={`ai-chat-message ${message.role === 'assistant' ? 'assistant' : ''}`}>
@@ -521,7 +523,7 @@ export default function AIChatPage() {
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Kirjoita viestisi..."
+                    placeholder={t('assistant.inputPlaceholder')}
                     disabled={loading}
                     className="ai-chat-input"
                   />
@@ -530,15 +532,15 @@ export default function AIChatPage() {
                     disabled={loading || !input.trim()}
                     className="ai-chat-send-button"
                   >
-                    Lähetä
+                    {t('assistant.send')}
                   </button>
                   <button
                     type="button"
                     onClick={handleNewChat}
-                    title="Aloita uusi keskustelu"
+                    title={t('assistant.newChatTitle')}
                     className="ai-chat-newchat-button"
                   >
-                    <span role="img" aria-label="Uusi keskustelu">➕</span>
+                    <span role="img" aria-label={t('assistant.newChatAria')}>➕</span>
                   </button>
                 </form>
               </div>
@@ -554,8 +556,8 @@ export default function AIChatPage() {
               }}>
                 {/* Upload kortti - aina näkyvissä */}
                 <div className="ai-chat-upload-card" style={{ flexShrink: 0 }}>
-                  <h3>Lisää tiedosto tietokantaan</h3>
-                  <p>Voit liittää PDF-, Word- tai tekstimuotoisen tiedoston. Tiedosto tallennetaan yrityksesi tietokantaan.</p>
+                  <h3>{t('assistant.files.uploadCard.title')}</h3>
+                  <p>{t('assistant.files.uploadCard.desc')}</p>
                   {/* Drag & drop -alue */}
                   <div
                     ref={dropRef}
@@ -565,7 +567,7 @@ export default function AIChatPage() {
                     className={`ai-chat-drag-drop ${dragActive ? 'active' : ''}`}
                     onClick={() => dropRef.current && dropRef.current.querySelector('input[type=file]').click()}
                   >
-                    Vedä ja pudota tiedostoja tähän tai <span>valitse tiedostot</span>
+                    {t('assistant.files.uploadCard.dragText')} <span>{t('assistant.files.uploadCard.chooseFiles')}</span>
                     <input
                       type="file"
                       multiple
@@ -579,7 +581,7 @@ export default function AIChatPage() {
                       {pendingFiles.map(f => (
                         <div key={f.name + f.size} className="ai-chat-pending-file">
                           <span className="ai-chat-pending-file-name">{f.name}</span>
-                          <span className="ai-chat-remove-file" onClick={() => handleRemovePending(f.name, f.size)}>Poista</span>
+                          <span className="ai-chat-remove-file" onClick={() => handleRemovePending(f.name, f.size)}>{t('assistant.files.uploadCard.remove')}</span>
                         </div>
                       ))}
                     </div>
@@ -591,20 +593,20 @@ export default function AIChatPage() {
                     disabled={uploadLoading || pendingFiles.length === 0}
                     className="ai-chat-upload-button"
                   >
-                    Lähetä tiedostot ({pendingFiles.length})
+                    {t('assistant.files.uploadCard.uploadBtn', { count: pendingFiles.length })}
                   </button>
-                  {uploadLoading && <p className="ai-chat-loading-text">Ladataan...</p>}
+                  {uploadLoading && <p className="ai-chat-loading-text">{t('assistant.files.uploadCard.uploading')}</p>}
                   {uploadError && <p className="ai-chat-error-text">{uploadError}</p>}
                   {uploadSuccess && <p className="ai-chat-success-text">{uploadSuccess}</p>}
                 </div>
                 
                 {/* Tiedostot - erillinen container */}
                 <div className="ai-chat-files-list">
-                  <h3>Tiedostot</h3>
+                  <h3>{t('assistant.files.list.title')}</h3>
                   <div className="ai-chat-files-scroll" ref={filesListRef}>
                     {filesLoading ? (
                       <div className="ai-chat-loading">
-                        <span>Ladataan tiedostoja...</span>
+                        <span>{t('assistant.files.list.loading')}</span>
                       </div>
                     ) : filesError ? (
                       <div className="ai-chat-error">
@@ -612,8 +614,8 @@ export default function AIChatPage() {
                       </div>
                     ) : files.length === 0 ? (
                       <div className="ai-chat-empty-state">
-                        <img src="/placeholder.png" alt="Ei tiedostoja" />
-                        <div>Et ole vielä lisännyt tiedostoja</div>
+                        <img src="/placeholder.png" alt={t('assistant.files.list.emptyAlt')} />
+                        <div>{t('assistant.files.list.emptyTitle')}</div>
                       </div>
                     ) : (
                       <>
@@ -629,7 +631,7 @@ export default function AIChatPage() {
                               onClick={() => handleFileDeletion(file.id)}
                               className="ai-chat-delete-button"
                             >
-                              Poista
+                              {t('assistant.files.list.delete')}
                             </button>
                           </div>
                         ))}

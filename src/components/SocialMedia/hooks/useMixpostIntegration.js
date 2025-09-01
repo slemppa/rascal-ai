@@ -110,70 +110,88 @@ export const useMixpostIntegration = () => {
     return await fetchSocialAccounts();
   };
 
-  // Yhdistä sometili OAuth:lla
+  // Yhdistä sometili OAuth:lla (useita endpoint-kandidaatteja ja parempi virheenkäsittely)
   const connectSocialAccount = async (platform) => {
-    return new Promise((resolve, reject) => {
-      console.log(`Yhdistetään ${platform}...`);
-      
-      // Käytä suoraa OAuth URL:ia platformin mukaan
-      let oauthUrl;
-      if (platform === 'facebook') {
-        oauthUrl = `https://www.facebook.com/v23.0/dialog/oauth?client_id=4061580827451364&redirect_uri=${encodeURIComponent('https://mixpost.mak8r.fi/mixpost/callback/instagram')}&scope=business_management%2Cpages_show_list%2Cread_insights%2Cpages_manage_posts%2Cpages_read_engagement%2Cpages_manage_engagement%2Cinstagram_basic%2Cinstagram_content_publish%2Cinstagram_manage_insights%2Cinstagram_manage_comments&response_type=code&state=${Math.random().toString(36).substring(2, 15)}`;
-      } else {
-        // Käytä Mixpost OAuth proxy:tä muille platformeille
-        oauthUrl = `https://mixpost.mak8r.fi/mixpost/accounts/add/${platform}`;
-      }
-      
-      console.log('OAuth URL:', oauthUrl);
-      
-      const popup = window.open(oauthUrl, 'oauth', 'width=600,height=600,scrollbars=yes,resizable=yes');
-      
-      if (!popup) {
-        reject(new Error('Popup estetty. Salli popup-ikkunat tälle sivustolle.'));
-        return;
-      }
+    const MIXPOST_PROXY = '/api/mixpost-linkedin'
 
-      const checkClosed = setInterval(async () => {
-        if (popup.closed) {
-          clearInterval(checkClosed);
-          
+    const openPopup = (url) => {
+      console.log('[useMixpostIntegration] Avataan popup:', url)
+      const features = 'width=600,height=700,menubar=no,toolbar=no,location=yes,status=no,scrollbars=yes,resizable=yes'
+      return window.open(url, 'oauth', features)
+    }
+
+    const pollPopup = (popup) => {
+      return new Promise((resolve, reject) => {
+        let elapsed = 0
+        const intervalMs = 1000
+        const maxWaitMs = 5 * 60 * 1000
+        const timer = setInterval(async () => {
           try {
-            console.log('OAuth popup suljettu, päivitetään tilejä...');
-            await refreshSocialAccounts();
-            await saveSocialAccountToSupabase(platform);
-            resolve();
-          } catch (error) {
-            console.error('Virhe OAuth-prosessin jälkeen:', error);
-            reject(error);
+            if (popup.closed) {
+              clearInterval(timer)
+              try {
+                console.log('[useMixpostIntegration] Popup suljettu, päivitetään tilejä...')
+                await refreshSocialAccounts()
+                await saveSocialAccountToSupabase(platform)
+                console.log('[useMixpostIntegration] OAuth-prosessi valmis')
+                return resolve()
+              } catch (afterError) {
+                console.error('[useMixpostIntegration] Virhe OAuth-prosessin jälkeen:', afterError)
+                return reject(afterError)
+              }
+            }
+            elapsed += intervalMs
+            if (elapsed >= maxWaitMs) {
+              clearInterval(timer)
+              if (!popup.closed) popup.close()
+              return reject(new Error('OAuth-yhdistys aikakatkaistiin 5 minuutin jälkeen.'))
+            }
+          } catch (_) {
+            // cross-origin; jatka pollingia
           }
-        }
-      }, 1000);
+        }, intervalMs)
+      })
+    }
 
-      // Timeout 5 minuutissa
-      setTimeout(() => {
-        clearInterval(checkClosed);
-        if (!popup.closed) {
-          popup.close();
-        }
-        reject(new Error('OAuth-yhdistys aikakatkaistiin. Yritä uudelleen.'));
-      }, 300000);
-    });
-  };
+    // LinkedIn: käytä aina backend-proxyä (GET/POST fallback & 302 Location)
+    if (platform === 'linkedin') {
+      const proxyUrl = mixpostConfig?.mixpost_workspace_uuid
+        ? `${MIXPOST_PROXY}?workspace_uuid=${encodeURIComponent(mixpostConfig.mixpost_workspace_uuid)}`
+        : MIXPOST_PROXY
+      const popup = openPopup(proxyUrl)
+      if (!popup) {
+        throw new Error('Popup estetty. Salli popup-ikkunat tälle sivustolle.')
+      }
+      await pollPopup(popup)
+      return
+    }
+
+    // Muut alustat: suora workspace-url jos saatavilla, muuten generinen reitti
+    const otherPlatformUrl = mixpostConfig?.mixpost_workspace_uuid
+      ? buildDirectProviderUrl(mixpostConfig.mixpost_workspace_uuid)
+      : `https://mixpost.mak8r.fi/mixpost/accounts/add/${platform}`
+    const popup = openPopup(otherPlatformUrl)
+    if (!popup) {
+      throw new Error('Popup estetty. Salli popup-ikkunat tälle sivustolle.')
+    }
+    await pollPopup(popup)
+  }
 
   // Tallenna sometili Supabaseen
   const saveSocialAccountToSupabase = async (platform) => {
     try {
       console.log('Tallennetaan sometili Supabaseen...');
       
-      // Etsi uusin tili kyseiseltä platformilta
-      const latestAccount = socialAccounts.find(account => 
-        account.provider === platform && 
-        account.created_at && 
-        new Date(account.created_at) > new Date(Date.now() - 60000)
-      );
+      // Etsi tili kyseiseltä platformilta: ensisijaisesti sellainen jota ei ole vielä tallennettu
+      const existingIds = new Set((savedSocialAccounts || []).map(a => a.mixpost_account_uuid))
+      let latestAccount = socialAccounts.find(account => account.provider === platform && !existingIds.has(account.id))
+      if (!latestAccount) {
+        // Fallback: ota ensimmäinen kyseisen platformin tili
+        latestAccount = socialAccounts.find(account => account.provider === platform)
+      }
 
       if (!latestAccount) {
-        console.log('Uutta tiliä ei löytynyt tallennettavaksi');
+        console.log('Tiliä ei löytynyt tallennettavaksi. Varmista, että yhdistäminen onnistui Mixpostissa.');
         return;
       }
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import PageMeta from '../components/PageMeta'
 import SiteHeader from '../components/SiteHeader'
@@ -9,6 +10,7 @@ import './BlogPage.css'
 import '../styles/article-cards.css' // Page specific styles
 
 export default function BlogPage() {
+  const { t, i18n } = useTranslation('common')
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -37,7 +39,7 @@ export default function BlogPage() {
       setArticles(articles || [])
     } catch (err) {
       console.error('Error fetching articles:', err)
-      setError('Artikkeleita ei voitu ladata. Yritä uudelleen myöhemmin.')
+      setError(t('blog.error'))
     } finally {
       setLoading(false)
     }
@@ -48,8 +50,8 @@ export default function BlogPage() {
   return (
     <>
       <PageMeta 
-        title="Artikkelit - RascalAI.fi" 
-        description="Lue ajankohtaisia artikkeleita myynnistä, markkinoinnista ja tekoälyn mahdollisuuksista" 
+        title={`${t('blog.title')} - RascalAI`} 
+        description={t('blog.description')} 
         image="/hero-v3.jpg" 
       />
       
@@ -61,10 +63,8 @@ export default function BlogPage() {
           {/* Page Title Section */}
           <section className="blog-title-section">
             <div className="blog-title-content">
-              <h1 className="blog-title">Artikkelit</h1>
-              <p className="blog-description">
-                Ajankohtaisia näkemyksiä myynnistä, markkinoinnista ja tekoälyn mahdollisuuksista
-              </p>
+              <h1 className="blog-title">{t('blog.title')}</h1>
+              <p className="blog-description">{t('blog.description')}</p>
             </div>
           </section>
 
@@ -73,20 +73,20 @@ export default function BlogPage() {
             {loading ? (
               <div className="loading-container">
                 <div className="loading-spinner"></div>
-                <p>Ladataan artikkeleita...</p>
+                <p>{t('blog.loading')}</p>
               </div>
             ) : error ? (
               <div className="error-container">
-                <h2>Virhe</h2>
+                <h2>{t('blog.errorTitle')}</h2>
                 <p>{error}</p>
                 <button onClick={fetchArticles} className="btn btn-primary">
-                  Yritä uudelleen
+                  {t('blog.retry')}
                 </button>
               </div>
             ) : articles.length === 0 ? (
               <div className="no-articles">
-                <h3>Ei artikkeleita vielä</h3>
-                <p>Artikkeleita lisätään pian!</p>
+                <h3>{t('blog.emptyTitle')}</h3>
+                <p>{t('blog.emptyDesc')}</p>
               </div>
             ) : (
               <div className="articles-grid">
@@ -123,9 +123,7 @@ export default function BlogPage() {
                           {article.category}
                         </div>
                       ) : (
-                        <div className="article-category">
-                          YLEINEN
-                        </div>
+                        <div className="article-category">{t('articles.general').toUpperCase()}</div>
                       )}
                     </div>
                     <div className="article-content">
@@ -135,18 +133,18 @@ export default function BlogPage() {
                           : '1.8rem'
                       }}>
                         <a href={`/blog/${article.slug || 'ei-slugia'}`} className="article-link">
-                          {article.title || 'Ei otsikkoa'}
+                          {article.title || t('blog.noTitle')}
                         </a>
                       </h3>
                       <p className="article-excerpt">
-                        {article.excerpt || (article.content ? article.content.substring(0, 150) + '...' : 'Ei kuvausta saatavilla')}
+                        {article.excerpt || (article.content ? article.content.substring(0, 150) + '...' : t('blog.noExcerpt'))}
                       </p>
                       <div className="article-meta">
                         <span className="article-date">
-                          {article.published_at ? new Date(article.published_at).toLocaleDateString('fi-FI') : 'Ei päivää'}
+                          {article.published_at ? new Date(article.published_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'fi-FI') : t('articles.noDate')}
                         </span>
                         <a href={`/blog/${article.slug || 'ei-slugia'}`} className="read-more-link">
-                          Lue lisää →
+                          {t('articles.readMore')}
                         </a>
                       </div>
                     </div>

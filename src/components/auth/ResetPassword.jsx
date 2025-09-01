@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../../lib/supabase'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import './AuthComponents.css'
 
 export default function ResetPassword() {
+  const { t } = useTranslation('common')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -31,14 +33,14 @@ export default function ResetPassword() {
           
           if (error) {
             console.error('Error verifying recovery token:', error.message)
-            setMessage('Virheellinen tai vanhentunut palautuslinkki')
+            setMessage(t('auth.invalidLink'))
             setIsVerifying(false)
             return
           }
           
           if (data.session) {
             setIsValidSession(true)
-            setMessage('Syötä uusi salasanasi alle')
+            setMessage(t('auth.setNewPassword'))
           }
         } else {
           // Fallback: tarkista onko sessio jo olemassa
@@ -46,12 +48,12 @@ export default function ResetPassword() {
           if (session) {
             setIsValidSession(true)
           } else {
-            setMessage('Virheellinen tai vanhentunut palautuslinkki')
+            setMessage(t('auth.invalidLink'))
           }
         }
       } catch (error) {
         console.error('Unexpected error:', error)
-        setMessage('Odottamaton virhe tapahtui')
+        setMessage(t('auth.unexpectedError'))
       } finally {
         setIsVerifying(false)
       }
@@ -63,7 +65,7 @@ export default function ResetPassword() {
       async (event, session) => {
         if (event === 'PASSWORD_RECOVERY') {
           setIsValidSession(true)
-          setMessage('Syötä uusi salasanasi alle')
+          setMessage(t('auth.setNewPassword'))
         }
       }
     )
@@ -75,12 +77,12 @@ export default function ResetPassword() {
     e.preventDefault()
     
     if (password !== confirmPassword) {
-      setMessage('Salasanat eivät täsmää')
+      setMessage(t('auth.passwordsDontMatch'))
       return
     }
     
     if (password.length < 6) {
-      setMessage('Salasanan tulee olla vähintään 6 merkkiä pitkä')
+      setMessage(t('auth.passwordTooShort'))
       return
     }
 
@@ -95,13 +97,13 @@ export default function ResetPassword() {
       if (error) {
         setMessage(error.message)
       } else {
-        setMessage('Salasana päivitetty onnistuneesti!')
+        setMessage(t('auth.passwordUpdated'))
         setTimeout(() => {
           navigate('/dashboard')
         }, 2000)
       }
     } catch (error) {
-      setMessage('Odottamaton virhe tapahtui')
+      setMessage(t('auth.unexpectedError'))
     } finally {
       setLoading(false)
     }
@@ -112,7 +114,7 @@ export default function ResetPassword() {
       <div className="auth-container">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto mb-4"></div>
-          <p className="text-gray-300">Vahvistetaan palautuslinkkiä...</p>
+          <p className="text-gray-300">{t('auth.verifyingRecovery')}</p>
         </div>
       </div>
     )
@@ -122,15 +124,15 @@ export default function ResetPassword() {
     return (
       <div className="auth-container">
         <div className="text-center">
-          <h2 className="auth-title">Virheellinen linkki</h2>
+          <h2 className="auth-title">{t('auth.invalidLinkTitle')}</h2>
           <p className="text-gray-300 mb-6">
-            {message || 'Tämä salasanan palautuslinkki on virheellinen tai vanhentunut.'}
+            {message || t('auth.invalidLink')}
           </p>
           <button
             onClick={() => navigate('/signin')}
             className="auth-button"
           >
-            Takaisin kirjautumiseen
+            {t('auth.backToSignin')}
           </button>
         </div>
       </div>
@@ -139,12 +141,12 @@ export default function ResetPassword() {
 
   return (
     <div className="auth-container">
-      <h2 className="auth-title">Aseta uusi salasana</h2>
+      <h2 className="auth-title">{t('auth.setNewPassword')}</h2>
       
       <form onSubmit={handlePasswordReset} className="auth-form">
         <div className="auth-form-group">
           <label htmlFor="password" className="auth-label">
-            Uusi salasana
+            {t('auth.newPassword')}
           </label>
           <input
             id="password"
@@ -154,14 +156,14 @@ export default function ResetPassword() {
             required
             minLength={6}
             className="auth-input password"
-            placeholder="Vähintään 6 merkkiä"
+            placeholder={t('auth.min6chars')}
             autoComplete="new-password"
           />
           <button
             type="button"
             onClick={() => setShowPassword(v => !v)}
             tabIndex={-1}
-            aria-label={showPassword ? 'Piilota salasana' : 'Näytä salasana'}
+            aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
             className="auth-password-toggle"
           >
             {showPassword ? (
@@ -179,7 +181,7 @@ export default function ResetPassword() {
         
         <div className="auth-form-group">
           <label htmlFor="confirmPassword" className="auth-label">
-            Vahvista uusi salasana
+            {t('auth.confirmNewPassword')}
           </label>
           <input
             id="confirmPassword"
@@ -189,14 +191,14 @@ export default function ResetPassword() {
             required
             minLength={6}
             className="auth-input password"
-            placeholder="Vahvista uusi salasanasi"
+            placeholder={t('auth.confirmNewPasswordPlaceholder')}
             autoComplete="new-password"
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(v => !v)}
             tabIndex={-1}
-            aria-label={showConfirmPassword ? 'Piilota salasana' : 'Näytä salasana'}
+            aria-label={showConfirmPassword ? t('auth.hidePassword') : t('auth.showPassword')}
             className="auth-password-toggle"
           >
             {showConfirmPassword ? (
@@ -217,7 +219,7 @@ export default function ResetPassword() {
           disabled={loading}
           className="auth-button"
         >
-          {loading ? 'Päivitetään salasanaa...' : 'Päivitä salasana'}
+          {loading ? t('auth.updatingPassword') : t('auth.updatePassword')}
         </button>
         
         {message && (

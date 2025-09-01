@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import './AuthComponents.css'
 
 export default function SignIn({ onClose, onForgotClick, onMagicLinkClick }) {
+  const { t } = useTranslation('common')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -49,16 +51,16 @@ export default function SignIn({ onClose, onForgotClick, onMagicLinkClick }) {
         <button
           onClick={onClose}
           className="auth-close-btn"
-          aria-label="Sulje"
+          aria-label={t('auth.close')}
         >
           ×
         </button>
       )}
-      <h2 className="auth-title">Kirjaudu sisään</h2>
+      <h2 className="auth-title">{t('auth.signIn')}</h2>
       <form onSubmit={handleSignIn} className="auth-form">
         <div className="auth-form-group">
           <label htmlFor="email" className="auth-label">
-            Sähköposti
+            {t('auth.email')}
           </label>
           <input
             id="email"
@@ -67,13 +69,13 @@ export default function SignIn({ onClose, onForgotClick, onMagicLinkClick }) {
             onChange={(e) => setEmail(e.target.value)}
             required
             className="auth-input"
-            placeholder="sähköposti@esimerkki.fi"
+            placeholder={t('auth.emailPlaceholder')}
             autoComplete="username"
           />
         </div>
         <div className="auth-form-group">
           <label htmlFor="password" className="auth-label">
-            Salasana
+            {t('auth.password')}
           </label>
           <input
             id="password"
@@ -82,14 +84,14 @@ export default function SignIn({ onClose, onForgotClick, onMagicLinkClick }) {
             onChange={(e) => setPassword(e.target.value)}
             required
             className="auth-input password"
-            placeholder="Salasanasi"
+            placeholder={t('auth.passwordPlaceholder')}
             autoComplete="current-password"
           />
           <button
             type="button"
             onClick={() => setShowPassword(v => !v)}
             tabIndex={-1}
-            aria-label={showPassword ? 'Piilota salasana' : 'Näytä salasana'}
+            aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
             className="auth-password-toggle"
           >
             {showPassword ? (
@@ -112,7 +114,7 @@ export default function SignIn({ onClose, onForgotClick, onMagicLinkClick }) {
           disabled={loading}
           className="auth-button"
         >
-          {loading ? 'Kirjaudutaan...' : 'Kirjaudu sisään'}
+          {loading ? t('auth.signingIn') : t('auth.signIn')}
         </button>
         {error && (
           <div className="auth-error">
@@ -124,22 +126,22 @@ export default function SignIn({ onClose, onForgotClick, onMagicLinkClick }) {
         <div>
           {onForgotClick ? (
             <a href="#" className="auth-link" onClick={e => { e.preventDefault(); onForgotClick(); }}>
-              Unohditko salasanan?
+              {t('auth.forgotPassword')}
             </a>
           ) : (
             <Link to="/forgot-password" className="auth-link">
-              Unohditko salasanan?
+              {t('auth.forgotPassword')}
             </Link>
           )}
         </div>
         <div>
           {onMagicLinkClick ? (
             <a href="#" className="auth-link" onClick={e => { e.preventDefault(); onMagicLinkClick(); }}>
-              Kirjaudu taikalinkillä
+              {t('auth.loginWithMagicLink')}
             </a>
           ) : (
             <Link to="/magic-link" className="auth-link">
-              Kirjaudu taikalinkillä
+              {t('auth.loginWithMagicLink')}
             </Link>
           )}
         </div>

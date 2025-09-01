@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import Button from './Button';
+import { useTranslation } from 'react-i18next';
 import './CarouselTemplateSelector.css';
 
 const templates = [
@@ -11,6 +12,7 @@ const templates = [
 
 export default function CarouselTemplateSelector() {
   const { user } = useAuth();
+  const { t } = useTranslation('common');
   const [selected, setSelected] = useState(templates[0].id);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -33,7 +35,7 @@ export default function CarouselTemplateSelector() {
         .single()
       
       if (userError || !userData?.company_id) {
-        throw new Error('Käyttäjän company ID ei löytynyt');
+        throw new Error(t('settings.carousel.userCompanyMissing'));
       }
       
       const res = await fetch('/api/carousel-template', {
@@ -48,11 +50,11 @@ export default function CarouselTemplateSelector() {
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || 'Virhe lähetyksessä');
+        throw new Error(data.error || t('settings.carousel.sendError'));
       }
       setSuccess(true);
     } catch (e) {
-      setError(e.message || 'Tuntematon virhe');
+      setError(e.message || t('settings.carousel.unknownError'));
     } finally {
       setLoading(false);
     }
@@ -60,7 +62,7 @@ export default function CarouselTemplateSelector() {
 
   return (
     <div className="carousel-selector">
-      <h2 className="carousel-title">Valitse karusellin ulkoasu</h2>
+      <h2 className="carousel-title">{t('settings.carousel.title')}</h2>
       <div className="templates-grid">
         {templates.map((tpl) => (
           <div
@@ -78,9 +80,9 @@ export default function CarouselTemplateSelector() {
         disabled={loading}
         className="submit-button"
       >
-        {loading ? 'Lähetetään...' : 'Valitse'}
+        {loading ? t('settings.carousel.sending') : t('settings.carousel.select')}
       </Button>
-      {success && <div className="success-message">Valinta lähetetty!</div>}
+      {success && <div className="success-message">{t('settings.carousel.sent')}</div>}
       {error && <div className="error-message">{error}</div>}
     </div>
   );

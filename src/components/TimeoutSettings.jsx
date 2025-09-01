@@ -8,12 +8,14 @@ import {
 } from '../utils/inactivityUtils'
 import { useLocation } from 'react-router-dom'
 import './TimeoutSettings.css'
+import { useTranslation } from 'react-i18next'
 
 const TimeoutSettings = () => {
   const [selectedTimeout, setSelectedTimeout] = useState(20)
   const [isCustom, setIsCustom] = useState(false)
   const [customTimeout, setCustomTimeout] = useState(20)
   const [showSaved, setShowSaved] = useState(false)
+  const { t } = useTranslation('common')
   
   const location = useLocation()
   const { currentTimeout } = useAutoLogout()
@@ -61,15 +63,15 @@ const TimeoutSettings = () => {
   return (
     <div className="timeout-settings">
       <div className="timeout-settings-header">
-        <h3 className="timeout-settings-title">Sessio-asetukset</h3>
+        <h3 className="timeout-settings-title">{t('settings.timeout.title')}</h3>
         <p className="timeout-settings-description">
-          Määritä kuinka kauan sessio pysyy aktiivisena inaktiivisuuden jälkeen.
+          {t('settings.timeout.description')}
         </p>
       </div>
 
       <div className="timeout-settings-content">
         <div className="timeout-option-group">
-          <label className="timeout-option-label">Valitse timeout:</label>
+          <label className="timeout-option-label">{t('settings.timeout.select')}</label>
           
           <div className="timeout-options">
             {TIMEOUT_OPTIONS.map((option) => (
@@ -95,7 +97,7 @@ const TimeoutSettings = () => {
                 checked={isCustom}
                 onChange={() => setIsCustom(true)}
               />
-              <span className="timeout-option-text">Mukautettu</span>
+              <span className="timeout-option-text">{t('settings.timeout.custom')}</span>
             </label>
           </div>
         </div>
@@ -103,7 +105,7 @@ const TimeoutSettings = () => {
         {isCustom && (
           <div className="timeout-custom-group">
             <label className="timeout-custom-label">
-              Mukautettu timeout (minuutteina):
+              {t('settings.timeout.customLabel')}
               <input
                 type="number"
                 min="5"
@@ -114,19 +116,19 @@ const TimeoutSettings = () => {
               />
             </label>
             <p className="timeout-custom-note">
-              Sallittu arvo: 5-120 minuuttia
+              {t('settings.timeout.customNote')}
             </p>
           </div>
         )}
 
         <div className="timeout-current-info">
-          <div className="timeout-current-label">Nykyinen asetus:</div>
+          <div className="timeout-current-label">{t('settings.timeout.current')}</div>
           <div className="timeout-current-value">
-            {isCustom ? customTimeout : selectedTimeout} minuuttia
+            {isCustom ? customTimeout : selectedTimeout} min
           </div>
           {currentTimeout !== (isCustom ? customTimeout : selectedTimeout) && (
             <div className="timeout-current-note">
-              (Sivun oletusarvo: {currentTimeout} minuuttia)
+              {t('settings.timeout.pageDefault', { minutes: currentTimeout })}
             </div>
           )}
         </div>
@@ -136,32 +138,32 @@ const TimeoutSettings = () => {
             className="timeout-btn timeout-btn-primary"
             onClick={handleSave}
           >
-            Tallenna asetukset
+            {t('settings.timeout.save')}
           </button>
           
           <button 
             className="timeout-btn timeout-btn-secondary"
             onClick={handleReset}
           >
-            Palauta oletukset
+            {t('settings.timeout.reset')}
           </button>
         </div>
 
         {showSaved && (
           <div className="timeout-saved-message">
-            ✓ Asetukset tallennettu
+            {t('settings.timeout.saved')}
           </div>
         )}
       </div>
 
       <div className="timeout-settings-footer">
         <div className="timeout-info-box">
-          <h4 className="timeout-info-title">Tietoa sessio-asetuksista</h4>
+          <h4 className="timeout-info-title">{t('settings.timeout.infoTitle')}</h4>
           <ul className="timeout-info-list">
-            <li>Varoitus näkyy 5 minuuttia ennen sessio päättymistä</li>
-            <li>Kaikki aktiviteetit (hiiri, näppäimistö, kosketus) nollaa ajastimen</li>
-            <li>Asetukset tallentuvat selaimen localStorageen</li>
-            <li>Jos et aseta omaa timeoutia, käytetään sivun oletusarvoa</li>
+            <li>{t('settings.timeout.info.0')}</li>
+            <li>{t('settings.timeout.info.1')}</li>
+            <li>{t('settings.timeout.info.2')}</li>
+            <li>{t('settings.timeout.info.3')}</li>
           </ul>
         </div>
       </div>

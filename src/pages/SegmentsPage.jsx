@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { fetchSegments } from '../services/segmentsApi'
@@ -41,6 +42,7 @@ function SegmentCard({ segment, onOpen }) {
 }
 
 export default function SegmentsPage() {
+  const { t, i18n } = useTranslation('common')
   const { user } = useAuth()
   const userId = user?.id
   const navigate = useNavigate()
@@ -73,7 +75,7 @@ export default function SegmentsPage() {
   if (loading) {
     return (
       <div className="container" style={{ padding: 24 }}>
-        <p>Ladataan segmenttejä...</p>
+        <p>{t('segments.loading')}</p>
       </div>
     )
   }
@@ -81,7 +83,7 @@ export default function SegmentsPage() {
   if (error) {
     return (
       <div className="container" style={{ padding: 24 }}>
-        <div style={{ color: '#dc2626' }}>Virhe ladattaessa segmenttejä: {error}</div>
+        <div style={{ color: '#dc2626' }}>{t('segments.error')}: {error}</div>
       </div>
     )
   }
@@ -92,16 +94,16 @@ export default function SegmentsPage() {
     <div className="container" style={{ padding: 24 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Segmentit</h1>
-          <p style={{ color: '#6b7280', marginTop: 8 }}>Organisoi kontaktisi ja seuraa segmenttien suorituskykyä</p>
+          <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>{t('segments.header.title')}</h1>
+          <p style={{ color: '#6b7280', marginTop: 8 }}>{t('segments.header.description')}</p>
         </div>
-        <Button onClick={() => setShowCreate(true)}>Luo uusi segmentti</Button>
+        <Button onClick={() => setShowCreate(true)}>{t('segments.actions.create')}</Button>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16, marginBottom: 24 }}>
-        <StatsCard title="Segmenttejä yhteensä" value={segments.length} icon="🎯" />
-        <StatsCard title="Kontakteja yhteensä" value={totalContacts} icon="👥" />
-        <StatsCard title="Keskimäärin per segmentti" value={segments.length > 0 ? Math.round(totalContacts / segments.length) : 0} icon="📊" />
+        <StatsCard title={t('segments.stats.totalSegments')} value={segments.length} icon="🎯" />
+        <StatsCard title={t('segments.stats.totalContacts')} value={totalContacts} icon="👥" />
+        <StatsCard title={t('segments.stats.avgPerSegment')} value={segments.length > 0 ? Math.round(totalContacts / segments.length) : 0} icon="📊" />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16 }}>
@@ -112,7 +114,7 @@ export default function SegmentsPage() {
 
       {segments.length === 0 && (
         <div style={{ textAlign: 'center', padding: '48px 0' }}>
-          <p style={{ color: '#6b7280', marginBottom: 16 }}>Ei segmenttejä vielä</p>
+          <p style={{ color: '#6b7280', marginBottom: 16 }}>{t('segments.empty')}</p>
         </div>
       )}
 
@@ -120,7 +122,7 @@ export default function SegmentsPage() {
         <div className="modal-overlay modal-overlay--light" role="dialog" aria-modal="true">
           <div className="modal-container">
             <div className="modal-header">
-              <h2 className="modal-title">Luo uusi segmentti</h2>
+              <h2 className="modal-title">{t('segments.actions.create')}</h2>
               <button className="modal-close-btn" onClick={() => setShowCreate(false)} type="button">×</button>
             </div>
             <div className="modal-content">

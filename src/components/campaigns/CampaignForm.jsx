@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import Button from '../Button'
 import { createCampaignApi } from '../../services/campaignsApi'
 import { supabase } from '../../lib/supabase'
 
 export default function CampaignForm({ userId, onSuccess, onCancel }) {
+  const { t } = useTranslation('common')
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -68,7 +70,7 @@ export default function CampaignForm({ userId, onSuccess, onCancel }) {
         window.location.href = '/campaigns'
       }
     } catch (err) {
-      setError(err.message || 'Virhe tallennuksessa')
+      setError(err.message || t('campaigns.form.saveError'))
     } finally {
       setLoading(false)
     }
@@ -81,19 +83,19 @@ export default function CampaignForm({ userId, onSuccess, onCancel }) {
       )}
 
       <div>
-        <label htmlFor="name" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Kampanjan nimi *</label>
-        <input id="name" type="text" required value={formData.name} onChange={(e) => handleChange('name', e.target.value)} placeholder="Esim. Q3 Follow-up kampanja" style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #e5e7eb' }} />
+        <label htmlFor="name" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>{t('campaigns.form.nameLabel')}</label>
+        <input id="name" type="text" required value={formData.name} onChange={(e) => handleChange('name', e.target.value)} placeholder={t('campaigns.form.namePlaceholder')} style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #e5e7eb' }} />
       </div>
 
       <div>
-        <label htmlFor="description" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Kuvaus</label>
-        <textarea id="description" rows={4} value={formData.description} onChange={(e) => handleChange('description', e.target.value)} placeholder="Lyhyt kuvaus kampanjan tarkoituksesta..." style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #e5e7eb' }} />
+        <label htmlFor="description" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>{t('campaigns.form.descriptionLabel')}</label>
+        <textarea id="description" rows={4} value={formData.description} onChange={(e) => handleChange('description', e.target.value)} placeholder={t('campaigns.form.descriptionPlaceholder')} style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #e5e7eb' }} />
       </div>
 
       <div>
-        <label htmlFor="call_type" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Soittoskripti</label>
+        <label htmlFor="call_type" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>{t('campaigns.form.scriptLabel')}</label>
         <select id="call_type" value={formData.call_type_id} onChange={(e) => handleChange('call_type_id', e.target.value)} style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #e5e7eb' }}>
-          <option value="">Valitse soittoskripti</option>
+          <option value="">{t('campaigns.form.scriptPlaceholder')}</option>
           {callTypes.map(ct => (
             <option key={ct.id} value={ct.id}>{ct.name}</option>
           ))}
@@ -102,18 +104,18 @@ export default function CampaignForm({ userId, onSuccess, onCancel }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <div>
-          <label htmlFor="daily_limit" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Päivittäinen raja</label>
+          <label htmlFor="daily_limit" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>{t('campaigns.form.dailyLimitLabel')}</label>
           <input id="daily_limit" type="number" min={1} value={formData.daily_call_limit} onChange={(e) => handleChange('daily_call_limit', parseInt(e.target.value || '0', 10))} style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #e5e7eb' }} />
         </div>
         <div>
-          <label htmlFor="max_attempts" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Max yritykset per kontakti</label>
+          <label htmlFor="max_attempts" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>{t('campaigns.form.maxAttemptsLabel')}</label>
           <input id="max_attempts" type="number" min={1} max={10} value={formData.max_attempts_per_contact} onChange={(e) => handleChange('max_attempts_per_contact', parseInt(e.target.value || '0', 10))} style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #e5e7eb' }} />
         </div>
       </div>
 
       <div style={{ display: 'flex', gap: 12 }}>
-        <Button type="submit" disabled={loading}>{loading ? 'Luodaan...' : 'Luo kampanja'}</Button>
-        <Button type="button" variant="secondary" onClick={() => (onCancel ? onCancel() : (window.location.href = '/campaigns'))}>Peruuta</Button>
+        <Button type="submit" disabled={loading}>{loading ? t('campaigns.form.submitting') : t('campaigns.form.submit')}</Button>
+        <Button type="button" variant="secondary" onClick={() => (onCancel ? onCancel() : (window.location.href = '/campaigns'))}>{t('campaigns.form.cancel')}</Button>
       </div>
     </form>
   )

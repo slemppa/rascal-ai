@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import Button from '../Button'
 import SegmentColorPicker from './SegmentColorPicker'
 import { createSegmentApi } from '../../services/segmentsApi'
 
 export default function SegmentForm({ userId, onSuccess, onCancel }) {
+  const { t } = useTranslation('common')
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -29,7 +31,7 @@ export default function SegmentForm({ userId, onSuccess, onCancel }) {
         window.location.href = '/segments'
       }
     } catch (err) {
-      setError(err.message || 'Virhe tallennuksessa')
+      setError(err.message || t('segments.form.saveError'))
     } finally {
       setLoading(false)
     }
@@ -42,23 +44,23 @@ export default function SegmentForm({ userId, onSuccess, onCancel }) {
       )}
 
       <div>
-        <label htmlFor="name" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Segmentin nimi *</label>
-        <input id="name" type="text" required value={formData.name} onChange={(e) => handleChange('name', e.target.value)} placeholder="Esim. Lämpimät liidit" style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #e5e7eb' }} />
+        <label htmlFor="name" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>{t('segments.form.nameLabel')}</label>
+        <input id="name" type="text" required value={formData.name} onChange={(e) => handleChange('name', e.target.value)} placeholder={t('segments.form.namePlaceholder')} style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #e5e7eb' }} />
       </div>
 
       <div>
-        <label htmlFor="description" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Kuvaus</label>
-        <textarea id="description" rows={3} value={formData.description} onChange={(e) => handleChange('description', e.target.value)} placeholder="Kuvaile segmenttiä..." style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #e5e7eb' }} />
+        <label htmlFor="description" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>{t('segments.form.descriptionLabel')}</label>
+        <textarea id="description" rows={3} value={formData.description} onChange={(e) => handleChange('description', e.target.value)} placeholder={t('segments.form.descriptionPlaceholder')} style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #e5e7eb' }} />
       </div>
 
       <div>
-        <label style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Väri</label>
+        <label style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>{t('segments.form.colorLabel')}</label>
         <SegmentColorPicker value={formData.color} onChange={(c) => handleChange('color', c)} />
       </div>
 
       <div style={{ display: 'flex', gap: 12 }}>
-        <Button type="submit" disabled={loading}>{loading ? 'Luodaan...' : 'Luo segmentti'}</Button>
-        <Button type="button" variant="secondary" onClick={() => (onCancel ? onCancel() : (window.location.href = '/segments'))}>Peruuta</Button>
+        <Button type="submit" disabled={loading}>{loading ? t('segments.form.submitting') : t('segments.form.submit')}</Button>
+        <Button type="button" variant="secondary" onClick={() => (onCancel ? onCancel() : (window.location.href = '/segments'))}>{t('segments.form.cancel')}</Button>
       </div>
     </form>
   )

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -12,6 +13,7 @@ import '../styles/blog-article.css'
 console.log('BlogArticlePage CSS imported:', new Date().toISOString())
 
 export default function BlogArticlePage() {
+  const { t, i18n } = useTranslation('common')
   const { slug } = useParams()
   const [article, setArticle] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -44,9 +46,9 @@ export default function BlogArticlePage() {
 
       if (error) {
         if (error.code === 'PGRST116') {
-          throw new Error('Artikkelia ei löytynyt')
+          throw new Error(t('article.notFound'))
         }
-        throw new Error('Virhe artikkelin haussa: ' + error.message)
+        throw new Error('Error fetching article: ' + error.message)
       }
 
       console.log('DEBUG: Artikkeli haettu:', article)
@@ -90,7 +92,7 @@ export default function BlogArticlePage() {
         <div className="layout-container">
           <div className="loading-container">
             <div className="loading-spinner"></div>
-            <p>Ladataan artikkelia...</p>
+            <p>{t('article.loading')}</p>
           </div>
         </div>
       </div>
@@ -102,10 +104,10 @@ export default function BlogArticlePage() {
       <div className="blog-article-page">
         <div className="layout-container">
           <div className="error-container">
-            <h2>Virhe</h2>
-            <p>{error || 'Artikkelia ei löytynyt'}</p>
+            <h2>{t('article.errorTitle')}</h2>
+            <p>{error || t('article.notFound')}</p>
             <Link to="/blog" className="btn btn-primary">
-              Takaisin artikkeleihin
+              {t('article.backToArticles')}
             </Link>
           </div>
         </div>
@@ -116,7 +118,7 @@ export default function BlogArticlePage() {
   return (
     <>
       <PageMeta 
-        title={`${article.title || 'Artikkeli'} - RascalAI.fi`} 
+        title={`${article.title || t('blog.noTitle')} - RascalAI`} 
         description={article.excerpt || (article.content ? article.content.substring(0, 160) : '')} 
         image={article.image_url || article.media_url || "/hero-v3.jpg"} 
       />
@@ -126,11 +128,11 @@ export default function BlogArticlePage() {
 
         <div className="layout-container">
           <div className="back-button-container">
-            <Link to="/blog" className="back-button">← Takaisin artikkeleihin</Link>
+            <Link to="/blog" className="back-button">← {t('article.backToArticles')}</Link>
           </div>
 
           <header className="article-header">
-            <h1 className="article-title">{article.title || 'Ei otsikkoa'}</h1>
+            <h1 className="article-title">{article.title || t('blog.noTitle')}</h1>
           </header>
 
           {(article.image_url || article.media_url) && (
@@ -174,7 +176,7 @@ export default function BlogArticlePage() {
                     {article.content}
                   </ReactMarkdown>
                 ) : (
-                  <p>Artikkelin sisältö puuttuu.</p>
+                  <p>{t('article.contentMissing')}</p>
                 )}
               </div>
             </div>
@@ -183,10 +185,10 @@ export default function BlogArticlePage() {
           {(prevArticle || nextArticle) && (
             <div className="article-nav">
               {prevArticle ? (
-                <Link to={`/blog/${prevArticle.slug}`} className="nav-button prev">← Edellinen artikkeli</Link>
+                <Link to={`/blog/${prevArticle.slug}`} className="nav-button prev">{t('article.prev')}</Link>
               ) : <span />}
               {nextArticle && (
-                <Link to={`/blog/${nextArticle.slug}`} className="nav-button">Seuraava artikkeli →</Link>
+                <Link to={`/blog/${nextArticle.slug}`} className="nav-button">{t('article.next')}</Link>
               )}
             </div>
           )}

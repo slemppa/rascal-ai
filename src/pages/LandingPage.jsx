@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import SignIn from '../components/auth/SignIn'
 import ForgotPassword from '../components/auth/ForgotPassword'
 import MagicLink from '../components/auth/MagicLink'
@@ -11,12 +12,31 @@ import '../styles/article-cards.css'
 export default function LandingPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { t, i18n } = useTranslation('common')
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showForgotModal, setShowForgotModal] = useState(false)
   const [showMagicModal, setShowMagicModal] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [articles, setArticles] = useState([])
   const [articlesLoading, setArticlesLoading] = useState(true)
+  const dateLocale = i18n.language === 'fi' ? 'fi-FI' : 'en-US'
+
+  useEffect(() => {
+    const isEn = location.pathname.startsWith('/en')
+    const target = isEn ? 'en' : 'fi'
+    if (i18n.language !== target) {
+      i18n.changeLanguage(target)
+    }
+  }, [location.pathname, i18n])
+
+  const setLanguage = (lang) => {
+    if (lang !== 'fi' && lang !== 'en') return
+    document.cookie = `rascal.lang=${encodeURIComponent(lang)}; path=/; max-age=31536000`
+    i18n.changeLanguage(lang)
+    const hash = location.hash || ''
+    const pathWithoutLang = location.pathname.replace(/^\/(fi|en)/, '')
+    navigate(`/${lang}${pathWithoutLang}${hash}`)
+  }
 
   useEffect(() => {
     if (location.state?.showLogoutMessage) {
@@ -110,7 +130,7 @@ export default function LandingPage() {
 
   return (
     <>
-      <PageMeta title="RascalAI.fi – Myyjän paras työpari" description="Rascal AI vapauttaa myyjien ajan rutiineista ja valmistelusta, jotta voit keskittyä voittaviin asiakaskohtaamisiin." image="/hero-v3.jpg" />
+      <PageMeta title={t('meta.title')} description={t('meta.description')} image="/hero-v3.jpg" />
 
       <div className="landing-page">
         <div className="layout-container">
@@ -124,32 +144,37 @@ export default function LandingPage() {
             </div>
             <div className="header-right">
               <div className="nav-links desktop-nav">
-                <a className="nav-link" href="/blog">Artikkelit</a>
-                <a className="nav-link" href="#cta">Demo</a>
-                <a className="nav-link" href="/asiakkaat">Asiakkaat</a>
-                <a className="nav-link" href="#team">Tiimi</a>
-                <a className="nav-link" href="#contact">Ota yhteyttä</a>
+                <a className="nav-link" href="/blog">{t('nav.articles')}</a>
+                <a className="nav-link" href="#cta">{t('nav.demo')}</a>
+                <a className="nav-link" href="/asiakkaat">{t('nav.customers')}</a>
+                <a className="nav-link" href="#team">{t('nav.team')}</a>
+                <a className="nav-link" href="#contact">{t('nav.contact')}</a>
               </div>
               <div className="header-buttons desktop-buttons">
                 <button
                   className="btn btn-primary"
                   onClick={() => setShowSignInModal(true)}
                 >
-                  Varaa demo
+                  {t('nav.bookDemo')}
                 </button>
                 <button
                   className="btn btn-secondary"
                   onClick={() => setShowSignInModal(true)}
                 >
-                  Kirjaudu
+                  {t('nav.signin')}
                 </button>
+              </div>
+              <div className="lang-switch" aria-label="Language switcher">
+                <button className="nav-link" onClick={() => setLanguage('fi')}>{t('lang.shortFi')}</button>
+                <span style={{padding: '0 4px'}}> / </span>
+                <button className="nav-link" onClick={() => setLanguage('en')}>{t('lang.shortEn')}</button>
               </div>
               
               {/* Mobile Menu Button */}
               <button 
                 className="mobile-menu-button"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                aria-label="Toggle mobile menu"
+                aria-label={t('a11y.toggleMobileMenu')}
               >
                 {isMobileMenuOpen ? (
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -167,11 +192,11 @@ export default function LandingPage() {
             {isMobileMenuOpen && (
               <div className="mobile-menu">
                 <div className="mobile-nav-links">
-                  <a className="mobile-nav-link" href="/blog" onClick={() => setIsMobileMenuOpen(false)}>Artikkelit</a>
-                  <a className="mobile-nav-link" href="#cta" onClick={() => setIsMobileMenuOpen(false)}>Demo</a>
-                  <a className="mobile-nav-link" href="/asiakkaat" onClick={() => setIsMobileMenuOpen(false)}>Asiakkaat</a>
-                  <a className="mobile-nav-link" href="#team" onClick={() => setIsMobileMenuOpen(false)}>Tiimi</a>
-                  <a className="mobile-nav-link" href="#contact" onClick={() => setIsMobileMenuOpen(false)}>Ota yhteyttä</a>
+                  <a className="mobile-nav-link" href="/blog" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.articles')}</a>
+                  <a className="mobile-nav-link" href="#cta" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.demo')}</a>
+                  <a className="mobile-nav-link" href="/asiakkaat" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.customers')}</a>
+                  <a className="mobile-nav-link" href="#team" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.team')}</a>
+                  <a className="mobile-nav-link" href="#contact" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.contact')}</a>
                 </div>
                 <div className="mobile-buttons">
                   <button
@@ -181,7 +206,7 @@ export default function LandingPage() {
                       setIsMobileMenuOpen(false)
                     }}
                   >
-                    Varaa demo
+                    {t('nav.bookDemo')}
                   </button>
                   <button
                     className="btn btn-secondary mobile-btn"
@@ -190,7 +215,7 @@ export default function LandingPage() {
                       setIsMobileMenuOpen(false)
                     }}
                   >
-                    Kirjaudu
+                    {t('nav.signin')}
                   </button>
                 </div>
               </div>
@@ -208,16 +233,16 @@ export default function LandingPage() {
                 >
                   <div className="hero-content">
                     <h1 className="hero-title">
-                      Myynnin, markkinoinnin ja johdon assistentti
+                      {t('hero.title')}
                     </h1>
                     <h2 className="hero-subtitle">
-                      Olen siis uusi työkaverisi
+                      {t('hero.subtitle')}
                     </h2>
                     <button
                       className="btn btn-primary hero-cta"
                       onClick={() => setShowSignInModal(true)}
                     >
-                      Varaa demo
+                      {t('hero.cta')}
                     </button>
                   </div>
                 </div>
@@ -226,16 +251,14 @@ export default function LandingPage() {
               {/* Uusimmat artikkelit */}
               <div className="section" id="latest-articles">
                 <div className="section-header">
-                  <h2 className="section-title">Uusimmat artikkelit</h2>
-                  <p className="section-description">
-                    Pysy ajan tasalla tekoälyn ja automaation trendeistä
-                  </p>
+                  <h2 className="section-title">{t('sections.latestArticles')}</h2>
+                  <p className="section-description">{t('sections.latestArticlesDescription')}</p>
                 </div>
                 
                 {articlesLoading ? (
                   <div className="articles-loading">
                     <div className="loading-spinner"></div>
-                    <p>Ladataan artikkeleita...</p>
+                    <p>{t('articles.loading')}</p>
                   </div>
                 ) : articles.length > 0 ? (
                   <>
@@ -257,7 +280,7 @@ export default function LandingPage() {
                                 ? (article.category.length > 2 
                                     ? article.category.slice(0, 2).join(' • ') + ' +' + (article.category.length - 2)
                                     : article.category.join(' • '))
-                                : article.category || 'Yleinen'}
+                                : article.category || t('articles.general')}
                             </div>
                           </div>
                           <div className="article-content">
@@ -273,15 +296,15 @@ export default function LandingPage() {
                             <div className="article-meta">
                               <span className="article-date">
                                 {article.published_at 
-                                  ? new Date(article.published_at).toLocaleDateString('fi-FI', {
+                                  ? new Date(article.published_at).toLocaleDateString(dateLocale, {
                                       year: 'numeric',
                                       month: '2-digit',
                                       day: '2-digit'
                                     })
-                                  : 'Ei päivää'}
+                                  : t('articles.noDate')}
                               </span>
                               <a href={`/blog/${article.slug}`} className="read-more-link">
-                                Lue lisää →
+                                {t('articles.readMore')}
                               </a>
                             </div>
                           </div>
@@ -291,7 +314,7 @@ export default function LandingPage() {
                   </>
                 ) : (
                   <div className="no-articles">
-                    <p>Ei artikkeleita vielä saatavilla.</p>
+                    <p>{t('articles.none')}</p>
                   </div>
                 )}
               </div>
@@ -300,13 +323,13 @@ export default function LandingPage() {
               <div className="section" id="solutions">
                 <div className="section-header">
                   <h1 className="section-title">
-                    Mitä Rascal AI tekee?
+                    {t('sections.whatRascalDoes')}
                   </h1>
                   <div className="section-description">
-                    <p>Rascal AI hahmottaa myynnin ja markkinoinnin kokonaisuuden</p>
-                    <p>Se rakentaa sisältösuunnitelmen, tuottaa ja julkaisee somepostaukset, blogit ja uutiskirjeet.</p>
-                    <p>Rascal AI soittaa, kartoittaa, buukkaa tapaamisia ja vastaanottaa puheluita.</p>
-                    <p>Kaikki tämä - automaattisesti ja omalla tyylilläsi.</p>
+                    <p>{t('features.intro.p1')}</p>
+                    <p>{t('features.intro.p2')}</p>
+                    <p>{t('features.intro.p3')}</p>
+                    <p>{t('features.intro.p4')}</p>
                   </div>
                 </div>
                 <div className="features-grid-full-width">
@@ -317,10 +340,10 @@ export default function LandingPage() {
                       </svg>
                     </div>
                     <div className="feature-content">
-                      <h2 className="feature-title">SOME</h2>
+                      <h2 className="feature-title">{t('features.cards.social.title')}</h2>
                       <p className="feature-description">
-                        <em>Rakenna luottamusta, brändiä ja myyntiä – automaattisesti.</em><br />
-                        Rascal AI luo kohderyhmääsi puhuttelevaa sisältöä Facebookiin, Instagramiin ja LinkedIniin. Se oppii tyylisi, äänesi ja tavoitteesi – ja tuottaa sisällöt puolestasi.
+                        <em>{t('features.cards.social.lead')}</em><br />
+                        {t('features.cards.social.body')}
                       </p>
                     </div>
                   </div>
@@ -331,10 +354,10 @@ export default function LandingPage() {
                       </svg>
                     </div>
                     <div className="feature-content">
-                      <h2 className="feature-title">AVATAR-TEKNOLOGIA</h2>
+                      <h2 className="feature-title">{t('features.cards.avatar.title')}</h2>
                       <p className="feature-description">
-                        <em>Sinun näköisesi – tekoälyn voimalla.</em><br />
-                        Avatar-teknologia luo sinusta digitaalikopion, joka esiintyy videoilla ja tuottaa sisältöä kasvoillasi. Aidon oloinen, vaikuttava ja ennen kaikkea tehokas.
+                        <em>{t('features.cards.avatar.lead')}</em><br />
+                        {t('features.cards.avatar.body')}
                       </p>
                     </div>
                   </div>
@@ -349,10 +372,10 @@ export default function LandingPage() {
                       </svg>
                     </div>
                     <div className="feature-content">
-                      <h2 className="feature-title">BLOGIT & ARTIKKELIT</h2>
+                      <h2 className="feature-title">{t('features.cards.blog.title')}</h2>
                       <p className="feature-description">
-                        <em>Asiantuntevaa sisältöä, joka ei unohda mitään.</em><br />
-                        Rascal AI kirjoittaa artikkeleita ja blogeja juuri sinun kohdeyleisöllesi – strategian ja sisältösuunnitelman mukaisesti. Se muistaa kaiken oleellisen ja kirjoittaa kuin sinä, parhaimmillasi.
+                        <em>{t('features.cards.blog.lead')}</em><br />
+                        {t('features.cards.blog.body')}
                       </p>
                     </div>
                   </div>
@@ -363,10 +386,10 @@ export default function LandingPage() {
                       </svg>
                     </div>
                     <div className="feature-content">
-                      <h2 className="feature-title">UUTISKIRJEET</h2>
+                      <h2 className="feature-title">{t('features.cards.newsletter.title')}</h2>
                       <p className="feature-description">
-                        <em>Sisältö + jakelu – yhdessä paketissa.</em><br />
-                        Kun artikkeli on valmis, Rascal AI tiivistää siitä kiinnostavan uutiskirjeen ja lähettää sen automaattisesti oikealle kohderyhmälle.
+                        <em>{t('features.cards.newsletter.lead')}</em><br />
+                        {t('features.cards.newsletter.body')}
                       </p>
                     </div>
                   </div>
@@ -377,10 +400,10 @@ export default function LandingPage() {
                       </svg>
                     </div>
                     <div className="feature-content">
-                      <h2 className="feature-title">SISÄLTÖGENERAATTORI</h2>
+                      <h2 className="feature-title">{t('features.cards.generator.title')}</h2>
                       <p className="feature-description">
-                        <em>Kysy – saat sisällön muutamassa minuutissa.</em><br />
-                        Tarvitsetko postauksen, artikkelin tai kampanjaviestit nopeasti? Rascal AI rakentaa relevantin sisällön lennosta – aina sinun tyylilläsi.
+                        <em>{t('features.cards.generator.lead')}</em><br />
+                        {t('features.cards.generator.body')}
                       </p>
                     </div>
                   </div>
@@ -391,10 +414,10 @@ export default function LandingPage() {
                       </svg>
                     </div>
                     <div className="feature-content">
-                      <h2 className="feature-title">PUHELUT</h2>
+                      <h2 className="feature-title">{t('features.cards.calls.title')}</h2>
                       <p className="feature-description">
-                        <em>Tekoäly myy ja kartoittaa – ihmisen tavoin.</em><br />
-                        Rascal AI soittaa, kartoittaa tarpeet ja buukkaa tapaamiset suoraan kalenteriisi. Se hoitaa myös asiakaspalvelupuhelut – inhimillisesti ja tehokkaasti.
+                        <em>{t('features.cards.calls.lead')}</em><br />
+                        {t('features.cards.calls.body')}
                       </p>
                     </div>
                   </div>
@@ -405,10 +428,10 @@ export default function LandingPage() {
                       </svg>
                     </div>
                     <div className="feature-content">
-                      <h2 className="feature-title">TEKSTIVIESTIT</h2>
+                      <h2 className="feature-title">{t('features.cards.sms.title')}</h2>
                       <p className="feature-description">
-                        <em>Henkilökohtaista viestintää skaalautuvasti.</em><br />
-                        Tavoita kohderyhmäsi suoraan puhelimeen. Rascal AI lähettää viestejä, sopii soittoja ja seuraa liidejä – ilman, että sinä nostat sormeakaan.
+                        <em>{t('features.cards.sms.lead')}</em><br />
+                        {t('features.cards.sms.body')}
                       </p>
                     </div>
                   </div>
@@ -419,10 +442,10 @@ export default function LandingPage() {
                       </svg>
                     </div>
                     <div className="feature-content">
-                      <h2 className="feature-title">CRM-INTEGRAATIOT</h2>
+                      <h2 className="feature-title">{t('features.cards.crm.title')}</h2>
                       <p className="feature-description">
-                        <em>Yhdistyy suoraan järjestelmiisi.</em><br />
-                        Rascal AI kytkeytyy CRM:ään, jolloin kaikki asiakasdata ja viestintä pysyy automaattisesti ajan tasalla.
+                        <em>{t('features.cards.crm.lead')}</em><br />
+                        {t('features.cards.crm.body')}
                       </p>
                     </div>
                   </div>
@@ -433,38 +456,32 @@ export default function LandingPage() {
               <div className="section" id="industries">
                 <div className="section-header">
                   <h1 className="section-title">
-                    Miksi Rascal AI?
+                    {t('sections.whyRascal')}
                   </h1>
                   <p className="section-description">
-                    Poista rutiinit, vapauta myyjät kohtaamisiin ja nosta tulokset uudelle tasolle. Rascal Company syntyi yhdestä kysymyksestä: Mitä tapahtuisi, jos myyjäsi käyttäisivät 30–50 % enemmän ajasta asiakkaiden kanssa – jo ensi kuussa?
+                    {t('why.description')}
                   </p>
                 </div>
                 <div className="industries-grid">
                   <div className="industry-card">
                     <div className="industry-image" style={{backgroundImage: 'url("/image-1.jpg")'}}></div>
                     <div className="industry-content">
-                      <p className="industry-title">Myynti ja markkinointi</p>
-                      <p className="industry-description">
-                        Vapauta myyjäsi rutiineista ja anna heidän keskittyä asiakaskohtaamisiin, joissa syntyy liikevaihto.
-                      </p>
+                      <p className="industry-title">{t('industries.cards.salesMarketing.title')}</p>
+                      <p className="industry-description">{t('industries.cards.salesMarketing.description')}</p>
                     </div>
                   </div>
                   <div className="industry-card">
                     <div className="industry-image" style={{backgroundImage: 'url("/image-2.jpg")'}}></div>
                     <div className="industry-content">
-                      <p className="industry-title">Sisällön tuotanto</p>
-                      <p className="industry-description">
-                        AI laatii markkinointisisältöä eri kanaviin, uutiskirjeisiin, blogeihin ja sähköpostisuoriin.
-                      </p>
+                      <p className="industry-title">{t('industries.cards.contentProduction.title')}</p>
+                      <p className="industry-description">{t('industries.cards.contentProduction.description')}</p>
                     </div>
                   </div>
                   <div className="industry-card">
                     <div className="industry-image" style={{backgroundImage: 'url("/image-3.jpg")'}}></div>
                     <div className="industry-content">
-                      <p className="industry-title">Prosessien optimointi</p>
-                      <p className="industry-description">
-                        Oppii jatkuvasti julkaistuista sisällöistä ja toteutetuista toimenpiteistä, parantaen suoritusta.
-                      </p>
+                      <p className="industry-title">{t('industries.cards.processOptimization.title')}</p>
+                      <p className="industry-description">{t('industries.cards.processOptimization.description')}</p>
                     </div>
                   </div>
                 </div>
@@ -476,27 +493,23 @@ export default function LandingPage() {
                   <div className="cta-section">
                     <div className="cta-content">
                       <h1 className="cta-title">
-                        Tekoäly Due Diligence
+                        {t('sections.dueDiligence')}
                       </h1>
-                      <p className="cta-description">
-                        Veloitukseton 60 min kartoitus: missä tekoäly tuo nopeimmat ja suurimmat hyödyt – ilman hypeä ja hakuammuntaa.
-                      </p>
-                      <a className="btn btn-primary cta-button" href="/ai-due-diligence">Tutustu ja varaa</a>
+                      <p className="cta-description">{t('cta.dueDiligenceDesc')}</p>
+                      <a className="btn btn-primary cta-button" href="/ai-due-diligence">{t('cta.learnAndBook')}</a>
                     </div>
                   </div>
                   <div className="cta-section">
                     <div className="cta-content">
                       <h1 className="cta-title">
-                        Varaa 30 minuuttia
+                        {t('sections.book30min')}
                       </h1>
-                      <p className="cta-description">
-                        Näytämme, miten Rascal AI vapauttaa myyjäsi parhaaseen työhönsä ja nostaa tulokset uudelle tasolle.
-                      </p>
+                      <p className="cta-description">{t('cta.book30minDesc')}</p>
                       <button
                         className="btn btn-primary cta-button"
                         disabled
                       >
-                        Tulee pian
+                        {t('cta.comingSoon')}
                       </button>
                     </div>
                   </div>
@@ -507,8 +520,8 @@ export default function LandingPage() {
             {/* Team Section */}
             <div className="section" id="team">
               <div className="section-header">
-                <h2 className="section-title">Tiimi</h2>
-                <p className="section-description">Tutustu ihmisiin Rascal AI:n takana.</p>
+                <h2 className="section-title">{t('sections.team')}</h2>
+                <p className="section-description">{t('team.description')}</p>
               </div>
               <div className="team-grid">
                 <div className="team-card">
@@ -517,7 +530,7 @@ export default function LandingPage() {
                   </div>
                   <div className="team-name">Mika Järvinen</div>
                   <div className="team-description">
-                    Kuudes Aisti Oy:n perustaja ja toimitusjohtaja, joka tunnetaan inspiroivana ja energisoivana valmentajana. Hän auttaa yrityksiä ja yksilöitä saavuttamaan parempia tuloksia haastamalla vakiintuneita ajattelu- ja toimintatapoja sekä tuomalla tuoreita näkökulmia ja työvälineitä, jotka inspiroivat ja energisoivat kehittymiseen ja henkilökohtaiseen tuloskasvuun.
+                    Founder and CEO of Kuudes Aisti Oy, known as an inspiring and energizing coach. He helps companies and individuals achieve better results by challenging established ways of thinking and working, and by bringing fresh perspectives and tools that inspire and energize development and personal performance growth.
                   </div>
                 </div>
                 <div className="team-card">
@@ -526,7 +539,7 @@ export default function LandingPage() {
                   </div>
                   <div className="team-name">Henri Rantanen</div>
                   <div className="team-description">
-                    Henri on omistanut yli kaksi vuosikymmentä ihmisten potentiaalin vapauttamiseen. Hän auttaa yksilöitä ja organisaatioita tunnistamaan ja ylittämään mentaaliset esteet, jotka estävät heitä saavuttamasta tavoitteitaan. Hän yhdistää käytännön kokemuksen yrittäjyydestä, myynnistä ja johtamisesta syvälliseen ymmärrykseen ihmismielen toiminnasta.
+                    Henri has dedicated over two decades to unlocking human potential. He helps individuals and organizations identify and overcome the mental barriers that keep them from achieving their goals. He combines hands-on experience in entrepreneurship, sales and leadership with a deep understanding of how the human mind works.
                   </div>
                 </div>
                 <div className="team-card">
@@ -535,7 +548,7 @@ export default function LandingPage() {
                   </div>
                   <div className="team-name">Sami Kiias</div>
                   <div className="team-description">
-                    Sami on erikoistunut yritysten arjen helpottamiseen teknologian avulla. Hän auttaa asiakkaitaan ottamaan tekoälyn ja automaation käyttöön konkreettisilla, aikaa säästävillä ratkaisuilla, jotka tehostavat markkinointia ja viestintää. Hän yhdistää sisällöntuotannon ja visuaalisen suunnittelun kokemuksen syvälliseen ymmärrykseen no-code-automaation ja tekoälyratkaisujen mahdollisuuksista.
+                    Sami specializes in making everyday business easier through technology. He helps clients adopt AI and automation with concrete, time-saving solutions that streamline marketing and communications. He combines experience in content creation and visual design with a deep understanding of no-code automation and AI solutions.
                   </div>
                 </div>
               </div>
@@ -546,11 +559,11 @@ export default function LandingPage() {
           <footer className="footer">
             <div className="footer-content">
               <div className="footer-links">
-                <a className="footer-link" href="#solutions">Kyvykkyydet</a>
-                <a className="footer-link" href="#industries">Toimialat</a>
-                <a className="footer-link" href="#contact">Demo</a>
-                <a className="footer-link" href="#contact">Yhteys</a>
-                <a className="footer-link" href="mailto:info@rascalai.fi">Ota yhteyttä</a>
+                <a className="footer-link" href="#solutions">{t('footer.capabilities')}</a>
+                <a className="footer-link" href="#industries">{t('footer.industries')}</a>
+                <a className="footer-link" href="#contact">{t('footer.demo')}</a>
+                <a className="footer-link" href="#contact">{t('footer.contact')}</a>
+                <a className="footer-link" href="mailto:info@rascalai.fi">{t('footer.email')}</a>
               </div>
               <div className="footer-bottom">
                 <div className="footer-social">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -71,6 +72,7 @@ const transformSupabaseData = (supabaseData) => {
 }
 
 function ContentCard({ content, onView, onPublish }) {
+  const { t } = useTranslation('common')
   return (
     <div className="content-card">
       <div className="content-card-content">
@@ -87,7 +89,7 @@ function ContentCard({ content, onView, onPublish }) {
             <div className="placeholder-content">
               <img 
                 src="/placeholder.png" 
-                alt="Media ei saatavilla"
+                alt={t('blogNewsletter.placeholders.noMedia')}
                 className="placeholder-image"
                 onError={(e) => {
                   e.target.style.display = 'none';
@@ -96,7 +98,7 @@ function ContentCard({ content, onView, onPublish }) {
               />
               <div className="placeholder-fallback" style={{ display: 'none' }}>
                 <div className="placeholder-icon">📄</div>
-                <div className="placeholder-text">Ei kuvaa</div>
+                <div className="placeholder-text">{t('blogNewsletter.placeholders.noImage')}</div>
               </div>
             </div>
           )}
@@ -108,9 +110,7 @@ function ContentCard({ content, onView, onPublish }) {
             </h3>
             <div className="content-badges">
               <span className="content-type">
-                {content.type === 'Blog' ? '📝 Blog' : 
-                 content.type === 'Newsletter' ? '📧 Newsletter' : 
-                 content.type}
+                {content.type === 'Blog' ? '📝 Blog' : content.type === 'Newsletter' ? '📧 Newsletter' : content.type}
               </span>
               <span className={`content-status ${content.status.toLowerCase().replace(' ', '-')}`}>
                 {content.status}
@@ -130,7 +130,7 @@ function ContentCard({ content, onView, onPublish }) {
                 onClick={() => onView(content)}
                 style={{ fontSize: '11px', padding: '6px 10px' }}
               >
-                👁️ Näytä
+                👁️ {t('blogNewsletter.actions.view')}
               </Button>
               {/* Julkaisu-nappi vain jos status on "Tarkistuksessa" */}
               {content.status === 'Tarkistuksessa' && (
@@ -143,7 +143,7 @@ function ContentCard({ content, onView, onPublish }) {
                     padding: '6px 10px' 
                   }}
                 >
-                  📤 Julkaise
+                  📤 {t('blogNewsletter.actions.publish')}
                 </Button>
               )}
             </div>
@@ -155,6 +155,7 @@ function ContentCard({ content, onView, onPublish }) {
 }
 
 export default function BlogNewsletterPage() {
+  const { t, i18n } = useTranslation('common')
   const { user } = useAuth()
   const [contents, setContents] = useState([])
   const [loading, setLoading] = useState(false)
@@ -436,14 +437,14 @@ export default function BlogNewsletterPage() {
     <div className="blog-newsletter-container">
       {/* Page Header */}
       <div className="blog-newsletter-header">
-        <h2>Blogit ja uutiskirjeet</h2>
+        <h2>{t('blogNewsletter.header')}</h2>
       </div>
 
       {/* Search and Filters */}
       <div className="search-filters">
         <input
           type="text"
-          placeholder="Etsi blogeja ja newslettereja..."
+          placeholder={t('blogNewsletter.searchPlaceholder')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
@@ -453,28 +454,28 @@ export default function BlogNewsletterPage() {
           onChange={(e) => setStatusFilter(e.target.value)}
           className="status-filter"
         >
-          <option value="">Kaikki statukset</option>
-          <option value="Luonnos">Luonnos</option>
-          <option value="Kesken">Kesken</option>
-          <option value="Tarkistuksessa">Tarkistuksessa</option>
-          <option value="Aikataulutettu">Aikataulutettu</option>
-          <option value="Valmis">Valmis</option>
-          <option value="Julkaistu">Julkaistu</option>
+          <option value="">{t('blogNewsletter.filters.allStatuses')}</option>
+          <option value="Luonnos">{t('blogNewsletter.status.Luonnos')}</option>
+          <option value="Kesken">{t('blogNewsletter.status.Kesken')}</option>
+          <option value="Tarkistuksessa">{t('blogNewsletter.status.Tarkistuksessa')}</option>
+          <option value="Aikataulutettu">{t('blogNewsletter.status.Aikataulutettu')}</option>
+          <option value="Valmis">{t('blogNewsletter.status.Valmis')}</option>
+          <option value="Julkaistu">{t('blogNewsletter.status.Julkaistu')}</option>
         </select>
         <select 
           value={typeFilter} 
           onChange={(e) => setTypeFilter(e.target.value)}
           className="type-filter"
         >
-          <option value="">Kaikki sisältötyypit</option>
-          <option value="Blog">📝 Blog-artikkelit</option>
-          <option value="Newsletter">📧 Newsletterit</option>
+          <option value="">{t('blogNewsletter.filters.allTypes')}</option>
+          <option value="Blog">{t('blogNewsletter.types.blog')}</option>
+          <option value="Newsletter">{t('blogNewsletter.types.newsletter')}</option>
         </select>
         <Button 
           variant="primary"
           onClick={() => setShowCreateModal(true)}
         >
-          + Luo uusi sisältö
+          {t('blogNewsletter.actions.createNew')}
         </Button>
       </div>
 
@@ -488,7 +489,7 @@ export default function BlogNewsletterPage() {
               window.location.reload()
             }}
           >
-            Yritä uudelleen
+            {t('blogNewsletter.actions.retry')}
           </Button>
         </div>
       )}
@@ -499,18 +500,18 @@ export default function BlogNewsletterPage() {
           {loading ? (
             <div className="loading-state">
               <div className="loading-spinner"></div>
-              <p>Ladataan sisältöä...</p>
+              <p>{t('blogNewsletter.loading.loadingContent')}</p>
             </div>
           ) : filteredContents.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon">📝</div>
-              <h3>Ei sisältöä vielä</h3>
-              <p>Aloita luomalla uusi blog-artikkeli tai newsletter</p>
+              <h3>{t('blogNewsletter.empty.title')}</h3>
+              <p>{t('blogNewsletter.empty.description')}</p>
               <Button 
                 variant="primary"
                 onClick={() => setShowCreateModal(true)}
               >
-                Luo ensimmäinen sisältö
+                {t('blogNewsletter.empty.createFirst')}
               </Button>
             </div>
           ) : (
@@ -538,7 +539,7 @@ export default function BlogNewsletterPage() {
         >
           <div className="modal-container" style={{ maxWidth: '800px' }}>
             <div className="modal-header">
-              <h2 className="modal-title">Luo uusi sisältö</h2>
+              <h2 className="modal-title">{t('blogNewsletter.createModal.title')}</h2>
               <button
                 onClick={() => setShowCreateModal(false)}
                 className="modal-close-btn"
@@ -557,17 +558,17 @@ export default function BlogNewsletterPage() {
                 })
               }}>
                 <div className="form-group">
-                  <label className="form-label">Otsikko</label>
+                  <label className="form-label">{t('blogNewsletter.createModal.fields.title')}</label>
                   <input
                     name="title"
                     type="text"
                     required
                     className="form-input"
-                    placeholder="Syötä sisällön otsikko..."
+                    placeholder={t('blogNewsletter.createModal.placeholders.title')}
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Tyyppi</label>
+                  <label className="form-label">{t('blogNewsletter.createModal.fields.type')}</label>
                   <select
                     name="type"
                     required
@@ -578,12 +579,12 @@ export default function BlogNewsletterPage() {
                   </select>
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Sisältö</label>
+                  <label className="form-label">{t('blogNewsletter.createModal.fields.content')}</label>
                   <textarea
                     name="content"
                     rows={12}
                     className="form-textarea"
-                    placeholder="Kirjoita sisältö..."
+                    placeholder={t('blogNewsletter.createModal.placeholders.content')}
                   />
                 </div>
                 <div className="modal-actions">
@@ -593,7 +594,7 @@ export default function BlogNewsletterPage() {
                       variant="secondary"
                       onClick={() => setShowCreateModal(false)}
                     >
-                      Peruuta
+                      {t('blogNewsletter.actions.cancel')}
                     </Button>
                   </div>
                   <div className="modal-actions-right">
@@ -601,7 +602,7 @@ export default function BlogNewsletterPage() {
                       type="submit"
                       variant="primary"
                     >
-                      Luo sisältö
+                      {t('blogNewsletter.createModal.create')}
                     </Button>
                   </div>
                 </div>
@@ -669,7 +670,7 @@ export default function BlogNewsletterPage() {
                     {viewingContent.type === 'Blog' ? '📝 Blog' : '📧 Newsletter'}
                   </span>
                   <span className="content-date">
-                    {viewingContent.createdAt ? new Date(viewingContent.createdAt).toLocaleDateString('fi-FI') : 'Ei päivämäärää'}
+                    {viewingContent.createdAt ? new Date(viewingContent.createdAt).toLocaleDateString(i18n.language === 'fi' ? 'fi-FI' : 'en-US') : t('blogNewsletter.placeholders.noDate')}
                   </span>
                 </div>
                 <div className="content-body">
@@ -679,14 +680,14 @@ export default function BlogNewsletterPage() {
                   ) : viewingContent.caption ? (
                     <ReactMarkdown>{viewingContent.caption}</ReactMarkdown>
                   ) : (
-                    <p style={{ color: '#666', fontStyle: 'italic' }}>Ei sisältöä saatavilla</p>
+                    <p style={{ color: '#666', fontStyle: 'italic' }}>{t('blogNewsletter.placeholders.noContent')}</p>
                   )}
                 </div>
                 
                 {/* Näytä lisätietoja jos saatavilla */}
                 {viewingContent.idea && viewingContent.idea !== viewingContent.title && (
                   <div style={{ marginTop: '20px', padding: '16px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-                    <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#666' }}>Alkuperäinen idea:</h4>
+                    <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#666' }}>{t('blogNewsletter.viewModal.originalIdea')}</h4>
                     <p style={{ margin: '0', fontSize: '14px' }}>{viewingContent.idea}</p>
                   </div>
                 )}
@@ -694,7 +695,7 @@ export default function BlogNewsletterPage() {
                 {/* Näytä status */}
                 <div style={{ marginTop: '16px', padding: '12px', backgroundColor: '#f1f5f9', borderRadius: '6px' }}>
                   <span style={{ fontSize: '12px', fontWeight: '600', color: '#475569' }}>
-                    Status: {viewingContent.status}
+                    {t('blogNewsletter.viewModal.status')} {viewingContent.status}
                   </span>
                 </div>
               </div>
@@ -705,7 +706,7 @@ export default function BlogNewsletterPage() {
                     variant="secondary"
                     onClick={() => setShowViewModal(false)}
                   >
-                    Sulje
+                    {t('blogNewsletter.actions.close')}
                   </Button>
                 </div>
                 <div className="modal-actions-right">
@@ -713,13 +714,13 @@ export default function BlogNewsletterPage() {
                     type="button"
                     variant="danger"
                     onClick={() => {
-                      if (window.confirm('Oletko varma, että haluat poistaa tämän sisällön?')) {
+                      if (window.confirm(t('blogNewsletter.alerts.deleteConfirm'))) {
                         handleDeleteContent(viewingContent.id)
                         setShowViewModal(false)
                       }
                     }}
                   >
-                    Poista
+                    {t('blogNewsletter.actions.delete')}
                   </Button>
                 </div>
               </div>

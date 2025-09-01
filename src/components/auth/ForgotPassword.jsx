@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../../lib/supabase'
 import { Link } from 'react-router-dom'
 
 export default function ForgotPassword({ onClose }) {
+  const { t } = useTranslation('common')
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -33,21 +35,21 @@ export default function ForgotPassword({ onClose }) {
         <button
           onClick={onClose}
           style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', fontSize: 28, color: '#cbd5e1', cursor: 'pointer', transition: 'color 0.2s' }}
-          aria-label="Sulje"
+          aria-label={t('auth.close')}
           onMouseOver={e => e.currentTarget.style.color = '#4ADE80'}
           onMouseOut={e => e.currentTarget.style.color = '#cbd5e1'}
         >
           ×
         </button>
       )}
-      <h2 style={{ fontSize: 26, fontWeight: 700, marginBottom: 18, textAlign: 'center', color: '#fff' }}>Palauta salasana</h2>
+      <h2 style={{ fontSize: 26, fontWeight: 700, marginBottom: 18, textAlign: 'center', color: '#fff' }}>{t('auth.sendReset')}</h2>
       <p style={{ color: '#cbd5e1', textAlign: 'center', marginBottom: 18, fontSize: 15 }}>
-        Syötä sähköpostiosoitteesi, niin lähetämme sinulle linkin salasanan palautusta varten.
+        {t('auth.resetDesc') || 'Syötä sähköpostiosoitteesi, niin lähetämme sinulle linkin salasanan palautusta varten.'}
       </p>
       <form onSubmit={handleResetPassword} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
         <div>
           <label htmlFor="email" style={{ display: 'block', marginBottom: 6, fontWeight: 500, color: '#cbd5e1' }}>
-            Sähköposti
+            {t('auth.email')}
           </label>
           <input
             id="email"
@@ -66,7 +68,7 @@ export default function ForgotPassword({ onClose }) {
               outline: 'none',
               marginBottom: 2
             }}
-            placeholder="sähköposti@esimerkki.fi"
+            placeholder={t('auth.emailPlaceholder')}
             autoComplete="email"
           />
         </div>
@@ -87,7 +89,7 @@ export default function ForgotPassword({ onClose }) {
             marginTop: 4
           }}
         >
-          {loading ? 'Lähetetään palautuslinkkiä...' : 'Lähetä palautuslinkki'}
+          {loading ? t('auth.sendingReset') : t('auth.sendReset')}
         </button>
         {message && (
           <div style={{
@@ -105,9 +107,9 @@ export default function ForgotPassword({ onClose }) {
       </form>
       <div style={{ marginTop: 18, textAlign: 'center' }}>
         <p style={{ fontSize: 15, color: '#cbd5e1' }}>
-          Muistatko salasanasi?{' '}
+          {t('auth.rememberPassword')}{' '}
           <a href="#" style={{ color: '#4ADE80', textDecoration: 'underline' }} onClick={onClose}>
-            Kirjaudu sisään
+            {t('auth.login')}
           </a>
         </p>
       </div>

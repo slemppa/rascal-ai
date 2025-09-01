@@ -1,0 +1,937 @@
+{
+  "lang": { "fi": "In Finnish", "en": "In English", "shortFi": "FI", "shortEn": "EN" },
+  "meta": {
+    "title": "RascalAI – Your best sales assistant",
+    "description": "Rascal AI frees sales from routines and preparation so you can focus on winning customer interactions."
+  },
+  "nav": {
+    "articles": "Articles",
+    "demo": "Demo",
+    "customers": "Customers",
+    "team": "Team",
+    "contact": "Contact",
+    "signin": "Sign in",
+    "bookDemo": "Book a demo"
+  },
+  "hero": {
+    "title": "Assistant for sales, marketing and leadership",
+    "subtitle": "I'm your new teammate",
+    "cta": "Book a demo"
+  },
+  "sections": {
+    "latestArticles": "Latest articles",
+    "latestArticlesDescription": "Stay up to date with AI and automation trends",
+    "whatRascalDoes": "What does Rascal AI do?",
+    "whyRascal": "Why Rascal AI?",
+    "team": "Team",
+    "dueDiligence": "AI Due Diligence",
+    "book30min": "Book 30 minutes"
+  },
+  "cta": {
+    "learnAndBook": "Learn more and book",
+    "comingSoon": "Coming soon",
+    "dueDiligenceDesc": "A free 60-minute assessment: where AI brings the fastest and biggest benefits – without hype or guesswork.",
+    "book30minDesc": "We'll show how Rascal AI frees your salespeople to do their best work and takes results to the next level."
+  },
+  "articles": {
+    "loading": "Loading articles...",
+    "general": "General",
+    "noDate": "No date",
+    "readMore": "Read more →",
+    "none": "No articles available yet."
+  },
+  "blog": {
+    "title": "Articles",
+    "description": "Timely insights on sales, marketing and the possibilities of AI",
+    "loading": "Loading articles...",
+    "errorTitle": "Error",
+    "error": "Failed to load articles. Please try again later.",
+    "retry": "Try again",
+    "emptyTitle": "No articles yet",
+    "emptyDesc": "Articles will be added soon!",
+    "noTitle": "No title",
+    "noExcerpt": "No description available"
+  },
+  "article": {
+    "loading": "Loading article...",
+    "errorTitle": "Error",
+    "notFound": "Article not found",
+    "backToArticles": "Back to articles",
+    "contentMissing": "Article content is missing.",
+    "prev": "← Previous article",
+    "next": "Next article →"
+  },
+  "features": {
+    "intro": {
+      "p1": "Rascal AI understands the big picture of sales and marketing",
+      "p2": "It builds a content plan, produces and publishes social posts, blogs and newsletters.",
+      "p3": "Rascal AI calls, qualifies, books meetings and answers calls.",
+      "p4": "All this – automatically and in your own style."
+    },
+    "cards": {
+      "social": {
+        "title": "SOCIAL",
+        "lead": "Build trust, brand and sales – automatically.",
+        "body": "Rascal AI creates content that resonates with your audience for Facebook, Instagram and LinkedIn. It learns your style, voice and goals – and produces the content for you."
+      },
+      "avatar": {
+        "title": "AVATAR TECHNOLOGY",
+        "lead": "Looks like you – powered by AI.",
+        "body": "Avatar technology creates a digital copy of you that appears in videos and produces content with your face. Realistic, impactful and above all effective."
+      },
+      "blog": {
+        "title": "BLOGS & ARTICLES",
+        "lead": "Expert content that forgets nothing.",
+        "body": "Rascal AI writes articles and blogs precisely for your target audience – according to the strategy and content plan. It remembers what's essential and writes like you, at your best."
+      },
+      "newsletter": {
+        "title": "NEWSLETTERS",
+        "lead": "Content + distribution – in one package.",
+        "body": "When an article is ready, Rascal AI summarizes it into an engaging newsletter and sends it automatically to the right audience."
+      },
+      "generator": {
+        "title": "CONTENT GENERATOR",
+        "lead": "Ask – get content in minutes.",
+        "body": "Need a post, article or campaign messages quickly? Rascal AI creates relevant content on the fly – always in your style."
+      },
+      "calls": {
+        "title": "CALLS",
+        "lead": "AI sells and qualifies – like a human.",
+        "body": "Rascal AI calls, discovers needs and books meetings directly in your calendar. It also handles customer service calls – humanly and efficiently."
+      },
+      "sms": {
+        "title": "TEXT MESSAGES",
+        "lead": "Personal communication at scale.",
+        "body": "Reach your audience directly on their phone. Rascal AI sends messages, arranges calls and tracks leads – without you lifting a finger."
+      },
+      "crm": {
+        "title": "CRM INTEGRATIONS",
+        "lead": "Connects directly to your systems.",
+        "body": "Rascal AI connects to your CRM, keeping all customer data and communications automatically up to date."
+      }
+    }
+  },
+  "why": {
+    "description": "Remove routines, free your salespeople for customer interactions and raise results to a new level. Rascal Company was born from one question: What would happen if your salespeople spent 30–50% more time with customers – as soon as next month?"
+  },
+  "industries": {
+    "cards": {
+      "salesMarketing": {
+        "title": "Sales and marketing",
+        "description": "Free your salespeople from routines and let them focus on the interactions that generate revenue."
+      },
+      "contentProduction": {
+        "title": "Content production",
+        "description": "AI produces marketing content for various channels, newsletters, blogs and email campaigns."
+      },
+      "processOptimization": {
+        "title": "Process optimization",
+        "description": "Continuously learns from published content and executed actions, improving performance."
+      }
+    }
+  },
+  "team": {
+    "description": "Meet the people behind Rascal AI."
+  },
+  "footer": {
+    "capabilities": "Capabilities",
+    "industries": "Industries",
+    "demo": "Demo",
+    "contact": "Contact",
+    "email": "Contact us"
+  },
+  "a11y": {
+    "toggleMobileMenu": "Toggle mobile menu"
+  }
+  ,
+  "auth": {
+    "close": "Close",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "email": "Email",
+    "password": "Password",
+    "emailPlaceholder": "email@example.com",
+    "passwordPlaceholder": "Your password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "forgotPassword": "Forgot your password?",
+    "loginWithMagicLink": "Sign in with magic link",
+    "signInFailed": "Sign-in failed",
+    "sendReset": "Send reset link",
+    "sendingReset": "Sending reset link...",
+    "resetSent": "Check your email for the password reset link!",
+    "unexpectedError": "Unexpected error occurred",
+    "rememberPassword": "Remember your password?",
+    "login": "Sign in",
+    "magicLink": "Magic link",
+    "magicLinkDesc": "Enter your email and we'll send you a magic sign-in link.",
+    "sendMagicLink": "Send magic link",
+    "sendingMagicLink": "Sending magic link...",
+    "magicLinkSent": "Check your email for the magic link!",
+    "wantPassword": "Want to use a password?",
+    "loginWithPassword": "Sign in with password",
+    "verifyingRecovery": "Verifying recovery link...",
+    "invalidLinkTitle": "Invalid link",
+    "invalidLink": "This password recovery link is invalid or expired.",
+    "backToSignin": "Back to sign in",
+    "setNewPassword": "Set a new password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "min6chars": "At least 6 characters",
+    "confirmNewPasswordPlaceholder": "Confirm your new password",
+    "updatingPassword": "Updating password...",
+    "updatePassword": "Update password",
+    "passwordsDontMatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 6 characters long",
+    "passwordUpdated": "Password updated successfully!"
+  },
+  
+  "aiDD": {
+    "meta": {
+      "title": "AI Due Diligence – RascalAI",
+      "description": "A free one-hour assessment: where AI brings the fastest and biggest benefits in sales, marketing, customer service, product development and leadership."
+    },
+    "hero": {
+      "title": "AI Due Diligence",
+      "subtitle": "Free 60-minute assessment: where AI brings the fastest and biggest benefits – without hype or guesswork."
+    },
+    "sections": {
+      "whatIs": {
+        "title": "What is it?",
+        "p": "RascalAI's AI Due Diligence is a free one-hour assessment that shows where AI brings the fastest and biggest benefits in your business. It identifies critical areas in sales, marketing, customer service, product development and leadership – without hype or guesswork."
+      },
+      "problem": {
+        "title": "What problem does it solve?",
+        "items": [
+          "Removes guesswork: where to apply AI first",
+          "Unifies scattered experiments into a single action plan",
+          "Ensures AI initiatives are tied to KPI/OKR metrics",
+          "Prevents unnecessary investments and risks"
+        ]
+      },
+      "deliverables": {
+        "title": "What do you get?",
+        "items": [
+          "AI Heatmap: a clear view of where AI brings the most value",
+          "Top 10 opportunities: one-pager describing value and impact",
+          "90-day action plan: concrete next steps",
+          "Data and risk profile: GDPR, privacy and quality assurance",
+          "Training and change model: how the team gets full benefit from AI"
+        ]
+      },
+      "process": {
+        "title": "How it's done – 5 steps",
+        "items": [
+          "Align – clarify goals and metrics",
+          "Map – chart processes and routines",
+          "Measure – assess current state and data readiness",
+          "Prioritize – score benefits, risks and feasibility",
+          "Plan – build a clear action plan"
+        ]
+      },
+      "benefits": {
+        "title": "Business benefits",
+        "items": [
+          "Sales: faster deals, higher win rate",
+          "Marketing: better targeting, improved ROI",
+          "Customer service: shorter response times, happier customers",
+          "Product development: faster from idea to market",
+          "Leadership: up-to-date reports, better decision-making"
+        ]
+      }
+    },
+    "cta": {
+      "title": "Let's start with a free 60-minute assessment",
+      "body": "Let's make AI a new team member that accelerates growth and streamlines everyday work.",
+      "button": "Book assessment"
+    }
+  }
+  ,
+  "dashboard": {
+    "meta": {
+      "title": "Dashboard - Rascal AI",
+      "description": "Manage your content and track results in the Rascal AI Dashboard. Posts, stats and schedules at a glance."
+    },
+    "header": {
+      "title": "Dashboard",
+      "subtitle": "Manage your content and track results at a glance"
+    },
+    "metrics": {
+      "title": "Key metrics",
+      "filters": {
+        "all": "All",
+        "week": "Last week",
+        "month": "Last month",
+        "days7": "Last 7 days",
+        "days30": "Last 30 days"
+      },
+      "stats": {
+        "upcomingPosts": "Upcoming posts",
+        "publishedContent": "Content published",
+        "messageCosts": "Costs (messages)",
+        "callCosts": "Call costs",
+        "successCalls": "Calls (successful)",
+        "answerRate": "Answer rate",
+        "trendUpSuffix": "increase vs previous",
+        "trendDownSuffix": "decrease vs previous"
+      }
+    },
+    "upcoming": {
+      "title": "Upcoming posts",
+      "headers": { "media": "Media", "caption": "Caption", "status": "Status", "date": "Date" },
+      "empty": "No upcoming posts",
+      "today": "Today"
+    },
+    "campaigns": {
+      "title": "Campaign performance",
+      "headers": { "campaign": "Campaign", "calls": "Calls", "successRate": "Success %" },
+      "empty": "No campaigns"
+    },
+    "charts": {
+      "title": "Calls and messages over time",
+      "scatter": "Duration vs success rate",
+      "heatmap": "Best performing call times",
+      "day": "Day",
+      "axis": {
+        "duration": "Duration (s)",
+        "successRate": "Success %",
+        "count": "Count"
+      }
+    },
+    "status": {
+      "Draft": "Draft",
+      "In Progress": "In Progress",
+      "Under Review": "Under Review",
+      "Scheduled": "Scheduled",
+      "Done": "Done",
+      "Deleted": "Deleted",
+      "Pending": "Pending",
+      "Odottaa": "Pending"
+    },
+    "edit": {
+      "title": "Edit post",
+      "ideaLabel": "Idea description",
+      "ideaPlaceholder": "Describe the post idea...",
+      "captionLabel": "Post text",
+      "captionPlaceholder": "Write the post text...",
+      "publishDateLabel": "Publish date",
+      "saveSuccess": "Saved successfully!",
+      "saveError": "Save failed",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving..."
+    }
+  }
+  ,
+  "sidebar": {
+    "sections": {
+      "marketing": "Marketing",
+      "sales": "Sales",
+      "tools": "Tools"
+    },
+    "labels": {
+      "dashboard": "Home",
+      "posts": "Social",
+      "blogNewsletter": "Blog & newsletter",
+      "strategy": "Strategy",
+      "campaigns": "Campaigns",
+      "segments": "Segments",
+      "calls": "Calls",
+      "aiChat": "Assistant",
+      "dev": "Dev",
+      "admin": "Admin",
+      "adminBlog": "Admin"
+    },
+    "settings": "Settings",
+    "helpCenter": "Help Center",
+    "logout": "Sign out"
+  }
+  ,
+  "posts": {
+    "header": "Social media content",
+    "searchPlaceholder": "Search social media content...",
+    "filters": { "allStatuses": "All statuses" },
+    "status": {
+      "Kesken": "Draft",
+      "Tarkistuksessa": "Ready to publish",
+      "Aikataulutettu": "Scheduled",
+      "Julkaistu": "Published"
+    },
+    "columns": {
+      "avatar": "Avatar",
+      "inProgress": "Draft",
+      "readyToPublish": "Ready to publish",
+      "scheduled": "Scheduled",
+      "published": "Published"
+    },
+    "actions": {
+      "createNew": "+ Create new content",
+      "edit": "Edit",
+      "moveToNext": "Move to next",
+      "publish": "Publish",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "saveChanges": "Save changes",
+      "publishToSelectedChannels": "Publish to selected channels",
+      "retry": "Try again"
+    },
+    "loading": {
+      "fetchingAccounts": "Fetching social accounts..."
+    },
+    "placeholders": {
+      "image": "Image",
+      "noImage": "No image",
+      "video": "Video",
+      "noVideo": "No video available"
+    },
+    "createModal": {
+      "title": "Create new social content",
+      "close": "Close",
+      "fields": {
+        "title": "Title",
+        "type": "Type",
+        "description": "Description"
+      },
+      "placeholders": {
+        "title": "Enter the content title...",
+        "description": "Write the description..."
+      },
+      "cancel": "Cancel",
+      "create": "Create"
+    },
+    "editModal": {
+      "title": "Edit social content",
+      "titleVoiceover": "Voiceover review",
+      "titleCaption": "Description review",
+      "labels": {
+        "description": "Description",
+        "voiceover": "Voiceover (read only)",
+        "voiceoverEdit": "Voiceover",
+        "confirmVoiceover": "I confirm the {field} is ready and reviewed",
+        "publishDate": "Publish date",
+        "status": "Status",
+        "source": "Source"
+      },
+      "placeholders": {
+        "description": "Write the description...",
+        "voiceover": "Write the voiceover text...",
+        "date": "dd.mm.yyyy hh:mm"
+      },
+      "charCounter": "characters"
+    },
+    "publishModal": {
+      "title": "Select channels to publish",
+      "close": "Close",
+      "contentToPublish": "Content to publish",
+      "selectChannels": "Select channels",
+      "noAccounts": "No connected social accounts.",
+      "connectInSettings": "Connect social accounts in settings"
+    },
+    "schedule": {
+      "prompt": "Enter schedule (YYYY-MM-DD HH:MM):"
+    },
+    "alerts": {
+      "ideaSent": "Idea sent to AI! Content will be generated in the background.",
+      "ideaError": "Error: Could not create content. Please try again.",
+      "deleteConfirm": "Are you sure you want to delete this content?",
+      "deleted": "Content marked as deleted!",
+      "deleteFailed": "Content deletion failed: {message}",
+      "scheduleSuccess": "Content scheduling succeeded!",
+      "scheduleFailed": "Scheduling failed: {message}",
+      "publishSuccess": "Content published successfully!",
+      "publishFailed": "Publishing failed: {message}",
+      "selectAtLeastOne": "Select at least one social account",
+      "moveSuccess": "Post moved to column: {status}",
+      "moveFailed": "Move failed: {message}",
+      "reelsOnly": "Move is only possible for Supabase posts"
+    }
+  }
+  ,
+  "blogNewsletter": {
+    "header": "Blogs and newsletters",
+    "searchPlaceholder": "Search blogs and newsletters...",
+    "filters": { "allStatuses": "All statuses", "allTypes": "All content types" },
+    "types": { "blog": "📝 Blog articles", "newsletter": "📧 Newsletters" },
+    "status": {
+      "Luonnos": "Draft",
+      "Kesken": "In progress",
+      "Tarkistuksessa": "Under Review",
+      "Aikataulutettu": "Scheduled",
+      "Valmis": "Done",
+      "Julkaistu": "Published"
+    },
+    "actions": {
+      "view": "View",
+      "publish": "Publish",
+      "createNew": "+ Create content",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "retry": "Try again",
+      "close": "Close"
+    },
+    "loading": { "loadingContent": "Loading content..." },
+    "empty": {
+      "title": "No content yet",
+      "description": "Start by creating a new blog article or newsletter",
+      "createFirst": "Create first content"
+    },
+    "placeholders": {
+      "noImage": "No image",
+      "noMedia": "No media available",
+      "noContent": "No content available",
+      "noDate": "No date"
+    },
+    "createModal": {
+      "title": "Create content",
+      "fields": { "title": "Title", "type": "Type", "content": "Content" },
+      "placeholders": { "title": "Enter the title...", "content": "Write the content..." },
+      "cancel": "Cancel",
+      "create": "Create content"
+    },
+    "viewModal": {
+      "originalIdea": "Original idea:",
+      "status": "Status:",
+      "close": "Close"
+    },
+    "alerts": {
+      "ideaSent": "Idea sent to AI! Content will be generated in the background.",
+      "ideaError": "Error: Could not create content. Please try again.",
+      "publishSuccess": "Published successfully!",
+      "publishFailed": "Publishing failed: {message}",
+      "deleteConfirm": "Are you sure you want to delete this content?",
+      "deleted": "Content deleted successfully!",
+      "deleteFailed": "Deletion failed: {message}"
+    }
+  }
+  ,
+  "strategy": {
+    "header": "Target audience, goals and content plan",
+    "loading": "Loading content strategy...",
+    "status": { "current": "Current", "upcoming": "Upcoming", "old": "Old" },
+    "icp": {
+      "title": "Target audience",
+      "placeholder": "Write audience profiles here (one per line)...",
+      "edit": "Edit ICP",
+      "empty": "No audience profiles yet",
+      "create": "Create audience profile"
+    },
+    "kpi": {
+      "title": "Goals",
+      "placeholder": "Write goals here...",
+      "edit": "Edit goals",
+      "empty": "No goals yet",
+      "create": "Create goals"
+    },
+    "list": { "title": "Content strategies" },
+    "strategyCard": { "placeholder": "Write the monthly strategy here..." },
+    "buttons": { "save": "Save", "cancel": "Cancel", "edit": "Edit" },
+    "empty": { "title": "No strategies yet", "description": "Start by creating the first monthly strategy" }
+  }
+  ,
+  "campaigns": {
+    "header": { "title": "Campaigns", "description": "Manage your call campaigns and track their performance" },
+    "actions": { "create": "Create campaign", "creating": "Creating...", "cancel": "Cancel" },
+    "loading": "Loading campaigns...",
+    "error": "Error loading campaigns",
+    "empty": "No campaigns yet",
+    "stats": {
+      "active": "Active campaigns",
+      "totalCalls": "Total calls",
+      "answerRate": "Answer rate",
+      "successful": "Successful"
+    },
+    "card": {
+      "calls": "Calls",
+      "answerRateShort": "Answer %",
+      "successful": "Successful",
+      "script": "Script"
+    },
+    "details": {
+      "title": "Campaign details",
+      "loading": "Loading...",
+      "error": "Error"
+    },
+    "form": {
+      "nameLabel": "Campaign name *",
+      "namePlaceholder": "e.g. Q3 Follow-up campaign",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Short description of the campaign...",
+      "scriptLabel": "Call script",
+      "scriptPlaceholder": "Select call script",
+      "dailyLimitLabel": "Daily limit",
+      "maxAttemptsLabel": "Max attempts per contact",
+      "submit": "Create campaign",
+      "submitting": "Creating...",
+      "cancel": "Cancel",
+      "saveError": "Save failed"
+    },
+    "status": {
+      "active": "Active",
+      "paused": "Paused",
+      "completed": "Completed",
+      "archived": "Archived"
+    },
+    "charts": {
+      "dailyCalls": "Daily calls",
+      "dailyAnswerRate": "Daily answer rate",
+      "seriesCalls": "Calls",
+      "seriesAnswered": "Answered",
+      "tooltipAnswer": "Answer %"
+    }
+  }
+  ,
+  "segments": {
+    "header": { "title": "Segments", "description": "Organize your contacts and track segment performance" },
+    "actions": { "create": "Create segment", "creating": "Creating...", "cancel": "Cancel" },
+    "loading": "Loading segments...",
+    "error": "Error loading segments",
+    "empty": "No segments yet",
+    "stats": {
+      "totalSegments": "Total segments",
+      "totalContacts": "Total contacts",
+      "avgPerSegment": "Average per segment"
+    },
+    "card": {
+      "contacts": "Contacts",
+      "created": "Created"
+    },
+    "form": {
+      "nameLabel": "Segment name *",
+      "namePlaceholder": "e.g. Warm leads",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Describe the segment...",
+      "colorLabel": "Color",
+      "submit": "Create segment",
+      "submitting": "Creating...",
+      "cancel": "Cancel",
+      "saveError": "Save failed"
+    },
+    "details": {
+      "title": "Segment details",
+      "loading": "Loading...",
+      "error": "Error",
+      "metrics": { "calls": "Calls", "answerRateShort": "Answer %", "successful": "Successful" }
+    },
+    "statsBoard": {
+      "calls": "Calls",
+      "answered": "Answered",
+      "successful": "Successful",
+      "answerRateShort": "Answer %",
+      "loading": "Loading stats..."
+    }
+  }
+  ,
+  "calls": {
+    "tabs": {
+      "calls": "Calls",
+      "logs": "Call log",
+      "messages": "Message log",
+      "textmessages": "Text messages",
+      "manage": "Manage",
+      "crm": "CRM"
+    },
+    "callsTab": {
+      "mass": {
+        "header": "Mass calls",
+        "description": "Start mass calls for Google Sheets data or schedule them for later.",
+        "startButton": "Start mass calls"
+      },
+      "single": {
+        "header": "Single call",
+        "description": "Select the call type and details in the modal.",
+        "startButton": "Start a single call"
+      },
+      "settings": {
+        "header": "Settings",
+        "ready": "Ready",
+        "type": {
+          "label": "Call type",
+          "loading": "Loading call types...",
+          "empty": "No call types available",
+          "addNew": "Add new"
+        },
+        "voice": {
+          "label": "Voice",
+          "test": "Test voice",
+          "stop": "Stop"
+        },
+        "script": {
+          "label": "Script",
+          "placeholder": "Select a call type to see the script",
+          "autoupdateHint": "The script updates automatically based on the selected call type"
+        }
+      },
+      "inbound": {
+        "header": "Inbound settings",
+        "editLarge": "Edit in large window",
+        "voice": { "label": "Voice", "test": "Test" },
+        "welcome": {
+          "label": "Welcome message",
+          "placeholder": "Write the welcome message...",
+          "hint": "The first message sent to the customer"
+        },
+        "script": {
+          "label": "Inbound script",
+          "placeholder": "Write the script for inbound calls...",
+          "hint": "Greeting and instructions for customers who call you"
+        },
+        "save": "Save settings"
+      }
+    },
+    "logsTab": {
+      "buttons": { "refresh": "Refresh", "refreshing": "Refreshing..." },
+      "filters": {
+        "title": "Filters and search",
+        "searchLabel": "Search name, number or email",
+        "searchPlaceholder": "John Doe, +1... or john@example.com",
+        "statusLabel": "Status",
+        "typeLabel": "Call type",
+        "dateFrom": "Date from",
+        "dateTo": "Date to",
+        "searchButton": "Search",
+        "clearButton": "Clear filters",
+        "all": "All",
+        "statusOptions": {
+          "success": "Successful",
+          "failed": "Failed",
+          "pending": "Pending",
+          "inProgress": "In progress"
+        }
+      }
+    },
+    "messagesTab": {
+      "buttons": { "refresh": "Refresh", "refreshing": "Refreshing..." },
+      "loading": "Loading messages...",
+      "empty": "No messages found",
+      "history": { "title": "Message history", "showingCount": "Showing {count} messages" },
+      "table": {
+        "phone": "Phone number",
+        "type": "Type",
+        "direction": "Direction",
+        "status": "Status",
+        "aiText": "AI text",
+        "customerText": "Customer reply",
+        "date": "Date"
+      },
+      "direction": { "outbound": "Sent", "inbound": "Received" },
+      "status": { "sent": "Sent", "delivered": "Delivered", "read": "Read", "failed": "Failed", "pending": "Pending" }
+    },
+    "textMessagesTab": {
+      "header": "Text messages",
+      "buttons": { "refresh": "Refresh", "refreshing": "Refreshing..." },
+      "sectionTitle": "First text message",
+      "showingCount": "Showing {{count}} call types",
+      "loadingTypes": "Loading call types...",
+      "empty": "No call types found",
+      "card": {
+        "unnamed": "Untitled type",
+        "statusActive": "Active",
+        "statusDraft": "Draft",
+        "statusUnknown": "Unknown",
+        "identifier": "Identifier:",
+        "messageLabel": "Message",
+        "placeholder": "SMS message sent to the customer before the call... (max 160 characters)",
+        "counterSuffix": "characters",
+        "longHint": "Long message ({{parts}} messages)",
+        "defined": "SMS defined",
+        "notDefined": "No SMS defined",
+        "edit": "Edit",
+        "save": "Save"
+      }
+    },
+    "common": {
+      "close": "Close",
+      "cancel": "Cancel",
+      "back": "Back",
+      "continue": "Continue",
+      "save": "Save"
+    },
+    "modals": {
+      "mass": {
+        "title": "Mass calls",
+        "step1": {
+          "title": "Step 1: Google Sheets data",
+          "desc": "Enter the Google Sheets URL and validate the data before continuing.",
+          "labelUrl": "Google Sheets URL",
+          "placeholderUrl": "https://docs.google.com/spreadsheets/d/...",
+          "cancel": "Cancel",
+          "validate": "Validate and continue",
+          "validating": "Validating...",
+          "validationOk": "Validation succeeded!",
+          "found": {
+            "phones": "Found {{count}} phone numbers",
+            "emails": "Found {{count}} emails",
+            "rows": "Total {{count}} rows"
+          }
+        },
+        "step2": {
+          "title": "Step 2: Call settings",
+          "desc": "Select campaign (optional segment), call type and voice.",
+          "campaign": { "label": "Campaign *", "select": "Select campaign" },
+          "segment": { "label": "Segment (optional)", "none": "No segment" },
+          "type": { "label": "Call type" },
+          "voice": { "label": "Voice" },
+          "smsFirst": { "label": "Text first", "readonly": "First SMS (read only)", "missing": "Add SMS text to the call type first" },
+          "back": "← Back",
+          "next": "Continue →"
+        },
+        "step3": {
+          "title": "Step 3: Start or schedule calls",
+          "desc": "Choose whether to start calls now or schedule them.",
+          "startNow": { "label": "🚀 Start now", "starting": "Starting..." },
+          "orSchedule": "📅 Or schedule calls",
+          "date": "Date",
+          "time": "Time",
+          "schedule": { "label": "📅 Schedule calls", "scheduling": "Scheduling..." },
+          "back": "← Back"
+        }
+      },
+      "single": {
+        "title": "Single call",
+        "close": "Close",
+        "step1": {
+          "title": "Step 1: Call settings",
+          "type": { "label": "Call type", "placeholder": "Select call type..." },
+          "voice": { "label": "Voice" },
+          "cancel": "Cancel",
+          "next": "Continue →"
+        },
+        "step2": {
+          "title": "Step 2: Customer info",
+          "name": { "label": "Name", "placeholder": "John Doe" },
+          "phone": { "label": "Phone number", "placeholder": "040 123 4567 or +358401234567" },
+          "script": { "label": "Script:", "placeholder": "Select call type to see the script." },
+          "smsFirst": { "label": "Text first", "readonly": "First SMS (read only)", "missing": "Add SMS text to the call type first" },
+          "back": "← Back",
+          "call": { "label": "Call", "calling": "Calling…" }
+        }
+      },
+      "inbound": {
+        "title": "Inbound settings",
+        "close": "Close"
+      }
+    }
+    ,
+    "manageTab": {
+      "header": { "title": "Manage call types" },
+      "cta": { "addNew": "➕ Add new type" },
+      "description": "Manage call types in the Supabase database. Only types with Active status are shown in calls.",
+      "existing": { "title": "Existing call types" },
+      "loading": "Loading call types...",
+      "empty": "No call types added yet",
+      "sort": { "label": "Sort:", "byStatus": "Status", "byName": "Name" },
+      "item": {
+        "identifier": "Identifier:",
+        "statusActive": "Active",
+        "statusDraft": "Draft",
+        "statusUnknown": "Unknown",
+        "delete": "Delete",
+        "deleteTitle": "Delete call type",
+        "deletingTitle": "Deleting...",
+        "edit": "Edit"
+      }
+    }
+  }
+  ,
+  "assistant": {
+    "loadingUser": "Loading user data...",
+    "tabs": { "chat": "Chat", "files": "Knowledge base" },
+    "typing": "Typing…",
+    "inputPlaceholder": "Write your message...",
+    "send": "Send",
+    "newChatTitle": "Start a new chat",
+    "newChatAria": "New chat",
+    "missingAssistantId": "Assistant ID is missing. Please contact support.",
+    "sendError": "Error sending message. Please try again.",
+    "files": {
+      "uploadCard": {
+        "title": "Add file to knowledge base",
+        "desc": "You can attach PDF, Word or text files. The file will be stored in your company's knowledge base.",
+        "dragText": "Drag and drop files here or",
+        "chooseFiles": "choose files",
+        "remove": "Remove",
+        "uploadBtn": "Upload files ({count})",
+        "uploading": "Uploading...",
+        "uploadError": "Error uploading files",
+        "uploadSuccess": "{count} file(s) uploaded successfully!",
+        "missingCompany": "Company ID is missing",
+        "missingAssistant": "Assistant ID is missing"
+      },
+      "list": {
+        "title": "Files",
+        "loading": "Loading files...",
+        "error": "Error loading files",
+        "emptyTitle": "You haven't added any files yet",
+        "emptyAlt": "No files",
+        "delete": "Delete"
+      }
+    }
+  }
+  ,
+  "settings": {
+    "title": "Settings",
+    "profile": { "title": "User information", "loading": "Loading user information...", "notFoundSupport": "User information not found. Please contact support.", "fetchError": "Error fetching user information. Please contact support.", "updateSuccess": "Information updated successfully!" },
+    "fields": { "name": "Name", "email": "Email", "company": "Company", "industry": "Industry", "userId": "User ID", "namePlaceholder": "Enter your name", "emailPlaceholder": "Enter your email address", "companyPlaceholder": "Enter your company name" },
+    "buttons": { "edit": "Edit", "save": "Save", "saving": "Saving...", "cancel": "Cancel", "changePassword": "Change password" },
+    "common": { "notSet": "Not set", "notAvailable": "Not available", "error": "Error", "loadingImages": "Loading images..." },
+    "password": { "title": "Change password", "saving": "Saving...", "save": "Save", "cancel": "Cancel", "mismatch": "New passwords do not match", "tooShort": "New password is too short (at least 6 characters)", "currentRequired": "Current password is required", "currentWrong": "Current password is incorrect", "changed": "Password changed successfully!", "currentPlaceholder": "Enter your current password", "newPlaceholder": "Enter new password", "confirmPlaceholder": "Re-enter new password", "current": "Current password", "new": "New password", "confirm": "Confirm new password" },
+    "avatar": { "title": "Avatar images", "loading": "Loading images...", "addNewAria": "Add new image", "add": "Add", "fetchError": "Failed to fetch images", "uploadError": "Image upload failed", "refreshError": "Failed to refresh images", "deleteError": "Deletion failed", "deleting": "Deleting...", "delete": "Delete image", "info": "{count}/4 images added. You can add up to 4 images." },
+    "voice": { "title": "Audio files (Voice Clone)", "loading": "Loading audio...", "addNewAria": "Add new audio file", "add": "Add", "processing": "Processing...", "added": "Audio added", "fetchError": "Failed to fetch audio files", "uploadError": "Audio upload failed", "infoNone": "{count}/1 audio file added. Add an audio file for the voice clone.", "infoSome": "{count}/1 audio file added. The audio file is permanent and cannot be deleted." },
+    "social": {
+      "title": "Social media connections",
+      "errorTitle": "Error:",
+      "errorHelp": "If the problem persists, contact support.",
+      "connectedTitle": "Connected accounts ({count})",
+      "refresh": "🔄 Refresh",
+      "refreshing": "Refreshing...",
+      "addedAt": "Added {date}",
+      "unknownDate": "unknown",
+      "addAccount": "Add account",
+      "connectTitle": "Connect a new account",
+      "status": { "connected": "Connected", "connecting": "Connecting...", "cta": "Click to connect" },
+      "connectionErrorTitle": "Connection error:",
+      "helpTitle": "Instructions:",
+      "help": [
+        "Allow popups for this site",
+        "Sign in to your social account in the new window",
+        "Grant the necessary permissions to Rascal AI",
+        "The window will close automatically after connecting"
+      ],
+      "alerts": { "refreshFailed": "Error refreshing social accounts. Please try again." },
+      "popupsBlocked": "Popups are blocked. Allow popups for this site and try again.",
+      "timeout": "Connection timed out. Check your internet connection and try again.",
+      "connectError": "Error connecting {platform}: {message}"
+    },
+    "timeout": {
+      "title": "Session settings",
+      "description": "Define how long the session remains active after inactivity.",
+      "select": "Select timeout:",
+      "custom": "Custom",
+      "customLabel": "Custom timeout (minutes):",
+      "customNote": "Allowed value: 5-120 minutes",
+      "current": "Current setting:",
+      "pageDefault": "(Page default: {minutes} minutes)",
+      "save": "Save settings",
+      "reset": "Reset to defaults",
+      "saved": "✓ Settings saved",
+      "infoTitle": "About session settings",
+      "info": [
+        "A warning appears 5 minutes before the session ends",
+        "All activity (mouse, keyboard, touch) resets the timer",
+        "Settings are saved to the browser's localStorage",
+        "If you don't set your own timeout, the page default is used"
+      ]
+    },
+    "carousel": {
+      "title": "Choose carousel style",
+      "sending": "Sending...",
+      "select": "Select",
+      "sent": "Selection sent!",
+      "userCompanyMissing": "User company ID not found",
+      "sendError": "Send error",
+      "unknownError": "Unknown error"
+    }
+  }
+}
+
+

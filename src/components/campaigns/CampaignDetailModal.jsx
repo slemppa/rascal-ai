@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { fetchCampaignById } from '../../services/campaignsApi'
 import CampaignStats from './CampaignStats'
 import CampaignStatusBadge from './CampaignStatusBadge'
 import '../ModalComponents.css'
 
 export default function CampaignDetailModal({ campaignId, onClose }) {
+  const { t } = useTranslation('common')
   const [campaign, setCampaign] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -29,12 +31,12 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
     <div className="modal-overlay modal-overlay--light" role="dialog" aria-modal="true">
       <div className="modal-container" style={{ maxWidth: 900 }}>
         <div className="modal-header">
-          <h2 className="modal-title">Kampanjan tiedot</h2>
+          <h2 className="modal-title">{t('campaigns.details.title')}</h2>
           <button className="modal-close-btn" onClick={onClose} type="button">×</button>
         </div>
         <div className="modal-content">
-          {loading && <div>Ladataan...</div>}
-          {error && <div style={{ color: '#dc2626' }}>{error}</div>}
+          {loading && <div>{t('campaigns.details.loading')}</div>}
+          {error && <div style={{ color: '#dc2626' }}>{t('campaigns.details.error')}</div>}
           {!loading && !error && campaign && (
             <div style={{ display: 'grid', gap: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

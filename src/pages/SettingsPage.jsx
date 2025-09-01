@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import PageHeader from '../components/PageHeader'
+import { useTranslation } from 'react-i18next'
 import CarouselTemplateSelector from '../components/CarouselTemplateSelector'
 import SocialMediaConnect from '../components/SocialMediaConnect'
 import TimeoutSettings from '../components/TimeoutSettings'
@@ -10,6 +11,7 @@ import styles from './SettingsPage.module.css'
 
 export default function SettingsPage() {
   const { user } = useAuth()
+  const { t } = useTranslation('common')
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -38,13 +40,13 @@ export default function SettingsPage() {
         
         if (error) {
           console.error('Error fetching user profile:', error)
-          setMessage('Käyttäjätietoja ei löytynyt. Ota yhteyttä tukeen.')
+          setMessage(t('settings.profile.notFoundSupport'))
         } else {
           setUserProfile(data)
         }
       } catch (error) {
         console.error('Error fetching user profile:', error)
-        setMessage('Virhe käyttäjätietojen haussa. Ota yhteyttä tukeen.')
+        setMessage(t('settings.profile.fetchError'))
       } finally {
         setProfileLoading(false)
       }
@@ -100,9 +102,9 @@ export default function SettingsPage() {
         .eq('id', userProfile.id)
       
       if (error) {
-        setMessage(`Virhe: ${error.message}`)
+        setMessage(`${t('settings.common.error')}: ${error.message}`)
       } else {
-        setMessage('Tiedot päivitetty onnistuneesti!')
+        setMessage(t('settings.profile.updateSuccess'))
         setIsEditing(false)
         // Päivitä käyttäjätiedot
         const { data } = await supabase
@@ -115,7 +117,7 @@ export default function SettingsPage() {
         }
       }
     } catch (error) {
-      setMessage(`Virhe: ${error.message}`)
+      setMessage(`${t('settings.common.error')}: ${error.message}`)
     } finally {
       setLoading(false)
     }
@@ -144,17 +146,17 @@ export default function SettingsPage() {
     
     // Validoi salasanat
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setPasswordMessage('Uudet salasanat eivät täsmää')
+      setPasswordMessage(t('settings.password.mismatch'))
       return
     }
     
     if (passwordData.newPassword.length < 6) {
-      setPasswordMessage('Uusi salasana on liian lyhyt (vähintään 6 merkkiä)')
+      setPasswordMessage(t('settings.password.tooShort'))
       return
     }
     
     if (!passwordData.currentPassword) {
-      setPasswordMessage('Nykyinen salasana vaaditaan')
+      setPasswordMessage(t('settings.password.currentRequired'))
       return
     }
     
@@ -169,7 +171,7 @@ export default function SettingsPage() {
       })
       
       if (signInError) {
-        setPasswordMessage('Nykyinen salasana on väärä')
+        setPasswordMessage(t('settings.password.currentWrong'))
         return
       }
       
@@ -179,9 +181,9 @@ export default function SettingsPage() {
       })
       
       if (error) {
-        setPasswordMessage(`Virhe: ${error.message}`)
+        setPasswordMessage(`${t('settings.common.error')}: ${error.message}`)
       } else {
-        setPasswordMessage('Salasana vaihdettu onnistuneesti!')
+        setPasswordMessage(t('settings.password.changed'))
         setPasswordData({
           currentPassword: '',
           newPassword: '',
@@ -190,7 +192,7 @@ export default function SettingsPage() {
         setShowPasswordChange(false)
       }
     } catch (error) {
-      setPasswordMessage(`Virhe: ${error.message}`)
+      setPasswordMessage(`${t('settings.common.error')}: ${error.message}`)
     } finally {
       setPasswordLoading(false)
     }
@@ -210,43 +212,43 @@ export default function SettingsPage() {
     <>
       <div className={styles['settings-container']}>
         <div className={styles['settings-header']}>
-          <h2 className={styles['page-title']}>Asetukset</h2>
+          <h2 className={styles['page-title']}>{t('settings.title')}</h2>
         </div>
         <div className={styles['settings-bentogrid']}>
           {/* Vasen sarake: Käyttäjätiedot */}
           <div className={styles.card}>
             {profileLoading ? (
               <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-                <div style={{ fontSize: '16px', color: '#6b7280' }}>Ladataan käyttäjätietoja...</div>
+                <div style={{ fontSize: '16px', color: '#6b7280' }}>{t('settings.profile.loading')}</div>
               </div>
             ) : (
               <>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                  <h2 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#1f2937' }}>Käyttäjätiedot</h2>
+                  <h2 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#1f2937' }}>{t('settings.profile.title')}</h2>
                   {!isEditing ? (
                     <button onClick={() => setIsEditing(true)} className={`${styles.btn} ${styles.btnSecondary}`}>
-                      Muokkaa
+                      {t('settings.buttons.edit')}
                     </button>
                   ) : (
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <button onClick={handleSave} disabled={loading} className={`${styles.btn} ${styles.btnPrimary}`}>
-                        {loading ? 'Tallennetaan...' : 'Tallenna'}
+                        {loading ? t('settings.buttons.saving') : t('settings.buttons.save')}
                       </button>
                       <button onClick={handleCancel} className={`${styles.btn} ${styles.btnNeutral}`}>
-                        Peruuta
+                        {t('settings.buttons.cancel')}
                       </button>
                     </div>
                   )}
                 </div>
             
                 {message && (
-                  <div className={`${styles.message} ${message.includes('Virhe') ? styles.messageError : styles.messageSuccess}`}>
+                  <div className={`${styles.message} ${message.includes(t('settings.common.error')) ? styles.messageError : styles.messageSuccess}`}>
                     {message}
                   </div>
                 )}
 
                 <div className={styles['form-group']}>
-                  <label>Nimi</label>
+                  <label>{t('settings.fields.name')}</label>
                   {isEditing ? (
                     <input 
                       type="text" 
@@ -254,12 +256,12 @@ export default function SettingsPage() {
                       value={formData.contact_person} 
                       onChange={handleInputChange}
                       className={styles['form-input']}
-                      placeholder="Syötä nimesi"
+                      placeholder={t('settings.fields.namePlaceholder')}
                     />
                   ) : (
                     <input 
                       type="text" 
-                      value={name || 'Ei asetettu'} 
+                      value={name || t('settings.common.notSet')} 
                       readOnly 
                       className={`${styles['form-input']} ${styles.readonly}`} 
                     />
@@ -267,7 +269,7 @@ export default function SettingsPage() {
                 </div>
                 
                 <div className={styles['form-group']}>
-                  <label>Sähköposti</label>
+                  <label>{t('settings.fields.email')}</label>
                   {isEditing ? (
                     <input 
                       type="email" 
@@ -275,12 +277,12 @@ export default function SettingsPage() {
                       value={formData.contact_email} 
                       onChange={handleInputChange}
                       className={styles['form-input']}
-                      placeholder="Syötä sähköpostiosoitteesi"
+                      placeholder={t('settings.fields.emailPlaceholder')}
                     />
                   ) : (
                     <input 
                       type="email" 
-                      value={email || 'Ei saatavilla'} 
+                      value={email || t('settings.common.notAvailable')} 
                       readOnly 
                       className={`${styles['form-input']} ${styles.readonly}`} 
                     />
@@ -288,7 +290,7 @@ export default function SettingsPage() {
                 </div>
                 
                 <div className={styles['form-group']}>
-                  <label>Yritys</label>
+                  <label>{t('settings.fields.company')}</label>
                   {isEditing ? (
                     <input 
                       type="text" 
@@ -296,12 +298,12 @@ export default function SettingsPage() {
                       value={formData.company_name} 
                       onChange={handleInputChange}
                       className={styles['form-input']}
-                      placeholder="Syötä yrityksesi nimi"
+                      placeholder={t('settings.fields.companyPlaceholder')}
                     />
                   ) : (
                     <input 
                       type="text" 
-                      value={companyName || 'Ei asetettu'} 
+                      value={companyName || t('settings.common.notSet')} 
                       readOnly 
                       className={`${styles['form-input']} ${styles.readonly}`} 
                     />
@@ -309,20 +311,20 @@ export default function SettingsPage() {
                 </div>
                 
                 <div className={styles['form-group']}>
-                  <label>Toimiala</label>
+                  <label>{t('settings.fields.industry')}</label>
                   <input 
                     type="text" 
-                    value={industry || 'Ei asetettu'} 
+                    value={industry || t('settings.common.notSet')} 
                     readOnly 
                     className={`${styles['form-input']} ${styles.readonly}`} 
                   />
                 </div>
                 
                 <div className={styles['form-group']}>
-                  <label>Käyttäjätunnus</label>
+                  <label>{t('settings.fields.userId')}</label>
                   <input 
                     type="text" 
-                    value={userProfile?.id || user?.id || 'Ei saatavilla'} 
+                    value={userProfile?.id || user?.id || t('settings.common.notAvailable')} 
                     readOnly 
                     className={`${styles['form-input']} ${styles.readonly}`} 
                     style={{fontFamily: 'monospace', fontSize: '12px'}} 
@@ -332,18 +334,18 @@ export default function SettingsPage() {
                 {/* Salasanan vaihto */}
                 <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', margin: 0 }}>Salasanan vaihto</h3>
+                    <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', margin: 0 }}>{t('settings.password.title')}</h3>
                     {!showPasswordChange ? (
                       <button onClick={() => setShowPasswordChange(true)} className={`${styles.btn} ${styles.btnSecondary}`}>
-                        Vaihda salasana
+                        {t('settings.buttons.changePassword')}
                       </button>
                     ) : (
                       <div style={{ display: 'flex', gap: '6px' }}>
                         <button onClick={handlePasswordSave} disabled={passwordLoading} className={`${styles.btn} ${styles.btnPrimary}`}>
-                          {passwordLoading ? 'Tallennetaan...' : 'Tallenna'}
+                          {passwordLoading ? t('settings.password.saving') : t('settings.password.save')}
                         </button>
                         <button onClick={handlePasswordCancel} className={`${styles.btn} ${styles.btnNeutral}`}>
-                          Peruuta
+                          {t('settings.password.cancel')}
                         </button>
                       </div>
                     )}
@@ -366,38 +368,38 @@ export default function SettingsPage() {
                   {showPasswordChange && (
                     <div>
                       <div className={styles['form-group']}>
-                        <label>Nykyinen salasana</label>
+                        <label>{t('settings.password.current')}</label>
                         <input 
                           type="password" 
                           name="currentPassword"
                           value={passwordData.currentPassword} 
                           onChange={handlePasswordChange}
                           className={styles['form-input']}
-                          placeholder="Syötä nykyinen salasanasi"
+                          placeholder={t('settings.password.currentPlaceholder')}
                         />
                       </div>
                       
                       <div className={styles['form-group']}>
-                        <label>Uusi salasana</label>
+                        <label>{t('settings.password.new')}</label>
                         <input 
                           type="password" 
                           name="newPassword"
                           value={passwordData.newPassword} 
                           onChange={handlePasswordChange}
                           className={styles['form-input']}
-                          placeholder="Syötä uusi salasana"
+                          placeholder={t('settings.password.newPlaceholder')}
                         />
                       </div>
                       
                       <div className={styles['form-group']}>
-                        <label>Vahvista uusi salasana</label>
+                        <label>{t('settings.password.confirm')}</label>
                         <input 
                           type="password" 
                           name="confirmPassword"
                           value={passwordData.confirmPassword} 
                           onChange={handlePasswordChange}
                           className={styles['form-input']}
-                          placeholder="Syötä uusi salasana uudelleen"
+                          placeholder={t('settings.password.confirmPlaceholder')}
                         />
                       </div>
                     </div>
@@ -444,6 +446,7 @@ export default function SettingsPage() {
 
 // Moderni monikuvakomponentti Tailwindilla, hakee kuvat backendistä companyId:lla
 function AvatarSectionMulti({ companyId }) {
+  const { t } = useTranslation('common')
   const [images, setImages] = useState([]); // [{url, id}]
   const fileInputRef = React.useRef(null);
   const [loading, setLoading] = useState(false);
@@ -494,7 +497,7 @@ function AvatarSectionMulti({ companyId }) {
       })
       .catch((error) => {
         console.error('AvatarSectionMulti: Virhe kuvien haussa:', error);
-        setError('Kuvien haku epäonnistui');
+        setError(t('settings.avatar.fetchError'));
       })
       .finally(() => setLoading(false));
   }, [companyId]);
@@ -541,14 +544,14 @@ function AvatarSectionMulti({ companyId }) {
           .then(data => {
             setImages(extractAvatarImages(data));
           })
-          .catch(() => setError('Kuvien päivitys epäonnistui'));
+          .catch(() => setError(t('settings.avatar.refreshError')));
         }, 2000);
       } else {
         const errorData = await res.json();
-        setError(errorData.error || 'Kuvan lähetys epäonnistui');
+        setError(errorData.error || t('settings.avatar.uploadError'));
       }
     } catch (e) {
-      setError('Kuvan lähetys epäonnistui');
+      setError(t('settings.avatar.uploadError'));
     } finally {
       setLoading(false);
       e.target.value = "";
@@ -585,10 +588,10 @@ function AvatarSectionMulti({ companyId }) {
       if (data.success) {
         setImages((prev) => prev.filter(img => img.id !== avatarId))
       } else {
-        setError(data.error || 'Poisto epäonnistui')
+        setError(data.error || t('settings.avatar.deleteError'))
       }
     } catch (e) {
-      setError('Poisto epäonnistui')
+      setError(t('settings.avatar.deleteError'))
     } finally {
       setDeletingAvatars(prev => {
         const newSet = new Set(prev)
@@ -614,9 +617,9 @@ function AvatarSectionMulti({ companyId }) {
 
   return (
     <div>
-      <h2 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#1f2937' }}>Avatar-kuvat</h2>
+      <h2 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#1f2937' }}>{t('settings.avatar.title')}</h2>
       {loading ? (
-        <div style={{ color: '#6b7280', fontSize: 14 }}>Ladataan kuvia...</div>
+        <div style={{ color: '#6b7280', fontSize: 14 }}>{t('settings.avatar.loading')}</div>
       ) : (
         <div className={styles['avatar-grid']}>
           {[0, 1, 2, 3].map((slot) => {
@@ -743,7 +746,7 @@ function AvatarSectionMulti({ companyId }) {
                   if (e.key === "Enter" || e.key === " ") openFileDialog();
                 }}
                 role="button"
-                aria-label="Lisää uusi kuva"
+                aria-label={t('settings.avatar.addNewAria')}
               >
                 <svg
                   width="24"
@@ -767,7 +770,7 @@ function AvatarSectionMulti({ companyId }) {
                   textAlign: 'center',
                   transition: 'color 0.2s'
                 }}>
-                  Lisää
+                  {t('settings.avatar.add')}
                 </span>
               </div>
             );
@@ -785,7 +788,7 @@ function AvatarSectionMulti({ companyId }) {
       />
       {/* Info-teksti */}
       <div style={{ color: '#6b7280', fontSize: 11, marginTop: 8 }}>
-        {images.length}/4 kuvaa lisätty. Voit lisätä max 4 kuvaa.
+        {t('settings.avatar.info', { count: images.length })}
       </div>
       {error && <div style={{ color: '#ef4444', fontSize: 11, marginTop: 6 }}>{error}</div>}
     </div>
@@ -794,6 +797,7 @@ function AvatarSectionMulti({ companyId }) {
 
 // Äänitiedostojen upload-komponentti
 function VoiceSection({ companyId }) {
+  const { t } = useTranslation('common')
   const [audioFiles, setAudioFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -848,10 +852,10 @@ function VoiceSection({ companyId }) {
         const extractedAudioFiles = extractAudioFiles(data);
         setAudioFiles(extractedAudioFiles);
       } else {
-        setError('Äänitiedostojen haku epäonnistui');
+        setError(t('settings.voice.fetchError'));
       }
     } catch (error) {
-      setError('Äänitiedostojen haku epäonnistui');
+      setError(t('settings.voice.fetchError'));
     } finally {
       setLoading(false);
     }
@@ -897,10 +901,10 @@ function VoiceSection({ companyId }) {
         }]);
       } else {
         const errorData = await res.json();
-        setError(errorData.error || 'Äänitiedoston lähetys epäonnistui');
+        setError(errorData.error || t('settings.voice.uploadError'));
       }
     } catch (e) {
-      setError('Äänitiedoston lähetys epäonnistui');
+      setError(t('settings.voice.uploadError'));
     } finally {
       setLoading(false);
       e.target.value = "";
@@ -928,9 +932,9 @@ function VoiceSection({ companyId }) {
 
   return (
     <div>
-      <h2 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#1f2937' }}>Äänitiedostot (Voice Clone)</h2>
+      <h2 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#1f2937' }}>{t('settings.voice.title')}</h2>
       {loading ? (
-        <div style={{ color: '#6b7280', fontSize: 14 }}>Ladataan äänitiedostoa...</div>
+        <div style={{ color: '#6b7280', fontSize: 14 }}>{t('settings.voice.loading')}</div>
       ) : (
         <div className={styles['avatar-grid']}>
           {[0].map((slot) => {
@@ -977,7 +981,7 @@ function VoiceSection({ companyId }) {
                     {audio.filename}
                   </span>
                   <span className={`text-xs mt-1 text-center ${audio.isPlaceholder ? 'text-green-600' : 'text-green-600'}`}>
-                    {audio.status === 'uploading' ? 'Käsitellään...' : 'Ääni lisätty'}
+                    {audio.status === 'uploading' ? t('settings.voice.processing') : t('settings.voice.added')}
                   </span>
                 </div>
 
@@ -992,7 +996,7 @@ function VoiceSection({ companyId }) {
                   if (e.key === "Enter" || e.key === " ") openFileDialog();
                 }}
                 role="button"
-                aria-label="Lisää uusi äänitiedosto"
+                aria-label={t('settings.voice.addNewAria')}
               >
                 <svg
                   className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-blue-500 transition"
@@ -1008,7 +1012,7 @@ function VoiceSection({ companyId }) {
                   />
                 </svg>
                 <span className="mt-1 text-gray-500 text-xs group-hover:text-blue-500 transition text-center">
-                  Lisää
+                  {t('settings.voice.add')}
                 </span>
               </div>
             );
@@ -1026,7 +1030,9 @@ function VoiceSection({ companyId }) {
       />
       {/* Info-teksti */}
       <div style={{ color: '#6b7280', fontSize: 11, marginTop: 8 }}>
-        {audioFiles.length}/1 äänitiedosto lisätty. {audioFiles.length === 0 ? 'Lisää äänitiedosto voice clone -ominaisuutta varten.' : 'Äänitiedosto pysyy pysyvästi ja sitä ei voi poistaa.'}
+        {audioFiles.length === 0
+          ? t('settings.voice.infoNone', { count: audioFiles.length })
+          : t('settings.voice.infoSome', { count: audioFiles.length })}
       </div>
       {error && <div style={{ color: '#ef4444', fontSize: 11, marginTop: 6 }}>{error}</div>}
     </div>

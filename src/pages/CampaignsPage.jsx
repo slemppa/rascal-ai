@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { fetchCampaigns } from '../services/campaignsApi'
@@ -9,6 +10,7 @@ import '../components/ModalComponents.css'
 import CampaignForm from '../components/campaigns/CampaignForm'
 
 export default function CampaignsPage() {
+  const { t } = useTranslation('common')
   const { user } = useAuth()
   const userId = user?.id
   const navigate = useNavigate()
@@ -40,7 +42,7 @@ export default function CampaignsPage() {
   if (loading) {
     return (
       <div className="container" style={{ padding: 24 }}>
-        <p>Ladataan kampanjoita...</p>
+        <p>{t('campaigns.loading')}</p>
       </div>
     )
   }
@@ -48,7 +50,7 @@ export default function CampaignsPage() {
   if (error) {
     return (
       <div className="container" style={{ padding: 24 }}>
-        <div style={{ color: '#dc2626' }}>Virhe ladattaessa kampanjoita: {error}</div>
+        <div style={{ color: '#dc2626' }}>{t('campaigns.error')}: {error}</div>
       </div>
     )
   }
@@ -63,17 +65,17 @@ export default function CampaignsPage() {
     <div className="container" style={{ padding: 24 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Kampanjat</h1>
-          <p style={{ color: '#6b7280', marginTop: 8 }}>Hallitse puhelukampanjoitasi ja seuraa niiden suorituskykyä</p>
+          <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>{t('campaigns.header.title')}</h1>
+          <p style={{ color: '#6b7280', marginTop: 8 }}>{t('campaigns.header.description')}</p>
         </div>
-        <Button onClick={() => setShowCreate(true)}>Luo uusi kampanja</Button>
+        <Button onClick={() => setShowCreate(true)}>{t('campaigns.actions.create')}</Button>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 16, marginBottom: 24 }}>
-        <StatsCard title="Aktiiviset kampanjat" value={activeCount} icon="📊" />
-        <StatsCard title="Yhteensä puheluja" value={totalCalls} icon="📞" />
-        <StatsCard title="Vastausprosentti" value={`${answerRate}%`} icon="✅" />
-        <StatsCard title="Onnistuneita" value={successfulCalls} icon="🎯" />
+        <StatsCard title={t('campaigns.stats.active')} value={activeCount} icon="📊" />
+        <StatsCard title={t('campaigns.stats.totalCalls')} value={totalCalls} icon="📞" />
+        <StatsCard title={t('campaigns.stats.answerRate')} value={`${answerRate}%`} icon="✅" />
+        <StatsCard title={t('campaigns.stats.successful')} value={successfulCalls} icon="🎯" />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16 }}>
@@ -84,7 +86,7 @@ export default function CampaignsPage() {
 
       {campaigns.length === 0 && (
         <div style={{ textAlign: 'center', padding: '48px 0' }}>
-          <p style={{ color: '#6b7280', marginBottom: 16 }}>Ei kampanjoita vielä</p>
+          <p style={{ color: '#6b7280', marginBottom: 16 }}>{t('campaigns.empty')}</p>
         </div>
       )}
 
@@ -92,7 +94,7 @@ export default function CampaignsPage() {
         <div className="modal-overlay modal-overlay--light" role="dialog" aria-modal="true">
           <div className="modal-container">
             <div className="modal-header">
-              <h2 className="modal-title">Luo uusi kampanja</h2>
+              <h2 className="modal-title">{t('campaigns.actions.create')}</h2>
               <button className="modal-close-btn" onClick={() => setShowCreate(false)} type="button">×</button>
             </div>
             <div className="modal-content">

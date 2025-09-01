@@ -1,8 +1,21 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 export default function SiteHeader({ onOpenSignIn }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { t, i18n } = useTranslation('common')
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const setLanguage = (lang) => {
+    if (lang !== 'fi' && lang !== 'en') return
+    document.cookie = `rascal.lang=${encodeURIComponent(lang)}; path=/; max-age=31536000`
+    i18n.changeLanguage(lang)
+    const hash = location.hash || ''
+    const pathWithoutLang = location.pathname.replace(/^\/(fi|en)/, '')
+    navigate(`/${lang}${pathWithoutLang}${hash}`)
+  }
 
   return (
     <header className="header">
@@ -16,15 +29,20 @@ export default function SiteHeader({ onOpenSignIn }) {
       </div>
       <div className="header-right">
         <div className="nav-links desktop-nav">
-          <a className="nav-link" href="/blog">Artikkelit</a>
-          <a className="nav-link" href="/#cta">Demo</a>
-          <a className="nav-link" href="/asiakkaat">Asiakkaat</a>
-          <a className="nav-link" href="/#team">Tiimi</a>
-          <a className="nav-link" href="/#contact">Ota yhteyttä</a>
+          <a className="nav-link" href="/blog">{t('nav.articles')}</a>
+          <a className="nav-link" href="/#cta">{t('nav.demo')}</a>
+          <a className="nav-link" href="/asiakkaat">{t('nav.customers')}</a>
+          <a className="nav-link" href="/#team">{t('nav.team')}</a>
+          <a className="nav-link" href="/#contact">{t('nav.contact')}</a>
         </div>
         <div className="header-buttons desktop-buttons">
-          <button className="btn btn-primary" onClick={onOpenSignIn}>Varaa demo</button>
-          <button className="btn btn-secondary" onClick={onOpenSignIn}>Kirjaudu</button>
+          <button className="btn btn-primary" onClick={onOpenSignIn}>{t('nav.bookDemo')}</button>
+          <button className="btn btn-secondary" onClick={onOpenSignIn}>{t('nav.signin')}</button>
+        </div>
+        <div className="lang-switch" aria-label="Language switcher">
+          <button className="nav-link" onClick={() => setLanguage('fi')}>{t('lang.shortFi')}</button>
+          <span style={{padding: '0 4px'}}> / </span>
+          <button className="nav-link" onClick={() => setLanguage('en')}>{t('lang.shortEn')}</button>
         </div>
         <button 
           className="mobile-menu-button"
@@ -46,15 +64,20 @@ export default function SiteHeader({ onOpenSignIn }) {
       {isMobileMenuOpen && (
         <div className="mobile-menu">
           <div className="mobile-nav-links">
-            <a className="mobile-nav-link" href="/blog" onClick={() => setIsMobileMenuOpen(false)}>Artikkelit</a>
-            <a className="mobile-nav-link" href="/#cta" onClick={() => setIsMobileMenuOpen(false)}>Demo</a>
-            <a className="mobile-nav-link" href="/asiakkaat" onClick={() => setIsMobileMenuOpen(false)}>Asiakkaat</a>
-            <a className="mobile-nav-link" href="/#team" onClick={() => setIsMobileMenuOpen(false)}>Tiimi</a>
-            <a className="mobile-nav-link" href="/#contact" onClick={() => setIsMobileMenuOpen(false)}>Ota yhteyttä</a>
+            <a className="mobile-nav-link" href="/blog" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.articles')}</a>
+            <a className="mobile-nav-link" href="/#cta" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.demo')}</a>
+            <a className="mobile-nav-link" href="/asiakkaat" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.customers')}</a>
+            <a className="mobile-nav-link" href="/#team" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.team')}</a>
+            <a className="mobile-nav-link" href="/#contact" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.contact')}</a>
           </div>
           <div className="mobile-buttons">
-            <button className="btn btn-primary mobile-btn" onClick={() => { onOpenSignIn?.(); setIsMobileMenuOpen(false) }}>Varaa demo</button>
-            <button className="btn btn-secondary mobile-btn" onClick={() => { onOpenSignIn?.(); setIsMobileMenuOpen(false) }}>Kirjaudu</button>
+            <button className="btn btn-primary mobile-btn" onClick={() => { onOpenSignIn?.(); setIsMobileMenuOpen(false) }}>{t('nav.bookDemo')}</button>
+            <button className="btn btn-secondary mobile-btn" onClick={() => { onOpenSignIn?.(); setIsMobileMenuOpen(false) }}>{t('nav.signin')}</button>
+          </div>
+          <div className="mobile-lang-switch">
+            <button className="mobile-nav-link" onClick={() => { setLanguage('fi'); setIsMobileMenuOpen(false) }}>{t('lang.shortFi')}</button>
+            <span style={{padding: '0 4px'}}> / </span>
+            <button className="mobile-nav-link" onClick={() => { setLanguage('en'); setIsMobileMenuOpen(false) }}>{t('lang.shortEn')}</button>
           </div>
         </div>
       )}

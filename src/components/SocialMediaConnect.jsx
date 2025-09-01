@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useMixpostIntegration } from './SocialMedia/hooks/useMixpostIntegration';
+import { useTranslation } from 'react-i18next';
 import './SocialMediaConnect.css';
 
 // CSS-animaatio spin-efektille
@@ -20,6 +21,7 @@ const SocialMediaConnect = () => {
     fetchSavedSocialAccounts,
     fetchSocialAccounts
   } = useMixpostIntegration();
+  const { t } = useTranslation('common');
 
   const [connecting, setConnecting] = useState(false);
   const [connectionError, setConnectionError] = useState(null);
@@ -48,10 +50,10 @@ const SocialMediaConnect = () => {
       
       // Näytä käyttäjäystävällinen virheviesti
       const errorMessage = error.message.includes('Popup estetty') 
-        ? 'Popup-ikkunat on estetty. Salli popup-ikkunat tälle sivustolle ja yritä uudelleen.'
+        ? t('settings.social.popupsBlocked')
         : error.message.includes('timeout') 
-        ? 'Yhdistys aikakatkaistiin. Tarkista internet-yhteys ja yritä uudelleen.'
-        : `Virhe yhdistettäessä ${platform}: ${error.message}`;
+        ? t('settings.social.timeout')
+        : t('settings.social.connectError', { platform, message: error.message });
       
       alert(errorMessage);
     } finally {
@@ -67,7 +69,7 @@ const SocialMediaConnect = () => {
       console.log('✅ Sometilit päivitetty!');
     } catch (error) {
       console.error('❌ Virhe päivitettäessä tilejä:', error);
-      alert('Virhe päivitettäessä sometilejä. Yritä uudelleen.');
+      alert(t('settings.social.alerts.refreshFailed'));
     }
   };
 
@@ -99,14 +101,14 @@ const SocialMediaConnect = () => {
       <style>{spinAnimation}</style>
       
       <h2 className="social-media-title">
-        Sosiaalisen median yhdistäminen
+        {t('settings.social.title')}
       </h2>
       
       {error && (
         <div className="error-message">
-          <strong>Virhe:</strong> {error}
+          <strong>{t('settings.social.errorTitle')}</strong> {error}
           <br />
-          <small>Jos ongelma jatkuu, ota yhteyttä tukeen.</small>
+          <small>{t('settings.social.errorHelp')}</small>
         </div>
       )}
 
@@ -114,14 +116,14 @@ const SocialMediaConnect = () => {
       <div className="connected-accounts-section">
         <div className="accounts-header">
           <h3 className="accounts-title">
-            Yhdistetyt sometilit ({connectedAccounts.length})
+            {t('settings.social.connectedTitle', { count: connectedAccounts.length })}
           </h3>
           <button
             onClick={handleRefreshAccounts}
             disabled={loading}
             className="refresh-button"
           >
-            {loading ? 'Päivitetään...' : '🔄 Päivitä'}
+            {loading ? t('settings.social.refreshing') : t('settings.social.refresh')}
           </button>
         </div>
         
@@ -161,7 +163,7 @@ const SocialMediaConnect = () => {
                   @{account.username}
                 </div>
                 <div className="account-date">
-                  Lisätty {account.created_at ? new Date(account.created_at).toLocaleDateString('fi-FI') : 'tuntematon'}
+                  {t('settings.social.addedAt', { date: account.created_at ? new Date(account.created_at).toLocaleDateString('fi-FI') : t('settings.social.unknownDate') })}
                 </div>
               </div>
             </div>
@@ -171,7 +173,7 @@ const SocialMediaConnect = () => {
           <div className="add-account-card">
             <div className="add-account-content">
               <div className="add-icon">➕</div>
-              <div className="add-text">Lisää tili</div>
+              <div className="add-text">{t('settings.social.addAccount')}</div>
             </div>
           </div>
         </div>
@@ -180,7 +182,7 @@ const SocialMediaConnect = () => {
       {/* Yhdistä tilit -osio */}
       <div className="connect-section">
         <h3 className="connect-title">
-          Yhdistä uusi tili
+          {t('settings.social.connectTitle')}
         </h3>
         
         <div className="platforms-list">
@@ -203,7 +205,7 @@ const SocialMediaConnect = () => {
                     {platform.name}
                   </div>
                   <div className="platform-status">
-                    {isConnected ? 'Yhdistetty' : isConnecting ? 'Yhdistetään...' : 'Klikkaa yhdistääksesi'}
+                    {isConnected ? t('settings.social.status.connected') : isConnecting ? t('settings.social.status.connecting') : t('settings.social.status.cta')}
                   </div>
                 </div>
                 {isConnecting && (
@@ -220,18 +222,18 @@ const SocialMediaConnect = () => {
 
       {connectionError && (
         <div className="connection-error">
-          <strong>Yhdistysvirhe:</strong> {connectionError}
+          <strong>{t('settings.social.connectionErrorTitle')}</strong> {connectionError}
         </div>
       )}
 
       {/* Ohjeteksti */}
       <div className="help-text">
-        <p><strong>Ohjeet:</strong></p>
+        <p><strong>{t('settings.social.helpTitle')}</strong></p>
         <ul>
-          <li>Salli popup-ikkunat tälle sivustolle</li>
-          <li>Kirjaudu sisään some-tiliisi uudessa ikkunassa</li>
-          <li>Anna tarvittavat oikeudet Rascal AI:lle</li>
-          <li>Ikkuna sulkeutuu automaattisesti yhdistyksen jälkeen</li>
+          <li>{t('settings.social.help.0')}</li>
+          <li>{t('settings.social.help.1')}</li>
+          <li>{t('settings.social.help.2')}</li>
+          <li>{t('settings.social.help.3')}</li>
         </ul>
       </div>
     </div>

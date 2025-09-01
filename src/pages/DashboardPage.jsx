@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { createPortal } from 'react-dom'
 // Analytics data haetaan nyt iframe:n kautta
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar, ScatterChart, Scatter, ZAxis, Tooltip, Legend, CartesianGrid } from 'recharts'
@@ -11,6 +12,7 @@ import PageMeta from '../components/PageMeta'
 import '../components/ModalComponents.css'
 
 function EditPostModal({ post, onClose, onSave }) {
+  const { t } = useTranslation('common')
   const [idea, setIdea] = useState(post.Idea || '')
   const [caption, setCaption] = useState(post.Caption || '')
   const [publishDate, setPublishDate] = useState(post["Publish Date"] ? post["Publish Date"].slice(0, 16) : '') // yyyy-MM-ddTHH:mm
@@ -52,14 +54,14 @@ function EditPostModal({ post, onClose, onSave }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       })
-      if (!res.ok) throw new Error('Tallennus epäonnistui')
+      if (!res.ok) throw new Error(t('dashboard.edit.saveError'))
       setSuccess(true)
       setTimeout(() => {
         setSuccess(false)
         onSave(payload)
       }, 1200)
     } catch (err) {
-      setError('Tallennus epäonnistui')
+      setError(t('dashboard.edit.saveError'))
     } finally {
       setSaving(false)
     }
@@ -90,7 +92,7 @@ function EditPostModal({ post, onClose, onSave }) {
         boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>Muokkaa julkaisua</h2>
+          <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>{t('dashboard.edit.title')}</h2>
           <button onClick={onClose} style={{
             background: 'none',
             border: 'none',
@@ -102,7 +104,7 @@ function EditPostModal({ post, onClose, onSave }) {
         
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div>
-            <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151' }}>Idean kuvaus</label>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151' }}>{t('dashboard.edit.ideaLabel')}</label>
             <textarea
               ref={textareaRef}
               value={idea}
@@ -117,12 +119,12 @@ function EditPostModal({ post, onClose, onSave }) {
                 resize: 'vertical',
                 fontFamily: 'inherit'
               }}
-              placeholder="Kuvaile julkaisun idea..."
+              placeholder={t('dashboard.edit.ideaPlaceholder')}
             />
           </div>
           
           <div>
-            <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151' }}>Julkaisun teksti</label>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151' }}>{t('dashboard.edit.captionLabel')}</label>
             <textarea
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
@@ -136,12 +138,12 @@ function EditPostModal({ post, onClose, onSave }) {
                 resize: 'vertical',
                 fontFamily: 'inherit'
               }}
-              placeholder="Kirjoita julkaisun teksti..."
+              placeholder={t('dashboard.edit.captionPlaceholder')}
             />
           </div>
           
           <div>
-            <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151' }}>Julkaisupäivä</label>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151' }}>{t('dashboard.edit.publishDateLabel')}</label>
             <input
               type="datetime-local"
               value={publishDate}
@@ -165,7 +167,7 @@ function EditPostModal({ post, onClose, onSave }) {
               color: '#dc2626',
               fontSize: 14
             }}>
-              {error}
+              {error || t('dashboard.edit.saveError')}
             </div>
           )}
           
@@ -178,7 +180,7 @@ function EditPostModal({ post, onClose, onSave }) {
               color: '#16a34a',
               fontSize: 14
             }}>
-              Tallennettu onnistuneesti!
+              {t('dashboard.edit.saveSuccess')}
             </div>
           )}
           
@@ -197,7 +199,7 @@ function EditPostModal({ post, onClose, onSave }) {
                 fontWeight: 500
               }}
             >
-              Peruuta
+              {t('dashboard.edit.cancel')}
             </button>
             <button
               type="submit"
@@ -214,7 +216,7 @@ function EditPostModal({ post, onClose, onSave }) {
                 opacity: saving ? 0.7 : 1
               }}
             >
-            {saving ? 'Tallennetaan...' : 'Tallenna'}
+            {saving ? t('dashboard.edit.saving') : t('dashboard.edit.save')}
           </button>
           </div>
         </form>
@@ -224,6 +226,7 @@ function EditPostModal({ post, onClose, onSave }) {
 }
 
 export default function DashboardPage() {
+  const { t, i18n } = useTranslation('common')
   // Analytics data haetaan nyt iframe:n kautta
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -253,25 +256,25 @@ export default function DashboardPage() {
   // Stats data trendeillä - käytetään oikeita tietoja
   const dashboardStats = [
     { 
-      label: 'Tulevat postaukset', 
+      label: t('dashboard.metrics.stats.upcomingPosts'), 
       value: statsData.upcomingCount || 0, 
       trend: 12.5, 
       color: '#cea78d' 
     },
     { 
-      label: 'Sisältö julkaistu', 
+      label: t('dashboard.metrics.stats.publishedContent'), 
       value: statsData.monthlyCount || 0, 
       trend: -5.2, 
       color: '#cea78d' 
     },
     { 
-      label: 'Kustannukset (viestit)', 
+      label: t('dashboard.metrics.stats.messageCosts'), 
       value: statsData.totalMessagePrice ? `€${statsData.totalMessagePrice.toFixed(2)}` : '€0.00', 
       trend: 8.7, 
       color: '#cea78d' 
     },
     { 
-      label: 'Puhelinkustannukset', 
+      label: t('dashboard.metrics.stats.callCosts'), 
       value: statsData.totalCallPrice ? `€${statsData.totalCallPrice.toFixed(2)}` : '€0.00', 
       trend: 15.3, 
       color: '#cea78d' 
@@ -1116,26 +1119,28 @@ export default function DashboardPage() {
   }).length
 
   const statusMap = {
-    'Draft': 'Luonnos',
-    'In Progress': 'Työn alla',
-    'Under Review': 'Tarkastuksessa',
-    'Scheduled': 'Aikataulutettu',
-    'Done': 'Valmis',
-    'Deleted': 'Poistettu',
-    'Odottaa': 'Odottaa',
+    'Draft': t('dashboard.status.Draft'),
+    'In Progress': t('dashboard.status.In Progress'),
+    'Under Review': t('dashboard.status.Under Review'),
+    'Scheduled': t('dashboard.status.Scheduled'),
+    'Done': t('dashboard.status.Done'),
+    'Deleted': t('dashboard.status.Deleted'),
+    'Odottaa': t('dashboard.status.Odottaa'),
+    'Pending': t('dashboard.status.Pending'),
   }
 
   function formatDate(dateStr) {
     if (!dateStr) return '--'
     const d = new Date(dateStr)
-    return d.toLocaleDateString('fi-FI', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+    const locale = i18n.language === 'fi' ? 'fi-FI' : 'en-US'
+    return d.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
   }
 
   const stats = [
-    { label: 'Tulevat postaukset', value: statsData.upcomingCount, sub: 'Status: Scheduled', color: '#22c55e' },
-    { label: 'Julkaisut kuukaudessa', value: `${statsData.monthlyCount} / 30`, sub: 'Tämä kuukausi', color: '#2563eb' },
-    { label: 'Puheluiden kokonaishinta', value: statsData.totalCallPrice.toLocaleString('fi-FI', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }), sub: 'Tämä kuukausi', color: '#f59e42' },
-    { label: 'Viestien kokonaishinta', value: statsData.totalMessagePrice.toLocaleString('fi-FI', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }), sub: 'Tämä kuukausi', color: '#059669' },
+    { label: t('dashboard.metrics.stats.upcomingPosts'), value: statsData.upcomingCount, sub: `${t('dashboard.upcoming.headers.status')}: ${t('dashboard.status.Scheduled')}` , color: '#22c55e' },
+    { label: t('dashboard.metrics.stats.monthlyPosts'), value: `${statsData.monthlyCount} / 30`, sub: t('dashboard.monthly.headers.thisMonth'), color: '#2563eb' },
+    { label: t('dashboard.metrics.stats.totalCallPrice'), value: statsData.totalCallPrice.toLocaleString('fi-FI', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }), sub: t('dashboard.monthly.headers.thisMonth'), color: '#f59e42' },
+    { label: t('dashboard.metrics.stats.totalMessagePrice'), value: statsData.totalMessagePrice.toLocaleString('fi-FI', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }), sub: t('dashboard.monthly.headers.thisMonth'), color: '#059669' },
   ]
 
   // Aikataulu-kortin data: näytetään vain tulevat julkaisut (publish_date >= nyt)
@@ -1171,45 +1176,46 @@ export default function DashboardPage() {
       d.getMonth() === now.getMonth() &&
       d.getFullYear() === now.getFullYear()
     ) {
-      return 'Tänään'
+      return t('dashboard.upcoming.today')
     }
-    return d.toLocaleDateString('fi-FI', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+    const locale = i18n.language === 'fi' ? 'fi-FI' : 'en-US'
+    return d.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
   }
 
   return (
     <>
       <PageMeta 
-        title="Dashboard - Rascal AI"
-        description="Hallitse sisältöäsi ja seuraa tuloksia Rascal AI Dashboardissa. Julkaisut, tilastot ja aikataulut yhdellä silmäyksellä."
+        title={t('dashboard.meta.title')}
+        description={t('dashboard.meta.description')}
         image="/hero.png"
       />
       <div className={styles['dashboard-container']}>
         <div className={styles['dashboard-header']}>
-          <h1>Kojelauta</h1>
-          <p>Hallitse sisältöäsi ja seuraa tuloksia yhdellä silmäyksellä</p>
+          <h1>{t('dashboard.header.title')}</h1>
+          <p>{t('dashboard.header.subtitle')}</p>
         </div>
         {/* Metrics Section - VAPIn tyylillä */}
         <div className={styles['metrics-section']}>
           <div className={styles['metrics-header']}>
-            <h2>Avainluvut</h2>
+            <h2>{t('dashboard.metrics.title')}</h2>
             <div className={styles['metrics-filters']}>
               <button 
                 className={styles['filter-btn'] + ' ' + (selectedFilter === 'all' ? styles['filter-active'] : '')}
                 onClick={() => setSelectedFilter('all')}
               >
-                Kaikki
+                {t('dashboard.metrics.filters.all')}
               </button>
               <button 
                 className={styles['filter-btn'] + ' ' + (selectedFilter === 'week' ? styles['filter-active'] : '')}
                 onClick={() => setSelectedFilter('week')}
               >
-                Viime viikko
+                {t('dashboard.metrics.filters.week')}
               </button>
               <button 
                 className={styles['filter-btn'] + ' ' + (selectedFilter === 'month' ? styles['filter-active'] : '')}
                 onClick={() => setSelectedFilter('month')}
               >
-                Viime kuukausi
+                {t('dashboard.metrics.filters.month')}
               </button>
             </div>
           </div>
@@ -1227,8 +1233,8 @@ export default function DashboardPage() {
               ))
             ) : (
               [...dashboardStats,
-                { label: 'Puhelut (onnistuneet)', value: successStats.success, trend: successStats.successRate, color: '#22c55e' },
-                { label: 'Vastausprosentti', value: `${successStats.answerRate}%`, trend: successStats.answerRate, color: '#2563eb' }
+                { label: t('dashboard.metrics.stats.successCalls'), value: successStats.success, trend: successStats.successRate, color: '#22c55e' },
+                { label: t('dashboard.metrics.stats.answerRate'), value: `${successStats.answerRate}%`, trend: successStats.answerRate, color: '#2563eb' }
               ].map((stat, i) => (
                 <div key={i} className={styles['metric-card']}>
                   <div className={styles['metric-label']}>{stat.label}</div>
@@ -1238,7 +1244,7 @@ export default function DashboardPage() {
                       {stat.trend > 0 ? '↗' : '↘'}
                     </span>
                     <span className={styles['trend-text']}>
-                      {Math.abs(stat.trend)}% {stat.trend > 0 ? 'kasvu' : 'lasku'} edelliseen
+                      {Math.abs(stat.trend)}% {stat.trend > 0 ? t('dashboard.metrics.stats.trendUpSuffix') : t('dashboard.metrics.stats.trendDownSuffix')}
                     </span>
                   </div>
                 </div>
@@ -1263,15 +1269,15 @@ export default function DashboardPage() {
           */}
           {/* Tulevat julkaisut -kortti: mobiiliystävällinen */}
           <div className={styles.card} style={{ gridColumn: 'span 3', minHeight: 180, display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>Tulevat julkaisut</div>
+            <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>{t('dashboard.upcoming.title')}</div>
             <div className="table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'clamp(13px, 3vw, 15px)', minWidth: 600 }}>
                 <thead>
                   <tr style={{ color: '#1f2937', fontWeight: 600, background: '#f7f8fc' }}>
-                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Media</th>
-                    <th style={{ textAlign: 'left', padding: '8px 4px' }}>Caption</th>
-                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Status</th>
-                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Pvm</th>
+                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.upcoming.headers.media')}</th>
+                    <th style={{ textAlign: 'left', padding: '8px 4px' }}>{t('dashboard.upcoming.headers.caption')}</th>
+                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.upcoming.headers.status')}</th>
+                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.upcoming.headers.date')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1282,7 +1288,7 @@ export default function DashboardPage() {
                       </tr>
                     ))
                   ) : upcomingPosts.length === 0 ? (
-                    <tr><td colSpan={4} style={{ color: '#888', padding: 16, textAlign: 'center' }}>Ei tulevia julkaisuja</td></tr>
+                    <tr><td colSpan={4} style={{ color: '#888', padding: 16, textAlign: 'center' }}>{t('dashboard.upcoming.empty')}</td></tr>
                   ) : (
                     upcomingPosts.map((row, i) => (
                       <tr key={row.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
@@ -1300,19 +1306,19 @@ export default function DashboardPage() {
 
           {/* Kampanjat – onnistumiset */}
           <div className={styles.card} style={{ gridColumn: 'span 3', minHeight: 180, display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>Kampanjoiden onnistumiset</div>
+            <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>{t('dashboard.campaigns.title')}</div>
             <div className="table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'clamp(13px, 3vw, 15px)', minWidth: 520 }}>
                 <thead>
                   <tr style={{ color: '#1f2937', fontWeight: 600, background: '#f7f8fc' }}>
-                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Kampanja</th>
-                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Puhelut</th>
-                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Onnistumis%</th>
+                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.campaigns.headers.campaign')}</th>
+                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.campaigns.headers.calls')}</th>
+                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.campaigns.headers.successRate')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {campaignMetrics.length === 0 ? (
-                    <tr><td colSpan={3} style={{ color: '#888', padding: 16, textAlign: 'center' }}>Ei kampanjoita</td></tr>
+                    <tr><td colSpan={3} style={{ color: '#888', padding: 16, textAlign: 'center' }}>{t('dashboard.campaigns.noCampaigns')}</td></tr>
                   ) : (
                     campaignMetrics.slice(0, 6).map(row => (
                       <tr key={row.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
@@ -1332,14 +1338,14 @@ export default function DashboardPage() {
         <div style={{ gridColumn: '1 / -1', paddingTop: 16, paddingBottom: 8 }}>
           <div className={styles['split-row']}>
             <div className={styles.card} style={{ minHeight: 220, display: 'flex', flexDirection: 'column' }}>
-              <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>Kesto vs. onnistumisaste</div>
+              <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>{t('dashboard.charts.scatter')}</div>
               <div style={{ width: '100%', height: 220 }}>
                 <ResponsiveContainer width="100%" height={220}>
                   <ScatterChart>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="avgDurationSec" name="Kesto (s)" unit="s" stroke="#6b7280" fontSize={12} />
-                    <YAxis dataKey="successRate" name="Onnistumis%" unit="%" stroke="#6b7280" fontSize={12} />
-                    <ZAxis dataKey="count" range={[40, 200]} name="Lukumäärä" />
+                    <XAxis dataKey="avgDurationSec" name={t('dashboard.charts.axis.duration')} unit="s" stroke="#6b7280" fontSize={12} />
+                    <YAxis dataKey="successRate" name={t('dashboard.charts.axis.successRate')} unit="%" stroke="#6b7280" fontSize={12} />
+                    <ZAxis dataKey="count" range={[40, 200]} name={t('dashboard.charts.axis.count')} />
                     <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value, name) => [value, name]} />
                     <Legend />
                     <Scatter name="Bin" data={scatterData} fill="#2563eb" />
@@ -1348,12 +1354,12 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className={styles.card} style={{ minHeight: 260, display: 'flex', flexDirection: 'column' }}>
-              <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>Parhaiten toimivat puheluajat</div>
+              <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>{t('dashboard.charts.heatmap')}</div>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: 720, borderCollapse: 'collapse' }}>
                   <thead>
                     <tr style={{ color: '#1f2937', fontWeight: 600, background: '#f7f8fc' }}>
-                      <th style={{ padding: 6, textAlign: 'left' }}>Päivä</th>
+                      <th style={{ padding: 6, textAlign: 'left' }}>{t('dashboard.charts.day')}</th>
                       {Array.from({ length: 24 }).map((_, h) => (
                         <th key={h} style={{ padding: 4, fontSize: 11 }}>{h}</th>
                       ))}
@@ -1361,7 +1367,8 @@ export default function DashboardPage() {
                   </thead>
                   <tbody>
                     {Array.from({ length: 7 }).map((_, d) => {
-                      const dayLabel = ['Ma','Ti','Ke','To','Pe','La','Su'][d]
+                      const dayLabels = i18n.language === 'fi' ? ['Ma','Ti','Ke','To','Pe','La','Su'] : ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+                      const dayLabel = dayLabels[d]
                       return (
                         <tr key={d}>
                           <td style={{ padding: 6, fontWeight: 600, color: '#374151' }}>{dayLabel}</td>
@@ -1387,19 +1394,19 @@ export default function DashboardPage() {
         {/* Grafiikki Section - VAPIn tyylillä */}
         <div className={styles['chart-section']}>
           <div className={styles['chart-header']}>
-            <h2>Puhelut ja viestit aikajärjestyksessä</h2>
+            <h2>{t('dashboard.charts.title')}</h2>
             <div className={styles['chart-filters']}>
               <button 
                 className={styles['filter-btn'] + ' ' + (selectedTimeFilter === '7days' ? styles['filter-active'] : '')}
                 onClick={() => setSelectedTimeFilter('7days')}
               >
-                Viime 7 päivää
+                {t('dashboard.metrics.filters.days7')}
               </button>
               <button 
                 className={styles['filter-btn'] + ' ' + (selectedTimeFilter === '30days' ? styles['filter-active'] : '')}
                 onClick={() => setSelectedTimeFilter('30days')}
               >
-                Viime 30 päivää
+                {t('dashboard.metrics.filters.days30')}
               </button>
             </div>
           </div>

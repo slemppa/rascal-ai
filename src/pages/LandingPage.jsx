@@ -240,7 +240,7 @@ export default function LandingPage() {
                     </h2>
                     <button
                       className="btn btn-primary hero-cta"
-                      onClick={() => setShowSignInModal(true)}
+                      disabled
                     >
                       {t('hero.cta')}
                     </button>

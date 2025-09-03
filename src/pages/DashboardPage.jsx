@@ -592,309 +592,145 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchStats = async () => {
+      if (!user) {
+        setStatsLoading(false)
+        return
+      }
+
       setStatsLoading(true)
       try {
         // Hae käyttäjän user_id ensin
-        let userId = null
-        if (user) {
-          const { data: userRow } = await supabase
-            .from('users')
-            .select('id')
-            .eq('auth_user_id', user.id)
-            .single()
-          userId = userRow?.id
+        const { data: userRow, error: userError } = await supabase
+          .from('users')
+          .select('id, features')
+          .eq('auth_user_id', user.id)
+          .single()
+
+        if (userError || !userRow?.id) {
+          console.error('User not found:', userError)
+          setStatsLoading(false)
+          return
         }
 
-        // Tulevat postaukset (status = 'Scheduled') - vain käyttäjän omat
-        const { count: upcomingCount } = await supabase
-          .from('content')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'Scheduled')
-          .eq('user_id', userId)
-
-        // Julkaisut tässä kuussa - vain käyttäjän omat
+        const userId = userRow.id
         const now = new Date()
         const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
-        const { count: monthlyCount } = await supabase
-          .from('content')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', userId)
-          .gte('created_at', firstDay.toISOString())
 
-        // Puheluiden kokonaishinta tässä kuussa - vain käyttäjän omat
-        const { data: callData } = await supabase
-          .from('call_logs')
-          .select('price')
-          .eq('user_id', userId)
-          .gte('call_date', firstDay.toISOString())
+        // Hae kaikki tiedot rinnakkain
+        const [
+          { count: upcomingCount, error: upcomingError },
+          { count: monthlyCount, error: monthlyError },
+          { data: callData, error: callError },
+          { data: messageData, error: messageError },
+          { count: aiUsage, error: aiError }
+        ] = await Promise.all([
+          supabase
+            .from('content')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'Scheduled')
+            .eq('user_id', userId),
+          supabase
+            .from('content')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', userId)
+            .gte('created_at', firstDay.toISOString()),
+          supabase
+            .from('call_logs')
+            .select('price')
+            .eq('user_id', userId)
+            .gte('call_date', firstDay.toISOString()),
+          supabase
+            .from('message_logs')
+            .select('price')
+            .eq('user_id', userId)
+            .gte('created_at', firstDay.toISOString())
+            .not('price', 'is', null),
+          supabase
+            .from('content')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', userId)
+            .gte('created_at', firstDay.toISOString())
+        ])
+
+        // Käsittele virheet
+        if (upcomingError) console.error('Error fetching upcoming posts:', upcomingError)
+        if (monthlyError) console.error('Error fetching monthly posts:', monthlyError)
+        if (callError) console.error('Error fetching call data:', callError)
+        if (messageError) console.error('Error fetching message data:', messageError)
+        if (aiError) console.error('Error fetching AI usage:', aiError)
+
+        // Laske hinnat
         const totalCallPrice = (callData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
-
-        // Viestien kokonaishinta tässä kuussa - vain käyttäjän omat
-        const { data: messageData } = await supabase
-          .from('message_logs')
-          .select('price')
-          .eq('user_id', userId)
-          .gte('created_at', firstDay.toISOString())
-          .not('price', 'is', null)
         const totalMessagePrice = (messageData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
-
-        // Käyttäjän features
-        let features = []
-        if (user) {
-          const { data: userProfile } = await supabase
-            .from('users')
-            .select('features')
-            .eq('auth_user_id', user.id)
-            .single()
-          features = userProfile?.features || []
-        }
-
-        // AI käyttö (content-määrä tässä kuussa) - vain käyttäjän omat
-        const { count: aiUsage } = await supabase
-          .from('content')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', userId)
-          .gte('created_at', firstDay.toISOString())
 
         setStatsData({
           upcomingCount: upcomingCount || 0,
           monthlyCount: monthlyCount || 0,
           totalCallPrice: totalCallPrice || 0,
           totalMessagePrice: totalMessagePrice || 0,
-          features,
+          features: userRow.features || [],
           aiUsage: aiUsage || 0
         })
       } catch (e) {
-        // Voit halutessasi näyttää virheen
+        console.error('Error fetching stats:', e)
+        setError('Virhe tilastojen lataamisessa')
+      } finally {
+        setStatsLoading(false)
       }
-      setStatsLoading(false)
     }
     fetchStats()
   }, [user])
 
   useEffect(() => {
     const fetchSchedule = async () => {
+      if (!user) {
+        setSchedule([])
+        setScheduleLoading(false)
+        return
+      }
+
       setScheduleLoading(true)
       try {
-        let userId = null
-        if (user) {
-          const { data: userRow } = await supabase
-            .from('users')
-            .select('id')
-            .eq('auth_user_id', user.id)
-            .single()
-          userId = userRow?.id
-        }
-        if (!userId) {
+        // Hae käyttäjän user_id
+        const { data: userRow, error: userError } = await supabase
+          .from('users')
+          .select('id')
+          .eq('auth_user_id', user.id)
+          .single()
+
+        if (userError || !userRow?.id) {
+          console.error('User not found for schedule:', userError)
           setSchedule([])
           setScheduleLoading(false)
           return
         }
-        const { data } = await supabase
+
+        // Hae tulevat julkaisut
+        const { data, error } = await supabase
           .from('content')
           .select('id, type, idea, status, publish_date, created_at, media_urls, caption')
-          .eq('user_id', userId)
+          .eq('user_id', userRow.id)
           .order('publish_date', { ascending: true, nullsFirst: true })
-          .limit(10)
-        setSchedule(data || [])
+          .limit(20)
+
+        if (error) {
+          console.error('Error fetching schedule:', error)
+          setSchedule([])
+        } else {
+          setSchedule(data || [])
+        }
       } catch (e) {
+        console.error('Error in fetchSchedule:', e)
         setSchedule([])
+      } finally {
+        setScheduleLoading(false)
       }
-      setScheduleLoading(false)
     }
     fetchSchedule()
   }, [user])
 
-  // Reaaliaikainen päivitys
-  useEffect(() => {
-    if (!user) return
-    
-    const fetchStatsForRealtime = async () => {
-      setStatsLoading(true)
-      try {
-        // Hae käyttäjän user_id ensin
-        let userId = null
-        if (user) {
-          const { data: userRow } = await supabase
-            .from('users')
-            .select('id')
-            .eq('auth_user_id', user.id)
-            .single()
-          userId = userRow?.id
-        }
 
-        // Tulevat postaukset (status = 'Scheduled') - vain käyttäjän omat
-        const { count: upcomingCount } = await supabase
-          .from('content')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'Scheduled')
-          .eq('user_id', userId)
 
-        // Julkaisut tässä kuussa - vain käyttäjän omat
-        const now = new Date()
-        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
-        const { count: monthlyCount } = await supabase
-          .from('content')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', userId)
-          .gte('created_at', firstDay.toISOString())
-
-        // Puheluiden kokonaishinta tässä kuussa - vain käyttäjän omat
-        const { data: callData } = await supabase
-          .from('call_logs')
-          .select('price')
-          .eq('user_id', userId)
-          .gte('call_date', firstDay.toISOString())
-        const totalCallPrice = (callData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
-
-        // Viestien kokonaishinta tässä kuussa - vain käyttäjän omat
-        const { data: messageData } = await supabase
-          .from('message_logs')
-          .select('price')
-          .eq('user_id', userId)
-          .gte('created_at', firstDay.toISOString())
-          .not('price', 'is', null)
-        const totalMessagePrice = (messageData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
-
-        // Käyttäjän features
-        let features = []
-        if (user) {
-          const { data: userProfile } = await supabase
-            .from('users')
-            .select('features')
-            .eq('auth_user_id', user.id)
-            .single()
-          features = userProfile?.features || []
-        }
-
-        // AI käyttö (content-määrä tässä kuussa) - vain käyttäjän omat
-        const { count: aiUsage } = await supabase
-          .from('content')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', userId)
-          .gte('created_at', firstDay.toISOString())
-
-        setStatsData({
-          upcomingCount: upcomingCount || 0,
-          monthlyCount: monthlyCount || 0,
-          totalCallPrice: totalCallPrice || 0,
-          totalMessagePrice: totalMessagePrice || 0,
-          features,
-          aiUsage: aiUsage || 0
-        })
-      } catch (e) {
-        // Voit halutessasi näyttää virheen
-      }
-      setStatsLoading(false)
-    }
-
-    const fetchScheduleForRealtime = async () => {
-      setScheduleLoading(true)
-      try {
-        let userId = null
-        if (user) {
-          const { data: userRow } = await supabase
-            .from('users')
-            .select('id')
-            .eq('auth_user_id', user.id)
-            .single()
-          userId = userRow?.id
-        }
-        if (!userId) {
-          setSchedule([])
-          setScheduleLoading(false)
-          return
-        }
-        const { data } = await supabase
-          .from('content')
-          .select('id, type, idea, status, publish_date, created_at, media_urls, caption')
-          .eq('user_id', userId)
-          .order('publish_date', { ascending: true, nullsFirst: true })
-          .limit(10)
-        setSchedule(data || [])
-      } catch (e) {
-        setSchedule([])
-      }
-      setScheduleLoading(false)
-    }
-
-    const channel = supabase
-      .channel('dashboard-updates')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'content' }, () => {
-        // Päivitä tilastot ja aikataulu
-        fetchStatsForRealtime()
-        fetchScheduleForRealtime()
-        // Päivitä myös julkaisut
-        const fetchPostsForRealtime = async () => {
-          setLoading(true)
-          setError(null)
-          
-          // Hae käyttäjän user_id ensin
-          let userId = null
-          if (user) {
-            const { data: userRow } = await supabase
-              .from('users')
-              .select('id')
-              .eq('auth_user_id', user.id)
-              .single()
-            userId = userRow?.id
-          }
-          
-          // Hakee kirjautuneen käyttäjän postaukset - vain käyttäjän omat
-          const { data, error } = await supabase
-            .from('content')
-            .select('*')
-            .eq('user_id', userId)
-            .order('publish_date', { ascending: false })
-          if (error) setError('Virhe haettaessa julkaisuja')
-          setPosts(data || [])
-          setLoading(false)
-        }
-        fetchPostsForRealtime()
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'call_logs' }, () => {
-        fetchStatsForRealtime()
-        // Päivitä myös puheluiden hinta
-        const fetchCallPriceForRealtime = async () => {
-          // Hae käyttäjän user_id ensin
-          let userId = null
-          if (user) {
-            const { data: userRow } = await supabase
-              .from('users')
-              .select('id')
-              .eq('auth_user_id', user.id)
-              .single()
-            userId = userRow?.id
-          }
-
-          // Hae kuluvan kuukauden puheluiden kokonaishinta - vain käyttäjän omat
-          const now = new Date()
-          const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
-          const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-          const { data, error } = await supabase
-            .from('call_logs')
-            .select('price')
-            .eq('user_id', userId)
-            .gte('call_date', firstDay.toISOString())
-            .lte('call_date', lastDay.toISOString())
-          if (!error && data) {
-            const sum = data.reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
-            setTotalCallPrice(sum)
-          } else {
-            setTotalCallPrice(0)
-          }
-        }
-        fetchCallPriceForRealtime()
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'message_logs' }, () => {
-        // Voit halutessasi päivittää viestit tai tilastot
-        fetchStatsForRealtime()
-      })
-      .subscribe()
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [user])
 
   // Tarkista Avatar-materiaalien status
   useEffect(() => {

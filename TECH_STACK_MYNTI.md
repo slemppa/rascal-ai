@@ -11,13 +11,21 @@ Rascal AI on moderni, skaalautuva ja turvallinen markkinointiautomaatiojärjeste
 ### Frontend (Client-side)
 - **React 19** - Uusin React-versio, joka tarjoaa parhaan suorituskyvyn ja kehittäjäkokemuksen
 - **Vite 6** - Nopein mahdollinen kehitysympäristö ja build-työkalu
-- **Tailwind CSS 4** - Moderni utility-first CSS-framework responsiiviselle designille
+- **CSS Grid & Flexbox** - Responsiivinen ja ammattimainen design (bentogrid-asettelu)
 - **React Router DOM 7** - Edistyksellinen reititysjärjestelmä SPA-arkkitehtuurille
+- **Axios** - HTTP-kutsut backend API:hin
+- **i18next** - Monikielisyys ja lokalisointi (suomi/englanti)
+- **Recharts** - Interaktiiviset kaaviot ja visualisoinnit
+- **React Markdown** - Markdown-sisällön renderöinti
+- **Lucide React** - Modernit ikonit ja kuvakkeet
+- **JWT Decode** - Turvallinen token-käsittely
 
 ### Backend (Server-side)
 - **Vercel Edge Functions** - Serverless-funktiot, jotka toimivat globaalisti ja skaalautuvat automaattisesti
 - **Node.js** - Tehokas JavaScript-runtime backend-logiikalle
 - **API Routes** - RESTful API-endpointit kaikille järjestelmän toiminnoille
+- **Formidable** - Tiedostojen latauksen käsittely
+- **UUID** - Yksilöllisten tunnisteiden generointi
 
 ### Tietokanta & Tietojen hallinta
 - **Supabase** - Enterprise-tason PostgreSQL-tietokanta pilvessä
@@ -75,16 +83,66 @@ Rascal AI on moderni, skaalautuva ja turvallinen markkinointiautomaatiojärjeste
 
 ## 🔌 Integraatiot & API:t
 
-### Sisäiset API:t
+### Frontend Integraatiot
+- **React Router DOM 7** - SPA-reititys ja navigaatio
+- **Axios** - HTTP-kutsut backend API:hin
+- **i18next** - Monikielisyys ja lokalisointi
+- **Recharts** - Interaktiiviset kaaviot ja visualisoinnit
+- **React Markdown** - Markdown-sisällön renderöinti
+- **Lucide React** - Modernit ikonit ja kuvakkeet
+
+### Backend Integraatiot
+
+#### Sisäiset API:t
 - **RESTful API** - Standardoitu rajapinta kaikille toiminnoille
 - **GraphQL-valmius** - Tulevaisuuden kehitysmahdollisuudet
 - **Webhook-tuki** - Reaaliaikainen tietojen synkronointi
 
-### Ulkoiset integraatiot
-- **N8N Workflow Automation** - Tehostettu prosessien automatisointi
+#### Ulkoiset palvelut ja API:t
+
+**Automatisointi & Workflow**
+- **N8N Workflow Automation** - Tehostettu prosessien automatisointi ja puheluiden hallinta
+  - Mass-puheluiden koordinointi
+  - Workflow-automatisointi
+  - Webhook-pohjainen integraatio
+
+**AI & Sisällöntuotanto**
+- **Mistral AI** - Edistyksellinen AI-malli sisällöntuotantoon ja analyysiin
+  - Tekstin generointi ja optimointi
+  - Strategioiden luonti
+  - Chat-toiminnallisuus
+- **Leonardo.ai** - AI-pohjainen kuvien ja visuaalisen sisällön luonti
+  - Automaattinen kuvien generointi
+  - Visuaalisen sisällön optimointi
+  - Brand-consistent kuvitus
+
+**Puhe & Ääni**
+- **Synthflow** - Ääni- ja puhesynteesi puheluiden automatisointiin
+  - Luonnollinen puhesynteesi
+  - Äänen klonointi
+  - Puheluiden automatisointi
+- **Twilio** - Puheluiden ja tekstiviestien lähettäminen
+  - VoIP-puhelut
+  - SMS-notifikaatiot
+  - Puheluiden seuranta
+
+**Sosiaalinen media & Sisällönhallinta**
+- **Mixpost** - Sosiaalisen median sisällön hallinta ja aikataulutus
+  - Multi-platform posting
+  - Sisällön aikataulutus
+  - Analytics ja raportointi
 - **Social Media API:t** - Suora yhteys sosiaalisen median alustoille
-- **Analytics-palvelut** - Kattava datan keräys ja analysointi
-- **File Storage** - Skalautuva tiedostojen tallennus
+  - LinkedIn, Facebook, Instagram integraatiot
+  - Automaattinen sisällön jakaminen
+
+**Analytics & Seuranta**
+- **Vercel Analytics** - Reaaliaikainen käyttäjätietojen seuranta
+- **Custom Analytics** - Räätälöidyt raportit ja mittarit
+- **Performance Monitoring** - Sovelluksen suorituskyvyn seuranta
+
+**Tiedostojen hallinta**
+- **Vercel Blob Storage** - Skalautuva tiedostojen tallennus
+- **File Upload API** - Turvallinen tiedostojen lataus
 
 ### Webhook-järjestelmä
 - **Reaaliaikainen synkronointi** - Tietojen päivitys välittömästi
@@ -129,15 +187,17 @@ Rascal AI on moderni, skaalautuva ja turvallinen markkinointiautomaatiojärjeste
 
 ### Kehitystyökalut
 - **Git & GitHub** - Versiohallinta ja yhteistyö
-- **ESLint** - Koodin laadun varmistus
-- **Prettier** - Koodin formatointi
+- **ESLint** - Koodin laadun varmistus ja standardointi
 - **Husky** - Git-hookit ennen committia
+- **Commitlint** - Commit-viestien standardointi (Conventional Commits)
+- **Standard Version** - Automaattinen versionhallinta ja changelog-generointi
 
 ### CI/CD Pipeline
-- **Automaattinen testaus** - Koodin laadun varmistus
-- **Automaattinen deploy** - Tuotantoon siirtyminen
-- **Version management** - Automaattinen versioiden hallinta
-- **Changelog generation** - Muutosten dokumentointi
+- **Vercel CLI** - Paikallinen kehitys ja preview-deployments
+- **Automaattinen deploy** - Tuotantoon siirtyminen GitHub Actions:in kautta
+- **Version management** - Automaattinen versioiden hallinta (standard-version)
+- **Changelog generation** - Muutosten dokumentointi automaattisesti
+- **Pre-commit hooks** - Koodin laadun varmistus ennen committia
 
 ---
 
@@ -199,6 +259,20 @@ Rascal AI on rakennettu käyttäen maailmanluokan teknologioita ja parhaita käy
 ✅ **Helppokäyttöisyys** - Intuitiivinen käyttöliittymä ja automaattinen skaalautuminen  
 ✅ **Kustannustehokkuus** - Optimoitu hinta/laatu-suhde ja ROI  
 ✅ **Tulevaisuudenvalmius** - Moderni arkkitehtuuri ja skaalautuvuus  
+
+### 🤖 AI-pohjaiset ominaisuudet
+✅ **Mistral AI** - Edistyksellinen sisällöntuotanto ja analyysi  
+✅ **Leonardo.ai** - Automaattinen visuaalisen sisällön luonti  
+✅ **Synthflow** - Luonnollinen puhesynteesi ja äänen klonointi  
+✅ **N8N** - Tehostettu workflow-automatisointi  
+✅ **Twilio** - Luotettava puhelu- ja viestintäinfrastruktuuri  
+
+### 📱 Moderni teknologiapino
+✅ **React 19** - Uusin frontend-teknologia  
+✅ **Vite 6** - Nopein kehitysympäristö  
+✅ **Supabase** - Enterprise-tason tietokanta ja autentikaatio  
+✅ **Vercel** - Maailmanluokan hosting ja CDN  
+✅ **Serverless-arkkitehtuuri** - Automaattinen skaalautuminen  
 
 Järjestelmä on suunniteltu kasvamaan yrityksesi mukana ja tarjoamaan kilpailuetun markkinointiautomaatiossa.
 

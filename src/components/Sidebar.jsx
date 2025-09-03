@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import styles from './Sidebar.module.css'
 import { useAuth } from '../contexts/AuthContext'
 import { useFeatures } from '../hooks/useFeatures'
+import NotificationBell from './NotificationBell'
 
 const menuItems = [
   { 
@@ -219,6 +220,9 @@ export default function Sidebar() {
           </div>
         </div>
         <span className={styles['profile-name']}>{user?.email || 'user@example.com'}</span>
+        <div className={styles['notification-bell-wrapper']}>
+          <NotificationBell />
+        </div>
       </div>
       {/* Dashboard */}
       <ul className={styles['nav-menu']}>

@@ -911,6 +911,84 @@
       "sendError": "Virhe lähetyksessä",
       "unknownError": "Tuntematon virhe"
     }
+  },
+  "posts": {
+    "pageTitle": "Hallinnoi julkaisuja",
+    "columns": {
+      "avatar": "Avatar",
+      "inProgress": "Kesken", 
+      "readyToPublish": "Valmiina julkaisuun",
+      "scheduled": "Aikataulutettu"
+    },
+    "buttons": {
+      "edit": "Muokkaa",
+      "view": "Näytä",
+      "publish": "Julkaise",
+      "schedule": "Aikatauluta",
+      "delete": "Poista",
+      "createNew": "Luo uusi julkaisu",
+      "saveChanges": "Tallenna muutokset",
+      "cancel": "Peruuta"
+    },
+    "placeholders": {
+      "title": "Syötä some-sisällön otsikko...",
+      "caption": "Kirjoita some-sisällön kuvaus..."
+    },
+    "modals": {
+      "editTitle": "Muokkaa some-sisältöä",
+      "viewTitle": "Näytä some-sisältöä",
+      "captionCheck": "Kuvaus-tarkistus",
+      "voiceoverCheck": "Voiceover-tarkistus",
+      "publishDate": "Julkaisupäivä",
+      "publishDatePlaceholder": "pp.kk.vvvv klo --:--"
+    },
+    "messages": {
+      "ideaSent": "Idea lähetetty AI:lle! Some-sisältö generoidaan taustalla.",
+      "errorCreating": "Virhe: Ei voitu luoda some-sisältöä. Yritä uudelleen.",
+      "errorCompanyId": "Virhe: Ei voitu hakea yritystietoja. Yritä uudelleen.",
+      "voiceoverError": "Virhe voiceover-tilan päivityksessä. Yritä uudelleen.",
+      "voiceoverSuccess": "Voiceover merkitty valmiiksi! Automaatio jatkaa eteenpäin.",
+      "confirmDelete": "Oletko varma, että haluat poistaa tämän some-sisällön?",
+      "deleteSuccess": "Some-sisältö merkitty poistetuksi!",
+      "deleteError": "Some-sisällön poisto epäonnistui:",
+      "schedulePrompt": "Syötä ajastuspäivä (YYYY-MM-DD HH:MM):",
+      "scheduleSuccess": "Some-sisällön ajastus onnistui!",
+      "scheduleError": "Some-sisällön ajastus epäonnistui:",
+      "selectAccounts": "Valitse vähintään yksi somekanava julkaisua varten",
+      "publishSuccess": "Some-sisällön julkaisu onnistui!",
+      "publishError": "Some-sisällön julkaisu epäonnistui:",
+      "moveError": "Siirtyminen epäonnistui:",
+      "dataFetchError": "Datan haku epäonnistui",
+      "userIdNotFound": "Käyttäjän ID ei löytynyt",
+      "statusUpdateFailed": "Statusin päivitys epäonnistui:",
+      "supabaseUpdateFailed": "Supabase-päivitys epäonnistui"
+    },
+    "statuses": {
+      "inProgress": "Kesken",
+      "ready": "Valmis",
+      "scheduled": "Aikataulutettu", 
+      "published": "Julkaistu",
+      "untitled": "Nimetön julkaisu",
+      "untitledReels": "Nimetön Reels"
+    },
+    "header": "Hallinnoi julkaisuja",
+    "searchPlaceholder": "Hae julkaisuja...",
+    "filters": {
+      "allStatuses": "Kaikki tilat"
+    },
+    "status": {
+      "Kesken": "Kesken",
+      "Tarkistuksessa": "Valmiina julkaisuun",
+      "Aikataulutettu": "Aikataulutettu",
+      "Julkaistu": "Julkaistu"
+    },
+    "actions": {
+      "createNew": "Luo uusi julkaisu",
+      "retry": "Yritä uudelleen"
+    },
+    "placeholders": {
+      "noImage": "Ei kuvaa"
+    }
   }
 }
 

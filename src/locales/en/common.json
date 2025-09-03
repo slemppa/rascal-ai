@@ -931,6 +931,84 @@
       "sendError": "Send error",
       "unknownError": "Unknown error"
     }
+  },
+  "posts": {
+    "pageTitle": "Manage Posts",
+    "columns": {
+      "avatar": "Avatar",
+      "inProgress": "In Progress", 
+      "readyToPublish": "Ready to Publish",
+      "scheduled": "Scheduled"
+    },
+    "buttons": {
+      "edit": "Edit",
+      "view": "View",
+      "publish": "Publish",
+      "schedule": "Schedule",
+      "delete": "Delete",
+      "createNew": "Create New Post",
+      "saveChanges": "Save Changes",
+      "cancel": "Cancel"
+    },
+    "placeholders": {
+      "title": "Enter social media content title...",
+      "caption": "Write social media content description..."
+    },
+    "modals": {
+      "editTitle": "Edit Social Media Content",
+      "viewTitle": "View Social Media Content",
+      "captionCheck": "Caption Check",
+      "voiceoverCheck": "Voiceover Check",
+      "publishDate": "Publish Date",
+      "publishDatePlaceholder": "dd.mm.yyyy hh:mm"
+    },
+    "messages": {
+      "ideaSent": "Idea sent to AI! Social content is being generated in the background.",
+      "errorCreating": "Error: Could not create social content. Try again.",
+      "errorCompanyId": "Error: Could not fetch company information. Try again.",
+      "voiceoverError": "Error updating voiceover status. Try again.",
+      "voiceoverSuccess": "Voiceover marked as ready! Automation continues.",
+      "confirmDelete": "Are you sure you want to delete this social media content?",
+      "deleteSuccess": "Social media content marked as deleted!",
+      "deleteError": "Social content deletion failed:",
+      "schedulePrompt": "Enter schedule date (YYYY-MM-DD HH:MM):",
+      "scheduleSuccess": "Social content scheduling successful!",
+      "scheduleError": "Social content scheduling failed:",
+      "selectAccounts": "Select at least one social channel for publishing",
+      "publishSuccess": "Social content publishing successful!",
+      "publishError": "Social content publishing failed:",
+      "moveError": "Move failed:",
+      "dataFetchError": "Data fetch failed",
+      "userIdNotFound": "User ID not found",
+      "statusUpdateFailed": "Status update failed:",
+      "supabaseUpdateFailed": "Supabase update failed"
+    },
+    "statuses": {
+      "inProgress": "In Progress",
+      "ready": "Ready",
+      "scheduled": "Scheduled", 
+      "published": "Published",
+      "untitled": "Untitled Post",
+      "untitledReels": "Untitled Reels"
+    },
+    "header": "Manage Posts",
+    "searchPlaceholder": "Search posts...",
+    "filters": {
+      "allStatuses": "All Statuses"
+    },
+    "status": {
+      "Kesken": "In Progress",
+      "Tarkistuksessa": "Ready to Publish",
+      "Aikataulutettu": "Scheduled",
+      "Julkaistu": "Published"
+    },
+    "actions": {
+      "createNew": "Create New Post",
+      "retry": "Retry"
+    },
+    "placeholders": {
+      "noImage": "No image"
+    }
   }
 }
 

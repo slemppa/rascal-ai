@@ -12,6 +12,7 @@ import AuthCallback from './components/auth/AuthCallback'
 import { AuthProvider } from './contexts/AuthContext'
 import { AutoLogoutProvider } from './contexts/AutoLogoutContext'
 import { PostsProvider } from './contexts/PostsContext'
+import { NotificationProvider } from './contexts/NotificationContext'
 import Sidebar from './components/Sidebar'
 import MobileNavigation from './components/MobileNavigation'
 import InactivityWarningModal from './components/InactivityWarningModal'
@@ -44,6 +45,7 @@ import CampaignDetailPage from './pages/CampaignDetailPage'
 import SegmentCreatePage from './pages/SegmentCreatePage'
 import SegmentDetailPage from './pages/SegmentDetailPage'
 import LinkedInTest from './components/LinkedInTest'
+import NotificationBell from './components/NotificationBell'
 
 // Komponentti joka näyttää ChatbotWidget:n vain julkkisilla sivuilla
 function ConditionalChatbotWidget() {
@@ -120,6 +122,7 @@ export default function App() {
     <AuthProvider>
       <AutoLogoutProvider>
         <PostsProvider>
+          <NotificationProvider>
           <Routes>
         {/* Julkiset reitit */}
         <Route path="/" element={<LanguageRedirect />} />
@@ -359,6 +362,7 @@ export default function App() {
 
         {/* Lisää muut suojatut reitit tähän samalla tavalla, jos haluat menun näkyvän niilläkin */}
       </Routes>
+          </NotificationProvider>
         </PostsProvider>
         <ConditionalChatbotWidget />
         <InactivityWarningModal />

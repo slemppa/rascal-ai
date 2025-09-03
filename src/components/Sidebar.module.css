@@ -167,6 +167,14 @@
   color: #ffffff;
 }
 
+.notification-bell-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0;
+  margin-top: 8px;
+}
+
 
 
 /* Mobiilioptimointi */

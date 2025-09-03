@@ -44,13 +44,13 @@ const initialPosts = [
 ]
 
 const columns = [
-  { status: 'Kesken', title: 'Avatar', color: '#fef3c7' },
-  { status: 'KeskenSupabase', title: 'Kesken', color: '#fef3c7' },
-  { status: 'Tarkistuksessa', title: 'Valmiina julkaisuun', color: '#dbeafe' },
-  { status: 'Aikataulutettu', title: 'Aikataulutettu', color: '#fce7f3' }
+  { status: 'Kesken', titleKey: 'posts.columns.avatar', color: '#fef3c7' },
+  { status: 'KeskenSupabase', titleKey: 'posts.columns.inProgress', color: '#fef3c7' },
+  { status: 'Tarkistuksessa', titleKey: 'posts.columns.readyToPublish', color: '#dbeafe' },
+  { status: 'Aikataulutettu', titleKey: 'posts.columns.scheduled', color: '#fce7f3' }
 ]
 
-const publishedColumn = { status: 'Julkaistu', title: 'Julkaistu', color: '#dcfce7' }
+const publishedColumn = { status: 'Julkaistu', titleKey: 'posts.statuses.published', color: '#dcfce7' }
 
 // Data muunnos funktio Supabase datasta Kanban muotoon
 const transformSupabaseData = (supabaseData) => {
@@ -97,7 +97,7 @@ const transformSupabaseData = (supabaseData) => {
     
     return {
       id: item.id,
-      title: item.idea || item.caption || 'Nimetön julkaisu',
+      title: item.idea || item.caption || t('posts.statuses.untitled'),
       status: status,
       thumbnail: thumbnail,
       caption: item.caption || item.idea || 'Ei kuvausta',
@@ -128,7 +128,7 @@ const transformReelsData = (reelsData) => {
     const status = item.status || 'Kesken' // Status is forced to 'Kesken' by the API
     return {
       id: item.id,
-      title: item.title || 'Nimetön Reels',
+      title: item.title || t('posts.statuses.untitledReels'),
       status: status,
       thumbnail: item.media_urls?.[0] || null,
       caption: item.caption || 'Ei kuvausta',
@@ -145,7 +145,7 @@ const transformReelsData = (reelsData) => {
   })
 }
 
-function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext }) {
+function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext, t }) {
   return (
     <div className="post-card">
       <div className="post-card-content">
@@ -310,7 +310,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
                     onClick={() => onEdit(post)}
                     style={{ fontSize: '11px', padding: '6px 10px' }}
                   >
-                    Muokkaa
+                    {post.status === 'Tarkistuksessa' ? t('posts.buttons.view') : t('posts.buttons.edit')}
                   </Button>
                   
                   {/* Siirtymispainikkeet */}
@@ -339,7 +339,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
                         padding: '6px 10px' 
                       }}
                     >
-                      Julkaise
+                      {t('posts.buttons.publish')}
                     </Button>
                   )}
                   
@@ -348,7 +348,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext 
                     onClick={() => onDelete(post)}
                     style={{ fontSize: '11px', padding: '6px 10px' }}
                   >
-                    Poista
+                    {t('posts.buttons.delete')}
                   </Button>
                 </>
               )}
@@ -401,7 +401,7 @@ export default function ManagePostsPage() {
         .single()
       
       if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
+        throw new Error(t('posts.messages.userIdNotFound'))
       }
       
       // Haetaan käyttäjän some-sisältö (ei Blog/Newsletter, ei poistettuja)
@@ -456,7 +456,7 @@ export default function ManagePostsPage() {
       
     } catch (err) {
       console.error('Virhe datan haussa:', err)
-      setError('Datan haku epäonnistui')
+      setError(t('posts.messages.dataFetchError'))
     } finally {
       setLoading(false)
     }
@@ -571,7 +571,7 @@ export default function ManagePostsPage() {
       
       const transformed = {
         id: item.id,
-        title: item.title || 'Nimetön Reels',
+        title: item.title || t('posts.statuses.untitledReels'),
         status: status,
         thumbnail: item.media_urls?.[0] || '/placeholder.png',
         caption: item.caption || 'Ei kuvausta',
@@ -618,7 +618,7 @@ export default function ManagePostsPage() {
         .single()
       
       if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
+        throw new Error(t('posts.messages.userIdNotFound'))
       }
 
       // Lähetetään idea-generation kutsu N8N:lle
@@ -651,11 +651,11 @@ export default function ManagePostsPage() {
       }
 
       setShowCreateModal(false)
-      alert('Idea lähetetty AI:lle! Some-sisältö generoidaan taustalla.')
+      alert(t('posts.messages.ideaSent'))
       
     } catch (error) {
       console.error('Virhe uuden julkaisun luomisessa:', error)
-      alert('Virhe: Ei voitu luoda some-sisältöä. Yritä uudelleen.')
+      alert(t('posts.messages.errorCreating'))
     }
   }
 
@@ -742,7 +742,7 @@ export default function ManagePostsPage() {
 
                if (userError || !userData?.company_id) {
                  console.error('Could not fetch company_id:', userError)
-                 alert('Virhe: Ei voitu hakea yritystietoja. Yritä uudelleen.')
+                 alert(t('posts.messages.errorCompanyId'))
                  return
                }
 
@@ -764,18 +764,18 @@ export default function ManagePostsPage() {
           if (!response.ok) {
             console.error('Voiceover webhook failed:', response.status)
             // Näytä käyttäjälle virheviesti
-            alert('Virhe voiceover-tilan päivityksessä. Yritä uudelleen.')
+            alert(t('posts.messages.voiceoverError'))
             return
           }
 
           const result = await response.json()
           
           // Näytä käyttäjälle onnistumisviesti
-          alert('Voiceover merkitty valmiiksi! Automaatio jatkaa eteenpäin.')
+          alert(t('posts.messages.voiceoverSuccess'))
           
         } catch (error) {
           console.error('Voiceover webhook error:', error)
-          alert('Virhe voiceover-tilan päivityksessä. Yritä uudelleen.')
+          alert(t('posts.messages.voiceoverError'))
           return
         }
       }
@@ -833,7 +833,7 @@ export default function ManagePostsPage() {
   }
 
   const handleDeletePost = async (post) => {
-    if (window.confirm('Oletko varma, että haluat poistaa tämän some-sisällön?')) {
+    if (window.confirm(t('posts.messages.confirmDelete'))) {
       try {
         // Haetaan käyttäjän data
         const { data: userData, error: userError } = await supabase
@@ -843,7 +843,7 @@ export default function ManagePostsPage() {
           .single()
 
         if (userError || !userData?.id) {
-          throw new Error('Käyttäjän ID ei löytynyt')
+          throw new Error(t('posts.messages.userIdNotFound'))
         }
 
         // Muutetaan status 'Deleted':ksi sen sijaan että poistetaan rivi
@@ -854,7 +854,7 @@ export default function ManagePostsPage() {
           .eq('user_id', userData.id)
 
         if (updateError) {
-          throw new Error('Statusin päivitys epäonnistui: ' + updateError.message)
+          throw new Error(t('posts.messages.statusUpdateFailed') + ' ' + updateError.message)
         }
 
         // Päivitetään UI
@@ -863,11 +863,11 @@ export default function ManagePostsPage() {
           await fetchReelsPosts()
         }
 
-        alert('Some-sisältö merkitty poistetuksi!')
+        alert(t('posts.messages.deleteSuccess'))
         
       } catch (error) {
         console.error('Delete error:', error)
-        alert('Some-sisällön poisto epäonnistui: ' + error.message)
+        alert(t('posts.messages.deleteError') + ' ' + error.message)
       }
     }
   }
@@ -875,7 +875,7 @@ export default function ManagePostsPage() {
   const handleSchedulePost = async (post) => {
     try {
       // Kysytään ajastuspäivä käyttäjältä
-      const scheduledDate = prompt('Syötä ajastuspäivä (YYYY-MM-DD HH:MM):', 
+      const scheduledDate = prompt(t('posts.messages.schedulePrompt'), 
         new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16))
 
       if (!scheduledDate) {
@@ -914,13 +914,13 @@ export default function ManagePostsPage() {
         await fetchReelsPosts()
       }
 
-      alert(result.message || 'Some-sisällön ajastus onnistui!')
+      alert(result.message || t('posts.messages.scheduleSuccess'))
       setShowEditModal(false)
       setEditingPost(null)
       
     } catch (error) {
       console.error('Schedule error:', error)
-      alert('Some-sisällön ajastus epäonnistui: ' + error.message)
+      alert(t('posts.messages.scheduleError') + ' ' + error.message)
     }
   }
 
@@ -936,7 +936,7 @@ export default function ManagePostsPage() {
 
   const handleConfirmPublish = async () => {
     if (!publishingPost || selectedAccounts.length === 0) {
-      alert('Valitse vähintään yksi somekanava julkaisua varten')
+      alert(t('posts.messages.selectAccounts'))
       return
     }
 
@@ -954,7 +954,7 @@ export default function ManagePostsPage() {
           .single()
 
         if (userError || !userData?.id) {
-          throw new Error('Käyttäjän ID ei löytynyt')
+          throw new Error(t('posts.messages.userIdNotFound'))
         }
 
         // Haetaan content data
@@ -1032,14 +1032,14 @@ export default function ManagePostsPage() {
         await fetchReelsPosts()
       }
 
-      alert(result.message || 'Some-sisällön julkaisu onnistui!')
+      alert(result.message || t('posts.messages.publishSuccess'))
       setShowPublishModal(false)
       setPublishingPost(null)
       setSelectedAccounts([])
       
     } catch (error) {
       console.error('Publish error:', error)
-      alert('Some-sisällön julkaisu epäonnistui: ' + error.message)
+      alert(t('posts.messages.publishError') + ' ' + error.message)
     }
   }
 
@@ -1059,7 +1059,7 @@ export default function ManagePostsPage() {
         .single()
 
       if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
+        throw new Error(t('posts.messages.userIdNotFound'))
       }
 
       // Määritellään status-mappaus
@@ -1084,7 +1084,7 @@ export default function ManagePostsPage() {
         .eq('user_id', userData.id)
 
       if (updateError) {
-        throw new Error('Supabase-päivitys epäonnistui')
+        throw new Error(t('posts.messages.supabaseUpdateFailed'))
       }
 
       // Päivitetään UI
@@ -1094,7 +1094,7 @@ export default function ManagePostsPage() {
       
     } catch (error) {
       console.error('Move to next error:', error)
-      alert('Siirtyminen epäonnistui: ' + error.message)
+      alert(t('posts.messages.moveError') + ' ' + error.message)
     }
   }
 
@@ -1380,12 +1380,12 @@ export default function ManagePostsPage() {
                               // Filteröidään postit statusin JA lähteen mukaan
               let columnPosts = filteredPosts.filter(post => {
                 // Avatar-sarakkeessa näytetään reels-dataa
-                if (column.title === 'Avatar') {
+                if (column.titleKey === 'posts.columns.avatar') {
                   const isAvatarPost = post.status === 'Kesken' && post.source === 'reels'
                   return isAvatarPost
                 }
                 // Kesken-sarakkeessa näytetään vain Supabase-dataa "Kesken" statusilla
-                else if (column.title === 'Kesken') {
+                else if (column.titleKey === 'posts.columns.inProgress') {
                   return post.status === 'Kesken' && post.source === 'supabase'
                 }
 
@@ -1397,13 +1397,13 @@ export default function ManagePostsPage() {
               
               return (
                 <div key={column.status} className="kanban-column">
-                  <h3 className="column-title">{column.title === 'Avatar' ? t('posts.columns.avatar') : column.title === 'Kesken' ? t('posts.columns.inProgress') : column.title === 'Valmiina julkaisuun' ? t('posts.columns.readyToPublish') : column.title === 'Aikataulutettu' ? t('posts.columns.scheduled') : column.title}</h3>
+                  <h3 className="column-title">{t(column.titleKey)}</h3>
                   <div className="column-content">
                     {columnPosts.map(post => {
                       // Varmistetaan että post on oikeassa muodossa
                       const safePost = {
                         id: post.id || 'unknown',
-                        title: post.title || 'Untitled',
+                        title: post.title || t('posts.statuses.untitled'),
                         caption: post.caption || t('posts.placeholders.noImage'),
                         type: post.type || 'Photo',
                         source: post.source || 'supabase',
@@ -1422,6 +1422,7 @@ export default function ManagePostsPage() {
                           onPublish={handlePublishPost}
                           onSchedule={handleSchedulePost}
                           onMoveToNext={handleMoveToNext}
+                          t={t}
                         />
                       )
                     })}
@@ -1439,12 +1440,12 @@ export default function ManagePostsPage() {
               
               return (
                 <div className="kanban-column kanban-column-full-width">
-                  <h3 className="column-title">{t('posts.columns.published')}</h3>
+                  <h3 className="column-title">{t(publishedColumn.titleKey)}</h3>
                   <div className="column-content">
                     {supabasePublishedPosts.map(post => {
                       const safePost = {
                         id: post.id || 'unknown',
-                        title: post.title || 'Untitled',
+                        title: post.title || t('posts.statuses.untitled'),
                         caption: post.caption || t('posts.placeholders.noImage'),
                         type: post.type || 'Photo',
                         source: post.source || 'supabase',
@@ -1464,6 +1465,7 @@ export default function ManagePostsPage() {
                           onPublish={handlePublishPost}
                           onSchedule={handleSchedulePost}
                           onMoveToNext={handleMoveToNext}
+                          t={t}
                         />
                       )
                     })}
@@ -1487,12 +1489,12 @@ export default function ManagePostsPage() {
         >
           <div className="modal-container" style={{ maxWidth: '500px' }}>
             <div className="modal-header">
-              <h2 className="modal-title">Luo uusi some-sisältö</h2>
+              <h2 className="modal-title">{t('posts.buttons.createNew')}</h2>
               <button
                 onClick={() => setShowCreateModal(false)}
                 className="modal-close-btn"
               >
-                Sulje
+                {t('posts.buttons.cancel')}
               </button>
             </div>
             <div className="modal-content">
@@ -1512,7 +1514,7 @@ export default function ManagePostsPage() {
                     type="text"
                     required
                     className="form-input"
-                    placeholder="Syötä some-sisällön otsikko..."
+                    placeholder={t('posts.placeholders.title')}
                   />
                 </div>
                 <div className="form-group">
@@ -1534,7 +1536,7 @@ export default function ManagePostsPage() {
                     name="caption"
                     rows={4}
                     className="form-textarea"
-                    placeholder="Kirjoita some-sisällön kuvaus..."
+                    placeholder={t('posts.placeholders.caption')}
                   />
                 </div>
                 <div className="modal-actions">
@@ -1544,7 +1546,7 @@ export default function ManagePostsPage() {
                       variant="secondary"
                       onClick={() => setShowCreateModal(false)}
                     >
-                      Peruuta
+                      {t('posts.buttons.cancel')}
                     </Button>
                   </div>
                   <div className="modal-actions-right">
@@ -1577,8 +1579,9 @@ export default function ManagePostsPage() {
           <div className="modal-container edit-post-modal">
             <div className="modal-header">
               <h2 className="modal-title">
-                {editingPost.status === 'Kesken' && editingPost.type === 'Carousel' ? 'Kuvaus-tarkistus' : 
-                 editingPost.status === 'Kesken' ? 'Voiceover-tarkistus' : 'Muokkaa some-sisältöä'}
+                {editingPost.status === 'Kesken' && editingPost.type === 'Carousel' ? t('posts.modals.captionCheck') : 
+                 editingPost.status === 'Kesken' ? t('posts.modals.voiceoverCheck') : 
+                 editingPost.status === 'Tarkistuksessa' ? t('posts.modals.viewTitle') : t('posts.modals.editTitle')}
               </h2>
               {/* Debug: Näytä status */}
               <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
@@ -1591,7 +1594,7 @@ export default function ManagePostsPage() {
                 }}
                 className="modal-close-btn"
               >
-                Sulje
+                {t('posts.buttons.cancel')}
               </button>
             </div>
             <div className="modal-content">
@@ -1930,12 +1933,12 @@ export default function ManagePostsPage() {
                        rows={6}
                        className="form-textarea"
                        defaultValue={editingPost.caption || ""}
-                       placeholder="Kirjoita some-sisällön kuvaus..."
+                       placeholder={t('posts.placeholders.caption')}
                      />
                    </div>
                  )}
 
-                 {/* "Valmiina julkaisuun" sarakkeessa: Captions-muokkaus + voiceover (readonly) */}
+                 {/* "Valmiina julkaisuun" sarakkeessa: Read-only näkymä + voiceover (vain luku) */}
                  {editingPost.status === 'Tarkistuksessa' && (
                    <>
                      <div className="form-group">
@@ -1945,11 +1948,10 @@ export default function ManagePostsPage() {
                          rows={6}
                          className="form-textarea"
                          defaultValue={editingPost.caption || ""}
-                         placeholder="Kirjoita some-sisällön kuvaus..."
+                         placeholder="Kuvaus (vain luku)"
+                         readOnly
+                         style={{ backgroundColor: '#f8f9fa', color: '#6c757d' }}
                        />
-                       <div className="char-counter">
-                         <span className="char-count">0</span> / 2200 merkkiä
-      </div>
                      </div>
 
                      {/* Voiceover näkyy vain jos kyseessä on Reels */}
@@ -1979,19 +1981,21 @@ export default function ManagePostsPage() {
                        rows={4}
                        className="form-textarea"
                        defaultValue={editingPost.caption || ""}
-                       placeholder="Kirjoita some-sisällön kuvaus..."
+                       placeholder={t('posts.placeholders.caption')}
                      />
                    </div>
                  )}
 
                  <div className="form-group">
-                   <label className="form-label">Julkaisupäivä</label>
+                   <label className="form-label">{t('posts.modals.publishDate')}</label>
                    <input
                      name="publishDate"
                      type="datetime-local"
                      className="form-input"
                      defaultValue={editingPost.publishDate || ""}
-                     placeholder="pp.kk.vvvv klo --:--"
+                     placeholder={t('posts.modals.publishDatePlaceholder')}
+                     readOnly={editingPost.status === 'Tarkistuksessa'}
+                     style={editingPost.status === 'Tarkistuksessa' ? { backgroundColor: '#f8f9fa', color: '#6c757d' } : undefined}
                    />
                  </div>
                </div>
@@ -2009,12 +2013,14 @@ export default function ManagePostsPage() {
                   </Button>
                 </div>
                 <div className="modal-actions-right">
-                  <Button
-                    type="submit"
-                    variant="primary"
-                  >
-                    Tallenna muutokset
-                  </Button>
+                  {editingPost.status !== 'Tarkistuksessa' && (
+                    <Button
+                      type="submit"
+                      variant="primary"
+                    >
+                      {t('posts.buttons.saveChanges')}
+                    </Button>
+                  )}
                   {/* Julkaisu-nappi vain jos status on "Valmiina julkaisuun" (Tarkistuksessa) tai "Aikataulutettu" */}
                   {(editingPost.status === 'Tarkistuksessa' || editingPost.status === 'Aikataulutettu') && (
                     <Button
@@ -2051,7 +2057,7 @@ export default function ManagePostsPage() {
                         marginLeft: '8px' 
                       }}
                     >
-                      Julkaise
+                      {t('posts.buttons.publish')}
                     </Button>
                   )}
                 </div>
@@ -2088,7 +2094,7 @@ export default function ManagePostsPage() {
                 }}
                 className="modal-close-btn"
               >
-                Sulje
+                {t('posts.buttons.cancel')}
               </button>
             </div>
             <div className="modal-content">
@@ -2282,7 +2288,7 @@ export default function ManagePostsPage() {
                     onClick={handleConfirmPublish}
                     disabled={selectedAccounts.length === 0 || loadingAccounts}
                   >
-                    Julkaise valituille kanaville
+                    {t('posts.buttons.publish')} valituille kanaville
                   </Button>
                 </div>
               </div>

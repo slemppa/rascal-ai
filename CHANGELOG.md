@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.50.0](https://github.com/slemppa/rascal-ai/compare/v1.49.3...v1.50.0) (2025-09-03)
+
+
+### ✨ Features
+
+* muuta hero-osion CTA 'Varaa demo' -> 'Tulossa pian' ([d4fc103](https://github.com/slemppa/rascal-ai/commit/d4fc103298804d9b8745a7af627f052956a5103a))
+
 ### [1.49.3](https://github.com/slemppa/rascal-ai/compare/v1.49.2...v1.49.3) (2025-09-03)
 
 

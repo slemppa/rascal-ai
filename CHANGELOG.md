@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.49.3](https://github.com/slemppa/rascal-ai/compare/v1.49.2...v1.49.3) (2025-09-03)
+
+
+### 🐛 Bug Fixes
+
+* korjaa dashboard Avainluvut ja Tulevat postaukset -osiot ([05ea1d7](https://github.com/slemppa/rascal-ai/commit/05ea1d7f8caaf9301fcf68adb52f61473d52bc50))
+
 ### [1.49.2](https://github.com/slemppa/rascal-ai/compare/v1.49.1...v1.49.2) (2025-09-01)
 
 

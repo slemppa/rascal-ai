@@ -238,12 +238,20 @@ export default function LandingPage() {
                     <h2 className="hero-subtitle">
                       {t('hero.subtitle')}
                     </h2>
-                    <button
-                      className="btn btn-primary hero-cta"
-                      disabled
-                    >
-                      {t('hero.cta')}
-                    </button>
+                    <div className="hero-buttons">
+                      <button
+                        className="btn btn-primary hero-cta"
+                        disabled
+                      >
+                        {t('hero.cta')}
+                      </button>
+                      <a
+                        className="btn btn-secondary hero-cta"
+                        href="/ai-due-diligence"
+                      >
+                        {t('hero.cta2')}
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -330,6 +338,7 @@ export default function LandingPage() {
                     <p>{t('features.intro.p2')}</p>
                     <p>{t('features.intro.p3')}</p>
                     <p>{t('features.intro.p4')}</p>
+                    <p>{t('features.intro.p5')}</p>
                   </div>
                 </div>
                 <div className="features-grid-full-width">
@@ -449,6 +458,73 @@ export default function LandingPage() {
                       </p>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Implementation Section */}
+              <div className="section" id="implementation">
+                <div className="section-header">
+                  <h1 className="section-title">
+                    {t('sections.implementation')}
+                  </h1>
+                  <p className="section-description">
+                    {t('implementation.description')}
+                  </p>
+                </div>
+                <div className="features-grid-full-width">
+                  <div className="feature-card">
+                    <div className="feature-icon">
+                      <span style={{fontSize: '18px', fontWeight: 'bold'}}>1</span>
+                    </div>
+                    <div className="feature-content">
+                      <h2 className="feature-title">{t('implementation.workshop1.title')}</h2>
+                      <p className="feature-description">
+                        <em>{t('implementation.workshop1.description').split(':')[0]}.</em><br />
+                        {t('implementation.workshop1.description').split('.')[1]}.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="feature-card">
+                    <div className="feature-icon">
+                      <span style={{fontSize: '18px', fontWeight: 'bold'}}>2</span>
+                    </div>
+                    <div className="feature-content">
+                      <h2 className="feature-title">{t('implementation.workshop2.title')}</h2>
+                      <p className="feature-description">
+                        <em>{t('implementation.workshop2.description').split('.')[0]}.</em><br />
+                        {t('implementation.workshop2.description').split('.')[1]}.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="feature-card">
+                    <div className="feature-icon">
+                      <span style={{fontSize: '18px', fontWeight: 'bold'}}>3</span>
+                    </div>
+                    <div className="feature-content">
+                      <h2 className="feature-title">{t('implementation.workshop3.title')}</h2>
+                      <p className="feature-description">
+                        <em>{t('implementation.workshop3.description').split('.')[0]}.</em><br />
+                        {t('implementation.workshop3.description').split('.')[1]}.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="feature-card">
+                    <div className="feature-icon">
+                      <span style={{fontSize: '18px', fontWeight: 'bold'}}>4</span>
+                    </div>
+                    <div className="feature-content">
+                      <h2 className="feature-title">{t('implementation.workshop4.title')}</h2>
+                      <p className="feature-description">
+                        <em>{t('implementation.workshop4.description').split('.')[0]}.</em><br />
+                        {t('implementation.workshop4.description').split('.')[1]}.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="implementation-summary">
+                  <p className="implementation-summary-text">
+                    {t('implementation.summary')}
+                  </p>
                 </div>
               </div>
 

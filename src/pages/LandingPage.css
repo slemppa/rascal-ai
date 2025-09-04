@@ -374,13 +374,20 @@ html, body, #root, .landing-page {
   margin-right: auto;
 }
 
+.hero-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
 .hero-cta {
   font-size: 18px;
   padding: 18px 32px;
   border-radius: 8px;
   box-shadow: 0 8px 25px rgba(255, 102, 0, 0.3);
-  margin: 0 auto;
-  display: block;
+  margin: 0;
+  display: inline-block;
 }
 
 /* Sections - Tiivistetty spacing */
@@ -473,19 +480,20 @@ html, body, #root, .landing-page {
   font-size: 16px;
   font-weight: 500;
   line-height: 1.6;
-  margin: 0;
+  margin: 0 0 20px 0;
   color: #ffffff !important;
   width: 100%;
   max-width: none;
   text-shadow: 0 2px 8px rgba(0,0,0,0.4);
   z-index: 10;
   position: relative;
+  text-align: left;
 }
 
 .section-description p {
-  margin: 0 0 8px 0;
+  margin: 0 0 4px 0;
   text-align: left;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .section-description p:last-child {
@@ -552,13 +560,14 @@ html, body, #root, .landing-page {
   border-radius: 12px;
   padding: 20px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 12px;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
   min-width: 0;
   width: 100%;
+  align-items: flex-start;
 }
 
 .feature-card::before {
@@ -585,8 +594,8 @@ html, body, #root, .landing-page {
 
 .feature-icon {
   color: white;
-  width: 24px;
-  height: 24px;
+  width: 40px;
+  height: 40px;
   transition: transform 0.3s ease;
   background-color: #ff6600 !important;
   border-radius: 6px;
@@ -594,6 +603,7 @@ html, body, #root, .landing-page {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .feature-card:hover .feature-icon {
@@ -609,6 +619,9 @@ html, body, #root, .landing-page {
   text-shadow: 0 1px 4px rgba(0,0,0,0.3);
   z-index: 10;
   position: relative;
+  min-height: 46.8px; /* 18px * 1.3 * 2 = 46.8px for 2 lines */
+  display: flex;
+  align-items: flex-start;
 }
 
 .feature-description {
@@ -623,6 +636,13 @@ html, body, #root, .landing-page {
 
 .feature-description p {
   white-space: nowrap;
+}
+
+.feature-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
 }
 
 /* Industries Grid - Ammattimainen image-cards */
@@ -1176,9 +1196,16 @@ html, body, #root, .landing-page {
     padding: 0 12px;
   }
   
+  .hero-buttons {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+  }
+  
   .hero-cta {
     font-size: 15px;
     padding: 14px 18px;
+    width: 200px;
   }
   
   .cta-button {
@@ -1288,3 +1315,72 @@ html, body, #root, .landing-page {
 }
 
 /* Responsive Articles - Moved to src/styles/article-cards.css */
+
+/* Implementation Section Styles - Uses same styles as features */
+#implementation {
+  background-color: #24170f;
+  padding: 80px 0;
+  position: relative;
+}
+
+#implementation .section-header {
+  margin-bottom: 60px;
+}
+
+#implementation .section-title {
+  color: #ffffff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+#implementation .section-description {
+  color: #e7ecf3;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* Implementation grid - 2x2 layout */
+#implementation .features-grid-full-width {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 20px;
+  margin-bottom: 60px;
+}
+
+.implementation-summary {
+  text-align: center;
+  margin-top: 50px;
+  position: relative;
+  z-index: 2;
+}
+
+.implementation-summary-text {
+  font-size: 1.1rem;
+  color: #ffffff;
+  font-weight: 500;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px 30px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Implementation Section */
+@media (max-width: 768px) {
+  #implementation .features-grid-full-width {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
+}

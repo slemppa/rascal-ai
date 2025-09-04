@@ -15,13 +15,15 @@
   },
   "hero": {
     "title": "Myynnin, markkinoinnin ja johdon assistentti",
-    "subtitle": "Olen siis uusi työkaverisi",
-    "cta": "Tulossa pian"
+    "subtitle": "Rascal AI tuo teille uuden tiimikaverin, joka vapauttaa asiantuntijoiden aikaa, lisää tiiminne työn tuottavuutta, lisää työn mielekkyyttä, vahvistaa brändiänne ja kasvattaa myyntiänne – turvallisesti, tehokkaasti ja tuottavasti.",
+    "cta": "Tulossa pian",
+    "cta2": "Tutustu ja varaa"
   },
   "sections": {
     "latestArticles": "Uusimmat artikkelit",
     "latestArticlesDescription": "Pysy ajan tasalla tekoälyn ja automaation trendeistä",
     "whatRascalDoes": "Mitä Rascal AI tekee?",
+    "implementation": "Käyttöönotto, joka tuottaa tulosta heti",
     "whyRascal": "Miksi Rascal AI?",
     "team": "Tiimi",
     "dueDiligence": "Tekoäly Due Diligence",
@@ -32,6 +34,27 @@
     "comingSoon": "Tulee pian",
     "dueDiligenceDesc": "Veloitukseton 60 min kartoitus: missä tekoäly tuo nopeimmat ja suurimmat hyödyt – ilman hypeä ja hakuammuntaa.",
     "book30minDesc": "Näytämme, miten Rascal AI vapauttaa myyjäsi parhaaseen työhönsä ja nostaa tulokset uudelle tasolle."
+  },
+  "implementation": {
+    "title": "Käyttöönotto, joka tuottaa tulosta heti",
+    "description": "Rascal AI -palvelun käyttöönotto ei ole pelkkä tekninen asennus – se on neljän työpajan mittainen prosessi, joka varmistaa, että tiiminne saa täyden hyödyn irti heti ensimmäisestä päivästä.",
+    "workshop1": {
+      "title": "Käyttökoulutus – vauhtia alkuun",
+      "description": "Opettelemme yhdessä Rascal AI:n käytön käytännönläheisesti. Tiiminne pääsee heti kiinni arjen hyötyihin, mikä vähentää turhaa opettelua ja tuo ensimmäiset onnistumiset näkyviin nopeasti."
+    },
+    "workshop2": {
+      "title": "Erottuva tarina – myynnin ja markkinoinnin kärki",
+      "description": "Rakennamme yhdessä yrityksellenne selkeän ja erottuvan viestin, joka tekee viestinnästänne yhtenäistä, uskottavaa ja houkuttelevaa. Kun tarina on kirkas, myös AI:n tuottama sisältö tukee sitä johdonmukaisesti."
+    },
+    "workshop3": {
+      "title": "Tuottavuusloikka – AI oikeisiin tehtäviin",
+      "description": "Määritämme, missä asioissa Rascal AI tukee juuri teidän tiimiänne parhaiten. Näin tekoälystä tulee konkreettinen apuri, joka vapauttaa myyjien ja asiantuntijoiden aikaa asiakaskohtaamisiin – ja auttaa luomaan uusia, pysyviä rutiineja."
+    },
+    "workshop4": {
+      "title": "Tietoarkkitehtuuri & Data Management – oikea tieto, oikeaan aikaan",
+      "description": "Selvitämme, missä tieto liikkuu ja miten se liittyy myyntiin, markkinointiin ja asiakastyöhön. Rakennamme selkeän tietoarkkitehtuurin ja luomme perustan datan paremmalle hallinnalle. Näin vältetään päällekkäinen työ ja tieto muuttuu aidosti hyödylliseksi päätöksenteossa."
+    },
+    "summary": "Neljä työpajaa, yksi tavoite: varmistaa, että Rascal AI tekee teidän työstä sujuvampaa, tehokkaampaa ja tuottavampaa heti alusta alkaen."
   },
   "articles": {
     "loading": "Ladataan artikkeleita...",
@@ -63,10 +86,11 @@
   },
   "features": {
     "intro": {
-      "p1": "Rascal AI hahmottaa myynnin ja markkinoinnin kokonaisuuden",
-      "p2": "Se rakentaa sisältösuunnitelman, tuottaa ja julkaisee somepostaukset, blogit ja uutiskirjeet.",
-      "p3": "Rascal AI soittaa, kartoittaa, buukkaa tapaamisia ja vastaanottaa puheluita.",
-      "p4": "Kaikki tämä - automaattisesti ja omalla tyylilläsi."
+      "p1": "Rascal AI on uusi tiimikaverisi, joka näkee koko myynnin ja markkinoinnin kentän – ja hoitaa sen puolestasi.",
+      "p2": "Sisältö haltuun: laatii suunnitelman, tuottaa ja julkaisee somepostaukset, blogit ja uutiskirjeet.",
+      "p3": "Asiakaskontaktit kuntoon: soittaa, kartoittaa tarpeita, sopii tapaamisia ja ottaa puheluita vastaan.",
+      "p4": "Täysin automaattisesti: kaikki tämä tapahtuu omalla äänelläsi ja tyylilläsi – niin, että asiakkuudet etenevät ja sinä säästät aikaa.",
+      "p5": "Rascal AI tekee sen, mikä muuten jäisi tekemättä – ja varmistaa, että teillä on enemmän aikaa asiakkaiden kohtaamiseen."
     },
     "cards": {
       "social": {

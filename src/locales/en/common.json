@@ -15,13 +15,15 @@
   },
   "hero": {
     "title": "Assistant for sales, marketing and leadership",
-    "subtitle": "I'm your new teammate",
-    "cta": "Coming soon"
+    "subtitle": "Rascal AI brings you a new team member who frees up experts' time, increases your team's work productivity, enhances work meaningfulness, strengthens your brand and grows your sales – safely, efficiently and productively.",
+    "cta": "Coming soon",
+    "cta2": "Learn more and book"
   },
   "sections": {
     "latestArticles": "Latest articles",
     "latestArticlesDescription": "Stay up to date with AI and automation trends",
     "whatRascalDoes": "What does Rascal AI do?",
+    "implementation": "Implementation that delivers results immediately",
     "whyRascal": "Why Rascal AI?",
     "team": "Team",
     "dueDiligence": "AI Due Diligence",
@@ -32,6 +34,27 @@
     "comingSoon": "Coming soon",
     "dueDiligenceDesc": "A free 60-minute assessment: where AI brings the fastest and biggest benefits – without hype or guesswork.",
     "book30minDesc": "We'll show how Rascal AI frees your salespeople to do their best work and takes results to the next level."
+  },
+  "implementation": {
+    "title": "Implementation that delivers results immediately",
+    "description": "Rascal AI service implementation is not just a technical installation – it's a four-workshop process that ensures your team gets full benefit from day one.",
+    "workshop1": {
+      "title": "User training – speed to start",
+      "description": "We learn together to use Rascal AI in a practical way. Your team immediately gets to grips with daily benefits, which reduces unnecessary learning and makes the first successes visible quickly."
+    },
+    "workshop2": {
+      "title": "Distinctive story – the core of sales and marketing",
+      "description": "Together we build a clear and distinctive message for your company. When the story is clear, content produced by AI also consistently supports it and makes your communication coherent, credible, and appealing."
+    },
+    "workshop3": {
+      "title": "Productivity leap – AI for the right tasks",
+      "description": "We determine in which areas Rascal AI best supports your team. This way, artificial intelligence becomes a concrete assistant that frees up sellers' and experts' time for customer interactions – and helps create new, lasting routines."
+    },
+    "workshop4": {
+      "title": "Data Architecture & Data Management – right information, right time",
+      "description": "We find out where information moves and how it relates to sales, marketing, and customer work. We build a clear data architecture and create a foundation for better data management. This way, duplicate work is avoided, and information genuinely becomes useful in decision-making."
+    },
+    "summary": "Four workshops, one goal: ensure that Rascal AI makes your work smoother, more efficient, and more productive from the start."
   },
   "articles": {
     "loading": "Loading articles...",
@@ -63,10 +86,11 @@
   },
   "features": {
     "intro": {
-      "p1": "Rascal AI understands the big picture of sales and marketing",
-      "p2": "It builds a content plan, produces and publishes social posts, blogs and newsletters.",
-      "p3": "Rascal AI calls, qualifies, books meetings and answers calls.",
-      "p4": "All this – automatically and in your own style."
+      "p1": "Rascal AI is your new teammate who sees the entire sales and marketing field – and handles it for you.",
+      "p2": "Content under control: creates a plan, produces and publishes social posts, blogs and newsletters.",
+      "p3": "Customer contacts in order: calls, qualifies needs, schedules meetings and answers calls.",
+      "p4": "Fully automatically: all this happens in your own voice and style – so that customer relationships progress and you save time.",
+      "p5": "Rascal AI does what would otherwise be left undone – and ensures you have more time for customer meetings."
     },
     "cards": {
       "social": {

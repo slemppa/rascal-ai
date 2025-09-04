@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import SignIn from '../components/auth/SignIn'
 import ForgotPassword from '../components/auth/ForgotPassword'
-import MagicLink from '../components/auth/MagicLink'
 import PageMeta from '../components/PageMeta'
 import { supabase } from '../lib/supabase'
 import './LandingPage.css'
@@ -15,7 +14,6 @@ export default function LandingPage() {
   const { t, i18n } = useTranslation('common')
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showForgotModal, setShowForgotModal] = useState(false)
-  const [showMagicModal, setShowMagicModal] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [articles, setArticles] = useState([])
   const [articlesLoading, setArticlesLoading] = useState(true)
@@ -669,7 +667,7 @@ export default function LandingPage() {
       {showSignInModal && (
         <div className="modal-overlay" onClick={(e)=>{ if(e.target===e.currentTarget) setShowSignInModal(false) }}>
           <div className="modal-container">
-            <SignIn onClose={() => setShowSignInModal(false)} onForgotClick={()=>{ setShowSignInModal(false); setShowForgotModal(true) }} onMagicLinkClick={()=>{ setShowSignInModal(false); setShowMagicModal(true) }} />
+            <SignIn onClose={() => setShowSignInModal(false)} onForgotClick={()=>{ setShowSignInModal(false); setShowForgotModal(true) }} />
           </div>
         </div>
       )}
@@ -677,13 +675,6 @@ export default function LandingPage() {
         <div className="modal-overlay">
           <div className="modal-container">
             <ForgotPassword onClose={() => { setShowForgotModal(false); setShowSignInModal(true) }} />
-          </div>
-        </div>
-      )}
-      {showMagicModal && (
-        <div className="modal-overlay">
-          <div className="modal-container">
-            <MagicLink onClose={() => { setShowMagicModal(false); setShowSignInModal(true) }} />
           </div>
         </div>
       )}

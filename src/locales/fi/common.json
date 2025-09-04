@@ -179,7 +179,6 @@
     "showPassword": "Näytä salasana",
     "hidePassword": "Piilota salasana",
     "forgotPassword": "Unohditko salasanan?",
-    "loginWithMagicLink": "Kirjaudu taikalinkillä",
     "signInFailed": "Kirjautuminen epäonnistui",
     "sendReset": "Lähetä palautuslinkki",
     "sendingReset": "Lähetetään palautuslinkkiä...",
@@ -187,11 +186,6 @@
     "unexpectedError": "Odottamaton virhe tapahtui",
     "rememberPassword": "Muistatko salasanasi?",
     "login": "Kirjaudu sisään",
-    "magicLink": "Taikalinkki",
-    "magicLinkDesc": "Syötä sähköpostiosoitteesi, niin lähetämme sinulle taikalinkin kirjautumista varten.",
-    "sendMagicLink": "Lähetä taikalinkki",
-    "sendingMagicLink": "Lähetetään taikalinkkiä...",
-    "magicLinkSent": "Tarkista sähköpostisi taikalinkkiä varten!",
     "wantPassword": "Haluatko käyttää salasanaa?",
     "loginWithPassword": "Kirjaudu salasanalla",
     "verifyingRecovery": "Vahvistetaan palautuslinkkiä...",
@@ -263,6 +257,10 @@
           "Johtaminen: ajantasaiset raportit, parempi päätöksenteko"
         ]
       }
+    },
+    "form": {
+      "title": "Täytä lomake ja varaa kartoitus",
+      "description": "Kerro meille yrityksestäsi ja tavoitteistasi, jotta voimme valmistautua kartoituskutsuun parhaalla mahdollisella tavalla."
     },
     "cta": {
       "title": "Aloitetaan veloituksettomalla 60 min kartoituksella",

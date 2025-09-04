@@ -5,7 +5,6 @@ import PageMeta from '../components/PageMeta'
 import SiteHeader from '../components/SiteHeader'
 import SignIn from '../components/auth/SignIn' // Keep for modal rendering
 import ForgotPassword from '../components/auth/ForgotPassword' // Keep for modal rendering
-import MagicLink from '../components/auth/MagicLink' // Keep for modal rendering
 import './BlogPage.css'
 import '../styles/article-cards.css' // Page specific styles
 
@@ -17,7 +16,6 @@ export default function BlogPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showForgotModal, setShowForgotModal] = useState(false)
-  const [showMagicModal, setShowMagicModal] = useState(false)
 
   useEffect(() => {
     fetchArticles()
@@ -162,7 +160,6 @@ export default function BlogPage() {
             <SignIn 
               onClose={() => setShowSignInModal(false)}
               onForgotClick={() => { setShowSignInModal(false); setShowForgotModal(true) }}
-              onMagicLinkClick={() => { setShowSignInModal(false); setShowMagicModal(true) }}
             />
           </div>
         </div>
@@ -176,13 +173,6 @@ export default function BlogPage() {
         </div>
       )}
 
-      {showMagicModal && (
-        <div className="modal-overlay" onClick={(e)=>{ if(e.target===e.currentTarget) { setShowMagicModal(false); setShowSignInModal(true) } }}>
-          <div className="modal-container">
-            <MagicLink onClose={() => { setShowMagicModal(false); setShowSignInModal(true) }} />
-          </div>
-        </div>
-      )}
     </>
   )
 }

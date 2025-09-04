@@ -13,7 +13,7 @@ Ympäristö: Vercel (frontend + serverless API), Supabase (Auth + DB + RLS), N8N
 - **Integraatiot proxyn läpi**: ulkoiset N8N-kutsut kulkevat oman backendin kautta, joka lisää `x-api-key`-headerin serverillä.
 
 ### 3. Autentikointi ja istunnot
-- **Supabase Auth** (`src/lib/supabase.js`): kirjautuminen sähköposti/salasana ja magic link -virrat.
+- **Supabase Auth** (`src/lib/supabase.js`): kirjautuminen sähköposti/salasana -virrat.
 - **Istunnot**: hallitaan Supabasen SDK:lla. Supabasen `sb-*`-avaimet tyhjennetään uloskirjautumisessa (`src/contexts/AuthContext.jsx`).
 - **Auth-callback**: OTP-hashin verifiointi ja turvallinen uudelleenohjaus (`src/components/auth/AuthCallback.jsx`).
 

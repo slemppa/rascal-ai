@@ -7,7 +7,6 @@ import PageMeta from '../components/PageMeta'
 import SiteHeader from '../components/SiteHeader'
 import SignIn from '../components/auth/SignIn'
 import ForgotPassword from '../components/auth/ForgotPassword'
-import MagicLink from '../components/auth/MagicLink'
 import { supabase } from '../lib/supabase'
 import '../styles/blog-article.css'
 console.log('BlogArticlePage CSS imported:', new Date().toISOString())
@@ -23,7 +22,6 @@ export default function BlogArticlePage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showForgotModal, setShowForgotModal] = useState(false)
-  const [showMagicModal, setShowMagicModal] = useState(false)
 
   useEffect(() => {
     if (slug) {
@@ -201,7 +199,6 @@ export default function BlogArticlePage() {
             <SignIn 
               onClose={() => setShowSignInModal(false)}
               onForgotClick={() => { setShowSignInModal(false); setShowForgotModal(true) }}
-              onMagicLinkClick={() => { setShowSignInModal(false); setShowMagicModal(true) }}
             />
           </div>
         </div>
@@ -215,13 +212,6 @@ export default function BlogArticlePage() {
         </div>
       )}
 
-      {showMagicModal && (
-        <div className="modal-overlay" onClick={(e)=>{ if(e.target===e.currentTarget) { setShowMagicModal(false); setShowSignInModal(true) } }}>
-          <div className="modal-container">
-            <MagicLink onClose={() => { setShowMagicModal(false); setShowSignInModal(true) }} />
-          </div>
-        </div>
-      )}
     </>
   )
 }

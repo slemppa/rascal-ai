@@ -179,7 +179,6 @@
     "showPassword": "Show password",
     "hidePassword": "Hide password",
     "forgotPassword": "Forgot your password?",
-    "loginWithMagicLink": "Sign in with magic link",
     "signInFailed": "Sign-in failed",
     "sendReset": "Send reset link",
     "sendingReset": "Sending reset link...",
@@ -187,11 +186,6 @@
     "unexpectedError": "Unexpected error occurred",
     "rememberPassword": "Remember your password?",
     "login": "Sign in",
-    "magicLink": "Magic link",
-    "magicLinkDesc": "Enter your email and we'll send you a magic sign-in link.",
-    "sendMagicLink": "Send magic link",
-    "sendingMagicLink": "Sending magic link...",
-    "magicLinkSent": "Check your email for the magic link!",
     "wantPassword": "Want to use a password?",
     "loginWithPassword": "Sign in with password",
     "verifyingRecovery": "Verifying recovery link...",
@@ -263,6 +257,10 @@
           "Leadership: up-to-date reports, better decision-making"
         ]
       }
+    },
+    "form": {
+      "title": "Fill out the form and book your assessment",
+      "description": "Tell us about your company and goals so we can prepare for the assessment call in the best possible way."
     },
     "cta": {
       "title": "Let's start with a free 60-minute assessment",

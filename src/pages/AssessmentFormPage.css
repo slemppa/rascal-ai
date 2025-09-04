@@ -1,0 +1,24 @@
+.assessment-form-page {
+  min-height: 100vh;
+  background-color: #24170f;
+  color: white;
+}
+
+.assessment-form-main {
+  padding: 0;
+  margin: 0;
+}
+
+.form-container {
+  width: 100%;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+.notion-form {
+  border: none;
+  width: 100%;
+  height: 100vh;
+  display: block;
+}

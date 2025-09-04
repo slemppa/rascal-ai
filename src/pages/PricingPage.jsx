@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import SignIn from '../components/auth/SignIn'
 import ForgotPassword from '../components/auth/ForgotPassword'
-import MagicLink from '../components/auth/MagicLink'
 import PageMeta from '../components/PageMeta'
 import './PricingPage.css'
 
@@ -60,15 +59,12 @@ export default function PricingPage() {
   const navigate = useNavigate()
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showForgotModal, setShowForgotModal] = useState(false)
-  const [showMagicModal, setShowMagicModal] = useState(false)
 
   // ESC-näppäimen kuuntelu
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
-        if (showMagicModal) {
-          setShowMagicModal(false)
-        } else if (showForgotModal) {
+        if (showForgotModal) {
           setShowForgotModal(false)
         } else if (showSignInModal) {
           setShowSignInModal(false)
@@ -76,11 +72,11 @@ export default function PricingPage() {
       }
     }
 
-    if (showSignInModal || showForgotModal || showMagicModal) {
+    if (showSignInModal || showForgotModal) {
       document.addEventListener('keydown', handleEscape)
       return () => document.removeEventListener('keydown', handleEscape)
     }
-  }, [showSignInModal, showForgotModal, showMagicModal])
+  }, [showSignInModal, showForgotModal])
 
 
 
@@ -128,7 +124,6 @@ export default function PricingPage() {
               <SignIn 
                 onClose={() => setShowSignInModal(false)}
                 onForgotClick={() => { setShowSignInModal(false); setShowForgotModal(true); }}
-                onMagicLinkClick={() => { setShowSignInModal(false); setShowMagicModal(true); }}
               />
             </div>
           </div>
@@ -137,13 +132,6 @@ export default function PricingPage() {
           <div className="modal-overlay">
             <div className="modal-container">
               <ForgotPassword onClose={() => { setShowForgotModal(false); setShowSignInModal(true); }} />
-            </div>
-          </div>
-        )}
-        {showMagicModal && (
-          <div className="modal-overlay">
-            <div className="modal-container">
-              <MagicLink onClose={() => { setShowMagicModal(false); setShowSignInModal(true); }} />
             </div>
           </div>
         )}

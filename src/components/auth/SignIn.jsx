@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import './AuthComponents.css'
 
-export default function SignIn({ onClose, onForgotClick, onMagicLinkClick }) {
+export default function SignIn({ onClose, onForgotClick }) {
   const { t } = useTranslation('common')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -131,17 +131,6 @@ export default function SignIn({ onClose, onForgotClick, onMagicLinkClick }) {
           ) : (
             <Link to="/forgot-password" className="auth-link">
               {t('auth.forgotPassword')}
-            </Link>
-          )}
-        </div>
-        <div>
-          {onMagicLinkClick ? (
-            <a href="#" className="auth-link" onClick={e => { e.preventDefault(); onMagicLinkClick(); }}>
-              {t('auth.loginWithMagicLink')}
-            </a>
-          ) : (
-            <Link to="/magic-link" className="auth-link">
-              {t('auth.loginWithMagicLink')}
             </Link>
           )}
         </div>

@@ -6,7 +6,6 @@ import SignIn from './components/auth/SignIn'
 import SignUp from './components/auth/SignUp'
 import ForgotPassword from './components/auth/ForgotPassword'
 import ResetPassword from './components/auth/ResetPassword'
-import MagicLink from './components/auth/MagicLink'
 import ProtectedRoute from './components/ProtectedRoute'
 import AuthCallback from './components/auth/AuthCallback'
 import { AuthProvider } from './contexts/AuthContext'
@@ -34,6 +33,7 @@ import BlogNewsletterPage from './pages/BlogNewsletterPage'
 import BlogPage from './pages/BlogPage'
 import BlogArticlePage from './pages/BlogArticlePage'
 import AIDueDiligencePage from './pages/AIDueDiligencePage'
+import AssessmentFormPage from './pages/AssessmentFormPage'
 import CustomersPage from './pages/CustomersPage'
 import AdminBlogPage from './pages/AdminBlogPage'
 import AdminTestimonialsPage from './pages/AdminTestimonialsPage'
@@ -66,7 +66,6 @@ function ConditionalChatbotWidget() {
     '/signup', 
     '/forgot-password',
     '/reset-password',
-    '/magic-link',
     '/auth/callback',
     '/terms',
     '/privacy',
@@ -140,7 +139,6 @@ export default function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/magic-link" element={<MagicLink />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/terms" element={<TermsOfServicePage />} />
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
@@ -149,6 +147,7 @@ export default function App() {
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogArticlePage />} />
         <Route path="/ai-due-diligence" element={<AIDueDiligencePage />} />
+        <Route path="/assessment" element={<AssessmentFormPage />} />
         <Route path="/asiakkaat" element={<CustomersPage />} />
         <Route path="/admin-testimonials" element={
           <div className="app-layout">

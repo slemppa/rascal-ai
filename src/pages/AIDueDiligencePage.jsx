@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import PageMeta from '../components/PageMeta'
 import SignIn from '../components/auth/SignIn'
 import ForgotPassword from '../components/auth/ForgotPassword'
-import MagicLink from '../components/auth/MagicLink'
 import './AIDueDiligencePage.css'
 import './BlogPage.css'
 import SiteHeader from '../components/SiteHeader'
@@ -14,7 +13,6 @@ export default function AIDueDiligencePage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showForgotModal, setShowForgotModal] = useState(false)
-  const [showMagicModal, setShowMagicModal] = useState(false)
 
   return (
     <>
@@ -77,6 +75,7 @@ export default function AIDueDiligencePage() {
             </ul>
           </section>
 
+
           <section className="ai-dd-section ai-dd-cta">
             <div className="ai-dd-cta-card">
               <h3>{t('aiDD.cta.title')}</h3>
@@ -100,7 +99,6 @@ export default function AIDueDiligencePage() {
             <SignIn 
               onClose={() => setShowSignInModal(false)}
               onForgotClick={() => { setShowSignInModal(false); setShowForgotModal(true) }}
-              onMagicLinkClick={() => { setShowSignInModal(false); setShowMagicModal(true) }}
             />
           </div>
         </div>
@@ -109,13 +107,6 @@ export default function AIDueDiligencePage() {
         <div className="modal-overlay" onClick={(e)=>{ if(e.target===e.currentTarget) { setShowForgotModal(false); setShowSignInModal(true) } }}>
           <div className="modal-container">
             <ForgotPassword onClose={() => { setShowForgotModal(false); setShowSignInModal(true) }} />
-          </div>
-        </div>
-      )}
-      {showMagicModal && (
-        <div className="modal-overlay" onClick={(e)=>{ if(e.target===e.currentTarget) { setShowMagicModal(false); setShowSignInModal(true) } }}>
-          <div className="modal-container">
-            <MagicLink onClose={() => { setShowMagicModal(false); setShowSignInModal(true) }} />
           </div>
         </div>
       )}

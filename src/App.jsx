@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 import LandingPage from './pages/LandingPage'
 import DashboardPage from './pages/DashboardPage'
 import SignIn from './components/auth/SignIn'
@@ -365,6 +366,7 @@ export default function App() {
         </PostsProvider>
         <ConditionalChatbotWidget />
         <InactivityWarningModal />
+        <SpeedInsights />
       </AutoLogoutProvider>
     </AuthProvider>
   )

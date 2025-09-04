@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.52.0](https://github.com/slemppa/rascal-ai/compare/v1.51.0...v1.52.0) (2025-09-04)
+
+
+### ✨ Features
+
+* add assessment form page with Notion iframe ([3facbf0](https://github.com/slemppa/rascal-ai/commit/3facbf00bbdb1683f72ab8571faaeec19dfcdc20))
+
 ## [1.51.0](https://github.com/slemppa/rascal-ai/compare/v1.50.0...v1.51.0) (2025-09-04)
 
 

@@ -359,8 +359,7 @@
       "campaigns": "Kampanjat",
       "segments": "Segmentit",
       "calls": "Puhelut",
-      "aiChat": "Assistentti",
-      "dev": "Kehitys",
+      "assistentti": "Assistentti",
       "admin": "Ylläpito",
       "adminBlog": "Admin"
     },

@@ -87,17 +87,8 @@ const menuItems = [
   { 
     label: 'Assistentti', 
     path: '/ai-chat', 
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor">
-        <path d="M216,40H136V24a8,8,0,0,0-16,0V40H40A16,16,0,0,0,24,56V176a16,16,0,0,0,16,16H79.36L57.75,219a8,8,0,0,0,12.5,10l29.59-37h56.32l29.59,37a8,8,0,1,0,12.5-10l-21.61-27H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,136H40V56H216V176ZM104,120v24a8,8,0,0,1-16,0V120a8,8,0,0,1,16,0Zm32-16v40a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm32-16v56a8,8,0,0,1-16,0V88a8,8,0,0,1,16,0Z"></path>
-      </svg>
-    )
-  },
-  { 
-    label: 'Kehitys', 
-    path: '/dev', 
-    moderatorOnly: true,
-    feature: 'Dev',
+    moderatorOnly: false,
+    feature: null,
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M16 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -160,8 +151,10 @@ export default function Sidebar() {
     return !(adminOnly || moderatorOnly)
   }
 
-  const toolItems = menuItems.filter(i => ['/dev','/admin','/admin-blog','/admin-testimonials'].includes(i.path))
-  const canShowTools = toolItems.some(isItemVisible)
+  const toolItems = menuItems.filter(i => ['/ai-chat','/admin','/admin-blog','/admin-testimonials'].includes(i.path))
+  const publicToolItems = menuItems.filter(i => ['/ai-chat'].includes(i.path))
+  const adminToolItems = menuItems.filter(i => ['/admin','/admin-blog','/admin-testimonials'].includes(i.path))
+  const canShowTools = publicToolItems.some(isItemVisible) || adminToolItems.some(isItemVisible)
 
   // Tarkista admin- ja moderator-oikeudet
   useEffect(() => {
@@ -278,7 +271,7 @@ export default function Sidebar() {
         <span className={`${styles['chevron']} ${openSections.myynti ? styles['open'] : ''}`}>▾</span>
       </button>
       {openSections.myynti && (<ul className={styles['nav-menu']}>
-        {menuItems.filter(i => ['/campaigns','/segments','/calls','/ai-chat'].includes(i.path)).map(item => {
+        {menuItems.filter(i => ['/campaigns','/segments','/calls'].includes(i.path)).map(item => {
           const adminOnly = item.adminOnly && !isAdmin
           const moderatorOnly = item.moderatorOnly && !isModerator
           if (adminOnly || moderatorOnly) return null
@@ -286,7 +279,6 @@ export default function Sidebar() {
           if (item.path === '/campaigns' && !hasFeature('Campaigns')) return null
           if (item.path === '/segments' && !hasFeature('Segments')) return null
           if (item.path === '/calls' && !hasFeature('Phone Calls')) return null
-          if (item.path === '/ai-chat' && !hasFeature('Marketing assistant')) return null
           return (
             <li className={styles['nav-item']} key={item.path}>
               <button
@@ -294,7 +286,7 @@ export default function Sidebar() {
                 onClick={() => navigate(item.path)}
               >
                 <span className={styles['nav-icon']}>{item.icon}</span>
-                {item.path === '/campaigns' ? t('sidebar.labels.campaigns') : item.path === '/segments' ? t('sidebar.labels.segments') : item.path === '/calls' ? t('sidebar.labels.calls') : t('sidebar.labels.aiChat')}
+                {item.path === '/campaigns' ? t('sidebar.labels.campaigns') : item.path === '/segments' ? t('sidebar.labels.segments') : t('sidebar.labels.calls')}
               </button>
             </li>
           )
@@ -310,9 +302,9 @@ export default function Sidebar() {
           </button>
           {openSections.tyokalut && (
             <ul className={styles['nav-menu']}>
-              {toolItems.filter(isItemVisible).map(item => {
+              {[...publicToolItems, ...adminToolItems].filter(isItemVisible).map(item => {
                 // Feature-gating Työkalut -osioon
-                if (item.path === '/dev' && !hasFeature('Dev')) return null
+                // if (item.path === '/ai-chat' && !hasFeature('Dev')) return null // Poistettu - näkyy kaikille
                 return (
                   <li className={styles['nav-item']} key={item.path}>
                     <button
@@ -320,7 +312,7 @@ export default function Sidebar() {
                       onClick={() => navigate(item.path)}
                     >
                       <span className={styles['nav-icon']}>{item.icon}</span>
-                      {item.path === '/dev' ? t('sidebar.labels.dev') : item.path === '/admin' ? t('sidebar.labels.admin') : t('sidebar.labels.adminBlog')}
+                      {item.path === '/ai-chat' ? t('sidebar.labels.assistentti') : item.path === '/admin' ? t('sidebar.labels.admin') : t('sidebar.labels.adminBlog')}
                     </button>
                   </li>
                 )

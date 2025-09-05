@@ -310,17 +310,6 @@ export default function App() {
               <Sidebar />
               <MobileNavigation />
               <div className="main-content">
-                <AIChatPage />
-              </div>
-            </div>
-          </ProtectedRoute>
-        } />
-        <Route path="/dev" element={
-          <ProtectedRoute requiredRole="moderator" requiredFeatures={["Dev"]}>
-            <div className="app-layout">
-              <Sidebar />
-              <MobileNavigation />
-              <div className="main-content">
                 <DevPage />
               </div>
             </div>

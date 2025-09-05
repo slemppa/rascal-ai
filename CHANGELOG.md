@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.54.0](https://github.com/slemppa/rascal-ai/compare/v1.53.1...v1.54.0) (2025-09-05)
+
+
+### ✨ Features
+
+* yksinkertainen somet-yhdistys settings-sivulla ([5badaef](https://github.com/slemppa/rascal-ai/commit/5badaef50c5391c06908703b3f3b33c7cee71122))
+
 ### [1.53.1](https://github.com/slemppa/rascal-ai/compare/v1.53.0...v1.53.1) (2025-09-05)
 
 

@@ -237,12 +237,6 @@ export default function LandingPage() {
                       {t('hero.subtitle')}
                     </h2>
                     <div className="hero-buttons">
-                      <button
-                        className="btn btn-primary hero-cta"
-                        disabled
-                      >
-                        {t('hero.cta')}
-                      </button>
                       <a
                         className="btn btn-secondary hero-cta"
                         href="/ai-due-diligence"

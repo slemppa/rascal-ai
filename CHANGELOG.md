@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.53.1](https://github.com/slemppa/rascal-ai/compare/v1.53.0...v1.53.1) (2025-09-05)
+
+
+### 🐛 Bug Fixes
+
+* korjaa LandingPage mobiili-responsiivisuus ([9b0c74e](https://github.com/slemppa/rascal-ai/commit/9b0c74ea244ee6959268d366b1672565e4309ae6))
+
 ## [1.53.0](https://github.com/slemppa/rascal-ai/compare/v1.52.0...v1.53.0) (2025-09-04)
 
 

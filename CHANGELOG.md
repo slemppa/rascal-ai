@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.54.1](https://github.com/slemppa/rascal-ai/compare/v1.54.0...v1.54.1) (2025-09-05)
+
+
+### 🐛 Bug Fixes
+
+* korjaa sidebar duplikaatit ja poista admin-tarkistukset ([3b20c83](https://github.com/slemppa/rascal-ai/commit/3b20c83c84a161c3498d27193cd8865945ce0feb))
+
 ## [1.54.0](https://github.com/slemppa/rascal-ai/compare/v1.53.1...v1.54.0) (2025-09-05)
 
 

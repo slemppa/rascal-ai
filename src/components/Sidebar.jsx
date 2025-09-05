@@ -169,7 +169,7 @@ export default function Sidebar() {
           .single()
 
         if (!error && userData) {
-          const isAdminUser = userData.role === 'admin' || userData.company_id === 1
+          const isAdminUser = userData.role === 'admin' || userData.role === 'moderator'
           const isModeratorUser = userData.role === 'moderator' || isAdminUser
           
           setIsAdmin(isAdminUser)

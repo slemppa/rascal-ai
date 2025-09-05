@@ -68,7 +68,7 @@ export default function DevChatPage() {
   }, [user?.id])
 
   const companyName = userData?.company_name || 'Yrityksen'
-  const companyId = userData?.id
+  const companyId = userData?.company_id
   const assistantId = userData?.assistant_id
 
   // Hae tiedostot kun tietokanta-välilehti avataan

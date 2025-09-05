@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import CarouselTemplateSelector from '../components/CarouselTemplateSelector'
 import SocialMediaConnect from '../components/SocialMediaConnect'
 import TimeoutSettings from '../components/TimeoutSettings'
+import SimpleSocialConnect from '../components/SimpleSocialConnect'
 
 import styles from './SettingsPage.module.css'
 
@@ -419,7 +420,7 @@ export default function SettingsPage() {
             
             {/* Sosiaalisen median yhdistäminen */}
             <div className={styles.card}>
-              <SocialMediaConnect />
+              <SimpleSocialConnect />
             </div>
             
             {/* Avatar-kuvat */}

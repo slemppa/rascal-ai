@@ -282,3 +282,4 @@ Järjestelmä on suunniteltu kasvamaan yrityksesi mukana ja tarjoamaan kilpailue
 *Versio: 1.0*  
 *Tekijä: Rascal AI Development Team*
 
+

@@ -310,7 +310,7 @@ export default function App() {
               <Sidebar />
               <MobileNavigation />
               <div className="main-content">
-                <DevPage />
+                <AIChatPage />
               </div>
             </div>
           </ProtectedRoute>

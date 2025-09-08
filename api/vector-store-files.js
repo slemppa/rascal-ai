@@ -5,9 +5,9 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end()
   
   try {
-    const { companyId } = req.body
-    if (!companyId) {
-      return res.status(400).json({ error: 'companyId puuttuu' })
+    const { userId } = req.body
+    if (!userId) {
+      return res.status(400).json({ error: 'userId puuttuu' })
     }
 
     if (!N8N_VECTOR_STORE_FILES_URL) {
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     }
 
     console.log('Kutsu N8N webhookia:', N8N_VECTOR_STORE_FILES_URL)
-    console.log('Payload:', { companyId })
+    console.log('Payload:', { userId })
     
     const response = await fetch(N8N_VECTOR_STORE_FILES_URL, {
       method: 'POST',
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
         'x-api-key': N8N_SECRET_KEY
       },
-      body: JSON.stringify({ companyId })
+      body: JSON.stringify({ userId })
     })
     
     if (!response.ok) {

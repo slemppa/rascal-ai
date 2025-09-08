@@ -68,8 +68,6 @@ export default function DevChatPage() {
   }, [user?.id])
 
   const companyName = userData?.company_name || 'Yrityksen'
-  const companyId = userData?.company_id
-  const assistantId = userData?.assistant_id
 
   // Hae tiedostot kun tietokanta-välilehti avataan
   useEffect(() => {
@@ -112,7 +110,7 @@ export default function DevChatPage() {
     setFilesLoading(true)
     setFilesError('')
     try {
-      const response = await axios.post(DEV_LIST_ENDPOINT, { action: 'list', companyId, assistantId }, {
+      const response = await axios.post(DEV_LIST_ENDPOINT, { action: 'list', userId: userData.id }, {
         headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
       })
       let arr = []
@@ -146,8 +144,8 @@ export default function DevChatPage() {
     if (isSendingRef.current) return
     isSendingRef.current = true
 
-    if (!assistantId) {
-      const errorMessage = { role: 'assistant', content: 'Assistentin ID puuttuu. Ota yhteyttä ylläpitoon.' }
+    if (!userData?.id) {
+      const errorMessage = { role: 'assistant', content: 'Käyttäjän ID puuttuu. Ota yhteyttä ylläpitoon.' }
       setMessages(prev => [...prev, errorMessage])
       return
     }
@@ -161,7 +159,7 @@ export default function DevChatPage() {
       const clientMessageId = `msg_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
       if (inFlightIdsRef.current.has(clientMessageId)) return
       inFlightIdsRef.current.add(clientMessageId)
-      const payload = { message: input, threadId, companyId, assistantId, mode: 'dev', clientMessageId }
+      const payload = { message: input, threadId, userId: userData.id, mode: 'dev', clientMessageId }
       const response = await axios.post('/api/chat', payload)
       const raw = response.data
       const items = Array.isArray(raw) ? raw : [raw]
@@ -198,7 +196,7 @@ export default function DevChatPage() {
       const errorMessage = { role: 'assistant', content: 'Virhe viestin lähettämisessä. Yritä uudelleen.' }
       setMessages(prev => [...prev, errorMessage])
       // Varmista että viesti yritetään lähettää myöhemmin
-      enqueuePending({ id: clientMessageId, payload: { message: input, threadId, companyId, assistantId, mode: 'dev', clientMessageId } })
+        enqueuePending({ id: clientMessageId, payload: { message: input, threadId, userId: userData.id, mode: 'dev', clientMessageId } })
     } finally {
       inFlightIdsRef.current.clear()
       isSendingRef.current = false

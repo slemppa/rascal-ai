@@ -6,9 +6,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Vain POST sallittu' });
   }
 
-  const { assistantId, companyId, fileId } = req.body;
-  if (!assistantId || !companyId || !fileId) {
-    return res.status(400).json({ error: 'assistantId, companyId ja fileId vaaditaan' });
+  const { userId, fileId } = req.body;
+  if (!userId || !fileId) {
+    return res.status(400).json({ error: 'userId ja fileId vaaditaan' });
   }
 
   try {
@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     }
 
     console.log('Kutsu N8N delete-files webhookia:', N8N_DELETE_FILES_URL)
-    console.log('Delete payload:', { assistantId, companyId, fileId })
+    console.log('Delete payload:', { userId, fileId })
     console.log('Headers:', { 
       'Content-Type': 'application/json',
       'x-api-key': N8N_SECRET_KEY ? '***' : 'PUUTTUU'
@@ -38,8 +38,7 @@ export default async function handler(req, res) {
        },
       body: JSON.stringify({
         action: 'delete',
-        assistantId,
-        companyId,
+        userId,
         fileId
       })
     });

@@ -45,27 +45,21 @@ export default async function handler(req, res) {
 
       const [fields, files] = await form.parse(req)
       const uploadedFiles = files.files || []
-      const companyId = fields.companyId?.[0]
-      const assistantId = fields.assistantId?.[0]
+      const userId = fields.userId?.[0]
       const action = fields.action?.[0] || 'feed'
 
       console.log('Knowledge upload debug:')
       console.log('- Fields:', Object.keys(fields))
       console.log('- Files count:', uploadedFiles.length)
-      console.log('- CompanyId:', companyId)
-      console.log('- AssistantId:', assistantId)
+      console.log('- UserId:', userId)
       console.log('- Action:', action)
 
       if (uploadedFiles.length === 0) {
         return res.status(400).json({ error: 'Ei tiedostoja annettu' })
       }
 
-      if (!companyId) {
-        return res.status(400).json({ error: 'CompanyId puuttuu' })
-      }
-
-      if (!assistantId) {
-        return res.status(400).json({ error: 'AssistantId puuttuu' })
+      if (!userId) {
+        return res.status(400).json({ error: 'UserId puuttuu' })
       }
 
       // Käsittele kaikki tiedostot
@@ -116,8 +110,7 @@ export default async function handler(req, res) {
           },
           body: JSON.stringify({
             action: action,
-            companyId: companyId,
-            assistantId: assistantId,
+            userId: userId,
             files: blobResults,
             uploadedAt: new Date().toISOString(),
           }),

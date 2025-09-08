@@ -83,10 +83,8 @@ export default function AIChatPage() {
     fetchUserData()
   }, [user?.id])
 
-  // Hae companyName, companyId, assistantId käyttäjän tiedoista
+  // Hae companyName käyttäjän tiedoista
   const companyName = userData?.company_name || 'Company'
-  const companyId = userData?.company_id
-  const assistantId = userData?.assistant_id
 
   // Vieritä alas aina kun viestit päivittyvät (column-reverse hoitaa, joten ei tarvita)
   // useEffect ei enää tarpeen
@@ -118,19 +116,19 @@ export default function AIChatPage() {
   }
 
   const fetchFiles = async () => {
-    console.log('fetchFiles alkaa, loadingUserData:', loadingUserData, 'companyId:', companyId)
+    console.log('fetchFiles alkaa, loadingUserData:', loadingUserData, 'userId:', userData?.id)
     if (loadingUserData) {
       setFilesError(t('assistant.loadingUser'))
       return
     }
-    if (!companyId) {
-      setFilesError(t('assistant.files.uploadCard.missingCompany'))
+    if (!userData?.id) {
+      setFilesError('Käyttäjän ID puuttuu')
       return
     }
     setFilesLoading(true)
     setFilesError('')
     try {
-      const response = await axios.post('/api/vector-store-files', { companyId }, {
+      const response = await axios.post('/api/dev-knowledge', { action: 'list', userId: userData.id }, {
         headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
       })
       // Tuki eri payload-rakenteille
@@ -149,7 +147,19 @@ export default function AIChatPage() {
           arr = response.data
         }
       }
-      setFiles(arr)
+
+      // Normalize: if items have file_name and id (array), use as-is; otherwise map to compatible shape
+      const normalized = Array.isArray(arr) ? arr.map(item => {
+        if (item && typeof item === 'object' && 'file_name' in item && Array.isArray(item.id)) {
+          return item
+        }
+        return {
+          file_name: item.filename || item.name || 'Tiedosto',
+          id: item.id ? [item.id] : [],
+        }
+      }) : []
+
+      setFiles(normalized)
     } catch (error) {
       console.error('Virhe haettaessa tiedostoja:', error)
       setFilesError(t('assistant.files.list.error'))
@@ -162,8 +172,8 @@ export default function AIChatPage() {
     e.preventDefault()
     if (!input.trim() || loading || loadingUserData) return
     
-    if (!assistantId) {
-      const errorMessage = { role: 'assistant', content: t('assistant.missingAssistantId') }
+    if (!userData?.id) {
+      const errorMessage = { role: 'assistant', content: 'Käyttäjän ID puuttuu. Ota yhteyttä ylläpitoon.' }
       setMessages(prev => [...prev, errorMessage])
       return
     }
@@ -174,7 +184,7 @@ export default function AIChatPage() {
     setLoading(true)
 
     try {
-      const payload = { message: input, threadId, companyId, assistantId }
+      const payload = { message: input, threadId, userId: userData?.id }
       const pendingId = `msg_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
       enqueuePending({ id: pendingId, payload })
       const response = await axios.post('/api/chat', payload)
@@ -236,12 +246,8 @@ export default function AIChatPage() {
   const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files)
     if (files.length === 0) return
-    if (!companyId) {
-      setUploadError(t('assistant.files.uploadCard.missingCompany'))
-      return
-    }
-    if (!assistantId) {
-      setUploadError(t('assistant.files.uploadCard.missingAssistant'))
+    if (!userData?.id) {
+      setUploadError('Käyttäjän ID puuttuu')
       return
     }
 
@@ -254,8 +260,7 @@ export default function AIChatPage() {
       const formData = new FormData()
       files.forEach(file => formData.append('files', file))
       formData.append('action', 'feed')
-      formData.append('companyId', companyId)
-      formData.append('assistantId', assistantId)
+      formData.append('userId', userData.id)
 
       await axios.post('/api/upload-knowledge', formData, {
         headers: { 
@@ -295,8 +300,7 @@ export default function AIChatPage() {
     try {
       await axios.post('/api/delete-files', {
         action: 'delete',
-        companyId,
-        assistantId,
+        userId: userData.id,
         fileId
       }, {
         headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
@@ -349,21 +353,16 @@ export default function AIChatPage() {
   }
   const handleUploadPending = async () => {
     console.log('handleUploadPending klikattu, pendingFiles:', pendingFiles.length)
-    console.log('companyId:', companyId, 'assistantId:', assistantId)
+    console.log('userId:', userData?.id)
     console.log('uploadLoading:', uploadLoading)
     
     if (pendingFiles.length === 0) {
       console.log('Ei pendingFiles, palautetaan')
       return
     }
-    if (!companyId) {
-      console.log('companyId puuttuu')
-      setUploadError(t('assistant.files.uploadCard.missingCompany'))
-      return
-    }
-    if (!assistantId) {
-      console.log('assistantId puuttuu')
-      setUploadError(t('assistant.files.uploadCard.missingAssistant'))
+    if (!userData?.id) {
+      console.log('userId puuttuu')
+      setUploadError('Käyttäjän ID puuttuu')
       return
     }
     console.log('Asetetaan uploadLoading = true (handleUploadPending)')
@@ -374,8 +373,7 @@ export default function AIChatPage() {
       const formData = new FormData()
       pendingFiles.forEach(file => formData.append('files', file))
       formData.append('action', 'feed')
-      formData.append('companyId', companyId)
-      formData.append('assistantId', assistantId)
+      formData.append('userId', userData.id)
       console.log('Lähetetään tiedostot...')
       await axios.post('/api/upload-knowledge', formData, {
         headers: { 
@@ -400,12 +398,11 @@ export default function AIChatPage() {
   }
 
   // UUSI: Assistentin tiedostojen lisäys (POST + action)
-  async function uploadAssistantKnowledgeFiles({ files, assistantId, companyId }) {
+  async function uploadAssistantKnowledgeFiles({ files, userId }) {
     const formData = new FormData()
     Array.from(files).forEach(file => formData.append('files', file))
     formData.append('action', 'feed')
-    formData.append('companyId', companyId)
-    formData.append('assistantId', assistantId)
+    formData.append('userId', userId)
     return axios.post('/api/upload-knowledge', formData, {
       headers: { 
         'Content-Type': 'multipart/form-data',
@@ -415,11 +412,10 @@ export default function AIChatPage() {
   }
 
   // UUSI: Assistentin tiedoston poisto (POST + action)
-  async function deleteAssistantKnowledgeFile({ fileId, assistantId, companyId }) {
+  async function deleteAssistantKnowledgeFile({ fileId, userId }) {
     return axios.post('/api/delete-files', {
       action: 'delete',
-      companyId,
-      assistantId,
+      userId,
       fileId
     }, {
       headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
@@ -620,12 +616,12 @@ export default function AIChatPage() {
                     ) : (
                       <>
                         {files.map((file) => (
-                          <div key={file.id} className="ai-chat-file-item">
+                          <div key={file.file_name} className="ai-chat-file-item">
                             <div className="ai-chat-file-info">
-                              <div className="ai-chat-file-name">{file.filename}</div>
-                              <div className="ai-chat-file-meta">
-                                {formatBytes(file.bytes)} • {formatDate(file.created_at)}
-                              </div>
+                              <div className="ai-chat-file-name">{file.file_name || file.filename}</div>
+                              {Array.isArray(file.id) && (
+                                <div className="ai-chat-file-meta">{file.id.length} osaa</div>
+                              )}
                             </div>
                             <button
                               onClick={() => handleFileDeletion(file.id)}

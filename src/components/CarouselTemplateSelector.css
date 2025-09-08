@@ -16,9 +16,13 @@
 .templates-grid {
   display: flex;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+.color-picker-section {
+  margin-bottom: 20px;
 }
 
 .template-card {

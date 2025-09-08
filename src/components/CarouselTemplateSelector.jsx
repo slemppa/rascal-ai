@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import Button from './Button';
+import ColorPicker from './ColorPicker';
 import { useTranslation } from 'react-i18next';
 import './CarouselTemplateSelector.css';
 
@@ -14,6 +15,7 @@ export default function CarouselTemplateSelector() {
   const { user } = useAuth();
   const { t } = useTranslation('common');
   const [selected, setSelected] = useState(templates[0].id);
+  const [selectedColor, setSelectedColor] = useState('#3b82f6');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -38,20 +40,46 @@ export default function CarouselTemplateSelector() {
         throw new Error(t('settings.carousel.userCompanyMissing'));
       }
       
-      const res = await fetch('/api/carousel-template', {
+      const payload = { 
+        templateId: selectedTemplate.placidId,
+        companyId: userData.company_id,
+        color: selectedColor
+      };
+      
+      console.log('Lähetetään payload:', payload);
+      console.log('selectedColor arvo:', selectedColor, 'tyyppi:', typeof selectedColor);
+      
+      const res = await fetch('http://localhost:3000/api/carousel-template', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 
-          templateId: selectedTemplate.placidId,
-          companyId: userData.company_id
-        })
+        body: JSON.stringify(payload)
       });
+      
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || t('settings.carousel.sendError'));
+        let errorMessage = t('settings.carousel.sendError');
+        try {
+          const data = await res.json();
+          errorMessage = data.error || errorMessage;
+        } catch (jsonErr) {
+          console.error('Virhe JSON-parsinnassa:', jsonErr);
+          errorMessage = `HTTP ${res.status}: ${res.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
+      
+      // Yritä lukea JSON-vastaus
+      let responseData;
+      try {
+        responseData = await res.json();
+        console.log('Webhook vastaus:', responseData);
+      } catch (jsonErr) {
+        console.error('Virhe JSON-parsinnassa:', jsonErr);
+        // Vaikka JSON-parsinta epäonnistuu, kutsu voi olla onnistunut
+        responseData = { success: true, message: 'Valinta lähetetty' };
+      }
+      
       setSuccess(true);
     } catch (e) {
       setError(e.message || t('settings.carousel.unknownError'));
@@ -74,6 +102,18 @@ export default function CarouselTemplateSelector() {
             <div className="template-name">{tpl.name}</div>
           </div>
         ))}
+      </div>
+      
+      {/* Väripicker */}
+      <div className="color-picker-section">
+        <ColorPicker
+          value={selectedColor}
+          onChange={(color) => {
+            console.log('ColorPicker onChange kutsuttu:', color);
+            setSelectedColor(color);
+          }}
+          label={t('settings.carousel.colorLabel')}
+        />
       </div>
       <Button
         onClick={handleSubmit}

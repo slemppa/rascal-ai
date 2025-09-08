@@ -945,6 +945,7 @@
     },
     "carousel": {
       "title": "Choose carousel style",
+      "colorLabel": "Choose color",
       "sending": "Sending...",
       "select": "Select",
       "sent": "Selection sent!",

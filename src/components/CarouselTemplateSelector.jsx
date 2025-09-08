@@ -49,7 +49,7 @@ export default function CarouselTemplateSelector() {
       console.log('Lähetetään payload:', payload);
       console.log('selectedColor arvo:', selectedColor, 'tyyppi:', typeof selectedColor);
       
-      const res = await fetch('http://localhost:3000/api/carousel-template', {
+      const res = await fetch('/api/carousel-template', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -2275,6 +2275,38 @@ export default function ManagePostsPage() {
                   </div>
                 </div>
               </div>
+              
+              {/* Päivämäärän valinta */}
+              <div className="form-group">
+                <label className="form-label">Julkaisupäivä</label>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  <input
+                    type="datetime-local"
+                    id="publishDateTime"
+                    name="publishDateTime"
+                    value={publishingPost?.scheduledDate ? new Date(publishingPost.scheduledDate).toISOString().slice(0, 16) : ''}
+                    onChange={(e) => {
+                      const newDate = e.target.value ? new Date(e.target.value).toISOString() : null;
+                      setPublishingPost(prev => ({
+                        ...prev,
+                        scheduledDate: newDate,
+                        publishDate: e.target.value
+                      }));
+                    }}
+                    style={{
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      minWidth: '200px'
+                    }}
+                  />
+                  <span style={{ fontSize: '14px', color: '#6b7280' }}>
+                    (Jätä tyhjäksi julkaistaksesi heti)
+                  </span>
+                </div>
+              </div>
+              
               <div className="form-group">
                 <label className="form-label">Valitse somekanavat</label>
                 {loadingAccounts ? (

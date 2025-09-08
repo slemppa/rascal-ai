@@ -145,9 +145,14 @@ const transformReelsData = (reelsData) => {
   })
 }
 
-function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext, t }) {
+function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext, onDragStart, onDragEnd, isDragging, t }) {
   return (
-    <div className="post-card">
+    <div 
+      className={`post-card ${isDragging ? 'dragging' : ''}`}
+      draggable={post.source === 'supabase'}
+      onDragStart={(e) => onDragStart(e, post)}
+      onDragEnd={onDragEnd}
+    >
       <div className="post-card-content">
         <div className="post-thumbnail">
           {(() => {
@@ -382,8 +387,31 @@ export default function ManagePostsPage() {
   const [reelsPosts, setReelsPosts] = useState([])
   const [reelsLoading, setReelsLoading] = useState(false)
   const [reelsError, setReelsError] = useState(null)
+  
+  // Drag & Drop states
+  const [draggedPost, setDraggedPost] = useState(null)
+  const [dragOverColumn, setDragOverColumn] = useState(null)
+  
+  // Notification states
+  const [successMessage, setSuccessMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
   const hasInitialized = useRef(false)
+
+  // Auto-hide notifications
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => setSuccessMessage(''), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [successMessage])
+
+  useEffect(() => {
+    if (errorMessage) {
+      const timer = setTimeout(() => setErrorMessage(''), 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [errorMessage])
 
   // Data haku Supabasesta
   const fetchPosts = async () => {
@@ -651,11 +679,11 @@ export default function ManagePostsPage() {
       }
 
       setShowCreateModal(false)
-      alert(t('posts.messages.ideaSent'))
+      setSuccessMessage(t('posts.messages.ideaSent'))
       
     } catch (error) {
       console.error('Virhe uuden julkaisun luomisessa:', error)
-      alert(t('posts.messages.errorCreating'))
+      setErrorMessage(t('posts.messages.errorCreating'))
     }
   }
 
@@ -742,7 +770,7 @@ export default function ManagePostsPage() {
 
                if (userError || !userData?.company_id) {
                  console.error('Could not fetch company_id:', userError)
-                 alert(t('posts.messages.errorCompanyId'))
+                 setErrorMessage(t('posts.messages.errorCompanyId'))
                  return
                }
 
@@ -764,18 +792,18 @@ export default function ManagePostsPage() {
           if (!response.ok) {
             console.error('Voiceover webhook failed:', response.status)
             // Näytä käyttäjälle virheviesti
-            alert(t('posts.messages.voiceoverError'))
+            setErrorMessage(t('posts.messages.voiceoverError'))
             return
           }
 
           const result = await response.json()
           
           // Näytä käyttäjälle onnistumisviesti
-          alert(t('posts.messages.voiceoverSuccess'))
+          setSuccessMessage(t('posts.messages.voiceoverSuccess'))
           
         } catch (error) {
           console.error('Voiceover webhook error:', error)
-          alert(t('posts.messages.voiceoverError'))
+          setErrorMessage(t('posts.messages.voiceoverError'))
           return
         }
       }
@@ -863,11 +891,11 @@ export default function ManagePostsPage() {
           await fetchReelsPosts()
         }
 
-        alert(t('posts.messages.deleteSuccess'))
+        setSuccessMessage(t('posts.messages.deleteSuccess'))
         
       } catch (error) {
         console.error('Delete error:', error)
-        alert(t('posts.messages.deleteError') + ' ' + error.message)
+        setErrorMessage(t('posts.messages.deleteError') + ' ' + error.message)
       }
     }
   }
@@ -914,13 +942,13 @@ export default function ManagePostsPage() {
         await fetchReelsPosts()
       }
 
-      alert(result.message || t('posts.messages.scheduleSuccess'))
+      setSuccessMessage(result.message || t('posts.messages.scheduleSuccess'))
       setShowEditModal(false)
       setEditingPost(null)
       
     } catch (error) {
       console.error('Schedule error:', error)
-      alert(t('posts.messages.scheduleError') + ' ' + error.message)
+      setErrorMessage(t('posts.messages.scheduleError') + ' ' + error.message)
     }
   }
 
@@ -936,7 +964,7 @@ export default function ManagePostsPage() {
 
   const handleConfirmPublish = async () => {
     if (!publishingPost || selectedAccounts.length === 0) {
-      alert(t('posts.messages.selectAccounts'))
+      setErrorMessage(t('posts.messages.selectAccounts'))
       return
     }
 
@@ -1032,14 +1060,14 @@ export default function ManagePostsPage() {
         await fetchReelsPosts()
       }
 
-      alert(result.message || t('posts.messages.publishSuccess'))
+      setSuccessMessage(result.message || t('posts.messages.publishSuccess'))
       setShowPublishModal(false)
       setPublishingPost(null)
       setSelectedAccounts([])
       
     } catch (error) {
       console.error('Publish error:', error)
-      alert(t('posts.messages.publishError') + ' ' + error.message)
+      setErrorMessage(t('posts.messages.publishError') + ' ' + error.message)
     }
   }
 
@@ -1047,7 +1075,7 @@ export default function ManagePostsPage() {
     try {
       // Varmistetaan että kyseessä on Supabase-postaus
       if (post.source !== 'supabase') {
-        alert('Siirtyminen on mahdollista vain Supabase-postauksille')
+        setErrorMessage('Siirtyminen on mahdollista vain Supabase-postauksille')
         return
       }
 
@@ -1064,13 +1092,15 @@ export default function ManagePostsPage() {
 
       // Määritellään status-mappaus
       const statusMap = {
+        'Kesken': 'In Progress',
+        'KeskenSupabase': 'In Progress',
         'Tarkistuksessa': 'Under Review',
         'Aikataulutettu': 'Scheduled'
       }
 
       const supabaseStatus = statusMap[newStatus]
       if (!supabaseStatus) {
-        throw new Error('Virheellinen status')
+        throw new Error('Virheellinen status: ' + newStatus)
       }
 
       // Päivitetään Supabase
@@ -1090,12 +1120,53 @@ export default function ManagePostsPage() {
       // Päivitetään UI
       await fetchPosts()
       
-      alert(`Postaus siirretty sarakkeeseen: ${newStatus}`)
+      setSuccessMessage(`Postaus siirretty sarakkeeseen: ${newStatus}`)
       
     } catch (error) {
       console.error('Move to next error:', error)
-      alert(t('posts.messages.moveError') + ' ' + error.message)
+      setErrorMessage(t('posts.messages.moveError') + ' ' + error.message)
     }
+  }
+
+  // Drag & Drop handlers
+  const handleDragStart = (e, post) => {
+    setDraggedPost(post)
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('text/html', e.target.outerHTML)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedPost(null)
+    setDragOverColumn(null)
+  }
+
+  const handleDragOver = (e, columnStatus) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    setDragOverColumn(columnStatus)
+  }
+
+  const handleDragLeave = () => {
+    setDragOverColumn(null)
+  }
+
+  const handleDrop = async (e, targetStatus) => {
+    e.preventDefault()
+    setDragOverColumn(null)
+    
+    if (!draggedPost) return
+    
+    // Varmistetaan että kyseessä on Supabase-postaus
+    if (draggedPost.source !== 'supabase') {
+      setErrorMessage('Siirtyminen on mahdollista vain Supabase-postauksille')
+      return
+    }
+
+    // Jos status on sama, ei tehdä mitään
+    if (draggedPost.status === targetStatus) return
+
+    // Kutsutaan handleMoveToNext funktiota
+    await handleMoveToNext(draggedPost, targetStatus)
   }
 
   // Kuvien hallinta content-media bucket:iin
@@ -1158,11 +1229,11 @@ export default function ManagePostsPage() {
         )
       );
       
-      alert('Image deleted successfully!')
+      setSuccessMessage('Image deleted successfully!')
       
     } catch (error) {
       console.error('Error deleting image:', error)
-      alert('Image deletion failed: ' + error.message)
+      setErrorMessage('Image deletion failed: ' + error.message)
     }
   }
 
@@ -1224,26 +1295,26 @@ export default function ManagePostsPage() {
         )
       );
       
-      alert('Image added successfully!')
+      setSuccessMessage('Image added successfully!')
       
     } catch (error) {
       console.error('Error adding image:', error)
-      alert('Image addition failed: ' + error.message)
+      setErrorMessage('Image addition failed: ' + error.message)
     }
   }
 
-  // Drag & drop handlers
-  const handleDragOver = (e) => {
+  // Image drag & drop handlers (for adding images to posts)
+  const handleImageDragOver = (e) => {
     e.preventDefault();
     e.currentTarget.classList.add('drag-over');
   };
 
-  const handleDragLeave = (e) => {
+  const handleImageDragLeave = (e) => {
     e.preventDefault();
     e.currentTarget.classList.remove('drag-over');
   };
 
-  const handleDrop = (e, contentId) => {
+  const handleImageDrop = (e, contentId) => {
     e.preventDefault();
     e.currentTarget.classList.remove('drag-over');
     
@@ -1396,7 +1467,13 @@ export default function ManagePostsPage() {
               })
               
               return (
-                <div key={column.status} className="kanban-column">
+                <div 
+                  key={column.status} 
+                  className={`kanban-column ${dragOverColumn === column.status ? 'drag-over' : ''}`}
+                  onDragOver={(e) => handleDragOver(e, column.status)}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, column.status)}
+                >
                   <h3 className="column-title">{t(column.titleKey)}</h3>
                   <div className="column-content">
                     {columnPosts.map(post => {
@@ -1422,6 +1499,9 @@ export default function ManagePostsPage() {
                           onPublish={handlePublishPost}
                           onSchedule={handleSchedulePost}
                           onMoveToNext={handleMoveToNext}
+                          onDragStart={handleDragStart}
+                          onDragEnd={handleDragEnd}
+                          isDragging={draggedPost?.id === safePost.id}
                           t={t}
                         />
                       )
@@ -1465,6 +1545,9 @@ export default function ManagePostsPage() {
                           onPublish={handlePublishPost}
                           onSchedule={handleSchedulePost}
                           onMoveToNext={handleMoveToNext}
+                          onDragStart={handleDragStart}
+                          onDragEnd={handleDragEnd}
+                          isDragging={draggedPost?.id === safePost.id}
                           t={t}
                         />
                       )
@@ -1746,8 +1829,9 @@ export default function ManagePostsPage() {
                       );
                     }
                     
-                                         // Photo/Reels/LinkedIn: Show images and management
-                     if (['Photo', 'Reels', 'LinkedIn'].includes(editingPost.type)) {
+                                         // Carousel: Show images and management
+                     console.log('Edit modal post type:', editingPost.type);
+                     if (editingPost.type === 'Carousel') {
                        // Get media URLs from the correct source - use thumbnail if media_urls is empty
                        let mediaUrls = editingPost.originalData?.media_urls || 
                                       editingPost.originalData?.mediaUrls ||
@@ -1755,9 +1839,13 @@ export default function ManagePostsPage() {
                                       editingPost.mediaUrls || 
                                       [];
                        
+                       console.log('Carousel mediaUrls before fallback:', mediaUrls);
+                       console.log('Carousel editingPost.thumbnail:', editingPost.thumbnail);
+                       
                        // If mediaUrls is empty but thumbnail exists, use thumbnail
                        if (mediaUrls.length === 0 && editingPost.thumbnail) {
                          mediaUrls = [editingPost.thumbnail];
+                         console.log('Using thumbnail as fallback for Carousel:', editingPost.thumbnail);
                        }
                        
                        if (mediaUrls.length === 0) {
@@ -1765,9 +1853,9 @@ export default function ManagePostsPage() {
                            <div className="content-media-management">
                              <div 
                                className="drag-drop-zone"
-                               onDragOver={handleDragOver}
-                               onDragLeave={handleDragLeave}
-                               onDrop={(e) => handleDrop(e, editingPost.id)}
+                               onDragOver={handleImageDragOver}
+                               onDragLeave={handleImageDragLeave}
+                               onDrop={(e) => handleImageDrop(e, editingPost.id)}
                              >
                                <div className="drag-drop-content">
                                  <div className="drag-drop-icon">📁</div>
@@ -1836,8 +1924,31 @@ export default function ManagePostsPage() {
                        );
                      }
                     
-                    // Video: Toisto
+                    // Video: Toisto - käytä media_urls kenttää
+                    const mediaUrls = editingPost.media_urls || editingPost.mediaUrls || editingPost.originalData?.media_urls || [];
+                    console.log('Edit modal mediaUrls:', mediaUrls);
+                    console.log('Edit modal editingPost:', editingPost);
+                    
+                    const videoUrl = mediaUrls.find(url => 
+                      url && (url.includes('.mp4') || url.includes('.webm') || url.includes('.mov') || url.includes('.avi'))
+                    );
+                    
+                    if (videoUrl) {
+                      console.log('Found video URL:', videoUrl);
+                      return (
+                        <video 
+                          src={videoUrl} 
+                          controls 
+                          className="video-element"
+                        >
+                          Your browser does not support the video tag.
+                        </video>
+                      );
+                    }
+                    
+                    // Fallback: käytä thumbnail kenttää jos se on video
                     if (editingPost.thumbnail && (editingPost.thumbnail.includes('.mp4') || editingPost.thumbnail.includes('.webm') || editingPost.thumbnail.includes('.mov') || editingPost.thumbnail.includes('.avi'))) {
+                      console.log('Using thumbnail as video fallback:', editingPost.thumbnail);
                       return (
                         <video 
                           src={editingPost.thumbnail} 
@@ -1849,8 +1960,26 @@ export default function ManagePostsPage() {
                       );
                     }
                     
-                    // Kuva: Vain preview
+                    // Kuva: Vain preview - käytä mediaUrls kenttää
+                    const imageUrl = mediaUrls.find(url => 
+                      url && !url.includes('.mp4') && !url.includes('.webm') && !url.includes('.mov') && !url.includes('.avi')
+                    );
+                    
+                    console.log('Found image URL:', imageUrl);
+                    
+                    if (imageUrl) {
+                      return (
+                        <img 
+                          src={imageUrl} 
+                          alt="thumbnail"
+                          className="video-element"
+                        />
+                      );
+                    }
+                    
+                    // Fallback: käytä thumbnail kenttää jos mediaUrls on tyhjä
                     if (editingPost.thumbnail && editingPost.thumbnail !== '/placeholder.png') {
+                      console.log('Using thumbnail as fallback:', editingPost.thumbnail);
                       return (
                         <img 
                           src={editingPost.thumbnail} 
@@ -1902,26 +2031,44 @@ export default function ManagePostsPage() {
                <div className="content-fields">
                  {/* "Kesken" sarakkeessa: Voiceover-muokkaus - vain Avatar-sarakkeessa (reels) */}
                  {editingPost.status === 'Kesken' && (editingPost.source === 'reels' || editingPost.type === 'Reels') && (
-                   <div className="form-group">
-                     <label className="form-label">{editingPost.type === 'Carousel' ? 'Kuvaus' : 'Voiceover'}</label>
-                     <textarea
-                       name="voiceover"
-                       rows={8}
-                       className="form-textarea"
-                       defaultValue={editingPost.voiceover || ""}
-                       placeholder={editingPost.type === 'Carousel' ? "Kirjoita kuvaus..." : "Kirjoita voiceover-teksti..."}
-                     />
-                     <div className="voiceover-checkbox">
-                       <label className="checkbox-label">
-                         <input 
-                           type="checkbox" 
-                           name="voiceoverReady" 
-                           defaultChecked={editingPost.voiceoverReady}
+                   <>
+                     {/* Näytä postauksen sisältö read-only tilassa */}
+                     {editingPost.caption && (
+                       <div className="form-group">
+                         <label className="form-label">Postauksen sisältö (vain luku)</label>
+                         <textarea
+                           name="caption"
+                           rows={4}
+                           className="form-textarea"
+                           defaultValue={editingPost.caption || ""}
+                           placeholder="Postauksen sisältö..."
+                           readOnly
+                           style={{ backgroundColor: '#f8f9fa', color: '#6c757d' }}
                          />
-                         <span className="checkbox-text">Vahvistan että {editingPost.type === 'Carousel' ? 'kuvaus' : 'voiceover'} on valmis ja tarkistettu</span>
-                       </label>
+                       </div>
+                     )}
+                     
+                     <div className="form-group">
+                       <label className="form-label">{editingPost.type === 'Carousel' ? 'Kuvaus' : 'Voiceover'}</label>
+                       <textarea
+                         name="voiceover"
+                         rows={8}
+                         className="form-textarea"
+                         defaultValue={editingPost.voiceover || ""}
+                         placeholder={editingPost.type === 'Carousel' ? "Kirjoita kuvaus..." : "Kirjoita voiceover-teksti..."}
+                       />
+                       <div className="voiceover-checkbox">
+                         <label className="checkbox-label">
+                           <input 
+                             type="checkbox" 
+                             name="voiceoverReady" 
+                             defaultChecked={editingPost.voiceoverReady}
+                           />
+                           <span className="checkbox-text">Vahvistan että {editingPost.type === 'Carousel' ? 'kuvaus' : 'voiceover'} on valmis ja tarkistettu</span>
+                         </label>
+                       </div>
                      </div>
-                   </div>
+                   </>
                  )}
 
                  {/* "Kesken" sarakkeessa: Perusmuokkaus - Supabase-postauksille */}
@@ -1986,18 +2133,21 @@ export default function ManagePostsPage() {
                    </div>
                  )}
 
-                 <div className="form-group">
-                   <label className="form-label">{t('posts.modals.publishDate')}</label>
-                   <input
-                     name="publishDate"
-                     type="datetime-local"
-                     className="form-input"
-                     defaultValue={editingPost.publishDate || ""}
-                     placeholder={t('posts.modals.publishDatePlaceholder')}
-                     readOnly={editingPost.status === 'Tarkistuksessa'}
-                     style={editingPost.status === 'Tarkistuksessa' ? { backgroundColor: '#f8f9fa', color: '#6c757d' } : undefined}
-                   />
-                 </div>
+                 {/* Näytä julkaisupäivä kenttä vain jos status ei ole "Avatar" tai "Kesken" */}
+                 {editingPost.status !== 'Avatar' && editingPost.status !== 'Kesken' && (
+                   <div className="form-group">
+                     <label className="form-label">{t('posts.modals.publishDate')}</label>
+                     <input
+                       name="publishDate"
+                       type="datetime-local"
+                       className="form-input"
+                       defaultValue={editingPost.publishDate || ""}
+                       placeholder={t('posts.modals.publishDatePlaceholder')}
+                       readOnly={editingPost.status === 'Tarkistuksessa'}
+                       style={editingPost.status === 'Tarkistuksessa' ? { backgroundColor: '#f8f9fa', color: '#6c757d' } : undefined}
+                     />
+                   </div>
+                 )}
                </div>
              <div className="modal-actions">
                 <div className="modal-actions-left">
@@ -2296,6 +2446,25 @@ export default function ManagePostsPage() {
           </div>
         </div>,
         document.body
+      )}
+
+      {/* Success/Error Notifications */}
+      {successMessage && (
+        <div className="notification success-notification">
+          <div className="notification-content">
+            <span className="notification-icon">✅</span>
+            <span className="notification-message">{successMessage}</span>
+          </div>
+        </div>
+      )}
+      
+      {errorMessage && (
+        <div className="notification error-notification">
+          <div className="notification-content">
+            <span className="notification-icon">❌</span>
+            <span className="notification-message">{errorMessage}</span>
+          </div>
+        </div>
       )}
     </div>
   )

@@ -2017,3 +2017,106 @@
   background: #2563eb;
   transform: translateY(-1px);
 }
+
+/* Drag & Drop Styles */
+.post-card {
+  transition: all 0.2s ease;
+  cursor: grab;
+}
+
+.post-card:active {
+  cursor: grabbing;
+}
+
+.post-card.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+  z-index: 1000;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.kanban-column {
+  transition: all 0.2s ease;
+  min-height: 200px;
+}
+
+.kanban-column.drag-over {
+  background-color: rgba(59, 130, 246, 0.1);
+  border: 2px dashed #3b82f6;
+  border-radius: 8px;
+}
+
+.kanban-column.drag-over .column-title {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+/* Drag handle indicator */
+.post-card[draggable="true"]::before {
+  content: "⋮⋮";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: #9ca3af;
+  font-size: 12px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.post-card[draggable="true"]:hover::before {
+  opacity: 1;
+}
+
+/* Notification Styles */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  max-width: 400px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s ease-out;
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  font-weight: 500;
+}
+
+.success-notification {
+  background: #10b981;
+  color: white;
+  border-left: 4px solid #059669;
+}
+
+.error-notification {
+  background: #ef4444;
+  color: white;
+  border-left: 4px solid #dc2626;
+}
+
+.notification-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.notification-message {
+  flex: 1;
+  line-height: 1.4;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

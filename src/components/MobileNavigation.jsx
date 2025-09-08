@@ -7,6 +7,8 @@ import './MobileNavigation.css'
 
 const menuItems = [
   { label: 'Etusivu', path: '/dashboard', feature: null },
+  { label: 'Kampanjat', path: '/campaigns', feature: 'Campaigns' },
+  { label: 'Segmentit', path: '/segments', feature: 'Segments' },
   { label: 'Some', path: '/posts', feature: 'Social Media' },
   { label: 'Blog & Newsletter', path: '/blog-newsletter', feature: 'Social Media' },
   { label: 'Sisältöstrategia', path: '/strategy', feature: 'Social Media' },
@@ -14,6 +16,7 @@ const menuItems = [
   { label: 'Assistentti', path: '/ai-chat', feature: 'Marketing assistant' },
   { label: 'Dev', path: '/dev', feature: null, adminOnly: true },
   { label: 'Admin', path: '/admin', feature: null, adminOnly: true },
+  { label: 'Admin Blog', path: '/admin-blog', feature: null, adminOnly: true },
 ]
 
 const bottomItems = [

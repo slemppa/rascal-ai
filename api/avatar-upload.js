@@ -15,7 +15,9 @@ export default async function handler(req, res) {
 
   try {
     const form = formidable({
-      maxFileSize: 50 * 1024 * 1024, // 50MB
+      maxFileSize: 10 * 1024 * 1024, // 10MB - riittävä avatar-kuville
+      maxFields: 10,
+      maxFieldsSize: 1024 * 1024, // 1MB metadata
     })
 
     const [fields, files] = await form.parse(req)
@@ -30,6 +32,13 @@ export default async function handler(req, res) {
     
     if (!file) {
       return res.status(400).json({ error: 'No file provided' })
+    }
+
+    // Tarkista tiedoston koko
+    if (file.size > 10 * 1024 * 1024) {
+      return res.status(400).json({ 
+        error: 'File too large. Maximum size is 10MB for avatar images.' 
+      })
     }
 
     // Tunnista tiedostotyyppi

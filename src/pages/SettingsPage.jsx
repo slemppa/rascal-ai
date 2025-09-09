@@ -509,6 +509,12 @@ function AvatarSectionMulti({ companyId }) {
     if (!file) return;
     if (images.length >= 4) return;
     
+    // Tarkista tiedoston koko (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setError('Tiedosto on liian suuri. Maksimikoko avatar-kuville on 10MB.');
+      return;
+    }
+    
     setLoading(true);
     setError('');
     

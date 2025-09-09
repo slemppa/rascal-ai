@@ -2276,21 +2276,23 @@ export default function ManagePostsPage() {
                 </div>
               </div>
               
-              {/* Päivämäärän valinta */}
+              {/* Päivämäärän ja kellonajan valinta */}
               <div className="form-group">
-                <label className="form-label">Julkaisupäivä</label>
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <label className="form-label">Julkaisupäivä ja -aika</label>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
                   <input
-                    type="datetime-local"
-                    id="publishDateTime"
-                    name="publishDateTime"
-                    value={publishingPost?.scheduledDate ? new Date(publishingPost.scheduledDate).toISOString().slice(0, 16) : ''}
+                    type="date"
+                    id="publishDate"
+                    name="publishDate"
+                    value={publishingPost?.scheduledDate ? new Date(publishingPost.scheduledDate).toISOString().split('T')[0] : ''}
                     onChange={(e) => {
-                      const newDate = e.target.value ? new Date(e.target.value).toISOString() : null;
+                      const dateValue = e.target.value;
+                      const timeValue = publishingPost?.scheduledDate ? new Date(publishingPost.scheduledDate).toTimeString().slice(0, 5) : '12:00';
+                      const newDateTime = dateValue && timeValue ? new Date(`${dateValue}T${timeValue}`).toISOString() : null;
                       setPublishingPost(prev => ({
                         ...prev,
-                        scheduledDate: newDate,
-                        publishDate: e.target.value
+                        scheduledDate: newDateTime,
+                        publishDate: dateValue
                       }));
                     }}
                     style={{
@@ -2298,7 +2300,30 @@ export default function ManagePostsPage() {
                       border: '1px solid #d1d5db',
                       borderRadius: '6px',
                       fontSize: '14px',
-                      minWidth: '200px'
+                      minWidth: '150px'
+                    }}
+                  />
+                  <input
+                    type="time"
+                    id="publishTime"
+                    name="publishTime"
+                    value={publishingPost?.scheduledDate ? new Date(publishingPost.scheduledDate).toTimeString().slice(0, 5) : '12:00'}
+                    onChange={(e) => {
+                      const timeValue = e.target.value;
+                      const dateValue = publishingPost?.scheduledDate ? new Date(publishingPost.scheduledDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+                      const newDateTime = dateValue && timeValue ? new Date(`${dateValue}T${timeValue}`).toISOString() : null;
+                      setPublishingPost(prev => ({
+                        ...prev,
+                        scheduledDate: newDateTime,
+                        publishTime: timeValue
+                      }));
+                    }}
+                    style={{
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      minWidth: '120px'
                     }}
                   />
                   <span style={{ fontSize: '14px', color: '#6b7280' }}>

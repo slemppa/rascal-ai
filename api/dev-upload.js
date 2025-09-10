@@ -16,20 +16,17 @@ export default async function handler(req, res) {
     const form = formidable({ maxFileSize: 100 * 1024 * 1024, maxFields: 20 })
     const [fields, files] = await form.parse(req)
     const uploadedFiles = files.files || []
-    const companyId = fields.companyId?.[0]
-    const assistantId = fields.assistantId?.[0]
+    const userId = fields.userId?.[0]
     const action = fields.action?.[0] || 'feed'
     const fileNamesField = fields.fileNames?.[0]
     const providedNames = (() => { try { return JSON.parse(fileNamesField || '[]') } catch { return [] } })()
 
-    if (!companyId) return res.status(400).json({ error: 'CompanyId puuttuu' })
-    if (!assistantId) return res.status(400).json({ error: 'AssistantId puuttuu' })
+    if (!userId) return res.status(400).json({ error: 'UserId puuttuu' })
     if (uploadedFiles.length === 0) return res.status(400).json({ error: 'Ei tiedostoja annettu' })
 
     const fd = new FormData()
     fd.append('action', action)
-    fd.append('companyId', companyId)
-    fd.append('assistantId', assistantId)
+    fd.append('userId', userId)
     // Välitä nimet myös eksplisiittisesti payloadissa
     try {
       fd.append('fileNames', fileNamesField || JSON.stringify(providedNames))

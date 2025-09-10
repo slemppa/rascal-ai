@@ -262,7 +262,7 @@ export default function AIChatPage() {
       formData.append('action', 'feed')
       formData.append('userId', userData.id)
 
-      await axios.post('/api/upload-knowledge', formData, {
+      await axios.post('/api/dev-upload', formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
           'x-api-key': import.meta.env.N8N_SECRET_KEY
@@ -298,10 +298,8 @@ export default function AIChatPage() {
 
   const handleFileDeletion = async (fileId) => {
     try {
-      await axios.post('/api/delete-files', {
-        action: 'delete',
-        userId: userData.id,
-        fileId
+      await axios.post('/api/dev-delete-files', {
+        ids: [fileId]
       }, {
         headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
       })
@@ -375,7 +373,7 @@ export default function AIChatPage() {
       formData.append('action', 'feed')
       formData.append('userId', userData.id)
       console.log('Lähetetään tiedostot...')
-      await axios.post('/api/upload-knowledge', formData, {
+      await axios.post('/api/dev-upload', formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
           'x-api-key': import.meta.env.N8N_SECRET_KEY
@@ -403,7 +401,7 @@ export default function AIChatPage() {
     Array.from(files).forEach(file => formData.append('files', file))
     formData.append('action', 'feed')
     formData.append('userId', userId)
-    return axios.post('/api/upload-knowledge', formData, {
+    return axios.post('/api/dev-upload', formData, {
       headers: { 
         'Content-Type': 'multipart/form-data',
         'x-api-key': import.meta.env.N8N_SECRET_KEY
@@ -413,10 +411,8 @@ export default function AIChatPage() {
 
   // UUSI: Assistentin tiedoston poisto (POST + action)
   async function deleteAssistantKnowledgeFile({ fileId, userId }) {
-    return axios.post('/api/delete-files', {
-      action: 'delete',
-      userId,
-      fileId
+    return axios.post('/api/dev-delete-files', {
+      ids: [fileId]
     }, {
       headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
     })

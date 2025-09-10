@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.55.0](https://github.com/slemppa/rascal-ai/compare/v1.54.1...v1.55.0) (2025-09-10)
+
+
+### 📚 Documentation
+
+* Update tech stack documentation ([64a85be](https://github.com/slemppa/rascal-ai/commit/64a85befa466025ce85da9648e9fde45dbda08e7))
+
+
+### 🐛 Bug Fixes
+
+* korjaa chat sivun companyId bugi ([feca228](https://github.com/slemppa/rascal-ai/commit/feca2284f359a7ae56f8131c2eca25b0bb73149b))
+* korjaa sidebar oikeudet company_id muutoksen jälkeen ([8afb5b4](https://github.com/slemppa/rascal-ai/commit/8afb5b4f88fcb69354babb7bc166b65a35d5f58e))
+* Use correct dev endpoints for file upload/delete in AI chat ([30ea159](https://github.com/slemppa/rascal-ai/commit/30ea15960bfad7ccec6d12e73869aec77fe5569a))
+* Use relative API path for carousel template ([4e5a5c6](https://github.com/slemppa/rascal-ai/commit/4e5a5c6c82dcc27f27cb580f2e5d133ddd70975b))
+
+
+### ✨ Features
+
+* Add drag & drop and replace alerts with toast notifications ([3703ec4](https://github.com/slemppa/rascal-ai/commit/3703ec42fbb16513ebed5908a52cfd3bfaddbf51))
+* Add Photoshop-style color picker to carousel settings ([1934bd7](https://github.com/slemppa/rascal-ai/commit/1934bd70749302fd21228451cab16c550730c129))
+* Add publish date selection to publish modal ([48d0d27](https://github.com/slemppa/rascal-ai/commit/48d0d27da027374f7a253212c73fcf33ee722b86))
+* Add publish date/time selection to publish modal ([0db52d7](https://github.com/slemppa/rascal-ai/commit/0db52d72019a54c108fe0a4d44255f7b42f9160d))
+* improve inbound settings modal and calls tab layout ([c166d86](https://github.com/slemppa/rascal-ai/commit/c166d865b266691bad00d34c314d27752efe9d81))
+* update AI chat to use userId instead of companyId/assistantId ([95dd2e4](https://github.com/slemppa/rascal-ai/commit/95dd2e4ff2590beb85086c3175f4578280fb0afb))
+
 ### [1.54.1](https://github.com/slemppa/rascal-ai/compare/v1.54.0...v1.54.1) (2025-09-05)
 
 

@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import AddCallTypeModal from '../components/AddCallTypeModal'
 import EditCallTypeModal from '../components/EditCallTypeModal'
+import EditInboundSettingsModal from '../components/EditInboundSettingsModal'
 import CRM from '../components/crm.jsx'
 import './CallPanel.css'
 import CallStats from './CallStats'
@@ -51,6 +52,8 @@ export default function CallPanel() {
   const [inboundSettingsId, setInboundSettingsId] = useState(null)
   const [inboundSettingsLoaded, setInboundSettingsLoaded] = useState(false)
   const [showInboundModal, setShowInboundModal] = useState(false)
+  const [showEditInboundModal, setShowEditInboundModal] = useState(false)
+  const [editingInboundSettings, setEditingInboundSettings] = useState(null)
   const [currentAudio, setCurrentAudio] = useState(null)
   const [audioInfo, setAudioInfo] = useState('')
   const audioElementsRef = useRef([])
@@ -667,6 +670,67 @@ export default function CallPanel() {
     }
   }
 
+  const handleSaveEditInboundSettings = async () => {
+    setError('')
+    try {
+      if (!editingInboundSettings) return
+
+      const inboundVoiceObj = getVoiceOptions().find(v => v.value === editingInboundSettings.voice)
+      const inboundVoiceId = inboundVoiceObj?.id
+      
+      // Hae käyttäjän tiedot (vapi_inbound_assistant_id)
+      const { data: userProfile, error: userError } = await supabase
+        .from('users')
+        .select('contact_email, contact_person, company_name, vapi_inbound_assistant_id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (userError || !userProfile) {
+        setError('Käyttäjää ei löytynyt')
+        return
+      }
+
+      // Käytä uutta API endpointia webhook-integraatiolla
+      const response = await fetch('/api/save-inbound-settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          voiceId: inboundVoiceId,
+          script: editingInboundSettings.script,
+          welcomeMessage: editingInboundSettings.welcomeMessage,
+          userId: user.id, // auth_user_id
+          userEmail: userProfile.contact_email,
+          userName: userProfile.contact_person,
+          companyName: userProfile.company_name,
+          vapiInboundAssistantId: userProfile.vapi_inbound_assistant_id,
+          inboundSettingsId: inboundSettingsId
+        })
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        // Tarkista onko kyseessä N8N workflow virhe
+        if (result.error && result.error.includes('N8N workflow ei ole aktiivinen')) {
+          alert('⚠️ Inbound-asetukset tallennettu! N8N workflow ei ole vielä aktiivinen, mutta data on lähetetty.')
+        } else {
+          throw new Error(result.error || 'Inbound-asetusten tallennus epäonnistui')
+        }
+      } else {
+        // Päivitä paikalliset state-muuttujat
+        setInboundVoice(editingInboundSettings.voice)
+        setInboundScript(editingInboundSettings.script)
+        setInboundWelcomeMessage(editingInboundSettings.welcomeMessage)
+        alert('✅ Inbound-asetukset tallennettu onnistuneesti!')
+      }
+    } catch (e) {
+      console.error('Inbound settings error:', e)
+      setError('Inbound-asetusten tallennus epäonnistui: ' + (e.message || e))
+    }
+  }
+
   // Puhelun tyyppien hallinta - N8N-integraatio
   const handleSaveCallType = async () => {
     try {
@@ -981,6 +1045,11 @@ export default function CallPanel() {
 
   const openAddModal = () => {
     setShowAddModal(true)
+  }
+
+  const openEditInboundModal = (inboundSettings) => {
+    setEditingInboundSettings(inboundSettings)
+    setShowEditInboundModal(true)
   }
 
   // Hae puheluloki N8N:n kautta
@@ -2153,6 +2222,7 @@ export default function CallPanel() {
             inboundScript={inboundScript}
             setInboundScript={setInboundScript}
             handleSaveInboundSettings={handleSaveInboundSettings}
+            openEditInboundModal={openEditInboundModal}
           />
         )}
           
@@ -3354,6 +3424,21 @@ export default function CallPanel() {
           editingCallType={editingCallType}
           setEditingCallType={setEditingCallType}
           onSave={handleSaveCallType}
+        />
+        
+        <EditInboundSettingsModal
+          showModal={showEditInboundModal}
+          onClose={async () => {
+            // Tallennetaan automaattisesti kun suljetaan
+            await handleSaveEditInboundSettings()
+            setShowEditInboundModal(false)
+            setEditingInboundSettings(null)
+          }}
+          editingInboundSettings={editingInboundSettings}
+          setEditingInboundSettings={setEditingInboundSettings}
+          onSave={handleSaveEditInboundSettings}
+          getVoiceOptions={getVoiceOptions}
+          playVoiceSample={playVoiceSample}
         />
         
         {/* Inbound-asetukset modaali */}

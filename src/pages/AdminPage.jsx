@@ -728,21 +728,21 @@ export default function AdminPage() {
                          </div>
                          <div className="modal-actions">
                            <div className="modal-actions-left">
-                             <button
-                               className="cancel-button"
+                             <Button
+                               variant="secondary"
                                onClick={closeModal}
                              >
                                Peruuta
-                             </button>
+                             </Button>
                            </div>
                            <div className="modal-actions-right">
-                             <button
-                               className="save-button"
+                             <Button
+                               variant="primary"
                                onClick={saveModalChanges}
                                disabled={isSaving || Object.keys(modalChanges).length === 0}
                              >
                                {isSaving ? 'Tallennetaan...' : 'Tallenna'}
-                             </button>
+                             </Button>
                            </div>
                          </div>
                        </div>

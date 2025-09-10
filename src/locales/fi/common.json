@@ -661,7 +661,7 @@
       },
       "single": {
         "header": "Yksittäinen puhelu",
-        "description": "Valitse puhelun tyyppi ja tiedot modaalissa.",
+        "description": "Valitse puhelun tyyppi ja asiakkaan tiedot modaalissa. Soita yksi puhelu kerrallaan.",
         "startButton": "Soita yksittäinen puhelu"
       },
       "settings": {

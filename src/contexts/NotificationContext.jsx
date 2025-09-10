@@ -18,6 +18,25 @@ export const NotificationProvider = ({ children }) => {
   const [unreadCount, setUnreadCount] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [showVersionNotification, setShowVersionNotification] = useState(false)
+
+  // Tarkista onko uusi versio - näytä aina jos versio on eri kuin edellinen
+  const checkVersionUpdate = useCallback(() => {
+    const currentVersion = process.env.REACT_APP_VERSION || '1.56.0'
+    const lastSeenVersion = localStorage.getItem('lastSeenVersion')
+    
+    // Näytä aina jos versio on eri kuin viimeksi nähty
+    if (lastSeenVersion !== currentVersion) {
+      setShowVersionNotification(true)
+    }
+  }, [])
+
+  // Merkitse versio nähdyksi
+  const markVersionAsSeen = useCallback(() => {
+    const currentVersion = process.env.REACT_APP_VERSION || '1.56.0'
+    localStorage.setItem('lastSeenVersion', currentVersion)
+    setShowVersionNotification(false)
+  }, [])
 
   // Hae notifikaatiot suoraan Supabasesta
   const fetchNotifications = useCallback(async (limit = 50, offset = 0) => {
@@ -265,19 +284,22 @@ export const NotificationProvider = ({ children }) => {
   useEffect(() => {
     if (user) {
       fetchUnreadCount()
+      checkVersionUpdate()
     }
-  }, [user, fetchUnreadCount])
+  }, [user, fetchUnreadCount, checkVersionUpdate])
 
   const value = {
     notifications,
     unreadCount,
     loading,
     error,
+    showVersionNotification,
     fetchNotifications,
     fetchUnreadCount,
     markAsRead,
     markAllAsRead,
     deleteNotification,
+    markVersionAsSeen,
     refresh: () => fetchNotifications()
   }
 

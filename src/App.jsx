@@ -17,6 +17,7 @@ import Sidebar from './components/Sidebar'
 import MobileNavigation from './components/MobileNavigation'
 import InactivityWarningModal from './components/InactivityWarningModal'
 import ChatbotWidget from './components/ChatbotWidget'
+import VersionNotification from './components/VersionNotification'
 import { supabase } from './lib/supabase'
 import ManagePostsPage from './pages/ManagePostsPage'
 import AdminPage from './pages/AdminPage'
@@ -351,6 +352,7 @@ export default function App() {
 
         {/* Lisää muut suojatut reitit tähän samalla tavalla, jos haluat menun näkyvän niilläkin */}
       </Routes>
+        <VersionNotification />
           </NotificationProvider>
         </PostsProvider>
         <ConditionalChatbotWidget />

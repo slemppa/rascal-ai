@@ -1,9 +1,16 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { readFileSync } from 'fs'
+
+// Lue versio package.json:sta
+const packageJson = JSON.parse(readFileSync('./package.json', 'utf8'))
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  define: {
+    'process.env.REACT_APP_VERSION': JSON.stringify(packageJson.version)
+  },
   server: {
     // Automaattinen päivitys ja HMR
     hmr: {

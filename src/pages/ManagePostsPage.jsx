@@ -409,20 +409,15 @@ export default function ManagePostsPage() {
       console.log('fetchMixpostPosts: Starting...')
       setMixpostLoading(true)
       
-      // Kutsu omaa proxy-endpointtia
-      const response = await fetch('/api/mixpost-posts', {
-        method: 'GET',
+      // Kutsu omaa proxy-endpointtia axiosilla
+      const response = await axios.get('/api/mixpost-posts', {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
         }
       })
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const mixpostPosts = await response.json()
+      const mixpostPosts = response.data
       console.log('Mixpost posts received:', mixpostPosts)
       
       // Erottele scheduled ja published postaukset

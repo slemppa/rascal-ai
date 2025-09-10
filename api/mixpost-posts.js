@@ -61,7 +61,20 @@ export default async function handler(req, res) {
       throw new Error(`Mixpost API error: ${response.status}`)
     }
 
-    const data = await response.json()
+    const responseData = await response.json()
+    console.log('Mixpost API response:', responseData)
+    
+    // Mixpost palauttaa datan { data: [...] } muodossa
+    const data = responseData.data || responseData
+    
+    // Tarkista että data on array
+    if (!Array.isArray(data)) {
+      console.error('Mixpost API returned non-array data:', data)
+      return res.status(500).json({ 
+        error: 'Mixpost API palautti väärän muotoisen datan', 
+        details: 'Expected array, got: ' + typeof data 
+      })
+    }
     
     // Filtteröi vain scheduled postaukset ja muunna oikeaan muotoon
     const scheduledPosts = data
@@ -78,6 +91,7 @@ export default async function handler(req, res) {
         type: 'Photo'
       }))
 
+    console.log('Processed scheduled posts:', scheduledPosts)
     return res.status(200).json(scheduledPosts)
 
   } catch (error) {

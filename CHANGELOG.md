@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.57.0](https://github.com/slemppa/rascal-ai/compare/v1.56.0...v1.57.0) (2025-09-10)
+
+
+### ✨ Features
+
+* add version notification system ([a9e283a](https://github.com/slemppa/rascal-ai/commit/a9e283ae759d67103dfc4ee55768480bd698bf14))
+
 ## [1.56.0](https://github.com/slemppa/rascal-ai/compare/v1.55.0...v1.56.0) (2025-09-10)
 
 

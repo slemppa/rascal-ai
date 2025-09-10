@@ -17,6 +17,8 @@ export default function LandingPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [articles, setArticles] = useState([])
   const [articlesLoading, setArticlesLoading] = useState(true)
+  const [customerLogos, setCustomerLogos] = useState([])
+  const [logosLoading, setLogosLoading] = useState(true)
   const dateLocale = i18n.language === 'fi' ? 'fi-FI' : 'en-US'
 
   useEffect(() => {
@@ -124,6 +126,47 @@ export default function LandingPage() {
     }
 
     fetchLatestArticles()
+  }, [])
+
+  // Hae asiakkaiden logot samalla logiikalla kuin CustomersPage (suora Supabase-kysely)
+  useEffect(() => {
+    const fetchLogos = async () => {
+      try {
+        setLogosLoading(true)
+        const { data, error } = await supabase
+          .from('testimonials')
+          .select('id, name, title, company, quote, avatar_url, published, created_at')
+          .eq('published', true)
+          .order('created_at', { ascending: false })
+
+        if (error) {
+          console.error('Error fetching testimonials:', error)
+          setCustomerLogos([])
+          return
+        }
+
+        const items = Array.isArray(data) ? data : []
+        const logos = items
+          .map((it) => ({ id: it.id, company: it.company || it.name || 'Customer', url: it.avatar_url || '' }))
+          .filter((l) => Boolean(l.company))
+        const unique = []
+        const seen = new Set()
+        for (const l of logos) {
+          const key = (l.company || '').toLowerCase().trim()
+          if (!seen.has(key)) {
+            seen.add(key)
+            unique.push(l)
+          }
+        }
+        setCustomerLogos(unique)
+      } catch (e) {
+        console.error('Failed to load customer logos', e)
+        setCustomerLogos([])
+      } finally {
+        setLogosLoading(false)
+      }
+    }
+    fetchLogos()
   }, [])
 
   return (
@@ -246,6 +289,44 @@ export default function LandingPage() {
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Asiakaslogot */}
+              <div className="section" id="customers">
+                <div className="section-header">
+                  <h2 className="section-title">{t('sections.customersTitle', { defaultValue: 'Luotettu kumppani' })}</h2>
+                  <p className="section-description">{t('sections.customersDescription', { defaultValue: 'Valikoituja asiakkaita ja kumppaneita.' })}</p>
+                </div>
+                {logosLoading ? (
+                  <div className="articles-loading">
+                    <div className="loading-spinner"></div>
+                    <p>{t('articles.loading')}</p>
+                  </div>
+                ) : customerLogos.length === 0 ? (
+                  <div className="no-articles">
+                    <p>{t('articles.none')}</p>
+                  </div>
+                ) : (
+                  <div className="logos-grid">
+                    {customerLogos.slice(0, 24).map((logo) => (
+                      <div key={logo.id || logo.company} className="logo-card" title={logo.company} aria-label={logo.company}>
+                        {logo.url ? (
+                          <img
+                            className="logo-img"
+                            src={logo.url}
+                            alt={logo.company}
+                            loading="lazy"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none'
+                            }}
+                          />
+                        ) : (
+                          <span className="logo-fallback-text">{logo.company}</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Uusimmat artikkelit */}

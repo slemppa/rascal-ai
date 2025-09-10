@@ -3278,7 +3278,10 @@ export default function CallPanel() {
                   variant="secondary"
                   className="modal-close-btn"
                 >
-                  Sulje
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
                 </Button>
               </div>
               {loadingLogDetail ? (
@@ -3552,7 +3555,10 @@ export default function CallPanel() {
                   variant="secondary"
                   onClick={() => setShowInboundModal(false)}
                 >
-                  Peruuta
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
                 </Button>
                 <Button
                   onClick={async () => {
@@ -3594,7 +3600,10 @@ export default function CallPanel() {
                   aria-label={t('calls.common.close')}
                   title="Sulje"
                 >
-                  ×
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
                 </button>
               </div>
               
@@ -3895,7 +3904,10 @@ export default function CallPanel() {
                   variant="secondary"
                   className="modal-close-btn"
                 >
-                  Sulje
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
                 </Button>
               </div>
 
@@ -3935,7 +3947,12 @@ export default function CallPanel() {
                     </select>
 
                     <div style={{ display: 'flex', gap: 12, justifyContent: 'space-between' }}>
-                      <Button onClick={() => { setShowSingleCallModal(false); setSingleCallStep(1) }} variant="secondary">Peruuta</Button>
+                      <Button onClick={() => { setShowSingleCallModal(false); setSingleCallStep(1) }} variant="secondary">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </Button>
                       <Button onClick={() => setSingleCallStep(2)} disabled={!callType || !selectedVoice} variant="primary">Jatka →</Button>
                     </div>
                   </div>

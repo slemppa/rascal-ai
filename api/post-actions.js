@@ -4,6 +4,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUP
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
 
 export default async function handler(req, res) {
+  console.log('post-actions API called:', req.method, req.url)
+  
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
@@ -19,6 +21,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('post-actions request body:', req.body)
     const { 
       post_id,
       user_id,

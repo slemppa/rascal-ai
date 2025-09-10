@@ -105,7 +105,7 @@ const PostCard = React.memo(({ post, onEdit, onDelete, onPublish, onSchedule, on
                 variant="secondary"
                 style={{ fontSize: 11, padding: '4px 8px' }}
               >
-                ✏️ Muokkaa
+                {post.source === 'reels' ? 'Tarkista' : '✏️ Muokkaa'}
               </Button>
               
               {post.status === 'Kesken' && (
@@ -602,7 +602,10 @@ export default function ManagePostsPageOptimized() {
                   variant="secondary" 
                   onClick={() => setModals({ showCreateModal: false })}
                 >
-                  Peruuta
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
                 </Button>
                 <Button type="submit" variant="primary">
                   Luo julkaisu
@@ -632,7 +635,10 @@ export default function ManagePostsPageOptimized() {
               </div>
               <div className="modal-actions">
                 <Button variant="secondary" onClick={() => setModals({ showEditModal: false })}>
-                  Peruuta
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
                 </Button>
                 <Button variant="primary">
                   Tallenna
@@ -655,7 +661,10 @@ export default function ManagePostsPageOptimized() {
               <p>Haluatko varmasti julkaista julkaisun "{publishingPost.title}"?</p>
               <div className="modal-actions">
                 <Button variant="secondary" onClick={() => setModals({ showPublishModal: false })}>
-                  Peruuta
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
                 </Button>
                 <Button variant="primary">
                   Julkaise
@@ -681,7 +690,10 @@ export default function ManagePostsPageOptimized() {
               </div>
               <div className="modal-actions">
                 <Button variant="secondary" onClick={() => setModals({ showScheduleModal: false })}>
-                  Peruuta
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
                 </Button>
                 <Button variant="primary">
                   Aikatauluta

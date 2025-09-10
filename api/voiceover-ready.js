@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { recordId, voiceover, voiceoverReady, companyId } = req.body
+    const { recordId, voiceover, voiceoverReady, companyId, selectedAvatarId, action } = req.body
 
     if (!recordId || !companyId) {
       return res.status(400).json({ error: 'Missing required fields' })
@@ -23,8 +23,9 @@ export default async function handler(req, res) {
       voiceover,
       voiceoverReady,
       companyId,
+      selectedAvatarId,
       timestamp: new Date().toISOString(),
-      action: 'voiceover_ready'
+      action: action || 'voiceover_ready'
     }
 
     console.log('Sending voiceover ready data to N8N:', webhookData)
@@ -48,11 +49,13 @@ export default async function handler(req, res) {
 
     const result = await response.text()
     console.log('N8N webhook response:', result)
+    console.log('N8N webhook sent data:', JSON.stringify(webhookData, null, 2))
 
     return res.status(200).json({ 
       success: true, 
       message: 'Voiceover status updated successfully',
-      data: webhookData
+      data: webhookData,
+      n8nResponse: result
     })
 
   } catch (error) {

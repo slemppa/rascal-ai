@@ -209,34 +209,78 @@ export default function AdminTestimonialsPage({ embedded = false }) {
               </div>
               <div className="form-actions">
                 <button className="btn btn-primary" onClick={async () => {
-                  // Lähetä aina webhookiin; lisää tiedosto jos on
-                  const fd = new FormData()
-                  fd.append('action', form.id ? 'update' : 'create')
-                  if (form.id) fd.append('id', form.id)
-                  fd.append('name', form.name || '')
-                  fd.append('title', form.title || '')
-                  fd.append('company', form.company || '')
-                  fd.append('quote', form.quote || '')
-                  fd.append('published', String(!!form.published))
-                  if (form.avatar_url) fd.append('avatar_url', form.avatar_url)
-                  if (form.avatar_file) {
-                    const sanitizedFilename = sanitizeFilename(form.avatar_file.name)
-                    fd.append('avatar', form.avatar_file, sanitizedFilename)
-                  }
                   try {
                     setLoading(true)
-                    const resp = await fetch('/api/testimonials-management', { method: 'POST', body: fd })
-                    if (!resp.ok) throw new Error('Upload failed')
-                    setForm({ id: null, name: '', title: '', company: '', quote: '', avatar_url: '', published: true })
-                    setTempAvatarPreview('')
-                    await fetchAll()
+                    if (form.id) {
+                      // Muokkaus: jos uusi kuva on valittu, käytä backend-endpointtia (upload + update)
+                      if (form.avatar_file) {
+                        const fd = new FormData()
+                        fd.append('action', 'update')
+                        fd.append('id', String(form.id))
+                        fd.append('name', form.name || '')
+                        fd.append('title', form.title || '')
+                        fd.append('company', form.company || '')
+                        fd.append('quote', form.quote || '')
+                        fd.append('published', String(!!form.published))
+                        if (form.avatar_url) fd.append('avatar_url', form.avatar_url)
+                        const sanitizedFilename = sanitizeFilename(form.avatar_file.name)
+                        fd.append('avatar', form.avatar_file, sanitizedFilename)
+                        const resp = await fetch('/api/testimonials-management', { method: 'POST', body: fd })
+                        if (!resp.ok) throw new Error('Update with image failed')
+                      } else {
+                        // Ei uutta kuvaa → suora Supabase-päivitys kentille
+                        const { id, avatar_file, ...fields } = form
+                        const updateFields = {
+                          name: fields.name || '',
+                          title: fields.title || '',
+                          company: fields.company || '',
+                          quote: fields.quote || '',
+                          avatar_url: fields.avatar_url || '',
+                          published: !!fields.published
+                        }
+                        const { error } = await supabase
+                          .from('testimonials')
+                          .update(updateFields)
+                          .eq('id', id)
+                        if (error) throw error
+                      }
+                      // Nollaa ja päivitä lista
+                      setForm({ id: null, name: '', title: '', company: '', quote: '', avatar_url: '', published: true })
+                      setTempAvatarPreview('')
+                      await fetchAll()
+                    } else {
+                      // Uusi: käytä nykyistä webhookia, jotta kuvan lataus toimii
+                      const fd = new FormData()
+                      fd.append('action', 'create')
+                      fd.append('name', form.name || '')
+                      fd.append('title', form.title || '')
+                      fd.append('company', form.company || '')
+                      fd.append('quote', form.quote || '')
+                      fd.append('published', String(!!form.published))
+                      if (form.avatar_url) fd.append('avatar_url', form.avatar_url)
+                      if (form.avatar_file) {
+                        const sanitizedFilename = sanitizeFilename(form.avatar_file.name)
+                        fd.append('avatar', form.avatar_file, sanitizedFilename)
+                      }
+                      const resp = await fetch('/api/testimonials-management', { method: 'POST', body: fd })
+                      if (!resp.ok) throw new Error('Create failed')
+                      setForm({ id: null, name: '', title: '', company: '', quote: '', avatar_url: '', published: true })
+                      setTempAvatarPreview('')
+                      await fetchAll()
+                    }
                   } catch (e) {
                     console.error(e)
+                    alert('Tallennus epäonnistui: ' + (e?.message || 'Tuntematon virhe'))
                   } finally {
                     setLoading(false)
                   }
                 }} disabled={loading || !form.name || !form.quote}>{form.id ? 'Tallenna' : 'Lähetä'}</button>
-                {form.id && <button className="btn btn-secondary" onClick={() => setForm({ id: null, name: '', title: '', company: '', quote: '', avatar_url: '', published: true })}>Peruuta</button>}
+                {form.id && <button className="btn btn-secondary" onClick={() => setForm({ id: null, name: '', title: '', company: '', quote: '', avatar_url: '', published: true })}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>}
               </div>
             </div>
           </div>

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import PageMeta from '../components/PageMeta'
 import SiteHeader from '../components/SiteHeader'
-import { supabase } from '../lib/supabase'
 import './LandingPage.css'
 import './CustomersPage.css'
 

@@ -1419,6 +1419,54 @@ html, body, #root, .landing-page {
   font-size: 1.1rem;
 }
 
+/* Customers logos grid */
+.logos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto 20px auto;
+  padding: 0 10px;
+}
+
+.logo-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16/10;
+  overflow: hidden;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+}
+
+.logo-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: #fff;
+  filter: grayscale(100%);
+}
+
+.logo-fallback-text {
+  color: #24170f;
+  opacity: 0.7;
+  font-weight: 600;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .logos-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .logo-card {
+    padding: 0;
+  }
+  .logo-img { height: auto; }
+}
+
 /* Responsive Articles - Moved to src/styles/article-cards.css */
 
 /* Implementation Section Styles - Uses same styles as features */

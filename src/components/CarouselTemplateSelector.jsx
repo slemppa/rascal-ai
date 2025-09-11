@@ -7,20 +7,56 @@ import { useTranslation } from 'react-i18next';
 import './CarouselTemplateSelector.css';
 
 const templates = [
-  { id: 'template1', name: 'Moderni', image: '/carousel1.jpg', placidId: 'xpnx52obc7b5r' },
-  { id: 'template2', name: 'Klassinen', image: '/carousel2.jpg', placidId: 'xv4vrp3ifldw3' }
+  { 
+    id: 'template1', 
+    name: 'Moderni', 
+    placidId: 'xv4vrp3ifldw3',
+    type: 'text',
+    content: {
+      mainText: 'Säästä tunteja\nviikossa – näe\nkaikki\nmarkkinointisi\ntärkeät numerot\nyhdestä\nnäkymästä',
+      subText: 'Rascal AI',
+      url: null,
+      defaultBgColor: '#000000'
+    }
+  },
+  { 
+    id: 'template2', 
+    name: 'Klassinen', 
+    placidId: 'xpnx52obc7b5r',
+    type: 'text',
+    content: {
+      mainText: 'Loppu\nsähläämiselle!\nKaikki tärkeä tieto\nkeskitetysti ilman\nexcelien ja\ntyökalujen välistä\nhyppimistä',
+      subText: 'Rascal AI',
+      url: 'www.rascal.ai',
+      defaultBgColor: '#f5f5f5'
+    }
+  }
 ];
+
+// Funktio joka laskee tekstivärin kontrastin perusteella
+const getContrastingTextColor = (hexColor) => {
+  const color = hexColor.replace('#', '');
+  const r = parseInt(color.slice(0, 2), 16);
+  const g = parseInt(color.slice(2, 4), 16);
+  const b = parseInt(color.slice(4, 6), 16);
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  return brightness > 128 ? '#000000' : '#ffffff';
+};
 
 export default function CarouselTemplateSelector() {
   const { user } = useAuth();
   const { t } = useTranslation('common');
   const [selected, setSelected] = useState(templates[0].id);
-  const [selectedColor, setSelectedColor] = useState('#3b82f6');
+  const [selectedColor, setSelectedColor] = useState(templates[0].content.defaultBgColor);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSelect = (id) => setSelected(id);
+  const handleSelect = (id) => {
+    setSelected(id);
+    const template = templates.find(t => t.id === id);
+    setSelectedColor(template.content.defaultBgColor);
+  };
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -29,7 +65,6 @@ export default function CarouselTemplateSelector() {
     try {
       const selectedTemplate = templates.find(t => t.id === selected);
       
-      // Hae companyId Supabase users-taulusta
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('company_id')
@@ -47,7 +82,6 @@ export default function CarouselTemplateSelector() {
       };
       
       console.log('Lähetetään payload:', payload);
-      console.log('selectedColor arvo:', selectedColor, 'tyyppi:', typeof selectedColor);
       
       const res = await fetch('/api/carousel-template', {
         method: 'POST',
@@ -69,14 +103,12 @@ export default function CarouselTemplateSelector() {
         throw new Error(errorMessage);
       }
       
-      // Yritä lukea JSON-vastaus
       let responseData;
       try {
         responseData = await res.json();
         console.log('Webhook vastaus:', responseData);
       } catch (jsonErr) {
         console.error('Virhe JSON-parsinnassa:', jsonErr);
-        // Vaikka JSON-parsinta epäonnistuu, kutsu voi olla onnistunut
         responseData = { success: true, message: 'Valinta lähetetty' };
       }
       
@@ -90,31 +122,69 @@ export default function CarouselTemplateSelector() {
 
   return (
     <div className="carousel-selector">
-      <h2 className="carousel-title">{t('settings.carousel.title')}</h2>
+      <h2 className="carousel-title">Valitse karusellin ulkoasu</h2>
+      
       <div className="templates-grid">
-        {templates.map((tpl) => (
-          <div
-            key={tpl.id}
-            onClick={() => handleSelect(tpl.id)}
-            className={`template-card ${selected === tpl.id ? 'selected' : ''}`}
-          >
-            <img src={tpl.image} alt={tpl.name} className="template-image" />
-            <div className="template-name">{tpl.name}</div>
-          </div>
-        ))}
+        {templates.map((tpl) => {
+          const textColor = getContrastingTextColor(selectedColor);
+          
+          return (
+             <div
+               key={tpl.id}
+               onClick={() => handleSelect(tpl.id)}
+               className={`template-card ${selected === tpl.id ? 'selected' : ''}`}
+               data-template={tpl.id}
+             >
+              <div 
+                className="template-preview"
+                style={{ backgroundColor: selectedColor }}
+              >
+                <div 
+                  className="main-text"
+                  style={{ color: textColor }}
+                >
+                  {tpl.content.mainText.split('\n').map((line, index) => (
+                    <div key={index}>{line}</div>
+                  ))}
+                </div>
+                
+                <div className="branding">
+                  <div 
+                    className="sub-text"
+                    style={{ color: textColor }}
+                  >
+                    {tpl.content.subText}
+                  </div>
+                  {tpl.content.url && (
+                    <div 
+                      className="url-text"
+                      style={{ color: textColor }}
+                    >
+                      {tpl.content.url}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="template-name">{tpl.name}</div>
+            </div>
+          );
+        })}
       </div>
       
-      {/* Väripicker */}
-      <div className="color-picker-section">
-        <ColorPicker
-          value={selectedColor}
-          onChange={(color) => {
-            console.log('ColorPicker onChange kutsuttu:', color);
-            setSelectedColor(color);
-          }}
-          label={t('settings.carousel.colorLabel')}
-        />
+      <div className="color-section">
+        <h3 className="color-title">Valitse väri</h3>
+        <div className="color-picker-wrapper">
+          <ColorPicker
+            value={selectedColor}
+            onChange={(color) => {
+              console.log('ColorPicker onChange kutsuttu:', color);
+              setSelectedColor(color);
+            }}
+            label=""
+          />
+        </div>
       </div>
+      
       <Button
         onClick={handleSubmit}
         disabled={loading}
@@ -126,4 +196,4 @@ export default function CarouselTemplateSelector() {
       {error && <div className="error-message">{error}</div>}
     </div>
   );
-} 
+}

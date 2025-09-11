@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.59.0](https://github.com/slemppa/rascal-ai/compare/v1.58.0...v1.59.0) (2025-09-11)
+
+
+### ♻️ Code Refactoring
+
+* improve Yritysanalyysi UI and version notification ([f80fb80](https://github.com/slemppa/rascal-ai/commit/f80fb8018ae2bb2316f3244b3b15c1f2956c1251))
+
+
+### ✨ Features
+
+* improve carousel template preview with proper text positioning ([24ee680](https://github.com/slemppa/rascal-ai/commit/24ee680e6e67a36d0c336727d5351a986037000c))
+
 ## [1.58.0](https://github.com/slemppa/rascal-ai/compare/v1.57.0...v1.58.0) (2025-09-11)
 
 

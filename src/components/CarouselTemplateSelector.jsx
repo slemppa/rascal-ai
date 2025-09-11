@@ -33,16 +33,6 @@ const templates = [
   }
 ];
 
-// Funktio joka laskee tekstivärin kontrastin perusteella
-const getContrastingTextColor = (hexColor) => {
-  const color = hexColor.replace('#', '');
-  const r = parseInt(color.slice(0, 2), 16);
-  const g = parseInt(color.slice(2, 4), 16);
-  const b = parseInt(color.slice(4, 6), 16);
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-  return brightness > 128 ? '#000000' : '#ffffff';
-};
-
 export default function CarouselTemplateSelector() {
   const { user } = useAuth();
   const { t } = useTranslation('common');
@@ -51,6 +41,16 @@ export default function CarouselTemplateSelector() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+
+  // Funktio joka laskee tekstivärin kontrastin perusteella
+  const getContrastingTextColor = (hexColor) => {
+    const color = hexColor.replace('#', '');
+    const r = parseInt(color.slice(0, 2), 16);
+    const g = parseInt(color.slice(2, 4), 16);
+    const b = parseInt(color.slice(4, 6), 16);
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness > 128 ? '#000000' : '#ffffff';
+  };
 
   const handleSelect = (id) => {
     setSelected(id);
@@ -75,10 +75,17 @@ export default function CarouselTemplateSelector() {
         throw new Error(t('settings.carousel.userCompanyMissing'));
       }
       
+      const textColor = getContrastingTextColor(selectedColor);
+      
+      console.log('selectedColor:', selectedColor);
+      console.log('textColor:', textColor);
+      console.log('selectedTemplate:', selectedTemplate);
+      
       const payload = { 
         templateId: selectedTemplate.placidId,
         companyId: userData.company_id,
-        color: selectedColor
+        backgroundColor: selectedColor,
+        textColor: textColor
       };
       
       console.log('Lähetetään payload:', payload);

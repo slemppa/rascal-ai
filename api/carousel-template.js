@@ -3,10 +3,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Vain POST sallittu' });
   }
 
-  const { templateId, companyId, color } = req.body;
+  const { templateId, companyId, backgroundColor, textColor, color } = req.body;
   
-  console.log('Backend vastaanotti:', { templateId, companyId, color });
-  console.log('color arvo:', color, 'tyyppi:', typeof color);
+  console.log('Backend vastaanotti:', { templateId, companyId, backgroundColor, textColor, color });
+  console.log('backgroundColor arvo:', backgroundColor, 'tyyppi:', typeof backgroundColor);
+  console.log('textColor arvo:', textColor, 'tyyppi:', typeof textColor);
   
   if (!templateId) {
     return res.status(400).json({ error: 'templateId vaaditaan' });
@@ -18,7 +19,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log('Lähetetään webhook:', { templateId, companyId, color });
+    const webhookPayload = { 
+      templateId, 
+      companyId, 
+      backgroundColor, 
+      textColor,
+      // Takaisin yhteensopivuus vanhan API:n kanssa
+      color: backgroundColor 
+    };
+    
+    console.log('Lähetetään webhook:', webhookPayload);
     
     const webhookRes = await fetch(webhookUrl, {
       method: 'POST',
@@ -26,7 +36,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
         'x-api-key': process.env.N8N_SECRET_KEY
       },
-      body: JSON.stringify({ templateId, companyId, color })
+      body: JSON.stringify(webhookPayload)
     });
     
     console.log('Webhook vastaus status:', webhookRes.status);

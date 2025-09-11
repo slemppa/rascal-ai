@@ -64,7 +64,8 @@ export default async function handler(req, res) {
           const transformedData = {
             strategies: strategies,
             icpSummary: n8nData.icpSummary || [],
-            kpi: n8nData.kpi || []
+            kpi: n8nData.kpi || [],
+            companySummary: n8nData.summary || n8nData.companySummary || ''
           }
           
           return res.status(200).json(transformedData)
@@ -109,7 +110,8 @@ export default async function handler(req, res) {
       "Paranna lead quality scorea 25%",
       "Lisää sosiaalisen median engagementia 40%",
       "Kasvata newsletter-tilaajia 50%"
-    ]
+    ],
+    companySummary: "Rascal AI on suomalainen teknologia-alan yritys, joka tarjoaa AI-pohjaisia markkinointiratkaisuja pienille ja keskisuurille yrityksille. Yritys on erikoistunut automaattiseen sisältöluontiin, asiakashankintaan ja digitaalisen markkinoinnin optimointiin. Rascal AI:n tavoitteena on tehdä edistyksellisestä teknologiasta helposti käytettävää ja kustannustehokasta suomalaisille yrittäjille."
   }
 
   res.status(200).json(mockData)

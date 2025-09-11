@@ -60,6 +60,7 @@ export default function ContentStrategyPage() {
   const [strategy, setStrategy] = useState([])
   const [icpSummary, setIcpSummary] = useState([])
   const [kpiData, setKpiData] = useState([])
+  const [companySummary, setCompanySummary] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [editId, setEditId] = useState(null)
@@ -68,12 +69,15 @@ export default function ContentStrategyPage() {
   const [icpEditText, setIcpEditText] = useState('')
   const [editingKpi, setEditingKpi] = useState(false)
   const [kpiEditText, setKpiEditText] = useState('')
+  const [editingCompanySummary, setEditingCompanySummary] = useState(false)
+  const [companySummaryEditText, setCompanySummaryEditText] = useState('')
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
   const [companyId, setCompanyId] = useState(null)
   const textareaRef = React.useRef(null)
   const icpTextareaRef = React.useRef(null)
   const kpiTextareaRef = React.useRef(null)
+  const companySummaryTextareaRef = React.useRef(null)
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -105,24 +109,29 @@ export default function ContentStrategyPage() {
         
         // Käsittele data-rakenne
         if (data && typeof data === 'object') {
-          // Data tulee objektina: {strategies: [...], icpSummary: [...], kpi: [...]}
+          // Data tulee objektina: {strategies: [...], icpSummary: [...], kpi: [...], companySummary: ...}
           setStrategy(data.strategies || [])
           setIcpSummary(data.icpSummary || [])
           setKpiData(data.kpi || [])
+          setCompanySummary(data.summary || data.companySummary || '')
         } else if (Array.isArray(data) && data.length > 0) {
           // Vanha rakenne (array)
           const firstItem = data[0]
           setStrategy(firstItem.strategyAndMonth || [])
           setIcpSummary(firstItem.icpSummary || [])
           setKpiData(firstItem.kpi || [])
+          setCompanySummary(firstItem.summary || firstItem.companySummary || '')
         } else {
           setStrategy(mockStrategy)
           setIcpSummary([])
           setKpiData([])
+          setCompanySummary('')
         }
       } catch (e) {
         setStrategy(mockStrategy)
         setIcpSummary([])
+        setKpiData([])
+        setCompanySummary('')
         setError('Ei saatu yhteyttä strategia-endpointiin, näytetään mock-data')
       } finally {
         setLoading(false)
@@ -151,6 +160,13 @@ export default function ContentStrategyPage() {
       kpiTextareaRef.current.style.height = kpiTextareaRef.current.scrollHeight + 'px'
     }
   }, [kpiEditText, editingKpi])
+
+  useEffect(() => {
+    if (companySummaryTextareaRef.current) {
+      companySummaryTextareaRef.current.style.height = 'auto'
+      companySummaryTextareaRef.current.style.height = companySummaryTextareaRef.current.scrollHeight + 'px'
+    }
+  }, [companySummaryEditText, editingCompanySummary])
 
   const handleEdit = (item) => {
     setEditId(item.id)
@@ -300,6 +316,58 @@ export default function ContentStrategyPage() {
     setKpiEditText('')
   }
 
+  const handleEditCompanySummary = () => {
+    setEditingCompanySummary(true)
+    setCompanySummaryEditText(companySummary)
+    // Säätää textarea:n korkeus seuraavassa renderissä
+    setTimeout(() => {
+      if (companySummaryTextareaRef.current) {
+        companySummaryTextareaRef.current.style.height = 'auto'
+        companySummaryTextareaRef.current.style.height = companySummaryTextareaRef.current.scrollHeight + 'px'
+      }
+    }, 0)
+  }
+
+  const handleSaveCompanySummary = async () => {
+    try {
+      // Haetaan company_id jos se puuttuu
+      let currentCompanyId = companyId
+      if (!currentCompanyId) {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
+          const { data: userRecord } = await supabase
+            .from('users')
+            .select('company_id')
+            .eq('auth_user_id', session.user.id)
+            .single()
+          
+          if (userRecord?.company_id) {
+            currentCompanyId = userRecord.company_id
+            setCompanyId(userRecord.company_id)
+          }
+        }
+      }
+      
+      // Lähetä Company Summary päivitys N8N:ään
+      await axios.post('/api/update-post', {
+        updateType: 'companySummaryUpdate',
+        companySummary: companySummaryEditText,
+        company_id: currentCompanyId
+      })
+      
+      setCompanySummary(companySummaryEditText)
+      setEditingCompanySummary(false)
+      setCompanySummaryEditText('')
+    } catch (e) {
+      alert('Yritysanalyysin tallennus epäonnistui')
+    }
+  }
+
+  const handleCancelCompanySummary = () => {
+    setEditingCompanySummary(false)
+    setCompanySummaryEditText('')
+  }
+
   // Funktio kuukauden kirjoittamiseen isolla alkukirjaimella
   const formatMonth = (month) => {
     if (!month) return ''
@@ -373,8 +441,117 @@ export default function ContentStrategyPage() {
         </div>
         
         <div className="strategy-bentogrid">
-          {/* Kohderyhmä ja Tavoitteet - ylemmät kortit */}
+          {/* Yritysanalyysi, Kohderyhmä ja Tavoitteet - ylemmät kortit */}
           <div className="strategy-top-row">
+            {/* Yritysanalyysi-kortti */}
+            <div className="strategy-card">
+              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🏢 Yritysanalyysi</div>
+              {editingCompanySummary ? (
+                <div style={{ flex: 1 }}>
+                  <textarea
+                    ref={companySummaryTextareaRef}
+                    value={companySummaryEditText}
+                    onChange={e => setCompanySummaryEditText(e.target.value)}
+                    className="company-summary-textarea"
+                    style={{
+                      width: '100%',
+                      minHeight: 120,
+                      padding: 12,
+                      border: '2px solid #e5e7eb',
+                      borderRadius: 8,
+                      fontSize: 14,
+                      lineHeight: 1.6,
+                      fontFamily: 'inherit',
+                      background: '#f9fafb',
+                      boxSizing: 'border-box'
+                    }}
+                    placeholder="Kirjoita yrityksen analyysi..."
+                  />
+                  <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
+                    <button 
+                      style={{
+                        background: '#22c55e',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '8px 16px',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                      onClick={handleSaveCompanySummary}
+                    >
+                      {t('strategy.buttons.save')}
+                    </button>
+                    <button 
+                      style={{
+                        background: '#6b7280',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '8px 16px',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                      onClick={handleCancelCompanySummary}
+                    >
+                      {t('strategy.buttons.cancel')}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ flex: 1 }}>
+                  {companySummary && companySummary.length > 0 ? (
+                    <>
+                      <p style={{ margin: 0, color: '#374151', lineHeight: 1.6, fontSize: 14, whiteSpace: 'pre-line' }}>
+                        {companySummary}
+                      </p>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+                        <button 
+                          style={{
+                            background: '#22c55e',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: 8,
+                            padding: '8px 16px',
+                            fontSize: 14,
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                          }}
+                          onClick={handleEditCompanySummary}
+                        >
+                          Muokkaa
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
+                      <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Yritysanalyysi puuttuu. Lisää yrityksen kuvaus aloittaaksesi.</p>
+                      <button 
+                        style={{
+                          background: '#22c55e',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: 8,
+                          padding: '8px 16px',
+                          fontSize: 14,
+                          fontWeight: 600,
+                          cursor: 'pointer'
+                        }}
+                        onClick={() => {
+                          setEditingCompanySummary(true)
+                          setCompanySummaryEditText('')
+                        }}
+                      >
+                        Luo yritysanalyysi
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* Kohderyhmä-kortti */}
             {icpSummary && icpSummary.length > 0 && (
               <div className="strategy-card">
@@ -466,7 +643,9 @@ export default function ContentStrategyPage() {
                 </div>
               )}
             </div>
-          )}
+            )}
+
+            
 
             {/* Tavoitteet-kortti */}
             {kpiData && kpiData.length > 0 && (
@@ -719,6 +898,8 @@ export default function ContentStrategyPage() {
             </div>
           </div>
         )}
+
+        {/* Yritysanalyysi-placeholder poistettu, koska kortti on aina top-rivissä */}
 
         {/* Tavoitteet jos ei ole vielä olemassa */}
         {(!kpiData || kpiData.length === 0) && (

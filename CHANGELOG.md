@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.58.0](https://github.com/slemppa/rascal-ai/compare/v1.57.0...v1.58.0) (2025-09-11)
+
+
+### 🐛 Bug Fixes
+
+* korjaa Mixpost API datan käsittely ja vaihda axios-kutsuun ([13b5a9a](https://github.com/slemppa/rascal-ai/commit/13b5a9a6dba2365df445271b4de5e0f59b5752b4))
+
+
+### ✨ Features
+
+* add Yritysanalyysi card to Strategy page ([bd29ce3](https://github.com/slemppa/rascal-ai/commit/bd29ce3ea49e404085a88fba14f8fdfadf9acfd1))
+
 ## [1.57.0](https://github.com/slemppa/rascal-ai/compare/v1.56.0...v1.57.0) (2025-09-10)
 
 

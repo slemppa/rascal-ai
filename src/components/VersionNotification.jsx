@@ -8,7 +8,7 @@ const VersionNotification = () => {
 
   if (!showVersionNotification) return null
 
-  const currentVersion = process.env.REACT_APP_VERSION || '1.56.0'
+  const currentVersion = process.env.REACT_APP_VERSION || '1.58.0'
 
   return createPortal(
     <div 
@@ -115,10 +115,10 @@ const VersionNotification = () => {
                 color: '#374151',
                 lineHeight: '1.6'
               }}>
-                <li>Kuvien ja videoiden näyttäminen toimii nyt paremmin</li>
-                <li>Voit nyt valita milloin haluat julkaista postauksen</li>
-                <li>Julkaisut synkronoidaan automaattisesti sosiaaliseen mediaan</li>
-                <li>Kuvien vaihtaminen on nyt helpompaa</li>
+                <li>Lisätty yrityksen kuvaus -laatikko strategia-sivulle</li>
+                <li>Yrityksen kuvaus näkyy nyt ylemmässä rivissä muiden tietojen kanssa</li>
+                <li>Voit muokata yrityksen kuvausta suoraan laatikossa</li>
+                <li>Yrityksen tiedot haetaan automaattisesti järjestelmästä</li>
                 <li>Korjasimme pieniä bugeja ja teimme kaikesta sujuvampaa</li>
                 <li>Sovellus toimii nyt nopeammin ja luotettavammin</li>
               </ul>

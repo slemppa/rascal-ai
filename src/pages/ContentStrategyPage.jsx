@@ -445,7 +445,7 @@ export default function ContentStrategyPage() {
           <div className="strategy-top-row">
             {/* Yritysanalyysi-kortti */}
             <div className="strategy-card">
-              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🏢 Yritysanalyysi</div>
+              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>Yritysanalyysi</div>
               {editingCompanySummary ? (
                 <div style={{ flex: 1 }}>
                   <textarea

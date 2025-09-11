@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.60.0](https://github.com/slemppa/rascal-ai/compare/v1.59.0...v1.60.0) (2025-09-11)
+
+
+### ✨ Features
+
+* add text color support to carousel template API ([f09b9a1](https://github.com/slemppa/rascal-ai/commit/f09b9a1c97f3727fd13f9e4559cf93b47f7b767c))
+
 ## [1.59.0](https://github.com/slemppa/rascal-ai/compare/v1.58.0...v1.59.0) (2025-09-11)
 
 

@@ -96,6 +96,39 @@ const KeskenModal = ({
         return
       }
 
+      // Jos on jo kuvia, poista ne kaikki ensin
+      if (editingPost.media_urls && editingPost.media_urls.length > 0) {
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('id')
+          .eq('auth_user_id', user?.id)
+          .single()
+
+        if (userError || !userData?.id) {
+          setError('Käyttäjätietojen haku epäonnistui: ' + (userError?.message || 'Käyttäjää ei löytynyt'))
+          return
+        }
+
+        // Poista kaikki vanhat kuvat
+        for (const imageUrl of editingPost.media_urls) {
+          const deleteResponse = await fetch('/api/content-media-management', {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+            },
+            body: JSON.stringify({
+              contentId: editingPost.id,
+              imageUrl: imageUrl
+            })
+          })
+
+          if (!deleteResponse.ok) {
+            throw new Error('Vanhan kuvan poisto epäonnistui')
+          }
+        }
+      }
+
       const formData = new FormData()
       formData.append('image', file)
       formData.append('contentId', editingPost.id)
@@ -115,7 +148,16 @@ const KeskenModal = ({
 
       // Päivitä editingPost data
       const result = await response.json()
-      onSave()
+      
+      // Päivitä editingPost state uudella kuvalla
+      const updatedPost = {
+        ...editingPost,
+        media_urls: [result.publicUrl],
+        mediaUrls: [result.publicUrl],
+        thumbnail: result.publicUrl
+      }
+      
+      onSave(updatedPost)
     } catch (err) {
       setError('Kuvan lataus epäonnistui: ' + err.message)
     } finally {

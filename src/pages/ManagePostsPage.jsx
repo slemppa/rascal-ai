@@ -1858,11 +1858,17 @@ export default function ManagePostsPage() {
           setShowEditModal(false)
           setEditingPost(null)
         }}
-        onSave={() => {
-          setSuccessMessage('Tiedot tallennettu onnistuneesti')
-          setShowEditModal(false)
-          setEditingPost(null)
-          fetchPosts()
+        onSave={(updatedPost) => {
+          if (updatedPost) {
+            setEditingPost(updatedPost)
+            setSuccessMessage('Kuva vaihdettu onnistuneesti')
+            // Älä sulje modaalia kun kuva vaihdetaan
+          } else {
+            setSuccessMessage('Tiedot tallennettu onnistuneesti')
+            setShowEditModal(false)
+            setEditingPost(null)
+            fetchPosts()
+          }
         }}
         t={t}
       />

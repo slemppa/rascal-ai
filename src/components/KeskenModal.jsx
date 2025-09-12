@@ -98,16 +98,6 @@ const KeskenModal = ({
 
       // Jos on jo kuvia, poista ne kaikki ensin
       if (editingPost.media_urls && editingPost.media_urls.length > 0) {
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('id')
-          .eq('auth_user_id', user?.id)
-          .single()
-
-        if (userError || !userData?.id) {
-          setError('Käyttäjätietojen haku epäonnistui: ' + (userError?.message || 'Käyttäjää ei löytynyt'))
-          return
-        }
 
         // Poista kaikki vanhat kuvat
         for (const imageUrl of editingPost.media_urls) {
@@ -133,6 +123,7 @@ const KeskenModal = ({
       formData.append('image', file)
       formData.append('contentId', editingPost.id)
       formData.append('userId', userData.id)
+      formData.append('replaceMode', 'true') // Flag että tämä on "vaihda kuva" -toiminto
 
       const response = await fetch('/api/content-media-management', {
         method: 'POST',

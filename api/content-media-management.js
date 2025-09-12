@@ -47,6 +47,7 @@ export default async function handler(req, res) {
       const file = files.image?.[0]
       const contentId = fields.contentId?.[0]
       const userId = fields.userId?.[0]
+      const replaceMode = fields.replaceMode?.[0] === 'true'
 
       if (!file || !contentId || !userId) {
         return res.status(400).json({ 
@@ -101,7 +102,7 @@ export default async function handler(req, res) {
       }
 
       const currentMediaUrls = contentData.media_urls || []
-      const newMediaUrls = [...currentMediaUrls, urlData.publicUrl]
+      const newMediaUrls = replaceMode ? [urlData.publicUrl] : [...currentMediaUrls, urlData.publicUrl]
 
       const { error: updateError } = await supabase
         .from('content')

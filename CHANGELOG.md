@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.60.2](https://github.com/slemppa/rascal-ai/compare/v1.60.1...v1.60.2) (2025-09-12)
+
+
+### 🐛 Bug Fixes
+
+* clear media_urls field properly in image replacement ([92b894d](https://github.com/slemppa/rascal-ai/commit/92b894d09844383f8cf939c4f6646379ffd9c971))
+
 ### [1.60.1](https://github.com/slemppa/rascal-ai/compare/v1.60.0...v1.60.1) (2025-09-12)
 
 

@@ -717,6 +717,7 @@
         "statusOptions": {
           "success": "Onnistuneet",
           "failed": "Epäonnistuneet",
+          "voiceMail": "Vastaaja",
           "pending": "Odottaa",
           "inProgress": "Käynnissä"
         }

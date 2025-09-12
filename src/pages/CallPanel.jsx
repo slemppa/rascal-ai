@@ -1052,7 +1052,7 @@ export default function CallPanel() {
     setShowEditInboundModal(true)
   }
 
-  // Hae puheluloki N8N:n kautta
+  // Hae puheluloki N8N:n kautta - hakee kaikki rivit paginationilla
   const fetchCallLogs = async (page = currentPage) => {
     try {
       setLoadingCallLogs(true)
@@ -1075,59 +1075,126 @@ export default function CallPanel() {
         return
       }
 
-      let query = supabase
+      // Hae ensin rivien kokonaismäärä
+      let countQuery = supabase
         .from('call_logs')
-        .select('*')
+        .select('*', { count: 'exact', head: true })
         .eq('user_id', userProfile.id)
 
-      // Lisää järjestäminen
-      if (sortField === 'duration') {
-        query = query.order('duration', { ascending: sortDirection === 'asc' })
-      } else if (sortField === 'call_date') {
-        query = query.order('call_date', { ascending: sortDirection === 'asc' })
-      } else if (sortField === 'call_status') {
-        query = query.order('call_status', { ascending: sortDirection === 'asc' })
-      } else {
-        // Oletusjärjestys: created_at
-        query = query.order('created_at', { ascending: sortDirection === 'asc' })
-      }
-
-      // Lisää suodattimet
+      // Lisää suodattimet count-kyselyyn
       if (searchTerm) {
-        query = query.or(`customer_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`)
+        countQuery = countQuery.or(`customer_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`)
       }
       if (statusFilter) {
           if (statusFilter === 'success') {
-            query = query.eq('call_status', 'done').eq('answered', true)
+            countQuery = countQuery.eq('call_status', 'done').eq('answered', true).neq('call_outcome', 'voice mail')
           } else if (statusFilter === 'failed') {
-            query = query.eq('call_status', 'done').eq('answered', false)
+            countQuery = countQuery.eq('call_status', 'done').eq('answered', false)
+          } else if (statusFilter === 'voice_mail') {
+            countQuery = countQuery.eq('call_status', 'done').eq('call_outcome', 'voice mail')
           } else if (statusFilter === 'pending') {
-            query = query.eq('call_status', 'pending')
+            countQuery = countQuery.eq('call_status', 'pending')
           } else if (statusFilter === 'in_progress') {
-            query = query.eq('call_status', 'in progress')
+            countQuery = countQuery.eq('call_status', 'in progress')
           }
       }
       if (callTypeFilter) {
-        query = query.eq('call_type', callTypeFilter)
+        countQuery = countQuery.eq('call_type', callTypeFilter)
       }
       if (dateFrom) {
-          query = query.gte('call_date', dateFrom)
+          countQuery = countQuery.gte('call_date', dateFrom)
       }
       if (dateTo) {
-          query = query.lte('call_date', dateTo)
+          countQuery = countQuery.lte('call_date', dateTo)
       }
 
-      const { data: logs, error } = await query
+      const { count: totalCount, error: countError } = await countQuery
 
-      if (error) {
-        throw new Error('Puhelulokin haku epäonnistui: ' + error.message)
+      if (countError) {
+        throw new Error('Rivien laskenta epäonnistui: ' + countError.message)
       }
 
-      setCallLogs(logs || [])
+      // Jos ei ole rivejä, palauta tyhjä lista
+      if (totalCount === 0) {
+        setCallLogs([])
+        setCurrentPage(1)
+        setTotalCount(0)
+        setTotalPages(1)
+        return
+      }
+
+      // Laske sivujen määrä (1000 riviä per sivu)
+      const pageSize = 1000
+      const totalPages = Math.ceil(totalCount / pageSize)
+      setTotalPages(totalPages)
+
+      // Hae kaikki rivit erissä
+      let allLogs = []
+      let currentPageNum = 1
+
+      while (currentPageNum <= totalPages) {
+        const startIndex = (currentPageNum - 1) * pageSize
+        const endIndex = Math.min(startIndex + pageSize - 1, totalCount - 1)
+
+        let query = supabase
+          .from('call_logs')
+          .select('*')
+          .eq('user_id', userProfile.id)
+          .range(startIndex, endIndex)
+
+        // Lisää järjestäminen
+        if (sortField === 'duration') {
+          query = query.order('duration', { ascending: sortDirection === 'asc' })
+        } else if (sortField === 'call_date') {
+          query = query.order('call_date', { ascending: sortDirection === 'asc' })
+        } else if (sortField === 'call_status') {
+          query = query.order('call_status', { ascending: sortDirection === 'asc' })
+        } else {
+          // Oletusjärjestys: created_at
+          query = query.order('created_at', { ascending: sortDirection === 'asc' })
+        }
+
+        // Lisää suodattimet
+        if (searchTerm) {
+          query = query.or(`customer_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`)
+        }
+        if (statusFilter) {
+            if (statusFilter === 'success') {
+              query = query.eq('call_status', 'done').eq('answered', true).neq('call_outcome', 'voice mail')
+            } else if (statusFilter === 'failed') {
+              query = query.eq('call_status', 'done').eq('answered', false)
+            } else if (statusFilter === 'voice_mail') {
+              query = query.eq('call_status', 'done').eq('call_outcome', 'voice mail')
+            } else if (statusFilter === 'pending') {
+              query = query.eq('call_status', 'pending')
+            } else if (statusFilter === 'in_progress') {
+              query = query.eq('call_status', 'in progress')
+            }
+        }
+        if (callTypeFilter) {
+          query = query.eq('call_type', callTypeFilter)
+        }
+        if (dateFrom) {
+            query = query.gte('call_date', dateFrom)
+        }
+        if (dateTo) {
+            query = query.lte('call_date', dateTo)
+        }
+
+        const { data: pageLogs, error } = await query
+
+        if (error) {
+          throw new Error(`Puhelulokin haku sivulla ${currentPageNum} epäonnistui: ` + error.message)
+        }
+
+        allLogs = allLogs.concat(pageLogs || [])
+        currentPageNum++
+      }
+
+      setCallLogs(allLogs)
       setCurrentPage(page)
-      setTotalCount(logs?.length || 0)
+      setTotalCount(totalCount)
       
-      // Poistettu tilastojen laskenta fetchCallLogs-funktiosta
     } catch (error) {
       console.error('Puhelulokin haku epäonnistui:', error)
       setCallLogsError('Puhelulokin haku epäonnistui: ' + (error.message || error))
@@ -1304,9 +1371,11 @@ export default function CallPanel() {
       }
       if (statusFilter) {
         if (statusFilter === 'success') {
-          exportQuery = exportQuery.eq('call_status', 'done').eq('answered', true)
+          exportQuery = exportQuery.eq('call_status', 'done').eq('answered', true).neq('call_outcome', 'voice mail')
         } else if (statusFilter === 'failed') {
           exportQuery = exportQuery.eq('call_status', 'done').eq('answered', false)
+        } else if (statusFilter === 'voice_mail') {
+          exportQuery = exportQuery.eq('call_status', 'done').eq('call_outcome', 'voice mail')
         } else if (statusFilter === 'pending') {
           exportQuery = exportQuery.eq('call_status', 'pending')
         } else if (statusFilter === 'in_progress') {
@@ -2323,6 +2392,7 @@ export default function CallPanel() {
                     <option value="">{t('calls.logsTab.filters.all')}</option>
                     <option value="success">{t('calls.logsTab.filters.statusOptions.success')}</option>
                     <option value="failed">{t('calls.logsTab.filters.statusOptions.failed')}</option>
+                    <option value="voice_mail">{t('calls.logsTab.filters.statusOptions.voiceMail')}</option>
                     <option value="pending">{t('calls.logsTab.filters.statusOptions.pending')}</option>
                     <option value="in_progress">{t('calls.logsTab.filters.statusOptions.inProgress')}</option>
                   </select>

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.60.1](https://github.com/slemppa/rascal-ai/compare/v1.60.0...v1.60.1) (2025-09-12)
+
+
+### 🐛 Bug Fixes
+
+* implement proper image replacement functionality ([73a1c1c](https://github.com/slemppa/rascal-ai/commit/73a1c1ca4a7a6be32c5bf7920ce542bbdcb6f223))
+
 ## [1.60.0](https://github.com/slemppa/rascal-ai/compare/v1.59.0...v1.60.0) (2025-09-11)
 
 

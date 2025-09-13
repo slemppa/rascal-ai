@@ -4,13 +4,16 @@ import { useTranslation } from 'react-i18next'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useMonthlyLimit } from '../hooks/useMonthlyLimit'
 import Button from '../components/Button'
 import PublishModal from '../components/PublishModal'
 import AvatarModal from '../components/AvatarModal'
 import KeskenModal from '../components/KeskenModal'
 import TarkistuksessaModal from '../components/TarkistuksessaModal'
 import AikataulutettuModal from '../components/AikataulutettuModal'
+import MonthlyLimitWarning from '../components/MonthlyLimitWarning'
 import '../components/ModalComponents.css'
+import '../components/MonthlyLimitWarning.css'
 import './ManagePostsPage.css'
 
 // Dummy data
@@ -375,6 +378,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
 export default function ManagePostsPage() {
   const { t } = useTranslation('common')
   const { user } = useAuth()
+  const monthlyLimit = useMonthlyLimit()
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -402,6 +406,7 @@ export default function ManagePostsPage() {
   const [voiceoverReadyChecked, setVoiceoverReadyChecked] = useState(false)
   const [mixpostPosts, setMixpostPosts] = useState([])
   const [mixpostLoading, setMixpostLoading] = useState(false)
+  const [showLimitWarning, setShowLimitWarning] = useState(false)
 
   // Hae Mixpost postaukset
   const fetchMixpostPosts = async () => {
@@ -802,6 +807,13 @@ export default function ManagePostsPage() {
 
   const handleCreatePost = async (postData) => {
     try {
+      // Tarkista kuukausiraja ennen luontia
+      if (!monthlyLimit.canCreate) {
+        setShowCreateModal(false)
+        setShowLimitWarning(true)
+        return
+      }
+
       // Haetaan käyttäjän user_id ja company_id users taulusta
       const { data: userData, error: userError } = await supabase
         .from('users')
@@ -815,9 +827,6 @@ export default function ManagePostsPage() {
 
       // Lähetetään idea-generation kutsu N8N:lle
       try {
-
-
-
         const response = await fetch('/api/idea-generation', {
           method: 'POST',
           headers: {
@@ -832,6 +841,14 @@ export default function ManagePostsPage() {
         })
 
         if (!response.ok) {
+          // Tarkista onko kyse kuukausiraja-virheestä
+          const errorData = await response.json().catch(() => null)
+          if (errorData?.error?.includes('Monthly content limit exceeded')) {
+            setShowCreateModal(false)
+            setErrorMessage('Kuukausiraja ylitetty! Voit luoda uutta sisältöä vasta ensi kuussa.')
+            monthlyLimit.refresh() // Päivitä raja-tiedot
+            return
+          }
           console.error('Idea generation failed:', response.status)
           // Jatketaan silti postauksen luomista
         } else {
@@ -844,10 +861,16 @@ export default function ManagePostsPage() {
 
       setShowCreateModal(false)
       setSuccessMessage(t('posts.messages.ideaSent'))
+      monthlyLimit.refresh() // Päivitä raja-tiedot onnistuneen luonnin jälkeen
       
     } catch (error) {
       console.error('Virhe uuden julkaisun luomisessa:', error)
-      setErrorMessage(t('posts.messages.errorCreating'))
+      if (error.message?.includes('Monthly content limit exceeded')) {
+        setErrorMessage('Kuukausiraja ylitetty! Voit luoda uutta sisältöä vasta ensi kuussa.')
+        monthlyLimit.refresh()
+      } else {
+        setErrorMessage(t('posts.messages.errorCreating'))
+      }
     }
   }
 
@@ -1577,6 +1600,23 @@ export default function ManagePostsPage() {
       {/* Page Header */}
       <div className="posts-header">
         <h2>{t('posts.header')}</h2>
+        {monthlyLimit.loading ? (
+          <div className="monthly-limit-indicator loading">
+            Ladataan kuukausirajaa...
+          </div>
+        ) : (
+          <div className={`monthly-limit-indicator ${monthlyLimit.remaining <= 5 ? 'warning' : 'normal'}`}>
+            <span className="limit-text">
+              {monthlyLimit.currentCount}/{monthlyLimit.monthlyLimit} sisältöä tässä kuussa
+            </span>
+            {monthlyLimit.remaining <= 5 && monthlyLimit.remaining > 0 && (
+              <span className="warning-text">⚠️ Vain {monthlyLimit.remaining} jäljellä</span>
+            )}
+            {monthlyLimit.remaining === 0 && (
+              <span className="limit-reached">🚫 Kuukausiraja täynnä</span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Search and Filters */}
@@ -1601,7 +1641,13 @@ export default function ManagePostsPage() {
         </select>
         <Button 
           variant="primary"
-          onClick={() => setShowCreateModal(true)}
+          onClick={() => {
+            if (monthlyLimit.canCreate) {
+              setShowCreateModal(true)
+            } else {
+              setShowLimitWarning(true)
+            }
+          }}
         >
           {t('posts.actions.createNew')}
         </Button>
@@ -2705,6 +2751,19 @@ export default function ManagePostsPage() {
         onConfirm={handleConfirmPublish}
         t={t}
       />
+
+      {/* Monthly Limit Warning Modal */}
+      {showLimitWarning && createPortal(
+        <MonthlyLimitWarning
+          limitData={monthlyLimit}
+          onClose={() => setShowLimitWarning(false)}
+          onCreateAnyway={() => {
+            setShowLimitWarning(false)
+            setShowCreateModal(true)
+          }}
+        />,
+        document.body
+      )}
 
       {/* Success/Error Notifications */}
       {successMessage && (

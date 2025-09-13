@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.61.0](https://github.com/slemppa/rascal-ai/compare/v1.60.2...v1.61.0) (2025-09-13)
+
+
+### ✨ Features
+
+* add monthly content limit warning system ([d45c0d6](https://github.com/slemppa/rascal-ai/commit/d45c0d6c9a4b929c702485461df43be426d62394))
+* improve call logs pagination and filtering ([f375477](https://github.com/slemppa/rascal-ai/commit/f375477559a22eaaf20c7737c5a8650b65c51bb5))
+
 ### [1.60.2](https://github.com/slemppa/rascal-ai/compare/v1.60.1...v1.60.2) (2025-09-12)
 
 

@@ -154,7 +154,7 @@ const transformReelsData = (reelsData) => {
   })
 }
 
-function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext, onDragStart, onDragEnd, isDragging, t }) {
+function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext, onDragStart, onDragEnd, isDragging, hideActions = false, t }) {
   return (
     <div 
       className={`post-card ${isDragging ? 'dragging' : ''}`}
@@ -318,7 +318,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
             </span>
             <div className="post-actions">
               {/* Näytä napit vain jos ei ole "Julkaistu" sarakkeessa */}
-              {post.status !== 'Julkaistu' && (
+              {!hideActions && post.status !== 'Julkaistu' && (
                 <>
                   {post.status !== 'Tarkistuksessa' && (
                     <Button 
@@ -360,13 +360,15 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
                     </Button>
                   )}
                   
-                  <Button 
-                    variant="danger" 
-                    onClick={() => onDelete(post)}
-                    style={{ fontSize: '11px', padding: '6px 10px' }}
-                  >
-                    {t('posts.buttons.delete')}
-                  </Button>
+                  {post.status !== 'Aikataulutettu' && (
+                    <Button 
+                      variant="danger" 
+                      onClick={() => onDelete(post)}
+                      style={{ fontSize: '11px', padding: '6px 10px' }}
+                    >
+                      {t('posts.buttons.delete')}
+                    </Button>
+                  )}
                 </>
               )}
             </div>
@@ -1762,6 +1764,7 @@ export default function ManagePostsPage() {
                           onDragStart={handleDragStart}
                           onDragEnd={handleDragEnd}
                           isDragging={draggedPost?.id === safePost.id}
+                          hideActions={column.status === 'Aikataulutettu'}
                           t={t}
                         />
                       )

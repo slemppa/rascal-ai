@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { supabase } from '../lib/supabase'
 
 export const useMonthlyLimit = () => {
   const [limitData, setLimitData] = useState({
@@ -19,14 +20,15 @@ export const useMonthlyLimit = () => {
     setLimitData(prev => ({ ...prev, loading: true, error: null }))
 
     try {
-      const response = await fetch('/api/check-monthly-limit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          auth_user_id: user.id
-        })
+      // Hae token ja pyydä tiedot user-features endpointista (palauttaa monthly_content_count)
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData?.session?.access_token
+      if (!token) {
+        throw new Error('Missing auth token')
+      }
+
+      const response = await fetch('/api/user-features', {
+        headers: { Authorization: `Bearer ${token}` }
       })
 
       if (!response.ok) {
@@ -34,9 +36,16 @@ export const useMonthlyLimit = () => {
       }
 
       const data = await response.json()
+      const currentCount = Number(data?.monthly_content_count || 0)
+      const monthlyLimit = 30
+      const remaining = Math.max(0, monthlyLimit - currentCount)
+
       setLimitData(prev => ({
         ...prev,
-        ...data,
+        currentCount,
+        monthlyLimit,
+        remaining,
+        canCreate: currentCount < monthlyLimit,
         loading: false
       }))
     } catch (error) {

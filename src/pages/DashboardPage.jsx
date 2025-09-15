@@ -614,9 +614,29 @@ export default function DashboardPage() {
           return
         }
 
-        const userId = userRow.id
+        // Haetaan oikea user_id users taulusta (sama logiikka kuin posts-sivulla)
+        const { data: userData, error: userDataError } = await supabase
+          .from('users')
+          .select('id')
+          .eq('auth_user_id', user.id)
+          .single()
+        
+        if (userDataError || !userData?.id) {
+          console.error('User data not found:', userDataError)
+          setStatsLoading(false)
+          return
+        }
+        
+        const userId = userData.id
         const now = new Date()
         const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
+        
+        console.log('Dashboard stats calculation:', {
+          authUserId: user.id,
+          userId,
+          firstDay: firstDay.toISOString(),
+          now: now.toISOString()
+        })
 
         // Hae kaikki tiedot rinnakkain
         const [
@@ -665,6 +685,14 @@ export default function DashboardPage() {
         const totalCallPrice = (callData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
         const totalMessagePrice = (messageData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
 
+        console.log('Dashboard stats results:', {
+          upcomingCount,
+          monthlyCount,
+          totalCallPrice,
+          totalMessagePrice,
+          aiUsage
+        })
+        
         setStatsData({
           upcomingCount: upcomingCount || 0,
           monthlyCount: monthlyCount || 0,

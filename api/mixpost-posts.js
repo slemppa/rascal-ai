@@ -49,7 +49,10 @@ export default async function handler(req, res) {
 
     // Kutsu Mixpost API:a
     const mixpostApiUrl = process.env.VITE_MIXPOST_API_URL || 'https://mixpost.mak8r.fi'
-    const response = await fetch(`${mixpostApiUrl}/mixpost/api/${configData.mixpost_workspace_uuid}/posts`, {
+    const apiUrl = `${mixpostApiUrl}/mixpost/api/${configData.mixpost_workspace_uuid}/posts`
+    console.log('Calling Mixpost API:', apiUrl)
+    
+    const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -57,12 +60,15 @@ export default async function handler(req, res) {
       }
     })
 
+    console.log('Mixpost API response status:', response.status)
     if (!response.ok) {
-      throw new Error(`Mixpost API error: ${response.status}`)
+      const errorText = await response.text()
+      console.error('Mixpost API error response:', errorText)
+      throw new Error(`Mixpost API error: ${response.status} - ${errorText}`)
     }
 
     const responseData = await response.json()
-    console.log('Mixpost API response:', responseData)
+    console.log('Mixpost API response data:', responseData)
     
     // Mixpost palauttaa datan { data: [...] } muodossa
     const data = responseData.data || responseData
@@ -76,20 +82,44 @@ export default async function handler(req, res) {
       })
     }
     
-    // Filtteröi vain scheduled postaukset ja muunna oikeaan muotoon
+    // Filtteröi postaukset jotka eivät ole vielä julkaistu (scheduled, draft tai failed)
     const scheduledPosts = data
-      .filter(post => post.status === 'scheduled')
-      .map(post => ({
-        id: post.id,
-        title: post.content || post.caption || 'Aikataulutettu postaus',
-        caption: post.content || post.caption || '',
-        status: 'scheduled',
-        source: 'mixpost',
-        createdAt: post.scheduled_at || post.created_at,
-        scheduledDate: post.scheduled_at,
-        thumbnail: post.media?.[0]?.url || '/placeholder.png',
-        type: 'Photo'
-      }))
+      .filter(post => ['scheduled', 'draft', 'failed'].includes(post.status))
+      .map(post => {
+        const provider = post.accounts?.[0]?.provider || null
+        const firstVersion = Array.isArray(post.versions) ? post.versions[0] : null
+        const firstContent = firstVersion && Array.isArray(firstVersion.content) ? firstVersion.content[0] : null
+        const body = firstContent?.body || ''
+        const firstMedia = firstContent && Array.isArray(firstContent.media) ? firstContent.media[0] : null
+        const thumbUrl = firstMedia?.thumb_url || null
+        const isVideo = Boolean(firstMedia?.is_video)
+
+        const scheduledAt = post.scheduled_at || post.created_at
+        let scheduledDateFi = scheduledAt || null
+        try {
+          if (scheduledAt) {
+            const d = new Date((scheduledAt || '').replace(' ', 'T'))
+            scheduledDateFi = new Intl.DateTimeFormat('fi-FI', {
+              timeZone: 'Europe/Helsinki',
+              year: 'numeric', month: '2-digit', day: '2-digit',
+              hour: '2-digit', minute: '2-digit'
+            }).format(d)
+          }
+        } catch {}
+
+        return {
+          id: post.id,
+          title: body?.slice(0, 80) || 'Aikataulutettu postaus',
+          caption: body || post.content || post.caption || '',
+          status: 'scheduled',
+          source: 'mixpost',
+          provider,
+          createdAt: post.created_at || null,
+          scheduledDate: scheduledDateFi,
+          thumbnail: thumbUrl || post.media?.[0]?.url || '/placeholder.png',
+          type: isVideo ? 'Video' : 'Photo'
+        }
+      })
 
     console.log('Processed scheduled posts:', scheduledPosts)
     return res.status(200).json(scheduledPosts)

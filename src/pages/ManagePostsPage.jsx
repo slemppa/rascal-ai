@@ -299,11 +299,13 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
               </h3>
               <div className="post-badges">
                 <span className="post-type">
-                                      {post.type === 'Carousel' ? 'Carousel' :  
-                                   post.type === 'Reels' ? 'Reels' :
-                post.type === 'Blog' ? 'Blog' : 
-                                        post.type === 'Newsletter' ? 'Newsletter' :  
-                   post.type}
+                  {post.source === 'mixpost' && post.provider
+                    ? (post.provider.charAt(0).toUpperCase() + post.provider.slice(1))
+                    : (post.type === 'Carousel' ? 'Carousel' :  
+                       post.type === 'Reels' ? 'Reels' :
+                       post.type === 'Blog' ? 'Blog' : 
+                       post.type === 'Newsletter' ? 'Newsletter' :  
+                       post.type)}
                 </span>
           </div>
           </div>
@@ -379,6 +381,8 @@ export default function ManagePostsPage() {
   const { t } = useTranslation('common')
   const { user } = useAuth()
   const monthlyLimit = useMonthlyLimit()
+  
+  console.log('ManagePostsPage: monthlyLimit data:', monthlyLimit)
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -467,6 +471,7 @@ export default function ManagePostsPage() {
         fetchPosts()
       }
       
+      console.log('Mixpost scheduled posts:', scheduledPosts)
       setMixpostPosts(scheduledPosts)
       
     } catch (error) {
@@ -791,6 +796,13 @@ export default function ManagePostsPage() {
 
   // Yhdistetään data
   const allPosts = [...posts, ...reelsPosts, ...mixpostPosts]
+  console.log('All posts combined:', {
+    supabasePosts: posts.length,
+    reelsPosts: reelsPosts.length,
+    mixpostPosts: mixpostPosts.length,
+    total: allPosts.length,
+    mixpostPostsData: mixpostPosts
+  })
   const currentPosts = allPosts
   const currentLoading = loading || reelsLoading
   const currentError = error || reelsError
@@ -1702,7 +1714,11 @@ export default function ManagePostsPage() {
 
                 // Aikataulutettu-sarakkeessa näytetään Mixpost dataa
                 else if (column.status === 'Aikataulutettu') {
-                  return post.status === 'scheduled' && post.source === 'mixpost'
+                  const isMatch = post.status === 'scheduled' && post.source === 'mixpost'
+                  if (isMatch) {
+                    console.log('Aikataulutettu match:', post)
+                  }
+                  return isMatch
                 }
                 // Muissa sarakkeissa näytetään Supabase-data oikealla statusilla
                 else {

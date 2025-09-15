@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     // Hae features ja crm_connected public.users-taulusta auth_user_id:n perusteella
     const { data, error } = await userClient
       .from('users')
-      .select('features, crm_connected')
+      .select('id, features, crm_connected')
       .eq('auth_user_id', userId)
       .single()
 
@@ -43,7 +43,23 @@ export default async function handler(req, res) {
 
     const features = Array.isArray(data?.features) ? data.features : []
     const crm_connected = Boolean(data?.crm_connected)
-    return res.status(200).json({ features, crm_connected })
+
+    // Laske tämän kuun sisältöjen määrä tälle käyttäjälle
+    let monthly_content_count = 0
+    if (data?.id) {
+      const now = new Date()
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
+      const { count, error: countError } = await userClient
+        .from('content')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', data.id)
+        .gte('created_at', firstDay.toISOString())
+      if (!countError && typeof count === 'number') {
+        monthly_content_count = count
+      }
+    }
+
+    return res.status(200).json({ features, crm_connected, monthly_content_count })
   } catch (e) {
     console.error('user-features error:', e)
     return res.status(500).json({ error: 'Internal server error' })

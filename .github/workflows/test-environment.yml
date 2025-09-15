@@ -1,0 +1,49 @@
+name: Testiympäristö Deploy
+
+on:
+  push:
+    branches:
+      - test/tiimi-testing
+  pull_request:
+    branches:
+      - test/tiimi-testing
+
+jobs:
+  deploy-test-environment:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout koodi
+      uses: actions/checkout@v4
+      
+    - name: Aseta Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Asenna riippuvuudet
+      run: npm ci
+      
+    - name: Käynnistä testit
+      run: npm test --if-present
+      
+    - name: Buildaa projekti
+      run: npm run build
+      
+    - name: Deploy testiympäristöön
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-args: '--prod'
+        working-directory: ./
+        scope: ${{ secrets.VERCEL_ORG_ID }}
+        
+    - name: Ilmoita tiimille
+      if: success()
+      run: |
+        echo "✅ Testiympäristö on päivitetty!"
+        echo "🔗 Testiympäristö: https://rascal-ai-test.vercel.app"
+        echo "📝 Muista testata uudet ominaisuudet ja antaa palautetta GitHub Issues -kautta"

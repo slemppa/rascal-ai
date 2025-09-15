@@ -15,6 +15,9 @@
     "release:alpha": "standard-version --prerelease alpha",
     "release:beta": "standard-version --prerelease beta",
     "release:rc": "standard-version --prerelease rc",
+    "test:switch": "git checkout test/tiimi-testing",
+    "test:deploy": "git push origin test/tiimi-testing",
+    "test:merge": "git checkout main && git merge test/tiimi-testing && git push origin main",
     "prepare": "husky"
   },
   "standard-version": {

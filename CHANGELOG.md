@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.62.0](https://github.com/slemppa/rascal-ai/compare/v1.61.1...v1.62.0) (2025-09-15)
+
+
+### 🐛 Bug Fixes
+
+* **posts:** hide all actions in Aikataulutettu column ([49277d4](https://github.com/slemppa/rascal-ai/commit/49277d464ad6aa8734881328b0a84146f369cb8f))
+
+
+### ✨ Features
+
+* Add call logs stats to campaign cards ([3d2a89b](https://github.com/slemppa/rascal-ai/commit/3d2a89b75906c10f7952dec34857df52bd023bfe))
+
 ### [1.61.1](https://github.com/slemppa/rascal-ai/compare/v1.61.0...v1.61.1) (2025-09-15)
 
 

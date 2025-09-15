@@ -26,11 +26,11 @@ export default function CampaignsPage() {
         setLoading(false)
         return
       }
-            try {
-              const data = await fetchCampaigns(userId)
-              if (mounted) setCampaigns(Array.isArray(data) ? data : [])
+      try {
+        const data = await fetchCampaigns(userId)
+        if (mounted) setCampaigns(Array.isArray(data) ? data : [])
       } catch (err) {
-        console.error('CampaignsPage: Error fetching campaigns:', err)
+        console.error('CampaignsPage: Error fetching data:', err)
         if (mounted) setError(err.message || 'Tuntematon virhe')
       } finally {
         if (mounted) setLoading(false)

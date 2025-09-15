@@ -82,9 +82,9 @@
   background: var(--modal-background) !important;
   border-radius: var(--modal-border-radius) !important;
   padding: var(--modal-padding) !important;
-  max-width: 900px !important;
+  max-width: 1200px !important;
   width: 95% !important;
-  max-height: 95vh !important;
+  max-height: 90vh !important;
   overflow: hidden !important;
   display: flex !important;
   flex-direction: column !important;
@@ -125,9 +125,9 @@
   background: var(--modal-background) !important;
   border-radius: var(--modal-border-radius) !important;
   padding: var(--modal-padding) !important;
-  max-width: 900px !important;
+  max-width: 1200px !important;
   width: 95% !important;
-  max-height: 95vh !important;
+  max-height: 90vh !important;
   overflow: hidden !important;
   display: flex !important;
   flex-direction: column !important;

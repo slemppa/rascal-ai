@@ -77,8 +77,8 @@ export default function CallLogsTab({
               <option value="">Kaikki</option>
               <option value="success">Onnistuneet</option>
               <option value="failed">Epäonnistuneet</option>
-              <option value="pending">Odottaa</option>
-              <option value="in_progress">Käynnissä</option>
+              <option value="pending">Aikataulutettu</option>
+              <option value="in_progress">Jonossa</option>
             </select>
           </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Button from './Button'
 import './ModalComponents.css'
+import { useTranslation } from 'react-i18next'
 
 const EditCallTypeModal = ({ 
   showModal, 
@@ -9,8 +10,9 @@ const EditCallTypeModal = ({
   setEditingCallType, 
   onSave 
 }) => {
+  const { t } = useTranslation('common')
   const [currentStep, setCurrentStep] = useState(1)
-  const totalSteps = 4
+  const totalSteps = 5
 
   // ESC-toiminnallisuus - pitää olla heti useState jälkeen
   useEffect(() => {
@@ -32,10 +34,11 @@ const EditCallTypeModal = ({
   if (!showModal || !editingCallType) return null
 
   const steps = [
-    { id: 1, label: 'Basics' },
-    { id: 2, label: 'Content' },
-    { id: 3, label: 'Advanced' },
-    { id: 4, label: 'Summary' }
+    { id: 1, label: t('calls.modals.editCallType.steps.basics') },
+    { id: 2, label: t('calls.modals.editCallType.steps.content') },
+    { id: 3, label: t('calls.modals.editCallType.steps.advanced') },
+    { id: 4, label: t('calls.modals.editCallType.steps.summary') },
+    { id: 5, label: t('calls.modals.editCallType.steps.aiEnhancement') }
   ]
 
   // Tyhjän tilan klikkaus
@@ -61,6 +64,31 @@ const EditCallTypeModal = ({
     onSave()
   }
 
+  // Lähetä puhelun tyyppi AI-parannukseen
+  const handleAIEnhancement = async () => {
+    try {
+      const response = await fetch('/api/call-type-improvement', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          call_type_id: editingCallType.id
+        })
+      })
+
+      if (response.ok) {
+        alert('Puhelun tyyppi lähetetty AI-parannukseen! Saat parannetun version pian.')
+      } else {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Lähetys epäonnistui')
+      }
+    } catch (error) {
+      console.error('AI-parannuksen lähetys epäonnistui:', error)
+      alert('AI-parannuksen lähetys epäonnistui: ' + (error.message || error))
+    }
+  }
+
   return (
     <div className="modal-overlay modal-overlay--light" onClick={handleOverlayClick}>
       <div className="modal-container edit-call-type-modal">
@@ -81,7 +109,7 @@ const EditCallTypeModal = ({
         <div className="steps-container">
           {steps.map((step, index) => (
             <React.Fragment key={step.id}>
-              <div className="step-item">
+              <div className="step-item" onClick={() => setCurrentStep(step.id)} style={{ cursor: 'pointer' }}>
                 <div className={`step-number ${currentStep >= step.id ? 'active' : ''}`}>
                   {step.id}
                 </div>
@@ -102,7 +130,7 @@ const EditCallTypeModal = ({
             <div className="form-grid">
               <div className="form-group">
                 <label className="form-label">
-                  Name
+                  {t('calls.modals.editCallType.fields.name')}
                 </label>
                 <input
                   type="text"
@@ -113,21 +141,21 @@ const EditCallTypeModal = ({
               </div>
               <div className="form-group">
                 <label className="form-label">
-                  Status
+                  {t('calls.modals.editCallType.fields.status')}
                 </label>
                 <select
                   value={editingCallType.status || 'Active'}
                   onChange={e => setEditingCallType({ ...editingCallType, status: e.target.value })}
                   className="form-select"
                 >
-                  <option value="Active">Active</option>
-                  <option value="Draft">Draft</option>
-                  <option value="Archived">Archived</option>
+                  <option value="Active">{t('calls.modals.editCallType.statusOptions.active')}</option>
+                  <option value="Draft">{t('calls.modals.editCallType.statusOptions.draft')}</option>
+                  <option value="Archived">{t('calls.modals.editCallType.statusOptions.archived')}</option>
                 </select>
               </div>
               <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                 <label className="form-label">
-                  Version
+                  {t('calls.modals.editCallType.fields.version')}
                 </label>
                 <input
                   type="text"
@@ -403,6 +431,53 @@ const EditCallTypeModal = ({
               </div>
             </div>
           )}
+
+          {currentStep === 5 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ textAlign: 'center', marginBottom: 16 }}>
+                <h3 style={{ fontSize: 18, fontWeight: 600, color: '#1f2937', margin: '0 0 8px 0' }}>
+                  {t('calls.modals.editCallType.aiEnhancement.title')}
+                </h3>
+                <p style={{ fontSize: 14, color: '#6b7280', margin: 0, lineHeight: 1.4 }}>
+                  {t('calls.modals.editCallType.aiEnhancement.description')}
+                </p>
+              </div>
+              
+              <div style={{ 
+                background: '#f8fafc', 
+                border: '1px solid #e2e8f0', 
+                borderRadius: 8, 
+                padding: 16
+              }}>
+                <div style={{ fontSize: 13, color: '#374151', marginBottom: 8, fontWeight: 500 }}>
+                  {t('calls.modals.editCallType.aiEnhancement.benefits.title')}
+                </div>
+                <ul style={{ fontSize: 12, color: '#6b7280', margin: 0, paddingLeft: 16, lineHeight: 1.4 }}>
+                  <li>{t('calls.modals.editCallType.aiEnhancement.benefits.optimize')}</li>
+                  <li>{t('calls.modals.editCallType.aiEnhancement.benefits.improve')}</li>
+                  <li>{t('calls.modals.editCallType.aiEnhancement.benefits.suggest')}</li>
+                </ul>
+              </div>
+              
+              <Button
+                onClick={handleAIEnhancement}
+                style={{
+                  background: '#f97316',
+                  color: '#fff',
+                  padding: '8px 16px',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  borderRadius: 6,
+                  border: 'none',
+                  cursor: 'pointer',
+                  width: 'auto',
+                  alignSelf: 'center'
+                }}
+              >
+                {t('calls.modals.editCallType.aiEnhancement.cta')}
+              </Button>
+            </div>
+          )}
         </div>
         
         <div className="modal-actions">
@@ -412,7 +487,7 @@ const EditCallTypeModal = ({
               onClick={onClose}
               variant="secondary"
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             {currentStep > 1 && (
               <Button
@@ -431,7 +506,7 @@ const EditCallTypeModal = ({
                 type="button"
                 onClick={handleNext}
               >
-                Next
+                {t('common.next')}
               </Button>
             ) : (
               <Button

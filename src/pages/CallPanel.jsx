@@ -1338,6 +1338,31 @@ export default function CallPanel() {
     }
   }
 
+  // Kopioi puhelun tyyppi
+  const handleCopyCallType = async (type) => {
+    try {
+      if (!type?.id) return
+      
+      // Luo kopio alkuperäisestä tyypistä
+      const copyData = {
+        ...type,
+        id: undefined, // Poista ID jotta luodaan uusi
+        label: `${type.label} (Kopio)`,
+        value: `${type.value}_copy_${Date.now()}`, // Uniikki tunniste
+        status: 'Draft', // Aloita luonnoksena
+        created_at: undefined,
+        updated_at: undefined
+      }
+      
+      setNewCallType(copyData)
+      setShowAddModal(true)
+      setSuccessMessage('Puhelun tyyppi kopioitu! Muokkaa tarvittaessa ja tallenna.')
+    } catch (e) {
+      console.error('Puhelun tyypin kopiointi epäonnistui:', e)
+      setErrorMessage('Puhelun tyypin kopiointi epäonnistui: ' + (e.message || e))
+    }
+  }
+
   // Export puheluloki CSV-muodossa
   const exportCallLogs = async () => {
     try {
@@ -1439,8 +1464,8 @@ export default function CallPanel() {
           (log.call_status === 'done' && log.call_outcome === 'voice mail') ? 'Vastaaja' :
           log.call_status === 'done' && log.answered ? 'Onnistui' : 
           log.call_status === 'done' && !log.answered ? 'Epäonnistui' :
-          log.call_status === 'pending' ? 'Odottaa' : 
-          log.call_status === 'in progress' ? 'Käynnissä' : 
+          log.call_status === 'pending' ? 'Aikataulutettu' : 
+          log.call_status === 'in progress' ? 'Jonossa' : 
           'Tuntematon',
           `"${log.summary || ''}"`,
           `"${log.call_outcome || ''}"`,
@@ -2527,7 +2552,7 @@ export default function CallPanel() {
                                     <div style={{ fontSize: 32, fontWeight: 700, color: '#f59e0b', marginBottom: 8 }}>
                     {callLogs.filter(log => log.call_status === 'pending').length}
                 </div>
-                    <div style={{ fontSize: 14, color: '#6b7280' }}>Odottaa</div>
+                    <div style={{ fontSize: 14, color: '#6b7280' }}>Aikataulutettu</div>
               </div>
 
               <div style={{ 
@@ -2539,7 +2564,7 @@ export default function CallPanel() {
                                     <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6', marginBottom: 8 }}>
                     {callLogs.filter(log => log.call_status === 'in progress').length}
                   </div>
-                    <div style={{ fontSize: 14, color: '#6b7280' }}>Käynnissä</div>
+                    <div style={{ fontSize: 14, color: '#6b7280' }}>Jonossa</div>
                   </div>
                   
                   <div style={{ 
@@ -2564,7 +2589,7 @@ export default function CallPanel() {
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#1d4ed8', marginBottom: 8 }}>
                   {callLogs.filter(log => log.direction === 'outbound').length}
                 </div>
-                <div style={{ fontSize: 14, color: '#6b7280' }}>Lähteneet puhelut</div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>Lähtevät puhelut</div>
               </div>
               
               <div style={{ 
@@ -2576,7 +2601,7 @@ export default function CallPanel() {
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#92400e', marginBottom: 8 }}>
                   {callLogs.filter(log => log.direction === 'inbound').length}
                 </div>
-                <div style={{ fontSize: 14, color: '#6b7280' }}>Vastaanotetut puhelut</div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>Saapuvat puhelut</div>
               </div>
               
               {/* Hinta-tilastot */}
@@ -2825,8 +2850,8 @@ export default function CallPanel() {
                                    (log.call_status === 'done' && log.call_outcome === 'voice mail') ? 'Vastaaja' :
                                    log.call_status === 'done' && log.answered ? 'Onnistui' : 
                                    log.call_status === 'done' && !log.answered ? 'Epäonnistui' :
-                                   log.call_status === 'pending' ? 'Odottaa' : 
-                                   log.call_status === 'in progress' ? 'Käynnissä' : 'Tuntematon'}
+                                   log.call_status === 'pending' ? 'Aikataulutettu' : 
+                                   log.call_status === 'in progress' ? 'Jonossa' : 'Tuntematon'}
                             </span>
                           </td>
                           <td style={{ padding: '8px', textAlign: 'right', whiteSpace: 'nowrap' }} onClick={(e) => e.stopPropagation()}>
@@ -3057,6 +3082,24 @@ export default function CallPanel() {
                         )}
                       </div>
                           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                            <Button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleCopyCallType(type)
+                              }}
+                              variant="secondary"
+                              style={{
+                                background: '#3b82f6',
+                                color: '#fff',
+                                padding: '4px 8px',
+                                fontSize: 12,
+                                fontWeight: 500,
+                                cursor: 'pointer'
+                              }}
+                              title="Kopioi puhelun tyyppi"
+                            >
+                              Kopioi
+                            </Button>
                             <Button
                               onClick={(e) => {
                                 e.stopPropagation()
@@ -3405,8 +3448,8 @@ export default function CallPanel() {
                         }}>
                               {selectedLog.call_status === 'done' && selectedLog.answered ? 'Onnistui' : 
                                selectedLog.call_status === 'done' && !selectedLog.answered ? 'Epäonnistui' :
-                               selectedLog.call_status === 'pending' ? 'Odottaa' : 
-                               selectedLog.call_status === 'in progress' ? 'Käynnissä' : 'Tuntematon'}
+                               selectedLog.call_status === 'pending' ? 'Aikataulutettu' : 
+                               selectedLog.call_status === 'in progress' ? 'Jonossa' : 'Tuntematon'}
                         </span>
                       </div>
                           {selectedLog.campaign_id && (

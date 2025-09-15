@@ -1,5 +1,13 @@
 {
   "lang": { "fi": "Suomeksi", "en": "In English", "shortFi": "FI", "shortEn": "EN" },
+  "common": {
+    "close": "Sulje",
+    "cancel": "Peruuta",
+    "next": "Seuraava",
+    "back": "← Takaisin",
+    "continue": "Jatka →",
+    "save": "Tallenna"
+  },
   "meta": {
     "title": "RascalAI.fi – Myyjän paras työpari",
     "description": "Rascal AI vapauttaa myyjien ajan rutiineista ja valmistelusta, jotta voit keskittyä voittaviin asiakaskohtaamisiin."
@@ -561,7 +569,9 @@
       "active": "Aktiiviset kampanjat",
       "totalCalls": "Yhteensä puheluja",
       "answerRate": "Vastausprosentti",
-      "successful": "Onnistuneita"
+      "successful": "Onnistuneita",
+      "totalCallLogs": "Yhteensä",
+      "calledCalls": "Soitetut"
     },
     "card": {
       "calls": "Puhelut",
@@ -718,8 +728,8 @@
           "success": "Onnistuneet",
           "failed": "Epäonnistuneet",
           "voiceMail": "Vastaaja",
-          "pending": "Odottaa",
-          "inProgress": "Käynnissä"
+          "pending": "Aikataulutettu",
+          "inProgress": "Jonossa"
         }
       }
     },
@@ -737,17 +747,10 @@
         "customerText": "Asiakkaan vastaus",
         "date": "Päivämäärä"
       },
-      "direction": { "outbound": "Lähetetty", "inbound": "Vastaanotettu" },
+      "direction": { "outbound": "Lähtevät", "inbound": "Saapuvat" },
       "status": { "sent": "Lähetetty", "delivered": "Toimitettu", "read": "Luettu", "failed": "Epäonnistui", "pending": "Odottaa" }
     }
     ,
-    "common": {
-      "close": "Sulje",
-      "cancel": "Peruuta",
-      "back": "← Takaisin",
-      "continue": "Jatka →",
-      "save": "Tallenna"
-    },
     "modals": {
       "mass": {
         "title": "Massapuhelut",
@@ -811,12 +814,72 @@
       "inbound": {
         "title": "Inbound-asetukset",
         "close": "Sulje"
+      },
+      "addCallType": {
+        "steps": {
+          "basics": "Perustiedot",
+          "content": "Sisältö",
+          "advanced": "Lisäasetukset",
+          "summary": "Yhteenveto",
+          "aiEnhancement": "AI-parannus"
+        },
+        "fields": {
+          "name": "Nimi",
+          "status": "Tila",
+          "version": "Versio"
+        },
+        "statusOptions": {
+          "active": "Aktiivinen",
+          "draft": "Luonnos",
+          "archived": "Arkistoitu"
+        },
+        "aiEnhancement": {
+          "title": "Haluan parantaa tätä AI:lla",
+          "description": "Lähetä puhelun tyyppi AI-parannukseen. Saat takaisin optimoidun version, joka on paremmin räätälöity asiakkaillesi.",
+          "benefits": {
+            "title": "AI-parannuksen hyödyt:",
+            "optimize": "Optimoi puhelun kulkua ja kysymyksiä",
+            "improve": "Parantaa vastausten laatua ja luonnollisuutta",
+            "suggest": "Ehdota parannuksia skriptiin ja lähestymistapaan"
+          },
+          "cta": "Lähetä AI-parannukseen"
+        }
+      },
+      "editCallType": {
+        "steps": {
+          "basics": "Perustiedot",
+          "content": "Sisältö",
+          "advanced": "Lisäasetukset",
+          "summary": "Yhteenveto",
+          "aiEnhancement": "AI-parannus"
+        },
+        "fields": {
+          "name": "Nimi",
+          "status": "Tila",
+          "version": "Versio"
+        },
+        "statusOptions": {
+          "active": "Aktiivinen",
+          "draft": "Luonnos",
+          "archived": "Arkistoitu"
+        },
+        "aiEnhancement": {
+          "title": "Haluan parantaa tätä AI:lla",
+          "description": "Lähetä puhelun tyyppi AI-parannukseen. Saat takaisin optimoidun version, joka on paremmin räätälöity asiakkaillesi.",
+          "benefits": {
+            "title": "AI-parannuksen hyödyt:",
+            "optimize": "Optimoi puhelun kulkua ja kysymyksiä",
+            "improve": "Parantaa vastausten laatua ja luonnollisuutta",
+            "suggest": "Ehdota parannuksia skriptiin ja lähestymistapaan"
+          },
+          "cta": "Lähetä AI-parannukseen"
+        }
       }
     }
     ,
     "manageTab": {
       "header": { "title": "Puhelun tyyppien hallinta" },
-      "cta": { "addNew": "➕ Lisää uusi tyyppi" },
+      "cta": { "addNew": "Lisää uusi tyyppi" },
       "description": "Hallitse puhelun tyyppejä Supabase-tietokannassa. Vain Active-status olevat tyypit näkyvät puheluissa.",
       "existing": { "title": "Olemassa olevat puhelun tyypit" },
       "loading": "Ladataan puhelun tyyppejä...",

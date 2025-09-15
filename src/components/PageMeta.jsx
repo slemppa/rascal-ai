@@ -4,7 +4,9 @@ const PageMeta = ({
   title, 
   description, 
   image = '/hero.png',
-  url = window.location.href 
+  url = window.location.href,
+  keywords = null,
+  type = 'website'
 }) => {
   useEffect(() => {
     // Päivitä title
@@ -21,6 +23,17 @@ const PageMeta = ({
     }
     if (description) {
       metaDescription.content = description
+    }
+
+    // Päivitä keywords-meta tag
+    if (keywords) {
+      let metaKeywords = document.querySelector('meta[name="keywords"]')
+      if (!metaKeywords) {
+        metaKeywords = document.createElement('meta')
+        metaKeywords.name = 'keywords'
+        document.head.appendChild(metaKeywords)
+      }
+      metaKeywords.content = keywords
     }
 
     // Päivitä Open Graph meta-tagit
@@ -55,12 +68,15 @@ const PageMeta = ({
       updateMetaTag('twitter:url', url)
     }
 
+    // Päivitä og:type
+    updateMetaTag('og:type', type)
+
     // Cleanup function
     return () => {
       // Palauta alkuperäiset arvot jos tarpeen
       document.title = 'Rascal AI - Älykäs puhelin- ja viestintäautomaatio'
     }
-  }, [title, description, image, url])
+  }, [title, description, image, url, keywords, type])
 
   return null // Tämä komponentti ei renderöi mitään
 }

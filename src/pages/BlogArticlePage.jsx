@@ -118,7 +118,9 @@ export default function BlogArticlePage() {
       <PageMeta 
         title={`${article.title || t('blog.noTitle')} - RascalAI`} 
         description={article.excerpt || (article.content ? article.content.substring(0, 160) : '')} 
-        image={article.image_url || article.media_url || "/hero-v3.jpg"} 
+        image={article.image_url || article.media_url || "/hero-v3.jpg"}
+        keywords={`AI, Puhelinbotti, callbot, someAi, ${article.category ? (Array.isArray(article.category) ? article.category.join(', ') : article.category) : ''}, AI markkinointi, myynti automaatio, puhelin myynti, sisältömarkkinointi, blogi markkinointi, email markkinointi, asiakaspalvelu AI, chatbot, puhelinsoitto automaatio, myyntityö, asiakasviestintä, yritys markkinointi, suomalainen AI, sisältö luonti, uutiskirjeet, markkinointiautomaatio, AI assistentti, myyntiautomaatio, asiakashankinta, puhelinbotti AI, älykäs puhelinbotti, AI puhelinsoitto, automaattinen puhelinsoitto, AI myynti, puhelinmyynti automaatio`}
+        type="article"
       />
       
       <div className="blog-article-page">

@@ -63,19 +63,6 @@ function generateDynamicSitemap(articles) {
   </url>
 
   <!-- Pääsivut -->
-  <url>
-    <loc>${baseUrl}/features</loc>
-    <lastmod>${currentDate}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>${baseUrl}/pricing</loc>
-    <lastmod>${currentDate}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
 
   <url>
     <loc>${baseUrl}/contact</loc>
@@ -167,19 +154,6 @@ function generateStaticSitemap() {
   </url>
 
   <!-- Pääsivut -->
-  <url>
-    <loc>${baseUrl}/features</loc>
-    <lastmod>${currentDate}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>${baseUrl}/pricing</loc>
-    <lastmod>${currentDate}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
 
   <url>
     <loc>${baseUrl}/contact</loc>

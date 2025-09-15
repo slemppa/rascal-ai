@@ -31,8 +31,6 @@ Sovelluksessa on 4 eri modal-systeemiä, jotka ovat eri tarkoituksessa:
 
 ### 2. Landing page -modaalit
 **Tiedostot:**
-- `src/pages/FeaturesPage.css`
-- `src/pages/PricingPage.css`
 - `src/pages/ContactPage.css`
 - `src/pages/LandingPage.css`
 

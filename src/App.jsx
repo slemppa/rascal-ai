@@ -29,8 +29,6 @@ import CallPanel from './pages/CallPanel'
 import SettingsPage from './pages/SettingsPage'
 import TermsOfServicePage from './pages/TermsOfServicePage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
-import PricingPage from './pages/PricingPage'
-import FeaturesPage from './pages/FeaturesPage'
 import BlogNewsletterPage from './pages/BlogNewsletterPage'
 import BlogPage from './pages/BlogPage'
 import BlogArticlePage from './pages/BlogArticlePage'
@@ -144,8 +142,6 @@ export default function App() {
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/terms" element={<TermsOfServicePage />} />
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
-        <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/features" element={<FeaturesPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogArticlePage />} />
         <Route path="/ai-due-diligence" element={<AIDueDiligencePage />} />

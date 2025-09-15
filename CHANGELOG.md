@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.63.0](https://github.com/slemppa/rascal-ai/compare/v1.62.1...v1.63.0) (2025-09-15)
+
+
+### ✨ Features
+
+* paranna SEO-optimointia Meta Pixel ja keywords-tuella ([931ebff](https://github.com/slemppa/rascal-ai/commit/931ebff07dff900b3c3d4f657b19c7d759bf9c99))
+
 ### [1.62.1](https://github.com/slemppa/rascal-ai/compare/v1.62.0...v1.62.1) (2025-09-15)
 
 

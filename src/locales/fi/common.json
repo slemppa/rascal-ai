@@ -813,7 +813,19 @@
       },
       "inbound": {
         "title": "Inbound-asetukset",
-        "close": "Sulje"
+        "close": "Sulje",
+        "aiEnhancement": {
+          "title": "AI-parannus inbound asetuksiin",
+          "description": "Lähetä inbound-asetukset AI-parannukseen. Saat takaisin optimoidun version, joka on paremmin räätälöity asiakkaillesi.",
+          "benefits": {
+            "title": "AI-parannuksen hyödyt:",
+            "optimize": "Optimoi inbound-puhelun kulkua ja vastauksia",
+            "improve": "Parantaa tervehdyksen luonnollisuutta ja ammattimaisuutta",
+            "suggest": "Ehdota parannuksia skriptiin ja lähestymistapaan",
+            "customize": "Mukauttaa viestit yrityksesi tyyliin"
+          },
+          "cta": "Lähetä AI-parannukseen"
+        }
       },
       "addCallType": {
         "steps": {

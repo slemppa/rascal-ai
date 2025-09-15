@@ -54,6 +54,9 @@ export default function CallPanel() {
   const [showInboundModal, setShowInboundModal] = useState(false)
   const [showEditInboundModal, setShowEditInboundModal] = useState(false)
   const [editingInboundSettings, setEditingInboundSettings] = useState(null)
+  const [aiEnhancementSent, setAiEnhancementSent] = useState(false)
+  const [addModalAiEnhancementSent, setAddModalAiEnhancementSent] = useState(false)
+  const [editModalAiEnhancementSent, setEditModalAiEnhancementSent] = useState(false)
   const [currentAudio, setCurrentAudio] = useState(null)
   const [audioInfo, setAudioInfo] = useState('')
   const audioElementsRef = useRef([])
@@ -1044,15 +1047,54 @@ export default function CallPanel() {
   const openEditModal = (callType) => {
     setEditingCallType(callType)
     setShowEditModal(true)
+    setEditModalAiEnhancementSent(false) // Reset flag kun modaali avataan
   }
 
   const openAddModal = () => {
     setShowAddModal(true)
+    setAddModalAiEnhancementSent(false) // Reset flag kun modaali avataan
   }
 
   const openEditInboundModal = (inboundSettings) => {
     setEditingInboundSettings(inboundSettings)
     setShowEditInboundModal(true)
+    setAiEnhancementSent(false) // Reset flag kun modaali avataan
+  }
+
+  // Lähetä inbound-asetukset AI-parannukseen
+  const handleInboundAIEnhancement = async () => {
+    try {
+      if (!inboundSettingsId) {
+        alert('Tallenna ensin inbound-asetukset ennen AI-parannusta!')
+        return
+      }
+
+      const response = await fetch('/api/call-type-improvement', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          inbound_settings_id: inboundSettingsId
+        })
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        alert('Inbound-asetukset lähetetty AI-parannukseen! Saat parannetun version pian.')
+        // Merkitse että AI-parannus on lähetetty
+        setAiEnhancementSent(true)
+        // Sulje modaali onnistuneen lähetyksen jälkeen
+        setShowEditInboundModal(false)
+        setEditingInboundSettings(null)
+      } else {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Lähetys epäonnistui')
+      }
+    } catch (error) {
+      console.error('AI-parannuksen lähetys epäonnistui:', error)
+      alert('AI-parannuksen lähetys epäonnistui: ' + (error.message || error))
+    }
   }
 
   // Hae puheluloki N8N:n kautta - hakee kaikki rivit paginationilla
@@ -3524,9 +3566,12 @@ export default function CallPanel() {
         <AddCallTypeModal
           showModal={showAddModal}
           onClose={async () => {
-            // Tallennetaan automaattisesti kun suljetaan
-            await handleAddCallType()
+            // Tallennetaan automaattisesti kun suljetaan, paitsi jos AI-parannus on lähetetty
+            if (!addModalAiEnhancementSent) {
+              await handleAddCallType()
+            }
             closeModals()
+            setAddModalAiEnhancementSent(false) // Reset flag
           }}
           newCallType={newCallType}
           setNewCallType={setNewCallType}
@@ -3534,32 +3579,41 @@ export default function CallPanel() {
           loading={addTypeLoading}
           error={addTypeError}
           success={addTypeSuccess}
+          onAIEnhancementSent={() => setAddModalAiEnhancementSent(true)}
         />
         <EditCallTypeModal
           showModal={showEditModal}
           onClose={async () => {
-            // Tallennetaan automaattisesti kun suljetaan
-            await handleSaveCallType()
+            // Tallennetaan automaattisesti kun suljetaan, paitsi jos AI-parannus on lähetetty
+            if (!editModalAiEnhancementSent) {
+              await handleSaveCallType()
+            }
             closeModals()
+            setEditModalAiEnhancementSent(false) // Reset flag
           }}
           editingCallType={editingCallType}
           setEditingCallType={setEditingCallType}
           onSave={handleSaveCallType}
+          onAIEnhancementSent={() => setEditModalAiEnhancementSent(true)}
         />
         
         <EditInboundSettingsModal
           showModal={showEditInboundModal}
           onClose={async () => {
-            // Tallennetaan automaattisesti kun suljetaan
-            await handleSaveEditInboundSettings()
+            // Tallennetaan automaattisesti kun suljetaan, paitsi jos AI-parannus on lähetetty
+            if (!aiEnhancementSent) {
+              await handleSaveEditInboundSettings()
+            }
             setShowEditInboundModal(false)
             setEditingInboundSettings(null)
+            setAiEnhancementSent(false) // Reset flag
           }}
           editingInboundSettings={editingInboundSettings}
           setEditingInboundSettings={setEditingInboundSettings}
           onSave={handleSaveEditInboundSettings}
           getVoiceOptions={getVoiceOptions}
           playVoiceSample={playVoiceSample}
+          onAIEnhancement={handleInboundAIEnhancement}
         />
         
         {/* Inbound-asetukset modaali */}

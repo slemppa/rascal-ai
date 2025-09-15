@@ -8,7 +8,8 @@ const EditCallTypeModal = ({
   onClose, 
   editingCallType, 
   setEditingCallType, 
-  onSave 
+  onSave,
+  onAIEnhancementSent
 }) => {
   const { t } = useTranslation('common')
   const [currentStep, setCurrentStep] = useState(1)
@@ -79,6 +80,11 @@ const EditCallTypeModal = ({
 
       if (response.ok) {
         alert('Puhelun tyyppi lähetetty AI-parannukseen! Saat parannetun version pian.')
+        // Merkitse että AI-parannus on lähetetty ja sulje modaali
+        if (onAIEnhancementSent) {
+          onAIEnhancementSent()
+        }
+        onClose()
       } else {
         const errorData = await response.json()
         throw new Error(errorData.error || 'Lähetys epäonnistui')

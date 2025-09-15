@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Button from './Button'
+import { useTranslation } from 'react-i18next'
 import './ModalComponents.css'
 
 const EditInboundSettingsModal = ({ 
@@ -9,10 +10,12 @@ const EditInboundSettingsModal = ({
   setEditingInboundSettings, 
   onSave,
   getVoiceOptions,
-  playVoiceSample
+  playVoiceSample,
+  onAIEnhancement
 }) => {
+  const { t } = useTranslation('common')
   const [currentStep, setCurrentStep] = useState(1)
-  const totalSteps = 3
+  const totalSteps = 4
 
   // ESC-toiminnallisuus - pitää olla heti useState jälkeen
   useEffect(() => {
@@ -36,7 +39,8 @@ const EditInboundSettingsModal = ({
   const steps = [
     { id: 1, label: 'Ääni' },
     { id: 2, label: 'Viestit' },
-    { id: 3, label: 'Yhteenveto' }
+    { id: 3, label: 'Yhteenveto' },
+    { id: 4, label: 'AI-parannus' }
   ]
 
   // Tyhjän tilan klikkaus
@@ -206,6 +210,54 @@ Jos ei → kiitä ja tarjoa lisätietoja`}</div>
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {currentStep === 4 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ textAlign: 'center', marginBottom: 16 }}>
+                <h3 style={{ fontSize: 18, fontWeight: 600, color: '#1f2937', margin: '0 0 8px 0' }}>
+                  {t('calls.modals.inbound.aiEnhancement.title')}
+                </h3>
+                <p style={{ fontSize: 14, color: '#6b7280', margin: 0, lineHeight: 1.4 }}>
+                  {t('calls.modals.inbound.aiEnhancement.description')}
+                </p>
+              </div>
+              
+              <div style={{ 
+                background: '#f8fafc', 
+                border: '1px solid #e2e8f0', 
+                borderRadius: 8, 
+                padding: 16
+              }}>
+                <div style={{ fontSize: 13, color: '#374151', marginBottom: 8, fontWeight: 500 }}>
+                  {t('calls.modals.inbound.aiEnhancement.benefits.title')}
+                </div>
+                <ul style={{ fontSize: 12, color: '#6b7280', margin: 0, paddingLeft: 16, lineHeight: 1.4 }}>
+                  <li>{t('calls.modals.inbound.aiEnhancement.benefits.optimize')}</li>
+                  <li>{t('calls.modals.inbound.aiEnhancement.benefits.improve')}</li>
+                  <li>{t('calls.modals.inbound.aiEnhancement.benefits.suggest')}</li>
+                  <li>{t('calls.modals.inbound.aiEnhancement.benefits.customize')}</li>
+                </ul>
+              </div>
+              
+              <Button
+                onClick={onAIEnhancement}
+                style={{
+                  background: '#f97316',
+                  color: '#fff',
+                  padding: '8px 16px',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  borderRadius: 6,
+                  border: 'none',
+                  cursor: 'pointer',
+                  width: 'auto',
+                  alignSelf: 'center'
+                }}
+              >
+{t('calls.modals.inbound.aiEnhancement.cta')}
+              </Button>
             </div>
           )}
         </div>

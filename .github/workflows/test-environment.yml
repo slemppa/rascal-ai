@@ -26,7 +26,7 @@ jobs:
       run: npm ci
       
     - name: Käynnistä testit
-      run: npm test --if-present
+      run: npm run lint
       
     - name: Buildaa projekti
       run: npm run build

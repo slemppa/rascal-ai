@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.62.1](https://github.com/slemppa/rascal-ai/compare/v1.62.0...v1.62.1) (2025-09-15)
+
+
+### 🐛 Bug Fixes
+
+* korjattu blog-sivun artikkelilaatikoiden layout ja korkeudet ([823b380](https://github.com/slemppa/rascal-ai/commit/823b38097a96f2452a64dbdfb590806abcff3ff9))
+* korjattu call type -parannus ID-ongelma ([a243f24](https://github.com/slemppa/rascal-ai/commit/a243f24cbfe1f60e1ea5cd765255248d29f9a009))
+
 ## [1.62.0](https://github.com/slemppa/rascal-ai/compare/v1.61.1...v1.62.0) (2025-09-15)
 
 

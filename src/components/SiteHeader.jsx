@@ -36,7 +36,17 @@ export default function SiteHeader({ onOpenSignIn }) {
           <a className="nav-link" href="/#contact">{t('nav.contact')}</a>
         </div>
         <div className="header-buttons desktop-buttons">
-          <button className="btn btn-primary" onClick={onOpenSignIn}>{t('nav.bookDemo')}</button>
+          <button className="btn btn-primary" onClick={() => {
+            // Google Analytics event tracking
+            if (typeof gtag !== 'undefined') {
+              gtag('event', 'conversion', {
+                'event_category': 'booking',
+                'event_label': 'header_book_demo',
+                'value': 1
+              });
+            }
+            onOpenSignIn?.();
+          }}>{t('nav.bookDemo')}</button>
           <button className="btn btn-secondary" onClick={onOpenSignIn}>{t('nav.signin')}</button>
         </div>
         <div className="lang-switch" aria-label="Language switcher">
@@ -71,7 +81,18 @@ export default function SiteHeader({ onOpenSignIn }) {
             <a className="mobile-nav-link" href="/#contact" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.contact')}</a>
           </div>
           <div className="mobile-buttons">
-            <button className="btn btn-primary mobile-btn" onClick={() => { onOpenSignIn?.(); setIsMobileMenuOpen(false) }}>{t('nav.bookDemo')}</button>
+            <button className="btn btn-primary mobile-btn" onClick={() => { 
+              // Google Analytics event tracking
+              if (typeof gtag !== 'undefined') {
+                gtag('event', 'conversion', {
+                  'event_category': 'booking',
+                  'event_label': 'mobile_header_book_demo',
+                  'value': 1
+                });
+              }
+              onOpenSignIn?.(); 
+              setIsMobileMenuOpen(false) 
+            }}>{t('nav.bookDemo')}</button>
             <button className="btn btn-secondary mobile-btn" onClick={() => { onOpenSignIn?.(); setIsMobileMenuOpen(false) }}>{t('nav.signin')}</button>
           </div>
           <div className="mobile-lang-switch">

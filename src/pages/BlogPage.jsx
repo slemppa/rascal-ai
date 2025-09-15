@@ -53,7 +53,7 @@ export default function BlogPage() {
         image="/hero-v3.jpg" 
       />
       
-            <div className="blog-page">
+      <div className="blog-page">
         {/* Shared Site Header */}
         <SiteHeader onOpenSignIn={() => setShowSignInModal(true)} />
 

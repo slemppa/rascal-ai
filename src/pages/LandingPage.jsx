@@ -291,7 +291,8 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Asiakaslogot */}
+              {/* Asiakaslogot - KOMMENTOITU POIS */}
+              {/* 
               <div className="section" id="customers">
                 <div className="section-header">
                   <h2 className="section-title">{t('sections.customersTitle', { defaultValue: 'Luotettu kumppani' })}</h2>
@@ -328,6 +329,7 @@ export default function LandingPage() {
                   </div>
                 )}
               </div>
+              */}
 
               {/* Uusimmat artikkelit */}
               <div className="section" id="latest-articles">

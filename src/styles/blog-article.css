@@ -110,10 +110,10 @@
 .article-content {
   background: #2a1d15;
   padding: 40px 40px 0 40px;
-  margin: 0 auto 20px;
+  margin: 0 auto 0;
   max-width: 800px;
   border: 1px solid #4b3120;
-  border-radius: 20px;
+
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   position: relative;
   width: 100%;

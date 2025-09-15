@@ -487,12 +487,12 @@ html, body, #root, .landing-page {
   text-shadow: 0 2px 8px rgba(0,0,0,0.4);
   z-index: 10;
   position: relative;
-  text-align: left;
+  text-align: center;
 }
 
 .section-description p {
   margin: 0 0 4px 0;
-  text-align: left;
+  text-align: center;
   white-space: normal;
 }
 

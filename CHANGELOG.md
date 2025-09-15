@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.64.0](https://github.com/slemppa/rascal-ai/compare/v1.63.2...v1.64.0) (2025-09-15)
+
+
+### ✨ Features
+
+* add auto-close modal after AI enhancement for outbound call types ([b08e285](https://github.com/slemppa/rascal-ai/commit/b08e28575d4dfe4702812ba26f9c13d234e62506))
+
 ### [1.63.1](https://github.com/slemppa/rascal-ai/compare/v1.63.0...v1.63.1) (2025-09-15)
 
 

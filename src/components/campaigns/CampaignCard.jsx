@@ -9,6 +9,7 @@ export default function CampaignCard({ campaign }) {
   const answeredCalls = campaign.answered_calls || 0
   const successfulCalls = campaign.successful_calls || 0
   const answerRate = totalCalls > 0 ? Math.round((answeredCalls / totalCalls) * 100) : 0
+  
 
   const statusLabelMap = {
     active: t('campaigns.status.active'),

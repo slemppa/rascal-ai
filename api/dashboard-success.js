@@ -45,13 +45,13 @@ export default async function handler(req, res) {
       .single()
     if (userErr || !userRow?.id) return res.status(403).json({ error: 'User profile not found' })
 
-    // Hae puhelulokit – aikarajaus call_date:lla
+    // Hae puhelulokit – aikarajaus created_at:lla (call_date voi olla tulevaisuudessa)
     const { data: logs, error: logsErr } = await userClient
       .from('call_logs')
       .select('created_at, call_date, answered')
       .eq('user_id', userRow.id)
-      .gte('call_date', start.toISOString())
-      .lte('call_date', now.toISOString())
+      .gte('created_at', start.toISOString())
+      .lte('created_at', now.toISOString())
 
     if (logsErr) return res.status(500).json({ error: 'Failed to fetch logs', details: logsErr.message })
 

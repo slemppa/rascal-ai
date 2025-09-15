@@ -448,7 +448,9 @@ export default function DashboardPage() {
         const res = await fetch(`/api/dashboard-success?days=30`, { headers: { Authorization: `Bearer ${token}` } })
         const json = await res.json()
         if (res.ok) setSuccessStats(json)
-      } catch (e) {}
+      } catch (e) {
+        console.error('Dashboard: Error fetching success stats:', e)
+      }
     }
     fetchSuccess()
   }, [user])
@@ -1069,8 +1071,8 @@ export default function DashboardPage() {
               ))
             ) : (
               [...dashboardStats,
-                { label: t('dashboard.metrics.stats.successCalls'), value: successStats.success, trend: successStats.successRate, color: '#22c55e' },
-                { label: t('dashboard.metrics.stats.answerRate'), value: `${successStats.answerRate}%`, trend: successStats.answerRate, color: '#2563eb' }
+                { label: t('dashboard.metrics.stats.successCalls'), value: successStats.success || 0, trend: successStats.successRate || 0, color: '#22c55e' },
+                { label: t('dashboard.metrics.stats.answerRate'), value: `${successStats.answerRate || 0}%`, trend: successStats.answerRate || 0, color: '#2563eb' }
               ].map((stat, i) => (
                 <div key={i} className={styles['metric-card']}>
                   <div className={styles['metric-label']}>{stat.label}</div>

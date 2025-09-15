@@ -1087,7 +1087,7 @@ export default function CallPanel() {
       }
       if (statusFilter) {
           if (statusFilter === 'success') {
-            countQuery = countQuery.eq('call_status', 'done').eq('answered', true).neq('call_outcome', 'voice mail')
+            countQuery = countQuery.eq('call_status', 'done').eq('call_outcome', 'successful')
           } else if (statusFilter === 'failed') {
             countQuery = countQuery.eq('call_status', 'done').eq('answered', false)
           } else if (statusFilter === 'voice_mail') {
@@ -1160,7 +1160,7 @@ export default function CallPanel() {
         }
         if (statusFilter) {
             if (statusFilter === 'success') {
-              query = query.eq('call_status', 'done').eq('answered', true).neq('call_outcome', 'voice mail')
+              query = query.eq('call_status', 'done').eq('call_outcome', 'successful')
             } else if (statusFilter === 'failed') {
               query = query.eq('call_status', 'done').eq('answered', false)
             } else if (statusFilter === 'voice_mail') {
@@ -1789,6 +1789,8 @@ export default function CallPanel() {
       const selectedVoiceObj = getVoiceOptions().find(v => v.value === massCallSelectedVoice)
       const session = await supabase.auth.getSession()
       const token = session?.data?.session?.access_token
+      
+      
       const res = await fetch('/api/mass-call', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },

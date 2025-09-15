@@ -315,7 +315,7 @@ export default async function handler(req, res) {
             errorCount++
             continue
           }
-          callLogs.push({
+          const callLogEntry = {
             user_id: publicUserId, // Käytä public.users.id
             customer_name: name,
             phone_number: normalized,
@@ -331,7 +331,10 @@ export default async function handler(req, res) {
             contact_segment_id: contactSegmentId || null,
             summary: script && script.trim() ? `Mass-call: ${script.trim().substring(0, 100)}...` : `Mass-call: ${callType}`,
             sms_first: Boolean(sms_first)
-          })
+          }
+          
+          
+          callLogs.push(callLogEntry)
         } else {
           errorCount++
         }

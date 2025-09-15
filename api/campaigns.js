@@ -90,13 +90,22 @@ export default async function handler(req, res) {
     const campaignIds = campaigns.map(c => c.id)
 
     // Hae call_logs rivit ja laske aggregaatit muistissa
-    const { data: logs, error: logsError } = await userClient
+    // Käytä paginationia hakeakseen kaikki rivit (Supabase palauttaa vain 1000 riviä oletuksena)
+    
+    // Hae ensin rivien kokonaismäärä
+    const { count: totalCount, error: countError } = await userClient
       .from('call_logs')
-      .select('new_campaign_id, answered, call_outcome')
+      .select('*', { count: 'exact', head: true })
       .in('new_campaign_id', campaignIds)
 
-    if (logsError) {
-      // Jos lokien haku epäonnistuu, palauta kampanjat ilman tilastoja
+    if (countError) {
+      console.error('API: Error counting call logs:', countError)
+      return res.status(500).json({ error: 'Failed to count call logs', details: countError.message })
+    }
+
+
+    // Jos ei ole rivejä, palauta kampanjat ilman tilastoja
+    if (totalCount === 0) {
       return res.status(200).json(campaigns.map(c => ({
         ...c,
         total_calls: 0,
@@ -105,15 +114,45 @@ export default async function handler(req, res) {
       })))
     }
 
+    // Hae kaikki rivit erissä (1000 riviä per sivu)
+    const pageSize = 1000
+    const totalPages = Math.ceil(totalCount / pageSize)
+    let allLogs = []
+
+    for (let page = 1; page <= totalPages; page++) {
+      const startIndex = (page - 1) * pageSize
+      const endIndex = Math.min(startIndex + pageSize - 1, totalCount - 1)
+
+      const { data: pageLogs, error: pageError } = await userClient
+        .from('call_logs')
+        .select('new_campaign_id, answered, call_outcome')
+        .in('new_campaign_id', campaignIds)
+        .range(startIndex, endIndex)
+
+      if (pageError) {
+        console.error(`API: Error fetching call logs page ${page}:`, pageError)
+        return res.status(500).json({ error: `Failed to fetch call logs page ${page}`, details: pageError.message })
+      }
+
+      allLogs = allLogs.concat(pageLogs || [])
+    }
+
+
+    // Laske tilastot kaikista logeista
     const statsByCampaign = {}
-    for (const log of logs || []) {
+    for (const log of allLogs) {
       const cid = log.new_campaign_id
+      if (!cid) continue
+      
       if (!statsByCampaign[cid]) {
         statsByCampaign[cid] = { total_calls: 0, answered_calls: 0, successful_calls: 0 }
       }
+      // Kaikki puhelut
       statsByCampaign[cid].total_calls += 1
+      // Vastatut puhelut
       if (log.answered) statsByCampaign[cid].answered_calls += 1
-      if (log.call_outcome === 'success') statsByCampaign[cid].successful_calls += 1
+      // Onnistuneet puhelut (vain call_outcome = 'successful')
+      if (log.call_outcome === 'successful') statsByCampaign[cid].successful_calls += 1
     }
 
     const enriched = campaigns.map(c => ({
@@ -122,6 +161,7 @@ export default async function handler(req, res) {
       answered_calls: statsByCampaign[c.id]?.answered_calls || 0,
       successful_calls: statsByCampaign[c.id]?.successful_calls || 0
     }))
+
 
     res.status(200).json(enriched)
   } catch (error) {

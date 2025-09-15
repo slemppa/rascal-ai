@@ -80,6 +80,12 @@ const AddCallTypeModal = ({
 
   // Lähetä puhelun tyyppi AI-parannukseen
   const handleAIEnhancement = async () => {
+    // Tarkista että call type on tallennettu tietokantaan
+    if (!newCallType.id) {
+      alert('Tallenna ensin puhelun tyyppi ennen AI-parannusta!')
+      return
+    }
+
     try {
       const response = await fetch('/api/call-type-improvement', {
         method: 'POST',
@@ -87,7 +93,7 @@ const AddCallTypeModal = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          call_type_id: newCallType.id || 'new_call_type'
+          call_type_id: newCallType.id
         })
       })
 

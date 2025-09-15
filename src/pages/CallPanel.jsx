@@ -999,10 +999,13 @@ export default function CallPanel() {
         success_assessment: newCallType.success_assessment || '',
         first_sms: newCallType.first_sms || '' // Uusi kenttä
       }
-      const { error } = await supabase.from('call_types').insert([insertData])
+      const { data: newCallTypeData, error } = await supabase.from('call_types').insert([insertData]).select().single()
       if (error) throw error
       setAddTypeSuccess('Puhelutyyppi lisätty!')
-      setNewCallType({ callType: '', label: '', description: '', identity: '', style: '', guidelines: '', goals: '', first_line: '', intro: '', questions: '', outro: '', notes: '', version: '', status: 'Active' })
+      
+      // Aseta ID takaisin newCallType objektiin AI-parannusta varten
+      setNewCallType(prev => ({ ...prev, id: newCallTypeData.id }))
+      
       fetchCallTypes() // Päivitä lista
     } catch (e) {
       setAddTypeError('Lisäys epäonnistui: ' + (e.message || e))

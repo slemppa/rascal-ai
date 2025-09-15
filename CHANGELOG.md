@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.63.1](https://github.com/slemppa/rascal-ai/compare/v1.63.0...v1.63.1) (2025-09-15)
+
+
+### ♻️ Code Refactoring
+
+* poista käyttämättömät sivut ja korjaa Meta Pixel ([950edf7](https://github.com/slemppa/rascal-ai/commit/950edf78b6ddf30b11958b42a9df0462c47fb6b6))
+
 ## [1.63.0](https://github.com/slemppa/rascal-ai/compare/v1.62.1...v1.63.0) (2025-09-15)
 
 

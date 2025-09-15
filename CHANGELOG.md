@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.61.1](https://github.com/slemppa/rascal-ai/compare/v1.61.0...v1.61.1) (2025-09-15)
+
+
+### 🐛 Bug Fixes
+
+* korjaa dashboard ja campaigns tiedot sekä mass-call kampanja ([f0f0561](https://github.com/slemppa/rascal-ai/commit/f0f0561b39b4ef8c2a5c65e9e8ae924bbe40900a))
+
+
+### ✨ Features
+
+* **posts:** show Mixpost scheduled posts and provider badge ([c68c73c](https://github.com/slemppa/rascal-ai/commit/c68c73cccac9ecc82cf6f7d6cbd1b208e9284e90))
+
 ## [1.61.0](https://github.com/slemppa/rascal-ai/compare/v1.60.2...v1.61.0) (2025-09-13)
 
 

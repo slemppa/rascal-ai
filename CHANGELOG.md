@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.64.1](https://github.com/slemppa/rascal-ai/compare/v1.64.0...v1.64.1) (2025-09-17)
+
+
+### 🐛 Bug Fixes
+
+* **calls:** korjaa outbound AI-parannus; lisää JWT & estä X-tallennus ([5b8dfc6](https://github.com/slemppa/rascal-ai/commit/5b8dfc6905fef534709c431f9dc758e3a40483c0))
+
 ## [1.64.0](https://github.com/slemppa/rascal-ai/compare/v1.63.2...v1.64.0) (2025-09-15)
 
 

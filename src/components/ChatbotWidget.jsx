@@ -10,6 +10,7 @@ export default function ChatbotWidget() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null)
+  const [gdprConsent, setGdprConsent] = useState(false)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -21,6 +22,9 @@ export default function ChatbotWidget() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!gdprConsent) {
+      return
+    }
     setIsSubmitting(true)
     setSubmitStatus(null)
 
@@ -32,6 +36,7 @@ export default function ChatbotWidget() {
         },
         body: JSON.stringify({
           ...formData,
+          gdprConsent: true,
           source: 'chatbot-widget',
           timestamp: new Date().toISOString()
         })
@@ -115,6 +120,19 @@ export default function ChatbotWidget() {
                 />
               </div>
 
+              <div className="gdpr-consent">
+                <input
+                  type="checkbox"
+                  id="gdprConsent"
+                  name="gdprConsent"
+                  checked={gdprConsent}
+                  onChange={(e) => setGdprConsent(e.target.checked)}
+                />
+                <label htmlFor="gdprConsent">
+                  Hyväksyn, että tietoni käsitellään yhteydenottoa varten GDPR:n mukaisesti.
+                </label>
+              </div>
+
               {submitStatus === 'success' && (
                 <div className="success-message">
                   Olemme sinuun nopeammin yhteydessä kun uskotkaan!
@@ -131,7 +149,7 @@ export default function ChatbotWidget() {
               <button
                 type="submit"
                 className="submit-btn"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !gdprConsent}
               >
                 {isSubmitting ? 'Lähetetään...' : 'Lähetä'}
               </button>

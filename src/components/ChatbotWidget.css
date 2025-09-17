@@ -163,6 +163,27 @@
   color: #999;
 }
 
+/* GDPR consent */
+.gdpr-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.gdpr-consent input[type="checkbox"] {
+  margin-top: 2px;
+}
+
+.gdpr-consent label {
+  color: #333;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 /* Lähetysnappi */
 .submit-btn {
   background: linear-gradient(135deg, #ff6600 0%, #e55e00 100%);

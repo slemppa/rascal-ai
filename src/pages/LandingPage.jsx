@@ -733,7 +733,7 @@ export default function LandingPage() {
                     </div>
                   </a>
                 </div>
-                <p className="footer-copyright">© 2025 Rascal AI · Rascal Company - More than meets the eye</p>
+                <p className="footer-copyright">© 2025 Rascal AI · <a href="https://rascalcompany.fi/" target="_blank" rel="noopener noreferrer">Rascal Company</a> - More than meets the eye</p>
               </div>
             </div>
           </footer>

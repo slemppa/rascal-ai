@@ -837,6 +837,15 @@ html, body, #root, .landing-page {
   transform: scale(1.1);
 }
 
+.footer-bottom .footer-copyright a,
+.footer-bottom .footer-copyright a:visited,
+.footer-bottom .footer-copyright a:hover,
+.footer-bottom .footer-copyright a:active,
+.footer-bottom .footer-copyright a:focus {
+  color: inherit;
+  text-decoration: none;
+}
+
 .footer-copyright {
   color: #cea78d;
   font-size: 14px;

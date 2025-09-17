@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import CallDetailModal from '../components/calls/CallDetailModal'
 import { supabase } from '../lib/supabase'
 import AddCallTypeModal from '../components/AddCallTypeModal'
 import EditCallTypeModal from '../components/EditCallTypeModal'
@@ -120,6 +121,8 @@ export default function CallPanel() {
   const [selectedLog, setSelectedLog] = useState(null)
   const [showLogDetail, setShowLogDetail] = useState(false)
   const [loadingLogDetail, setLoadingLogDetail] = useState(false)
+  const [detailActiveTab, setDetailActiveTab] = useState('summary')
+  const [showMoreDetails, setShowMoreDetails] = useState(false)
 
   const voiceOptions = [
     { value: 'rascal-nainen-1', label: 'Aurora (Nainen, Lämmin ja Ammattimainen)', id: 'GGiK1UxbDRh5IRtHCTlK' },
@@ -1310,6 +1313,8 @@ export default function CallPanel() {
       setLoadingLogDetail(true)
       setSelectedLog(log)
       setShowLogDetail(true)
+      setDetailActiveTab('summary')
+      setShowMoreDetails(false)
       
       // Käytä log-objektia suoraan, koska se sisältää kaikki tiedot
       
@@ -3414,157 +3419,24 @@ export default function CallPanel() {
             handleMikaMassCallSelected={handleMikaMassCallSelected}
           />
         )}
-          </div>
+      </div>
       </div>
       
-      {/* Yksityiskohtainen näkymä modal ja Modaalit - kaikki samassa fragmentissa */}
-      <>
-        {showLogDetail && selectedLog && createPortal(
-            <div 
-              onClick={handleModalBackgroundClick}
-              className="modal-overlay modal-overlay--dark"
-            >
-              <div 
-                onClick={(e) => e.stopPropagation()}
-                className="modal-container"
-              >
-              <div className="modal-header">
-                <h2 className="modal-title" style={{ fontSize: 20, color: '#1f2937', fontWeight: 700, backgroundColor: 'transparent' }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                  </svg>
-                  Puhelun yksityiskohdat
-                </h2>
-                <Button
-                  onClick={() => setShowLogDetail(false)}
-                  variant="secondary"
-                  className="modal-close-btn"
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </Button>
-              </div>
-              {loadingLogDetail ? (
-                <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
-                  Ladataan yksityiskohtia...
-                </div>
-              ) : (
-                <div>
-                  <div style={{ marginBottom: 24 }}>
-                    <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
-                      Perustiedot
-                    </h3>
-                    <div style={{ display: 'grid', gap: 12 }}>
-                      <div style={{ color: '#1f2937' }}>
-                            <strong style={{ color: '#374151' }}>Nimi:</strong> {selectedLog.customer_name || 'Ei nimeä'}
-                      </div>
-                      <div style={{ color: '#1f2937' }}>
-                            <strong style={{ color: '#374151' }}>Puhelinnumero:</strong> {selectedLog.phone_number || 'Ei numeroa'}
-                          </div>
-                          <div style={{ color: '#1f2937' }}>
-                            <strong style={{ color: '#374151' }}>Sähköposti:</strong> {selectedLog.email || 'Ei sähköpostia'}
-                          </div>
-                          <div style={{ color: '#1f2937' }}>
-                            <strong style={{ color: '#374151' }}>Puhelun tyyppi:</strong> {selectedLog.call_type || '-'}
-                          </div>
-                          <div style={{ color: '#1f2937' }}>
-                            <strong style={{ color: '#374151' }}>Päivämäärä:</strong> {selectedLog.call_date ? new Date(selectedLog.call_date).toLocaleDateString('fi-FI') + ' ' + new Date(selectedLog.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : '-'}
-                          </div>
-                          <div style={{ color: '#1f2937' }}>
-                            <strong style={{ color: '#374151' }}>Vastattu:</strong> {selectedLog.answered ? 'Kyllä' : 'Ei'}
-                          </div>
-                          <div style={{ color: '#1f2937' }}>
-                            <strong style={{ color: '#374151' }}>Kesto:</strong> {selectedLog.duration || '-'}
-                      </div>
-                      <div style={{ color: '#1f2937' }}>
-                        <strong style={{ color: '#374151' }}>Tila:</strong> 
-                        <span style={{ 
-                          marginLeft: 8,
-                          padding: '2px 8px',
-                          borderRadius: 4,
-                          fontSize: 12,
-                          fontWeight: 500,
-                              background: selectedLog.call_status === 'done' && selectedLog.answered ? '#dcfce7' : 
-                                        selectedLog.call_status === 'pending' ? '#f3f4f6' : 
-                                        selectedLog.call_status === 'in progress' ? '#dbeafe' : '#fef2f2',
-                              color: selectedLog.call_status === 'done' && selectedLog.answered ? '#166534' : 
-                                     selectedLog.call_status === 'pending' ? '#6b7280' : 
-                                     selectedLog.call_status === 'in progress' ? '#1d4ed8' : '#dc2626'
-                        }}>
-                              {selectedLog.call_status === 'done' && selectedLog.answered ? 'Onnistui' : 
-                               selectedLog.call_status === 'done' && !selectedLog.answered ? 'Epäonnistui' :
-                               selectedLog.call_status === 'pending' ? 'Aikataulutettu' : 
-                               selectedLog.call_status === 'in progress' ? 'Jonossa' : 'Tuntematon'}
-                        </span>
-                      </div>
-                          {selectedLog.campaign_id && (
-                            <div style={{ color: '#1f2937' }}>
-                              <strong style={{ color: '#374151' }}>Kampanja ID:</strong> {selectedLog.campaign_id}
-                    </div>
-                          )}
-                          {selectedLog.vapi_call_id && (
-                            <div style={{ color: '#1f2937' }}>
-                              <strong style={{ color: '#374151' }}>VAPI Call ID:</strong> {selectedLog.vapi_call_id}
-                  </div>
-                          )}
-                        </div>
-                    </div>
-                    {/* Yhteenveto */}
-                    {selectedLog.summary && (
-                    <div style={{ marginBottom: 24 }}>
-                      <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
-                          Yhteenveto
-                      </h3>
-                        <div
-                          style={{
-                            width: '100%',
-                            background: '#f8fafc',
-                            padding: 16,
-                            borderRadius: 8,
-                            fontSize: 14,
-                            lineHeight: 1.6,
-                            whiteSpace: 'pre-wrap',
-                            overflowY: 'auto',
-                            maxHeight: '30vh',
-                            border: '1px solid #e2e8f0',
-                            boxSizing: 'border-box',
-                            color: '#1f2937'
-                          }}
-                        >
-                          {selectedLog.summary}
-                        </div>
-                    </div>
-                    )}
-                    {/* Transkripti */}
-                    {selectedLog.transcript && (
-                    <div style={{ marginBottom: 24 }}>
-                      <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
-                          Transkripti
-                      </h3>
-                        <div style={{ 
-                          background: '#f8fafc', 
-                          padding: 16, 
-                          borderRadius: 8, 
-                          fontSize: 14,
-                          lineHeight: 1.5,
-                          whiteSpace: 'pre-wrap',
-                          maxHeight: 300,
-                          overflowY: 'auto',
-                          color: '#1f2937'
-                        }}>
-                          {selectedLog.transcript}
-                        </div>
-                    </div>
-                    )}
-                </div>
-              )}
-              </div>
-            </div>,
-            document.body
-        )}
-        
+      {/* Yksityiskohtainen näkymä modal */}
+      {showLogDetail && selectedLog && (
+        <CallDetailModal
+          selectedLog={selectedLog}
+          loading={loadingLogDetail}
+          onClose={() => setShowLogDetail(false)}
+          onBackgroundClick={handleModalBackgroundClick}
+          formatDuration={formatDuration}
+          detailActiveTab={detailActiveTab}
+          setDetailActiveTab={setDetailActiveTab}
+          showMoreDetails={showMoreDetails}
+          setShowMoreDetails={setShowMoreDetails}
+        />
+      )}
+      
         <AddCallTypeModal
           showModal={showAddModal}
           onClose={async () => {
@@ -4193,8 +4065,7 @@ export default function CallPanel() {
           </div>,
           document.body
         )}
-      </>
     </div>
-    </>
+      </>
   )
 }

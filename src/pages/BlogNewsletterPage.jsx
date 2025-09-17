@@ -26,7 +26,8 @@ const transformSupabaseData = (supabaseData) => {
       'Scheduled': 'Aikataulutettu',
       'Done': 'Valmis',
       'Published': 'Julkaistu',
-      'Deleted': 'Poistettu'
+      'Deleted': 'Poistettu',
+      'Archived': 'Arkistoitu'
     }
     
     let status = statusMap[item.status] || 'Luonnos'
@@ -71,7 +72,7 @@ const transformSupabaseData = (supabaseData) => {
   return transformed
 }
 
-function ContentCard({ content, onView, onPublish }) {
+function ContentCard({ content, onView, onPublish, onArchive }) {
   const { t } = useTranslation('common')
   return (
     <div className="content-card">
@@ -110,7 +111,7 @@ function ContentCard({ content, onView, onPublish }) {
             </h3>
             <div className="content-badges">
               <span className="content-type">
-                {content.type === 'Blog' ? '📝 Blog' : content.type === 'Newsletter' ? '📧 Newsletter' : content.type}
+                {content.type === 'Blog' ? 'Blog' : content.type === 'Newsletter' ? 'Newsletter' : content.type}
               </span>
               <span className={`content-status ${content.status.toLowerCase().replace(' ', '-')}`}>
                 {content.status}
@@ -122,7 +123,7 @@ function ContentCard({ content, onView, onPublish }) {
           </p>
           <div className="content-footer">
             <span className="content-date">
-              {content.scheduledDate ? `📅 ${content.scheduledDate}` : content.createdAt || content.publishedAt}
+              {content.scheduledDate ? content.scheduledDate : content.createdAt || content.publishedAt}
             </span>
             <div className="content-actions">
               <Button 
@@ -130,7 +131,7 @@ function ContentCard({ content, onView, onPublish }) {
                 onClick={() => onView(content)}
                 style={{ fontSize: '11px', padding: '6px 10px' }}
               >
-                👁️ {t('blogNewsletter.actions.view')}
+                {t('blogNewsletter.actions.view')}
               </Button>
               {/* Julkaisu-nappi vain jos status on "Tarkistuksessa" */}
               {content.status === 'Tarkistuksessa' && (
@@ -143,7 +144,21 @@ function ContentCard({ content, onView, onPublish }) {
                     padding: '6px 10px' 
                   }}
                 >
-                  📤 {t('blogNewsletter.actions.publish')}
+                  {t('blogNewsletter.actions.publish')}
+                </Button>
+              )}
+              {/* Arkistoi-nappi kaikille muille paitsi jo arkistoiduille */}
+              {content.status !== 'Arkistoitu' && (
+                <Button
+                  variant="secondary"
+                  onClick={() => onArchive(content)}
+                  style={{ 
+                    backgroundColor: '#e5e7eb', 
+                    fontSize: '11px', 
+                    padding: '6px 10px'
+                  }}
+                >
+                  Arkistoi
                 </Button>
               )}
             </div>
@@ -163,6 +178,8 @@ export default function BlogNewsletterPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
+  const [activeTab, setActiveTab] = useState('main') // 'main' | 'archive'
+  const [toast, setToast] = useState({ visible: false, message: '' })
     const [showCreateModal, setShowCreateModal] = useState(false)
   const [showViewModal, setShowViewModal] = useState(false)
   const [viewingContent, setViewingContent] = useState(null)
@@ -219,7 +236,11 @@ export default function BlogNewsletterPage() {
   }, [user])
 
   // Filtteröidään sisältö
-  const filteredContents = contents.filter(content => {
+  const filteredContents = contents
+    // Tab-kohtainen perussuodatus
+    .filter(content => activeTab === 'archive' ? content.status === 'Arkistoitu' : content.status !== 'Arkistoitu')
+    // Hakusana, status ja tyyppi
+    .filter(content => {
     const matchesSearch = (content.title?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
                           (content.caption?.toLowerCase() || '').includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === '' || content.status === statusFilter
@@ -371,11 +392,42 @@ export default function BlogNewsletterPage() {
 
       // Päivitetään UI
       await fetchContents()
-      alert(result.message || 'Julkaisu onnistui!')
+      setToast({ visible: true, message: result.message || 'Julkaistu' })
+      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
       
     } catch (error) {
       console.error('Publish error:', error)
       alert('Julkaisu epäonnistui: ' + error.message)
+    }
+  }
+
+  const handleArchiveContent = async (content) => {
+    try {
+      // Haetaan käyttäjän user_id users-taulusta
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (userError || !userData?.id) {
+        throw new Error('Käyttäjän ID ei löytynyt')
+      }
+
+      const { error } = await supabase
+        .from('content')
+        .update({ status: 'Archived' })
+        .eq('id', content.id)
+        .eq('user_id', userData.id)
+
+      if (error) throw error
+
+      await fetchContents()
+      setToast({ visible: true, message: 'Siirretty arkistoon' })
+      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+    } catch (err) {
+      console.error('Archive error:', err)
+      alert('Arkistointi epäonnistui: ' + err.message)
     }
   }
 
@@ -405,7 +457,8 @@ export default function BlogNewsletterPage() {
 
       // Päivitetään UI
       await fetchContents()
-      alert('Sisältö poistettu onnistuneesti!')
+      setToast({ visible: true, message: 'Poistettu' })
+      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
       
     } catch (error) {
       console.error('Delete error:', error)
@@ -435,9 +488,28 @@ export default function BlogNewsletterPage() {
 
   return (
     <div className="blog-newsletter-container">
+      {toast.visible && (
+        <div className="toast-notice" role="status" aria-live="polite">{toast.message}</div>
+      )}
       {/* Page Header */}
       <div className="blog-newsletter-header">
         <h2>{t('blogNewsletter.header')}</h2>
+      </div>
+
+      {/* Tabs */}
+      <div className="tabs">
+        <button 
+          className={`tab-button ${activeTab === 'main' ? 'active' : ''}`}
+          onClick={() => setActiveTab('main')}
+        >
+          Sisältö
+        </button>
+        <button 
+          className={`tab-button ${activeTab === 'archive' ? 'active' : ''}`}
+          onClick={() => setActiveTab('archive')}
+        >
+          Arkisto
+        </button>
       </div>
 
       {/* Search and Filters */}
@@ -503,17 +575,24 @@ export default function BlogNewsletterPage() {
               <p>{t('blogNewsletter.loading.loadingContent')}</p>
             </div>
           ) : filteredContents.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-icon">📝</div>
-              <h3>{t('blogNewsletter.empty.title')}</h3>
-              <p>{t('blogNewsletter.empty.description')}</p>
-              <Button 
-                variant="primary"
-                onClick={() => setShowCreateModal(true)}
-              >
-                {t('blogNewsletter.empty.createFirst')}
-              </Button>
-            </div>
+            activeTab === 'archive' ? (
+              <div className="empty-state">
+                <div className="empty-icon"></div>
+                <h3>Täällä ei ole vielä mitään</h3>
+              </div>
+            ) : (
+              <div className="empty-state">
+                <div className="empty-icon"></div>
+                <h3>{t('blogNewsletter.empty.title')}</h3>
+                <p>{t('blogNewsletter.empty.description')}</p>
+                <Button 
+                  variant="primary"
+                  onClick={() => setShowCreateModal(true)}
+                >
+                  {t('blogNewsletter.empty.createFirst')}
+                </Button>
+              </div>
+            )
           ) : (
             filteredContents.map(content => (
               <ContentCard
@@ -521,6 +600,7 @@ export default function BlogNewsletterPage() {
                 content={content}
                 onView={handleViewContent}
                 onPublish={handlePublishContent}
+                onArchive={handleArchiveContent}
               />
             ))
           )}
@@ -574,8 +654,8 @@ export default function BlogNewsletterPage() {
                     required
                     className="form-select"
                   >
-                    <option value="blog">📝 Blog</option>
-                    <option value="newsletter">📧 Newsletter</option>
+                    <option value="blog">Blog</option>
+                    <option value="newsletter">Newsletter</option>
                   </select>
                 </div>
                 <div className="form-group">
@@ -667,7 +747,7 @@ export default function BlogNewsletterPage() {
                 
                 <div className="content-meta">
                   <span className="content-type">
-                    {viewingContent.type === 'Blog' ? '📝 Blog' : '📧 Newsletter'}
+                {viewingContent.type === 'Blog' ? 'Blog' : 'Newsletter'}
                   </span>
                   <span className="content-date">
                     {viewingContent.createdAt ? new Date(viewingContent.createdAt).toLocaleDateString(i18n.language === 'fi' ? 'fi-FI' : 'en-US') : t('blogNewsletter.placeholders.noDate')}

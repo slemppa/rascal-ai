@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.66.1](https://github.com/slemppa/rascal-ai/compare/v1.66.0...v1.66.1) (2025-09-17)
+
+
+### ✨ Features
+
+* **blog-newsletter:** add archive tab and action; add toasts ([1cce4b5](https://github.com/slemppa/rascal-ai/commit/1cce4b5d84ee7b49eaf68cd73ae72984f59322a0))
+
 ## [1.66.0](https://github.com/slemppa/rascal-ai/compare/v1.65.0...v1.66.0) (2025-09-17)
 
 

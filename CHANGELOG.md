@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.65.0](https://github.com/slemppa/rascal-ai/compare/v1.64.1...v1.65.0) (2025-09-17)
+
+
+### ✨ Features
+
+* **calls:** redesign and optimize 'Puhelun tiedot' modal ([b7dfdea](https://github.com/slemppa/rascal-ai/commit/b7dfdea48470d5c5d8051244cee8e1e415903481))
+
 ### [1.64.1](https://github.com/slemppa/rascal-ai/compare/v1.64.0...v1.64.1) (2025-09-17)
 
 

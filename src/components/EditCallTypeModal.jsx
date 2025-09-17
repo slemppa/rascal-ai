@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Button from './Button'
 import './ModalComponents.css'
 import { useTranslation } from 'react-i18next'
+import { supabase } from '../lib/supabase'
 
 const EditCallTypeModal = ({ 
   showModal, 
@@ -68,10 +69,12 @@ const EditCallTypeModal = ({
   // Lähetä puhelun tyyppi AI-parannukseen
   const handleAIEnhancement = async () => {
     try {
+      const { data: { session } } = await supabase.auth.getSession()
       const response = await fetch('/api/call-type-improvement', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {})
         },
         body: JSON.stringify({
           call_type_id: editingCallType.id

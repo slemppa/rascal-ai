@@ -1069,10 +1069,12 @@ export default function CallPanel() {
         return
       }
 
+      const { data: { session } } = await supabase.auth.getSession()
       const response = await fetch('/api/call-type-improvement', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {})
         },
         body: JSON.stringify({
           inbound_settings_id: inboundSettingsId
@@ -3599,9 +3601,9 @@ export default function CallPanel() {
         
         <EditInboundSettingsModal
           showModal={showEditInboundModal}
-          onClose={async () => {
-            // Tallennetaan automaattisesti kun suljetaan, paitsi jos AI-parannus on lähetetty
-            if (!aiEnhancementSent) {
+          onClose={async (opts) => {
+            const save = opts?.save !== false
+            if (save && !aiEnhancementSent) {
               await handleSaveEditInboundSettings()
             }
             setShowEditInboundModal(false)

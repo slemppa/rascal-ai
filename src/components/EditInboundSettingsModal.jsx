@@ -74,7 +74,7 @@ const EditInboundSettingsModal = ({
             Muokkaa Inbound-asetuksia
           </h2>
           <Button
-            onClick={onClose}
+            onClick={() => onClose({ save: false })}
             variant="secondary"
             className="modal-close-btn"
           >

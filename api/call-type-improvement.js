@@ -4,23 +4,23 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.SUPABASE_URL 
   || process.env.VITE_SUPABASE_URL 
   || process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY 
-  || process.env.VITE_SUPABASE_ANON_KEY
+const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseKey) {
+if (!supabaseUrl || (!serviceRoleKey && !anonKey)) {
   console.error('Missing Supabase environment variables:', {
     hasUrl: !!supabaseUrl,
-    hasKey: !!supabaseKey,
+    hasServiceRole: !!serviceRoleKey,
+    hasAnon: !!anonKey,
     SUPABASE_URL: !!process.env.SUPABASE_URL,
     VITE_SUPABASE_URL: !!process.env.VITE_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_URL: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
     SUPABASE_SERVICE_ROLE_KEY: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
-    VITE_SUPABASE_ANON_KEY: !!process.env.VITE_SUPABASE_ANON_KEY
+    VITE_SUPABASE_ANON_KEY: !!process.env.VITE_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   })
   throw new Error('Missing Supabase environment variables')
 }
-
-const supabase = createClient(supabaseUrl, supabaseKey)
 
 export default async function handler(req, res) {
   // CORS headers
@@ -38,6 +38,22 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Luo Supabase-asiakas: ensisijaisesti service role; muuten käytä Authorization-headerin Bearer JWT:tä; viimeisenä keinona anon-avainta
+    const authHeader = req.headers.authorization || req.headers.Authorization
+    let supabase
+    if (serviceRoleKey) {
+      supabase = createClient(supabaseUrl, serviceRoleKey)
+    } else if (authHeader && authHeader.startsWith('Bearer ') && anonKey) {
+      const token = authHeader.slice(7)
+      supabase = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: `Bearer ${token}` } }
+      })
+    } else if (anonKey) {
+      supabase = createClient(supabaseUrl, anonKey)
+    } else {
+      return res.status(500).json({ error: 'Supabase configuration error' })
+    }
+
     const { call_type_id, inbound_settings_id } = req.body
 
     if (!call_type_id && !inbound_settings_id) {

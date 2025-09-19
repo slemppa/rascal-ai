@@ -824,7 +824,7 @@ export default function ManagePostsPage() {
       // Tarkista kuukausiraja ennen luontia
       if (!monthlyLimit.canCreate) {
         setShowCreateModal(false)
-        setShowLimitWarning(true)
+        setErrorMessage('Kuukausiraja täynnä')
         return
       }
 
@@ -1624,10 +1624,10 @@ export default function ManagePostsPage() {
               {monthlyLimit.currentCount}/{monthlyLimit.monthlyLimit} sisältöä tässä kuussa
             </span>
             {monthlyLimit.remaining <= 5 && monthlyLimit.remaining > 0 && (
-              <span className="warning-text">⚠️ Vain {monthlyLimit.remaining} jäljellä</span>
+              <span className="warning-text">Vain {monthlyLimit.remaining} jäljellä</span>
             )}
             {monthlyLimit.remaining === 0 && (
-              <span className="limit-reached">🚫 Kuukausiraja täynnä</span>
+              <span className="limit-reached">Kuukausiraja täynnä</span>
             )}
           </div>
         )}
@@ -1659,9 +1659,10 @@ export default function ManagePostsPage() {
             if (monthlyLimit.canCreate) {
               setShowCreateModal(true)
             } else {
-              setShowLimitWarning(true)
+              setErrorMessage('Kuukausiraja täynnä')
             }
           }}
+          disabled={!monthlyLimit.canCreate}
         >
           {t('posts.actions.createNew')}
         </Button>

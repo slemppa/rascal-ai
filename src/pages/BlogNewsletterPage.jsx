@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useMonthlyLimit } from '../hooks/useMonthlyLimit'
 import Button from '../components/Button'
 import ReactMarkdown from 'react-markdown'
 import '../components/ModalComponents.css'
@@ -172,6 +173,7 @@ function ContentCard({ content, onView, onPublish, onArchive }) {
 export default function BlogNewsletterPage() {
   const { t, i18n } = useTranslation('common')
   const { user } = useAuth()
+  const monthlyLimit = useMonthlyLimit()
   const [contents, setContents] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -252,6 +254,13 @@ export default function BlogNewsletterPage() {
 
   const handleCreateContent = async (contentData) => {
     try {
+      // Estä luonti jos kuukausiraja täynnä
+      if (!monthlyLimit.canCreate) {
+        setShowCreateModal(false)
+        setToast({ visible: true, message: 'Kuukausiraja täynnä' })
+        setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+        return
+      }
       // Haetaan käyttäjän user_id ja company_id users taulusta
       const { data: userData, error: userError } = await supabase
         .from('users')
@@ -289,11 +298,14 @@ export default function BlogNewsletterPage() {
       }
 
       setShowCreateModal(false)
-      alert('Idea lähetetty AI:lle! Sisältö generoidaan taustalla.')
+      setToast({ visible: true, message: 'Idea lähetetty! Sisältö generoidaan taustalla' })
+      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+      monthlyLimit.refresh()
       
     } catch (error) {
       console.error('Virhe uuden sisällön luomisessa:', error)
-      alert('Virhe: Ei voitu luoda sisältöä. Yritä uudelleen.')
+      setToast({ visible: true, message: 'Virhe: Ei voitu luoda sisältöä' })
+      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
     }
   }
 
@@ -494,6 +506,21 @@ export default function BlogNewsletterPage() {
       {/* Page Header */}
       <div className="blog-newsletter-header">
         <h2>{t('blogNewsletter.header')}</h2>
+        {monthlyLimit.loading ? (
+          <div className="monthly-limit-indicator loading">Ladataan kuukausirajaa...</div>
+        ) : (
+          <div className={`monthly-limit-indicator ${monthlyLimit.remaining <= 5 ? 'warning' : 'normal'}`}>
+            <span className="limit-text">
+              {monthlyLimit.currentCount}/{monthlyLimit.monthlyLimit} sisältöä tässä kuussa
+            </span>
+            {monthlyLimit.remaining <= 5 && monthlyLimit.remaining > 0 && (
+              <span className="warning-text">Vain {monthlyLimit.remaining} jäljellä</span>
+            )}
+            {monthlyLimit.remaining === 0 && (
+              <span className="limit-reached">Kuukausiraja täynnä</span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Tabs */}
@@ -545,7 +572,15 @@ export default function BlogNewsletterPage() {
         </select>
         <Button 
           variant="primary"
-          onClick={() => setShowCreateModal(true)}
+          onClick={() => {
+            if (monthlyLimit.canCreate) {
+              setShowCreateModal(true)
+            } else {
+              setToast({ visible: true, message: 'Kuukausiraja täynnä' })
+              setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+            }
+          }}
+          disabled={!monthlyLimit.canCreate}
         >
           {t('blogNewsletter.actions.createNew')}
         </Button>

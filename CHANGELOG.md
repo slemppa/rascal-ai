@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.67.0](https://github.com/slemppa/rascal-ai/compare/v1.66.2...v1.67.0) (2025-09-21)
+
+
+### ✨ Features
+
+* **ai-chat:** image/audio upload support; always send filenames ([5ab7424](https://github.com/slemppa/rascal-ai/commit/5ab7424580533db7446e09af51dca7c4d2b57d8b))
+
+
+### 🐛 Bug Fixes
+
+* **i18n:** use {{count}} in upload texts; update upload desc ([ed7b7b9](https://github.com/slemppa/rascal-ai/commit/ed7b7b9283d276ee488e9428a856ec8b6f22f17b))
+
 ### [1.66.2](https://github.com/slemppa/rascal-ai/compare/v1.66.1...v1.66.2) (2025-09-19)
 
 

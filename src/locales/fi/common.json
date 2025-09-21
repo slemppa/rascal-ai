@@ -923,14 +923,14 @@
     "files": {
       "uploadCard": {
         "title": "Lisää tiedosto tietokantaan",
-        "desc": "Voit liittää PDF-, Word- tai tekstimuotoisen tiedoston. Tiedosto tallennetaan yrityksesi tietokantaan.",
+        "desc": "Voit liittää PDF-, Word-, teksti-, kuva- tai äänitiedoston. Tiedosto tallennetaan yrityksesi tietokantaan.",
         "dragText": "Vedä ja pudota tiedostoja tähän tai",
         "chooseFiles": "valitse tiedostot",
         "remove": "Poista",
-        "uploadBtn": "Lähetä tiedostot ({count})",
+        "uploadBtn": "Lähetä tiedostot ({{count}})",
         "uploading": "Ladataan...",
         "uploadError": "Virhe tiedostojen lataamisessa",
-        "uploadSuccess": "{count} tiedosto(a) ladattu onnistuneesti!",
+        "uploadSuccess": "{{count}} tiedosto(a) ladattu onnistuneesti!",
         "missingCompany": "Yrityksen ID puuttuu",
         "missingAssistant": "Assistentin ID puuttuu"
       },

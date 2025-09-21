@@ -148,14 +148,20 @@ export default function AIChatPage() {
         }
       }
 
-      // Normalize: if items have file_name and id (array), use as-is; otherwise map to compatible shape
+      // Normalize: ensure we always have a visible filename and consistent id array
       const normalized = Array.isArray(arr) ? arr.map(item => {
         if (item && typeof item === 'object' && 'file_name' in item && Array.isArray(item.id)) {
           return item
         }
+        const resolvedName = (item && typeof item === 'object')
+          ? (item.file_name || item.filename || item.name || item.originalFilename || item.title || 'Tiedosto')
+          : (typeof item === 'string' ? item : 'Tiedosto')
+        const resolvedId = (item && typeof item === 'object')
+          ? (Array.isArray(item.id) ? item.id : (item.id ? [item.id] : []))
+          : []
         return {
-          file_name: item.filename || item.name || 'Tiedosto',
-          id: item.id ? [item.id] : [],
+          file_name: resolvedName,
+          id: resolvedId,
         }
       }) : []
 
@@ -261,6 +267,7 @@ export default function AIChatPage() {
       files.forEach(file => formData.append('files', file))
       formData.append('action', 'feed')
       formData.append('userId', userData.id)
+      try { formData.append('fileNames', JSON.stringify(files.map(f => f.name))) } catch {}
 
       await axios.post('/api/dev-upload', formData, {
         headers: { 
@@ -372,6 +379,7 @@ export default function AIChatPage() {
       pendingFiles.forEach(file => formData.append('files', file))
       formData.append('action', 'feed')
       formData.append('userId', userData.id)
+      try { formData.append('fileNames', JSON.stringify(pendingFiles.map(f => f.name))) } catch {}
       console.log('Lähetetään tiedostot...')
       await axios.post('/api/dev-upload', formData, {
         headers: { 
@@ -563,6 +571,7 @@ export default function AIChatPage() {
                     <input
                       type="file"
                       multiple
+                      accept=".pdf,.doc,.docx,.txt,.md,.rtf,image/*,audio/*"
                       style={{ display: 'none' }}
                       onChange={handleFileInput}
                     />

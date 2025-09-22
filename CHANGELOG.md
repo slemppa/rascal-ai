@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.68.3](https://github.com/slemppa/rascal-ai/compare/v1.68.2...v1.68.3) (2025-09-22)
+
+
+### 🐛 Bug Fixes
+
+* **storage-delete:** use VITE_ env vars like other APIs ([ffbb5f0](https://github.com/slemppa/rascal-ai/commit/ffbb5f07a84375b585c785d4adface2f8ec28871))
+
 ### [1.68.2](https://github.com/slemppa/rascal-ai/compare/v1.68.1...v1.68.2) (2025-09-22)
 
 

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.68.1](https://github.com/slemppa/rascal-ai/compare/v1.68.0...v1.68.1) (2025-09-22)
+
+
+### 🐛 Bug Fixes
+
+* **api:** use public URLs in vectorsupabase ingest ([cb94f90](https://github.com/slemppa/rascal-ai/commit/cb94f90b9594f22e6cc692e4d0da9b256776c392))
+
+
+### ✨ Features
+
+* **ai-chat:** upload to supabase temp-ingest and ingest URLs ([874addc](https://github.com/slemppa/rascal-ai/commit/874addcac4917907f47c2e42f1b92b61991604ad))
+* **api:** add blob client upload handler ([a211637](https://github.com/slemppa/rascal-ai/commit/a211637941d19ec31ec0208057f20a690d541768))
+* **api:** add supabase storage upload/ingest/delete endpoints ([85f1065](https://github.com/slemppa/rascal-ai/commit/85f1065ed14c7bdb39c6c3398d44bc5329d4d367))
+
 ## [1.68.0](https://github.com/slemppa/rascal-ai/compare/v1.67.1...v1.68.0) (2025-09-22)
 
 

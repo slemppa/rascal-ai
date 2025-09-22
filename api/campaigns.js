@@ -125,8 +125,9 @@ export default async function handler(req, res) {
 
       const { data: pageLogs, error: pageError } = await userClient
         .from('call_logs')
-        .select('new_campaign_id, answered, call_outcome')
+        .select('new_campaign_id, answered, call_outcome, call_status, created_at')
         .in('new_campaign_id', campaignIds)
+        .order('created_at', { ascending: true })
         .range(startIndex, endIndex)
 
       if (pageError) {
@@ -145,21 +146,28 @@ export default async function handler(req, res) {
       if (!cid) continue
       
       if (!statsByCampaign[cid]) {
-        statsByCampaign[cid] = { total_calls: 0, answered_calls: 0, successful_calls: 0 }
+        statsByCampaign[cid] = { total_calls: 0, answered_calls: 0, successful_calls: 0, called_calls: 0 }
       }
       // Kaikki puhelut
       statsByCampaign[cid].total_calls += 1
       // Vastatut puhelut
       if (log.answered) statsByCampaign[cid].answered_calls += 1
-      // Onnistuneet puhelut (vain call_outcome = 'successful')
-      if (log.call_outcome === 'successful') statsByCampaign[cid].successful_calls += 1
+      // Onnistuneet puhelut: answered === true JA call_outcome = 'success' tai 'successful'
+      const outcome = (log.call_outcome || '').toLowerCase()
+      if (log.answered === true && (outcome === 'success' || outcome === 'successful')) {
+        statsByCampaign[cid].successful_calls += 1
+      }
+      // Soitetut puhelut (ei pending eikä in progress)
+      const status = (log.call_status || '').toLowerCase()
+      if (status !== 'pending' && status !== 'in progress') statsByCampaign[cid].called_calls += 1
     }
 
     const enriched = campaigns.map(c => ({
       ...c,
       total_calls: statsByCampaign[c.id]?.total_calls || 0,
       answered_calls: statsByCampaign[c.id]?.answered_calls || 0,
-      successful_calls: statsByCampaign[c.id]?.successful_calls || 0
+      successful_calls: statsByCampaign[c.id]?.successful_calls || 0,
+      called_calls: statsByCampaign[c.id]?.called_calls || 0
     }))
 
 

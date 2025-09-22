@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import CampaignDetailModal from './CampaignDetailModal'
-import { supabase } from '../../lib/supabase'
-import { useAuth } from '../../contexts/AuthContext'
+// Ei tehdä suoria Supabase-hakuja tässä – käytetään backendin rikastamia arvoja
 
 export default function CampaignCard({ campaign }) {
   const { t } = useTranslation('common')
-  const { user } = useAuth()
   const [open, setOpen] = useState(false)
-  const [callLogStats, setCallLogStats] = useState({ totalCallLogs: 0, calledCalls: 0 })
   const totalCalls = campaign.total_calls || 0
   const answeredCalls = campaign.answered_calls || 0
   const successfulCalls = campaign.successful_calls || 0
+  const calledCalls = campaign.called_calls || 0
   const answerRate = totalCalls > 0 ? Math.round((answeredCalls / totalCalls) * 100) : 0
   
 
@@ -25,43 +23,7 @@ export default function CampaignCard({ campaign }) {
   const status = campaign.status || 'active'
   const statusLabel = statusLabelMap[status] || status
 
-  // Hae call_logs tilastot kampanjalle
-  useEffect(() => {
-    async function fetchCallLogStats() {
-      if (!user?.id || !campaign.id) return
-
-      try {
-        // Hae käyttäjän users-taulun id
-        const { data: userProfile, error: userError } = await supabase
-          .from('users')
-          .select('id')
-          .eq('auth_user_id', user.id)
-          .single()
-
-        if (userError || !userProfile) return
-
-        // Hae call_logs kampanjalle
-        const { data: callLogs, error: logsError } = await supabase
-          .from('call_logs')
-          .select('call_status')
-          .eq('user_id', userProfile.id)
-          .eq('new_campaign_id', campaign.id)
-
-        if (!logsError && callLogs) {
-          const totalCallLogs = callLogs.length
-          const calledCalls = callLogs.filter(log => 
-            log.call_status !== 'pending' && log.call_status !== 'in progress'
-          ).length
-
-          setCallLogStats({ totalCallLogs, calledCalls })
-        }
-      } catch (error) {
-        console.error('Error fetching call log stats for campaign:', error)
-      }
-    }
-
-    fetchCallLogStats()
-  }, [user?.id, campaign.id])
+  // Kortti näyttää arvot suoraan backendin rikastamasta kampanjaobjektista
 
   return (
     <>
@@ -93,7 +55,7 @@ export default function CampaignCard({ campaign }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12, fontSize: 14 }}>
             <div>
               <div style={{ color: '#6b7280' }}>{t('campaigns.stats.calledCalls')}</div>
-              <div style={{ fontWeight: 600 }}>{callLogStats.calledCalls}</div>
+              <div style={{ fontWeight: 600 }}>{calledCalls}</div>
             </div>
             <div>
               <div style={{ color: '#6b7280' }}>{t('campaigns.card.successful')}</div>
@@ -105,7 +67,7 @@ export default function CampaignCard({ campaign }) {
             </div>
             <div>
               <div style={{ color: '#6b7280' }}>{t('campaigns.stats.totalCallLogs')}</div>
-              <div style={{ fontWeight: 600 }}>{callLogStats.totalCallLogs}</div>
+              <div style={{ fontWeight: 600 }}>{totalCalls}</div>
             </div>
           </div>
           {campaign.call_types?.name && (

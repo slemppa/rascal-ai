@@ -405,7 +405,8 @@ export default function AIChatPage() {
         const path = `${Date.now()}-${safeName}`
         const { error: putErr } = await supabase.storage.from(bucket).upload(path, file, { upsert: true, contentType: file.type || 'application/octet-stream' })
         if (putErr) throw new Error(putErr.message)
-        uploaded.push({ bucket, path, filename: file.name, size: file.size || 0, contentType: file.type || 'application/octet-stream' })
+        const { data: pub } = supabase.storage.from(bucket).getPublicUrl(path)
+        uploaded.push({ bucket, path, publicUrl: pub?.publicUrl || null, filename: file.name, size: file.size || 0, contentType: file.type || 'application/octet-stream' })
       }
       await fetch('/api/storage-ingest', {
         method: 'POST',

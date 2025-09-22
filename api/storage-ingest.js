@@ -10,27 +10,18 @@ export default async function handler(req, res) {
     if (!userId || !Array.isArray(files) || files.length === 0) return res.status(400).json({ error: 'userId ja files vaaditaan' })
 
     const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_SERVICE_ROLE_KEY
     const anonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    if (!supabaseUrl || (!serviceKey && !anonKey)) {
-      return res.status(500).json({ error: 'Supabase asetukset puuttuvat (URL tai KEY)' })
+    if (!supabaseUrl || !anonKey) {
+      return res.status(500).json({ error: 'Supabase asetukset puuttuvat' })
     }
-    // Käytä service rolea jos saatavilla, muuten anon (public bucketin julkinen URL ei vaadi service keytä)
-    const supabase = createClient(supabaseUrl, serviceKey || anonKey)
+    const supabase = createClient(supabaseUrl, anonKey)
 
     // Luo public URLit (bucket on public). Lisäksi voidaan luoda 1h signed URL tarvittaessa
     const enriched = []
     for (const f of files) {
       if (!f?.bucket || !f?.path) continue
       const { data: pub } = supabase.storage.from(f.bucket).getPublicUrl(f.path)
-      let signedUrl = null
-      try {
-        if (serviceKey) {
-          const { data: signed, error: signErr } = await supabase.storage.from(f.bucket).createSignedUrl(f.path, 3600)
-          if (!signErr) signedUrl = signed?.signedUrl || null
-        }
-      } catch (_) {}
-      enriched.push({ ...f, publicUrl: pub?.publicUrl || null, signedUrl })
+      enriched.push({ ...f, publicUrl: pub?.publicUrl || f.publicUrl || null })
     }
 
     // send to vectorsupabase webhook

@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.68.0](https://github.com/slemppa/rascal-ai/compare/v1.67.1...v1.68.0) (2025-09-22)
+
+
+### ✨ Features
+
+* **ai-chat:** use Vercel Blob for database uploads ([478e67c](https://github.com/slemppa/rascal-ai/commit/478e67c1315313bdde1cd9e631b52934f52f4e1e))
+* **api:** add blob upload and delete endpoints ([53682be](https://github.com/slemppa/rascal-ai/commit/53682be9e184037568d592af848adaf40ca222e2))
+
+
+### 🐛 Bug Fixes
+
+* **dashboard:** paginate success stats and respect filters ([bdffeba](https://github.com/slemppa/rascal-ai/commit/bdffeba7f5629a494672f8b00338dfa958146e28))
+
+
+### 🔧 Chores
+
+* **api:** improve dev-knowledge request parsing ([877dd8c](https://github.com/slemppa/rascal-ai/commit/877dd8c0eaa5a062da6ae7e7e7418b6b344c92c6))
+* **i18n:** update upload texts ([0407bd2](https://github.com/slemppa/rascal-ai/commit/0407bd2758ad75c1f57eb07c39269d771d16996a))
+
 ### [1.67.1](https://github.com/slemppa/rascal-ai/compare/v1.67.0...v1.67.1) (2025-09-22)
 
 

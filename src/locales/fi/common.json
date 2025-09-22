@@ -931,6 +931,7 @@
         "uploading": "Ladataan...",
         "uploadError": "Virhe tiedostojen lataamisessa",
         "uploadSuccess": "{{count}} tiedosto(a) ladattu onnistuneesti!",
+        "limitExceeded": "Yhteiskoko liian suuri. Max {{limitMB}} MB per lähetys.",
         "missingCompany": "Yrityksen ID puuttuu",
         "missingAssistant": "Assistentin ID puuttuu"
       },

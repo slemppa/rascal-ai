@@ -48,7 +48,7 @@ export default async function handler(req, res) {
     // Hae puhelulokit – aikarajaus created_at:lla (call_date voi olla tulevaisuudessa)
     const { data: logs, error: logsErr } = await userClient
       .from('call_logs')
-      .select('created_at, call_date, answered')
+      .select('created_at, call_date, answered, call_outcome')
       .eq('user_id', userRow.id)
       .gte('created_at', start.toISOString())
       .lte('created_at', now.toISOString())
@@ -57,9 +57,12 @@ export default async function handler(req, res) {
 
     const total = (logs || []).length
     const answered = (logs || []).filter(l => l.answered === true).length
-    // Onnistunut puhelu = answered === true
-    const success = answered
-    const answerRate = total > 0 ? Math.round((answered / total) * 100) : 0
+    // Onnistunut puhelu = answered === true AND call_outcome in ('success', 'successful')
+    const successfulCount = (logs || []).filter(l => {
+      const outcome = (l.call_outcome || '').toLowerCase()
+      return l.answered === true && (outcome === 'success' || outcome === 'successful')
+    }).length
+    const answerRate = total > 0 ? Math.round((successfulCount / total) * 100) : 0
     const successRate = answerRate
 
     // Aikasarja per päivä
@@ -75,14 +78,17 @@ export default async function handler(req, res) {
       perDay[key].total += 1
       if (l.answered === true) {
         perDay[key].answered += 1
-        perDay[key].success += 1
+        const outcome = (l.call_outcome || '').toLowerCase()
+        if (outcome === 'success' || outcome === 'successful') {
+          perDay[key].success += 1
+        }
       }
     }
 
     return res.status(200).json({
       total,
       answered,
-      success,
+      success: successfulCount,
       answerRate,
       successRate,
       perDay: Object.values(perDay)

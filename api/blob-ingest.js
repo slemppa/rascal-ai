@@ -1,6 +1,7 @@
 import { del } from '@vercel/blob'
 
-const DEV_KNOWLEDGE_WEBHOOK_URL = 'https://samikiias.app.n8n.cloud/webhook/dev-knowledge'
+// Käytä vectorsupabase -webhookia ingestille
+const DEV_UPLOAD_WEBHOOK_URL = 'https://samikiias.app.n8n.cloud/webhook/vectorsupabase'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
@@ -15,7 +16,7 @@ export default async function handler(req, res) {
     }
 
     // Välitä N8N:lle vain URLit ja metatiedot
-    const resp = await fetch(DEV_KNOWLEDGE_WEBHOOK_URL, {
+    const resp = await fetch(DEV_UPLOAD_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': N8N_SECRET_KEY },
       body: JSON.stringify({ action: 'feed_urls', userId, files })
@@ -25,11 +26,7 @@ export default async function handler(req, res) {
     try { data = JSON.parse(text) } catch { data = { message: text } }
     if (!resp.ok) return res.status(500).json({ error: 'N8N virhe', details: data })
 
-    // Kun ingest onnistuu, poista blobit heti
-    const urls = files.map(f => f.url)
-    try {
-      await Promise.all(urls.map(url => del(url).catch(() => null)))
-    } catch (_) {}
+    // Poistot suositellaan tehtäväksi N8N:stä kutsumalla /api/blob-delete asynkronisesti
 
     return res.status(200).json({ success: true, result: data })
   } catch (e) {

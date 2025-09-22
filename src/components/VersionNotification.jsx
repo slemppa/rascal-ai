@@ -8,7 +8,7 @@ const VersionNotification = () => {
 
   if (!showVersionNotification) return null
 
-  const currentVersion = process.env.REACT_APP_VERSION || '1.64.0'
+  const currentVersion = process.env.REACT_APP_VERSION || '1.67.0'
 
   return createPortal(
     <div 
@@ -115,10 +115,10 @@ const VersionNotification = () => {
                 color: '#374151',
                 lineHeight: '1.6'
               }}>
-                <li>Hallinta: AI‑parannus yhdellä napilla</li>
-                <li>Lähetys kulkee taustalla varmasti – ilman lisäsäätöä</li>
-                <li>Tietoturva kunnossa – yhteys hoidetaan palvelimen kautta</li>
-                <li>Pieniä viilauksia: sujuvampi ja nopeampi käyttö</li>
+                <li>AI‑chat: voit lisätä myös kuvat ja äänet. Tiedoston nimi lähtee aina mukaan.</li>
+                <li>Dashboard: Vastausprosentti lasketaan vain vastatuista, onnistuneista puheluista.</li>
+                <li>Kampanjat: kortit käyttävät kaikkia puhelulokeja (yli 1000) ja samaa onnistumislogiikkaa.</li>
+                <li>Pieniä parannuksia käyttökokemukseen.</li>
               </ul>
             </div>
 

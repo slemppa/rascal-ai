@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
+import { upload as vercelBlobUpload } from '@vercel/blob/client'
 import ReactMarkdown from 'react-markdown'
 import PageHeader from '../components/PageHeader'
 import { useTranslation } from 'react-i18next'
@@ -118,6 +119,19 @@ export default function AIChatPage() {
   function formatMB(bytes) {
     const mb = (bytes / (1024 * 1024))
     return mb.toFixed(1).replace('.', ',') + ' MB'
+  }
+
+  // Palauta turvallinen tiedostonimi (poista diakriitit ja erikoismerkit)
+  function sanitizeFilename(inputName) {
+    const trimmed = (inputName || '').trim()
+    const justName = trimmed.split('\\').pop().split('/').pop()
+    const dotIdx = justName.lastIndexOf('.')
+    const ext = dotIdx >= 0 ? justName.slice(dotIdx) : ''
+    const base = dotIdx >= 0 ? justName.slice(0, dotIdx) : justName
+    const withoutDiacritics = base.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    const asciiSafe = withoutDiacritics.replace(/[^a-zA-Z0-9._-]+/g, '-')
+    const collapsed = asciiSafe.replace(/-+/g, '-').replace(/^[.-]+|[.-]+$/g, '')
+    return (collapsed || 'file') + ext
   }
 
   const fetchFiles = async () => {
@@ -383,11 +397,21 @@ export default function AIChatPage() {
     setUploadError('')
     setUploadSuccess('')
     try {
-      console.log('Lähetetään tiedostot dev-upload-blob endpointtiin...')
-      const fd = new FormData()
-      pendingFiles.forEach(file => fd.append('files', file))
-      fd.append('userId', userData.id)
-      await axios.post('/api/dev-upload-blob', fd, { headers: { 'Content-Type': 'multipart/form-data', 'x-api-key': import.meta.env.N8N_SECRET_KEY } })
+      console.log('Ladataan tiedostot Supabaseen (public bucket upload)...')
+      const uploaded = []
+      for (const file of pendingFiles) {
+        const bucket = 'temp-ingest'
+        const safeName = sanitizeFilename(file.name)
+        const path = `${Date.now()}-${safeName}`
+        const { error: putErr } = await supabase.storage.from(bucket).upload(path, file, { upsert: true, contentType: file.type || 'application/octet-stream' })
+        if (putErr) throw new Error(putErr.message)
+        uploaded.push({ bucket, path, filename: file.name, size: file.size || 0, contentType: file.type || 'application/octet-stream' })
+      }
+      await fetch('/api/storage-ingest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': import.meta.env.N8N_SECRET_KEY },
+        body: JSON.stringify({ userId: userData.id, files: uploaded })
+      })
       setUploadSuccess(t('assistant.files.uploadCard.uploadSuccess', { count: pendingFiles.length }))
       setPendingFiles([])
       // Päivitä tiedostolista heti uploadin jälkeen

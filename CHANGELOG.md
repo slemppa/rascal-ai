@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.68.2](https://github.com/slemppa/rascal-ai/compare/v1.68.1...v1.68.2) (2025-09-22)
+
+
+### 🐛 Bug Fixes
+
+* **upload:** send public URLs to webhook and use anon key in ingest ([6994bf9](https://github.com/slemppa/rascal-ai/commit/6994bf9a3de4ceaac7b992d8960ed38cc5cf69cc))
+
 ### [1.68.1](https://github.com/slemppa/rascal-ai/compare/v1.68.0...v1.68.1) (2025-09-22)
 
 

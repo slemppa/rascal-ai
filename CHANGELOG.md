@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.67.1](https://github.com/slemppa/rascal-ai/compare/v1.67.0...v1.67.1) (2025-09-22)
+
+
+### 🐛 Bug Fixes
+
+* **campaigns:** paginate call_logs and add called_calls; unify success ([ce67710](https://github.com/slemppa/rascal-ai/commit/ce677100d90727df7345120ab486661afadcc8f6))
+* **dashboard:** answer rate uses successful answered calls ([bf92ecc](https://github.com/slemppa/rascal-ai/commit/bf92ecc4354cc54b37f672a4f688abaa3afd337e))
+
+
+### 🔧 Chores
+
+* **ui:** update VersionNotification for latest changes ([a44a7cd](https://github.com/slemppa/rascal-ai/commit/a44a7cd49d50f86e4613366b38d34e57bab44c01))
+
 ## [1.67.0](https://github.com/slemppa/rascal-ai/compare/v1.66.2...v1.67.0) (2025-09-21)
 
 

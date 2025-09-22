@@ -10,10 +10,10 @@ export default async function handler(req, res) {
     const list = Array.isArray(paths) && paths.length ? paths : (Array.isArray(files) ? files.map(f => f.path).filter(Boolean) : [])
     if (!list.length) return res.status(400).json({ error: 'paths vaaditaan' })
 
-    const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_SERVICE_ROLE_KEY
-    if (!supabaseUrl || !serviceKey) return res.status(500).json({ error: 'Supabase asetukset puuttuvat' })
-    const supabase = createClient(supabaseUrl, serviceKey)
+    const supabaseUrl = process.env.VITE_SUPABASE_URL
+    const anonKey = process.env.VITE_SUPABASE_ANON_KEY
+    if (!supabaseUrl || !anonKey) return res.status(500).json({ error: 'Supabase asetukset puuttuvat' })
+    const supabase = createClient(supabaseUrl, anonKey)
 
     const { error } = await supabase.storage.from(bucket).remove(list)
     if (error) return res.status(500).json({ error: 'remove epäonnistui', details: error.message })

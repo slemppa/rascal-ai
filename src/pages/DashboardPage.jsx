@@ -445,7 +445,8 @@ export default function DashboardPage() {
         const session = await supabase.auth.getSession()
         const token = session?.data?.session?.access_token
         if (!token) return
-        const res = await fetch(`/api/dashboard-success?days=30`, { headers: { Authorization: `Bearer ${token}` } })
+        const days = selectedFilter === 'week' ? 7 : selectedFilter === 'month' ? 30 : 30
+        const res = await fetch(`/api/dashboard-success?days=${encodeURIComponent(days)}`, { headers: { Authorization: `Bearer ${token}` } })
         const json = await res.json()
         if (res.ok) setSuccessStats(json)
       } catch (e) {
@@ -453,7 +454,7 @@ export default function DashboardPage() {
       }
     }
     fetchSuccess()
-  }, [user])
+  }, [user, selectedFilter])
 
   // Hae scatter- ja heatmap-data backendistä
   useEffect(() => {

@@ -45,15 +45,35 @@ export default async function handler(req, res) {
       .single()
     if (userErr || !userRow?.id) return res.status(403).json({ error: 'User profile not found' })
 
-    // Hae puhelulokit – aikarajaus created_at:lla (call_date voi olla tulevaisuudessa)
-    const { data: logs, error: logsErr } = await userClient
+    // Hae rivien kokonaismäärä ja sivuta (PostgREST default max 1000 per haku)
+    const { count: totalCount, error: countErr } = await userClient
       .from('call_logs')
-      .select('created_at, call_date, answered, call_outcome')
+      .select('*', { count: 'exact', head: true })
       .eq('user_id', userRow.id)
       .gte('created_at', start.toISOString())
       .lte('created_at', now.toISOString())
 
-    if (logsErr) return res.status(500).json({ error: 'Failed to fetch logs', details: logsErr.message })
+    if (countErr) return res.status(500).json({ error: 'Failed to count logs', details: countErr.message })
+
+    let logs = []
+    if (totalCount && totalCount > 0) {
+      const pageSize = 1000
+      const totalPages = Math.ceil(totalCount / pageSize)
+      for (let page = 1; page <= totalPages; page++) {
+        const startIndex = (page - 1) * pageSize
+        const endIndex = Math.min(startIndex + pageSize - 1, totalCount - 1)
+        const { data: pageLogs, error: pageErr } = await userClient
+          .from('call_logs')
+          .select('created_at, call_date, answered, call_outcome')
+          .eq('user_id', userRow.id)
+          .gte('created_at', start.toISOString())
+          .lte('created_at', now.toISOString())
+          .order('created_at', { ascending: true })
+          .range(startIndex, endIndex)
+        if (pageErr) return res.status(500).json({ error: `Failed to fetch logs page ${page}`, details: pageErr.message })
+        logs = logs.concat(pageLogs || [])
+      }
+    }
 
     const total = (logs || []).length
     const answered = (logs || []).filter(l => l.answered === true).length

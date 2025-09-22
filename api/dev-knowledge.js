@@ -9,7 +9,7 @@ export const config = {
 }
 
 // Kovakoodattu DEV-webhook osoite (N8N)
-const DEV_KNOWLEDGE_WEBHOOK_URL = 'https://samikiias.app.n8n.cloud/webhook/dev-knowledge'
+const DEV_KNOWLEDGE_WEBHOOK_URL = 'https://samikiias.app.n8n.cloud/webhook/vectorsupabase'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {

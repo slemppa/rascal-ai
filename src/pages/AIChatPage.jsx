@@ -52,6 +52,7 @@ export default function AIChatPage() {
   const [userData, setUserData] = useState(null)
   const [loadingUserData, setLoadingUserData] = useState(true)
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+  const MAX_BATCH_BYTES = 4 * 1024 * 1024 // ei käytössä Blob-polussa, jätetty varalle
 
   // Hae käyttäjän tiedot Supabase-tietokannasta
   useEffect(() => {
@@ -113,6 +114,10 @@ export default function AIChatPage() {
     if (!ts) return '-'
     const d = new Date(ts * 1000)
     return d.toLocaleDateString('fi-FI')
+  }
+  function formatMB(bytes) {
+    const mb = (bytes / (1024 * 1024))
+    return mb.toFixed(1).replace('.', ',') + ' MB'
   }
 
   const fetchFiles = async () => {
@@ -333,16 +338,19 @@ export default function AIChatPage() {
     e.stopPropagation()
     setDragActive(false)
     const files = Array.from(e.dataTransfer.files)
-    if (files.length > 0) {
-      setPendingFiles(prev => [...prev, ...files.filter(f => !prev.some(p => p.name === f.name && p.size === f.size))])
-    }
+    if (files.length === 0) return
+    setPendingFiles(prev => {
+      const uniqueNew = files.filter(f => !prev.some(p => p.name === f.name && p.size === f.size))
+      return [...prev, ...uniqueNew]
+    })
   }
   const handleFileInput = (e) => {
     const files = Array.from(e.target.files)
     console.log('handleFileInput kutsuttu, tiedostoja:', files.length)
     if (files.length > 0) {
       setPendingFiles(prev => {
-        const newPendingFiles = [...prev, ...files.filter(f => !prev.some(p => p.name === f.name && p.size === f.size))]
+        const uniqueNew = files.filter(f => !prev.some(p => p.name === f.name && p.size === f.size))
+        const newPendingFiles = [...prev, ...uniqueNew]
         console.log('pendingFiles päivitetty:', newPendingFiles.length)
         return newPendingFiles
       })
@@ -375,19 +383,11 @@ export default function AIChatPage() {
     setUploadError('')
     setUploadSuccess('')
     try {
-      const formData = new FormData()
-      pendingFiles.forEach(file => formData.append('files', file))
-      formData.append('action', 'feed')
-      formData.append('userId', userData.id)
-      try { formData.append('fileNames', JSON.stringify(pendingFiles.map(f => f.name))) } catch {}
-      console.log('Lähetetään tiedostot...')
-      await axios.post('/api/dev-upload', formData, {
-        headers: { 
-          'Content-Type': 'multipart/form-data',
-          'x-api-key': import.meta.env.N8N_SECRET_KEY
-        }
-      })
-      console.log('Tiedostot lähetetty onnistuneesti')
+      console.log('Lähetetään tiedostot dev-upload-blob endpointtiin...')
+      const fd = new FormData()
+      pendingFiles.forEach(file => fd.append('files', file))
+      fd.append('userId', userData.id)
+      await axios.post('/api/dev-upload-blob', fd, { headers: { 'Content-Type': 'multipart/form-data', 'x-api-key': import.meta.env.N8N_SECRET_KEY } })
       setUploadSuccess(t('assistant.files.uploadCard.uploadSuccess', { count: pendingFiles.length }))
       setPendingFiles([])
       // Päivitä tiedostolista heti uploadin jälkeen
@@ -395,7 +395,7 @@ export default function AIChatPage() {
       await fetchFiles()
       console.log('Tiedostolista päivitetty')
     } catch (error) {
-      console.error('Virhe tiedostojen lataamisessa:', error)
+      console.error('Virhe tiedostojen lataamisessa (blob):', error)
       setUploadError(t('assistant.files.uploadCard.uploadError'))
     } finally {
       console.log('Asetetaan uploadLoading = false (handleUploadPending)')

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.69.0](https://github.com/slemppa/rascal-ai/compare/v1.68.3...v1.69.0) (2025-09-23)
+
+
+### ✨ Features
+
+* Näytä kaikki slaidit Carousel-postauksissa julkaisumodaalissa ([07f5451](https://github.com/slemppa/rascal-ai/commit/07f5451a8bd669c3fbac27d0faf44b5d18dea502))
+
 ### [1.68.3](https://github.com/slemppa/rascal-ai/compare/v1.68.2...v1.68.3) (2025-09-22)
 
 

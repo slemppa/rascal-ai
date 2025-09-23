@@ -224,8 +224,55 @@ const KeskenModal = ({
               <div className="edit-modal-media">
                 <div className="media-container">
                   {(() => {
-                    const mediaUrl = editingPost.thumbnail || (editingPost.media_urls && editingPost.media_urls[0])
+                    const isCarousel = editingPost.type === 'Carousel'
                     const isPhotoType = editingPost.type === 'Photo' || editingPost.type === 'LinkedIn'
+                    
+                    // Carousel-tyyppisillä postauksilla näytetään kaikki slaidit
+                    if (isCarousel && editingPost.segments && editingPost.segments.length > 0) {
+                      return (
+                        <div className="carousel-slides">
+                          <h4 style={{ marginBottom: '12px', fontSize: '14px', fontWeight: '600', color: '#374151' }}>
+                            Slaidit ({editingPost.segments.length})
+                          </h4>
+                          <div className="slides-grid">
+                            {editingPost.segments.map((segment, index) => (
+                              <div key={segment.id || index} className="slide-item">
+                                <div className="slide-number">
+                                  {segment.slide_no || index + 1}
+                                </div>
+                                {segment.media_urls && segment.media_urls.length > 0 ? (
+                                  <img 
+                                    src={segment.media_urls[0]} 
+                                    alt={`Slaidi ${segment.slide_no || index + 1}`}
+                                    className="slide-image"
+                                    onError={(e) => {
+                                      e.target.style.display = 'none'
+                                      e.target.nextSibling.style.display = 'flex'
+                                    }}
+                                  />
+                                ) : (
+                                  <div className="slide-placeholder">
+                                    <img src="/placeholder.png" alt="Ei mediaa" />
+                                  </div>
+                                )}
+                                {/* Fallback placeholder - näkyy vain jos kuva ei lataa */}
+                                <div className="slide-placeholder" style={{ display: 'none' }}>
+                                  <img src="/placeholder.png" alt="Ei mediaa" />
+                                </div>
+                                {segment.caption && (
+                                  <div className="slide-caption">
+                                    {segment.caption}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )
+                    }
+                    
+                    // Muille tyypeille näytetään yksi kuva
+                    const mediaUrl = editingPost.thumbnail || (editingPost.media_urls && editingPost.media_urls[0])
                     
                     if (!mediaUrl) {
                       return (
@@ -467,6 +514,82 @@ const styles = `
   padding: 16px;
 }
 
+.carousel-slides {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.slides-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  max-height: 450px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.slide-item {
+  position: relative;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f9fafb;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+}
+
+.slide-number {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.slide-image {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+  flex: 1;
+}
+
+.slide-placeholder {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  flex: 1;
+}
+
+.slide-placeholder img {
+  width: 24px;
+  height: 24px;
+  opacity: 0.5;
+}
+
+.slide-caption {
+  padding: 6px 8px;
+  font-size: 11px;
+  color: #6b7280;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  max-height: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
 @media (max-width: 768px) {
   .edit-modal-grid {
     grid-template-columns: 1fr;
@@ -475,6 +598,23 @@ const styles = `
   
   .media-container {
     height: 250px;
+  }
+  
+  .slides-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+  }
+  
+  .slide-item {
+    min-height: 100px;
+  }
+  
+  .slide-image {
+    height: 60px;
+  }
+  
+  .slide-placeholder {
+    height: 60px;
   }
 }
 `

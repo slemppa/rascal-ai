@@ -61,7 +61,133 @@ const PublishModal = ({
                 color: 'white'
               }}>
                 {(() => {
-                  // Käytetään samaa logiikkaa kuin "Kesken" sarakkeessa
+                  const isCarousel = publishingPost.type === 'Carousel'
+                  
+                  // Carousel-tyyppisillä postauksilla näytetään kaikki slaidit
+                  if (isCarousel && publishingPost.segments && publishingPost.segments.length > 0) {
+                    return (
+                      <div className="carousel-slides" style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        padding: '16px',
+                        overflowY: 'auto'
+                      }}>
+                        <h4 style={{ 
+                          marginBottom: '12px', 
+                          fontSize: '16px', 
+                          fontWeight: '600', 
+                          color: 'white',
+                          textAlign: 'center'
+                        }}>
+                          Slaidit ({publishingPost.segments.length})
+                        </h4>
+                        <div className="slides-grid" style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+                          gap: '12px',
+                          maxHeight: '500px',
+                          overflowY: 'auto',
+                          paddingRight: '8px'
+                        }}>
+                          {publishingPost.segments.map((segment, index) => (
+                            <div key={segment.id || index} className="slide-item" style={{
+                              position: 'relative',
+                              border: '1px solid #e5e7eb',
+                              borderRadius: '8px',
+                              overflow: 'hidden',
+                              background: '#f9fafb',
+                              minHeight: '120px',
+                              display: 'flex',
+                              flexDirection: 'column'
+                            }}>
+                              <div className="slide-number" style={{
+                                position: 'absolute',
+                                top: '4px',
+                                left: '4px',
+                                background: 'rgba(0, 0, 0, 0.7)',
+                                color: 'white',
+                                padding: '2px 6px',
+                                borderRadius: '4px',
+                                fontSize: '11px',
+                                fontWeight: '600',
+                                zIndex: 2
+                              }}>
+                                {segment.slide_no || index + 1}
+                              </div>
+                              {segment.media_urls && segment.media_urls.length > 0 ? (
+                                <img 
+                                  src={segment.media_urls[0]} 
+                                  alt={`Slaidi ${segment.slide_no || index + 1}`}
+                                  className="slide-image"
+                                  style={{
+                                    width: '100%',
+                                    height: '80px',
+                                    objectFit: 'cover',
+                                    flex: 1
+                                  }}
+                                  onError={(e) => {
+                                    e.target.style.display = 'none'
+                                    e.target.nextSibling.style.display = 'flex'
+                                  }}
+                                />
+                              ) : (
+                                <div className="slide-placeholder" style={{
+                                  width: '100%',
+                                  height: '80px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  background: '#f3f4f6',
+                                  flex: 1
+                                }}>
+                                  <img src="/placeholder.png" alt="Ei mediaa" style={{
+                                    width: '24px',
+                                    height: '24px',
+                                    opacity: 0.5
+                                  }} />
+                                </div>
+                              )}
+                              {/* Fallback placeholder - näkyy vain jos kuva ei lataa */}
+                              <div className="slide-placeholder" style={{ 
+                                display: 'none',
+                                width: '100%',
+                                height: '80px',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                background: '#f3f4f6',
+                                flex: 1
+                              }}>
+                                <img src="/placeholder.png" alt="Ei mediaa" style={{
+                                  width: '24px',
+                                  height: '24px',
+                                  opacity: 0.5
+                                }} />
+                              </div>
+                              {segment.caption && (
+                                <div className="slide-caption" style={{
+                                  padding: '6px 8px',
+                                  fontSize: '11px',
+                                  color: '#6b7280',
+                                  background: 'white',
+                                  borderTop: '1px solid #e5e7eb',
+                                  maxHeight: '40px',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  display: '-webkit-box',
+                                  WebkitLineClamp: 2,
+                                  WebkitBoxOrient: 'vertical'
+                                }}>
+                                  {segment.caption}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  }
+                  
+                  // Muille tyypeille näytetään yksi kuva
                   let mediaUrl = null
                   
                   if (publishingPost.type === 'Carousel' && publishingPost.segments && publishingPost.segments.length > 0) {
@@ -72,7 +198,6 @@ const PublishModal = ({
                     // Muille tyypeille käytetään content-taulun media_urls
                     mediaUrl = publishingPost.media_urls?.[0] || publishingPost.mediaUrls?.[0] || publishingPost.thumbnail || null
                   }
-                  
                   
                   if (!mediaUrl) {
                     return <span>Ei kuvaa</span>

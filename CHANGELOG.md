@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.69.1](https://github.com/slemppa/rascal-ai/compare/v1.69.0...v1.69.1) (2025-09-24)
+
+
+### 🐛 Bug Fixes
+
+* Korjaa 'Luo sisältöä' modaali blog-newsletter sivulla ([4f2628c](https://github.com/slemppa/rascal-ai/commit/4f2628c23d487cf6eb964cae5e45e1fa9a459524))
+
 ## [1.69.0](https://github.com/slemppa/rascal-ai/compare/v1.68.3...v1.69.0) (2025-09-23)
 
 

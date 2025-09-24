@@ -114,7 +114,8 @@ const KeskenModal = ({
           })
 
           if (!deleteResponse.ok) {
-            throw new Error('Vanhan kuvan poisto epäonnistui')
+            const errorData = await deleteResponse.json().catch(() => ({}))
+            throw new Error(`Vanhan kuvan poisto epäonnistui: ${errorData.error || deleteResponse.statusText}`)
           }
         }
       }
@@ -134,7 +135,8 @@ const KeskenModal = ({
       })
 
       if (!response.ok) {
-        throw new Error('Kuvan lataus epäonnistui')
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(`Kuvan lataus epäonnistui: ${errorData.error || response.statusText}`)
       }
 
       // Päivitä editingPost data
@@ -148,9 +150,18 @@ const KeskenModal = ({
         thumbnail: result.publicUrl
       }
       
+      // Tyhjennä file input Safari-yhteensopivuuden vuoksi
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      
       onSave(updatedPost)
     } catch (err) {
       setError('Kuvan lataus epäonnistui: ' + err.message)
+      // Tyhjennä file input myös virhetilanteessa
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
     } finally {
       setImageLoading(false)
     }
@@ -202,6 +213,10 @@ const KeskenModal = ({
       className="modal-overlay modal-overlay--light"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
+          // Tyhjennä file input kun modaali suljetaan
+          if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+          }
           onClose()
         }
       }}
@@ -210,7 +225,13 @@ const KeskenModal = ({
         <div className="modal-header">
           <h2 className="modal-title">Muokkaa postausta</h2>
           <button
-            onClick={onClose}
+            onClick={() => {
+              // Tyhjennä file input kun modaali suljetaan
+              if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+              }
+              onClose()
+            }}
             className="modal-close-btn"
           >
             ✕
@@ -410,7 +431,13 @@ const KeskenModal = ({
                 <Button
                   type="button"
                   variant="secondary"
-                  onClick={onClose}
+                  onClick={() => {
+                    // Tyhjennä file input kun modaali suljetaan
+                    if (fileInputRef.current) {
+                      fileInputRef.current.value = ''
+                    }
+                    onClose()
+                  }}
                 >
                   Peruuta
                 </Button>

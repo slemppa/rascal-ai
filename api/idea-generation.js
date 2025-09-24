@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { idea, type, companyId, caption } = req.body
+    const { idea, content, type, companyId, caption } = req.body
 
     if (!idea || !type || !companyId) {
       return res.status(400).json({ error: 'Missing required fields: idea, type, companyId' })
@@ -22,6 +22,7 @@ export default async function handler(req, res) {
 
     const webhookData = {
       idea,
+      content,
       type,
       companyId,
       caption,

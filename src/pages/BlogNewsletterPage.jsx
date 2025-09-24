@@ -283,6 +283,7 @@ export default function BlogNewsletterPage() {
           },
           body: JSON.stringify({
             idea: contentData.title,
+            content: contentData.content,
             type: contentData.type,
             companyId: userData.company_id
           })
@@ -698,6 +699,7 @@ export default function BlogNewsletterPage() {
                   <textarea
                     name="content"
                     rows={12}
+                    required
                     className="form-textarea"
                     placeholder={t('blogNewsletter.createModal.placeholders.content')}
                   />

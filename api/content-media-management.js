@@ -63,6 +63,13 @@ export default async function handler(req, res) {
 
       // Lataa kuva bucket:iin suoraan images kansioon
       const filePath = `images/${fileName}`
+      
+      if (!file.filepath || !fs.existsSync(file.filepath)) {
+        return res.status(400).json({ 
+          error: 'File processing failed: file path not found' 
+        })
+      }
+      
       const fileBuffer = fs.readFileSync(file.filepath)
       const { data, error: uploadError } = await supabase.storage
         .from('content-media')

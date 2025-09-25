@@ -37,14 +37,6 @@ export default function SiteHeader({ onOpenSignIn }) {
         </div>
         <div className="header-buttons desktop-buttons">
           <button className="btn btn-primary" onClick={() => {
-            // Google Analytics event tracking
-            if (typeof gtag !== 'undefined') {
-              gtag('event', 'conversion', {
-                'event_category': 'booking',
-                'event_label': 'header_book_demo',
-                'value': 1
-              });
-            }
             onOpenSignIn?.();
           }}>{t('nav.bookDemo')}</button>
           <button className="btn btn-secondary" onClick={onOpenSignIn}>{t('nav.signin')}</button>
@@ -82,14 +74,6 @@ export default function SiteHeader({ onOpenSignIn }) {
           </div>
           <div className="mobile-buttons">
             <button className="btn btn-primary mobile-btn" onClick={() => { 
-              // Google Analytics event tracking
-              if (typeof gtag !== 'undefined') {
-                gtag('event', 'conversion', {
-                  'event_category': 'booking',
-                  'event_label': 'mobile_header_book_demo',
-                  'value': 1
-                });
-              }
               onOpenSignIn?.(); 
               setIsMobileMenuOpen(false) 
             }}>{t('nav.bookDemo')}</button>

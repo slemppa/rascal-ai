@@ -63,14 +63,6 @@ export default function DueDiligenceForm({ onSuccess, onCancel }) {
           <h3>{t('dueDiligenceForm.success.title')}</h3>
           <p>{t('dueDiligenceForm.success.message')}</p>
           <Button onClick={() => {
-            // Google Analytics event tracking
-            if (typeof gtag !== 'undefined') {
-              gtag('event', 'conversion', {
-                'event_category': 'booking',
-                'event_label': 'due_diligence_form_booking',
-                'value': 1
-              });
-            }
             window.location.href = 'https://calendar.app.google/LiXrLDnPEGMb4eoS9'
           }}>
             {t('dueDiligenceForm.success.button')}

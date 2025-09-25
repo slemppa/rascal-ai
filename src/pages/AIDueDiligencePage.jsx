@@ -85,16 +85,7 @@ export default function AIDueDiligencePage() {
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="btn btn-primary"
-                onClick={() => {
-                  // Google Analytics event tracking
-                  if (typeof gtag !== 'undefined') {
-                    gtag('event', 'conversion', {
-                      'event_category': 'booking',
-                      'event_label': 'ai_due_diligence_booking',
-                      'value': 1
-                    });
-                  }
-                }}
+                onClick={() => {}}
               >
                 {t('aiDD.cta.button')}
               </a>

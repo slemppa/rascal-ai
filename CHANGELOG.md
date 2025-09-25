@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.70.0](https://github.com/slemppa/rascal-ai/compare/v1.69.1...v1.70.0) (2025-09-25)
+
+
+### ✨ Features
+
+* Näytä kaikki kuvat PostCard-komponentissa ([9431e17](https://github.com/slemppa/rascal-ai/commit/9431e17ce6b268971293a0aeb15a6f6d4babf9d6))
+
 ### [1.69.1](https://github.com/slemppa/rascal-ai/compare/v1.69.0...v1.69.1) (2025-09-24)
 
 

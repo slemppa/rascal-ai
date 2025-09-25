@@ -251,34 +251,93 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
               );
             }
             
-            // Kuva: Vain preview
+            // Kuva: Näytä kaikki kuvat jos useampi, muuten vain thumbnail
             if (post.thumbnail) {
-              return (
-                <img
-                  src={post.thumbnail}
-                  alt="thumbnail"
-                  loading="lazy"
-                  decoding="async"
-                  onLoad={(e) => {
-                    e.target.style.opacity = '1'
-                  }}
-                  onError={(e) => {
-                    if (e.target && e.target.style) {
-                      e.target.style.display = 'none';
-                    }
-                    if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
-                      e.target.nextSibling.style.display = 'flex';
-                    }
-                  }}
-                  style={{ 
+              // Tarkista onko useampi kuva media_urls-kentässä
+              const mediaUrls = post.media_urls || post.mediaUrls || [];
+              const hasMultipleImages = mediaUrls.length > 1;
+              
+              if (hasMultipleImages) {
+                // Näytä kaikki kuvat pienenä gridinä
+                return (
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: 'repeat(2, 1fr)', 
+                    gap: '2px', 
                     width: '100%', 
-                    height: '100%', 
-                    objectFit: 'cover',
-                    opacity: 0,
-                    transition: 'opacity 0.3s ease'
-                  }}
-                />
-              );
+                    height: '100%' 
+                  }}>
+                    {mediaUrls.slice(0, 4).map((url, index) => (
+                      <img
+                        key={index}
+                        src={url}
+                        alt={`media ${index + 1}`}
+                        loading="lazy"
+                        decoding="async"
+                        onLoad={(e) => {
+                          e.target.style.opacity = '1'
+                        }}
+                        onError={(e) => {
+                          if (e.target && e.target.style) {
+                            e.target.style.display = 'none';
+                          }
+                          if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
+                            e.target.nextSibling.style.display = 'flex';
+                          }
+                        }}
+                        style={{ 
+                          width: '100%', 
+                          height: '100%', 
+                          objectFit: 'cover',
+                          opacity: 0,
+                          transition: 'opacity 0.3s ease'
+                        }}
+                      />
+                    ))}
+                    {mediaUrls.length > 4 && (
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: 'rgba(0,0,0,0.7)',
+                        color: 'white',
+                        fontSize: '12px',
+                        fontWeight: 'bold'
+                      }}>
+                        +{mediaUrls.length - 4}
+                      </div>
+                    )}
+                  </div>
+                );
+              } else {
+                // Näytä vain yksi kuva
+                return (
+                  <img
+                    src={post.thumbnail}
+                    alt="thumbnail"
+                    loading="lazy"
+                    decoding="async"
+                    onLoad={(e) => {
+                      e.target.style.opacity = '1'
+                    }}
+                    onError={(e) => {
+                      if (e.target && e.target.style) {
+                        e.target.style.display = 'none';
+                      }
+                      if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
+                        e.target.nextSibling.style.display = 'flex';
+                      }
+                    }}
+                    style={{ 
+                      width: '100%', 
+                      height: '100%', 
+                      objectFit: 'cover',
+                      opacity: 0,
+                      transition: 'opacity 0.3s ease'
+                    }}
+                  />
+                );
+              }
             }
             
             // Placeholder jos ei mediaa

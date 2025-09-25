@@ -343,8 +343,23 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
             // Placeholder jos ei mediaa
             return (
               <div className="placeholder-content">
-                <div className="placeholder-fallback">
-                  <div className="placeholder-icon">Kuva</div>
+                <img
+                  src="/placeholder.png"
+                  alt="Ei kuvaa"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    opacity: 0.3
+                  }}
+                  onError={(e) => {
+                    // Jos placeholder-kuva ei lataa, näytä tekstin
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div className="placeholder-fallback" style={{ display: 'none' }}>
+                  <div className="placeholder-icon">🖼️</div>
                   <div className="placeholder-text">Ei kuvaa</div>
                 </div>
               </div>

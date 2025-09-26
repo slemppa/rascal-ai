@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.74.0](https://github.com/slemppa/rascal-ai/compare/v1.73.0...v1.74.0) (2025-09-26)
+
+
+### ✨ Features
+
+* Add strategy approval system with webhook integration ([10f61dc](https://github.com/slemppa/rascal-ai/commit/10f61dccd08f947f325181e143c556534c83085f))
+
 ## [1.73.0](https://github.com/slemppa/rascal-ai/compare/v1.72.0...v1.73.0) (2025-09-26)
 
 

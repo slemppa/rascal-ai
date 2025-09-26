@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.71.0](https://github.com/slemppa/rascal-ai/compare/v1.70.0...v1.71.0) (2025-09-26)
+
+
+### 🐛 Bug Fixes
+
+* Käytä placeholder-kuvaa kun mediaa ei ole ([ebd9445](https://github.com/slemppa/rascal-ai/commit/ebd94452de5d4f70f8cdf1cfb71a222f00277fe9))
+
+
+### 🔧 Chores
+
+* Poista Google Analytics sovelluksesta ([5acda93](https://github.com/slemppa/rascal-ai/commit/5acda934af1a3572d42686c9392a650b5a113367))
+
+
+### ✨ Features
+
+* strategy-sivu hakee ja tallentaa dataa Supabasesta ([b9680f6](https://github.com/slemppa/rascal-ai/commit/b9680f66ac7dd17b951711c9c96bbc056237704d))
+
 ## [1.70.0](https://github.com/slemppa/rascal-ai/compare/v1.69.1...v1.70.0) (2025-09-25)
 
 

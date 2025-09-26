@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.73.0](https://github.com/slemppa/rascal-ai/compare/v1.72.0...v1.73.0) (2025-09-26)
+
+
+### ✨ Features
+
+* sometilien synkronointi ja provider-näyttö ([f35a097](https://github.com/slemppa/rascal-ai/commit/f35a0973bdce1add3529b580506d5966924a9a9a))
+
 ## [1.72.0](https://github.com/slemppa/rascal-ai/compare/v1.71.0...v1.72.0) (2025-09-26)
 
 

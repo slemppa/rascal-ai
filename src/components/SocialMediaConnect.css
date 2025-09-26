@@ -169,6 +169,16 @@
   text-overflow: ellipsis;
 }
 
+.account-provider {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-bottom: 4px;
+  text-transform: capitalize;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 
 
 .account-date {
@@ -384,6 +394,10 @@
     font-size: 11px;
   }
 
+  .account-provider {
+    font-size: 10px;
+  }
+
 
 
   .account-date {
@@ -509,6 +523,10 @@
 
   .account-username {
     font-size: 10px;
+  }
+
+  .account-provider {
+    font-size: 9px;
   }
 
 

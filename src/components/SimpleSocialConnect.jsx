@@ -162,17 +162,18 @@ export default function SimpleSocialConnect() {
                   {/* Platform-ikoni profiilikuvan alaosassa */}
                   <div style={{
                     position: 'absolute',
-                    bottom: '-2px',
-                    right: '-2px',
-                    width: '12px',
-                    height: '12px',
+                    bottom: '-3px',
+                    right: '-3px',
+                    width: '16px',
+                    height: '16px',
                     borderRadius: '50%',
                     backgroundColor: '#ffffff',
-                    border: '1px solid #e5e7eb',
+                    border: '2px solid #e5e7eb',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '8px'
+                    fontSize: '10px',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
                   }}>
                     {account.provider === 'instagram' ? '📷' :
                      account.provider === 'facebook' ? '📘' : '💼'}
@@ -186,6 +187,18 @@ export default function SimpleSocialConnect() {
                   </div>
                   <div style={{ fontSize: '10px', color: '#6b7280' }}>
                     @{account.username}
+                  </div>
+                  {/* Provider-nimi */}
+                  <div style={{ 
+                    fontSize: '9px', 
+                    color: '#9ca3af',
+                    textTransform: 'capitalize',
+                    marginTop: '2px'
+                  }}>
+                    {account.provider === 'instagram' ? 'Instagram' :
+                     account.provider === 'facebook' ? 'Facebook' : 
+                     account.provider === 'linkedin' ? 'LinkedIn' : 
+                     account.provider}
                   </div>
                 </div>
               </div>

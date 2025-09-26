@@ -81,7 +81,7 @@ const VersionNotification = () => {
               fontWeight: 'bold',
               color: '#111827'
             }}>
-              Hei! Rascal AI on saanut päivityksen!
+              Hei! Rascal AI on saanut uuden päivityksen! 🎉
             </h2>
           </div>
 
@@ -92,7 +92,7 @@ const VersionNotification = () => {
               color: '#374151',
               lineHeight: '1.5'
             }}>
-              Tervetuloa takaisin! Olemme tehneet Rascal AI:sta vielä paremman versioon <strong>v{currentVersion}</strong>
+              Tervetuloa takaisin! Olemme kehittäneet Rascal AI:ta eteenpäin ja nyt on valmis versio <strong>v{currentVersion}</strong>
             </p>
             
             <div style={{ 
@@ -107,7 +107,7 @@ const VersionNotification = () => {
                 fontWeight: '600',
                 color: '#111827'
               }}>
-                Tässä mitä paransimme:
+                Mitä uutta tässä versiossa:
               </h3>
               <ul style={{ 
                 margin: 0, 
@@ -115,10 +115,10 @@ const VersionNotification = () => {
                 color: '#374151',
                 lineHeight: '1.6'
               }}>
-                <li>AI‑chat: voit lisätä myös kuvat ja äänet. Tiedoston nimi lähtee aina mukaan.</li>
-                <li>Dashboard: Vastausprosentti lasketaan vain vastatuista, onnistuneista puheluista.</li>
-                <li>Kampanjat: kortit käyttävät kaikkia puhelulokeja (yli 1000) ja samaa onnistumislogiikkaa.</li>
-                <li>Pieniä parannuksia käyttökokemukseen.</li>
+                <li><strong>Sometilien synkronointi:</strong> Settings-sivulla sometilit synkronoidaan nyt automaattisesti Supabaseen!</li>
+                <li><strong>Provider-näyttö:</strong> Sometilien vieressä näkyy nyt selkeästi mikä alusta kyseessä (Instagram, Facebook, LinkedIn).</li>
+                <li><strong>Duplikaattien välttäminen:</strong> Sometilien tallennus toimii nyt turvallisesti ilman virheitä.</li>
+                <li><strong>Tone of voice -kenttä:</strong> Strategia-sivulle lisätty uusi kenttä kommunikaation tyylin määrittämiseen.</li>
               </ul>
             </div>
 
@@ -128,7 +128,7 @@ const VersionNotification = () => {
               color: '#6b7280',
               fontStyle: 'italic'
             }}>
-              Kiitos että olet mukana kehittämässä Rascal AI:ta kanssamme!
+              Kiitos kun olet mukana! Ilman sinua tämä ei olisi mahdollista 🙏
             </p>
           </div>
 
@@ -141,7 +141,7 @@ const VersionNotification = () => {
               variant="secondary"
               onClick={markVersionAsSeen}
             >
-              Selvä, jatketaan!
+              Joo, jatketaan!
             </Button>
             <Button
               variant="primary"

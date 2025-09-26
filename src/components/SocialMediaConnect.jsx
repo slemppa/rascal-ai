@@ -162,6 +162,12 @@ const SocialMediaConnect = () => {
                 <div className="account-username">
                   @{account.username}
                 </div>
+                <div className="account-provider">
+                  {account.provider === 'instagram' ? 'Instagram' :
+                   account.provider === 'facebook' ? 'Facebook' : 
+                   account.provider === 'linkedin' ? 'LinkedIn' : 
+                   account.provider}
+                </div>
                 <div className="account-date">
                   {t('settings.social.addedAt', { date: account.created_at ? new Date(account.created_at).toLocaleDateString('fi-FI') : t('settings.social.unknownDate') })}
                 </div>

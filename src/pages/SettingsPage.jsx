@@ -7,6 +7,7 @@ import CarouselTemplateSelector from '../components/CarouselTemplateSelector'
 import SocialMediaConnect from '../components/SocialMediaConnect'
 import TimeoutSettings from '../components/TimeoutSettings'
 import SimpleSocialConnect from '../components/SimpleSocialConnect'
+import { useMixpostIntegration } from '../components/SocialMedia/hooks/useMixpostIntegration'
 
 import styles from './SettingsPage.module.css'
 
@@ -26,6 +27,83 @@ export default function SettingsPage() {
   const [passwordMessage, setPasswordMessage] = useState('')
   const [userProfile, setUserProfile] = useState(null)
   const [profileLoading, setProfileLoading] = useState(true)
+  const [syncInProgress, setSyncInProgress] = useState(false)
+  
+  // Mixpost-integration hook
+  const { 
+    socialAccounts, 
+    savedSocialAccounts, 
+    fetchSocialAccounts, 
+    fetchSavedSocialAccounts,
+    mixpostConfig 
+  } = useMixpostIntegration()
+
+  // Synkronoi sometilit Supabaseen
+  const syncSocialAccountsToSupabase = async () => {
+    if (!user?.id || !socialAccounts?.length || syncInProgress) return
+
+    setSyncInProgress(true)
+    try {
+      console.log('🔄 Synkronoidaan sometilejä Supabaseen...')
+      
+      // Hae olemassa olevat tilit Supabasesta
+      const { data: existingAccounts } = await supabase
+        .from('user_social_accounts')
+        .select('mixpost_account_uuid, provider')
+        .eq('user_id', user.id)
+
+      // Luo Set olemassa olevista tileistä (provider + mixpost_account_uuid)
+      const existingAccountsSet = new Set(
+        existingAccounts?.map(acc => `${acc.provider}:${acc.mixpost_account_uuid}`) || []
+      )
+      
+      // Etsi uudet tilit joita ei ole Supabasessa
+      const newAccounts = socialAccounts.filter(account => {
+        const accountKey = `${account.provider}:${account.id}`
+        return !existingAccountsSet.has(accountKey)
+      })
+
+      if (newAccounts.length === 0) {
+        console.log('✅ Kaikki sometilit jo synkronoituna')
+        return
+      }
+
+      console.log(`📝 Lisätään ${newAccounts.length} uutta tiliä Supabaseen`)
+
+      // Lisää uudet tilit Supabaseen
+      const accountsToInsert = newAccounts.map(account => ({
+        user_id: user.id,
+        mixpost_account_uuid: account.id,
+        provider: account.provider,
+        account_name: account.name || account.username,
+        username: account.username,
+        profile_image_url: account.profile_image_url || account.image || account.picture,
+        is_authorized: true,
+        account_data: account,
+        last_synced_at: new Date().toISOString(),
+        created_at: new Date().toISOString()
+      }))
+
+      const { error } = await supabase
+        .from('user_social_accounts')
+        .upsert(accountsToInsert, {
+          onConflict: 'user_id,mixpost_account_uuid'
+        })
+
+      if (error) {
+        console.error('❌ Virhe sometilien synkronoinnissa:', error)
+      } else {
+        console.log('✅ Sometilit synkronoitu onnistuneesti')
+        // Päivitä tallennetut tilit
+        await fetchSavedSocialAccounts()
+      }
+
+    } catch (error) {
+      console.error('❌ Virhe sometilien synkronoinnissa:', error)
+    } finally {
+      setSyncInProgress(false)
+    }
+  }
 
   // Hae käyttäjätiedot public.users taulusta
   useEffect(() => {
@@ -55,6 +133,13 @@ export default function SettingsPage() {
 
     fetchUserProfile()
   }, [user?.id])
+
+  // Synkronoi sometilit kun ne on haettu Mixpostista
+  useEffect(() => {
+    if (socialAccounts?.length > 0 && user?.id) {
+      syncSocialAccountsToSupabase()
+    }
+  }, [socialAccounts, user?.id])
 
   // Käyttäjätiedot public.users taulusta
   const email = userProfile?.contact_email || user?.email || null

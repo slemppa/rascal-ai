@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.72.0](https://github.com/slemppa/rascal-ai/compare/v1.71.0...v1.72.0) (2025-09-26)
+
+
+### ✨ Features
+
+* Add TOV visualization to strategy page ([5164f19](https://github.com/slemppa/rascal-ai/commit/5164f1942dab5c3f62eaee8ff8321b6918e5d6a8))
+
 ## [1.71.0](https://github.com/slemppa/rascal-ai/compare/v1.70.0...v1.71.0) (2025-09-26)
 
 

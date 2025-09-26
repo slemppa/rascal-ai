@@ -2,13 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 
 const N8N_STRATEGY_URL = process.env.N8N_GET_STRATEGY_URL
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-// Luo Supabase client vain jos service key on saatavilla
-let supabase = null
-if (supabaseServiceKey) {
-  supabase = createClient(supabaseUrl, supabaseServiceKey)
-}
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -20,99 +14,94 @@ export default async function handler(req, res) {
   }
 
   const companyId = req.query.companyId
+  const userId = req.query.userId
 
   if (!companyId) {
     return res.status(400).json({ error: 'company_id puuttuu' })
   }
 
-  // Kutsu N8N:ää GET:llä ja companyId query-parametrina
-  const N8N_STRATEGY_URL = process.env.N8N_GET_STRATEGY_URL
-  if (N8N_STRATEGY_URL) {
-    const url = `${N8N_STRATEGY_URL}?companyId=${companyId}`
+  if (!userId) {
+    return res.status(400).json({ error: 'user_id puuttuu' })
+  }
+
+  // JWT token validointi
+  const token = req.headers.authorization?.replace('Bearer ', '')
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token required' })
+  }
+
+  // Luo Supabase client käyttäjän tokenilla
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: `Bearer ${token}` } }
+  })
+
+  // Tarkista että käyttäjä on autentikoitu
+  const { data: user, error: authError } = await supabase.auth.getUser(token)
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Invalid token' })
+  }
+
+  try {
+    console.log('Strategy API called with:', { companyId, userId })
     
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'x-api-key': process.env.N8N_SECRET_KEY
-        }
-      })
-      
-      if (response.ok) {
-        const responseText = await response.text()
-        
-        let data
-        try {
-          data = JSON.parse(responseText)
-        } catch (parseError) {
-          throw new Error('Invalid JSON response from N8N')
-        }
-        
-        // Muunna N8N:n data oikeaan muotoon
-        if (Array.isArray(data) && data.length > 0) {
-          const n8nData = data[0]
-          const strategies = n8nData.strategyAndMonth?.map(item => ({
-            id: item.recordId,
-            name: `${item.Month} strategia`,
-            description: item.Strategy,
-            month: item.Month,
-            strategy: item.Strategy,
-            company_id: companyId,
-            created_at: new Date().toISOString()
-          })) || []
-          
-          const transformedData = {
-            strategies: strategies,
-            icpSummary: n8nData.icpSummary || [],
-            kpi: n8nData.kpi || [],
-            companySummary: n8nData.summary || n8nData.companySummary || ''
-          }
-          
-          return res.status(200).json(transformedData)
-        }
-        
-        return res.status(200).json(data)
-      }
-    } catch (e) {
-      // N8N error - käytetään mock dataa
+    // Haetaan käyttäjän tiedot users taulusta
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('company_summary, icp_summary, kpi')
+      .eq('id', userId)
+      .single()
+
+    if (userError) {
+      console.error('Error fetching user data:', userError)
+      return res.status(500).json({ error: 'Käyttäjätietojen haku epäonnistui' })
     }
-  }
 
-  // Palauta mock data jos N8N ei vastaa tai URL puuttuu
-  const mockData = {
-    strategies: [
-      {
-        id: 1,
-        name: "Kesäkuu strategia",
-        description: "Kesäkuun sisältöstrategia keskittyy sosiaalisen median kampanjoihin ja brändin rakentamiseen.",
-        month: "Kesäkuu",
-        strategy: "Kesäkuun sisältöstrategia keskittyy sosiaalisen median kampanjoihin ja brändin rakentamiseen. Suunnittelemme 3-4 viikoittaisen sisällön, joka sisältää käytännön vinkkejä, case-studies ja trendejä.",
-        company_id: companyId,
-        created_at: new Date().toISOString()
-      },
-      {
-        id: 2,
-        name: "Heinäkuu strategia", 
-        description: "Heinäkuun strategia painottaa video-sisältöä ja live-tapahtumia.",
-        month: "Heinäkuu",
-        strategy: "Heinäkuun strategia painottaa video-sisältöä ja live-tapahtumia. Suunnittelemme 2-3 viikoittaisen videosisällön sekä yhden live-webinaarin kuukaudessa.",
-        company_id: companyId,
-        created_at: new Date().toISOString()
-      }
-    ],
-    icpSummary: [
-      "Suomalaiset yrittäjät ja pienet yritykset, jotka haluavat parantaa digitaalista läsnäoloa",
-      "Ikäryhmä 25-45, teknologia-innostuneet mutta aikarajoitteiset",
-      "Haluavat käytännön vinkkejä ja todistettuja strategioita markkinointiin"
-    ],
-    kpi: [
-      "Kasvata organista liikennettä 30% seuraavassa 6 kuukaudessa",
-      "Paranna lead quality scorea 25%",
-      "Lisää sosiaalisen median engagementia 40%",
-      "Kasvata newsletter-tilaajia 50%"
-    ],
-    companySummary: "Rascal AI on suomalainen teknologia-alan yritys, joka tarjoaa AI-pohjaisia markkinointiratkaisuja pienille ja keskisuurille yrityksille. Yritys on erikoistunut automaattiseen sisältöluontiin, asiakashankintaan ja digitaalisen markkinoinnin optimointiin. Rascal AI:n tavoitteena on tehdä edistyksellisestä teknologiasta helposti käytettävää ja kustannustehokasta suomalaisille yrittäjille."
-  }
+    // Haetaan sisältöstrategiat content_strategy taulusta
+    console.log('Fetching strategies for user_id:', userId)
+    const { data: strategiesData, error: strategiesError } = await supabase
+      .from('content_strategy')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
 
-  res.status(200).json(mockData)
+    if (strategiesError) {
+      console.error('Error fetching strategies:', strategiesError)
+      return res.status(500).json({ error: 'Strategioiden haku epäonnistui' })
+    }
+
+    // Muunna strategiat oikeaan muotoon
+    const strategies = strategiesData?.map(item => ({
+      id: item.id,
+      name: `${item.month} strategia`,
+      description: item.strategy,
+      month: item.month,
+      strategy: item.strategy,
+      company_id: companyId,
+      user_id: userId,
+      created_at: item.created_at
+    })) || []
+
+    // Muunna ICP summary arrayksi rivinvaihdoista
+    const icpSummary = userData.icp_summary ? 
+      userData.icp_summary.split('\n').filter(line => line.trim() !== '') 
+      : []
+
+    // Muunna KPI arrayksi rivinvaihdoista
+    const kpi = userData.kpi ? 
+      userData.kpi.split('\n').filter(line => line.trim() !== '') 
+      : []
+
+    const responseData = {
+      strategies: strategies,
+      icpSummary: icpSummary,
+      kpi: kpi,
+      companySummary: userData.company_summary || ''
+    }
+
+    return res.status(200).json(responseData)
+
+  } catch (error) {
+    console.error('Error in strategy handler:', error)
+    return res.status(500).json({ error: 'Sisäinen palvelinvirhe' })
+  }
 } 

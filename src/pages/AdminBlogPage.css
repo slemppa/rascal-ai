@@ -5,6 +5,33 @@
   padding-bottom: 60px;
 }
 
+/* Article Preview Styles */
+.article-preview {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+}
+
+.article-preview h4 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.article-preview p {
+  margin: 8px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.article-preview strong {
+  color: #333;
+  font-weight: 600;
+}
+
 .layout-container {
   max-width: 1200px;
   margin: 0 auto;

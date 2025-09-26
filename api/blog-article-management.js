@@ -23,30 +23,40 @@ export default async function handler(req, res) {
 	}
 
 	const N8N_URL = process.env.N8N_CMS_URL
+	const N8N_UPDATE_URL = process.env.N8N_CMS_UPDATE
 	const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY
+	
 	if (!N8N_URL) {
 		return res.status(500).json({ error: 'N8N_CMS_URL not set' })
 	}
 
-	try {
-		const form = formidable({ multiples: false })
-		form.parse(req, async (err, fields, files) => {
-			if (err) {
-				console.error('Form parse error:', err)
-				return res.status(400).json({ error: 'Invalid form data' })
-			}
+		try {
+			const form = formidable({ multiples: false })
+			form.parse(req, async (err, fields, files) => {
+				if (err) {
+					console.error('Form parse error:', err)
+					return res.status(400).json({ error: 'Invalid form data' })
+				}
 
-			const getField = (key, def = '') => {
-				const v = fields[key]
-				if (Array.isArray(v)) return v[0] ?? def
-				return v ?? def
-			}
+				const getField = (key, def = '') => {
+					const v = fields[key]
+					if (Array.isArray(v)) return v[0] ?? def
+					return v ?? def
+				}
+
+				// Valitse oikea URL action:in perusteella
+				const action = String(getField('action') || 'create')
+				const targetUrl = action === 'update' ? N8N_UPDATE_URL : N8N_URL
+				
+				if (!targetUrl) {
+					return res.status(500).json({ error: `N8N URL not set for action: ${action}` })
+				}
 
 			let imageUrl = getField('image_url', '')
-			let imageOriginalFilename = ''
-			let imageStoredPath = ''
-			let imageMimeType = ''
-			let imageSize = 0
+			let imageOriginalFilename = getField('image_filename', '')
+			let imageStoredPath = getField('image_path', '')
+			let imageMimeType = getField('image_mime', '')
+			let imageSize = parseInt(getField('image_size', '0'))
 
 			// Jos mukana on binary-kuva, lataa se Vercel Blobiin
 			const rawImage = files.image
@@ -75,7 +85,7 @@ export default async function handler(req, res) {
 			// Rakenna JSON payload N8N:lle
 			const payload = {
 				action: String(getField('action') || 'create'),
-				articleId: getField('articleId') ? String(getField('articleId')) : null,
+				id: getField('articleId') ? String(getField('articleId')) : null, // Supabase ID (articleId = editingArticle.id)
 				title: String(getField('title') || ''),
 				slug: String(getField('slug') || ''),
 				excerpt: String(getField('excerpt') || ''),
@@ -91,7 +101,7 @@ export default async function handler(req, res) {
 			}
 
 			try {
-				const response = await axios.post(N8N_URL, payload, {
+				const response = await axios.post(targetUrl, payload, {
 					headers: {
 						'Content-Type': 'application/json',
 						...(N8N_SECRET_KEY ? { 'x-api-key': N8N_SECRET_KEY } : {})

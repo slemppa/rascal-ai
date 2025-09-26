@@ -24,7 +24,7 @@ const STRATEGY_URL = import.meta.env.N8N_GET_STRATEGY_URL || 'https://samikiias.
 
 const getStrategy = async () => {
   try {
-    // Haetaan käyttäjän company_id Supabase:sta
+    // Haetaan käyttäjän company_id ja user_id Supabase:sta
     const { data: { session } } = await supabase.auth.getSession()
     if (!session?.user) {
       throw new Error('Käyttäjä ei ole kirjautunut')
@@ -32,7 +32,7 @@ const getStrategy = async () => {
 
     const { data: userRecord, error: userError } = await supabase
       .from('users')
-      .select('company_id')
+      .select('company_id, id')
       .eq('auth_user_id', session.user.id)
       .single()
 
@@ -41,12 +41,24 @@ const getStrategy = async () => {
     }
 
     const companyId = userRecord.company_id
+    const userId = userRecord.id
 
-    // Kutsu API endpointia company_id:llä
-    const url = `/api/strategy?companyId=${companyId}`
+    // Kutsu API endpointia company_id:llä ja user_id:llä
+    const url = `/api/strategy?companyId=${companyId}&userId=${userId}`
     
-  const res = await fetch(url)
-  if (!res.ok) throw new Error('Strategian haku epäonnistui')
+    // Hae käyttäjän token
+    const { data: { session: currentSession } } = await supabase.auth.getSession()
+    if (!currentSession?.access_token) {
+      throw new Error('Käyttäjä ei ole kirjautunut')
+    }
+    
+    const res = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${currentSession.access_token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    if (!res.ok) throw new Error('Strategian haku epäonnistui')
     const data = await res.json()
     return data
   } catch (error) {
@@ -182,35 +194,34 @@ export default function ContentStrategyPage() {
 
   const handleSave = async (item) => {
     try {
-      // Haetaan company_id jos se puuttuu
-      let currentCompanyId = companyId
-      if (!currentCompanyId) {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session?.user) {
-          const { data: userRecord } = await supabase
-            .from('users')
-            .select('company_id')
-            .eq('auth_user_id', session.user.id)
-            .single()
-          
-          if (userRecord?.company_id) {
-            currentCompanyId = userRecord.company_id
-            setCompanyId(userRecord.company_id)
-          }
-        }
+      // Päivitä strategia Supabasessa
+      const { data: updatedStrategy, error } = await supabase
+        .from('content_strategy')
+        .update({ 
+          strategy: editText,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', item.id)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Error updating strategy:', error)
+        alert('Tallennus epäonnistui: ' + error.message)
+        return
       }
-      
+
+      // Päivitä paikallinen state
       const updated = { 
         ...item, 
         strategy: editText, 
         Strategy: editText, // Säilytetään myös vanha kenttä yhteensopivuuden vuoksi
-        updateType: 'strategyUpdate',
-        company_id: currentCompanyId
+        updated_at: updatedStrategy.updated_at
       }
-      await axios.post('/api/update-post', updated)
       setStrategy(strategy.map(s => s.id === item.id ? updated : s))
       setEditId(null)
     } catch (e) {
+      console.error('Error in handleSave:', e)
       alert('Tallennus epäonnistui')
     }
   }
@@ -236,35 +247,44 @@ export default function ContentStrategyPage() {
     try {
       const newIcpSummary = icpEditText.split('\n').filter(line => line.trim() !== '')
       
-      // Haetaan company_id jos se puuttuu
-      let currentCompanyId = companyId
-      if (!currentCompanyId) {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session?.user) {
-          const { data: userRecord } = await supabase
-            .from('users')
-            .select('company_id')
-            .eq('auth_user_id', session.user.id)
-            .single()
-          
-          if (userRecord?.company_id) {
-            currentCompanyId = userRecord.company_id
-            setCompanyId(userRecord.company_id)
-          }
-        }
+      // Haetaan käyttäjän user_id
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.user) {
+        alert('Käyttäjä ei ole kirjautunut')
+        return
+      }
+
+      const { data: userRecord } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', session.user.id)
+        .single()
+
+      if (!userRecord?.id) {
+        alert('Käyttäjätiedot eivät löytyneet')
+        return
       }
       
-      // Lähetä ICP päivitys N8N:ään
-      await axios.post('/api/update-post', {
-        updateType: 'icpUpdate',
-        icpSummary: newIcpSummary,
-        company_id: currentCompanyId
-      })
+      // Päivitä ICP Supabasessa
+      const { error } = await supabase
+        .from('users')
+        .update({ 
+          icp_summary: newIcpSummary.join('\n'),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userRecord.id)
+
+      if (error) {
+        console.error('Error updating ICP:', error)
+        alert('ICP:n tallennus epäonnistui: ' + error.message)
+        return
+      }
       
       setIcpSummary(newIcpSummary)
       setEditingIcp(false)
       setIcpEditText('')
     } catch (e) {
+      console.error('Error in handleSaveIcp:', e)
       alert('ICP:n tallennus epäonnistui')
     }
   }
@@ -278,35 +298,44 @@ export default function ContentStrategyPage() {
     try {
       const newKpiData = kpiEditText.split('\n').filter(line => line.trim() !== '')
       
-      // Haetaan company_id jos se puuttuu
-      let currentCompanyId = companyId
-      if (!currentCompanyId) {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session?.user) {
-          const { data: userRecord } = await supabase
-            .from('users')
-            .select('company_id')
-            .eq('auth_user_id', session.user.id)
-            .single()
-          
-          if (userRecord?.company_id) {
-            currentCompanyId = userRecord.company_id
-            setCompanyId(userRecord.company_id)
-          }
-        }
+      // Haetaan käyttäjän user_id
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.user) {
+        alert('Käyttäjä ei ole kirjautunut')
+        return
+      }
+
+      const { data: userRecord } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', session.user.id)
+        .single()
+
+      if (!userRecord?.id) {
+        alert('Käyttäjätiedot eivät löytyneet')
+        return
       }
       
-      // Lähetä KPI päivitys N8N:ään
-      await axios.post('/api/update-post', {
-        updateType: 'kpiUpdate',
-        kpiData: newKpiData,
-        company_id: currentCompanyId
-      })
+      // Päivitä KPI Supabasessa
+      const { error } = await supabase
+        .from('users')
+        .update({ 
+          kpi: newKpiData.join('\n'),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userRecord.id)
+
+      if (error) {
+        console.error('Error updating KPI:', error)
+        alert('KPI:n tallennus epäonnistui: ' + error.message)
+        return
+      }
       
       setKpiData(newKpiData)
       setEditingKpi(false)
       setKpiEditText('')
     } catch (e) {
+      console.error('Error in handleSaveKpi:', e)
       alert('KPI:n tallennus epäonnistui')
     }
   }
@@ -330,35 +359,44 @@ export default function ContentStrategyPage() {
 
   const handleSaveCompanySummary = async () => {
     try {
-      // Haetaan company_id jos se puuttuu
-      let currentCompanyId = companyId
-      if (!currentCompanyId) {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session?.user) {
-          const { data: userRecord } = await supabase
-            .from('users')
-            .select('company_id')
-            .eq('auth_user_id', session.user.id)
-            .single()
-          
-          if (userRecord?.company_id) {
-            currentCompanyId = userRecord.company_id
-            setCompanyId(userRecord.company_id)
-          }
-        }
+      // Haetaan käyttäjän user_id
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.user) {
+        alert('Käyttäjä ei ole kirjautunut')
+        return
+      }
+
+      const { data: userRecord } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', session.user.id)
+        .single()
+
+      if (!userRecord?.id) {
+        alert('Käyttäjätiedot eivät löytyneet')
+        return
       }
       
-      // Lähetä Company Summary päivitys N8N:ään
-      await axios.post('/api/update-post', {
-        updateType: 'companySummaryUpdate',
-        companySummary: companySummaryEditText,
-        company_id: currentCompanyId
-      })
+      // Päivitä Company Summary Supabasessa
+      const { error } = await supabase
+        .from('users')
+        .update({ 
+          company_summary: companySummaryEditText,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userRecord.id)
+
+      if (error) {
+        console.error('Error updating company summary:', error)
+        alert('Yritysanalyysin tallennus epäonnistui: ' + error.message)
+        return
+      }
       
       setCompanySummary(companySummaryEditText)
       setEditingCompanySummary(false)
       setCompanySummaryEditText('')
     } catch (e) {
+      console.error('Error in handleSaveCompanySummary:', e)
       alert('Yritysanalyysin tallennus epäonnistui')
     }
   }

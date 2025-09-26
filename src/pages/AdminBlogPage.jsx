@@ -93,29 +93,45 @@ export default function AdminBlogPage() {
         console.log('Updating article with data:', formData)
         console.log('Published status:', formData.published, 'Type:', typeof formData.published)
 
-        // MUOKKAUS: Suora Supabase päivitys
-        const { error } = await supabase
-          .from('blog_posts')
-          .update({
-            title: formData.title,
-            slug: formData.slug,
-            excerpt: formData.excerpt,
-            content: formData.content,
-            category: formData.category,
-            image_url: formData.image_url,
-            published_at: formData.published_at,
-            published: formData.published,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', editingArticle.id)
+        // MUOKKAUS: Käytä samaa API:ta kuin uuden artikkelin luonnissa
+        const fd = new FormData()
+        fd.append('action', 'update')
+        fd.append('articleId', editingArticle.id)
+        fd.append('title', formData.title || '')
+        fd.append('slug', formData.slug || '')
+        fd.append('excerpt', formData.excerpt || '')
+        fd.append('content', formData.content || '')
+        fd.append('category', formData.category || '')
+        fd.append('published_at', formData.published_at || '')
+        fd.append('published', String(formData.published ?? true))
 
-        if (error) {
-          console.error('Supabase update error:', error)
-          throw new Error('Virhe artikkelin päivityksessä: ' + error.message)
+        // Jos käyttäjä valitsi uuden kuvan, lähetetään binarynä
+        if (tempImageFile?.file) {
+          const originalName = tempImageFile.fileName || tempImageFile.file.name
+          const sanitizedName = sanitizeFilename(originalName)
+          fd.append('image', tempImageFile.file, sanitizedName)
+        } else if (formData.image_url) {
+          // Jos ei uutta kuvaa, lähetetään vanha image_url
+          fd.append('image_url', formData.image_url)
         }
 
-        console.log('Article updated successfully')
-        alert('Artikkeli päivitetty!')
+        // Lähetä backend API:n kautta proxy:nä
+        const response = await fetch('/api/blog-article-management', {
+          method: 'POST',
+          body: fd
+        })
+
+        if (!response.ok) {
+          throw new Error('Artikkelia ei voitu päivittää')
+        }
+
+        const result = await response.json()
+        
+        if (result.success) {
+          alert('Artikkeli päivitetty!')
+        } else {
+          throw new Error(result.error || 'Tuntematon virhe')
+        }
       } else {
         // UUSI ARTIKKELI: Tarkista että kuva on valittu
         if (!tempImageFile?.file) {
@@ -389,59 +405,73 @@ export default function AdminBlogPage() {
                 </div>
                 
                 <form onSubmit={handleSubmit} className="article-form">
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label htmlFor="title">Otsikko *</label>
-                      <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleInputChange}
-                        required
-                        placeholder="Artikkelin otsikko"
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label htmlFor="slug">URL-slug *</label>
-                      <input
-                        type="text"
-                        id="slug"
-                        name="slug"
-                        value={formData.slug}
-                        onChange={handleInputChange}
-                        required
-                        placeholder="artikkelin-url-slug"
-                      />
-                    </div>
-                  </div>
+                  {!editingArticle ? (
+                    <>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label htmlFor="title">Otsikko *</label>
+                          <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="Artikkelin otsikko"
+                          />
+                        </div>
+                        
+                        <div className="form-group">
+                          <label htmlFor="slug">URL-slug *</label>
+                          <input
+                            type="text"
+                            id="slug"
+                            name="slug"
+                            value={formData.slug}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="artikkelin-url-slug"
+                          />
+                        </div>
+                      </div>
 
-                  <div className="form-row">
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label htmlFor="category">Kategoria</label>
+                          <input
+                            type="text"
+                            id="category"
+                            name="category"
+                            value={formData.category}
+                            onChange={handleInputChange}
+                            placeholder="esim. Myynti, Markkinointi"
+                          />
+                        </div>
+                        
+                        <div className="form-group">
+                          <label htmlFor="published_at">Julkaisupäivä *</label>
+                          <input
+                            type="date"
+                            id="published_at"
+                            name="published_at"
+                            value={formData.published_at}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
                     <div className="form-group">
-                      <label htmlFor="category">Kategoria</label>
-                      <input
-                        type="text"
-                        id="category"
-                        name="category"
-                        value={formData.category}
-                        onChange={handleInputChange}
-                        placeholder="esim. Myynti, Markkinointi"
-                      />
+                      <h3>Artikkelin tiedot</h3>
+                      <div className="article-preview">
+                        <h4>{editingArticle.title}</h4>
+                        <p><strong>Slug:</strong> /{editingArticle.slug}</p>
+                        <p><strong>Kategoria:</strong> {editingArticle.category || 'Ei kategoriaa'}</p>
+                        <p><strong>Julkaisupäivä:</strong> {editingArticle.published_at ? new Date(editingArticle.published_at).toLocaleDateString('fi-FI') : 'Ei päivää'}</p>
+                      </div>
                     </div>
-                    
-                    <div className="form-group">
-                      <label htmlFor="published_at">Julkaisupäivä *</label>
-                      <input
-                        type="date"
-                        id="published_at"
-                        name="published_at"
-                        value={formData.published_at}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                  </div>
+                  )}
 
                   <div className="form-group">
                     <label htmlFor="published">Julkaisustatus</label>
@@ -478,102 +508,106 @@ export default function AdminBlogPage() {
                     </small>
                   </div>
 
-                  <div className="form-group">
-                    <label>Artikkelin kuva *</label>
-                    
-                    {/* Drag & Drop Area */}
-                    <div 
-                      className={`image-upload-area ${dragActive ? 'drag-active' : ''} ${uploading ? 'uploading' : ''} ${!formData.image_url && !tempImageFile ? 'required-field' : ''}`}
-                      onDragEnter={handleDrag}
-                      onDragLeave={handleDrag}
-                      onDragOver={handleDrag}
-                      onDrop={handleDrop}
-                    >
-                      {uploading ? (
-                        <div className="upload-progress">
-                          <div className="upload-spinner"></div>
-                          <p>Ladataan kuvaa...</p>
+                  {!editingArticle && (
+                    <>
+                      <div className="form-group">
+                        <label>Artikkelin kuva *</label>
+                        
+                        {/* Drag & Drop Area */}
+                        <div 
+                          className={`image-upload-area ${dragActive ? 'drag-active' : ''} ${uploading ? 'uploading' : ''} ${!formData.image_url && !tempImageFile ? 'required-field' : ''}`}
+                          onDragEnter={handleDrag}
+                          onDragLeave={handleDrag}
+                          onDragOver={handleDrag}
+                          onDrop={handleDrop}
+                        >
+                          {uploading ? (
+                            <div className="upload-progress">
+                              <div className="upload-spinner"></div>
+                              <p>Ladataan kuvaa...</p>
+                            </div>
+                          ) : formData.image_url ? (
+                            <div className="uploaded-image">
+                              <img src={formData.image_url} alt="Ladattu kuva" />
+                              <div className="image-actions">
+                                <button 
+                                  type="button" 
+                                  onClick={() => {
+                                    if (confirm('Oletko varma, että haluat poistaa kuvan? Kuva on pakollinen artikkelin tallentamiseen!')) {
+                                      setFormData(prev => ({ ...prev, image_url: '' }))
+                                      setTempImageFile(null)
+                                    }
+                                  }}
+                                  className="btn btn-small btn-danger"
+                                >
+                                  Poista kuva
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="upload-placeholder">
+                              <div className="upload-icon">📷</div>
+                              <h3>Raahaa kuva tähän tai klikkaa valitaksesi</h3>
+                              <p className="required-text">⚠️ Kuva on pakollinen uuden artikkelin lisäämisessä!</p>
+                              <p>Tuetut formaatit: JPG, PNG, GIF (max 5MB)</p>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileSelect}
+                                className="file-input"
+                              />
+                            </div>
+                          )}
                         </div>
-                      ) : formData.image_url ? (
-                        <div className="uploaded-image">
-                          <img src={formData.image_url} alt="Ladattu kuva" />
-                          <div className="image-actions">
-                            <button 
-                              type="button" 
-                              onClick={() => {
-                                if (confirm('Oletko varma, että haluat poistaa kuvan? Kuva on pakollinen artikkelin tallentamiseen!')) {
-                                  setFormData(prev => ({ ...prev, image_url: '' }))
-                                  setTempImageFile(null)
-                                }
-                              }}
-                              className="btn btn-small btn-danger"
-                            >
-                              Poista kuva
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="upload-placeholder">
-                          <div className="upload-icon">📷</div>
-                          <h3>Raahaa kuva tähän tai klikkaa valitaksesi</h3>
-                          <p className="required-text">⚠️ Kuva on pakollinen uuden artikkelin lisäämisessä!</p>
-                          <p>Tuetut formaatit: JPG, PNG, GIF (max 5MB)</p>
+                        
+                        {/* Manual URL input as fallback */}
+                        <details className="manual-url-section">
+                          <summary>Tai syötä kuvan URL manuaalisesti</summary>
                           <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileSelect}
-                            className="file-input"
+                            type="url"
+                            id="image_url"
+                            name="image_url"
+                            value={formData.image_url}
+                            onChange={handleInputChange}
+                            placeholder="https://your-project.supabase.co/storage/v1/object/public/blog-covers/kuva.jpg"
+                            className="manual-url-input"
                           />
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* Manual URL input as fallback */}
-                    <details className="manual-url-section">
-                      <summary>Tai syötä kuvan URL manuaalisesti</summary>
-                      <input
-                        type="url"
-                        id="image_url"
-                        name="image_url"
-                        value={formData.image_url}
-                        onChange={handleInputChange}
-                        placeholder="https://your-project.supabase.co/storage/v1/object/public/blog-covers/kuva.jpg"
-                        className="manual-url-input"
-                      />
-                    </details>
-                    
-                    <small className="form-help">
-                      <strong>Kuva on pakollinen!</strong> Kuvat ladataan automaattisesti Supabase Storage:en blog-covers bucketiin
-                    </small>
-                  </div>
+                        </details>
+                        
+                        <small className="form-help">
+                          <strong>Kuva on pakollinen!</strong> Kuvat ladataan automaattisesti Supabase Storage:en blog-covers bucketiin
+                        </small>
+                      </div>
 
-                  <div className="form-group">
-                    <label htmlFor="excerpt">Lyhyt kuvaus</label>
-                    <textarea
-                      id="excerpt"
-                      name="excerpt"
-                      value={formData.excerpt}
-                      onChange={handleInputChange}
-                      rows="3"
-                      placeholder="Lyhyt kuvaus artikkelista (näkyy listauksessa)"
-                    />
-                  </div>
+                      <div className="form-group">
+                        <label htmlFor="excerpt">Lyhyt kuvaus</label>
+                        <textarea
+                          id="excerpt"
+                          name="excerpt"
+                          value={formData.excerpt}
+                          onChange={handleInputChange}
+                          rows="3"
+                          placeholder="Lyhyt kuvaus artikkelista (näkyy listauksessa)"
+                        />
+                      </div>
 
-                  <div className="form-group">
-                    <label htmlFor="content">Sisältö (Markdown-muodossa) *</label>
-                    <textarea
-                      id="content"
-                      name="content"
-                      value={formData.content}
-                      onChange={handleInputChange}
-                      rows="15"
-                      required
-                      placeholder="Artikkelin sisältö Markdown-muodossa..."
-                    />
-                    <small className="form-help">
-                      Käytä Markdown-syntaksia: **lihavointi**, *kursiivi*, ## otsikko, - lista, [linkki](url)
-                    </small>
-                  </div>
+                      <div className="form-group">
+                        <label htmlFor="content">Sisältö (Markdown-muodossa) *</label>
+                        <textarea
+                          id="content"
+                          name="content"
+                          value={formData.content}
+                          onChange={handleInputChange}
+                          rows="15"
+                          required
+                          placeholder="Artikkelin sisältö Markdown-muodossa..."
+                        />
+                        <small className="form-help">
+                          Käytä Markdown-syntaksia: **lihavointi**, *kursiivi*, ## otsikko, - lista, [linkki](url)
+                        </small>
+                      </div>
+                    </>
+                  )}
 
                   <div className="form-actions">
                     <button type="button" onClick={closeForm} className="btn btn-secondary">

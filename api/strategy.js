@@ -47,7 +47,7 @@ export default async function handler(req, res) {
     // Haetaan käyttäjän tiedot users taulusta
     const { data: userData, error: userError } = await supabase
       .from('users')
-      .select('company_summary, icp_summary, kpi')
+      .select('company_summary, icp_summary, kpi, tov')
       .eq('id', userId)
       .single()
 
@@ -95,7 +95,8 @@ export default async function handler(req, res) {
       strategies: strategies,
       icpSummary: icpSummary,
       kpi: kpi,
-      companySummary: userData.company_summary || ''
+      companySummary: userData.company_summary || '',
+      tov: userData.tov || ''
     }
 
     return res.status(200).json(responseData)

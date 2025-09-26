@@ -73,6 +73,7 @@ export default function ContentStrategyPage() {
   const [icpSummary, setIcpSummary] = useState([])
   const [kpiData, setKpiData] = useState([])
   const [companySummary, setCompanySummary] = useState('')
+  const [tov, setTov] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [editId, setEditId] = useState(null)
@@ -83,6 +84,8 @@ export default function ContentStrategyPage() {
   const [kpiEditText, setKpiEditText] = useState('')
   const [editingCompanySummary, setEditingCompanySummary] = useState(false)
   const [companySummaryEditText, setCompanySummaryEditText] = useState('')
+  const [editingTov, setEditingTov] = useState(false)
+  const [tovEditText, setTovEditText] = useState('')
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
   const [companyId, setCompanyId] = useState(null)
@@ -90,6 +93,7 @@ export default function ContentStrategyPage() {
   const icpTextareaRef = React.useRef(null)
   const kpiTextareaRef = React.useRef(null)
   const companySummaryTextareaRef = React.useRef(null)
+  const tovTextareaRef = React.useRef(null)
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -121,11 +125,12 @@ export default function ContentStrategyPage() {
         
         // Käsittele data-rakenne
         if (data && typeof data === 'object') {
-          // Data tulee objektina: {strategies: [...], icpSummary: [...], kpi: [...], companySummary: ...}
+          // Data tulee objektina: {strategies: [...], icpSummary: [...], kpi: [...], companySummary: ..., tov: ...}
           setStrategy(data.strategies || [])
           setIcpSummary(data.icpSummary || [])
           setKpiData(data.kpi || [])
           setCompanySummary(data.summary || data.companySummary || '')
+          setTov(data.tov || '')
         } else if (Array.isArray(data) && data.length > 0) {
           // Vanha rakenne (array)
           const firstItem = data[0]
@@ -133,17 +138,20 @@ export default function ContentStrategyPage() {
           setIcpSummary(firstItem.icpSummary || [])
           setKpiData(firstItem.kpi || [])
           setCompanySummary(firstItem.summary || firstItem.companySummary || '')
+          setTov(firstItem.tov || '')
         } else {
           setStrategy(mockStrategy)
           setIcpSummary([])
           setKpiData([])
           setCompanySummary('')
+          setTov('')
         }
       } catch (e) {
         setStrategy(mockStrategy)
         setIcpSummary([])
         setKpiData([])
         setCompanySummary('')
+        setTov('')
         setError('Ei saatu yhteyttä strategia-endpointiin, näytetään mock-data')
       } finally {
         setLoading(false)
@@ -179,6 +187,13 @@ export default function ContentStrategyPage() {
       companySummaryTextareaRef.current.style.height = companySummaryTextareaRef.current.scrollHeight + 'px'
     }
   }, [companySummaryEditText, editingCompanySummary])
+
+  useEffect(() => {
+    if (tovTextareaRef.current) {
+      tovTextareaRef.current.style.height = 'auto'
+      tovTextareaRef.current.style.height = tovTextareaRef.current.scrollHeight + 'px'
+    }
+  }, [tovEditText, editingTov])
 
   const handleEdit = (item) => {
     setEditId(item.id)
@@ -406,6 +421,67 @@ export default function ContentStrategyPage() {
     setCompanySummaryEditText('')
   }
 
+  const handleEditTov = () => {
+    setEditingTov(true)
+    setTovEditText(tov)
+    // Säätää textarea:n korkeus seuraavassa renderissä
+    setTimeout(() => {
+      if (tovTextareaRef.current) {
+        tovTextareaRef.current.style.height = 'auto'
+        tovTextareaRef.current.style.height = tovTextareaRef.current.scrollHeight + 'px'
+      }
+    }, 0)
+  }
+
+  const handleSaveTov = async () => {
+    try {
+      // Haetaan käyttäjän user_id
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.user) {
+        alert('Käyttäjä ei ole kirjautunut')
+        return
+      }
+
+      const { data: userRecord } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', session.user.id)
+        .single()
+
+      if (!userRecord?.id) {
+        alert('Käyttäjätiedot eivät löytyneet')
+        return
+      }
+      
+      // Päivitä TOV Supabasessa
+      const { error } = await supabase
+        .from('users')
+        .update({ 
+          tov: tovEditText,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userRecord.id)
+
+      if (error) {
+        console.error('Error updating TOV:', error)
+        alert('TOV:n tallennus epäonnistui: ' + error.message)
+        return
+      }
+      
+      setTov(tovEditText)
+      setEditingTov(false)
+      setTovEditText('')
+    } catch (e) {
+      console.error('Error in handleSaveTov:', e)
+      alert('TOV:n tallennus epäonnistui')
+    }
+  }
+
+  const handleCancelTov = () => {
+    setEditingTov(false)
+    setTovEditText('')
+  }
+
   // Funktio kuukauden kirjoittamiseen isolla alkukirjaimella
   const formatMonth = (month) => {
     if (!month) return ''
@@ -479,7 +555,7 @@ export default function ContentStrategyPage() {
         </div>
         
         <div className="strategy-bentogrid">
-          {/* Yritysanalyysi, Kohderyhmä ja Tavoitteet - ylemmät kortit */}
+          {/* Yritysanalyysi, Kohderyhmä, Tavoitteet ja TOV - ylemmät kortit */}
           <div className="strategy-top-row">
             {/* Yritysanalyysi-kortti */}
             <div className="strategy-card">
@@ -777,6 +853,116 @@ export default function ContentStrategyPage() {
                 )}
               </div>
             )}
+
+            {/* TOV-kortti */}
+            <div className="strategy-card">
+              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🎤 Äänenlaatu & TOV</div>
+              
+              {editingTov ? (
+                <div style={{ flex: 1 }}>
+                  <textarea
+                    ref={tovTextareaRef}
+                    value={tovEditText}
+                    onChange={e => setTovEditText(e.target.value)}
+                    className="tov-textarea"
+                    style={{
+                      width: '100%',
+                      minHeight: 120,
+                      padding: 12,
+                      border: '2px solid #e5e7eb',
+                      borderRadius: 8,
+                      fontSize: 14,
+                      lineHeight: 1.6,
+                      fontFamily: 'inherit',
+                      background: '#f9fafb',
+                      boxSizing: 'border-box'
+                    }}
+                    placeholder="Kuvaile yrityksen äänenlaatu ja TOV (Tone of Voice)..."
+                  />
+                  <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
+                    <button 
+                      style={{
+                        background: '#22c55e',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '8px 16px',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                      onClick={handleSaveTov}
+                    >
+                      {t('strategy.buttons.save')}
+                    </button>
+                    <button 
+                      style={{
+                        background: '#6b7280',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '8px 16px',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                      onClick={handleCancelTov}
+                    >
+                      {t('strategy.buttons.cancel')}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ flex: 1 }}>
+                  {tov && tov.length > 0 ? (
+                    <>
+                      <p style={{ margin: 0, color: '#374151', lineHeight: 1.6, fontSize: 14, whiteSpace: 'pre-line' }}>
+                        {tov}
+                      </p>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+                        <button 
+                          style={{
+                            background: '#22c55e',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: 8,
+                            padding: '8px 16px',
+                            fontSize: 14,
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                          }}
+                          onClick={handleEditTov}
+                        >
+                          Muokkaa
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
+                      <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Äänenlaatu ja TOV puuttuu. Lisää yrityksen äänenlaatu aloittaaksesi.</p>
+                      <button 
+                        style={{
+                          background: '#22c55e',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: 8,
+                          padding: '8px 16px',
+                          fontSize: 14,
+                          fontWeight: 600,
+                          cursor: 'pointer'
+                        }}
+                        onClick={() => {
+                          setEditingTov(true)
+                          setTovEditText('')
+                        }}
+                      >
+                        Luo TOV-kuvaus
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Sisältöstrategiat - otsikko */}
@@ -962,6 +1148,34 @@ export default function ContentStrategyPage() {
                 }}
               >
                 {t('strategy.kpi.create')}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* TOV jos ei ole vielä olemassa */}
+        {(!tov || tov.length === 0) && (
+          <div className="strategy-card">
+            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🎤 Äänenlaatu & TOV</div>
+            <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
+              <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Äänenlaatu ja TOV puuttuu. Lisää yrityksen äänenlaatu aloittaaksesi.</p>
+              <button 
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '8px 16px',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+                onClick={() => {
+                  setEditingTov(true)
+                  setTovEditText('')
+                }}
+              >
+                Luo TOV-kuvaus
               </button>
             </div>
           </div>

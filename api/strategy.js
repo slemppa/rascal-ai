@@ -78,7 +78,8 @@ export default async function handler(req, res) {
       strategy: item.strategy,
       company_id: companyId,
       user_id: userId,
-      created_at: item.created_at
+      created_at: item.created_at,
+      approved: item.approved || false
     })) || []
 
     // Muunna ICP summary arrayksi rivinvaihdoista

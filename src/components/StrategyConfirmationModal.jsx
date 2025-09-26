@@ -1,18 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { createPortal } from 'react-dom'
 import Button from './Button'
-import { useNotifications } from '../contexts/NotificationContext'
+import { useTranslation } from 'react-i18next'
 
-const VersionNotification = () => {
-  const { showVersionNotification, markVersionAsSeen } = useNotifications()
+const StrategyConfirmationModal = ({ isOpen, onClose, onRequestUpdate, loading }) => {
+  const { t } = useTranslation('common')
 
-  if (!showVersionNotification) return null
-
-  const currentVersion = process.env.REACT_APP_VERSION || '1.67.0'
+  if (!isOpen) return null
 
   return createPortal(
     <div 
-      className="version-notification-overlay"
+      className="strategy-confirmation-overlay"
       style={{
         position: 'fixed',
         top: 0,
@@ -27,7 +25,7 @@ const VersionNotification = () => {
       }}
     >
       <div 
-        className="version-notification-modal"
+        className="strategy-confirmation-modal"
         style={{
           backgroundColor: 'white',
           borderRadius: '12px',
@@ -40,7 +38,7 @@ const VersionNotification = () => {
       >
         {/* Sulje-nappi */}
         <button
-          onClick={markVersionAsSeen}
+          onClick={onClose}
           style={{
             position: 'absolute',
             top: '12px',
@@ -57,23 +55,24 @@ const VersionNotification = () => {
         </button>
 
         {/* Sisältö */}
-        <div style={{ paddingRight: '32px' }}>
+        <div style={{ paddingRight: '32px', textAlign: 'center' }}>
           <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
+            justifyContent: 'center',
             marginBottom: '16px' 
           }}>
             <div style={{
               width: '40px',
               height: '40px',
-              backgroundColor: '#10b981',
+              backgroundColor: '#f59e0b',
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               marginRight: '12px'
             }}>
-              <span style={{ color: 'white', fontSize: '20px', fontWeight: 'bold' }}>R</span>
+              <span style={{ color: 'white', fontSize: '20px', fontWeight: 'bold' }}>⚠️</span>
             </div>
             <h2 style={{ 
               margin: 0, 
@@ -81,7 +80,7 @@ const VersionNotification = () => {
               fontWeight: 'bold',
               color: '#111827'
             }}>
-              Hei! Rascal AI on saanut uuden päivityksen! 🎉
+              Uusi strategia saatavilla!
             </h2>
           </div>
 
@@ -92,66 +91,62 @@ const VersionNotification = () => {
               color: '#374151',
               lineHeight: '1.5'
             }}>
-              Tervetuloa takaisin! Olemme kehittäneet Rascal AI:ta eteenpäin ja nyt on valmis versio <strong>v{currentVersion}</strong>
+              Ennen kuin voimme aloittaa sisällön generoinnin, meidän täytyy varmistaa että strategia on ajan tasalla ja sopii nykyiseen tilanteeseen.
             </p>
             
             <div style={{ 
-              backgroundColor: '#f3f4f6', 
+              backgroundColor: '#fef3c7', 
               padding: '16px', 
               borderRadius: '8px',
-              marginBottom: '16px'
+              marginBottom: '16px',
+              border: '1px solid #fbbf24',
+              textAlign: 'left'
             }}>
               <h3 style={{ 
                 margin: '0 0 8px 0', 
                 fontSize: '18px', 
                 fontWeight: '600',
-                color: '#111827'
+                color: '#92400e',
+                textAlign: 'center'
               }}>
-                Mitä uutta tässä versiossa:
+                Miksi tämä on tärkeää?
               </h3>
               <ul style={{ 
                 margin: 0, 
                 paddingLeft: '20px', 
-                color: '#374151',
+                color: '#92400e',
                 lineHeight: '1.6'
               }}>
-                <li><strong>Strategian vahvistus:</strong> Nyt voit hyväksyä strategiat suoraan sovelluksesta! Ei tarvitse enää käydä erikseen tarkistamassa.</li>
-                <li><strong>Selkeä status:</strong> Näet heti mitkä strategiat on hyväksytty ja mitkä odottaa vielä vahvistusta.</li>
-                <li><strong>Automaattinen synkronointi:</strong> Sometilit yhdistyvät nyt automaattisesti - ei tarvitse tehdä mitään erikseen!</li>
-                <li><strong>Parempi käyttökokemus:</strong> Sovellus muistaa paremmin mitä olet tehnyt ja näyttää vahvistuksia.</li>
-                <li><strong>Nopeampi työskentely:</strong> Kaikki tärkeimmät toiminnot löytyvät nyt helpommin.</li>
+                <li>Varmistamme että strategia vastaa nykyistä markkinatilannetta</li>
+                <li>Varmistamme että tavoitteet ovat edelleen relevantteja</li>
+                <li>Varmistamme että resurssit riittävät toteuttamiseen</li>
+                <li>Varmistamme että ympäristö ei ole muuttunut merkittävästi</li>
               </ul>
             </div>
 
             <p style={{ 
-              margin: 0, 
+              margin: 0,
+              display: 'flex',
+              justifyContent: 'center',
               fontSize: '14px', 
               color: '#6b7280',
               fontStyle: 'italic'
             }}>
-              Kiitos kun olet mukana! Ilman sinua tämä ei olisi mahdollista 🙏
+              Tämä varmistaa että generoimamme strategia on mahdollisimman tehokas ja sopiva tilanteeseen.
             </p>
           </div>
 
           <div style={{ 
             display: 'flex', 
-            justifyContent: 'flex-end',
+            justifyContent: 'center',
             gap: '12px'
           }}>
             <Button
-              variant="secondary"
-              onClick={markVersionAsSeen}
-            >
-              Joo, jatketaan!
-            </Button>
-            <Button
               variant="primary"
-              onClick={() => {
-                window.location.reload()
-                markVersionAsSeen()
-              }}
+              onClick={onRequestUpdate}
+              disabled={loading}
             >
-              Päivitä sivu
+              {loading ? 'Käsitellään...' : 'Tarkista strategia'}
             </Button>
           </div>
         </div>
@@ -161,4 +156,4 @@ const VersionNotification = () => {
   )
 }
 
-export default VersionNotification
+export default StrategyConfirmationModal

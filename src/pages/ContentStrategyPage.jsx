@@ -69,7 +69,13 @@ const getStrategy = async () => {
 
 export default function ContentStrategyPage() {
   const { t, i18n } = useTranslation('common')
+  const { user } = useAuth()
   const [strategy, setStrategy] = useState([])
+  
+  // Debug: log strategy changes
+  useEffect(() => {
+    console.log('Strategy state updated:', strategy)
+  }, [strategy])
   const [icpSummary, setIcpSummary] = useState([])
   const [kpiData, setKpiData] = useState([])
   const [companySummary, setCompanySummary] = useState('')
@@ -87,6 +93,7 @@ export default function ContentStrategyPage() {
   const [editingTov, setEditingTov] = useState(false)
   const [tovEditText, setTovEditText] = useState('')
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const [toast, setToast] = useState({ visible: false, message: '' })
 
   const [companyId, setCompanyId] = useState(null)
   const textareaRef = React.useRef(null)
@@ -126,6 +133,7 @@ export default function ContentStrategyPage() {
         // Käsittele data-rakenne
         if (data && typeof data === 'object') {
           // Data tulee objektina: {strategies: [...], icpSummary: [...], kpi: [...], companySummary: ..., tov: ...}
+          console.log('Strategy data (object):', data.strategies)
           setStrategy(data.strategies || [])
           setIcpSummary(data.icpSummary || [])
           setKpiData(data.kpi || [])
@@ -133,6 +141,7 @@ export default function ContentStrategyPage() {
           setTov(data.tov || '')
         } else if (Array.isArray(data) && data.length > 0) {
           // Vanha rakenne (array)
+          console.log('Strategy data (array):', data)
           const firstItem = data[0]
           setStrategy(firstItem.strategyAndMonth || [])
           setIcpSummary(firstItem.icpSummary || [])
@@ -140,6 +149,7 @@ export default function ContentStrategyPage() {
           setCompanySummary(firstItem.summary || firstItem.companySummary || '')
           setTov(firstItem.tov || '')
         } else {
+          console.log('Using mock strategy data')
           setStrategy(mockStrategy)
           setIcpSummary([])
           setKpiData([])
@@ -238,6 +248,74 @@ export default function ContentStrategyPage() {
     } catch (e) {
       console.error('Error in handleSave:', e)
       alert('Tallennus epäonnistui')
+    }
+  }
+
+  const handleApproveStrategy = async (item) => {
+    console.log('🎯 handleApproveStrategy kutsuttu strategialle:', item)
+    try {
+      // Lähetä ensin axios-kutsu API endpointin kautta
+      console.log('🚀 Lähetetään strategian vahvistus API:n kautta...')
+      console.log('Data:', {
+        strategy_id: item.id,
+        month: item.month,
+        company_id: companyId,
+        user_id: user?.id
+      })
+
+      // Hae access token
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        throw new Error('Käyttäjä ei ole kirjautunut')
+      }
+
+      const response = await axios.post('/api/strategy-approve', {
+        strategy_id: item.id,
+        month: item.month,
+        company_id: companyId,
+        user_id: user?.id
+      }, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'x-api-key': process.env.N8N_SECRET_KEY || 'fallback-key',
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      console.log('✅ Strategy approval sent successfully:', response.data)
+
+      // Sitten päivitä strategia approved: true Supabasessa
+      const { data: updatedStrategy, error } = await supabase
+        .from('content_strategy')
+        .update({ 
+          approved: true,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', item.id)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Error approving strategy:', error)
+        alert('Vahvistus epäonnistui: ' + error.message)
+        return
+      }
+
+      // Päivitä paikallinen state
+      const updated = { 
+        ...item, 
+        approved: true,
+        updated_at: updatedStrategy.updated_at
+      }
+      setStrategy(strategy.map(s => s.id === item.id ? updated : s))
+
+      // Näytä toast-notifikaatio
+      setToast({ visible: true, message: 'Strategia hyväksytty onnistuneesti!' })
+      setTimeout(() => setToast({ visible: false, message: '' }), 3000)
+
+    } catch (e) {
+      console.error('Error in handleApproveStrategy:', e)
+      alert('Vahvistus epäonnistui: ' + e.message)
     }
   }
 
@@ -972,119 +1050,194 @@ export default function ContentStrategyPage() {
 
           {/* Strategiakortit */}
           <div className="strategy-grid">
-            {strategy.map(item => {
-            const status = getStrategyStatus(item.month || item.Month)
-            return (
-            <div key={item.id} className="strategy-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-                <div style={{ fontWeight: 700, fontSize: 18, color: '#374151' }}>
-                  {formatMonth(item.month || item.Month)}
-                </div>
-                <div style={{
-                  background: getStatusColor(status),
-                  color: '#ffffff',
-                  padding: '4px 8px',
-                  borderRadius: 6,
-                  fontSize: 12,
-                  fontWeight: 600,
-                  textTransform: 'uppercase'
-                }}>
-                  {getStatusText(status)}
-                </div>
-              </div>
-              
-              {editId === item.id ? (
-                <div style={{ flex: 1 }}>
-                  <textarea
-                    ref={textareaRef}
-                    value={editText}
-                    onChange={e => setEditText(e.target.value)}
-                    className="strategy-textarea"
-                    style={{
-                      width: '100%',
-                      minHeight: 120,
-                      padding: 12,
-                      border: '2px solid #e5e7eb',
-                      borderRadius: 8,
-                      fontSize: 14,
-                      lineHeight: 1.6,
-                      fontFamily: 'inherit',
-                      background: '#f9fafb',
-                      boxSizing: 'border-box'
-                    }}
-                    placeholder={t('strategy.strategyCard.placeholder')}
-                  />
-                  <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
-                    <button 
-                      style={{
-                        background: '#22c55e',
-                        color: '#ffffff',
-                        border: 'none',
-                        borderRadius: 8,
-                        padding: '8px 16px',
-                        fontSize: 14,
-                        fontWeight: 600,
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => handleSave(item)}
-                    >
-                      {t('strategy.buttons.save')}
-                    </button>
-                    <button 
-                      style={{
-                        background: '#6b7280',
-                        color: '#ffffff',
-                        border: 'none',
-                        borderRadius: 8,
-                        padding: '8px 16px',
-                        fontSize: 14,
-                        fontWeight: 600,
-                        cursor: 'pointer'
-                      }}
-                      onClick={handleCancel}
-                    >
-                      {t('strategy.buttons.cancel')}
-                    </button>
+            {console.log('Rendering strategies:', strategy.length, strategy)}
+            {Array.isArray(strategy) && strategy.length > 0 ? strategy
+              .sort((a, b) => {
+                // Järjestä uusimmasta vanhimmaksi
+                const dateA = new Date(a.created_at || a.createdTime || 0)
+                const dateB = new Date(b.created_at || b.createdTime || 0)
+                const timeA = dateA.getTime()
+                const timeB = dateB.getTime()
+
+                // Päivämäärä ensin: uusin ensin, puuttuva päivämäärä tulkitaan vanhimmaksi
+                if (timeA && timeB) return timeB - timeA
+                if (timeA && !timeB) return -1
+                if (!timeA && timeB) return 1
+                
+                // Muuten järjestä kuukauden mukaan (uusimmasta vanhimmaksi)
+                const monthA = a.month || a.Month || ''
+                const monthB = b.month || b.Month || ''
+                
+                console.log('Sorting by month:', { monthA, monthB })
+                
+                // Kuukausien järjestys (uusimmasta vanhimmaksi)
+                const monthOrder = [
+                  'joulukuu', 'marraskuu', 'lokakuu', 'syyskuu', 'elokuu', 'heinäkuu',
+                  'kesäkuu', 'toukokuu', 'huhtikuu', 'maaliskuu', 'helmikuu', 'tammikuu'
+                ]
+                
+                const indexA = monthOrder.findIndex(month => 
+                  monthA.toLowerCase().includes(month.toLowerCase()) || 
+                  month.toLowerCase().includes(monthA.toLowerCase())
+                )
+                const indexB = monthOrder.findIndex(month => 
+                  monthB.toLowerCase().includes(month.toLowerCase()) || 
+                  month.toLowerCase().includes(monthB.toLowerCase())
+                )
+                
+                console.log('Month indices:', { indexA, indexB, monthA, monthB })
+                
+                // Jos kuukausi löytyi, käytä sitä, muuten säilytä järjestys
+                if (indexA !== -1 && indexB !== -1) {
+                  return indexA - indexB
+                }
+                
+                return 0
+              })
+              .map(item => {
+                const status = getStrategyStatus(item.month || item.Month)
+                return (
+                  <div key={item.id} className="strategy-card">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                      <div style={{ fontWeight: 700, fontSize: 18, color: '#374151' }}>
+                        {formatMonth(item.month || item.Month)}
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <div style={{
+                          background: getStatusColor(status),
+                          color: '#ffffff',
+                          padding: '4px 8px',
+                          borderRadius: 6,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          textTransform: 'uppercase'
+                        }}>
+                          {getStatusText(status)}
+                        </div>
+                        <div style={{
+                          background: item.approved ? '#22c55e' : '#f59e0b',
+                          color: '#ffffff',
+                          padding: '4px 8px',
+                          borderRadius: 6,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          textTransform: 'uppercase'
+                        }}>
+                          {item.approved ? 'Hyväksytty' : 'Odottaa'}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {editId === item.id ? (
+                      <div style={{ flex: 1 }}>
+                        <textarea
+                          ref={textareaRef}
+                          value={editText}
+                          onChange={e => setEditText(e.target.value)}
+                          className="strategy-textarea"
+                          style={{
+                            width: '100%',
+                            minHeight: 120,
+                            padding: 12,
+                            border: '2px solid #e5e7eb',
+                            borderRadius: 8,
+                            fontSize: 14,
+                            lineHeight: 1.6,
+                            fontFamily: 'inherit',
+                            background: '#f9fafb',
+                            boxSizing: 'border-box'
+                          }}
+                          placeholder={t('strategy.strategyCard.placeholder')}
+                        />
+                        <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
+                          <button 
+                            style={{
+                              background: '#22c55e',
+                              color: '#ffffff',
+                              border: 'none',
+                              borderRadius: 8,
+                              padding: '8px 16px',
+                              fontSize: 14,
+                              fontWeight: 600,
+                              cursor: 'pointer'
+                            }}
+                            onClick={() => handleSave(item)}
+                          >
+                            {t('strategy.buttons.save')}
+                          </button>
+                          <button 
+                            style={{
+                              background: '#6b7280',
+                              color: '#ffffff',
+                              border: 'none',
+                              borderRadius: 8,
+                              padding: '8px 16px',
+                              fontSize: 14,
+                              fontWeight: 600,
+                              cursor: 'pointer'
+                            }}
+                            onClick={handleCancel}
+                          >
+                            {t('strategy.buttons.cancel')}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{ flex: 1 }}>
+                        <div style={{ 
+                          fontSize: 15, 
+                          lineHeight: 1.6, 
+                          color: '#374151', 
+                          whiteSpace: 'pre-line',
+                          marginBottom: 16
+                        }}>
+                          {item.strategy || item.Strategy}
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: 12, color: '#9ca3af' }}>
+                            {new Date(item.created_at || item.createdTime).toLocaleDateString(i18n.language === 'fi' ? 'fi-FI' : 'en-US')}
+                          </span>
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            {!item.approved && (
+                              <button 
+                                style={{
+                                  background: '#f59e0b',
+                                  color: '#ffffff',
+                                  border: 'none',
+                                  borderRadius: 8,
+                                  padding: '8px 16px',
+                                  fontSize: 14,
+                                  fontWeight: 600,
+                                  cursor: 'pointer'
+                                }}
+                                onClick={() => handleApproveStrategy(item)}
+                              >
+                                Hyväksy strategia
+                              </button>
+                            )}
+                            <button 
+                              style={{
+                                background: '#22c55e',
+                                color: '#ffffff',
+                                border: 'none',
+                                borderRadius: 8,
+                                padding: '8px 16px',
+                                fontSize: 14,
+                                fontWeight: 600,
+                                cursor: 'pointer'
+                              }}
+                              onClick={() => handleEdit(item)}
+                            >
+                              {t('strategy.buttons.edit')}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              ) : (
-                <div style={{ flex: 1 }}>
-                  <div style={{ 
-                    fontSize: 15, 
-                    lineHeight: 1.6, 
-                    color: '#374151', 
-                    whiteSpace: 'pre-line',
-                    marginBottom: 16
-                  }}>
-                    {item.strategy || item.Strategy}
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: 12, color: '#9ca3af' }}>
-                      {new Date(item.created_at || item.createdTime).toLocaleDateString(i18n.language === 'fi' ? 'fi-FI' : 'en-US')}
-                    </span>
-                    <button 
-                      style={{
-                        background: '#22c55e',
-                        color: '#ffffff',
-                        border: 'none',
-                        borderRadius: 8,
-                        padding: '8px 16px',
-                        fontSize: 14,
-                        fontWeight: 600,
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => handleEdit(item)}
-                    >
-                      {t('strategy.buttons.edit')}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )
-        })}
+                )
+              }) : null}
           </div>
-        </div>
 
         {/* Tyhjä tila jos ei strategioita */}
         {strategy.length === 0 && (
@@ -1193,8 +1346,30 @@ export default function ContentStrategyPage() {
           </div>
         )}
       </div>
-
-
+      
+      {/* Toast notifikaatio */}
+      {toast.visible && (
+        <div 
+          className="toast-notice" 
+          role="status" 
+          aria-live="polite"
+          style={{
+            position: 'fixed',
+            top: '16px',
+            right: '16px',
+            background: '#111827',
+            color: '#ffffff',
+            padding: '12px 16px',
+            borderRadius: '10px',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+            zIndex: 1100,
+            fontWeight: 600
+          }}
+        >
+          {toast.message}
+        </div>
+      )}
+      </div>
     </>
   )
-} 
+}

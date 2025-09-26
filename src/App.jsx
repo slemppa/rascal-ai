@@ -13,11 +13,14 @@ import { AuthProvider } from './contexts/AuthContext'
 import { AutoLogoutProvider } from './contexts/AutoLogoutContext'
 import { PostsProvider } from './contexts/PostsContext'
 import { NotificationProvider } from './contexts/NotificationContext'
+import { StrategyStatusProvider } from './contexts/StrategyStatusContext'
 import Sidebar from './components/Sidebar'
 import MobileNavigation from './components/MobileNavigation'
 import InactivityWarningModal from './components/InactivityWarningModal'
 import ChatbotWidget from './components/ChatbotWidget'
 import VersionNotification from './components/VersionNotification'
+import StrategyConfirmationModal from './components/StrategyConfirmationModal'
+import { useStrategyStatus } from './contexts/StrategyStatusContext'
 import { supabase } from './lib/supabase'
 import ManagePostsPage from './pages/ManagePostsPage'
 import AdminPage from './pages/AdminPage'
@@ -116,13 +119,34 @@ function LanguageRedirect() {
   return null;
 }
 
+// Wrapper komponentti strategia-vahvistus modaalia varten
+function StrategyConfirmationWrapper() {
+  const { 
+    showStrategyModal, 
+    loading, 
+    approveStrategy, 
+    requestStrategyUpdate, 
+    closeModal 
+  } = useStrategyStatus()
+
+  return (
+    <StrategyConfirmationModal
+      isOpen={showStrategyModal}
+      onClose={closeModal}
+      onRequestUpdate={requestStrategyUpdate}
+      loading={loading}
+    />
+  )
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <AutoLogoutProvider>
         <PostsProvider>
           <NotificationProvider>
-          <Routes>
+            <StrategyStatusProvider>
+              <Routes>
         {/* Julkiset reitit */}
         <Route path="/" element={<LanguageRedirect />} />
         <Route path="/fi" element={<LandingPage />} />
@@ -347,8 +371,10 @@ export default function App() {
         } />
 
         {/* Lisää muut suojatut reitit tähän samalla tavalla, jos haluat menun näkyvän niilläkin */}
-      </Routes>
-        <VersionNotification />
+              </Routes>
+              <VersionNotification />
+              <StrategyConfirmationWrapper />
+            </StrategyStatusProvider>
           </NotificationProvider>
         </PostsProvider>
         <ConditionalChatbotWidget />

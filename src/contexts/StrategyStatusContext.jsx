@@ -137,7 +137,8 @@ export const StrategyStatusProvider = ({ children }) => {
     loading,
     approveStrategy,
     requestStrategyUpdate,
-    closeModal
+    closeModal,
+    refreshUserStatus: fetchUserStatus
   }
 
   return (

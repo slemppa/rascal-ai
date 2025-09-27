@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../../lib/supabase'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import './AuthComponents.css'
 
@@ -46,17 +46,29 @@ export default function SignIn({ onClose, onForgotClick }) {
   }
 
   return (
-    <div className="auth-container">
-      {onClose && (
-        <button
-          onClick={onClose}
-          className="auth-close-btn"
-          aria-label={t('auth.close')}
-        >
-          ×
-        </button>
-      )}
-      <h2 className="auth-title">{t('auth.signIn')}</h2>
+    <div className="fullscreen-login-container">
+      <div className="login-sidebar">
+        <div className="login-photo-container">
+          <img src="/login-photo.png" alt="Rascal AI" className="login-photo" />
+          <div className="login-photo-overlay"></div>
+        </div>
+        <div className="favicon-container">
+          <img src="/favicon.png" alt="Rascal AI" className="login-favicon" />
+          <h1 className="login-brand-title">Rascal AI</h1>
+        </div>
+      </div>
+      <div className="login-main-content">
+        <div className="auth-container">
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="auth-close-btn"
+              aria-label={t('auth.close')}
+            >
+              ×
+            </button>
+          )}
+          <h2 className="auth-title">{t('auth.signIn')}</h2>
       <form onSubmit={handleSignIn} className="auth-form">
         <div className="auth-form-group">
           <label htmlFor="email" className="auth-label">
@@ -135,7 +147,8 @@ export default function SignIn({ onClose, onForgotClick }) {
           )}
         </div>
       </div>
-
+        </div>
+      </div>
     </div>
   )
 }

@@ -4,6 +4,7 @@ import axios from 'axios'
 import './ContentStrategyPage.css'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useStrategyStatus } from '../contexts/StrategyStatusContext'
 import Button from '../components/Button'
 import '../components/ModalComponents.css'
 
@@ -70,6 +71,7 @@ const getStrategy = async () => {
 export default function ContentStrategyPage() {
   const { t, i18n } = useTranslation('common')
   const { user } = useAuth()
+  const { refreshUserStatus } = useStrategyStatus()
   const [strategy, setStrategy] = useState([])
   
   // Debug: log strategy changes
@@ -301,6 +303,20 @@ export default function ContentStrategyPage() {
         return
       }
 
+      // Päivitä myös käyttäjän status "Approved":ksi
+      const { error: userError } = await supabase
+        .from('users')
+        .update({ 
+          status: 'Approved',
+          strategy_approved_at: new Date().toISOString()
+        })
+        .eq('auth_user_id', user.id)
+
+      if (userError) {
+        console.error('Error updating user status:', userError)
+        // Ei keskeytetä prosessia tämän takia
+      }
+
       // Päivitä paikallinen state
       const updated = { 
         ...item, 
@@ -308,6 +324,9 @@ export default function ContentStrategyPage() {
         updated_at: updatedStrategy.updated_at
       }
       setStrategy(strategy.map(s => s.id === item.id ? updated : s))
+
+      // Päivitä käyttäjän status kontekstissa
+      refreshUserStatus()
 
       // Näytä toast-notifikaatio
       setToast({ visible: true, message: 'Strategia hyväksytty onnistuneesti!' })

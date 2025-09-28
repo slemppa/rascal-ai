@@ -64,37 +64,6 @@
   background: rgba(255, 107, 43, 0.2);
 }
 
-.favicon-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  position: relative;
-  z-index: 2;
-}
-
-.login-favicon {
-  width: 120px;
-  height: 120px;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease;
-}
-
-.login-favicon:hover {
-  transform: scale(1.05);
-}
-
-.login-brand-title {
-  font-size: 48px;
-  font-weight: 800;
-  color: #ffffff;
-  text-align: center;
-  margin: 0;
-  letter-spacing: -0.02em;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
-  z-index: 3;
-}
 
 .login-main-content {
   flex: 1;
@@ -384,35 +353,36 @@ h2.auth-title { color: #ffffff !important; }
 @media (max-width: 768px) {
   .fullscreen-login-container {
     flex-direction: column;
+    min-height: 100vh;
   }
   
   .login-sidebar {
-    min-height: 200px;
-    padding: 40px 20px;
+    min-height: 40vh;
+    padding: 0;
+    position: relative;
   }
   
   .login-photo-container {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
   
   .login-photo {
     width: 100%;
-    height: 200px;
+    height: 100%;
     object-fit: cover;
-  }
-  
-  .login-brand-title {
-    font-size: 32px;
-  }
-  
-  .login-favicon {
-    width: 80px;
-    height: 80px;
   }
   
   .login-main-content {
     padding: 20px;
     flex: 1;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .auth-container {
@@ -512,6 +482,15 @@ h2.auth-title { color: #ffffff !important; }
 }
 
 @media (max-width: 480px) {
+  .login-sidebar {
+    min-height: 35vh;
+  }
+  
+  .login-main-content {
+    padding: 16px;
+    min-height: 65vh;
+  }
+  
   .auth-container {
     padding: 20px;
     border-radius: 10px;
@@ -602,6 +581,17 @@ h2.auth-title { color: #ffffff !important; }
 
   .auth-magic-info {
     font-size: 12px;
+  }
+}
+
+/* Landscape-moodi mobiilissa */
+@media (max-width: 768px) and (orientation: landscape) {
+  .login-sidebar {
+    min-height: 50vh;
+  }
+  
+  .login-main-content {
+    min-height: 50vh;
   }
 }
 

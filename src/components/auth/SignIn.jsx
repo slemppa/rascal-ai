@@ -52,10 +52,6 @@ export default function SignIn({ onClose, onForgotClick }) {
           <img src="/login-photo.png" alt="Rascal AI" className="login-photo" />
           <div className="login-photo-overlay"></div>
         </div>
-        <div className="favicon-container">
-          <img src="/favicon.png" alt="Rascal AI" className="login-favicon" />
-          <h1 className="login-brand-title">Rascal AI</h1>
-        </div>
       </div>
       <div className="login-main-content">
         <div className="auth-container">

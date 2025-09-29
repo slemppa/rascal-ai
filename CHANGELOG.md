@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.74.1](https://github.com/slemppa/rascal-ai/compare/v1.74.0...v1.74.1) (2025-09-29)
+
+
+### ♻️ Code Refactoring
+
+* remove favicon and text from login sidebar ([5cea0ee](https://github.com/slemppa/rascal-ai/commit/5cea0ee120e418341ae7f0f95f3cc1585afeb185))
+
+
+### ✨ Features
+
+* create fullscreen login page with orange/black theme ([3386c45](https://github.com/slemppa/rascal-ai/commit/3386c4595f96267f273915df46562f5af659ffee)), closes [#ff6b2](https://github.com/slemppa/rascal-ai/issues/ff6b2) [#0a0a0](https://github.com/slemppa/rascal-ai/issues/0a0a0)
+* **meeting-notes:** lisää sivu ja näkyvyysrajat ([352d4b1](https://github.com/slemppa/rascal-ai/commit/352d4b1bb0ac4fc44a5dc20239de63cf57fa2d46))
+
 ## [1.74.0](https://github.com/slemppa/rascal-ai/compare/v1.73.0...v1.74.0) (2025-09-26)
 
 

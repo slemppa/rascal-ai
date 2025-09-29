@@ -369,7 +369,8 @@
       "calls": "Puhelut",
       "assistentti": "Assistentti",
       "admin": "Ylläpito",
-      "adminBlog": "Admin"
+      "adminBlog": "Admin",
+      "meetingNotes": "Palaverimuistiot"
     },
     "settings": "Asetukset",
     "helpCenter": "Ohjekeskus",
@@ -1088,6 +1089,25 @@
     "placeholders": {
       "noImage": "Ei kuvaa"
     }
+  },
+  "meetingNotes": {
+    "title": "Palaverimuistiot",
+    "header": "Palaverimuistiot",
+    "addNew": "Lisää uusi",
+    "empty": "Ei palaverimuistioita vielä. Aloita luomalla ensimmäinen muistio.",
+    "createTitle": "Luo uusi palaverimuistio",
+    "editTitle": "Muokkaa palaverimuistiota",
+    "titleLabel": "Otsikko",
+    "titlePlaceholder": "Esimerkiksi: Viikkopalaveri 15.1.2024",
+    "dateLabel": "Päivämäärä",
+    "contentLabel": "Muistio",
+    "contentPlaceholder": "Kirjoita palaverimuistio tähän...",
+    "save": "Tallenna",
+    "update": "Päivitä",
+    "cancel": "Peruuta",
+    "edit": "Muokkaa",
+    "delete": "Poista",
+    "lastUpdated": "Päivitetty viimeksi"
   }
 }
 

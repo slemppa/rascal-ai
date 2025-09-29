@@ -121,6 +121,19 @@ const menuItems = [
       </svg>
     )
   },
+  { 
+    label: 'Palaverimuistiot', 
+    path: '/meeting-notes', 
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M14 2V8H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M16 13H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M16 17H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M10 9H9H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    )
+  },
 ]
 
 
@@ -151,8 +164,8 @@ export default function Sidebar() {
     return !(adminOnly || moderatorOnly)
   }
 
-  const toolItems = menuItems.filter(i => ['/ai-chat','/admin','/admin-blog','/admin-testimonials'].includes(i.path))
-  const publicToolItems = menuItems.filter(i => ['/ai-chat'].includes(i.path))
+  const toolItems = menuItems.filter(i => ['/ai-chat','/admin','/admin-blog','/admin-testimonials','/meeting-notes'].includes(i.path))
+  const publicToolItems = menuItems.filter(i => ['/ai-chat','/meeting-notes'].includes(i.path))
   const adminToolItems = menuItems.filter(i => ['/admin','/admin-blog','/admin-testimonials'].includes(i.path))
   const canShowTools = publicToolItems.some(isItemVisible) || adminToolItems.some(isItemVisible)
 
@@ -305,6 +318,10 @@ export default function Sidebar() {
               {[...publicToolItems, ...adminToolItems].filter(isItemVisible).map(item => {
                 // Feature-gating Työkalut -osioon
                 // if (item.path === '/ai-chat' && !hasFeature('Dev')) return null // Poistettu - näkyy kaikille
+                if (item.path === '/meeting-notes') {
+                  // Näytä vain jos käyttäjä on moderator/admin TAI feature on päällä
+                  if (!(isModerator || isAdmin || hasFeature('Meeting Notes'))) return null
+                }
                 return (
                   <li className={styles['nav-item']} key={item.path}>
                     <button
@@ -312,7 +329,9 @@ export default function Sidebar() {
                       onClick={() => navigate(item.path)}
                     >
                       <span className={styles['nav-icon']}>{item.icon}</span>
-                      {item.path === '/ai-chat' ? t('sidebar.labels.assistentti') : item.path === '/admin' ? t('sidebar.labels.admin') : t('sidebar.labels.adminBlog')}
+                      {item.path === '/ai-chat' ? t('sidebar.labels.assistentti') : 
+                       item.path === '/meeting-notes' ? t('sidebar.labels.meetingNotes') :
+                       item.path === '/admin' ? t('sidebar.labels.admin') : t('sidebar.labels.adminBlog')}
                     </button>
                   </li>
                 )

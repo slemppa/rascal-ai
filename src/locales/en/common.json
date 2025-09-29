@@ -361,7 +361,8 @@
       "calls": "Calls",
       "assistentti": "Assistant",
       "admin": "Admin",
-      "adminBlog": "Admin"
+      "adminBlog": "Admin",
+      "meetingNotes": "Meeting Notes"
     },
     "settings": "Settings",
     "helpCenter": "Help Center",
@@ -1032,6 +1033,25 @@
     "placeholders": {
       "noImage": "No image"
     }
+  },
+  "meetingNotes": {
+    "title": "Meeting Notes",
+    "header": "Meeting Notes",
+    "addNew": "Add new",
+    "empty": "No meeting notes yet. Start by creating your first note.",
+    "createTitle": "Create new meeting note",
+    "editTitle": "Edit meeting note",
+    "titleLabel": "Title",
+    "titlePlaceholder": "e.g. Weekly meeting 15.1.2024",
+    "dateLabel": "Date",
+    "contentLabel": "Notes",
+    "contentPlaceholder": "Write your meeting notes here...",
+    "save": "Save",
+    "update": "Update",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "lastUpdated": "Last updated"
   }
 }
 

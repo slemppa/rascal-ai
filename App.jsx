@@ -30,6 +30,7 @@ import SettingsPage from './src/pages/SettingsPage'
 import BlogNewsletterPage from './src/pages/BlogNewsletterPage'
 import AdminBlogPage from './src/pages/AdminBlogPage'
 import AdminTestimonialsPage from './src/pages/AdminTestimonialsPage'
+import MeetingNotesPage from './src/pages/MeetingNotesPage'
 import CampaignsPage from './src/pages/CampaignsPage'
 import CampaignCreatePage from './src/pages/CampaignCreatePage'
 import CampaignDetailPage from './src/pages/CampaignDetailPage'
@@ -264,6 +265,17 @@ export default function App() {
                       <MobileNavigation />
                       <div className="main-content">
                         <SettingsPage />
+                      </div>
+                    </div>
+                  </ProtectedRoute>
+                } />
+                <Route path="/meeting-notes" element={
+                  <ProtectedRoute>
+                    <div className="app-layout">
+                      <Sidebar />
+                      <MobileNavigation />
+                      <div className="main-content">
+                        <MeetingNotesPage />
                       </div>
                     </div>
                   </ProtectedRoute>

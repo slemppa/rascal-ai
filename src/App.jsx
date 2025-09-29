@@ -40,6 +40,7 @@ import AssessmentFormPage from './pages/AssessmentFormPage'
 import CustomersPage from './pages/CustomersPage'
 import AdminBlogPage from './pages/AdminBlogPage'
 import AdminTestimonialsPage from './pages/AdminTestimonialsPage'
+import MeetingNotesPage from './pages/MeetingNotesPage'
 // MixpostAnalyticsDashboard poistettu
 import CampaignsPage from './pages/CampaignsPage'
 import SegmentsPage from './pages/SegmentsPage'
@@ -365,6 +366,17 @@ export default function App() {
               <MobileNavigation />
               <div className="main-content">
                 <SettingsPage />
+              </div>
+            </div>
+          </ProtectedRoute>
+        } />
+        <Route path="/meeting-notes" element={
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <MeetingNotesPage />
               </div>
             </div>
           </ProtectedRoute>

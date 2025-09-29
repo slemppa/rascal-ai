@@ -353,6 +353,13 @@ export default function AIChatPage() {
     setDragActive(false)
     const files = Array.from(e.dataTransfer.files)
     if (files.length === 0) return
+    // Kokorajoitus 25 MB per tiedosto drag&dropissa
+    const MAX_BYTES = 25 * 1024 * 1024
+    const tooLargeDrop = files.find(f => (f.size || 0) > MAX_BYTES)
+    if (tooLargeDrop) {
+      setUploadError('Tiedosto liian suuri')
+      return
+    }
     setPendingFiles(prev => {
       const uniqueNew = files.filter(f => !prev.some(p => p.name === f.name && p.size === f.size))
       return [...prev, ...uniqueNew]
@@ -362,6 +369,13 @@ export default function AIChatPage() {
     const files = Array.from(e.target.files)
     console.log('handleFileInput kutsuttu, tiedostoja:', files.length)
     if (files.length > 0) {
+      // Kokorajoitus 25 MB per tiedosto inputista
+      const MAX_BYTES = 25 * 1024 * 1024
+      const tooLargeInput = files.find(f => (f.size || 0) > MAX_BYTES)
+      if (tooLargeInput) {
+        setUploadError('Tiedosto liian suuri')
+        return
+      }
       setPendingFiles(prev => {
         const uniqueNew = files.filter(f => !prev.some(p => p.name === f.name && p.size === f.size))
         const newPendingFiles = [...prev, ...uniqueNew]

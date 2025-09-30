@@ -25,6 +25,13 @@ export default function SettingsPage() {
   })
   const [passwordLoading, setPasswordLoading] = useState(false)
   const [passwordMessage, setPasswordMessage] = useState('')
+  const [showEmailChange, setShowEmailChange] = useState(false)
+  const [emailData, setEmailData] = useState({
+    newEmail: '',
+    confirmEmail: ''
+  })
+  const [emailLoading, setEmailLoading] = useState(false)
+  const [emailMessage, setEmailMessage] = useState('')
   const [userProfile, setUserProfile] = useState(null)
   const [profileLoading, setProfileLoading] = useState(true)
   const [syncInProgress, setSyncInProgress] = useState(false)
@@ -294,6 +301,52 @@ export default function SettingsPage() {
     setPasswordMessage('')
   }
 
+  const handleEmailChangeInput = (e) => {
+    const { name, value } = e.target
+    setEmailData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const isValidEmail = (value) => {
+    return /[^@\s]+@[^@\s]+\.[^@\s]+/.test(value)
+  }
+
+  const handleEmailSave = async () => {
+    if (!user) return
+    if (emailData.newEmail !== emailData.confirmEmail) {
+      setEmailMessage(t('settings.email.mismatch'))
+      return
+    }
+    if (!isValidEmail(emailData.newEmail)) {
+      setEmailMessage(t('settings.email.invalid'))
+      return
+    }
+    setEmailLoading(true)
+    setEmailMessage('')
+    try {
+      const { error } = await supabase.auth.updateUser(
+        { email: emailData.newEmail },
+        { emailRedirectTo: `${window.location.origin}/auth/callback` }
+      )
+      if (error) {
+        setEmailMessage(`${t('settings.common.error')}: ${error.message}`)
+      } else {
+        setEmailMessage(t('settings.email.changed'))
+        setShowEmailChange(false)
+        setEmailData({ newEmail: '', confirmEmail: '' })
+      }
+    } catch (err) {
+      setEmailMessage(`${t('settings.common.error')}: ${err.message}`)
+    } finally {
+      setEmailLoading(false)
+    }
+  }
+
+  const handleEmailCancel = () => {
+    setEmailData({ newEmail: '', confirmEmail: '' })
+    setShowEmailChange(false)
+    setEmailMessage('')
+  }
+
   return (
     <>
       <div className={styles['settings-container']}>
@@ -486,6 +539,68 @@ export default function SettingsPage() {
                           onChange={handlePasswordChange}
                           className={styles['form-input']}
                           placeholder={t('settings.password.confirmPlaceholder')}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Sähköpostin vaihto */}
+                <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', margin: 0 }}>{t('settings.email.title')}</h3>
+                    {!showEmailChange ? (
+                      <button onClick={() => setShowEmailChange(true)} className={`${styles.btn} ${styles.btnSecondary}`}>
+                        {t('settings.buttons.changeEmail')}
+                      </button>
+                    ) : (
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        <button onClick={handleEmailSave} disabled={emailLoading} className={`${styles.btn} ${styles.btnPrimary}`}>
+                          {emailLoading ? t('settings.email.saving') : t('settings.email.save')}
+                        </button>
+                        <button onClick={handleEmailCancel} className={`${styles.btn} ${styles.btnNeutral}`}>
+                          {t('settings.email.cancel')}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {emailMessage && (
+                    <div style={{ 
+                      padding: '8px 12px', 
+                      borderRadius: '6px', 
+                      marginBottom: '12px',
+                      fontSize: '14px',
+                      background: emailMessage.includes('Virhe') ? '#fef2f2' : '#f0fdf4',
+                      color: emailMessage.includes('Virhe') ? '#dc2626' : '#16a34a',
+                      border: `1px solid ${emailMessage.includes('Virhe') ? '#fecaca' : '#bbf7d0'}`
+                    }}>
+                      {emailMessage}
+                    </div>
+                  )}
+
+                  {showEmailChange && (
+                    <div>
+                      <div className={styles['form-group']}>
+                        <label>{t('settings.email.new')}</label>
+                        <input 
+                          type="email" 
+                          name="newEmail"
+                          value={emailData.newEmail} 
+                          onChange={handleEmailChangeInput}
+                          className={styles['form-input']}
+                          placeholder={t('settings.email.newPlaceholder')}
+                        />
+                      </div>
+                      <div className={styles['form-group']}>
+                        <label>{t('settings.email.confirm')}</label>
+                        <input 
+                          type="email" 
+                          name="confirmEmail"
+                          value={emailData.confirmEmail} 
+                          onChange={handleEmailChangeInput}
+                          className={styles['form-input']}
+                          placeholder={t('settings.email.confirmPlaceholder')}
                         />
                       </div>
                     </div>

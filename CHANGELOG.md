@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.75.0](https://github.com/slemppa/rascal-ai/compare/v1.74.1...v1.75.0) (2025-09-30)
+
+
+### ✨ Features
+
+* **settings:** add email change UI and Supabase update flow ([debb035](https://github.com/slemppa/rascal-ai/commit/debb035ef1394734e52a5bb5d16f73f908a51ad8))
+
 ### [1.74.1](https://github.com/slemppa/rascal-ai/compare/v1.74.0...v1.74.1) (2025-09-29)
 
 

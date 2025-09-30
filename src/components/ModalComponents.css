@@ -81,7 +81,7 @@
 .modal-overlay .modal-container {
   background: var(--modal-background) !important;
   border-radius: var(--modal-border-radius) !important;
-  padding: var(--modal-padding) !important;
+  padding: 0 !important;
   max-width: 1200px !important;
   width: 95% !important;
   max-height: 90vh !important;
@@ -120,11 +120,17 @@
   border: none !important;
 }
 
+/* Luontimodaali - keskikokoinen */
+.modal-container--create {
+  max-width: 640px !important;
+  width: 90vw !important;
+}
+
 /* Fallback tarkempaa selektoria varten */
 .modal-container {
   background: var(--modal-background) !important;
   border-radius: var(--modal-border-radius) !important;
-  padding: var(--modal-padding) !important;
+  padding: 0 !important;
   max-width: 1200px !important;
   width: 95% !important;
   max-height: 90vh !important;
@@ -176,8 +182,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
+  margin-bottom: 0;
+  padding: 24px 32px 20px;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -279,13 +285,20 @@
 .modal-content {
   flex: 1 1 auto !important;
   overflow: auto !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  padding: 24px 32px !important;
   min-height: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
   align-self: stretch !important;
   box-sizing: border-box !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* Varmista että sisäiset lohkot eivät aseta kapeampaa maksimileveyttä */
@@ -311,6 +324,7 @@
 
 .form-group {
   margin-bottom: 0;
+  width: 100%;
 }
 
 .form-label {
@@ -325,20 +339,28 @@
 .form-select,
 .form-textarea {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #d1d5db;
+  padding: 12px 16px;
+  border: 2px solid #d1d5db !important;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 15px;
   transition: all 0.2s ease;
-  background: white;
+  background: #ffffff !important;
+  color: #1f2937 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.form-select option {
+  color: #1f2937 !important;
+  background: #ffffff !important;
 }
 
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  outline: none !important;
+  border-color: #3b82f6 !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
 
 .form-textarea {
@@ -351,9 +373,10 @@
   display: flex;
   gap: 12px;
   justify-content: space-between;
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
+  margin-top: 8px;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-top: none;
 }
 
 .modal-actions-left {
@@ -639,6 +662,37 @@ h2.modal-title {
 .modal-container h3,
 .modal-container .modal-title {
   color: #1f2937 !important;
+}
+
+/* Upload Dropzone */
+.upload-dropzone {
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fafafa;
+  position: relative;
+}
+
+.upload-dropzone:hover {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+}
+
+.upload-dropzone.drag-active {
+  border-color: #3b82f6;
+  background: #dbeafe;
+  transform: scale(1.02);
+}
+
+.upload-preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
 }
 
 /* Touch-friendly elementit mobiililla */

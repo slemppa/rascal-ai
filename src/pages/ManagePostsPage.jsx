@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { useMonthlyLimit } from '../hooks/useMonthlyLimit'
 import Button from '../components/Button'
+import PostsCalendar from '../components/PostsCalendar'
 import PublishModal from '../components/PublishModal'
 import AvatarModal from '../components/AvatarModal'
 import KeskenModal from '../components/KeskenModal'
@@ -467,7 +468,11 @@ export default function ManagePostsPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [dataSourceToggle, setDataSourceToggle] = useState('all') // 'all', 'supabase', 'reels'
+  const [activeTab, setActiveTab] = useState('kanban') // 'kanban' | 'calendar'
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showUploadModal, setShowUploadModal] = useState(false)
+  const [uploadDragActive, setUploadDragActive] = useState(false)
+  const [uploadPreviewUrl, setUploadPreviewUrl] = useState(null)
   const [showEditModal, setShowEditModal] = useState(false)
   const [editingPost, setEditingPost] = useState(null)
   const [showPublishModal, setShowPublishModal] = useState(false)
@@ -887,11 +892,50 @@ export default function ManagePostsPage() {
 
   // Filtteröidään postit
   const filteredPosts = currentPosts.filter(post => {
-        const matchesSearch = (post.title?.toLowerCase() || '').includes(debouncedSearchTerm.toLowerCase()) ||
+    const matchesSearch = (post.title?.toLowerCase() || '').includes(debouncedSearchTerm.toLowerCase()) ||
                          (post.caption?.toLowerCase() || '').includes(debouncedSearchTerm.toLowerCase())
     const matchesStatus = statusFilter === '' || post.status === statusFilter
-    return matchesSearch && matchesStatus
+    const matchesType = typeFilter === '' || post.type === typeFilter
+    return matchesSearch && matchesStatus && matchesType
   })
+
+  // Kalenterin tarvitsemat eventit (ajastetut tai julkaisuajalla varustetut)
+  const calendarItems = filteredPosts
+    .map(p => {
+      // Näytä kalenterissa vain julkaisut, joilla on publish_date (publishDate)
+      if (!p.publishDate) return null
+
+      let isoDate = null
+      let time = ''
+
+      try {
+        const d = new Date(p.publishDate)
+        if (!isNaN(d.getTime())) {
+          isoDate = d.toISOString()
+          const hh = String(d.getHours()).padStart(2, '0')
+          const mm = String(d.getMinutes()).padStart(2, '0')
+          time = `${hh}:${mm}`
+        }
+      } catch {}
+
+      if (!isoDate) return null
+
+      const dateObj = new Date(isoDate)
+      const yyyy = dateObj.getFullYear()
+      const mm = String(dateObj.getMonth() + 1).padStart(2, '0')
+      const dd = String(dateObj.getDate()).padStart(2, '0')
+
+      return {
+        id: p.id,
+        title: p.title || 'Postaus',
+        dateKey: `${yyyy}-${mm}-${dd}`,
+        time,
+        source: p.source || 'supabase',
+        type: p.type || 'Post',
+        status: p.status || ''
+      }
+    })
+    .filter(Boolean)
 
   const handleCreatePost = async (postData) => {
     try {
@@ -1707,39 +1751,57 @@ export default function ManagePostsPage() {
         )}
       </div>
 
+      {/* Tabs + Search and Filters */}
+      <div className="tabs">
+        <button 
+          className={`tab-button ${activeTab === 'kanban' ? 'active' : ''}`}
+          onClick={() => setActiveTab('kanban')}
+        >
+          Julkaisut
+        </button>
+        <button 
+          className={`tab-button ${activeTab === 'calendar' ? 'active' : ''}`}
+          onClick={() => setActiveTab('calendar')}
+        >
+          Kalenteri
+        </button>
+      </div>
+
       {/* Search and Filters */}
       <div className="search-filters">
-        <input
-          type="text"
-          placeholder={t('posts.searchPlaceholder')}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input"
-        />
         <select 
-          value={statusFilter} 
-          onChange={(e) => setStatusFilter(e.target.value)}
+          value={typeFilter} 
+          onChange={(e) => setTypeFilter(e.target.value)}
           className="status-filter"
         >
-          <option value="">{t('posts.filters.allStatuses')}</option>
-          <option value="Kesken">{t('posts.status.Kesken')}</option>
-          <option value="Tarkistuksessa">{t('posts.status.Tarkistuksessa')}</option>
-          <option value="Aikataulutettu">{t('posts.status.Aikataulutettu')}</option>
-          <option value="Julkaistu">{t('posts.status.Julkaistu')}</option>
+          <option value="">Kaikki tyypit</option>
+          <option value="Photo">Photo</option>
+          <option value="Carousel">Carousel</option>
+          <option value="Reels">Reels</option>
+          <option value="LinkedIn">LinkedIn</option>
+          <option value="Video">Video</option>
         </select>
-        <Button 
-          variant="primary"
-          onClick={() => {
-            if (monthlyLimit.canCreate) {
-              setShowCreateModal(true)
-            } else {
-              setErrorMessage('Kuukausiraja täynnä')
-            }
-          }}
-          disabled={!monthlyLimit.canCreate}
-        >
-          {t('posts.actions.createNew')}
-        </Button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <Button 
+            variant="secondary"
+            onClick={() => setShowUploadModal(true)}
+          >
+            Tuo oma julkaisu
+          </Button>
+          <Button 
+            variant="primary"
+            onClick={() => {
+              if (monthlyLimit.canCreate) {
+                setShowCreateModal(true)
+              } else {
+                setErrorMessage('Kuukausiraja täynnä')
+              }
+            }}
+            disabled={!monthlyLimit.canCreate}
+          >
+            Generoi uusi julkaisu
+          </Button>
+        </div>
       </div>
 
       {/* Loading State */}
@@ -1773,7 +1835,7 @@ export default function ManagePostsPage() {
       )}
         
       {/* Kanban Board */}
-      {!currentError && !loading && (
+      {!currentError && !loading && activeTab === 'kanban' && (
         <div className="kanban-board">
           {/* Ylemmät 4 saraketta */}
           <div className="kanban-top-row">
@@ -1850,7 +1912,7 @@ export default function ManagePostsPage() {
             })}
           </div>
           
-          {/* Julkaistu-sarakkeessa kaikkien 4 sarakkeen levyinen */}
+      {/* Julkaistu-sarakkeessa kaikkien 4 sarakkeen levyinen */}
           <div className="kanban-bottom-row">
             {(() => {
               // Haetaan vain Supabase julkaistut postaukset
@@ -1898,6 +1960,22 @@ export default function ManagePostsPage() {
         </div>
       )}
 
+      {/* Calendar View */}
+      {!currentError && !loading && activeTab === 'calendar' && (
+        <div style={{ marginTop: 24 }}>
+          <PostsCalendar 
+            items={calendarItems}
+            onEventClick={(ev) => {
+              // Etsi vastaava postaus kaikista nykyisistä posteista
+              const post = currentPosts.find(p => p.id === ev.id)
+              if (post) {
+                handleEditPost(post)
+              }
+            }}
+          />
+        </div>
+      )}
+
       {/* Create Modal */}
       {showCreateModal && createPortal(
         <div 
@@ -1908,9 +1986,9 @@ export default function ManagePostsPage() {
             }
           }}
         >
-          <div className="modal-container" style={{ maxWidth: '500px' }}>
+          <div className="modal-container modal-container--create">
             <div className="modal-header">
-              <h2 className="modal-title">{t('posts.buttons.createNew')}</h2>
+              <h2 className="modal-title">Generoi uusi julkaisu</h2>
               <button
                 onClick={() => setShowCreateModal(false)}
                 className="modal-close-btn"
@@ -1922,7 +2000,8 @@ export default function ManagePostsPage() {
               </button>
             </div>
             <div className="modal-content">
-              <form onSubmit={(e) => {
+              <form 
+                onSubmit={(e) => {
                 e.preventDefault()
                 const formData = new FormData(e.target)
                 handleCreatePost({
@@ -1930,7 +2009,8 @@ export default function ManagePostsPage() {
                   type: formData.get('type'),
                   caption: formData.get('caption')
                 })
-              }}>
+                }}
+              >
                 <div className="form-group">
                   <label className="form-label">Otsikko</label>
                   <input
@@ -1938,7 +2018,7 @@ export default function ManagePostsPage() {
                     type="text"
                     required
                     className="form-input"
-                    placeholder={t('posts.placeholders.title')}
+                    placeholder="Anna julkaisulle otsikko..."
                   />
                 </div>
                 <div className="form-group">
@@ -1955,12 +2035,12 @@ export default function ManagePostsPage() {
                   </select>
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Kuvaus</label>
+                  <label className="form-label">Kuvaus (valinnainen)</label>
                   <textarea
                     name="caption"
                     rows={4}
                     className="form-textarea"
-                    placeholder={t('posts.placeholders.caption')}
+                    placeholder="Lisää kuvaus tai konteksti julkaisulle..."
                   />
                 </div>
                 <div className="modal-actions">
@@ -1970,7 +2050,7 @@ export default function ManagePostsPage() {
                       variant="secondary"
                       onClick={() => setShowCreateModal(false)}
                     >
-                      {t('posts.buttons.cancel')}
+                      Peruuta
                     </Button>
                   </div>
                   <div className="modal-actions-right">
@@ -1978,7 +2058,275 @@ export default function ManagePostsPage() {
                       type="submit"
                       variant="primary"
                     >
-                      Luo some-sisältö
+                      Generoi
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Upload Modal */}
+      {showUploadModal && createPortal(
+        <div 
+          className="modal-overlay modal-overlay--light"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowUploadModal(false)
+            }
+          }}
+        >
+          <div className="modal-container modal-container--create">
+            <div className="modal-header">
+              <h2 className="modal-title">Tuo oma julkaisu</h2>
+              <button
+                onClick={() => setShowUploadModal(false)}
+                className="modal-close-btn"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div className="modal-content">
+              <form 
+                onSubmit={async (e) => {
+                  e.preventDefault()
+                  const formData = new FormData(e.target)
+                  const file = formData.get('file')
+                  const type = formData.get('type')
+                  const title = formData.get('title')
+                  const caption = formData.get('caption')
+
+                  try {
+                    setLoading(true)
+                    
+                    // 1. Hae user_id users-taulusta
+                    const { data: userData, error: userError } = await supabase
+                      .from('users')
+                      .select('id')
+                      .eq('auth_user_id', user.id)
+                      .single()
+                    
+                    if (userError || !userData?.id) {
+                      throw new Error('Käyttäjän ID ei löytynyt')
+                    }
+
+                    // 2. Lataa tiedosto Supabase Storageen
+                    const bucket = 'content-media'
+                    const fileExt = file.name.split('.').pop()
+                    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+                    const filePath = `${userData.id}/${fileName}`
+
+                    const { error: uploadError } = await supabase.storage
+                      .from(bucket)
+                      .upload(filePath, file, {
+                        cacheControl: '3600',
+                        upsert: false
+                      })
+
+                    if (uploadError) {
+                      throw new Error(`Upload epäonnistui: ${uploadError.message}`)
+                    }
+
+                    // 3. Hae julkinen URL
+                    const { data: urlData } = supabase.storage
+                      .from(bucket)
+                      .getPublicUrl(filePath)
+
+                    const mediaUrl = urlData.publicUrl
+
+                    // 4. Tallenna content-tauluun
+                    const { error: insertError } = await supabase
+                      .from('content')
+                      .insert({
+                        user_id: userData.id,
+                        type: type,
+                        idea: title || 'Tuotu julkaisu',
+                        caption: caption || '',
+                        media_urls: [mediaUrl],
+                        status: 'In Progress',
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                      })
+
+                    if (insertError) {
+                      throw new Error(`Tallennus epäonnistui: ${insertError.message}`)
+                    }
+
+                    setShowUploadModal(false)
+                    setSuccessMessage('Julkaisu tuotu onnistuneesti!')
+                    await fetchPosts() // Päivitä lista
+                  } catch (error) {
+                    console.error('Upload error:', error)
+                    setErrorMessage(error.message || 'Julkaisun tuonti epäonnistui')
+                  } finally {
+                    setLoading(false)
+                  }
+                }}
+              >
+                <div className="form-group">
+                  <label className="form-label">Tyyppi</label>
+                  <select
+                    name="type"
+                    required
+                    className="form-select"
+                  >
+                    <option value="Photo">Photo</option>
+                    <option value="Carousel">Carousel</option>
+                    <option value="Reels">Reels</option>
+                    <option value="LinkedIn">LinkedIn</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Media</label>
+                  <div
+                    className={`upload-dropzone ${uploadDragActive ? 'drag-active' : ''}`}
+                    onDragOver={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setUploadDragActive(true)
+                    }}
+                    onDragLeave={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setUploadDragActive(false)
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setUploadDragActive(false)
+                      
+                      const files = e.dataTransfer.files
+                      if (files && files[0]) {
+                        const file = files[0]
+                        const input = document.querySelector('input[name="file"]')
+                        const dataTransfer = new DataTransfer()
+                        dataTransfer.items.add(file)
+                        input.files = dataTransfer.files
+                        
+                        // Preview
+                        if (file.type.startsWith('image/')) {
+                          const reader = new FileReader()
+                          reader.onload = (e) => setUploadPreviewUrl(e.target.result)
+                          reader.readAsDataURL(file)
+                        } else if (file.type.startsWith('video/')) {
+                          setUploadPreviewUrl(URL.createObjectURL(file))
+                        }
+                      }
+                    }}
+                    onClick={() => document.querySelector('input[name="file"]').click()}
+                  >
+                    {uploadPreviewUrl ? (
+                      <div className="upload-preview">
+                        {uploadPreviewUrl.startsWith('blob:') ? (
+                          <video src={uploadPreviewUrl} style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px' }} controls />
+                        ) : (
+                          <img src={uploadPreviewUrl} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', objectFit: 'contain' }} />
+                        )}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setUploadPreviewUrl(null)
+                            document.querySelector('input[name="file"]').value = ''
+                          }}
+                          style={{
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            background: 'rgba(0,0,0,0.6)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '50%',
+                            width: '28px',
+                            height: '28px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: '#9ca3af', marginBottom: '12px' }}>
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="17 8 12 3 7 8"></polyline>
+                          <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p style={{ margin: '0 0 8px 0', fontSize: '15px', fontWeight: 600, color: '#374151' }}>
+                          Vedä ja pudota tiedosto tähän
+                        </p>
+                        <p style={{ margin: 0, fontSize: '13px', color: '#6b7280' }}>
+                          tai klikkaa valitaksesi tiedoston
+                        </p>
+                        <p style={{ margin: '12px 0 0 0', fontSize: '12px', color: '#9ca3af' }}>
+                          JPG, PNG, MP4, MOV (max 50MB)
+                        </p>
+                      </>
+                    )}
+                  </div>
+                  <input
+                    name="file"
+                    type="file"
+                    required
+                    accept="image/*,video/*"
+                    style={{ display: 'none' }}
+                    onChange={(e) => {
+                      const file = e.target.files[0]
+                      if (file) {
+                        if (file.type.startsWith('image/')) {
+                          const reader = new FileReader()
+                          reader.onload = (e) => setUploadPreviewUrl(e.target.result)
+                          reader.readAsDataURL(file)
+                        } else if (file.type.startsWith('video/')) {
+                          setUploadPreviewUrl(URL.createObjectURL(file))
+                        }
+                      }
+                    }}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Otsikko (valinnainen)</label>
+                  <input
+                    name="title"
+                    type="text"
+                    className="form-input"
+                    placeholder="Anna julkaisulle otsikko..."
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Postaus (valinnainen)</label>
+                  <textarea
+                    name="caption"
+                    rows={4}
+                    className="form-textarea"
+                    placeholder="Kirjoita postauksen teksti..."
+                  />
+                </div>
+                <div className="modal-actions">
+                  <div className="modal-actions-left">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setShowUploadModal(false)}
+                    >
+                      Peruuta
+                    </Button>
+                  </div>
+                  <div className="modal-actions-right">
+                    <Button
+                      type="submit"
+                      variant="primary"
+                    >
+                      Tuo julkaisu
                     </Button>
                   </div>
                 </div>

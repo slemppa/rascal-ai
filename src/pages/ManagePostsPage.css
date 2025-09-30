@@ -119,6 +119,150 @@
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
+/* Tabs (Taulu/Kalenteri) */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tab-button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #374151;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab-button.active {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+
+/* Calendar */
+.calendar-container {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.calendar-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-weight: 700;
+  color: #374151;
+  padding: 8px 0;
+}
+
+.calendar-cell {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  height: 140px; /* Vakio korkeus per päivä */
+  background: #fafafa;
+  overflow: hidden;
+}
+
+.calendar-cell--today {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) inset;
+  background: #f0f9ff;
+}
+
+.calendar-cell--empty {
+  background: transparent;
+  border: none;
+}
+
+.calendar-cell-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 8px;
+  gap: 8px;
+}
+
+.calendar-day-number {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.calendar-events {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto; /* Scrollaa jos sisältöä paljon */
+}
+
+.calendar-event {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.2;
+  background: #eef2ff;
+  color: #1e3a8a;
+}
+
+.calendar-event--supabase { background: #dcfce7; color: #065f46; }
+.calendar-event--reels { background: #fee2e2; color: #991b1b; }
+.calendar-event--mixpost { background: #e0f2fe; color: #075985; }
+
+.calendar-event-time {
+  font-weight: 700;
+}
+
+.calendar-event-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calendar-chip {
+  background: #f3f4f6;
+  color: #374151;
+  border-radius: 9999px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.calendar-chip--muted {
+  background: #eef2f7;
+  color: #6b7280;
+}
+
+.calendar-more {
+  font-size: 12px;
+  color: #6b7280;
+}
+
 .search-input {
   flex: 1;
   max-width: 400px;

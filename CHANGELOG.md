@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.77.0](https://github.com/slemppa/rascal-ai/compare/v1.75.0...v1.77.0) (2025-09-30)
+
+
+### ✨ Features
+
+* add calendar view and post import to ManagePostsPage ([2d3d2c1](https://github.com/slemppa/rascal-ai/commit/2d3d2c101a92f7be80eac3bd0d30fc70359d3cf9))
+
+## [1.76.0](https://github.com/slemppa/rascal-ai/compare/v1.75.0...v1.76.0) (2025-09-30)
+
+
+### ✨ Features
+
+* add calendar view and post import to ManagePostsPage ([2d3d2c1](https://github.com/slemppa/rascal-ai/commit/2d3d2c101a92f7be80eac3bd0d30fc70359d3cf9))
+
 ## [1.75.0](https://github.com/slemppa/rascal-ai/compare/v1.74.1...v1.75.0) (2025-09-30)
 
 

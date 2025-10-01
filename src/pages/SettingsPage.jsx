@@ -49,7 +49,7 @@ export default function SettingsPage() {
 
   // Synkronoi sometilit Supabaseen
   const syncSocialAccountsToSupabase = async () => {
-    if (!user?.id || !socialAccounts?.length || syncInProgress) return
+    if (!user?.id || syncInProgress) return
 
     setSyncInProgress(true)
     try {
@@ -58,8 +58,13 @@ export default function SettingsPage() {
       // Hae olemassa olevat tilit Supabasesta
       const { data: existingAccounts } = await supabase
         .from('user_social_accounts')
-        .select('mixpost_account_uuid, provider')
+        .select('id, mixpost_account_uuid, provider')
         .eq('user_id', user.id)
+
+      // Luo Set Mixpost-tileistä (provider + mixpost_account_uuid)
+      const mixpostAccountsSet = new Set(
+        socialAccounts?.map(acc => `${acc.provider}:${acc.id}`) || []
+      )
 
       // Luo Set olemassa olevista tileistä (provider + mixpost_account_uuid)
       const existingAccountsSet = new Set(
@@ -67,45 +72,69 @@ export default function SettingsPage() {
       )
       
       // Etsi uudet tilit joita ei ole Supabasessa
-      const newAccounts = socialAccounts.filter(account => {
+      const newAccounts = socialAccounts?.filter(account => {
         const accountKey = `${account.provider}:${account.id}`
         return !existingAccountsSet.has(accountKey)
-      })
+      }) || []
 
-      if (newAccounts.length === 0) {
-        console.log('✅ Kaikki sometilit jo synkronoituna')
-        return
-      }
-
-      console.log(`📝 Lisätään ${newAccounts.length} uutta tiliä Supabaseen`)
+      // Etsi poistetut tilit (Supabasessa mutta ei Mixpostissa)
+      const accountsToRemove = existingAccounts?.filter(account => {
+        const accountKey = `${account.provider}:${account.mixpost_account_uuid}`
+        return !mixpostAccountsSet.has(accountKey)
+      }) || []
 
       // Lisää uudet tilit Supabaseen
-      const accountsToInsert = newAccounts.map(account => ({
-        user_id: user.id,
-        mixpost_account_uuid: account.id,
-        provider: account.provider,
-        account_name: account.name || account.username,
-        username: account.username,
-        profile_image_url: account.profile_image_url || account.image || account.picture,
-        is_authorized: true,
-        account_data: account,
-        last_synced_at: new Date().toISOString(),
-        created_at: new Date().toISOString()
-      }))
+      if (newAccounts.length > 0) {
+        console.log(`📝 Lisätään ${newAccounts.length} uutta tiliä Supabaseen`)
+        
+        const accountsToInsert = newAccounts.map(account => ({
+          user_id: user.id,
+          mixpost_account_uuid: account.id,
+          provider: account.provider,
+          account_name: account.name || account.username,
+          username: account.username,
+          profile_image_url: account.profile_image_url || account.image || account.picture,
+          is_authorized: true,
+          account_data: account,
+          last_synced_at: new Date().toISOString(),
+          created_at: new Date().toISOString()
+        }))
 
-      const { error } = await supabase
-        .from('user_social_accounts')
-        .upsert(accountsToInsert, {
-          onConflict: 'user_id,mixpost_account_uuid'
-        })
+        const { error: insertError } = await supabase
+          .from('user_social_accounts')
+          .upsert(accountsToInsert, {
+            onConflict: 'user_id,mixpost_account_uuid'
+          })
 
-      if (error) {
-        console.error('❌ Virhe sometilien synkronoinnissa:', error)
+        if (insertError) {
+          console.error('❌ Virhe uusien tilien lisäämisessä:', insertError)
+        }
+      }
+
+      // Poista tilit joita ei enää löydy Mixpostista
+      if (accountsToRemove.length > 0) {
+        console.log(`🗑️ Poistetaan ${accountsToRemove.length} tiliä joita ei enää löydy Mixpostista`)
+        
+        const idsToRemove = accountsToRemove.map(acc => acc.id)
+        
+        const { error: deleteError } = await supabase
+          .from('user_social_accounts')
+          .delete()
+          .in('id', idsToRemove)
+
+        if (deleteError) {
+          console.error('❌ Virhe tilien poistamisessa:', deleteError)
+        }
+      }
+
+      if (newAccounts.length === 0 && accountsToRemove.length === 0) {
+        console.log('✅ Kaikki sometilit jo synkronoituna')
       } else {
         console.log('✅ Sometilit synkronoitu onnistuneesti')
-        // Päivitä tallennetut tilit
-        await fetchSavedSocialAccounts()
       }
+      
+      // Päivitä tallennetut tilit
+      await fetchSavedSocialAccounts()
 
     } catch (error) {
       console.error('❌ Virhe sometilien synkronoinnissa:', error)
@@ -145,7 +174,7 @@ export default function SettingsPage() {
 
   // Synkronoi sometilit kun ne on haettu Mixpostista
   useEffect(() => {
-    if (socialAccounts?.length > 0 && user?.id) {
+    if (socialAccounts !== null && user?.id) {
       syncSocialAccountsToSupabase()
     }
   }, [socialAccounts, user?.id])

@@ -104,8 +104,10 @@ export default function PostsCalendar({ items = [], onEventClick }) {
                         >
                           <span className="calendar-event-time">{ev.time || ''}</span>
                           <span className="calendar-event-title">{ev.title}</span>
-                          <span className="calendar-chip">{ev.type}</span>
-                          {ev.status && <span className="calendar-chip calendar-chip--muted">{ev.status}</span>}
+                          <div className="calendar-event-chips">
+                            <span className="calendar-chip">{ev.type}</span>
+                            {ev.status && <span className="calendar-chip calendar-chip--muted">{ev.status}</span>}
+                          </div>
                         </div>
                       ))}
                       {cell.events.length > 4 && (

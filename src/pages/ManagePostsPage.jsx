@@ -459,7 +459,6 @@ export default function ManagePostsPage() {
   const { user } = useAuth()
   const monthlyLimit = useMonthlyLimit()
   
-  console.log('ManagePostsPage: monthlyLimit data:', monthlyLimit)
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -496,7 +495,6 @@ export default function ManagePostsPage() {
   // Hae Mixpost postaukset
   const fetchMixpostPosts = async () => {
     try {
-      console.log('fetchMixpostPosts: Starting...')
       setMixpostLoading(true)
       
       // Kutsu omaa proxy-endpointtia axiosilla
@@ -508,52 +506,22 @@ export default function ManagePostsPage() {
       })
 
       const mixpostPosts = response.data
-      console.log('Mixpost posts received:', mixpostPosts)
       
-      // Erottele scheduled ja published postaukset
-      const scheduledPosts = mixpostPosts.filter(post => post.status === 'scheduled')
-      const publishedPosts = mixpostPosts.filter(post => post.status === 'published')
-      
-      // Jos on published postauksia, päivitä niiden status Supabasessa
-      if (publishedPosts.length > 0) {
-        console.log('Found published posts, updating Supabase status:', publishedPosts)
-        
-        for (const post of publishedPosts) {
-          try {
-            // Hae Supabase postaus mixpost_post_id:llä
-            const { data: supabasePost, error: fetchError } = await supabase
-              .from('content')
-              .select('id, status')
-              .eq('mixpost_post_id', post.id)
-              .single()
-            
-            if (supabasePost && supabasePost.status !== 'published') {
-              // Päivitä status published:ksi ja published timestamp
-              const { error: updateError } = await supabase
-                .from('content')
-                .update({ 
-                  status: 'published',
-                  mixpost_published_at: new Date().toISOString()
-                })
-                .eq('id', supabasePost.id)
-              
-              if (updateError) {
-                console.error('Error updating post status to published:', updateError)
-              } else {
-                console.log(`Updated post ${supabasePost.id} status to published`)
-              }
-            }
-          } catch (error) {
-            console.error('Error processing published post:', error)
-          }
-        }
-        
-        // Päivitä postaukset Supabasesta
-        fetchPosts()
+      // Käännä statusit suomeksi varmistukseksi (jos API ei ole tehnyt sitä)
+      const statusMap = {
+        'published': 'Julkaistu',
+        'scheduled': 'Aikataulutettu', 
+        'draft': 'Luonnos',
+        'failed': 'Epäonnistui'
       }
       
-      console.log('Mixpost scheduled posts:', scheduledPosts)
-      setMixpostPosts(scheduledPosts)
+      const translatedPosts = mixpostPosts.map(post => ({
+        ...post,
+        status: statusMap[post.status] || post.status
+      }))
+      
+      // Näytä kaikki Mixpost-postaukset (sekä scheduled että published)
+      setMixpostPosts(translatedPosts)
       
     } catch (error) {
       console.error('Mixpost fetch error:', error)
@@ -637,7 +605,6 @@ export default function ManagePostsPage() {
   // Hae Mixpost postaukset kun sivu avataan
   useEffect(() => {
     if (user) {
-      console.log('Fetching Mixpost posts for user:', user.id)
       fetchMixpostPosts()
     }
   }, [user])
@@ -877,13 +844,6 @@ export default function ManagePostsPage() {
 
   // Yhdistetään data
   const allPosts = [...posts, ...reelsPosts, ...mixpostPosts]
-  console.log('All posts combined:', {
-    supabasePosts: posts.length,
-    reelsPosts: reelsPosts.length,
-    mixpostPosts: mixpostPosts.length,
-    total: allPosts.length,
-    mixpostPostsData: mixpostPosts
-  })
   const currentPosts = allPosts
   const currentLoading = loading || reelsLoading
   const currentError = error || reelsError
@@ -916,7 +876,9 @@ export default function ManagePostsPage() {
           const mm = String(d.getMinutes()).padStart(2, '0')
           time = `${hh}:${mm}`
         }
-      } catch {}
+      } catch (err) {
+        // Virheellinen päivämäärä, ohitetaan
+      }
 
       if (!isoDate) return null
 
@@ -1853,11 +1815,11 @@ export default function ManagePostsPage() {
 
                 // Aikataulutettu-sarakkeessa näytetään Mixpost dataa
                 else if (column.status === 'Aikataulutettu') {
-                  const isMatch = post.status === 'scheduled' && post.source === 'mixpost'
-                  if (isMatch) {
-                    console.log('Aikataulutettu match:', post)
-                  }
-                  return isMatch
+                  return post.status === 'Aikataulutettu' && post.source === 'mixpost'
+                }
+                // Julkaistu-sarakkeessa näytetään sekä Supabase että Mixpost dataa
+                else if (column.status === 'Julkaistu') {
+                  return post.status === 'Julkaistu'
                 }
                 // Muissa sarakkeissa näytetään Supabase-data oikealla statusilla
                 else {

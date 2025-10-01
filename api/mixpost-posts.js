@@ -50,7 +50,6 @@ export default async function handler(req, res) {
     // Kutsu Mixpost API:a
     const mixpostApiUrl = process.env.VITE_MIXPOST_API_URL || 'https://mixpost.mak8r.fi'
     const apiUrl = `${mixpostApiUrl}/mixpost/api/${configData.mixpost_workspace_uuid}/posts`
-    console.log('Calling Mixpost API:', apiUrl)
     
     const response = await fetch(apiUrl, {
       method: 'GET',
@@ -60,7 +59,6 @@ export default async function handler(req, res) {
       }
     })
 
-    console.log('Mixpost API response status:', response.status)
     if (!response.ok) {
       const errorText = await response.text()
       console.error('Mixpost API error response:', errorText)
@@ -68,7 +66,6 @@ export default async function handler(req, res) {
     }
 
     const responseData = await response.json()
-    console.log('Mixpost API response data:', responseData)
     
     // Mixpost palauttaa datan { data: [...] } muodossa
     const data = responseData.data || responseData
@@ -82,9 +79,9 @@ export default async function handler(req, res) {
       })
     }
     
-    // Filtteröi postaukset jotka eivät ole vielä julkaistu (scheduled, draft tai failed)
+    // Käsittele kaikki postaukset (scheduled, draft, failed, published)
     const scheduledPosts = data
-      .filter(post => ['scheduled', 'draft', 'failed'].includes(post.status))
+      .filter(post => ['scheduled', 'draft', 'failed', 'published'].includes(post.status))
       .map(post => {
         const provider = post.accounts?.[0]?.provider || null
         const firstVersion = Array.isArray(post.versions) ? post.versions[0] : null
@@ -94,34 +91,50 @@ export default async function handler(req, res) {
         const thumbUrl = firstMedia?.thumb_url || null
         const isVideo = Boolean(firstMedia?.is_video)
 
-        const scheduledAt = post.scheduled_at || post.created_at
-        let scheduledDateFi = scheduledAt || null
+        // Käytä published_at jos julkaistu, muuten scheduled_at
+        const dateToUse = post.status === 'published' 
+          ? (post.published_at || post.scheduled_at || post.created_at)
+          : (post.scheduled_at || post.created_at)
+        
+        let scheduledDateFi = dateToUse || null
+        let publishDateISO = null
         try {
-          if (scheduledAt) {
-            const d = new Date((scheduledAt || '').replace(' ', 'T'))
+          if (dateToUse) {
+            const d = new Date((dateToUse || '').replace(' ', 'T'))
             scheduledDateFi = new Intl.DateTimeFormat('fi-FI', {
               timeZone: 'Europe/Helsinki',
               year: 'numeric', month: '2-digit', day: '2-digit',
               hour: '2-digit', minute: '2-digit'
             }).format(d)
+            publishDateISO = d.toISOString() // ISO muoto kalenteria varten
           }
         } catch {}
 
+        // Käännä status suomeksi
+        const statusMap = {
+          'published': 'Julkaistu',
+          'scheduled': 'Aikataulutettu',
+          'draft': 'Luonnos',
+          'failed': 'Epäonnistui'
+        }
+        
+        const translatedStatus = statusMap[post.status] || post.status
+
         return {
           id: post.id,
-          title: body?.slice(0, 80) || 'Aikataulutettu postaus',
+          title: body?.slice(0, 80) || (post.status === 'published' ? 'Julkaistu postaus' : 'Aikataulutettu postaus'),
           caption: body || post.content || post.caption || '',
-          status: 'scheduled',
+          status: translatedStatus, // Käännä status suomeksi
           source: 'mixpost',
           provider,
           createdAt: post.created_at || null,
           scheduledDate: scheduledDateFi,
+          publishDate: publishDateISO, // ISO timestamp kalenteria varten
           thumbnail: thumbUrl || post.media?.[0]?.url || '/placeholder.png',
           type: isVideo ? 'Video' : 'Photo'
         }
       })
 
-    console.log('Processed scheduled posts:', scheduledPosts)
     return res.status(200).json(scheduledPosts)
 
   } catch (error) {

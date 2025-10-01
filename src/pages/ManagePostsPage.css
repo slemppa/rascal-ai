@@ -390,11 +390,20 @@
 }
 
 .kanban-bottom-row {
-  width: 100%;
+  display: block !important;
+  width: 100% !important;
+  flex: 0 0 100% !important; /* Flex-kontekstissa: ei kasva, ei pienene, 100% leveys */
+  max-width: 100% !important;
+  min-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .kanban-column-full-width {
-  width: 100%;
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: none !important;
 }
 
 /* Julkaistu-sarakkeen tyylit - koko leveydellä ja postaukset vasemmalta oikealle */
@@ -421,6 +430,14 @@
 
 /* Mobiililla yksi sarake */
 @media (max-width: 768px) {
+  .kanban-bottom-row {
+    width: 100% !important;
+  }
+  
+  .kanban-column-full-width {
+    width: 100% !important;
+  }
+  
   .kanban-column-full-width .column-content {
     grid-template-columns: 1fr;
     gap: 16px;
@@ -429,6 +446,14 @@
 
 /* Tabletilla kaksi saraketta */
 @media (min-width: 769px) and (max-width: 1200px) {
+  .kanban-bottom-row {
+    width: 100% !important;
+  }
+  
+  .kanban-column-full-width {
+    width: 100% !important;
+  }
+  
   .kanban-column-full-width .column-content {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 18px;
@@ -437,6 +462,14 @@
 
 /* Isolla näytöllä kolme saraketta */
 @media (min-width: 1201px) {
+  .kanban-bottom-row {
+    width: 100% !important;
+  }
+  
+  .kanban-column-full-width {
+    width: 100% !important;
+  }
+  
   .kanban-column-full-width .column-content {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 24px;

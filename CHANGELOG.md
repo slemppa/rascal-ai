@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.78.0](https://github.com/slemppa/rascal-ai/compare/v1.77.1...v1.78.0) (2025-10-01)
+
+
+### ✨ Features
+
+* lisää tilaus-sarake adminiin ja is_generated tuonti ([f6a5b9c](https://github.com/slemppa/rascal-ai/commit/f6a5b9c2c8ad8059cb4b947766d3be582253ff66))
+
 ### [1.77.1](https://github.com/slemppa/rascal-ai/compare/v1.77.0...v1.77.1) (2025-10-01)
 
 

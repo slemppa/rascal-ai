@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.79.0](https://github.com/slemppa/rascal-ai/compare/v1.78.0...v1.79.0) (2025-10-01)
+
+
+### ✨ Features
+
+* paranna kalenteria ja korjaa mixpost-integraatio ([f792254](https://github.com/slemppa/rascal-ai/commit/f79225430ab03a8b395d01c23cf678e9318e37ed))
+
 ## [1.78.0](https://github.com/slemppa/rascal-ai/compare/v1.77.1...v1.78.0) (2025-10-01)
 
 

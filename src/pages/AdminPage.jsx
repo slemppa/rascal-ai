@@ -522,19 +522,20 @@ export default function AdminPage() {
                  
                  <div className="admin-table-container">
                    <table className="admin-table">
-                     <thead>
-                       <tr>
-                         <th>Nimi</th>
-                         <th>Sähköposti</th>
-                         {showUserIds && <th>User ID</th>}
-                         <th>Rooli</th>
-                         <th>Yritys</th>
-                         <th>CRM yhdistetty</th>
-                         <th>Featuret</th>
-                         <th>Rekisteröitynyt</th>
-                         <th>Toiminnot</th>
-                       </tr>
-                     </thead>
+                    <thead>
+                      <tr>
+                        <th>Nimi</th>
+                        <th>Sähköposti</th>
+                        {showUserIds && <th>User ID</th>}
+                        <th>Rooli</th>
+                        <th>Yritys</th>
+                        <th>Tilaus</th>
+                        <th>CRM yhdistetty</th>
+                        <th>Featuret</th>
+                        <th>Rekisteröitynyt</th>
+                        <th>Toiminnot</th>
+                      </tr>
+                    </thead>
                      <tbody>
                        {filteredUsers.map(user => (
                          <tr key={user.id}>
@@ -552,6 +553,17 @@ export default function AdminPage() {
                              </select>
                            </td>
                            <td>{user.company_name || 'Ei yritystä'}</td>
+                           <td>
+                             <select
+                               value={user.subscription_status || 'free'}
+                               onChange={(e) => updateUserField(user.id, 'subscription_status', e.target.value)}
+                               style={{ textTransform: 'capitalize' }}
+                             >
+                               <option value="free">Free</option>
+                               <option value="pro">Pro</option>
+                               <option value="enterprise">Enterprise</option>
+                             </select>
+                           </td>
                            <td>
                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                <label className="switch" title="CRM yhdistetty">

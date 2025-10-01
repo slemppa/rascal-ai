@@ -72,7 +72,8 @@ export default async function handler(req, res) {
             voice_id,
             assistant_id,
             crm_connected,
-            features
+            features,
+            subscription_status
           `)
           .order('created_at', { ascending: false })
 

@@ -2150,6 +2150,7 @@ export default function ManagePostsPage() {
                         caption: caption || '',
                         media_urls: [mediaUrl],
                         status: 'In Progress',
+                        is_generated: false,
                         created_at: new Date().toISOString(),
                         updated_at: new Date().toISOString()
                       })

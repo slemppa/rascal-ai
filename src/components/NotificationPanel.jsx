@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { X, Check, Trash2, Phone, MessageSquare, AlertCircle, Bell } from 'lucide-react'
+import { X, Check, Trash2, Phone, MessageSquare, AlertCircle, Bell, Lightbulb } from 'lucide-react'
 import { useNotifications } from '../contexts/NotificationContext'
 import './NotificationPanel.css'
 
@@ -56,6 +56,8 @@ const NotificationPanel = ({ onClose }) => {
         return <Phone className="notification-icon" size={16} />
       case 'message':
         return <MessageSquare className="notification-icon" size={16} />
+      case 'strategy':
+        return <Lightbulb className="notification-icon" size={16} />
       default:
         return <AlertCircle className="notification-icon" size={16} />
     }

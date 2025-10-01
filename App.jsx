@@ -17,8 +17,7 @@ import Sidebar from './src/components/Sidebar'
 import MobileNavigation from './src/components/MobileNavigation'
 import InactivityWarningModal from './src/components/InactivityWarningModal'
 import VersionNotification from './src/components/VersionNotification'
-import StrategyConfirmationModal from './src/components/StrategyConfirmationModal'
-import { useStrategyStatus } from './src/contexts/StrategyStatusContext'
+import StrategyModalManager from './src/components/StrategyModalManager'
 import ManagePostsPage from './src/pages/ManagePostsPage'
 import AdminPage from './src/pages/AdminPage'
 import ContentStrategyPage from './src/pages/ContentStrategyPage'
@@ -37,12 +36,6 @@ import CampaignDetailPage from './src/pages/CampaignDetailPage'
 import SegmentsPage from './src/pages/SegmentsPage'
 import SegmentCreatePage from './src/pages/SegmentCreatePage'
 import SegmentDetailPage from './src/pages/SegmentDetailPage'
-
-// StrategyConfirmationWrapper komponentti
-function StrategyConfirmationWrapper() {
-  const { showConfirmation } = useStrategyStatus()
-  return showConfirmation ? <StrategyConfirmationModal /> : null
-}
 
 // ConditionalChatbotWidget komponentti - ei tarvita enää
 function ConditionalChatbotWidget() {
@@ -294,7 +287,7 @@ export default function App() {
                 } />
               </Routes>
               <VersionNotification />
-              <StrategyConfirmationWrapper />
+              <StrategyModalManager />
             </StrategyStatusProvider>
           </NotificationProvider>
         </PostsProvider>

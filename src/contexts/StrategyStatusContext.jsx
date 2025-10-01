@@ -21,6 +21,7 @@ export const StrategyStatusProvider = ({ children }) => {
   const [loading, setLoading] = useState(false)
 
   console.log('StrategyStatusProvider: Rendered with user:', user?.id, 'location:', location.pathname)
+  console.log('StrategyStatusProvider: showStrategyModal =', showStrategyModal)
 
   // Hae käyttäjän status
   const fetchUserStatus = async () => {
@@ -49,6 +50,11 @@ export const StrategyStatusProvider = ({ children }) => {
       if (data?.status === 'Pending' && !location.pathname.includes('/strategy')) {
         console.log('StrategyStatus: Showing modal for Pending status')
         setShowStrategyModal(true)
+        // FORCE: Dispatch custom event DOM:iin
+        setTimeout(() => {
+          const event = new CustomEvent('strategy-modal-should-open', { detail: { reason: 'status-pending' } })
+          window.dispatchEvent(event)
+        }, 100)
       } else if (data?.status === 'Pending' && location.pathname.includes('/strategy')) {
         console.log('StrategyStatus: Pending status but on strategy page, not showing modal')
       }
@@ -123,6 +129,48 @@ export const StrategyStatusProvider = ({ children }) => {
     }
   }, [user?.id])
 
+  // Kuuntele realtime-päivityksiä user statukseen
+  useEffect(() => {
+    if (!user?.id) return
+
+    console.log('StrategyStatus: Setting up realtime subscription for user:', user.id)
+
+    // Luo Supabase realtime channel
+    const channel = supabase
+      .channel('user-status-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'users',
+          filter: `auth_user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('StrategyStatus: Realtime update received:', payload)
+          const newStatus = payload.new?.status
+          
+          if (newStatus) {
+            console.log('StrategyStatus: Status changed to:', newStatus)
+            setUserStatus(newStatus)
+            
+            // Näytä modal jos status muuttui Pending:ksi JA emme ole strategia-sivulla
+            if (newStatus === 'Pending' && !location.pathname.includes('/strategy')) {
+              console.log('StrategyStatus: Opening modal due to realtime status change')
+              setShowStrategyModal(true)
+            }
+          }
+        }
+      )
+      .subscribe()
+
+    // Cleanup subscription
+    return () => {
+      console.log('StrategyStatus: Cleaning up realtime subscription')
+      supabase.removeChannel(channel)
+    }
+  }, [user?.id, location.pathname])
+
   // Sulje modal kun mennään strategia-sivulle
   useEffect(() => {
     if (location.pathname.includes('/strategy')) {
@@ -130,6 +178,19 @@ export const StrategyStatusProvider = ({ children }) => {
       setShowStrategyModal(false)
     }
   }, [location.pathname])
+
+  // DEBUG: Kuuntele custom event joka pakottaa modalin auki
+  useEffect(() => {
+    const handleForceOpen = () => {
+      console.log('StrategyStatus: Force opening modal via custom event')
+      setShowStrategyModal(true)
+    }
+    
+    window.addEventListener('force-strategy-modal-open', handleForceOpen)
+    return () => {
+      window.removeEventListener('force-strategy-modal-open', handleForceOpen)
+    }
+  }, [])
 
   const value = {
     showStrategyModal,

@@ -8,12 +8,14 @@ import SocialMediaConnect from '../components/SocialMediaConnect'
 import TimeoutSettings from '../components/TimeoutSettings'
 import SimpleSocialConnect from '../components/SimpleSocialConnect'
 import { useMixpostIntegration } from '../components/SocialMedia/hooks/useMixpostIntegration'
+import { useStrategyStatus } from '../contexts/StrategyStatusContext'
 
 import styles from './SettingsPage.module.css'
 
 export default function SettingsPage() {
   const { user } = useAuth()
   const { t } = useTranslation('common')
+  const { refreshUserStatus, userStatus } = useStrategyStatus()
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -638,6 +640,67 @@ export default function SettingsPage() {
             <div className={styles.card}>
               <CarouselTemplateSelector />
             </div>
+
+            {/* DEBUG: Strategia-modal testausnappi */}
+            {process.env.NODE_ENV === 'development' && (
+              <div className={styles.card} style={{ padding: '20px' }}>
+                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px' }}>🔧 Strategia Modal Debug</h3>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '12px' }}>
+                  Nykyinen status: <strong>{userStatus || 'ei tiedossa'}</strong>
+                </p>
+                <div style={{ display: 'flex', gap: '8px', flexDirection: 'column' }}>
+                  <button
+                    onClick={async () => {
+                      console.log('=== DEBUG: Aloitetaan status-päivitys ===')
+                      console.log('User ID:', user.id)
+                      console.log('Current status:', userStatus)
+                      
+                      try {
+                        // Päivitä status Pending:ksi
+                        const { error, data } = await supabase
+                          .from('users')
+                          .update({ status: 'Pending' })
+                          .eq('auth_user_id', user.id)
+                          .select()
+                        
+                        console.log('Update result:', { error, data })
+                        
+                        if (error) {
+                          console.error('Error updating status:', error)
+                          alert('Virhe statuksen päivityksessä: ' + error.message)
+                        } else {
+                          console.log('Status päivitetty Pending:ksi')
+                          // Odota hetki ja päivitä context
+                          setTimeout(async () => {
+                            await refreshUserStatus()
+                            console.log('Context päivitetty')
+                          }, 500)
+                          alert('Status päivitetty! Tarkista konsoli.')
+                        }
+                      } catch (err) {
+                        console.error('Error:', err)
+                        alert('Virhe: ' + err.message)
+                      }
+                    }}
+                    className={`${styles.btn} ${styles.btnPrimary}`}
+                  >
+                    1. Aseta status Pending
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      console.log('=== DEBUG: Pakotetaan modal auki ===')
+                      // Avaa modal suoraan window-objektin kautta
+                      const event = new CustomEvent('force-strategy-modal-open')
+                      window.dispatchEvent(event)
+                    }}
+                    className={`${styles.btn} ${styles.btnSecondary}`}
+                  >
+                    2. Pakota modal auki (debug)
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

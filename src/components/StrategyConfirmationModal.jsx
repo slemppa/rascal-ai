@@ -6,7 +6,14 @@ import { useTranslation } from 'react-i18next'
 const StrategyConfirmationModal = ({ isOpen, onClose, onRequestUpdate, loading }) => {
   const { t } = useTranslation('common')
 
-  if (!isOpen) return null
+  console.log('StrategyConfirmationModal render:', { isOpen, loading })
+
+  if (!isOpen) {
+    console.log('StrategyConfirmationModal: isOpen is false, returning null')
+    return null
+  }
+
+  console.log('StrategyConfirmationModal: Rendering modal!')
 
   return createPortal(
     <div 

@@ -19,8 +19,7 @@ import MobileNavigation from './components/MobileNavigation'
 import InactivityWarningModal from './components/InactivityWarningModal'
 import ChatbotWidget from './components/ChatbotWidget'
 import VersionNotification from './components/VersionNotification'
-import StrategyConfirmationModal from './components/StrategyConfirmationModal'
-import { useStrategyStatus } from './contexts/StrategyStatusContext'
+import StrategyModalManager from './components/StrategyModalManager'
 import { supabase } from './lib/supabase'
 import ManagePostsPage from './pages/ManagePostsPage'
 import AdminPage from './pages/AdminPage'
@@ -120,25 +119,7 @@ function LanguageRedirect() {
   return null;
 }
 
-// Wrapper komponentti strategia-vahvistus modaalia varten
-function StrategyConfirmationWrapper() {
-  const { 
-    showStrategyModal, 
-    loading, 
-    approveStrategy, 
-    requestStrategyUpdate, 
-    closeModal 
-  } = useStrategyStatus()
-
-  return (
-    <StrategyConfirmationModal
-      isOpen={showStrategyModal}
-      onClose={closeModal}
-      onRequestUpdate={requestStrategyUpdate}
-      loading={loading}
-    />
-  )
-}
+// Poistettu - käytetään nyt StrategyModalManager.jsx komponenttia
 
 export default function App() {
   return (
@@ -385,7 +366,7 @@ export default function App() {
         {/* Lisää muut suojatut reitit tähän samalla tavalla, jos haluat menun näkyvän niilläkin */}
               </Routes>
               <VersionNotification />
-              <StrategyConfirmationWrapper />
+              <StrategyModalManager />
             </StrategyStatusProvider>
           </NotificationProvider>
         </PostsProvider>

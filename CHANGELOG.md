@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.79.1](https://github.com/slemppa/rascal-ai/compare/v1.79.0...v1.79.1) (2025-10-01)
+
+
+### 🐛 Bug Fixes
+
+* korjaa Julkaistu-sarakkeen leveys koko leveydelle ([8908936](https://github.com/slemppa/rascal-ai/commit/89089364d8e40512ce860cc48c66149f81c4c794))
+
 ## [1.79.0](https://github.com/slemppa/rascal-ai/compare/v1.78.0...v1.79.0) (2025-10-01)
 
 

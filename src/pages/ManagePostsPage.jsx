@@ -112,6 +112,7 @@ const transformSupabaseData = (supabaseData) => {
       thumbnail: thumbnail,
       caption: item.caption || item.idea || 'Ei kuvausta',
       type: item.type || 'Photo',
+      provider: item.provider || null, // Lisätään provider-kenttä
       createdAt: item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : null,
       scheduledDate: item.publish_date && publishDate > now ? new Date(item.publish_date).toISOString().split('T')[0] : null,
       publishedAt: item.publish_date && publishDate <= now ? new Date(item.publish_date).toISOString().split('T')[0] : null,
@@ -887,6 +888,12 @@ export default function ManagePostsPage() {
       const mm = String(dateObj.getMonth() + 1).padStart(2, '0')
       const dd = String(dateObj.getDate()).padStart(2, '0')
 
+      // Määritä kanava/alusta provider-kentästä
+      let channel = null
+      if (p.provider) {
+        channel = p.provider.charAt(0).toUpperCase() + p.provider.slice(1)
+      }
+
       return {
         id: p.id,
         title: p.title || 'Postaus',
@@ -894,7 +901,8 @@ export default function ManagePostsPage() {
         time,
         source: p.source || 'supabase',
         type: p.type || 'Post',
-        status: p.status || ''
+        status: p.status || '',
+        channel: channel || null
       }
     })
     .filter(Boolean)
@@ -2140,7 +2148,6 @@ export default function ManagePostsPage() {
                     className="form-select"
                   >
                     <option value="Photo">Photo</option>
-                    <option value="Carousel">Carousel</option>
                     <option value="Reels">Reels</option>
                     <option value="LinkedIn">LinkedIn</option>
                   </select>

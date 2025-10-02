@@ -102,7 +102,10 @@ export default function PostsCalendar({ items = [], onEventClick }) {
                           tabIndex={0}
                           onKeyDown={(e) => { if (e.key === 'Enter') onEventClick && onEventClick(ev) }}
                         >
-                          <span className="calendar-event-time">{ev.time || ''}</span>
+                          <div className="calendar-event-header">
+                            <span className="calendar-event-time">{ev.time || ''}</span>
+                            {ev.channel && <span className="calendar-event-channel">{ev.channel}</span>}
+                          </div>
                           <span className="calendar-event-title">{ev.title}</span>
                           <div className="calendar-event-chips">
                             <span className="calendar-chip">{ev.type}</span>

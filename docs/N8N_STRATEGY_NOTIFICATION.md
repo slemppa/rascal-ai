@@ -143,3 +143,4 @@ curl -X POST https://rascal.fi/api/create-notification \
 - `/src/contexts/StrategyStatusContext.jsx` - Modal-logiikka
 - `/src/components/StrategyConfirmationModal.jsx` - Modal-komponentti
 
+

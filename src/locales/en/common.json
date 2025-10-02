@@ -715,6 +715,7 @@
         "all": "All",
         "statusOptions": {
           "success": "Answered",
+          "successful": "Successful",
           "failed": "Failed",
           "voiceMail": "Voice Mail",
           "pending": "Pending",

@@ -1224,19 +1224,31 @@ export default function CallPanel() {
       }
       if (statusFilter) {
           if (statusFilter === 'success') {
-            countQuery = countQuery.eq('call_status', 'done').eq('call_outcome', 'successful')
+            // Vastatut: done + answered (sama kuin tilastoissa)
+            countQuery = countQuery.eq('call_status', 'done').eq('answered', true)
+          } else if (statusFilter === 'successful') {
+            // Onnistuneet: call_outcome = 'successful' (sama kuin tilastoissa, ei call_status ehtoa)
+            countQuery = countQuery.eq('call_outcome', 'successful')
           } else if (statusFilter === 'failed') {
+            // Epäonnistuneet: done + !answered (sama kuin tilastoissa)
             countQuery = countQuery.eq('call_status', 'done').eq('answered', false)
           } else if (statusFilter === 'voice_mail') {
             countQuery = countQuery.eq('call_status', 'done').eq('call_outcome', 'voice mail')
           } else if (statusFilter === 'pending') {
+            // Aikataulutettu: pending (sama kuin tilastoissa)
             countQuery = countQuery.eq('call_status', 'pending')
           } else if (statusFilter === 'in_progress') {
+            // Jonossa: in progress (sama kuin tilastoissa)
             countQuery = countQuery.eq('call_status', 'in progress')
           }
       }
       if (callTypeFilter) {
-        countQuery = countQuery.eq('call_type', callTypeFilter)
+        if (callTypeFilter === 'successful') {
+          // Onnistuneet: call_outcome = 'successful' (sama kuin tilastoissa)
+          countQuery = countQuery.eq('call_outcome', 'successful')
+        } else {
+          countQuery = countQuery.eq('call_type', callTypeFilter)
+        }
       }
       if (dateFrom) {
           countQuery = countQuery.gte('call_date', dateFrom)
@@ -1297,19 +1309,31 @@ export default function CallPanel() {
         }
         if (statusFilter) {
             if (statusFilter === 'success') {
-              query = query.eq('call_status', 'done').eq('call_outcome', 'successful')
+              // Vastatut: done + answered (sama kuin tilastoissa)
+              query = query.eq('call_status', 'done').eq('answered', true)
+            } else if (statusFilter === 'successful') {
+              // Onnistuneet: call_outcome = 'successful' (sama kuin tilastoissa, ei call_status ehtoa)
+              query = query.eq('call_outcome', 'successful')
             } else if (statusFilter === 'failed') {
+              // Epäonnistuneet: done + !answered (sama kuin tilastoissa)
               query = query.eq('call_status', 'done').eq('answered', false)
             } else if (statusFilter === 'voice_mail') {
               query = query.eq('call_status', 'done').eq('call_outcome', 'voice mail')
             } else if (statusFilter === 'pending') {
+              // Aikataulutettu: pending (sama kuin tilastoissa)
               query = query.eq('call_status', 'pending')
             } else if (statusFilter === 'in_progress') {
+              // Jonossa: in progress (sama kuin tilastoissa)
               query = query.eq('call_status', 'in progress')
             }
         }
         if (callTypeFilter) {
-          query = query.eq('call_type', callTypeFilter)
+          if (callTypeFilter === 'successful') {
+            // Onnistuneet: call_outcome = 'successful' (sama kuin tilastoissa)
+            query = query.eq('call_outcome', 'successful')
+          } else {
+            query = query.eq('call_type', callTypeFilter)
+          }
         }
         if (dateFrom) {
             query = query.gte('call_date', dateFrom)
@@ -2557,6 +2581,7 @@ export default function CallPanel() {
                   >
                     <option value="">{t('calls.logsTab.filters.all')}</option>
                     <option value="success">{t('calls.logsTab.filters.statusOptions.success')}</option>
+                    <option value="successful">{t('calls.logsTab.filters.statusOptions.successful')}</option>
                     <option value="failed">{t('calls.logsTab.filters.statusOptions.failed')}</option>
                     <option value="voice_mail">{t('calls.logsTab.filters.statusOptions.voiceMail')}</option>
                     <option value="pending">{t('calls.logsTab.filters.statusOptions.pending')}</option>

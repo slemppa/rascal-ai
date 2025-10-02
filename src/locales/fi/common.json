@@ -727,6 +727,7 @@
         "all": "Kaikki",
         "statusOptions": {
           "success": "Vastatut",
+          "successful": "Onnistuneet",
           "failed": "Epäonnistuneet",
           "voiceMail": "Vastaaja",
           "pending": "Aikataulutettu",

@@ -88,6 +88,7 @@ export default function CallLogsTab({
             </label>
             <select value={callTypeFilter} onChange={(e) => setCallTypeFilter(e.target.value)} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 14, color: '#1f2937', background: '#fff' }}>
               <option value="">Kaikki</option>
+              <option value="successful">Onnistuneet</option>
               {callTypes.map(type => (
                 <option key={type.id} value={type.name}>{type.name}</option>
               ))}

@@ -726,7 +726,7 @@
         "clearButton": "Tyhjennä filtterit",
         "all": "Kaikki",
         "statusOptions": {
-          "success": "Onnistuneet",
+          "success": "Vastatut",
           "failed": "Epäonnistuneet",
           "voiceMail": "Vastaaja",
           "pending": "Aikataulutettu",

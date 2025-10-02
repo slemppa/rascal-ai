@@ -714,7 +714,7 @@
         "clearButton": "Clear filters",
         "all": "All",
         "statusOptions": {
-          "success": "Successful",
+          "success": "Answered",
           "failed": "Failed",
           "voiceMail": "Voice Mail",
           "pending": "Pending",

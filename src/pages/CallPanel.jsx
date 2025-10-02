@@ -37,7 +37,6 @@ export default function CallPanel() {
   const [callStatus, setCallStatus] = useState(null)
   const [polling, setPolling] = useState(false)
   const pollingRef = useRef(null)
-  const [stats, setStats] = useState({ totalCount: 0, calledCount: 0, failedCount: 0 })
   
   // Uudet state-muuttujat
   const [callType, setCallType] = useState('AI-assarin kartoitus')
@@ -95,6 +94,16 @@ export default function CallPanel() {
   const [loadingCallLogs, setLoadingCallLogs] = useState(false)
   const [callLogsError, setCallLogsError] = useState('')
   const [updatingLogIds, setUpdatingLogIds] = useState({})
+  
+  // Tilastot (haetaan erikseen ilman filttereitä)
+  const [stats, setStats] = useState({
+    answered: 0,
+    successful: 0,
+    failed: 0,
+    pending: 0,
+    inProgress: 0,
+    totalCalls: 0
+  })
   
   // Viestilokin state-muuttujat
   const [messageLogs, setMessageLogs] = useState([])
@@ -209,6 +218,7 @@ export default function CallPanel() {
     if (user?.id) {
       fetchCallLogs()
       fetchCallTypes()
+      fetchStats() // Hae tilastot erikseen
     }
   }, [user?.id])
 
@@ -1103,6 +1113,83 @@ export default function CallPanel() {
   }
 
   // Hae puheluloki N8N:n kautta - hakee kaikki rivit paginationilla
+  // Hae tilastot erikseen (ilman filttereitä)
+  const fetchStats = async () => {
+    try {
+      if (!user?.id) return
+
+      // Hae users.id
+      const { data: userProfile, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (userError || !userProfile) return
+
+      // Hae tilastot COUNT-kyselyillä (paljon tehokkaampi kuin kaikkien rivien haku)
+      
+      // Yhteensä
+      const { count: totalCalls, error: totalError } = await supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userProfile.id)
+
+      // Vastatut (done + answered)
+      const { count: answered, error: answeredError } = await supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userProfile.id)
+        .eq('call_status', 'done')
+        .eq('answered', true)
+
+      // Onnistuneet (call_outcome = 'successful')
+      const { count: successful, error: successfulError } = await supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userProfile.id)
+        .eq('call_outcome', 'successful')
+
+      // Epäonnistuneet (done + !answered)
+      const { count: failed, error: failedError } = await supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userProfile.id)
+        .eq('call_status', 'done')
+        .eq('answered', false)
+
+      // Aikataulutettu
+      const { count: pending, error: pendingError } = await supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userProfile.id)
+        .eq('call_status', 'pending')
+
+      // Jonossa
+      const { count: inProgress, error: inProgressError } = await supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userProfile.id)
+        .eq('call_status', 'in progress')
+
+      if (totalError || answeredError || successfulError || failedError || pendingError || inProgressError) {
+        console.error('Tilastojen haku epäonnistui:', { totalError, answeredError, successfulError, failedError, pendingError, inProgressError })
+        return
+      }
+
+      setStats({
+        answered: answered || 0,
+        successful: successful || 0,
+        failed: failed || 0,
+        pending: pending || 0,
+        inProgress: inProgress || 0,
+        totalCalls: totalCalls || 0
+      })
+    } catch (error) {
+      console.error('Tilastojen haku epäonnistui:', error)
+    }
+  }
+
   const fetchCallLogs = async (page = currentPage) => {
     try {
       setLoadingCallLogs(true)
@@ -2402,7 +2489,7 @@ export default function CallPanel() {
                 </Button>
                 <Button
                   type="button"
-                  onClick={() => fetchCallLogs()}
+                  onClick={() => { fetchCallLogs(); fetchStats(); }}
                   disabled={loadingCallLogs}
                   variant="secondary"
                   style={{
@@ -2578,7 +2665,19 @@ export default function CallPanel() {
                 border: '1px solid #e2e8f0' 
               }}>
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e', marginBottom: 8 }}>
-                    {callLogs.filter(log => log.call_status === 'done' && log.answered).length}
+                    {stats.answered}
+                </div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>Vastatut puhelut</div>
+              </div>
+              
+              <div style={{ 
+                background: '#f8fafc', 
+                padding: 24, 
+                borderRadius: 12, 
+                border: '1px solid #e2e8f0' 
+              }}>
+                <div style={{ fontSize: 32, fontWeight: 700, color: '#10b981', marginBottom: 8 }}>
+                    {stats.successful}
                 </div>
                 <div style={{ fontSize: 14, color: '#6b7280' }}>Onnistuneet puhelut</div>
               </div>
@@ -2590,7 +2689,7 @@ export default function CallPanel() {
                 border: '1px solid #e2e8f0' 
               }}>
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#ef4444', marginBottom: 8 }}>
-                    {callLogs.filter(log => log.call_status === 'done' && !log.answered).length}
+                    {stats.failed}
                 </div>
                 <div style={{ fontSize: 14, color: '#6b7280' }}>Epäonnistuneet</div>
               </div>
@@ -2601,10 +2700,10 @@ export default function CallPanel() {
                 borderRadius: 12, 
                 border: '1px solid #e2e8f0' 
               }}>
-                                    <div style={{ fontSize: 32, fontWeight: 700, color: '#f59e0b', marginBottom: 8 }}>
-                    {callLogs.filter(log => log.call_status === 'pending').length}
+                <div style={{ fontSize: 32, fontWeight: 700, color: '#f59e0b', marginBottom: 8 }}>
+                    {stats.pending}
                 </div>
-                    <div style={{ fontSize: 14, color: '#6b7280' }}>Aikataulutettu</div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>Aikataulutettu</div>
               </div>
 
               <div style={{ 
@@ -2613,20 +2712,20 @@ export default function CallPanel() {
                 borderRadius: 12, 
                 border: '1px solid #e2e8f0' 
               }}>
-                                    <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6', marginBottom: 8 }}>
-                    {callLogs.filter(log => log.call_status === 'in progress').length}
-                  </div>
-                    <div style={{ fontSize: 14, color: '#6b7280' }}>Jonossa</div>
-                  </div>
+                <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6', marginBottom: 8 }}>
+                    {stats.inProgress}
+                </div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>Jonossa</div>
+              </div>
                   
-                  <div style={{ 
-                    background: '#f8fafc', 
-                    padding: 24, 
-                    borderRadius: 12, 
-                    border: '1px solid #e2e8f0' 
-                  }}>
-                                    <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1', marginBottom: 8 }}>
-                    {callLogs.length}
+              <div style={{ 
+                background: '#f8fafc', 
+                padding: 24, 
+                borderRadius: 12, 
+                border: '1px solid #e2e8f0' 
+              }}>
+                <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1', marginBottom: 8 }}>
+                    {stats.totalCalls}
                 </div>
                 <div style={{ fontSize: 14, color: '#6b7280' }}>Yhteensä</div>
               </div>
@@ -2793,7 +2892,7 @@ export default function CallPanel() {
                     <tbody>
                       {callLogs.map((log, index) => (
                         <tr
-                              key={log.id || index}
+                              key={`${log.id}-${index}`}
                           onClick={() => fetchLogDetail(log)}
                           style={{
                             background: '#fff',

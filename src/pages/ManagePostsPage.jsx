@@ -1647,14 +1647,6 @@ export default function ManagePostsPage() {
           setShowEditModal(false)
           setEditingPost(null)
         }
-        if (showEditModalKesken) {
-          setShowEditModalKesken(false)
-          setEditingPost(null)
-        }
-        if (showEditModalTarkistuksessa) {
-          setShowEditModalTarkistuksessa(false)
-          setEditingPost(null)
-        }
         if (showCreateModal) {
           setShowCreateModal(false)
         }
@@ -2349,7 +2341,7 @@ export default function ManagePostsPage() {
 
       {/* Aikataulutettu Modal */}
       <AikataulutettuModal
-        show={showEditModal && editingPost && editingPost.status === 'Aikataulutettu'}
+        show={showEditModal && editingPost && (editingPost.status === 'Aikataulutettu' || editingPost.status === 'Luonnos')}
         editingPost={editingPost}
         onClose={() => {
           setShowEditModal(false)

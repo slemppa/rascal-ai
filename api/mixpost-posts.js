@@ -121,7 +121,9 @@ export default async function handler(req, res) {
         const translatedStatus = statusMap[post.status] || post.status
 
         return {
-          id: post.id,
+          // Alkuperäinen Mixpost-data säilytetään
+          ...post,
+          // Lisätään frontend-tarvitsemat kentät
           title: body?.slice(0, 80) || (post.status === 'published' ? 'Julkaistu postaus' : 'Aikataulutettu postaus'),
           caption: body || post.content || post.caption || '',
           status: translatedStatus, // Käännä status suomeksi

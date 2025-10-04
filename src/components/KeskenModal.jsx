@@ -239,6 +239,27 @@ const KeskenModal = ({
         </div>
         <div className="modal-content">
           <form onSubmit={handleSubmit}>
+          {/* Luontipäivämäärä */}
+          <div className="form-group" style={{ marginBottom: '16px' }}>
+            <label className="form-label">Luotu</label>
+            <p className="form-text" style={{ 
+              padding: '8px 12px',
+              backgroundColor: '#f8f9fa',
+              border: '1px solid #e5e7eb',
+              borderRadius: '6px',
+              fontSize: '14px',
+              color: '#6b7280'
+            }}>
+              {editingPost.created_at ? new Date(editingPost.created_at).toLocaleString('fi-FI', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              }) : 'Ei tiedossa'}
+            </p>
+          </div>
+
             {/* Kaksi saraketta: media vasemmalle, kentät oikealle */}
             <div className="edit-modal-grid">
               {/* Vasen sarake: Media */}

@@ -26,14 +26,7 @@ const AikataulutettuModal = ({
                       `Kanava ${accountId}`
     const providerIcon = supabaseAccount?.provider
     
-    console.log(`Debug - renderChannelField for accountId ${accountId}:`, {
-      accountId,
-      supabaseAccount,
-      accountName,
-      providerIcon,
-      channelContent: channelContents[accountId],
-      allSocialAccounts: socialAccounts
-    })
+    // Debug info removed
     
     return (
       <div key={accountId} className="border rounded-lg p-4 bg-gray-50">
@@ -170,7 +163,7 @@ const AikataulutettuModal = ({
         })
       }
       
-      console.log('Debug - Initializing channelContents:', channelContentsData)
+      // Debug info removed
       setChannelContents(channelContentsData)
     }
   }, [editingPost])
@@ -214,13 +207,9 @@ const AikataulutettuModal = ({
         }
 
         postUuid = editingPost.uuid // Käytä Mixpost UUID:ta
-        console.log('Debug - Found Supabase data:', supabaseData)
       }
 
-      console.log('Debug - editingPost.source:', editingPost.source)
-      console.log('Debug - editingPost.uuid:', editingPost.uuid)
-      console.log('Debug - editingPost.id:', editingPost.id)
-      console.log('Debug - postUuid:', postUuid)
+      // Debug info removed
 
       if (!postUuid) {
         throw new Error('Mixpost post UUID puuttuu. Varmista että postaus on Mixpostissa.')
@@ -252,12 +241,7 @@ const AikataulutettuModal = ({
         // Käytä kanavan omaa tekstiä jos se on määritelty, muuten käytä päätekstiä
         const channelContent = channelContents[version.account_id] || formData.content
         
-        console.log(`Debug - Version ${version.account_id}:`, {
-          originalContent: version.content?.[0]?.body,
-          channelContent: channelContent,
-          channelContents: channelContents,
-          formDataContent: formData.content
-        })
+        // Debug info removed
         
         return {
           account_id: version.account_id,
@@ -299,20 +283,7 @@ const AikataulutettuModal = ({
         updateData.time = formData.time   // HH:MM (lokaali aika)
         updateData.timezone = 'Europe/Helsinki' // Aikavyöhyke
         
-        // Debug: näytä mitä lähetetään
-        const helsinkiDateTime = new Date(`${formData.date}T${formData.time}`)
-        
-        console.log('Debug - User selected (Helsinki):', formData.date, formData.time)
-        console.log('Debug - Sending to Mixpost (local):', updateData.date, updateData.time, updateData.timezone)
-        console.log('Debug - Helsinki datetime:', helsinkiDateTime.toISOString())
-        console.log('Debug - Expected: Mixpost should preserve Helsinki time with timezone')
-        console.log('Debug - Channel contents:', channelContents)
-        console.log('Debug - Social accounts from Supabase:', socialAccounts)
-        console.log('Debug - Updated versions:', updatedVersions.map(v => ({
-          account_id: v.account_id,
-          content: v.content?.[0]?.body
-        })))
-        console.log('Debug - Full updateData being sent:', JSON.stringify(updateData, null, 2))
+        // Debug info removed
       }
 
       // Lisätään alkuperäiset accounts ja tags jos ne löytyvät
@@ -330,14 +301,7 @@ const AikataulutettuModal = ({
         ).filter(id => !isNaN(id))
       }
 
-      console.log('Debug - Sending updateData:', updateData)
-      console.log('Debug - Media in first version:', updatedVersions[0]?.content?.[0]?.media)
-      console.log('Debug - Original accounts:', editingPost.accounts?.length || 0)
-      console.log('Debug - Original tags:', editingPost.tags?.length || 0)
-      console.log('Debug - Original scheduled_at:', editingPost.scheduled_at)
-      console.log('Debug - UpdateData accounts:', updateData.accounts)
-      console.log('Debug - UpdateData tags:', updateData.tags)
-      console.log('Debug - Versions account_ids:', updatedVersions.map(v => v.account_id))
+      // Debug info removed
 
       // Kutsu backend-endpointtia
       const response = await fetch('/api/mixpost-update-post', {
@@ -354,12 +318,10 @@ const AikataulutettuModal = ({
 
       if (!response.ok) {
         const errorData = await response.json()
-        console.error('Update API error:', errorData)
         throw new Error(errorData.error || 'Tallennus epäonnistui')
       }
 
       const updateResult = await response.json()
-      console.log('Update API success:', updateResult)
 
       // Päivitä Supabase-data jos kyseessä on Mixpost-postaus
       if (editingPost.source === 'mixpost') {
@@ -381,7 +343,6 @@ const AikataulutettuModal = ({
       // Jos päivämäärä ja aika on asetettu, kutsutaan schedule-endpointtia
       // Mixpost API:n dokumentaation mukaan schedule-endpointtia käytetään ajastamiseen
       if (updateData.date && updateData.time) {
-        console.log('Debug - Scheduling post with date/time/timezone:', updateData.date, updateData.time, updateData.timezone)
         
         try {
           const scheduleResponse = await fetch('/api/mixpost-schedule-post', {
@@ -399,14 +360,11 @@ const AikataulutettuModal = ({
 
           if (!scheduleResponse.ok) {
             const errorData = await scheduleResponse.json()
-            console.error('Schedule API error:', errorData)
             throw new Error(`Schedule-päivitys epäonnistui: ${errorData.error || errorData.details || 'Tuntematon virhe'}`)
           }
 
           const scheduleResult = await scheduleResponse.json()
-          console.log('Debug - Post scheduled successfully:', scheduleResult)
         } catch (scheduleError) {
-          console.error('Schedule error:', scheduleError)
           // Ei heitä virhettä, koska sisältö päivittyi onnistuneesti
           setError(`Sisältö päivittyi, mutta ajastus epäonnistui: ${scheduleError.message}`)
         }
@@ -425,7 +383,6 @@ const AikataulutettuModal = ({
       }, 1500)
 
     } catch (err) {
-      console.error('Error updating post:', err)
       setError(err.message || 'Tallennus epäonnistui')
     } finally {
       setLoading(false)
@@ -468,6 +425,27 @@ const AikataulutettuModal = ({
               Postaus päivitetty onnistuneesti!
             </div>
           )}
+
+          {/* Luontipäivämäärä */}
+          <div className="form-group" style={{ marginBottom: '16px' }}>
+            <label className="form-label">Luotu</label>
+            <p className="form-text" style={{ 
+              padding: '8px 12px',
+              backgroundColor: '#f8f9fa',
+              border: '1px solid #e5e7eb',
+              borderRadius: '6px',
+              fontSize: '14px',
+              color: '#6b7280'
+            }}>
+              {editingPost.created_at ? new Date(editingPost.created_at).toLocaleString('fi-FI', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              }) : 'Ei tiedossa'}
+            </p>
+          </div>
 
           {/* Media-preview */}
           <div className="form-group">
@@ -648,11 +626,7 @@ const AikataulutettuModal = ({
                   const accountId = typeof account === 'object' ? account.id : account
                   if (!accountId || accountId === 0) return null
                   
-                  console.log(`Debug - Processing account ${index}:`, {
-                    account,
-                    accountId,
-                    socialAccounts: socialAccounts
-                  })
+                  // Debug info removed
                   
                   return renderChannelField(accountId, account, index)
                 })}

@@ -105,7 +105,7 @@ const transformSupabaseData = (supabaseData) => {
     
 
     
-    return {
+    const transformed = {
       id: item.id,
       title: item.idea || item.caption || t('posts.statuses.untitled'),
       status: status,
@@ -129,6 +129,10 @@ const transformSupabaseData = (supabaseData) => {
       },
       source: 'supabase'
     }
+    
+    // Debug info removed
+    
+    return transformed
   })
 }
 
@@ -389,9 +393,16 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
               {post.caption}
             </p>
           <div className="post-footer">
-            <span className="post-date">
-              {post.scheduledDate ? `${post.scheduledDate}` : post.createdAt || post.publishedAt}
-            </span>
+            {post.originalData?.created_at && (
+              <span className="post-created-date" style={{ 
+                fontSize: '11px', 
+                color: '#6b7280',
+                display: 'block',
+                marginTop: '2px'
+              }}>
+                Luotu: {new Date(post.originalData.created_at).toLocaleDateString('fi-FI')}
+              </span>
+            )}
             <div className="post-actions">
               {/* Näytä napit vain jos ei ole "Julkaistu" sarakkeessa */}
               {!hideActions && post.status !== 'Julkaistu' && (
@@ -992,7 +1003,9 @@ export default function ManagePostsPage() {
           // Lisätään segments data post-objektiin
           const postWithSegments = {
             ...post,
-            segments: segmentsData || []
+            segments: segmentsData || [],
+            // Kopioi created_at suoraan editingPost:iin modaaleja varten
+            created_at: post.originalData?.created_at || post.created_at
           }
           setEditingPost(postWithSegments)
           setShowEditModal(true)
@@ -1008,6 +1021,8 @@ export default function ManagePostsPage() {
     const postWithOriginalData = {
       ...post,
       media_urls: post.media_urls || post.mediaUrls || post.originalData?.media_urls || [],
+      // Kopioi created_at suoraan editingPost:iin modaaleja varten
+      created_at: post.originalData?.created_at || post.created_at,
       originalData: {
         ...post,
         media_urls: post.media_urls || post.mediaUrls || post.originalData?.media_urls || []
@@ -1848,7 +1863,11 @@ export default function ManagePostsPage() {
                         thumbnail: post.thumbnail || null,
                         status: post.status || 'Kesken',
                         voiceover: post.voiceover || '',
-                        segments: post.segments || [] // Lisätään segments data!
+                        segments: post.segments || [], // Lisätään segments data!
+                        originalData: post.originalData || {}, // Lisätään originalData!
+                        createdAt: post.createdAt,
+                        scheduledDate: post.scheduledDate,
+                        publishedAt: post.publishedAt
                       }
                       
                       return (
@@ -1895,7 +1914,11 @@ export default function ManagePostsPage() {
                         status: post.status || 'Julkaistu',
                         published_at: post.publishedAt,
                         external_urls: [],
-                        segments: post.segments || [] // Lisätään segments data!
+                        segments: post.segments || [], // Lisätään segments data!
+                        originalData: post.originalData || {}, // Lisätään originalData!
+                        createdAt: post.createdAt,
+                        scheduledDate: post.scheduledDate,
+                        publishedAt: post.publishedAt
                       }
                       
                       return (

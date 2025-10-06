@@ -5,10 +5,11 @@ import { useAuth } from '../contexts/AuthContext'
 import Button from './Button'
 
 const AikataulutettuModal = ({ 
-  show, 
+  show = true,  // Oletusarvo true, jotta Dashboard voi käyttää ilman show proppia
   editingPost, 
   onClose, 
-  onEdit,
+  onEdit,  // ManagePostsPage käyttää
+  onSave,  // DashboardPage käyttää
   t 
 }) => {
   const { user } = useAuth()
@@ -91,6 +92,17 @@ const AikataulutettuModal = ({
   // Päivitä formData kun editingPost muuttuu
   useEffect(() => {
     if (editingPost) {
+      console.log('AikataulutettuModal - editingPost:', {
+        id: editingPost.id,
+        source: editingPost.source,
+        status: editingPost.status,
+        hasAccounts: !!editingPost.accounts,
+        accountsLength: editingPost.accounts?.length,
+        accounts: editingPost.accounts,
+        hasVersions: !!editingPost.versions,
+        versionsLength: editingPost.versions?.length
+      })
+      
       let dateStr = ''
       let timeStr = ''
       let postBody = ''
@@ -387,9 +399,12 @@ const AikataulutettuModal = ({
 
       setSuccess(true)
       
-      // Kutsutaan onEdit callbackia jos se on määritelty
+      // Kutsutaan onEdit tai onSave callbackia jos se on määritelty
       if (onEdit) {
         onEdit()
+      }
+      if (onSave) {
+        onSave(editingPost)
       }
 
       // Suljetaan modaali 1.5 sekunnin kuluttua

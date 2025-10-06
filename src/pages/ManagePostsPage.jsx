@@ -178,6 +178,8 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
       draggable={post.source === 'supabase'}
       onDragStart={(e) => onDragStart(e, post)}
       onDragEnd={onDragEnd}
+      onClick={hideActions ? () => onEdit(post) : undefined}
+      style={hideActions ? { cursor: 'pointer' } : undefined}
     >
       <div className="post-card-content">
         <div className="post-thumbnail">
@@ -985,6 +987,46 @@ export default function ManagePostsPage() {
   }
 
   const handleEditPost = async (post) => {
+    console.log('handleEditPost called with:', { id: post.id, status: post.status, source: post.source, type: post.type })
+    
+    // Jos kyseessä on Mixpost-postaus, haetaan täysi data API:sta
+    if (post.source === 'mixpost') {
+      try {
+        const token = (await supabase.auth.getSession()).data.session?.access_token
+        if (!token) {
+          console.error('No auth token available')
+          return
+        }
+
+        const response = await fetch('/api/mixpost-posts', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok) {
+          console.error('Failed to fetch Mixpost posts:', response.status)
+          return
+        }
+
+        const data = await response.json()
+        console.log('Fetched Mixpost posts:', data)
+        
+        // Etsi oikea postaus ID:n perusteella
+        const fullPost = data.find(p => p.id === post.id)
+        if (fullPost) {
+          console.log('Found full Mixpost post:', fullPost)
+          setEditingPost(fullPost)
+          setShowEditModal(true)
+          return
+        } else {
+          console.error('Post not found in Mixpost data')
+        }
+      } catch (error) {
+        console.error('Error fetching Mixpost post:', error)
+      }
+    }
+    
     // Jos kyseessä on Carousel-tyyppi, haetaan segments data
     if (post.type === 'Carousel' && post.source === 'supabase') {
       try {
@@ -2396,14 +2438,22 @@ export default function ManagePostsPage() {
 
       {/* Aikataulutettu Modal */}
       <AikataulutettuModal
-        show={showEditModal && editingPost && (editingPost.status === 'Aikataulutettu' || editingPost.status === 'Luonnos')}
+        show={showEditModal && editingPost && (
+          editingPost.source === 'mixpost' || 
+          editingPost.status === 'Aikataulutettu' || 
+          editingPost.status === 'Luonnos'
+        )}
         editingPost={editingPost}
         onClose={() => {
           setShowEditModal(false)
           setEditingPost(null)
         }}
-        onEdit={() => {
-          // TODO: Implement edit functionality
+        onEdit={async () => {
+          console.log('Post updated successfully')
+          setShowEditModal(false)
+          setEditingPost(null)
+          // Päivitä data
+          await fetchPosts()
         }}
         t={t}
       />

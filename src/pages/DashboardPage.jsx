@@ -9,6 +9,7 @@ import { supabase } from '../lib/supabase'
 import styles from './DashboardPage.module.css'
 import { useAuth } from '../contexts/AuthContext'
 import PageMeta from '../components/PageMeta'
+import AikataulutettuModal from '../components/AikataulutettuModal'
 // Analytics poistettu - tehdään myöhemmin
 import '../components/ModalComponents.css'
 
@@ -286,6 +287,8 @@ export default function DashboardPage() {
   const [socialAccounts, setSocialAccounts] = useState([]) // Supabase social accounts
   const { user } = useAuth()
   const [imageModalUrl, setImageModalUrl] = useState(null)
+  const [showScheduledModal, setShowScheduledModal] = useState(false)
+  const [selectedPost, setSelectedPost] = useState(null)
   const [selectedFilter, setSelectedFilter] = useState('all')
   const [selectedTimeFilter, setSelectedTimeFilter] = useState('7days')
   // Analytics filtteröinnit käsitellään iframe:ssä
@@ -1191,6 +1194,23 @@ export default function DashboardPage() {
     })
   }
 
+  const handleScheduledPostClick = (post) => {
+    setSelectedPost(post)
+    setShowScheduledModal(true)
+  }
+
+  const handleCloseScheduledModal = () => {
+    setShowScheduledModal(false)
+    setSelectedPost(null)
+  }
+
+  const handleSaveScheduledPost = async (updatedPost) => {
+    // Päivitä schedule-lista
+    setSchedule(prev => prev.map(p => p.id === updatedPost.id ? updatedPost : p))
+    setShowScheduledModal(false)
+    setSelectedPost(null)
+  }
+
   return (
     <>
       <PageMeta 
@@ -1301,7 +1321,17 @@ export default function DashboardPage() {
                     <tr><td colSpan={5} style={{ color: '#888', padding: 16, textAlign: 'center' }}>{t('dashboard.upcoming.empty')}</td></tr>
                   ) : (
                     upcomingPosts.map((row, i) => (
-                      <tr key={row.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                      <tr 
+                        key={row.id} 
+                        onClick={() => handleScheduledPostClick(row)}
+                        style={{ 
+                          borderBottom: '1px solid #f3f4f6',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
                         <td style={{ padding: '8px 4px', verticalAlign: 'top' }}>{renderMediaCell(row)}</td>
                         <td style={{ padding: '8px 4px', verticalAlign: 'top', wordBreak: 'break-word', maxWidth: '300px' }}>
                           <div style={{ 
@@ -1543,6 +1573,15 @@ export default function DashboardPage() {
           </div>
         </div>,
         document.body
+      )}
+
+      {/* Aikataulutettu Modal */}
+      {showScheduledModal && selectedPost && (
+        <AikataulutettuModal
+          editingPost={selectedPost}
+          onClose={handleCloseScheduledModal}
+          onSave={handleSaveScheduledPost}
+        />
       )}
     </>
   )

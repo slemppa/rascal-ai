@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createPortal } from 'react-dom'
+import axios from 'axios'
 // Analytics data haetaan nyt iframe:n kautta
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar, ScatterChart, Scatter, ZAxis, Tooltip, Legend, CartesianGrid } from 'recharts'
 import PageHeader from '../components/PageHeader'
@@ -282,6 +283,7 @@ export default function DashboardPage() {
   ]
   const [schedule, setSchedule] = useState([])
   const [scheduleLoading, setScheduleLoading] = useState(true)
+  const [socialAccounts, setSocialAccounts] = useState([]) // Supabase social accounts
   const { user } = useAuth()
   const [imageModalUrl, setImageModalUrl] = useState(null)
   const [selectedFilter, setSelectedFilter] = useState('all')
@@ -712,6 +714,32 @@ export default function DashboardPage() {
     fetchStats()
   }, [user])
 
+  // Hae käyttäjän social accounts Supabasesta
+  useEffect(() => {
+    const fetchSocialAccounts = async () => {
+      if (!user?.id) return
+      
+      try {
+        const { data, error } = await supabase
+          .from('user_social_accounts')
+          .select('mixpost_account_uuid, provider, account_name, username, profile_image_url')
+          .eq('user_id', user.id)
+          .eq('is_authorized', true)
+        
+        if (error) {
+          console.error('Error fetching social accounts:', error)
+          return
+        }
+        
+        setSocialAccounts(data || [])
+        console.log('Fetched social accounts:', data)
+      } catch (error) {
+        console.error('Error fetching social accounts:', error)
+      }
+    }
+    fetchSocialAccounts()
+  }, [user?.id])
+
   useEffect(() => {
     const fetchSchedule = async () => {
       if (!user) {
@@ -736,8 +764,8 @@ export default function DashboardPage() {
           return
         }
 
-        // Hae tulevat julkaisut
-        const { data, error } = await supabase
+        // Hae tulevat julkaisut Supabasesta
+        const { data: supabaseData, error } = await supabase
           .from('content')
           .select('id, type, idea, status, publish_date, created_at, media_urls, caption')
           .eq('user_id', userRow.id)
@@ -746,10 +774,58 @@ export default function DashboardPage() {
 
         if (error) {
           console.error('Error fetching schedule:', error)
-          setSchedule([])
-        } else {
-          setSchedule(data || [])
         }
+
+        // Hae myös Mixpost-postaukset (käytetään axiosia kuten ManagePostsPage)
+        let mixpostData = []
+        try {
+          const response = await axios.get('/api/mixpost-posts', {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+            }
+          })
+          
+          const mixpostPosts = response.data
+          console.log('Mixpost API returned posts:', mixpostPosts.length, mixpostPosts)
+          
+          // Käännä statusit suomeksi
+          const statusMap = {
+            'published': 'Julkaistu',
+            'scheduled': 'Aikataulutettu', 
+            'draft': 'Luonnos',
+            'failed': 'Epäonnistui'
+          }
+          
+          // Muunna kaikki Mixpost-postaukset samaan muotoon kuin Supabase-data
+          // HUOM: API palauttaa publishDate (camelCase), muunnetaan publish_date:ksi
+          mixpostData = mixpostPosts
+            .filter(post => post.publishDate) // Vain postaukset joilla on julkaisupäivä
+            .map(post => ({
+              id: post.id,
+              type: 'Mixpost',
+              idea: post.title || post.caption?.slice(0, 80) || 'Postaus',
+              status: statusMap[post.status] || post.status,
+              publish_date: post.publishDate, // API:sta tuleva publishDate -> publish_date
+              publishDate: post.publishDate, // Säilytetään myös alkuperäinen
+              created_at: post.createdAt,
+              media_urls: post.thumbnail ? [post.thumbnail] : [],
+              caption: post.caption,
+              source: 'mixpost',
+              accounts: post.accounts || [],
+              channelNames: post.channelNames || []
+            }))
+          
+          console.log('Mixpost posts with publishDate:', mixpostData.length, 'out of', mixpostPosts.length)
+        } catch (mixpostError) {
+          console.error('Error fetching Mixpost posts:', mixpostError)
+        }
+
+        // Yhdistä Supabase ja Mixpost data
+        const allSchedule = [...(supabaseData || []), ...mixpostData]
+        console.log('Supabase posts:', supabaseData?.length || 0, 'Mixpost posts:', mixpostData.length, 'Total:', allSchedule.length)
+        console.log('First mixpost post:', mixpostData[0])
+        setSchedule(allSchedule)
       } catch (e) {
         console.error('Error in fetchSchedule:', e)
         setSchedule([])
@@ -1012,11 +1088,42 @@ export default function DashboardPage() {
 
   // Aikataulu-kortin data: näytetään vain tulevat julkaisut (publish_date >= nyt)
   const nowDate = new Date()
+  console.log('=== UPCOMING POSTS FILTER DEBUG ===')
+  console.log('Total schedule items:', schedule.length)
+  console.log('Sample schedule items:', schedule.slice(0, 3))
+  console.log('Now (local):', nowDate)
+  console.log('Now (ISO):', nowDate.toISOString())
+  
   // Tulevat julkaisut -kortin data: media_urls ja caption mukaan
   const upcomingPosts = (schedule || []).filter(row => {
-    if (!row.publish_date) return false
-    return new Date(row.publish_date) >= nowDate
-  }).sort((a, b) => new Date(a.publish_date) - new Date(b.publish_date))
+    if (!row.publish_date) {
+      return false
+    }
+    // Tarkista onko jo UTC-muodossa (sisältää Z tai +)
+    const dateStr = row.publish_date
+    let publishDate
+    if (dateStr.includes('Z') || dateStr.includes('+')) {
+      publishDate = new Date(dateStr)
+    } else {
+      // Lisää Z jotta tulkitaan UTC:nä
+      publishDate = new Date(dateStr.replace(' ', 'T') + 'Z')
+    }
+    const isFuture = publishDate >= nowDate
+    if (!isFuture) {
+      console.log('FILTERED OUT (past):', row.id, 'publishDate:', publishDate.toISOString(), 'vs now:', nowDate.toISOString())
+    }
+    return isFuture
+  }).sort((a, b) => {
+    const dateA = a.publish_date.includes('Z') || a.publish_date.includes('+') 
+      ? new Date(a.publish_date) 
+      : new Date(a.publish_date.replace(' ', 'T') + 'Z')
+    const dateB = b.publish_date.includes('Z') || b.publish_date.includes('+')
+      ? new Date(b.publish_date)
+      : new Date(b.publish_date.replace(' ', 'T') + 'Z')
+    return dateA - dateB
+  })
+  
+  console.log('Schedule:', schedule.length, 'Upcoming posts:', upcomingPosts.length, 'Now:', nowDate)
 
   function renderMediaCell(row) {
     const urls = row.media_urls || []
@@ -1036,17 +1143,42 @@ export default function DashboardPage() {
 
   function formatUpcomingDate(dateStr) {
     if (!dateStr) return '--'
-    const d = new Date(dateStr)
+    // Tarkista onko jo UTC-muodossa (sisältää Z tai +)
+    let d
+    if (dateStr.includes('Z') || dateStr.includes('+')) {
+      d = new Date(dateStr)
+    } else {
+      // Lisää Z jotta tulkitaan UTC:nä
+      d = new Date(dateStr.replace(' ', 'T') + 'Z')
+    }
+    
+    // Muunna Europe/Helsinki aikavyöhykkeeseen vertailua varten
+    const helsinkiDate = new Date(d.toLocaleString('en-US', { timeZone: 'Europe/Helsinki' }))
     const now = new Date()
+    
+    // Hae kellonaika
+    const timeStr = d.toLocaleString('fi-FI', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Europe/Helsinki'
+    })
+    
     if (
-      d.getDate() === now.getDate() &&
-      d.getMonth() === now.getMonth() &&
-      d.getFullYear() === now.getFullYear()
+      helsinkiDate.getDate() === now.getDate() &&
+      helsinkiDate.getMonth() === now.getMonth() &&
+      helsinkiDate.getFullYear() === now.getFullYear()
     ) {
-      return t('dashboard.upcoming.today')
+      return `${t('dashboard.upcoming.today')} klo ${timeStr}`
     }
     const locale = i18n.language === 'fi' ? 'fi-FI' : 'en-US'
-    return d.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+    return d.toLocaleString(locale, { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit',
+      timeZone: 'Europe/Helsinki'
+    })
   }
 
   return (
@@ -1143,6 +1275,7 @@ export default function DashboardPage() {
                   <tr style={{ color: '#1f2937', fontWeight: 600, background: '#f7f8fc' }}>
                     <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.upcoming.headers.media')}</th>
                     <th style={{ textAlign: 'left', padding: '8px 4px' }}>{t('dashboard.upcoming.headers.caption')}</th>
+                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Kanavat</th>
                     <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.upcoming.headers.status')}</th>
                     <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.upcoming.headers.date')}</th>
                   </tr>
@@ -1151,16 +1284,67 @@ export default function DashboardPage() {
                   {scheduleLoading ? (
                     Array(5).fill(0).map((_, i) => (
                       <tr key={i}>
-                        <td colSpan={4} style={{ background: '#eee', height: 48, borderRadius: 6 }}></td>
+                        <td colSpan={5} style={{ background: '#eee', height: 48, borderRadius: 6 }}></td>
                       </tr>
                     ))
                   ) : upcomingPosts.length === 0 ? (
-                    <tr><td colSpan={4} style={{ color: '#888', padding: 16, textAlign: 'center' }}>{t('dashboard.upcoming.empty')}</td></tr>
+                    <tr><td colSpan={5} style={{ color: '#888', padding: 16, textAlign: 'center' }}>{t('dashboard.upcoming.empty')}</td></tr>
                   ) : (
                     upcomingPosts.map((row, i) => (
                       <tr key={row.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
                         <td style={{ padding: '8px 4px', verticalAlign: 'top' }}>{renderMediaCell(row)}</td>
-                        <td style={{ padding: '8px 4px', verticalAlign: 'top', wordBreak: 'break-word' }}>{row.caption || '--'}</td>
+                        <td style={{ padding: '8px 4px', verticalAlign: 'top', wordBreak: 'break-word', maxWidth: '300px' }}>
+                          <div style={{ 
+                            overflow: 'hidden', 
+                            textOverflow: 'ellipsis', 
+                            display: '-webkit-box', 
+                            WebkitLineClamp: 2, 
+                            WebkitBoxOrient: 'vertical',
+                            lineHeight: '1.4em',
+                            maxHeight: '2.8em'
+                          }}>
+                            {row.caption || '--'}
+                          </div>
+                        </td>
+                        <td style={{ padding: '8px 4px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
+                          {(() => {
+                            // Hae kanavat accounts-datasta ja matcha Supabase-dataan
+                            if (row.accounts && row.accounts.length > 0) {
+                              return (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                  {row.accounts.map((acc, idx) => {
+                                    // Hae nimi Supabasesta mixpost_account_uuid:n perusteella
+                                    const accountId = acc.id || acc.account_id
+                                    const supabaseAccount = socialAccounts.find(sa => 
+                                      sa.mixpost_account_uuid === String(accountId)
+                                    )
+                                    
+                                    const name = supabaseAccount?.username 
+                                      ? `@${supabaseAccount.username}` 
+                                      : supabaseAccount?.account_name 
+                                      || acc.name 
+                                      || (acc.username ? `@${acc.username}` : null) 
+                                      || (acc.provider ? acc.provider.charAt(0).toUpperCase() + acc.provider.slice(1) : null)
+                                    
+                                    return name ? (
+                                      <span key={idx} style={{ 
+                                        fontSize: '12px', 
+                                        padding: '2px 6px', 
+                                        background: '#f3f4f6', 
+                                        borderRadius: '4px',
+                                        color: '#6b7280'
+                                      }}>
+                                        {name}
+                                      </span>
+                                    ) : null
+                                  })}
+                                </div>
+                              )
+                            }
+                            
+                            return '--'
+                          })()}
+                        </td>
                         <td style={{ padding: '8px 4px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>{statusMap[row.status] || row.status || '--'}</td>
                         <td style={{ padding: '8px 4px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>{formatUpcomingDate(row.publish_date)}</td>
                       </tr>

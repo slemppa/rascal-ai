@@ -123,10 +123,18 @@ export default async function handler(req, res) {
         
         const translatedStatus = statusMap[post.status] || post.status
 
+        // Hae kanavien nimet
+        const channelNames = (post.accounts || [])
+          .map(acc => {
+            if (acc.name) return acc.name
+            if (acc.username) return `@${acc.username}`
+            if (acc.provider) return acc.provider.charAt(0).toUpperCase() + acc.provider.slice(1)
+            return null
+          })
+          .filter(Boolean)
+
         return {
-          // Alkuperäinen Mixpost-data säilytetään
-          ...post,
-          // Lisätään frontend-tarvitsemat kentät
+          // Lisätään frontend-tarvitsemat kentät ENSIN
           title: body?.slice(0, 80) || (post.status === 'published' ? 'Julkaistu postaus' : 'Aikataulutettu postaus'),
           caption: body || post.content || post.caption || '',
           status: translatedStatus, // Käännä status suomeksi
@@ -136,7 +144,10 @@ export default async function handler(req, res) {
           scheduledDate: scheduledDateFi,
           publishDate: publishDateISO, // ISO timestamp kalenteria varten
           thumbnail: thumbUrl || post.media?.[0]?.url || '/placeholder.png',
-          type: isVideo ? 'Video' : 'Photo'
+          type: isVideo ? 'Video' : 'Photo',
+          channelNames: channelNames,
+          // Alkuperäinen Mixpost-data viimeisenä (ei korvaa ylläolevia)
+          ...post
         }
       })
 

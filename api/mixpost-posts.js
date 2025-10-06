@@ -107,7 +107,8 @@ export default async function handler(req, res) {
             scheduledDateFi = new Intl.DateTimeFormat('fi-FI', {
               timeZone: 'Europe/Helsinki',
               year: 'numeric', month: '2-digit', day: '2-digit',
-              hour: '2-digit', minute: '2-digit'
+              hour: '2-digit', minute: '2-digit',
+              hour12: false
             }).format(d)
             publishDateISO = d.toISOString() // ISO muoto kalenteria varten
           }

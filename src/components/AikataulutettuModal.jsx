@@ -117,7 +117,8 @@ const AikataulutettuModal = ({
             month: '2-digit',
             day: '2-digit',
             hour: '2-digit',
-            minute: '2-digit'
+            minute: '2-digit',
+            hour12: false
           })
           
           const parts = formatter.formatToParts(date)
@@ -456,7 +457,8 @@ const AikataulutettuModal = ({
                 month: 'long',
                 day: 'numeric',
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
+                hour12: false
               }) : 'Ei tiedossa'}
             </p>
           </div>
@@ -592,6 +594,7 @@ const AikataulutettuModal = ({
                           day: 'numeric',
                           hour: '2-digit',
                           minute: '2-digit',
+                          hour12: false,
                           timeZone: 'Europe/Helsinki'
                         })
                       }

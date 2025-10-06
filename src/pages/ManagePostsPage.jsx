@@ -520,11 +520,21 @@ export default function ManagePostsPage() {
     try {
       setMixpostLoading(true)
       
+      // Hae sessio ja token
+      const session = await supabase.auth.getSession()
+      const token = session.data.session?.access_token
+      
+      if (!token) {
+        console.error('No auth token available for Mixpost API')
+        setMixpostPosts([])
+        return
+      }
+      
       // Kutsu omaa proxy-endpointtia axiosilla
       const response = await axios.get('/api/mixpost-posts', {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+          'Authorization': `Bearer ${token}`
         }
       })
 
@@ -548,6 +558,9 @@ export default function ManagePostsPage() {
       
     } catch (error) {
       console.error('Mixpost fetch error:', error)
+      console.error('Error details:', error.response?.status, error.response?.data)
+      // Jatka normaalisti ilman Mixpost-postauksia
+      setMixpostPosts([])
     } finally {
       setMixpostLoading(false)
     }

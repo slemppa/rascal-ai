@@ -779,15 +779,22 @@ export default function DashboardPage() {
         // Hae myös Mixpost-postaukset (käytetään axiosia kuten ManagePostsPage)
         let mixpostData = []
         try {
-          const response = await axios.get('/api/mixpost-posts', {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-            }
-          })
+          const session = await supabase.auth.getSession()
+          const token = session.data.session?.access_token
           
-          const mixpostPosts = response.data
-          console.log('Mixpost API returned posts:', mixpostPosts.length, mixpostPosts)
+          if (!token) {
+            console.error('No auth token available for Mixpost API')
+            mixpostData = []
+          } else {
+            const response = await axios.get('/api/mixpost-posts', {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              }
+            })
+            
+            const mixpostPosts = response.data
+            console.log('Mixpost API returned posts:', mixpostPosts.length, mixpostPosts)
           
           // Käännä statusit suomeksi
           const statusMap = {
@@ -816,7 +823,8 @@ export default function DashboardPage() {
               channelNames: post.channelNames || []
             }))
           
-          console.log('Mixpost posts with publishDate:', mixpostData.length, 'out of', mixpostPosts.length)
+            console.log('Mixpost posts with publishDate:', mixpostData.length, 'out of', mixpostPosts.length)
+          }
         } catch (mixpostError) {
           console.error('Error fetching Mixpost posts:', mixpostError)
         }
@@ -1160,6 +1168,7 @@ export default function DashboardPage() {
     const timeStr = d.toLocaleString('fi-FI', {
       hour: '2-digit',
       minute: '2-digit',
+      hour12: false,
       timeZone: 'Europe/Helsinki'
     })
     
@@ -1177,6 +1186,7 @@ export default function DashboardPage() {
       year: 'numeric', 
       hour: '2-digit', 
       minute: '2-digit',
+      hour12: false,
       timeZone: 'Europe/Helsinki'
     })
   }

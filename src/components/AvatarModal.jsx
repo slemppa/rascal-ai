@@ -313,18 +313,32 @@ const AvatarModal = ({
                           voiceoverReady: voiceoverReadyChecked
                         })
 
+                        // Hae voiceover-teksti lomakkeesta
+                        const voiceoverTextarea = document.querySelector('textarea[name="voiceover"]')
+                        const voiceoverText = voiceoverTextarea ? voiceoverTextarea.value : (editingPost.voiceover || '')
+
+                        const requestData = {
+                          recordId: editingPost.originalData?.['Record ID'] || editingPost.originalData?.id || editingPost.id,
+                          voiceover: voiceoverText || null,
+                          voiceoverReady: !!voiceoverReadyChecked,
+                          companyId: userData.company_id,
+                          selectedAvatarId: selectedAvatar,
+                          action: 'avatar_selected'
+                        }
+
+                        console.log('DEBUG: Sending voiceover-ready data:', requestData)
+                        console.log('DEBUG: editingPost.originalData:', editingPost.originalData)
+                        console.log('DEBUG: Record ID options:', {
+                          'Record ID': editingPost.originalData?.['Record ID'],
+                          'id': editingPost.originalData?.id,
+                          'editingPost.id': editingPost.id
+                        })
+
                         // Lähetä endpointiin
                         const response = await fetch('/api/voiceover-ready', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            recordId: editingPost.id,
-                            voiceover: editingPost.voiceover || null,
-                            voiceoverReady: !!voiceoverReadyChecked,
-                            companyId: userData.company_id,
-                            selectedAvatarId: selectedAvatar,
-                            action: 'avatar_selected'
-                          })
+                          body: JSON.stringify(requestData)
                         })
 
                         if (!response.ok) {

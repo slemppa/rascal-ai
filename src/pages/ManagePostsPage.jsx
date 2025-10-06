@@ -137,28 +137,39 @@ const transformSupabaseData = (supabaseData) => {
 }
 
 // Transform Reels data to Kanban format
-const transformReelsData = (reelsData) => {
-  if (!reelsData || !Array.isArray(reelsData)) return []
-  return reelsData.map(item => {
-    const status = item.status || 'Kesken' // Status is forced to 'Kesken' by the API
-    return {
-      id: item.id,
-      title: item.title || t('posts.statuses.untitledReels'),
-      status: status,
-      thumbnail: item.media_urls?.[0] || null,
-      caption: item.caption || 'Ei kuvausta',
-      type: 'Reels',
-      createdAt: item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : null,
-      scheduledDate: null,
-      publishedAt: null,
-      mediaUrls: item.media_urls || [],
-      hashtags: item.hashtags || [],
-      voiceover: item.voiceover || '',
-      originalData: item,
-      source: 'reels'
-    }
-  })
-}
+  const transformReelsData = (reelsData) => {
+    if (!reelsData || !Array.isArray(reelsData)) return []
+    
+    console.log('DEBUG: transformReelsData received:', reelsData)
+    
+    return reelsData.map(item => {
+      const status = item.status || 'Kesken' // Status is forced to 'Kesken' by the API
+      
+      console.log('DEBUG: Processing reels item:', {
+        id: item.id,
+        title: item.title,
+        caption: item.caption,
+        status: item.status
+      })
+      
+      return {
+        id: item.id,
+        title: item.title || t('posts.statuses.untitledReels'),
+        status: status,
+        thumbnail: item.media_urls?.[0] || null,
+        caption: item.caption || 'Ei kuvausta',
+        type: 'Reels',
+        createdAt: item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : null,
+        scheduledDate: null,
+        publishedAt: null,
+        mediaUrls: item.media_urls || [],
+        hashtags: item.hashtags || [],
+        voiceover: item.voiceover || '',
+        originalData: item,
+        source: 'reels'
+      }
+    })
+  }
 
 function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext, onDragStart, onDragEnd, isDragging, hideActions = false, t }) {
   return (
@@ -778,21 +789,8 @@ export default function ManagePostsPage() {
       return
     }
     
-    // Asetetaan heti dummy dataa näkyviin
-    const dummyData = [
-      {
-        id: 'reels-1',
-        title: 'Ladataan Reels dataa...',
-        caption: 'Haetaan dataa Airtablesta...',
-        media_urls: ['/placeholder.png'],
-        status: 'Kesken',
-        created_at: new Date().toISOString(),
-        hashtags: ['#ladataan'],
-        voiceover: 'Ladataan...',
-        source: 'reels'
-      }
-    ]
-    setReelsPosts(dummyData)
+    // Aloitetaan tyhjällä datalla
+    setReelsPosts([])
     
     try {
       setReelsLoading(true)
@@ -825,35 +823,6 @@ export default function ManagePostsPage() {
 
 
     // Transform Reels data to Kanban format
-  const transformReelsData = (reelsData) => {
-    if (!reelsData || !Array.isArray(reelsData)) return []
-    
-    return reelsData.map(item => {
-      const status = item.status || 'Kesken' // Status is forced to 'Kesken' by the API
-      
-      const transformed = {
-        id: item.id,
-        title: item.title || t('posts.statuses.untitledReels'),
-        status: status,
-        thumbnail: item.media_urls?.[0] || '/placeholder.png',
-        caption: item.caption || 'Ei kuvausta',
-        type: 'Reels',
-        createdAt: item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : null,
-        scheduledDate: null,
-        publishedAt: null,
-        mediaUrls: item.media_urls || [],
-        hashtags: item.hashtags || [],
-        voiceover: item.voiceover || '',
-        originalData: item,
-        source: 'reels'
-      }
-
-      return transformed
-    })
-  }
-
-
-
   // Yhdistetään data
   const allPosts = [...posts, ...reelsPosts, ...mixpostPosts]
   const currentPosts = allPosts
@@ -881,12 +850,27 @@ export default function ManagePostsPage() {
       let time = ''
 
       try {
-        const d = new Date(p.publishDate)
+        // publishDate on joko ISO-muodossa (Z:llä) tai "YYYY-MM-DDTHH:MM" muodossa
+        let d
+        if (p.publishDate.includes('Z') || p.publishDate.includes('+')) {
+          // ISO-muoto, käytä suoraan
+          d = new Date(p.publishDate)
+        } else {
+          // Lisätään 'Z' loppuun jotta se tulkitaan UTC:nä
+          const utcDateString = p.publishDate.endsWith('Z') ? p.publishDate : p.publishDate + 'Z'
+          d = new Date(utcDateString)
+        }
+        
         if (!isNaN(d.getTime())) {
           isoDate = d.toISOString()
-          const hh = String(d.getHours()).padStart(2, '0')
-          const mm = String(d.getMinutes()).padStart(2, '0')
-          time = `${hh}:${mm}`
+          // Näytä paikallinen aika (Europe/Helsinki)
+          const localTime = d.toLocaleString('fi-FI', {
+            timeZone: 'Europe/Helsinki',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          })
+          time = localTime
         }
       } catch (err) {
         // Virheellinen päivämäärä, ohitetaan
@@ -1852,41 +1836,76 @@ export default function ManagePostsPage() {
                 >
                   <h3 className="column-title">{t(column.titleKey)}</h3>
                   <div className="column-content">
-                    {columnPosts.map(post => {
-                      // Varmistetaan että post on oikeassa muodossa
-                      const safePost = {
-                        id: post.id || 'unknown',
-                        title: post.title || t('posts.statuses.untitled'),
-                        caption: post.caption || t('posts.placeholders.noImage'),
-                        type: post.type || 'Photo',
-                        source: post.source || 'supabase',
-                        thumbnail: post.thumbnail || null,
-                        status: post.status || 'Kesken',
-                        voiceover: post.voiceover || '',
-                        segments: post.segments || [], // Lisätään segments data!
-                        originalData: post.originalData || {}, // Lisätään originalData!
-                        createdAt: post.createdAt,
-                        scheduledDate: post.scheduledDate,
-                        publishedAt: post.publishedAt
-                      }
-                      
-                      return (
-                        <PostCard
-                          key={safePost.id}
-                          post={safePost}
-                          onEdit={handleEditPost}
-                          onDelete={handleDeletePost}
-                          onPublish={handlePublishPost}
-                          onSchedule={handleSchedulePost}
-                          onMoveToNext={handleMoveToNext}
-                          onDragStart={handleDragStart}
-                          onDragEnd={handleDragEnd}
-                          isDragging={draggedPost?.id === safePost.id}
-                          hideActions={column.status === 'Aikataulutettu'}
-                          t={t}
-                        />
-                      )
-                    })}
+                    {columnPosts.length === 0 && column.titleKey === 'posts.columns.avatar' ? (
+                      <div className="empty-column-placeholder" style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '40px 20px',
+                        textAlign: 'center',
+                        color: '#6b7280',
+                        backgroundColor: '#f9fafb',
+                        borderRadius: '8px',
+                        border: '2px dashed #d1d5db',
+                        minHeight: '200px'
+                      }}>
+                        <div style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.5 }}>
+                          🎬
+                        </div>
+                        <h4 style={{ 
+                          fontSize: '18px', 
+                          fontWeight: '600', 
+                          marginBottom: '8px',
+                          color: '#374151'
+                        }}>
+                          Ei Reels-sisältöä
+                        </h4>
+                        <p style={{ 
+                          fontSize: '14px', 
+                          lineHeight: '1.5',
+                          maxWidth: '200px'
+                        }}>
+                          Sinulla ei ole tällä hetkellä täällä mitään. Reels-sisältöä näkyy tässä sarakkeessa.
+                        </p>
+                      </div>
+                    ) : (
+                      columnPosts.map(post => {
+                        // Varmistetaan että post on oikeassa muodossa
+                        const safePost = {
+                          id: post.id || 'unknown',
+                          title: post.title || t('posts.statuses.untitled'),
+                          caption: post.caption || t('posts.placeholders.noImage'),
+                          type: post.type || 'Photo',
+                          source: post.source || 'supabase',
+                          thumbnail: post.thumbnail || null,
+                          status: post.status || 'Kesken',
+                          voiceover: post.voiceover || '',
+                          segments: post.segments || [], // Lisätään segments data!
+                          originalData: post.originalData || {}, // Lisätään originalData!
+                          createdAt: post.createdAt,
+                          scheduledDate: post.scheduledDate,
+                          publishedAt: post.publishedAt
+                        }
+                        
+                        return (
+                          <PostCard
+                            key={safePost.id}
+                            post={safePost}
+                            onEdit={handleEditPost}
+                            onDelete={handleDeletePost}
+                            onPublish={handlePublishPost}
+                            onSchedule={handleSchedulePost}
+                            onMoveToNext={handleMoveToNext}
+                            onDragStart={handleDragStart}
+                            onDragEnd={handleDragEnd}
+                            isDragging={draggedPost?.id === safePost.id}
+                            hideActions={column.status === 'Aikataulutettu'}
+                            t={t}
+                          />
+                        )
+                      })
+                    )}
                   </div>
                 </div>
               )

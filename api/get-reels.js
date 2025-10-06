@@ -18,9 +18,9 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'N8N webhook URL ei ole määritelty' })
     }
 
-    console.log('Kutsutaan N8N webhookia:', n8nUrl)
-    console.log('Company ID:', companyId)
-    console.log('API Key saatavilla:', !!process.env.N8N_SECRET_KEY)
+    console.log('DEBUG: Kutsutaan N8N webhookia:', n8nUrl)
+    console.log('DEBUG: Company ID:', companyId)
+    console.log('DEBUG: API Key saatavilla:', !!process.env.N8N_SECRET_KEY)
 
     const response = await fetch(n8nUrl, {
       method: 'POST',
@@ -37,32 +37,8 @@ export default async function handler(req, res) {
       const errorText = await response.text()
       console.error('N8N error response:', errorText)
       if (response.status === 404) {
-        console.log('N8N workflow ei ole aktiivinen, palautetaan dummy reels dataa')
-        const dummyData = [
-          {
-            id: 'reels-1',
-            title: 'Testi Reels - AI automaatio',
-            caption: 'Oletko valmis vapauttamaan aikasi keskittyäksesi siihen, mikä todella merkitsee? Meidän oppaallamme näytämme, kuinka AI voi muuttaa liiketoimintasi.',
-            media_urls: ['/placeholder.png'],
-            status: 'Kesken',
-            created_at: new Date().toISOString(),
-            hashtags: ['#test', '#reels'],
-            voiceover: 'Kuvittele, että voit keskittyä liiketoiminnan kasvattamiseen, kun AI vapauttaa sinut rutiineista. Nyt se on mahdollista!',
-            source: 'reels'
-          },
-          {
-            id: 'reels-2', 
-            title: 'Toinen testi reels',
-            caption: 'Tämä on toinen testi reels sisältöä',
-            media_urls: ['/placeholder.png'],
-            status: 'Kesken',
-            created_at: new Date().toISOString(),
-            hashtags: ['#dummy', '#content'],
-            voiceover: 'Toinen äänitys testiä varten',
-            source: 'reels'
-          }
-        ]
-        return res.status(200).json(dummyData)
+        console.log('N8N workflow ei ole aktiivinen, palautetaan tyhjä array')
+        return res.status(200).json([])
       }
       throw new Error(`N8N webhook error: ${response.status} - ${errorText}`)
     }
@@ -71,32 +47,8 @@ export default async function handler(req, res) {
 
 
     if (responseText.includes('Workflow was started')) {
-      console.log('N8N workflow käynnistyi, palautetaan dummy reels dataa')
-      const dummyData = [
-        {
-          id: 'reels-1',
-          title: 'Testi Reels - AI automaatio',
-          caption: 'Oletko valmis vapauttamaan aikasi keskittyäksesi siihen, mikä todella merkitsee? Meidän oppaallamme näytämme, kuinka AI voi muuttaa liiketoimintasi.',
-          media_urls: ['/placeholder.png'],
-          status: 'Kesken',
-          created_at: new Date().toISOString(),
-          hashtags: ['#test', '#reels'],
-          voiceover: 'Kuvittele, että voit keskittyä liiketoiminnan kasvattamiseen, kun AI vapauttaa sinut rutiineista. Nyt se on mahdollista!',
-          source: 'reels'
-        },
-        {
-          id: 'reels-2', 
-          title: 'Toinen testi reels',
-          caption: 'Tämä on toinen testi reels sisältöä',
-          media_urls: ['/placeholder.png'],
-          status: 'Kesken',
-          created_at: new Date().toISOString(),
-          hashtags: ['#dummy', '#content'],
-          voiceover: 'Toinen äänitys testiä varten',
-          source: 'reels'
-        }
-      ]
-      return res.status(200).json(dummyData)
+      console.log('DEBUG: N8N workflow käynnistyi, palautetaan tyhjä array')
+      return res.status(200).json([])
     }
 
     // Jos N8N palauttaa oikeaa dataa, käsitellään se
@@ -112,41 +64,61 @@ export default async function handler(req, res) {
       console.log('Data ei ole array, muunnetaan:', data)
       data = []
     }
-    const reelsData = data.map(item => {
-      // Käytetään Idea-kenttää otsikkona, jos Caption ei ole saatavilla
-      const title = item.Idea || (item.Caption ? item.Caption.substring(0, 100) + '...' : 'Nimetön Reels')
-      
-      // Käytetään Caption-kenttää kuvausta varten
-      const caption = item.Caption || item.Idea || ''
-      
-      // Käytetään Voiceover-kenttää voiceover-tekstinä
-      const voiceover = item.Voiceover || ''
-      
-      // Status-mappaus
-      const statusMap = {
-        'Draft': 'Kesken',
-        'In Progress': 'Kesken',
-        'Under Review': 'Tarkistuksessa',
-        'Scheduled': 'Aikataulutettu',
-        'Published': 'Julkaistu'
-      }
-      const status = statusMap[item.Status] || 'Kesken'
-      
-      return {
-        id: item.id || item['Record ID'] || `reels-${Date.now()}-${Math.random()}`,
-        title: title,
-        caption: caption,
-        media_urls: [], // Media URL:t tulevat myöhemmin
-        status: status,
-        created_at: item.createdTime || item.Created || new Date().toISOString(),
-        publish_date: null,
-        hashtags: [],
-        voiceover: voiceover,
-        user_id: null,
-        source: 'reels'
-      }
-    })
+    const reelsData = data
+      .map(item => {
+        // Käytetään Idea-kenttää otsikkona, jos Caption ei ole saatavilla
+        const title = item.Idea || (item.Caption ? item.Caption.substring(0, 100) + '...' : '')
+        
+        // Käytetään Caption-kenttää kuvausta varten
+        const caption = item.Caption || item.Idea || ''
+        
+        // Käytetään Voiceover-kenttää voiceover-tekstinä
+        const voiceover = item.Voiceover || ''
+        
+        // Status-mappaus
+        const statusMap = {
+          'Draft': 'Kesken',
+          'In Progress': 'Kesken',
+          'Under Review': 'Tarkistuksessa',
+          'Scheduled': 'Aikataulutettu',
+          'Published': 'Julkaistu'
+        }
+        const status = statusMap[item.Status] || 'Kesken'
+        
+        console.log('DEBUG: Processing Airtable item:', {
+          'Record ID': item['Record ID'],
+          'Idea': item.Idea,
+          'Caption': item.Caption,
+          'Status': item.Status,
+          'title': title,
+          'caption': caption
+        })
+        
+        return {
+          id: item.id || item['Record ID'] || `reels-${Date.now()}-${Math.random()}`,
+          title: title,
+          caption: caption,
+          media_urls: [], // Media URL:t tulevat myöhemmin
+          status: status,
+          created_at: item.createdTime || item.Created || new Date().toISOString(),
+          publish_date: null,
+          hashtags: [],
+          voiceover: voiceover,
+          user_id: null,
+          source: 'reels',
+          'Record ID': item['Record ID'] // Lisätään Record ID myös tähän
+        }
+      })
+      .filter(item => {
+        // Filtteröidään pois itemit joilla ei ole otsikkoa eikä kuvausta
+        const hasContent = item.title || item.caption || item.voiceover
+        if (!hasContent) {
+          console.log('DEBUG: Skipping empty reels item:', item.id)
+        }
+        return hasContent
+      })
 
+    console.log('DEBUG: Palautetaan reelsData:', reelsData)
     res.status(200).json(reelsData)
   } catch (e) {
     console.error('Virhe N8N reels haussa:', e)

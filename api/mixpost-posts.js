@@ -100,7 +100,10 @@ export default async function handler(req, res) {
         let publishDateISO = null
         try {
           if (dateToUse) {
-            const d = new Date((dateToUse || '').replace(' ', 'T'))
+            // Mixpost tallentaa UTC-ajan muodossa "YYYY-MM-DD HH:MM:SS"
+            // Lisätään Z jotta JavaScript tulkitsee sen UTC:nä
+            const utcDateString = (dateToUse || '').replace(' ', 'T') + 'Z'
+            const d = new Date(utcDateString)
             scheduledDateFi = new Intl.DateTimeFormat('fi-FI', {
               timeZone: 'Europe/Helsinki',
               year: 'numeric', month: '2-digit', day: '2-digit',

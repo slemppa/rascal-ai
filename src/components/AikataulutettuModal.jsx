@@ -105,16 +105,30 @@ const AikataulutettuModal = ({
       
       if (dateTimeStr) {
         try {
-          const date = new Date(dateTimeStr)
+          // Mixpost tallentaa UTC-ajan ilman Z-merkintää
+          // Lisätään Z jotta JavaScript tulkitsee sen UTC:nä
+          const utcDateString = dateTimeStr.replace(' ', 'T') + 'Z'
+          const date = new Date(utcDateString)
           
-          const year = date.getFullYear()
-          const month = String(date.getMonth() + 1).padStart(2, '0')
-          const day = String(date.getDate()).padStart(2, '0')
+          // Muunna Europe/Helsinki aikavyöhykkeeseen
+          const formatter = new Intl.DateTimeFormat('fi-FI', {
+            timeZone: 'Europe/Helsinki',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+          
+          const parts = formatter.formatToParts(date)
+          const year = parts.find(p => p.type === 'year').value
+          const month = parts.find(p => p.type === 'month').value
+          const day = parts.find(p => p.type === 'day').value
+          const hour = parts.find(p => p.type === 'hour').value
+          const minute = parts.find(p => p.type === 'minute').value
+          
           dateStr = `${year}-${month}-${day}`
-          
-          const hours = String(date.getHours()).padStart(2, '0')
-          const minutes = String(date.getMinutes()).padStart(2, '0')
-          timeStr = `${hours}:${minutes}`
+          timeStr = `${hour}:${minute}`
         } catch (e) {
           console.error('Error parsing date:', e)
         }
@@ -567,14 +581,18 @@ const AikataulutettuModal = ({
                       }
                       
                       if (dateTimeStr) {
-                        const date = new Date(dateTimeStr)
+                        // Mixpost tallentaa UTC-ajan ilman Z-merkintää
+                        // Lisätään Z jotta JavaScript tulkitsee sen UTC:nä
+                        const utcDateString = dateTimeStr.replace(' ', 'T') + 'Z'
+                        const date = new Date(utcDateString)
                         return date.toLocaleString('fi-FI', {
                           weekday: 'long',
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',
                           hour: '2-digit',
-                          minute: '2-digit'
+                          minute: '2-digit',
+                          timeZone: 'Europe/Helsinki'
                         })
                       }
                       return 'Ei ajankohtaa'

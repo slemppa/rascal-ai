@@ -1536,72 +1536,15 @@ export default function CallPanel() {
     }
   }
 
-  // Export puheluloki CSV-muodossa
+  // Export puheluloki CSV-muodossa — käytä näkyvää, suodatettua callLogs-dataa
   const exportCallLogs = async () => {
     try {
-      if (!user?.id) {
-        alert('Käyttäjän tunniste puuttuu!')
-        return
-      }
-
-      // Hae ensin users.id käyttäen auth_user_id:tä
-      const { data: userProfile, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-
-      if (userError || !userProfile) {
-        alert('Käyttäjää ei löytynyt!')
-        return
-      }
-
-      // Hae filtteröidyt call_logs käyttäjälle (samat filtterit kuin listassa)
-      let exportQuery = supabase
-        .from('call_logs')
-        .select('*')
-        .eq('user_id', userProfile.id)
-        .order('created_at', { ascending: false })
-
-      // Lisää suodattimet
-      if (searchTerm) {
-        exportQuery = exportQuery.or(`customer_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`)
-      }
-      if (statusFilter) {
-        if (statusFilter === 'success') {
-          exportQuery = exportQuery.eq('call_status', 'done').eq('answered', true).neq('call_outcome', 'voice mail')
-        } else if (statusFilter === 'failed') {
-          exportQuery = exportQuery.eq('call_status', 'done').eq('answered', false)
-        } else if (statusFilter === 'voice_mail') {
-          exportQuery = exportQuery.eq('call_status', 'done').eq('call_outcome', 'voice mail')
-        } else if (statusFilter === 'pending') {
-          exportQuery = exportQuery.eq('call_status', 'pending')
-        } else if (statusFilter === 'in_progress') {
-          exportQuery = exportQuery.eq('call_status', 'in progress')
-        }
-      }
-      if (callTypeFilter) {
-        exportQuery = exportQuery.eq('call_type', callTypeFilter)
-      }
-      if (dateFrom) {
-        exportQuery = exportQuery.gte('call_date', dateFrom)
-      }
-      if (dateTo) {
-        exportQuery = exportQuery.lte('call_date', dateTo)
-      }
-
-      const { data: logs, error } = await exportQuery
-
-      if (error) {
-        throw new Error('Puhelulokin haku epäonnistui: ' + error.message)
-      }
-
-      if (!logs || logs.length === 0) {
+      const logs = Array.isArray(callLogs) ? callLogs : []
+      if (!logs.length) {
         alert('Ei puheluja exportattavaksi!')
         return
       }
 
-      // Luo CSV sisältö
       const headers = [
         'Nimi',
         'Puhelinnumero',
@@ -1614,6 +1557,7 @@ export default function CallPanel() {
         'Kesto',
         'Tila',
         'Yhteenveto',
+        'Transkripti',
         'Puhelun tulos',
         'Kampanja ID',
         'VAPI Call ID'
@@ -1640,14 +1584,14 @@ export default function CallPanel() {
           log.call_status === 'pending' ? 'Aikataulutettu' : 
           log.call_status === 'in progress' ? 'Jonossa' : 
           'Tuntematon',
-          `"${log.summary || ''}"`,
+          `"${String(log.summary || '').replaceAll('"', '""').replace(/[\r\n]+/g, ' ') }"`,
+          `"${String(log.transcript || log.call_transcript || '').replaceAll('"', '""').replace(/[\r\n]+/g, ' ') }"`,
           `"${log.call_outcome || ''}"`,
           `"${log.campaign_id || ''}"`,
           `"${log.vapi_call_id || ''}"`
         ].join(','))
       ].join('\n')
 
-      // Luo ja lataa CSV-tiedosto
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
       const link = document.createElement('a')
       const url = URL.createObjectURL(blob)

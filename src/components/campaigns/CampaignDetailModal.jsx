@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { fetchCampaignById } from '../../services/campaignsApi'
+import { pauseCampaign } from '../../services/campaignsApi'
 import CampaignStats from './CampaignStats'
 import CampaignStatusBadge from './CampaignStatusBadge'
 import '../ModalComponents.css'
@@ -10,6 +11,8 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
   const [campaign, setCampaign] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [pausing, setPausing] = useState(false)
+  const [pauseError, setPauseError] = useState('')
 
   useEffect(() => {
     let mounted = true
@@ -47,6 +50,38 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
                   )}
                 </div>
                 <CampaignStatusBadge status={campaign.status} />
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      setPausing(true)
+                      setPauseError('')
+                      await pauseCampaign(campaign.id)
+                      // Päivitä näkymä tuoreella datalla
+                      const fresh = await fetchCampaignById(campaign.id)
+                      setCampaign(fresh)
+                    } catch (e) {
+                      setPauseError(e.message || 'Keskeytys epäonnistui')
+                    } finally {
+                      setPausing(false)
+                    }
+                  }}
+                  disabled={pausing || campaign.status === 'paused'}
+                  style={{
+                    background: campaign.status === 'paused' ? '#e5e7eb' : '#f59e0b',
+                    color: campaign.status === 'paused' ? '#6b7280' : '#111827',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: 8,
+                    padding: '8px 12px',
+                    fontWeight: 700,
+                    cursor: pausing || campaign.status === 'paused' ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {pausing ? 'Keskeytetään…' : campaign.status === 'paused' ? 'Keskeytetty' : 'Keskeytä kampanja'}
+                </button>
+                {pauseError && <div style={{ color: '#dc2626', alignSelf: 'center' }}>{pauseError}</div>}
               </div>
               <CampaignStats campaignId={campaign.id} />
             </div>

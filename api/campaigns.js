@@ -96,6 +96,7 @@ export default async function handler(req, res) {
     const { count: totalCount, error: countError } = await userClient
       .from('call_logs')
       .select('*', { count: 'exact', head: true })
+      .eq('user_id', publicUserId)
       .in('new_campaign_id', campaignIds)
 
     if (countError) {
@@ -125,7 +126,8 @@ export default async function handler(req, res) {
 
       const { data: pageLogs, error: pageError } = await userClient
         .from('call_logs')
-        .select('new_campaign_id, answered, call_outcome, call_status, created_at')
+        .select('new_campaign_id, answered, call_outcome, call_status, created_at, user_id')
+        .eq('user_id', publicUserId)
         .in('new_campaign_id', campaignIds)
         .order('created_at', { ascending: true })
         .range(startIndex, endIndex)
@@ -139,27 +141,43 @@ export default async function handler(req, res) {
     }
 
 
-    // Laske tilastot kaikista logeista
+    // Laske tilastot kaikista logeista Puheluloki-KPI-logiikalla
     const statsByCampaign = {}
     for (const log of allLogs) {
       const cid = log.new_campaign_id
       if (!cid) continue
       
       if (!statsByCampaign[cid]) {
-        statsByCampaign[cid] = { total_calls: 0, answered_calls: 0, successful_calls: 0, called_calls: 0 }
+        statsByCampaign[cid] = { 
+          total_calls: 0, 
+          answered_calls: 0, 
+          successful_calls: 0, 
+          failed_calls: 0,
+          pending_calls: 0,
+          in_progress_calls: 0,
+          called_calls: 0 
+        }
       }
       // Kaikki puhelut
       statsByCampaign[cid].total_calls += 1
-      // Vastatut puhelut
-      if (log.answered) statsByCampaign[cid].answered_calls += 1
+      const status = (log.call_status || '').toLowerCase()
+      // Vastatut puhelut (vain valmiit)
+      if (status === 'done' && log.answered === true) statsByCampaign[cid].answered_calls += 1
       // Onnistuneet puhelut: answered === true JA call_outcome = 'success' tai 'successful'
       const outcome = (log.call_outcome || '').toLowerCase()
-      if (log.answered === true && (outcome === 'success' || outcome === 'successful')) {
+      if (status === 'done' && log.answered === true && (outcome === 'success' || outcome === 'successful')) {
         statsByCampaign[cid].successful_calls += 1
       }
-      // Soitetut puhelut (ei pending eikä in progress)
-      const status = (log.call_status || '').toLowerCase()
-      if (status !== 'pending' && status !== 'in progress') statsByCampaign[cid].called_calls += 1
+      // Epäonnistuneet: valmiit ja ei-vastatut
+      if (status === 'done' && log.answered === false) {
+        statsByCampaign[cid].failed_calls += 1
+      }
+      // Pending
+      if (status === 'pending') statsByCampaign[cid].pending_calls += 1
+      // In progress
+      if (status === 'in progress') statsByCampaign[cid].in_progress_calls += 1
+      // Soitetut puhelut: vain valmiit (done). Paused EI ole soittettu.
+      if (status === 'done') statsByCampaign[cid].called_calls += 1
     }
 
     const enriched = campaigns.map(c => ({
@@ -167,6 +185,9 @@ export default async function handler(req, res) {
       total_calls: statsByCampaign[c.id]?.total_calls || 0,
       answered_calls: statsByCampaign[c.id]?.answered_calls || 0,
       successful_calls: statsByCampaign[c.id]?.successful_calls || 0,
+      failed_calls: statsByCampaign[c.id]?.failed_calls || 0,
+      pending_calls: statsByCampaign[c.id]?.pending_calls || 0,
+      in_progress_calls: statsByCampaign[c.id]?.in_progress_calls || 0,
       called_calls: statsByCampaign[c.id]?.called_calls || 0
     }))
 

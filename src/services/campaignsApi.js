@@ -57,4 +57,22 @@ export async function fetchCampaignStats(id, days = 30) {
   return response.json()
 }
 
+export async function pauseCampaign(id) {
+  const { data } = await supabase.auth.getSession()
+  const token = data?.session?.access_token
+  const response = await fetch('/api/campaign-pause', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify({ id })
+  })
+  if (!response.ok) {
+    const text = await response.text().catch(() => '')
+    throw new Error(`Kampanjan keskeytys epäonnistui: ${response.status} ${text}`)
+  }
+  return response.json()
+}
+
 

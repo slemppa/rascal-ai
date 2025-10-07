@@ -52,10 +52,8 @@ export default async function handler(req, res) {
     // Laske tilastot
     const totalCalls = allCallLogs?.length || 0
     
-    // Soitetut = ne jotka eivät ole pending tai in progress
-    const calledCalls = allCallLogs?.filter(log => 
-      log.call_status !== 'pending' && log.call_status !== 'in progress'
-    ).length || 0
+    // Soitetut = valmiit (done). Paused ei ole soittettu.
+    const calledCalls = allCallLogs?.filter(log => log.call_status === 'done').length || 0
 
     return res.status(200).json({
       success: true,

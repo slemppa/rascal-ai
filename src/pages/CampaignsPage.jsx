@@ -73,15 +73,21 @@ export default function CampaignsPage() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 16, marginBottom: 24 }}>
-        <StatsCard title={t('campaigns.stats.active')} value={activeCount} icon="📊" />
-        <StatsCard title={t('campaigns.stats.totalCalls')} value={totalCalls} icon="📞" />
-        <StatsCard title={t('campaigns.stats.answerRate')} value={`${answerRate}%`} icon="✅" />
-        <StatsCard title={t('campaigns.stats.successful')} value={successfulCalls} icon="🎯" />
+        <StatsCard title={t('campaigns.stats.active')} value={activeCount} />
+        <StatsCard title={t('campaigns.stats.totalCalls')} value={totalCalls} />
+        <StatsCard title={t('campaigns.stats.answerRate')} value={`${answerRate}%`} />
+        <StatsCard title={t('campaigns.stats.successful')} value={successfulCalls} />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16 }}>
         {campaigns.map((campaign) => (
-          <CampaignCard key={campaign.id} campaign={campaign} />
+          <CampaignCard
+            key={campaign.id}
+            campaign={campaign}
+            onStatusChange={(fresh) => {
+              setCampaigns(prev => prev.map(c => c.id === fresh.id ? { ...c, status: fresh.status } : c))
+            }}
+          />
         ))}
       </div>
 

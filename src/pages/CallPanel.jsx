@@ -218,7 +218,7 @@ export default function CallPanel() {
     if (user?.id) {
       fetchCallLogs()
       fetchCallTypes()
-      fetchStats() // Hae tilastot erikseen
+      // Tilastot lasketaan jatkossa suodatetusta callLogs-datasta
     }
   }, [user?.id])
 
@@ -1353,6 +1353,16 @@ export default function CallPanel() {
       }
 
       setCallLogs(allLogs)
+      // Päivitä KPI-tilastot suoraan suodatetusta callLogs-datasta, jotta laatikot seuraavat filttereitä
+      const nextStats = {
+        answered: allLogs.filter(log => log.call_status === 'done' && log.answered === true).length,
+        successful: allLogs.filter(log => log.call_outcome === 'successful').length,
+        failed: allLogs.filter(log => log.call_status === 'done' && log.answered === false).length,
+        pending: allLogs.filter(log => log.call_status === 'pending').length,
+        inProgress: allLogs.filter(log => log.call_status === 'in progress').length,
+        totalCalls: allLogs.length
+      }
+      setStats(nextStats)
       setCurrentPage(page)
       setTotalCount(totalCount)
       
@@ -2513,7 +2523,7 @@ export default function CallPanel() {
                 </Button>
                 <Button
                   type="button"
-                  onClick={() => { fetchCallLogs(); fetchStats(); }}
+                  onClick={() => { fetchCallLogs() }}
                   disabled={loadingCallLogs}
                   variant="secondary"
                   style={{

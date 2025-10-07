@@ -67,6 +67,7 @@
     ]
   },
   "dependencies": {
+    "@elevenlabs/react": "^0.7.1",
     "@supabase/supabase-js": "^2.50.2",
     "@vercel/analytics": "^1.5.0",
     "@vercel/blob": "^1.1.1",

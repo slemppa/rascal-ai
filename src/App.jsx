@@ -49,6 +49,7 @@ import SegmentCreatePage from './pages/SegmentCreatePage'
 import SegmentDetailPage from './pages/SegmentDetailPage'
 import LinkedInTest from './components/LinkedInTest'
 import NotificationBell from './components/NotificationBell'
+import OnboardingModal from './components/OnboardingModal'
 
 // Komponentti joka näyttää ChatbotWidget:n vain julkkisilla sivuilla
 function ConditionalChatbotWidget() {
@@ -122,8 +123,12 @@ function LanguageRedirect() {
 // Poistettu - käytetään nyt StrategyModalManager.jsx komponenttia
 
 export default function App() {
+  console.log('🔵🔵🔵 App.jsx: RENDERING!')
+  
   return (
-    <AuthProvider>
+    <>
+      <OnboardingModal />
+      <AuthProvider>
       <AutoLogoutProvider>
         <PostsProvider>
           <NotificationProvider>
@@ -375,5 +380,6 @@ export default function App() {
         <SpeedInsights />
       </AutoLogoutProvider>
     </AuthProvider>
+    </>
   )
 }

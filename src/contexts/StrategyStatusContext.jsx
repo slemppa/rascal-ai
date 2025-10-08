@@ -23,6 +23,22 @@ export const StrategyStatusProvider = ({ children }) => {
   console.log('StrategyStatusProvider: Rendered with user:', user?.id, 'location:', location.pathname)
   console.log('StrategyStatusProvider: showStrategyModal =', showStrategyModal)
 
+  // Sivut joilla strategia-modal EI saa avautua (kriittiset toiminnot)
+  const MODAL_BLACKLIST = [
+    '/strategy',   // Strategia-sivu (käyttäjä jo käsittelee strategiaa)
+    '/settings',   // Asetukset (salasanan vaihto, kriittiset asetukset)
+    '/signin',     // Kirjautuminen
+    '/signup',     // Rekisteröityminen
+    '/reset-password',  // Salasanan resetointi
+    '/forgot-password', // Salasanan palautus
+    '/admin',      // Admin-sivu
+  ]
+
+  // Tarkista onko nykyinen sivu blacklistillä
+  const isOnBlockedPage = () => {
+    return MODAL_BLACKLIST.some(path => location.pathname.includes(path))
+  }
+
   // Hae käyttäjän status
   const fetchUserStatus = async () => {
     if (!user?.id) {
@@ -46,8 +62,8 @@ export const StrategyStatusProvider = ({ children }) => {
       console.log('StrategyStatus: User status:', data?.status)
       setUserStatus(data?.status)
       
-      // Näytä modal jos status on Pending JA emme ole strategia-sivulla
-      if (data?.status === 'Pending' && !location.pathname.includes('/strategy')) {
+      // Näytä modal jos status on Pending JA emme ole blacklist-sivulla
+      if (data?.status === 'Pending' && !isOnBlockedPage()) {
         console.log('StrategyStatus: Showing modal for Pending status')
         setShowStrategyModal(true)
         // FORCE: Dispatch custom event DOM:iin
@@ -55,8 +71,8 @@ export const StrategyStatusProvider = ({ children }) => {
           const event = new CustomEvent('strategy-modal-should-open', { detail: { reason: 'status-pending' } })
           window.dispatchEvent(event)
         }, 100)
-      } else if (data?.status === 'Pending' && location.pathname.includes('/strategy')) {
-        console.log('StrategyStatus: Pending status but on strategy page, not showing modal')
+      } else if (data?.status === 'Pending' && isOnBlockedPage()) {
+        console.log('StrategyStatus: Pending status but on blocked page, not showing modal')
       }
     } catch (error) {
       console.error('StrategyStatus: Error fetching user status:', error)
@@ -154,8 +170,8 @@ export const StrategyStatusProvider = ({ children }) => {
             console.log('StrategyStatus: Status changed to:', newStatus)
             setUserStatus(newStatus)
             
-            // Näytä modal jos status muuttui Pending:ksi JA emme ole strategia-sivulla
-            if (newStatus === 'Pending' && !location.pathname.includes('/strategy')) {
+            // Näytä modal jos status muuttui Pending:ksi JA emme ole blacklist-sivulla
+            if (newStatus === 'Pending' && !isOnBlockedPage()) {
               console.log('StrategyStatus: Opening modal due to realtime status change')
               setShowStrategyModal(true)
             }
@@ -171,10 +187,10 @@ export const StrategyStatusProvider = ({ children }) => {
     }
   }, [user?.id, location.pathname])
 
-  // Sulje modal kun mennään strategia-sivulle
+  // Sulje modal kun mennään blacklist-sivulle
   useEffect(() => {
-    if (location.pathname.includes('/strategy')) {
-      console.log('StrategyStatus: On strategy page, closing modal')
+    if (isOnBlockedPage()) {
+      console.log('StrategyStatus: On blocked page, closing modal')
       setShowStrategyModal(false)
     }
   }, [location.pathname])

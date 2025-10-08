@@ -663,9 +663,6 @@ export default function AIChatPage() {
                           <div key={file.file_name} className="ai-chat-file-item">
                             <div className="ai-chat-file-info">
                               <div className="ai-chat-file-name">{file.file_name || file.filename}</div>
-                              {Array.isArray(file.id) && (
-                                <div className="ai-chat-file-meta">{file.id.length} osaa</div>
-                              )}
                             </div>
                             <button
                               onClick={() => handleFileDeletion(file.id)}

@@ -751,6 +751,29 @@
       },
       "direction": { "outbound": "Lähtevät", "inbound": "Saapuvat" },
       "status": { "sent": "Lähetetty", "delivered": "Toimitettu", "read": "Luettu", "failed": "Epäonnistui", "pending": "Odottaa" }
+    },
+    "textMessagesTab": {
+      "header": "Tekstiviestit",
+      "buttons": { "refresh": "Päivitä", "refreshing": "Päivitetään..." },
+      "sectionTitle": "Ensimmäinen tekstiviesti",
+      "showingCount": "Näytetään {{count}} puhelutyyppiä",
+      "loadingTypes": "Ladataan puhelutyyppejä...",
+      "empty": "Ei puhelutyyppejä löytynyt",
+      "card": {
+        "unnamed": "Nimetön tyyppi",
+        "statusActive": "Aktiivinen",
+        "statusDraft": "Luonnos",
+        "statusUnknown": "Tuntematon",
+        "identifier": "Tunniste:",
+        "messageLabel": "Viesti",
+        "placeholder": "Asiakkaalle lähetettävä SMS ennen puhelua... (max 160 merkkiä)",
+        "counterSuffix": "merkkiä",
+        "longHint": "Pitkä viesti ({{parts}} viestiä)",
+        "defined": "SMS määritelty",
+        "notDefined": "SMS ei määritelty",
+        "edit": "Muokkaa",
+        "save": "Tallenna"
+      }
     }
     ,
     "modals": {

@@ -266,6 +266,8 @@
   height: auto;
   transition: border-color 0.2s ease;
   box-sizing: border-box;
+  color: #1f2937 !important; /* Pakota musta teksti */
+  background: #ffffff !important; /* Valkoinen tausta */
 }
 
 .strategy-textarea:focus {
@@ -278,9 +280,12 @@
 .strategy-textarea,
 .icp-textarea,
 .company-summary-textarea,
-.tov-textarea {
+.tov-textarea,
+.kpi-textarea {
   overflow: hidden;
   resize: none;
+  color: #1f2937 !important; /* Pakota musta teksti KAIKILLE textarea-kentille */
+  background: #ffffff !important; /* Valkoinen tausta */
 }
 
 .edit-actions {
@@ -455,6 +460,8 @@
   border-radius: 8px;
   font-size: 16px;
   transition: border-color 0.2s ease;
+  color: #1f2937 !important; /* Pakota musta teksti */
+  background: #ffffff !important; /* Valkoinen tausta */
 }
 
 .form-input:focus,
@@ -467,6 +474,8 @@
 .form-textarea {
   min-height: 120px;
   resize: vertical;
+  color: #1f2937 !important; /* Pakota musta teksti */
+  background: #ffffff !important; /* Valkoinen tausta */
 }
 
 .modal-actions {

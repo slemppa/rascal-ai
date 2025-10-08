@@ -3,6 +3,7 @@ import pkg from '../../package.json'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import Button from '../components/Button'
 import '../components/ModalComponents.css'
 import './AdminPage.css'
 

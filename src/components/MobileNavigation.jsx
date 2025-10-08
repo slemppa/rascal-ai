@@ -15,8 +15,8 @@ const menuItems = [
   { label: 'Puhelut', path: '/calls', feature: 'Phone Calls' },
   { label: 'Assistentti', path: '/ai-chat', feature: 'Marketing assistant' },
   { label: 'Dev', path: '/dev', feature: null, adminOnly: true },
-  { label: 'Admin', path: '/admin', feature: null, adminOnly: true },
-  { label: 'Admin Blog', path: '/admin-blog', feature: null, adminOnly: true },
+  { label: 'Ylläpito', path: '/admin', feature: null, adminOnly: true },
+  { label: 'Admin', path: '/admin-blog', feature: null, moderatorOnly: true },
 ]
 
 const bottomItems = [
@@ -46,8 +46,8 @@ export default function MobileNavigation() {
           .single()
 
         if (!error && userData) {
-          const admin = userData.role === 'admin' || userData.company_id === 1
-          const moderator = userData.role === 'moderator' || admin
+          const admin = userData.role === 'admin'
+          const moderator = userData.role === 'moderator' || userData.role === 'admin'
           setIsAdmin(admin)
           setIsModerator(moderator)
         }
@@ -129,8 +129,9 @@ export default function MobileNavigation() {
             {/* Navigaatiovalikko */}
             <nav className="mobile-nav-list">
               {menuItems.map(item => {
-                const adminOnly = item.adminOnly && !(isAdmin || isModerator)
-                if (adminOnly) return null
+                // Oikeuksien tarkistus
+                if (item.adminOnly && !isAdmin) return null
+                if (item.moderatorOnly && !isModerator) return null
 
                 // Feature-gating mobiilissa
                 if (item.feature && !hasFeature(item.feature)) return null

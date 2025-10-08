@@ -410,13 +410,13 @@ h2.auth-title { color: #ffffff !important; }
   }
 
   .auth-label {
-    font-size: 13px;
+    font-size: 14px;
     margin-bottom: 4px;
   }
 
   .auth-input,
   .auth-magic-input {
-    font-size: 14px;
+    font-size: 16px; /* Estää iOS-zoomauksen */
     padding: 10px 12px;
     border-radius: 6px;
   }
@@ -516,15 +516,15 @@ h2.auth-title { color: #ffffff !important; }
   }
 
   .auth-label {
-    font-size: 12px;
+    font-size: 13px;
     margin-bottom: 3px;
   }
 
   .auth-input,
   .auth-magic-input {
-    font-size: 13px;
-    padding: 8px 10px;
-    border-radius: 5px;
+    font-size: 16px; /* Estää iOS-zoomauksen */
+    padding: 10px 12px;
+    border-radius: 6px;
   }
 
   .auth-input.password {

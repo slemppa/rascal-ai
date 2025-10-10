@@ -180,77 +180,103 @@ const EditCallTypeModal = ({
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">AI role</label>
+                  <label className="form-label">Agent Name</label>
+                  <input
+                    type="text"
+                    value={editingCallType.agent_name || ''}
+                    onChange={e => setEditingCallType({ ...editingCallType, agent_name: e.target.value })}
+                    placeholder="Sarah from Sales"
+                    className="form-input"
+                  />
+                </div>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
+                  <div style={{ lineHeight: 1.6 }}>"Emma from Customer Success" or "Alex - Technical Support"</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
+                <div className="form-group">
+                  <label className="form-label">Target Audience</label>
+                  <input
+                    type="text"
+                    value={editingCallType.target_audience || ''}
+                    onChange={e => setEditingCallType({ ...editingCallType, target_audience: e.target.value })}
+                    placeholder="B2B decision makers, CFOs at mid-size companies"
+                    className="form-input"
+                  />
+                </div>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
+                  <div style={{ lineHeight: 1.6 }}>Be specific: "HR managers at 50-500 employee companies" instead of just "HR managers"</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
+                <div className="form-group">
+                  <label className="form-label">Agent Persona / Role</label>
                   <textarea
                     value={editingCallType.identity || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, identity: e.target.value })}
-                    placeholder={
-`• Who is the assistant (name + role)?\n• Under which brand does it operate?\n• What problem/situation does it help solve?\n• What high-level goal does it serve?`
-                    }
+                    placeholder="You are Sarah, a friendly sales consultant at TechCorp. You help business owners streamline their operations with our software solutions."
                     rows={5}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>You are [Name], [Company]'s AI assistant. You help [target audience] with [topic] and hand over to a human expert when needed.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
+                  <div style={{ lineHeight: 1.6 }}>"You are Emma, a customer success specialist at CloudCo. You help clients maximize their ROI by identifying optimization opportunities and providing actionable recommendations."</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Speaking style</label>
+                  <label className="form-label">Tone & Speaking Style</label>
                   <textarea
                     value={editingCallType.style || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, style: e.target.value })}
-                    placeholder={
-`• Language and mode of address.\n• Tone: friendly/concise/professional.\n• Avoid: jargon, long sentences.\n• Rhythm: short sentences, natural pauses (… or –).`
-                    }
+                    placeholder="Professional yet warm. Use clear, jargon-free language. Keep sentences short and pause naturally for responses."
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>Speak clearly and warmly; keep it concise. Avoid jargon. Use short sentences and natural pauses (… or –).</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
+                  <div style={{ lineHeight: 1.6 }}>"Conversational and consultative. Mirror the prospect's energy level. Use 'we' language to build partnership. Avoid technical terms unless the prospect uses them first."</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Call goals</label>
+                  <label className="form-label">Call Objective / Goals</label>
                   <textarea
                     value={editingCallType.goals || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, goals: e.target.value })}
-                    placeholder={
-`• List 3–5 concrete goals for this call type.\n• What information must be collected?\n• What is the outcome/next step?`
-                    }
+                    placeholder="1. Qualify budget and timeline&#10;2. Identify key pain points&#10;3. Determine decision-making process&#10;4. Book demo with qualified leads"
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>1) Find out [X]. 2) Map [interests/challenges]. 3) Offer a helpful option. 4) Ask for follow-up. 5) Collect best time and contact method.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
+                  <div style={{ lineHeight: 1.6 }}>"1. Confirm current solution & satisfaction level<br/>2. Identify 2-3 specific challenges<br/>3. Gauge interest in ROI calculator<br/>4. Schedule next touchpoint"</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Conversation guidelines</label>
+                  <label className="form-label">Guidelines & Rules</label>
                   <textarea
                     value={editingCallType.guidelines || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, guidelines: e.target.value })}
-                    placeholder={
-`• How to pace the conversation.\n• One question at a time, wait for answer.\n• Clarify if the answer is unclear.\n• If customer asks → answer briefly then return to script.\n• Show empathy and do not interrupt.`
-                    }
+                    placeholder="Always confirm understanding before moving on. If prospect asks off-topic questions, acknowledge briefly and redirect. Never interrupt; let them finish speaking completely."
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>Ask one question at a time and wait. If unclear, ask for an example. Answer briefly and continue the script.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
+                  <div style={{ lineHeight: 1.6 }}>"Ask permission before diving into questions. If they're busy, offer to reschedule immediately. Surface objections gently with 'It sounds like...' framing. Always end with a clear next step."</div>
                 </div>
               </div>
             </div>
@@ -260,94 +286,86 @@ const EditCallTypeModal = ({
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Opening line</label>
+                  <label className="form-label">Greeting</label>
                   <input
                     type="text"
                     value={editingCallType.first_line || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, first_line: e.target.value })}
                     className="form-input"
-                    placeholder="What the assistant says first when the call starts"
+                    placeholder="Hi, this is Sarah from TechCorp!"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>This is what the assistant says first when the call starts.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
+                  <div style={{ lineHeight: 1.6 }}>"Good morning! This is Alex calling from CloudCo." - Keep it natural and friendly.</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Intro</label>
+                  <label className="form-label">Purpose Introduction / Reason for Call</label>
                   <textarea
                     value={editingCallType.intro || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, intro: e.target.value })}
-                    placeholder={
-                    `• Greeting + introduction + reason for contact.\n• Set expectations (I'll ask a few questions).\n• Invite to continue.`
-                    }
+                    placeholder="I'm reaching out because you recently downloaded our pricing guide. I wanted to see if you had any questions and share how we've helped similar companies reduce costs by 30%."
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>Hello! This is [Name], [Company]'s AI assistant. I'm calling/answering because [reason]. If it's okay, I'll ask a couple of concise questions — shall we begin?</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
+                  <div style={{ lineHeight: 1.6 }}>"I noticed you attended our webinar last week. I'm following up to see what resonated with you and answer any questions. Is now a good time for a quick chat, maybe 5-7 minutes?"</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Question list</label>
+                  <label className="form-label">Product/Service Questions List</label>
                   <textarea
                     value={editingCallType.questions || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, questions: e.target.value })}
-                    placeholder={
-`• Number 4–7 core questions.\n• Write each on its own line.\n• Add branches: If no/yes → do X.\n• Add: wait for answer between questions.`
-                    }
+                    placeholder="1. What's your current process for [specific task]?&#10;   [wait for answer]&#10;2. What challenges are you facing with that approach?&#10;   [wait for answer]&#10;3. If you could wave a magic wand, what would the ideal solution look like?&#10;   [wait for answer]"
                     rows={8}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151', whiteSpace: 'pre-wrap' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>{`1) Did you attend [event]?\nwait for answer\nIf no → ask if they'd like a link or recording.\nwait for answer\n2) What got you interested in [topic]?\nwait for answer\n3) Where do you see the biggest challenge: [options]?\nwait for answer\n4) Would you like a specialist to contact you?\nwait for answer\nIf yes → ask for the best time and method (call/email).`}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
+                  <div style={{ lineHeight: 1.6 }}>{`1. How are you currently handling customer onboarding?\n   [wait for answer]\n   → If manual: How much time does that take per week?\n2. What's the biggest bottleneck in that process?\n   [wait for answer]\n3. Have you explored automation tools before?\n   [wait for answer]\n   → If yes: What didn't work about them?`}</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Closing line</label>
+                  <label className="form-label">Call Closing / Goodbye</label>
                   <textarea
                     value={editingCallType.outro || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, outro: e.target.value })}
-                    placeholder={
-`• Thank them and ask if there's anything else.\n• Offer to send a summary/links by email.\n• Confirm the next steps.\n• End politely.`
-                    }
+                    placeholder="This has been really helpful! Based on what you shared, I think a personalized demo would be valuable. I'll send you a calendar link - does Tuesday or Thursday work better for you?"
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151', whiteSpace: 'pre-wrap' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>{`Thanks for the chat! Shall I send a short summary and links by email?\nwait for answer\nLet's agree on this: [next step]. Have a great day – goodbye!`}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
+                  <div style={{ lineHeight: 1.6 }}>"Thanks for your time! I'll email you those resources we discussed plus our ROI calculator. Any final questions before I let you go? Perfect - talk soon!"</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Additional notes</label>
+                  <label className="form-label">Agent Notes / Special Instructions</label>
                   <textarea
                     value={editingCallType.notes || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, notes: e.target.value })}
-                    placeholder={
-`• What metadata should be recorded (time, method, consent, email, preferences).\n• Special flags/labels (urgent, feedback, escalation).`
-                    }
+                    placeholder="Record: Preferred contact time, current solution name, budget range mentioned, decision timeline, competitor mentions, specific pain points, and any follow-up commitments made."
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>Record: preferred contact time, method, email, request for webinar link/recording, short summary of challenges/goals.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
+                  <div style={{ lineHeight: 1.6 }}>"Flag as 'Hot Lead' if budget confirmed + decision timeline under 60 days. Tag with primary use case. Note any technical requirements or integration needs mentioned."</div>
                 </div>
               </div>
 

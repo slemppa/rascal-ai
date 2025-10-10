@@ -754,6 +754,8 @@ export default function CallPanel() {
         // Päivitä olemassa oleva puhelutyyppi Supabase-tietokannassa
         const fields = {
           name: editingCallType.name || editingCallType.callType,
+          agent_name: editingCallType.agent_name || '',
+          target_audience: editingCallType.target_audience || '',
           identity: editingCallType.identity || '',
           style: editingCallType.style || '',
           guidelines: editingCallType.guidelines || '',
@@ -1000,6 +1002,8 @@ export default function CallPanel() {
       const insertData = {
         user_id: userProfile.id,
         name: newCallType.callType,
+        agent_name: newCallType.agent_name || '',
+        target_audience: newCallType.target_audience || '',
         identity: newCallType.identity || '',
         style: newCallType.style || '',
         guidelines: newCallType.guidelines || '',

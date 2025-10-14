@@ -1620,16 +1620,32 @@ export default function ManagePostsPage() {
       formData.append('contentId', contentId)
       formData.append('userId', userData.id)
 
+      // Hae session ja tarkista että se on voimassa
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError || !sessionData.session?.access_token) {
+        throw new Error('Session expired or invalid. Please log in again.')
+      }
+
+      console.log('DEBUG - Sending image upload request:', { contentId, userId: userData.id })
+
+      // Luodaan AbortController timeout:lle
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 60000) // 60 sekuntia timeout
+
       const response = await fetch('/api/content-media-management', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+          'Authorization': `Bearer ${sessionData.session.access_token}`
         },
-        body: formData
+        body: formData,
+        signal: controller.signal
       })
 
+      clearTimeout(timeoutId)
+
       if (!response.ok) {
-        const errorData = await response.json()
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('DEBUG - Upload failed:', errorData)
         throw new Error(errorData.error || 'Image addition failed')
       }
 
@@ -1664,7 +1680,22 @@ export default function ManagePostsPage() {
       
     } catch (error) {
       console.error('Error adding image:', error)
-      setErrorMessage('Image addition failed: ' + error.message)
+      
+      let errorMessage = 'Image addition failed: ' + error.message
+      
+      // Jos timeout, anna selkeämpi viesti
+      if (error.name === 'AbortError') {
+        errorMessage = 'Image upload timed out. Please try again with a smaller image.'
+      }
+      
+      setErrorMessage(errorMessage)
+      
+      // Jos session on vanhentunut, ohjaa takaisin login-sivulle
+      if (error.message.includes('Session expired')) {
+        setTimeout(() => {
+          window.location.href = '/login'
+        }, 2000)
+      }
     }
   }
 

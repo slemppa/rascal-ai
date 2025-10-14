@@ -74,7 +74,7 @@ const transformSupabaseData = (supabaseData) => {
   return transformed
 }
 
-function ContentCard({ content, onView, onPublish, onArchive, onDownload }) {
+function ContentCard({ content, onView, onPublish, onArchive, onDownload, onEdit }) {
   const { t } = useTranslation('common')
   return (
     <div className="content-card">
@@ -151,6 +151,13 @@ function ContentCard({ content, onView, onPublish, onArchive, onDownload }) {
               >
                 {t('blogNewsletter.actions.view')}
               </Button>
+              <Button 
+                variant="secondary" 
+                onClick={() => onEdit(content)}
+                style={{ fontSize: '11px', padding: '6px 10px' }}
+              >
+                ✏️ Muokkaa
+              </Button>
               {/* Julkaisu-nappi vain jos status on "Tarkistuksessa" */}
               {content.status === 'Tarkistuksessa' && (
                 <Button
@@ -201,7 +208,9 @@ export default function BlogNewsletterPage() {
   const [toast, setToast] = useState({ visible: false, message: '' })
     const [showCreateModal, setShowCreateModal] = useState(false)
   const [showViewModal, setShowViewModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
   const [viewingContent, setViewingContent] = useState(null)
+  const [editingContent, setEditingContent] = useState(null)
  
   const hasInitialized = useRef(false)
 
@@ -338,6 +347,102 @@ export default function BlogNewsletterPage() {
   const handleViewContent = async (content) => {
     setViewingContent(content)
     setShowViewModal(true)
+  }
+
+  const handleEditContent = async (content) => {
+    setEditingContent(content)
+    setShowEditModal(true)
+  }
+
+  const handleUpdateContent = async (contentData) => {
+    try {
+      // Haetaan käyttäjän user_id users taulusta
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (userError || !userData?.id) {
+        throw new Error('Käyttäjän ID ei löytynyt')
+      }
+
+      // Päivitetään content Supabase:sta
+      const { error } = await supabase
+        .from('content')
+        .update({
+          idea: contentData.title,
+          caption: contentData.caption,
+          meta_description: contentData.meta_description,
+          type: contentData.type,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', contentData.id)
+        .eq('user_id', userData.id)
+
+      if (error) {
+        throw error
+      }
+
+      // Päivitetään UI
+      await fetchContents()
+      setShowEditModal(false)
+      setEditingContent(null)
+      setToast({ visible: true, message: 'Sisältö päivitetty' })
+      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+      
+    } catch (error) {
+      console.error('Update error:', error)
+      setToast({ visible: true, message: 'Päivitys epäonnistui: ' + error.message })
+      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+    }
+  }
+
+  const handleImageUpload = async (event, contentId) => {
+    const file = event.target.files[0]
+    if (!file) return
+
+    try {
+      // Haetaan käyttäjän user_id users taulusta
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (userError || !userData?.id) {
+        throw new Error('Käyttäjän ID ei löytynyt')
+      }
+
+      const formData = new FormData()
+      formData.append('image', file)
+      formData.append('contentId', contentId)
+      formData.append('userId', userData.id)
+      formData.append('replaceMode', 'true')
+
+      const response = await fetch('/api/content-media-management', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        },
+        body: formData
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Kuvan lataus epäonnistui')
+      }
+
+      // Päivitetään UI
+      await fetchContents()
+      setToast({ visible: true, message: 'Kuva päivitetty' })
+      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+      
+    } catch (error) {
+      console.error('Image upload error:', error)
+      setToast({ visible: true, message: 'Kuvan lataus epäonnistui: ' + error.message })
+      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+    }
   }
 
   const handlePublishContent = async (content) => {
@@ -543,14 +648,18 @@ export default function BlogNewsletterPage() {
           setShowViewModal(false)
           setViewingContent(null)
         }
+        if (showEditModal) {
+          setShowEditModal(false)
+          setEditingContent(null)
+        }
       }
     }
 
-    if (showCreateModal || showViewModal) {
+    if (showCreateModal || showViewModal || showEditModal) {
       document.addEventListener('keydown', handleEscKey)
       return () => document.removeEventListener('keydown', handleEscKey)
     }
-  }, [showCreateModal, showViewModal])
+  }, [showCreateModal, showViewModal, showEditModal])
 
   return (
     <div className="blog-newsletter-container">
@@ -691,6 +800,7 @@ export default function BlogNewsletterPage() {
                 onPublish={handlePublishContent}
                 onArchive={handleArchiveContent}
                 onDownload={handleDownloadImage}
+                onEdit={handleEditContent}
               />
             ))
           )}
@@ -895,6 +1005,135 @@ export default function BlogNewsletterPage() {
                   </Button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Edit Modal */}
+      {showEditModal && editingContent && createPortal(
+        <div 
+          className="modal-overlay modal-overlay--light"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowEditModal(false)
+              setEditingContent(null)
+            }
+          }}
+        >
+          <div className="modal-container" style={{ maxWidth: '800px' }}>
+            <div className="modal-header">
+              <h2 className="modal-title">Muokkaa sisältöä</h2>
+              <button
+                onClick={() => {
+                  setShowEditModal(false)
+                  setEditingContent(null)
+                }}
+                className="modal-close-btn"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-content">
+              <form onSubmit={(e) => {
+                e.preventDefault()
+                const formData = new FormData(e.target)
+                handleUpdateContent({
+                  id: editingContent.id,
+                  title: formData.get('title'),
+                  caption: formData.get('caption'),
+                  meta_description: formData.get('meta_description'),
+                  type: formData.get('type')
+                })
+              }}>
+                <div className="form-group">
+                  <label className="form-label">Otsikko</label>
+                  <input
+                    name="title"
+                    type="text"
+                    required
+                    className="form-input"
+                    defaultValue={editingContent.title}
+                    placeholder="Sisällön otsikko"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Tyyppi</label>
+                  <select
+                    name="type"
+                    required
+                    className="form-select"
+                    defaultValue={editingContent.type}
+                  >
+                    <option value="Blog">Blog</option>
+                    <option value="Newsletter">Newsletter</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Kuvaus</label>
+                  <textarea
+                    name="caption"
+                    rows={4}
+                    className="form-textarea"
+                    defaultValue={editingContent.caption}
+                    placeholder="Sisällön kuvaus"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Meta Description</label>
+                  <textarea
+                    name="meta_description"
+                    rows={3}
+                    className="form-textarea"
+                    defaultValue={editingContent.meta_description}
+                    placeholder="SEO-kuvaus (näkyy hakukoneissa)"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Kuva</label>
+                  <div className="image-upload-section">
+                    {editingContent.thumbnail && editingContent.thumbnail !== '/placeholder.png' ? (
+                      <div className="current-image">
+                        <img src={editingContent.thumbnail} alt="Nykyinen kuva" style={{ maxWidth: '200px', borderRadius: '8px' }} />
+                        <p style={{ fontSize: '12px', color: '#666', margin: '8px 0 0 0' }}>
+                          Nykyinen kuva. Käytä "Vaihda kuva" -nappia vaihtaaksesi.
+                        </p>
+                      </div>
+                    ) : (
+                      <p style={{ fontSize: '14px', color: '#666' }}>Ei kuvaa</p>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, editingContent.id)}
+                      style={{ marginTop: '12px' }}
+                    />
+                  </div>
+                </div>
+                <div className="modal-actions">
+                  <div className="modal-actions-left">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => {
+                        setShowEditModal(false)
+                        setEditingContent(null)
+                      }}
+                    >
+                      Peruuta
+                    </Button>
+                  </div>
+                  <div className="modal-actions-right">
+                    <Button
+                      type="submit"
+                      variant="primary"
+                    >
+                      Tallenna muutokset
+                    </Button>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>,

@@ -41,15 +41,32 @@ export default async function handler(req, res) {
       const form = formidable({
         maxFileSize: 10 * 1024 * 1024, // 10MB
         maxFields: 5,
+        timeout: 30000, // 30 sekuntia timeout
+        keepExtensions: true,
+        allowEmptyFiles: false,
+        minFileSize: 1
       })
 
+      console.log('DEBUG - Starting form parse...')
       const [fields, files] = await form.parse(req)
+      console.log('DEBUG - Form parsed successfully')
+      
       const file = files.image?.[0]
       const contentId = fields.contentId?.[0]
       const userId = fields.userId?.[0]
       const replaceMode = fields.replaceMode?.[0] === 'true'
 
+      console.log('DEBUG - Form data:', { 
+        hasFile: !!file, 
+        contentId, 
+        userId, 
+        replaceMode,
+        fileName: file?.originalFilename,
+        fileSize: file?.size
+      })
+
       if (!file || !contentId || !userId) {
+        console.error('DEBUG - Missing required fields:', { file: !!file, contentId, userId })
         return res.status(400).json({ 
           error: 'Missing fields: image, contentId, userId' 
         })
@@ -71,6 +88,8 @@ export default async function handler(req, res) {
       }
       
       const fileBuffer = fs.readFileSync(file.filepath)
+      console.log('DEBUG - About to upload to storage:', { filePath, fileSize: fileBuffer.length })
+      
       const { data, error: uploadError } = await supabase.storage
         .from('content-media')
         .upload(filePath, fileBuffer, {
@@ -85,6 +104,8 @@ export default async function handler(req, res) {
           details: uploadError.message 
         })
       }
+      
+      console.log('DEBUG - Upload successful:', data)
 
       // Hae julkinen URL käyttäen samaa polkua kuin upload
       const { data: urlData } = supabase.storage
@@ -185,20 +206,9 @@ export default async function handler(req, res) {
       // Poista tiedosto bucket:ista
       console.log('DEBUG - imageUrl:', imageUrl);
       
-      // Poimi tiedostonimi URL:sta ja muodosta käyttäjäkohtainen polku
+      // Poimi tiedostonimi URL:sta ja muodosta polku
       const fileName = imageUrl.split('/').pop()
       console.log('DEBUG - fileName:', fileName);
-      
-      // Käytä jo haettua user_id:tä
-      const userId = contentData.user_id
-      
-      if (contentError) {
-        console.error('Error fetching content user_id:', contentError)
-        return res.status(400).json({ 
-          error: 'Content not found', 
-          details: contentError.message 
-        })
-      }
       
       // Muodosta polku tiedostolle images kansiossa
       const filePath = `images/${fileName}`

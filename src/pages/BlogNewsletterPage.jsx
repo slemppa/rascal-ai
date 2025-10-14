@@ -440,8 +440,19 @@ export default function BlogNewsletterPage() {
       
     } catch (error) {
       console.error('Image upload error:', error)
-      setToast({ visible: true, message: 'Kuvan lataus epäonnistui: ' + error.message })
+      
+      let errorMessage = 'Kuvan lataus epäonnistui: ' + error.message
+      
+      // Jos network error, anna selkeämpi viesti
+      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        errorMessage = 'Verkkoyhteys ongelma. Tarkista internetyhteytesi ja kokeile uudelleen.'
+      }
+      
+      setToast({ visible: true, message: errorMessage })
       setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+      
+      // Näytä myös alert käyttäjälle
+      alert('🚨 KUVA-LATAUS EPÄONNISTUI 🚨\n\nVirhe: ' + errorMessage + '\n\nOle hyvä ja:\n1. Tarkista internetyhteytesi\n2. Kokeile uudelleen\n3. Jos ongelma jatkuu, ota yhteyttä tukeen')
     }
   }
 

@@ -1688,7 +1688,15 @@ export default function ManagePostsPage() {
         errorMessage = 'Image upload timed out. Please try again with a smaller image.'
       }
       
+      // Jos network error, anna selkeämpi viesti
+      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        errorMessage = 'Network error. Please check your internet connection and try again.'
+      }
+      
       setErrorMessage(errorMessage)
+      
+      // Näytä myös alert käyttäjälle
+      alert('🚨 KUVA-LATAUS EPÄONNISTUI 🚨\n\nVirhe: ' + errorMessage + '\n\nOle hyvä ja:\n1. Tarkista internetyhteytesi\n2. Kokeile uudelleen\n3. Jos ongelma jatkuu, ota yhteyttä tukeen')
       
       // Jos session on vanhentunut, ohjaa takaisin login-sivulle
       if (error.message.includes('Session expired')) {

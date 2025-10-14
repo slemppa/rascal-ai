@@ -489,7 +489,8 @@
       "cancel": "Cancel",
       "delete": "Delete",
       "retry": "Try again",
-      "close": "Close"
+      "close": "Close",
+      "download": "Download"
     },
     "loading": { "loadingContent": "Loading content..." },
     "empty": {

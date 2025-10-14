@@ -55,6 +55,7 @@ const transformSupabaseData = (supabaseData) => {
       type: item.type || 'Blog',
       idea: item.idea || '',
       blog_post: item.blog_post || '',
+      meta_description: item.meta_description || '',
       createdAt: item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : null,
       scheduledDate: item.publish_date && publishDate > now ? new Date(item.publish_date).toISOString().split('T')[0] : null,
       publishedAt: item.publish_date && publishDate <= now ? new Date(item.publish_date).toISOString().split('T')[0] : null,
@@ -73,20 +74,33 @@ const transformSupabaseData = (supabaseData) => {
   return transformed
 }
 
-function ContentCard({ content, onView, onPublish, onArchive }) {
+function ContentCard({ content, onView, onPublish, onArchive, onDownload }) {
   const { t } = useTranslation('common')
   return (
     <div className="content-card">
       <div className="content-card-content">
         <div className="content-thumbnail">
           {content.thumbnail && content.thumbnail !== '/placeholder.png' ? (
-            <img
-              src={content.thumbnail}
-              alt="thumbnail"
-              onError={(e) => {
-                e.target.src = '/placeholder.png';
-              }}
-            />
+            <>
+              <img
+                src={content.thumbnail}
+                alt="thumbnail"
+                onError={(e) => {
+                  e.target.src = '/placeholder.png';
+                }}
+              />
+              <button 
+                className="download-button"
+                onClick={() => onDownload(content.thumbnail, content.title)}
+                title={t('blogNewsletter.actions.download')}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7,10 12,15 17,10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+              </button>
+            </>
           ) : (
             <div className="placeholder-content">
               <img 
@@ -108,7 +122,7 @@ function ContentCard({ content, onView, onPublish, onArchive }) {
         <div className="content-info">
           <div className="content-header">
             <h3 className="content-title">
-              {content.title.length > 60 ? content.title.slice(0, 60) + '…' : content.title}
+              {content.title.includes('.') ? content.title.split('.')[0] + '.' : content.title}
             </h3>
             <div className="content-badges">
               <span className="content-type">
@@ -120,7 +134,10 @@ function ContentCard({ content, onView, onPublish, onArchive }) {
             </div>
           </div>
           <p className="content-caption">
-            {content.caption.length > 120 ? content.caption.slice(0, 120) + '…' : content.caption}
+            {content.meta_description ? 
+              (content.meta_description.includes('.') ? content.meta_description.split('.')[0] + '.' : content.meta_description) :
+              (content.caption.includes('.') ? content.caption.split('.')[0] + '.' : content.caption)
+            }
           </p>
           <div className="content-footer">
             <span className="content-date">
@@ -479,6 +496,42 @@ export default function BlogNewsletterPage() {
     }
   }
 
+  const handleDownloadImage = async (imageUrl, title) => {
+    try {
+      // Luodaan turvallinen tiedostonimi
+      const safeTitle = title.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_')
+      const fileName = `${safeTitle}_image.jpg`
+      
+      // Haetaan kuva
+      const response = await fetch(imageUrl)
+      if (!response.ok) {
+        throw new Error('Kuvan lataus epäonnistui')
+      }
+      
+      const blob = await response.blob()
+      
+      // Luodaan latauslinkki
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = fileName
+      document.body.appendChild(link)
+      link.click()
+      
+      // Siivotaan
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+      
+      setToast({ visible: true, message: 'Kuva ladattu' })
+      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+      
+    } catch (error) {
+      console.error('Download error:', error)
+      setToast({ visible: true, message: 'Lataus epäonnistui' })
+      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+    }
+  }
+
   // ESC-näppäimellä sulkeutuminen
   useEffect(() => {
     const handleEscKey = (event) => {
@@ -637,6 +690,7 @@ export default function BlogNewsletterPage() {
                 onView={handleViewContent}
                 onPublish={handlePublishContent}
                 onArchive={handleArchiveContent}
+                onDownload={handleDownloadImage}
               />
             ))
           )}

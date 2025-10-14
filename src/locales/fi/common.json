@@ -499,7 +499,8 @@
       "cancel": "Peruuta",
       "delete": "Poista",
       "retry": "Yritä uudelleen",
-      "close": "Sulje"
+      "close": "Sulje",
+      "download": "Lataa"
     },
     "loading": { "loadingContent": "Ladataan sisältöä..." },
     "empty": {

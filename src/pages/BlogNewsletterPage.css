@@ -232,6 +232,49 @@
   transform: scale(1.05);
 }
 
+/* Download button */
+.download-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(-4px);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.content-thumbnail:hover .download-button {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.download-button:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.download-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.download-button svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
+}
+
 /* Placeholder content */
 .placeholder-content {
   display: flex;

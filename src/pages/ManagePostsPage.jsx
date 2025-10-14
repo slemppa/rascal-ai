@@ -388,7 +388,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
                   <div className="post-info">
             <div className="post-header">
               <h3 className="post-title">
-                {post.title.length > 50 ? post.title.slice(0, 50) + '…' : post.title}
+                {post.title.includes('.') ? post.title.split('.')[0] + '.' : post.title}
               </h3>
               <div className="post-badges">
                 <span className="post-type">

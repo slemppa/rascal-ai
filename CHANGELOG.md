@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.79.3](https://github.com/slemppa/rascal-ai/compare/v1.79.1...v1.79.3) (2025-10-14)
+
+
+### 🔧 Chores
+
+* Päivitä versio 1.79.2 ([b659e41](https://github.com/slemppa/rascal-ai/commit/b659e414f69f696e3d61449b41bd1f891469dda3))
+* sync pending changes ([390e425](https://github.com/slemppa/rascal-ai/commit/390e425ef04e5d74ffd13c5a98a380954fd66e99))
+
+
+### 🐛 Bug Fixes
+
+* Add axios import to DashboardPage and fix Mixpost posts display ([0881009](https://github.com/slemppa/rascal-ai/commit/0881009e4f0f2ab432ec3578c190e1a8191d90d6))
+* **calls:** KPI-laatikot päivittyvät filtterien mukaan ([4e86960](https://github.com/slemppa/rascal-ai/commit/4e86960c8ff8599843c46312831ead736c68782e))
+* **calls:** lisää transkripti CSV-exporttiin ([cb10cb1](https://github.com/slemppa/rascal-ai/commit/cb10cb14c6c3471bd239ad593a68c5926b5dd1e3))
+* **campaigns:** korjaa Jäljellä-luku (vain pending+in progress) ([4b78bd8](https://github.com/slemppa/rascal-ai/commit/4b78bd8196c830ed1a140ad069c493e05e9ca4ed))
+* Estä strategia-modal kriittisillä sivuilla (settings, admin, auth) ([33a2a05](https://github.com/slemppa/rascal-ai/commit/33a2a056e2172945448ffa94e36e5e7e7a346a5e))
+* Force 24-hour time format across all components ([16508a7](https://github.com/slemppa/rascal-ai/commit/16508a7a67056e4c11a5c1a8dd3e2732d03a7b31))
+* Korjaa Button-import ja admin-oikeudet Sidebarissa ([407c08e](https://github.com/slemppa/rascal-ai/commit/407c08e3c4c1f0c52a0efc1568aa75301fb5bce5))
+* Korjaa iOS-zoomaus salasanan vaihdossa ja mobiilinavigaatio ([68ed399](https://github.com/slemppa/rascal-ai/commit/68ed399a78b295fba77ba032d46d87e35e2d8c98))
+* Korjattu timezone-käsittely kaikissa näkymissä ([28ae3fc](https://github.com/slemppa/rascal-ai/commit/28ae3fc137179660c60ce38cbabbc57cd86715e1))
+* lisätty puuttuvat käännökset Tekstiviestit-välilehteä varten ([cde3893](https://github.com/slemppa/rascal-ai/commit/cde3893f1e29dc18035736f20eb65d20ea7021c5))
+* Pakota musta tekstiväri strategia-sivun input/textarea-kentissä ([a428268](https://github.com/slemppa/rascal-ai/commit/a42826848fb7df4033b4f86b4d4764114f28172c))
+* Poista epärelevantti 'x osaa' tieto tiedostolistasta ([d16e92d](https://github.com/slemppa/rascal-ai/commit/d16e92d008aeeb5a826b1a7ef635a500a30e857b))
+
+
+### ✨ Features
+
+* add created_at timestamps to posts modals and cards ([8c8a0c6](https://github.com/slemppa/rascal-ai/commit/8c8a0c660ef83a0dba30a98945f12fb148d41d06))
+* Fix Mixpost post editing from Aikataulutettu column ([26c2abe](https://github.com/slemppa/rascal-ai/commit/26c2abeccd826d6682493d56250eb3878c74bbe2))
+* Improve call type modals with better UX and new fields ([50569f7](https://github.com/slemppa/rascal-ai/commit/50569f78f1af19a2048a4c8a2460e6146cc1cf14))
+* Korjattu postauksen muokkaus ja ajastus ([cd082a7](https://github.com/slemppa/rascal-ai/commit/cd082a7f5cd55581635d97e88735bf5a2ec09743))
+* Lisää 'Onnistuneet' hakuvaihtoehto ja korjaa haku-logiikka ([5575fb0](https://github.com/slemppa/rascal-ai/commit/5575fb0d149d41dceebd56ca39e11e0b4a703bd5))
+* Lisää latausnappi kuville ja paranna otsikoiden näyttöä ([48ef94d](https://github.com/slemppa/rascal-ai/commit/48ef94db1caa0aa5943a3f5aeae399865a3b9bda))
+* lisätty kalenterinäkymään kanavan näyttö ja klikkaus ([6389277](https://github.com/slemppa/rascal-ai/commit/6389277c7f79c2416335cfd0d16f126bb5373115))
+
 ### [1.79.1](https://github.com/slemppa/rascal-ai/compare/v1.79.0...v1.79.1) (2025-10-01)
 
 

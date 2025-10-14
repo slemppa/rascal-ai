@@ -2,8 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [1.79.3](https://github.com/slemppa/rascal-ai/compare/v1.79.1...v1.79.3) (2025-10-14)
+### [1.79.3](https://github.com/slemppa/rascal-ai/compare/v1.79.2...v1.79.3) (2025-10-14)
 
+### ✨ Features
+
+* Lisää latausnappi kuville ja paranna otsikoiden näyttöä ([48ef94d](https://github.com/slemppa/rascal-ai/commit/48ef94d))
 
 ### 🔧 Chores
 

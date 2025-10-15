@@ -6,6 +6,7 @@ import styles from './Sidebar.module.css'
 import { useAuth } from '../contexts/AuthContext'
 import { useFeatures } from '../hooks/useFeatures'
 import NotificationBell from './NotificationBell'
+import TicketButton from './TicketButton'
 
 const menuItems = [
   { 
@@ -384,6 +385,7 @@ export default function Sidebar() {
       <div className={styles.sidebar}>
         {menu}
       </div>
+      <TicketButton />
     </>
   )
 } 

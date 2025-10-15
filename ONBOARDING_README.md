@@ -28,6 +28,12 @@ Uusi onboarding-ominaisuus mahdollistaa asiakkaille itsenäisen ICP (Ideal Custo
 ### Komponentit
 - **OnboardingModal.jsx** - Pääkomponentti
 - **OnboardingModal.css** - Tyylitiedosto
+- **VoiceOrb.jsx** - Elävä visuaalinen pallo
+- **VoiceOrb.css** - Pallon animaatiot ja tyylit
+
+### API Endpoints
+- **`/api/elevenlabs-config`** - Palauttaa ElevenLabs Agent ID:n turvallisesti
+- **`/api/onboarding-completed`** - Webhook-endpoint joka lähettää conversation datan N8N:ään
 
 ### Teknologiat
 - **React** - Frontend framework
@@ -48,6 +54,7 @@ Uusi onboarding-ominaisuus mahdollistaa asiakkaille itsenäisen ICP (Ideal Custo
 #### icp_summary (text)
 - Käyttö: Tallennetaan ICP-haastattelun tulokset JSON-muodossa
 - Päivitetään kun haastattelu valmistuu
+- Sisältää kaikki `saveICPData` client toolille lähetetyt parametrit (JSON string)
 
 ## Ympäristömuuttujat
 
@@ -56,6 +63,10 @@ Lisää `.env` tiedostoon:
 ```env
 # ElevenLabs Agents Platform
 ELEVENLABS_AGENT_ID=your_agent_id_here
+
+# N8N Webhook (olemassa oleva)
+N8N_11LABS_ICP_INTERVIEW_URL=https://samikiias.app.n8n.cloud/webhook/end-of-icp
+N8N_SECRET_KEY=your_secret_key_here
 ```
 
 ### Agent ID:n hankkiminen
@@ -63,6 +74,8 @@ ELEVENLABS_AGENT_ID=your_agent_id_here
 2. Luo uusi agent tai valitse olemassa oleva
 3. Kopioi Agent ID konsolin yläpalkista
 4. Lisää se `.env` tiedostoon
+
+**Huom:** Agent ID haetaan API-endpointista `/api/elevenlabs-config`, joka lukee sen turvallisesti backend-puolella. Näin Agent ID ei näy selaimessa.
 
 ## ElevenLabs Agent -konfiguraatio
 
@@ -129,6 +142,27 @@ Save the collected ICP (Ideal Customer Profile) data. Call this when the intervi
 
 **Blocking:** ☑️ Enabled (agent odottaa vastauksen)
 
+## 🔄 Prosessin kulku
+
+1. **Sivun lataus**: `OnboardingModal` tarkistaa Supabasesta:
+   - `onboarding_completed === false`
+   - `role === 'admin'` (testausvaihe)
+   
+2. **Modaali näkyy**: Käyttäjä aloittaa haastattelun ElevenLabs AI:n kanssa
+
+3. **Haastattelu**: AI kerää ICP (Ideal Customer Profile) tiedot
+
+4. **Tallennus**: Kun AI kutsuu `saveICPData` client toolin:
+   - Webhook lähetetään N8N:ään
+   - **N8N päivittää Supabasen:**
+     - `users.icp_summary` ← JSON-muotoinen ICP data
+     - `onboarding_completed` → `true`
+   - Modaali sulkeutuu välittömästi
+
+5. **Valmis**: Käyttäjä voi jatkaa Dashboardille, modaali ei enää näy
+
+**Huom:** OnboardingModal EI päivitä Supabasea suoraan. N8N hoitaa kaikki tietokantapäivitykset.
+
 ## Käyttö
 
 ### Käyttäjän näkökulma
@@ -177,8 +211,13 @@ Save the collected ICP (Ideal Customer Profile) data. Call this when the intervi
 - Automaattinen modaalin näyttäminen ensimmäisellä kirjautumisella
 - Vain admin-käyttäjille (turvallinen testaus)
 - ElevenLabs Agents Platform integraatio
-- Visuaalinen palaute (speaking/listening)
+- **VoiceOrb** - Elävä pallo joka reagoi puheeseen
+  - 🔵 Sininen + pulssointi = AI puhuu
+  - 🟢 Vihreä = Käyttäjä kuuntelee/puhuu
+  - Skaalautuu audio-volumin mukaan reaaliajassa
 - ICP-datan tallennus Supabaseen
+- **Webhook-integraatio** - Lähettää conversation ID:n N8N:ään kun keskustelu päättyy
+- Conversation ID:n tallennus ja seuranta
 - Responsiivinen design
 - Mikrofonin käyttöoikeuden hallinta
 
@@ -219,6 +258,12 @@ Avaa selaimen konsoli ja tarkista:
 - Tarkista että `saveICPData` client tool on konfigurattu oikein ElevenLabs konsolissa
 - Varmista että tool kutsutaan haastattelun lopussa
 - Tarkista Supabase-yhteys
+
+**"Webhook ei lähetä"**
+- Varmista että `N8N_11LABS_ICP_INTERVIEW_URL` on asetettu `.env` tiedostossa
+- Tarkista että N8N webhook (`https://samikiias.app.n8n.cloud/webhook/end-of-icp`) on käynnissä
+- Katso API-serverin logit: `/api/onboarding-completed` endpoint
+- Webhook on **optionaalinen** - järjestelmä toimii ilman sitäkin
 
 ## Lisenssit
 

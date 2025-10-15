@@ -10,16 +10,9 @@ export default function StrategyModalManager() {
   const context = useStrategyStatus()
   const [forceOpen, setForceOpen] = useState(false)
 
-  console.log('StrategyModalManager render:', { 
-    contextModal: context?.showStrategyModal, 
-    forceOpen,
-    loading: context?.loading 
-  })
-
   // Kuuntele window eventejä modalin avaamiseen
   useEffect(() => {
     const handleOpen = (e) => {
-      console.log('StrategyModalManager: Received open event:', e.detail)
       setForceOpen(true)
     }
 
@@ -35,7 +28,6 @@ export default function StrategyModalManager() {
   // Tarkista onko modal auki joko contextin tai force-flagin takia
   const isOpen = context?.showStrategyModal || forceOpen
 
-  console.log('StrategyModalManager: Final isOpen =', isOpen)
 
   const handleClose = () => {
     setForceOpen(false)

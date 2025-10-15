@@ -20,8 +20,6 @@ export const StrategyStatusProvider = ({ children }) => {
   const [userStatus, setUserStatus] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  console.log('StrategyStatusProvider: Rendered with user:', user?.id, 'location:', location.pathname)
-  console.log('StrategyStatusProvider: showStrategyModal =', showStrategyModal)
 
   // Sivut joilla strategia-modal EI saa avautua (kriittiset toiminnot)
   const MODAL_BLACKLIST = [
@@ -42,12 +40,10 @@ export const StrategyStatusProvider = ({ children }) => {
   // Hae käyttäjän status
   const fetchUserStatus = async () => {
     if (!user?.id) {
-      console.log('StrategyStatus: No user ID, skipping status check')
       return
     }
 
     try {
-      console.log('StrategyStatus: Fetching user status for user:', user.id)
       const { data, error } = await supabase
         .from('users')
         .select('status, strategy_approved_at')
@@ -59,12 +55,10 @@ export const StrategyStatusProvider = ({ children }) => {
         return
       }
 
-      console.log('StrategyStatus: User status:', data?.status)
       setUserStatus(data?.status)
       
       // Näytä modal jos status on Pending JA emme ole blacklist-sivulla
       if (data?.status === 'Pending' && !isOnBlockedPage()) {
-        console.log('StrategyStatus: Showing modal for Pending status')
         setShowStrategyModal(true)
         // FORCE: Dispatch custom event DOM:iin
         setTimeout(() => {
@@ -72,7 +66,6 @@ export const StrategyStatusProvider = ({ children }) => {
           window.dispatchEvent(event)
         }, 100)
       } else if (data?.status === 'Pending' && isOnBlockedPage()) {
-        console.log('StrategyStatus: Pending status but on blocked page, not showing modal')
       }
     } catch (error) {
       console.error('StrategyStatus: Error fetching user status:', error)
@@ -82,11 +75,9 @@ export const StrategyStatusProvider = ({ children }) => {
   // Vahvista strategia
   const approveStrategy = async () => {
     if (!user?.id) {
-      console.log('StrategyStatus: No user ID for approval')
       return
     }
 
-    console.log('StrategyStatus: Approving strategy for user:', user.id)
     setLoading(true)
     try {
       const session = await supabase.auth.getSession()
@@ -98,7 +89,6 @@ export const StrategyStatusProvider = ({ children }) => {
         return
       }
 
-      console.log('StrategyStatus: Sending approval request')
       const response = await fetch('/api/strategy-approve', {
         method: 'POST',
         headers: {
@@ -108,10 +98,8 @@ export const StrategyStatusProvider = ({ children }) => {
       })
 
       if (response.ok) {
-        console.log('StrategyStatus: Approval successful')
         setUserStatus('Approved')
         setShowStrategyModal(false)
-        console.log('Strategy approved successfully')
       } else {
         const errorData = await response.json()
         console.error('StrategyStatus: Approval failed:', errorData)
@@ -149,7 +137,6 @@ export const StrategyStatusProvider = ({ children }) => {
   useEffect(() => {
     if (!user?.id) return
 
-    console.log('StrategyStatus: Setting up realtime subscription for user:', user.id)
 
     // Luo Supabase realtime channel
     const channel = supabase
@@ -163,16 +150,13 @@ export const StrategyStatusProvider = ({ children }) => {
           filter: `auth_user_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('StrategyStatus: Realtime update received:', payload)
           const newStatus = payload.new?.status
           
           if (newStatus) {
-            console.log('StrategyStatus: Status changed to:', newStatus)
             setUserStatus(newStatus)
             
             // Näytä modal jos status muuttui Pending:ksi JA emme ole blacklist-sivulla
             if (newStatus === 'Pending' && !isOnBlockedPage()) {
-              console.log('StrategyStatus: Opening modal due to realtime status change')
               setShowStrategyModal(true)
             }
           }
@@ -182,7 +166,6 @@ export const StrategyStatusProvider = ({ children }) => {
 
     // Cleanup subscription
     return () => {
-      console.log('StrategyStatus: Cleaning up realtime subscription')
       supabase.removeChannel(channel)
     }
   }, [user?.id, location.pathname])
@@ -190,7 +173,6 @@ export const StrategyStatusProvider = ({ children }) => {
   // Sulje modal kun mennään blacklist-sivulle
   useEffect(() => {
     if (isOnBlockedPage()) {
-      console.log('StrategyStatus: On blocked page, closing modal')
       setShowStrategyModal(false)
     }
   }, [location.pathname])
@@ -198,7 +180,6 @@ export const StrategyStatusProvider = ({ children }) => {
   // DEBUG: Kuuntele custom event joka pakottaa modalin auki
   useEffect(() => {
     const handleForceOpen = () => {
-      console.log('StrategyStatus: Force opening modal via custom event')
       setShowStrategyModal(true)
     }
     

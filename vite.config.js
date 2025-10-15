@@ -9,8 +9,7 @@ const packageJson = JSON.parse(readFileSync('./package.json', 'utf8'))
 export default defineConfig({
   plugins: [react()],
   define: {
-    'process.env.REACT_APP_VERSION': JSON.stringify(packageJson.version),
-    'import.meta.env.ELEVENLABS_AGENT_ID': JSON.stringify(process.env.ELEVENLABS_AGENT_ID)
+    'process.env.REACT_APP_VERSION': JSON.stringify(packageJson.version)
   },
   server: {
     // Automaattinen päivitys ja HMR

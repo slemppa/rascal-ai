@@ -18,6 +18,7 @@ import MobileNavigation from './src/components/MobileNavigation'
 import InactivityWarningModal from './src/components/InactivityWarningModal'
 import VersionNotification from './src/components/VersionNotification'
 import StrategyModalManager from './src/components/StrategyModalManager'
+import OnboardingModal from './src/components/OnboardingModal'
 import ManagePostsPage from './src/pages/ManagePostsPage'
 import AdminPage from './src/pages/AdminPage'
 import ContentStrategyPage from './src/pages/ContentStrategyPage'
@@ -43,9 +44,12 @@ function ConditionalChatbotWidget() {
 }
 
 export default function App() {
+  console.log('🔵🔵🔵 App.jsx: RENDERING!')
+  
   return (
     <AuthProvider>
       <AutoLogoutProvider>
+        <OnboardingModal />
         <PostsProvider>
           <NotificationProvider>
             <StrategyStatusProvider>

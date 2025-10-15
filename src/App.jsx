@@ -124,8 +124,6 @@ function LanguageRedirect() {
 // Poistettu - käytetään nyt StrategyModalManager.jsx komponenttia
 
 export default function App() {
-  console.log('🔵🔵🔵 App.jsx: RENDERING!')
-  
   return (
     <>
       <OnboardingModal />

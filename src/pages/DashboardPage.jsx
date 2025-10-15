@@ -637,13 +637,6 @@ export default function DashboardPage() {
         const now = new Date()
         const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
         
-        console.log('Dashboard stats calculation:', {
-          authUserId: user.id,
-          userId,
-          firstDay: firstDay.toISOString(),
-          now: now.toISOString()
-        })
-
         // Hae kaikki tiedot rinnakkain
         const [
           { count: upcomingCount, error: upcomingError },
@@ -690,14 +683,6 @@ export default function DashboardPage() {
         // Laske hinnat
         const totalCallPrice = (callData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
         const totalMessagePrice = (messageData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
-
-        console.log('Dashboard stats results:', {
-          upcomingCount,
-          monthlyCount,
-          totalCallPrice,
-          totalMessagePrice,
-          aiUsage
-        })
         
         setStatsData({
           upcomingCount: upcomingCount || 0,
@@ -735,7 +720,6 @@ export default function DashboardPage() {
         }
         
         setSocialAccounts(data || [])
-        console.log('Fetched social accounts:', data)
       } catch (error) {
         console.error('Error fetching social accounts:', error)
       }
@@ -797,7 +781,6 @@ export default function DashboardPage() {
             })
             
             const mixpostPosts = response.data
-            console.log('Mixpost API returned posts:', mixpostPosts.length, mixpostPosts)
           
           // Käännä statusit suomeksi
           const statusMap = {
@@ -826,7 +809,6 @@ export default function DashboardPage() {
               channelNames: post.channelNames || []
             }))
           
-            console.log('Mixpost posts with publishDate:', mixpostData.length, 'out of', mixpostPosts.length)
           }
         } catch (mixpostError) {
           console.error('Error fetching Mixpost posts:', mixpostError)
@@ -834,8 +816,6 @@ export default function DashboardPage() {
 
         // Yhdistä Supabase ja Mixpost data
         const allSchedule = [...(supabaseData || []), ...mixpostData]
-        console.log('Supabase posts:', supabaseData?.length || 0, 'Mixpost posts:', mixpostData.length, 'Total:', allSchedule.length)
-        console.log('First mixpost post:', mixpostData[0])
         setSchedule(allSchedule)
       } catch (e) {
         console.error('Error in fetchSchedule:', e)
@@ -1044,15 +1024,6 @@ export default function DashboardPage() {
 
   // Kirjaudu ulos -handler
   const handleLogout = async () => {
-    console.log('=== DASHBOARD LOGOUT START ===')
-    console.log('Calling AuthContext signOut...')
-    await signOut()
-    console.log('AuthContext signOut completed, clearing storage...')
-    localStorage.clear()
-    sessionStorage.clear()
-    console.log('Storage cleared, reloading page...')
-    window.location.reload()
-    console.log('=== DASHBOARD LOGOUT END ===')
   }
 
   // Laske tulevat postaukset (seuraavat 7 päivää)
@@ -1099,11 +1070,6 @@ export default function DashboardPage() {
 
   // Aikataulu-kortin data: näytetään vain tulevat julkaisut (publish_date >= nyt)
   const nowDate = new Date()
-  console.log('=== UPCOMING POSTS FILTER DEBUG ===')
-  console.log('Total schedule items:', schedule.length)
-  console.log('Sample schedule items:', schedule.slice(0, 3))
-  console.log('Now (local):', nowDate)
-  console.log('Now (ISO):', nowDate.toISOString())
   
   // Tulevat julkaisut -kortin data: media_urls ja caption mukaan
   const upcomingPosts = (schedule || []).filter(row => {
@@ -1121,7 +1087,6 @@ export default function DashboardPage() {
     }
     const isFuture = publishDate >= nowDate
     if (!isFuture) {
-      console.log('FILTERED OUT (past):', row.id, 'publishDate:', publishDate.toISOString(), 'vs now:', nowDate.toISOString())
     }
     return isFuture
   }).sort((a, b) => {
@@ -1134,7 +1099,6 @@ export default function DashboardPage() {
     return dateA - dateB
   })
   
-  console.log('Schedule:', schedule.length, 'Upcoming posts:', upcomingPosts.length, 'Now:', nowDate)
 
   function renderMediaCell(row) {
     const urls = row.media_urls || []

@@ -13,7 +13,12 @@ const NotificationBell = () => {
     fetchUnreadCount()
   }, []) // Ei dependencyjä - hakee vain kerran mountissa
 
-  const togglePanel = () => {
+  const togglePanel = (e) => {
+    // Critical Safari fix: Stop event from bubbling
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
     setIsPanelOpen(!isPanelOpen)
   }
 

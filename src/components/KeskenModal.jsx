@@ -220,6 +220,15 @@ const KeskenModal = ({
           onClose()
         }
       }}
+      onTouchEnd={(e) => {
+        if (e.target === e.currentTarget) {
+          // Tyhjennä file input kun modaali suljetaan
+          if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+          }
+          onClose()
+        }
+      }}
     >
       <div className="modal-container" style={{ maxWidth: '800px' }}>
         <div className="modal-header">

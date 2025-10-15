@@ -43,7 +43,7 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  z-index: calc(var(--modal-z-index) - 1) !important; /* Laske hieman, ettei peitä tabivalikkoa hover-efektillä */
+  z-index: 9998 !important; /* Kiinteä arvo Safari-yhteensopivuuden vuoksi */
   padding: 16px !important;
   visibility: visible !important;
   opacity: 1 !important;
@@ -91,7 +91,7 @@
   box-shadow: var(--modal-shadow) !important;
   border: var(--modal-border) !important;
   position: relative !important;
-  z-index: calc(var(--modal-z-index) + 1) !important;
+  z-index: 9999 !important; /* Kiinteä arvo Safari-yhteensopivuuden vuoksi */
   visibility: visible !important;
   opacity: 1 !important;
   animation: modalSlideIn 0.3s ease-out !important;
@@ -140,7 +140,7 @@
   box-shadow: var(--modal-shadow) !important;
   border: var(--modal-border) !important;
   position: relative !important;
-  z-index: calc(var(--modal-z-index) + 1) !important;
+  z-index: 9999 !important; /* Kiinteä arvo Safari-yhteensopivuuden vuoksi */
   visibility: visible !important;
   opacity: 1 !important;
   animation: modalSlideIn 0.3s ease-out !important;
@@ -761,4 +761,85 @@ input:checked + .slider:before {
 
 input:focus + .slider {
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+}
+
+/* ========================================
+   SAFARI-SPESIFISET KORJAUKSET
+   ======================================== */
+
+/* Safari backdrop-filter tuki ja fallback */
+@supports (-webkit-backdrop-filter: blur(12px)) {
+  .modal-overlay--light {
+    background: rgba(0, 0, 0, 0.4);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  
+  .modal-overlay--dark {
+    background: rgba(0, 0, 0, 0.8);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
+/* Fallback Safariille ilman backdrop-filter tukea */
+@supports not (-webkit-backdrop-filter: blur(12px)) {
+  .modal-overlay--light {
+    background: rgba(0, 0, 0, 0.6) !important; /* Vahvempi tausta */
+  }
+  
+  .modal-overlay--dark {
+    background: rgba(0, 0, 0, 0.9) !important; /* Vahvempi tausta */
+  }
+}
+
+/* Safari position: fixed korjaus */
+.modal-overlay {
+  /* Varmista että Safari käsittelee position: fixed oikein */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Safari touch-event tuki */
+@media (hover: none) and (pointer: coarse) {
+  .modal-overlay {
+    /* Lisää touch-action Safariille */
+    touch-action: manipulation;
+  }
+}
+
+/* Safari z-index stacking context korjaus */
+.modal-overlay {
+  /* Luo uusi stacking context Safariille */
+  isolation: isolate;
+}
+
+/* Safari animaatio-optimointi */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: var(--modal-blur-light);
+    -webkit-backdrop-filter: var(--modal-blur-light);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    -webkit-transform: scale(0.9) translateY(-20px) translateZ(0);
+    transform: scale(0.9) translateY(-20px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: scale(1) translateY(0) translateZ(0);
+    transform: scale(1) translateY(0) translateZ(0);
+  }
 }

@@ -1550,6 +1550,11 @@ export default function DashboardPage() {
               setImageModalUrl(null)
             }
           }}
+          onTouchEnd={(e) => {
+            if (e.target === e.currentTarget) {
+              setImageModalUrl(null)
+            }
+          }}
         >
           <div className="modal-container" style={{ 
             maxWidth: '90vw', 

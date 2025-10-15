@@ -17,7 +17,7 @@ const StrategyConfirmationModal = ({ isOpen, onClose, onRequestUpdate, loading }
 
   return createPortal(
     <div 
-      className="strategy-confirmation-overlay"
+      className="strategy-confirmation-overlay modal-overlay modal-overlay--light"
       style={{
         position: 'fixed',
         top: 0,
@@ -28,11 +28,25 @@ const StrategyConfirmationModal = ({ isOpen, onClose, onRequestUpdate, loading }
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 9999
+        zIndex: 9999,
+        // Safari-spesifiset korjaukset
+        WebkitTransform: 'translateZ(0)',
+        transform: 'translateZ(0)',
+        isolation: 'isolate'
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose()
+        }
+      }}
+      onTouchEnd={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose()
+        }
       }}
     >
       <div 
-        className="strategy-confirmation-modal"
+        className="strategy-confirmation-modal modal-container"
         style={{
           backgroundColor: 'white',
           borderRadius: '12px',
@@ -40,7 +54,10 @@ const StrategyConfirmationModal = ({ isOpen, onClose, onRequestUpdate, loading }
           maxWidth: '500px',
           width: '90%',
           boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-          position: 'relative'
+          position: 'relative',
+          // Safari-spesifiset korjaukset
+          WebkitTransform: 'translateZ(0)',
+          transform: 'translateZ(0)'
         }}
       >
         {/* Sulje-nappi */}

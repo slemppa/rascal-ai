@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { X, Check, Trash2, Phone, MessageSquare, AlertCircle, Bell, Lightbulb } from 'lucide-react'
 import { useNotifications } from '../contexts/NotificationContext'
 import './NotificationPanel.css'
@@ -22,19 +23,29 @@ const NotificationPanel = ({ onClose }) => {
     fetchNotifications()
   }, []) // Ei dependencyjä - hakee vain kerran kun paneli avataan
 
-  // Sulje paneli kun klikataan sen ulkopuolelle
+  // Close panel when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Don't close if clicking the bell button
+      if (event.target.closest('.notification-bell-container')) {
+        return
+      }
+      
       if (panelRef.current && !panelRef.current.contains(event.target)) {
         onClose()
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
+    // Small delay to prevent the opening click from closing the panel
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('mousedown', handleClickOutside)
+    }, 100)
+    
     return () => {
+      clearTimeout(timeoutId)
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [onClose])
+  }, [])
 
   // Sulje paneli ESC-näppäimellä
   useEffect(() => {
@@ -138,7 +149,7 @@ const NotificationPanel = ({ onClose }) => {
     )
   }
 
-  return (
+  return createPortal(
     <div className="notification-panel" ref={panelRef}>
       <div className="notification-panel-header">
         <h3>Notifikaatiot</h3>
@@ -159,7 +170,20 @@ const NotificationPanel = ({ onClose }) => {
       </div>
 
       <div className="notification-panel-content">
-        {notifications.length === 0 ? (
+        {loading && notifications.length === 0 ? (
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
+            <p>Ladataan notifikaatioita...</p>
+          </div>
+        ) : error ? (
+          <div className="error-state">
+            <AlertCircle size={24} />
+            <p>Virhe notifikaatioiden lataamisessa</p>
+            <button className="retry-button" onClick={() => window.location.reload()}>
+              Yritä uudelleen
+            </button>
+          </div>
+        ) : notifications.length === 0 ? (
           <div className="empty-state">
             <Bell size={32} />
             <p>Ei notifikaatioita</p>
@@ -213,7 +237,8 @@ const NotificationPanel = ({ onClose }) => {
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 

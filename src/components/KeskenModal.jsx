@@ -20,6 +20,30 @@ const KeskenModal = ({
   const [imageLoading, setImageLoading] = useState(false)
   const fileInputRef = useRef(null)
 
+  // Validoi media-tiedosto
+  const validateMediaFile = (file) => {
+    // Tarkista tiedostotyyppi - backend odottaa tiettyjä MIME-tyyppejä
+    const validImageTypes = [
+      'image/jpeg',
+      'image/jpg', 
+      'image/png',
+      'image/gif'
+    ]
+    
+    const validVideoTypes = [
+      'video/mp4',
+      'video/x-m4v'
+    ]
+
+    const validTypes = [...validImageTypes, ...validVideoTypes]
+    
+    if (!validTypes.includes(file.type)) {
+      return `Tiedostotyyppi ${file.type} ei ole tuettu. Sallitut muodot: JPG, PNG, GIF, MP4, M4V`
+    }
+
+    return null // Ei virheitä
+  }
+
   // Päivitä formData kun editingPost muuttuu
   useEffect(() => {
     if (editingPost) {
@@ -80,6 +104,17 @@ const KeskenModal = ({
   const handleImageUpload = async (event) => {
     const file = event.target.files[0]
     if (!file) return
+
+    // Validoi tiedosto ennen latausta
+    const validationError = validateMediaFile(file)
+    if (validationError) {
+      setError(validationError)
+      // Tyhjennä file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      return
+    }
 
     setImageLoading(true)
     setError('')
@@ -155,7 +190,17 @@ const KeskenModal = ({
         fileInputRef.current.value = ''
       }
       
-      onSave(updatedPost)
+      // Päivitä paikallinen state ensin, sitten kutsu onSave
+      setFormData(prev => ({
+        ...prev,
+        // Lisää timestamp kuvan URL:een cache-busting:ia varten
+        imageUpdated: Date.now()
+      }))
+      
+      // Kutsu onSave pienen viiveen jälkeen, jotta state ehtii päivittyä
+      setTimeout(() => {
+        onSave(updatedPost)
+      }, 100)
     } catch (err) {
       setError('Kuvan lataus epäonnistui: ' + err.message)
       // Tyhjennä file input myös virhetilanteessa
@@ -337,8 +382,9 @@ const KeskenModal = ({
                                 size="small"
                                 onClick={() => fileInputRef.current?.click()}
                                 disabled={imageLoading}
+                                title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
                               >
-                                {imageLoading ? 'Ladataan...' : 'Lisää kuva'}
+                                {imageLoading ? 'Ladataan...' : 'Lisää media'}
                               </Button>
                             </div>
                           )}
@@ -358,8 +404,14 @@ const KeskenModal = ({
                     
                     return (
                       <div className="media-wrapper">
+                        {imageLoading && (
+                          <div className="image-loading-overlay">
+                            <div className="loading-spinner"></div>
+                            <p>Ladataan uutta kuvaa...</p>
+                          </div>
+                        )}
                         <img 
-                          src={mediaUrl} 
+                          src={`${mediaUrl}${formData.imageUpdated ? `?t=${formData.imageUpdated}` : ''}`}
                           alt="Postauksen media"
                           className="media-preview"
                           onError={(e) => {
@@ -377,8 +429,9 @@ const KeskenModal = ({
                               onClick={() => fileInputRef.current?.click()}
                               disabled={imageLoading}
                               style={{ marginRight: '8px' }}
+                              title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
                             >
-                              {imageLoading ? 'Ladataan...' : 'Vaihda kuva'}
+                              {imageLoading ? 'Ladataan...' : 'Vaihda media'}
                             </Button>
                             <Button
                               type="button"
@@ -406,8 +459,9 @@ const KeskenModal = ({
                           size="small"
                           onClick={() => fileInputRef.current?.click()}
                           disabled={imageLoading}
+                          title="Sallitut muodot: JPG, PNG, GIF, WebP, MP4, WebM, MOV (max 10MB)"
                         >
-                          {imageLoading ? 'Ladataan...' : 'Lisää kuva'}
+                          {imageLoading ? 'Ladataan...' : 'Lisää media'}
                         </Button>
                       </div>
                     )}
@@ -418,7 +472,7 @@ const KeskenModal = ({
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/jpg,image/png,image/gif,video/mp4,video/x-m4v"
                   onChange={handleImageUpload}
                   style={{ display: 'none' }}
                 />
@@ -451,8 +505,20 @@ const KeskenModal = ({
             </div>
 
             {error && (
-              <div className="error-message" style={{ color: '#ef4444', marginBottom: '16px' }}>
-                {error}
+              <div className="error-message" style={{ 
+                color: '#ef4444', 
+                marginBottom: '16px',
+                padding: '12px 16px',
+                backgroundColor: '#fef2f2',
+                border: '1px solid #fecaca',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '500'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '16px' }}>⚠️</span>
+                  <span>{error}</span>
+                </div>
               </div>
             )}
 
@@ -519,6 +585,43 @@ const styles = `
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+.image-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 8px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f4f6;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.image-loading-overlay p {
+  margin: 0;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .media-preview {

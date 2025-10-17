@@ -25,8 +25,8 @@ const MonthlyLimitWarning = ({ limitData, onClose, onCreateAnyway }) => {
             </div>
             <h3>Kuukausiraja ylitetty</h3>
             <p>
-              Olet luonut {limitData.currentCount} sisältöä tässä kuussa. 
-              Kuukausiraja on {limitData.monthlyLimit} sisältöä.
+              Olet luonut {limitData.currentCount} generoitua sisältöä tässä kuussa. 
+              Kuukausiraja on {limitData.monthlyLimit} generoitua sisältöä.
             </p>
             <p>
               <strong>Voit luoda uutta sisältöä vasta ensi kuussa.</strong>

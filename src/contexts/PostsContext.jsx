@@ -445,13 +445,15 @@ export const PostsProvider = ({ children }) => {
       
       return {
         id: item.id,
-        title: isAvatar ? `Avatar ${item.id}` : (item.idea || item.caption || 'Nimetön reel'),
+        title: isAvatar ? `Avatar ${item.id}` : (item.Idea || item.caption || 'Nimetön reel'),
         status: 'Kesken',
         thumbnail: item.media_urls?.[0] || null,
         caption: isAvatar ? `Avatar-kuva ${item.id}` : (item.caption || ''),
         type: isAvatar ? 'Avatar' : 'Reel',
-        createdAt: item.created_at,
+        createdAt: item.createdTime || item.created_at,
         mediaUrls: item.media_urls || [],
+        hashtags: item.Hashtags || item.hashtags || [],
+        voiceover: item.Voiceover || item.voiceover || '',
         source: 'reels',
         originalData: item
       }

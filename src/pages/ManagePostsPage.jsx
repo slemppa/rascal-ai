@@ -54,7 +54,7 @@ const initialPosts = [
 ]
 
 const columns = [
-  { status: 'Kesken', titleKey: 'posts.columns.avatar', color: '#fef3c7' },
+  { status: 'Avatar', titleKey: 'posts.columns.avatar', color: '#fef3c7' },
   { status: 'KeskenSupabase', titleKey: 'posts.columns.inProgress', color: '#fef3c7' },
   { status: 'Tarkistuksessa', titleKey: 'posts.columns.readyToPublish', color: '#dbeafe' },
   { status: 'Aikataulutettu', titleKey: 'posts.columns.scheduled', color: '#fce7f3' }
@@ -145,26 +145,31 @@ const transformSupabaseData = (supabaseData) => {
     return reelsData.map(item => {
       const status = item.status || 'Kesken' // Status is forced to 'Kesken' by the API
       
+      // Tunnista avatar-kuvat "Type (from Variables) (from Companies)" kentän perusteella
+      const isAvatar = Array.isArray(item["Type (from Variables) (from Companies)"]) && 
+                      item["Type (from Variables) (from Companies)"].includes("Avatar")
+      
       console.log('DEBUG: Processing reels item:', {
         id: item.id,
         title: item.title,
         caption: item.caption,
-        status: item.status
+        status: item.status,
+        isAvatar: isAvatar
       })
       
       return {
         id: item.id,
-        title: item.title || t('posts.statuses.untitledReels'),
+        title: isAvatar ? `Avatar ${item.id}` : (item.Idea || item.caption || t('posts.statuses.untitledReels')),
         status: status,
         thumbnail: item.media_urls?.[0] || null,
-        caption: item.caption || 'Ei kuvausta',
-        type: 'Reels',
-        createdAt: item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : null,
+        caption: isAvatar ? `Avatar-kuva ${item.id}` : (item.caption || 'Ei kuvausta'),
+        type: isAvatar ? 'Avatar' : 'Reel',
+        createdAt: item.createdTime || item.created_at ? new Date(item.createdTime || item.created_at).toISOString().split('T')[0] : null,
         scheduledDate: null,
         publishedAt: null,
         mediaUrls: item.media_urls || [],
-        hashtags: item.hashtags || [],
-        voiceover: item.voiceover || '',
+        hashtags: item.Hashtags || item.hashtags || [],
+        voiceover: item.Voiceover || item.voiceover || '',
         originalData: item,
         source: 'reels'
       }
@@ -1794,7 +1799,7 @@ export default function ManagePostsPage() {
         ) : (
           <div className={`monthly-limit-indicator ${monthlyLimit.remaining <= 5 ? 'warning' : 'normal'}`}>
             <span className="limit-text">
-              {monthlyLimit.currentCount}/{monthlyLimit.monthlyLimit} sisältöä tässä kuussa
+              {monthlyLimit.currentCount}/{monthlyLimit.monthlyLimit} generoitua sisältöä tässä kuussa
             </span>
             {monthlyLimit.remaining <= 5 && monthlyLimit.remaining > 0 && (
               <span className="warning-text">Vain {monthlyLimit.remaining} jäljellä</span>
@@ -1897,9 +1902,9 @@ export default function ManagePostsPage() {
             {columns.map(column => {
                               // Filteröidään postit statusin JA lähteen mukaan
               let columnPosts = filteredPosts.filter(post => {
-                // Avatar-sarakkeessa näytetään reels-dataa
-                if (column.titleKey === 'posts.columns.avatar') {
-                  return post.status === 'Kesken' && post.source === 'reels'
+                // Avatar-sarakkeessa näytetään reels-dataa Avatar-tyypin kanssa
+                if (column.status === 'Avatar') {
+                  return post.status === 'Kesken' && post.source === 'reels' && post.type === 'Avatar'
                 }
                 // Kesken-sarakkeessa näytetään vain Supabase-dataa "Kesken" statusilla
                 else if (column.titleKey === 'posts.columns.inProgress') {
@@ -2446,9 +2451,19 @@ export default function ManagePostsPage() {
         }}
         onSave={(updatedPost) => {
           if (updatedPost) {
+            // Päivitä editingPost state uudella datalla
             setEditingPost(updatedPost)
             setSuccessMessage('Kuva vaihdettu onnistuneesti')
-            // Älä sulje modaalia kun kuva vaihdetaan
+            
+            // Päivitä myös posts-lista uudella datalla
+            setPosts(prevPosts => 
+              prevPosts.map(post => 
+                post.id === updatedPost.id ? updatedPost : post
+              )
+            )
+            
+            // Älä sulje modaalia kun kuva vaihdetaan - anna käyttäjän nähdä uusi kuva
+            // Modaali pysyy auki kunnes käyttäjä sulkee sen manuaalisesti
           } else {
             setSuccessMessage('Tiedot tallennettu onnistuneesti')
             setShowEditModal(false)

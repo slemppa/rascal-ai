@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     const features = Array.isArray(data?.features) ? data.features : []
     const crm_connected = Boolean(data?.crm_connected)
 
-    // Laske tämän kuun sisältöjen määrä tälle käyttäjälle
+    // Laske tämän kuun generoitujen sisältöjen määrä tälle käyttäjälle
     let monthly_content_count = 0
     if (data?.id) {
       const now = new Date()
@@ -53,6 +53,7 @@ export default async function handler(req, res) {
         .from('content')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', data.id)
+        .eq('is_generated', true)
         .gte('created_at', firstDay.toISOString())
       if (!countError && typeof count === 'number') {
         monthly_content_count = count

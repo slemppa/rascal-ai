@@ -685,7 +685,7 @@ export default function BlogNewsletterPage() {
         ) : (
           <div className={`monthly-limit-indicator ${monthlyLimit.remaining <= 5 ? 'warning' : 'normal'}`}>
             <span className="limit-text">
-              {monthlyLimit.currentCount}/{monthlyLimit.monthlyLimit} sisältöä tässä kuussa
+              {monthlyLimit.currentCount}/{monthlyLimit.monthlyLimit} generoitua sisältöä tässä kuussa
             </span>
             {monthlyLimit.remaining <= 5 && monthlyLimit.remaining > 0 && (
               <span className="warning-text">Vain {monthlyLimit.remaining} jäljellä</span>

@@ -13,6 +13,7 @@ const TicketModal = ({ isOpen, onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null) // 'success' | 'error' | null
   const [dragActive, setDragActive] = useState(false)
+  const [fileError, setFileError] = useState('')
   const fileInputRef = useRef(null)
 
 
@@ -51,26 +52,29 @@ const TicketModal = ({ isOpen, onClose }) => {
   }
 
   const addFiles = (files) => {
-    const validFiles = files.filter(file => {
-      const maxSize = 50 * 1024 * 1024 // 50MB
+    setFileError('') // Tyhjennä edelliset virheet
+    
+    const validFiles = []
+    const errors = []
+    
+    files.forEach(file => {
       const validTypes = [
         'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
         'video/mp4', 'video/webm', 'video/quicktime',
         'audio/mp3', 'audio/wav', 'audio/mpeg', 'audio/ogg'
       ]
       
-      if (file.size > maxSize) {
-        alert(`Tiedosto ${file.name} on liian suuri (max 50MB)`)
-        return false
-      }
-      
       if (!validTypes.includes(file.type)) {
-        alert(`Tiedostotyyppi ${file.type} ei ole tuettu`)
-        return false
+        errors.push(`Tiedostotyyppi "${file.type}" ei ole tuettu tiedostossa "${file.name}"`)
+        return
       }
       
-      return true
+      validFiles.push(file)
     })
+
+    if (errors.length > 0) {
+      setFileError(errors.join('. '))
+    }
 
     setSelectedFiles(prev => [...prev, ...validFiles].slice(0, 5)) // Max 5 files
   }
@@ -217,7 +221,7 @@ const TicketModal = ({ isOpen, onClose }) => {
 
             <div className="form-group">
               <label className="form-label">
-                Liitteet <span style={{ fontSize: '12px', color: '#666' }}>(Kuvat, videot tai äänitiedostot - max 50MB per tiedosto)</span>
+                Liitteet <span style={{ fontSize: '12px', color: '#666' }}>(Kuvat, videot tai äänitiedostot)</span>
               </label>
               
               <div
@@ -252,6 +256,23 @@ const TicketModal = ({ isOpen, onClose }) => {
                 onChange={handleFileSelect}
                 style={{ display: 'none' }}
               />
+
+              {fileError && (
+                <div style={{ 
+                  color: '#ef4444', 
+                  marginTop: '8px',
+                  padding: '8px 12px',
+                  backgroundColor: '#fef2f2',
+                  border: '1px solid #fecaca',
+                  borderRadius: '6px',
+                  fontSize: '13px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>⚠️</span>
+                    <span>{fileError}</span>
+                  </div>
+                </div>
+              )}
 
               {selectedFiles.length > 0 && (
                 <div style={{ marginTop: '15px' }}>

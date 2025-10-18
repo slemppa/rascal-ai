@@ -76,10 +76,8 @@ const OnboardingModal = () => {
 
         if (error) throw error
 
-        // Näytä vain jos:
-        // 1. onboarding ei ole valmis
-        // 2. käyttäjä on admin (testausvaiheessa)
-        const show = data?.onboarding_completed === false && data?.role === 'admin'
+        // Näytä vain jos onboarding ei ole valmis
+        const show = data?.onboarding_completed === false
         setShouldShow(show)
       } catch (error) {
         console.error('❌ Error checking onboarding status:', error)

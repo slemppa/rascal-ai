@@ -48,8 +48,8 @@ Uusi onboarding-ominaisuus mahdollistaa asiakkaille itsenäisen ICP (Ideal Custo
 - Asetetaan `true` kun käyttäjä on suorittanut haastattelun
 
 #### role (text)
-- Käyttö: Vain **admin**-roolin käyttäjille näytetään modaali
-- Mahdollistaa turvallisen testauksen tuotantoympäristössä
+- Käyttö: Ei vaikuta modaalin näyttämiseen (modaali näkyy kaikille)
+- Säilytetty tietokantakenttänä muihin tarkoituksiin
 
 #### icp_summary (text)
 - Käyttö: Tallennetaan ICP-haastattelun tulokset JSON-muodossa
@@ -146,7 +146,6 @@ Save the collected ICP (Ideal Customer Profile) data. Call this when the intervi
 
 1. **Sivun lataus**: `OnboardingModal` tarkistaa Supabasesta:
    - `onboarding_completed === false`
-   - `role === 'admin'` (testausvaihe)
    
 2. **Modaali näkyy**: Käyttäjä aloittaa haastattelun ElevenLabs AI:n kanssa
 
@@ -188,11 +187,10 @@ Save the collected ICP (Ideal Customer Profile) data. Call this when the intervi
    - Sitten "✓ Merkitse valmiiksi"
    - Modaali sulkeutuu eikä enää avaudu
 
-### Admin-testaus
+### Testaus
 
 1. **Testikäyttäjän luonti**
    - Luo uusi käyttäjä Supabasessa
-   - Aseta `role = 'admin'`
    - Aseta `onboarding_completed = false`
 
 2. **Testaus**
@@ -209,7 +207,7 @@ Save the collected ICP (Ideal Customer Profile) data. Call this when the intervi
 
 ### ✅ Toteutettu
 - Automaattinen modaalin näyttäminen ensimmäisellä kirjautumisella
-- Vain admin-käyttäjille (turvallinen testaus)
+- Näkyy kaikille käyttäjille joiden onboarding ei ole valmis
 - ElevenLabs Agents Platform integraatio
 - **VoiceOrb** - Elävä pallo joka reagoi puheeseen
   - 🔵 Sininen + pulssointi = AI puhuu

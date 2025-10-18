@@ -160,25 +160,9 @@ const OnboardingModal = () => {
     conversationIdRef.current = null
   }
 
-  const handleSkip = async () => {
-    if (!user?.id) return
-    
-    try {
-      // Merkitse onboarding suoritetuksi ilman ICP dataa
-      const { error } = await supabase
-        .from('users')
-        .update({ 
-          onboarding_completed: true,
-          updated_at: new Date().toISOString()
-        })
-        .eq('auth_user_id', user.id)
-      
-      if (error) throw error
-      
-      setShouldShow(false)
-    } catch (error) {
-      console.error('Error skipping onboarding:', error)
-    }
+  const handleSkip = () => {
+    // Sulje modaali, mutta älä tee muutoksia tietokantaan
+    setShouldShow(false)
   }
 
   // Älä näytä jos lataa tai ei pitäisi näkyä

@@ -184,8 +184,8 @@ Save the collected ICP (Ideal Customer Profile) data. Call this when the intervi
    - Kun haastattelu on valmis, agentti kutsuu `saveICPData` client toolia
    - Data tallennetaan automaattisesti
    - Käyttäjä klikkaa "⏹️ Lopeta haastattelu"
-   - Sitten "✓ Merkitse valmiiksi"
    - Modaali sulkeutuu eikä enää avaudu
+   - **Vaihtoehto:** Käyttäjä voi klikata "Ohita toistaiseksi" - sulkee modaalin tilapäisesti
 
 ### Testaus
 

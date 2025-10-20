@@ -31,34 +31,30 @@ export const useNextMonthQuota = () => {
         throw new Error('Käyttäjän ID ei löytynyt')
       }
 
-      // Laske seuraavan kuun päivämäärä (paikallinen YYYY-MM-01, vältä UTC-heittelyä)
+      // Selvitä seuraavan kuun strategia ja laske generoidut sisällöt strategy_id:n perusteella
       const now = new Date()
-      const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
-      const pMonth = `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, '0')}-01`
-      
-      // Käytä get_user_quota_status funktiota seuraavan kuun tietojen hakemiseen
-      const { data, error } = await supabase
-        .rpc('get_user_quota_status', {
-          p_user_id: userData.id,
-          p_month: pMonth
-        })
+      const nextMonthDate = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+      const englishMonthNames = [
+        'january','february','march','april','may','june','july','august','september','october','november','december'
+      ]
+      const targetMonthName = englishMonthNames[nextMonthDate.getMonth()]
 
-      if (error) {
-        console.error('Error fetching next month quota:', error)
-        throw error
+      // Hae käyttäjän strategia, jonka month vastaa seuraavaa kuukautta (DB:ssä kuukaudet englanniksi)
+      const { data: strategyRow, error: strategyErr } = await supabase
+        .from('content_strategy')
+        .select('id, month')
+        .eq('user_id', userData.id)
+        .ilike('month', `%${targetMonthName}%`)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (strategyErr) {
+        console.error('Error fetching next month strategy:', strategyErr)
       }
 
-      const fallback = {
-        subscription_status: userData.subscription_status || 'free',
-        monthly_limit: 30,
-        ai_generated_count: 0,
-        remaining_quota: 30
-      }
-      const quotaInfoRaw = Array.isArray(data) ? (data && data[0]) : data
-      const quotaInfo = quotaInfoRaw && typeof quotaInfoRaw === 'object' ? quotaInfoRaw : fallback
-
-      // Määritä rajat subscription statusin mukaan
-      const subscriptionStatus = String(quotaInfo.subscription_status || 'free').toLowerCase()
+      // Määritä kuukausiraja tilauksen perusteella
+      const subscriptionStatus = String(userData.subscription_status || 'free').toLowerCase()
       let monthlyLimit = 30
       switch (subscriptionStatus) {
         case 'pro':
@@ -71,7 +67,23 @@ export const useNextMonthQuota = () => {
           monthlyLimit = 30
       }
 
-      const nextMonthCount = Number(quotaInfo.ai_generated_count) || 0
+      let nextMonthCount = 0
+      if (strategyRow?.id) {
+        // Laske content-riveistä tälle strategialle generoidut sisällöt
+        const { count, error: cntErr } = await supabase
+          .from('content')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', userData.id)
+          .eq('strategy_id', strategyRow.id)
+          .eq('is_generated', true)
+
+        if (cntErr) {
+          console.error('Error counting next month generated content:', cntErr)
+        } else {
+          nextMonthCount = count || 0
+        }
+      }
+
       const nextMonthRemaining = Math.max(0, monthlyLimit - nextMonthCount)
 
       setQuotaData({

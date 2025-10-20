@@ -86,6 +86,8 @@ export default function ContentStrategyPage() {
   const [error, setError] = useState(null)
   const [editId, setEditId] = useState(null)
   const [editText, setEditText] = useState('')
+  const [generatedCount, setGeneratedCount] = useState(0)
+  const [generatedCountLoading, setGeneratedCountLoading] = useState(false)
   const [editingIcp, setEditingIcp] = useState(false)
   const [icpEditText, setIcpEditText] = useState('')
   const [editingKpi, setEditingKpi] = useState(false)
@@ -102,6 +104,43 @@ export default function ContentStrategyPage() {
   const kpiTextareaRef = React.useRef(null)
   const companySummaryTextareaRef = React.useRef(null)
   const tovTextareaRef = React.useRef(null)
+
+  const fetchGeneratedCount = async (strategyId) => {
+    try {
+      setGeneratedCountLoading(true)
+
+      // Hae käyttäjän public users.id auth_user_id:n perusteella
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.user) return
+
+      const { data: userRecord, error: userErr } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', session.user.id)
+        .single()
+      if (userErr || !userRecord?.id) return
+
+      // Laske generoidut sisällöt tälle strategialle
+      const { count, error: cntErr } = await supabase
+        .from('content')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', userRecord.id)
+        .eq('strategy_id', strategyId)
+        .eq('is_generated', true)
+
+      if (cntErr) {
+        console.error('Error fetching generated count:', cntErr)
+        setGeneratedCount(0)
+      } else {
+        setGeneratedCount(count || 0)
+      }
+    } catch (err) {
+      console.error('fetchGeneratedCount error:', err)
+      setGeneratedCount(0)
+    } finally {
+      setGeneratedCountLoading(false)
+    }
+  }
 
 
   useEffect(() => {
@@ -221,6 +260,7 @@ export default function ContentStrategyPage() {
   const handleEdit = (item) => {
     setEditId(item.id)
     setEditText(item.strategy || item.Strategy)
+    fetchGeneratedCount(item.id)
     // Säätää textarea:n korkeus seuraavassa renderissä
     setTimeout(() => {
       if (textareaRef.current) {
@@ -1502,14 +1542,21 @@ export default function ContentStrategyPage() {
               alignItems: 'center', 
               marginBottom: '20px' 
             }}>
-              <h3 style={{ 
-                margin: 0, 
-                fontSize: '20px', 
-                fontWeight: '700', 
-                color: '#374151' 
-              }}>
-                {i18n.language === 'fi' ? 'Muokkaa strategiaa' : 'Edit strategy'}
-              </h3>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
+                <h3 style={{ 
+                  margin: 0, 
+                  fontSize: '20px', 
+                  fontWeight: '700', 
+                  color: '#374151' 
+                }}>
+                  {i18n.language === 'fi' ? 'Muokkaa strategiaa' : 'Edit strategy'}
+                </h3>
+                <span style={{ fontSize: 13, color: '#6b7280' }}>
+                  {generatedCountLoading 
+                    ? (i18n.language === 'fi' ? 'Ladataan...' : 'Loading...') 
+                    : `${generatedCount} ${i18n.language === 'fi' ? 'generoitua sisältöä' : 'generated contents'}`}
+                </span>
+              </div>
               <button
                 onClick={handleCancel}
                 style={{

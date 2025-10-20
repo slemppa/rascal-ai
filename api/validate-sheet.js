@@ -1,21 +1,6 @@
 // Tarkista onko numero estettyjen alueiden joukossa
 function isBlockedNumber(originalNumber, normalizedNumber) {
-  // Estettyjen alkuperäisten numeroiden tarkistus
-  const blockedPrefixes = ['020', '010', '09']
-  for (const prefix of blockedPrefixes) {
-    if (String(originalNumber).startsWith(prefix)) {
-      return { blocked: true, reason: `Estetty numeroalue: ${prefix}` }
-    }
-  }
-  
-  // Estettyjen normalisoitujen numeroiden tarkistus
-  const blockedNormalized = ['+35820', '+35810', '+3589']
-  for (const blocked of blockedNormalized) {
-    if (normalizedNumber && normalizedNumber.startsWith(blocked)) {
-      return { blocked: true, reason: `Estetty numeroalue: ${blocked}` }
-    }
-  }
-  
+  // Estosuodatus poistettu: sallitaan kaikki numerot
   return { blocked: false, reason: null }
 }
 

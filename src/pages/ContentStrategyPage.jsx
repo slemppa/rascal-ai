@@ -94,7 +94,6 @@ export default function ContentStrategyPage() {
   const [companySummaryEditText, setCompanySummaryEditText] = useState('')
   const [editingTov, setEditingTov] = useState(false)
   const [tovEditText, setTovEditText] = useState('')
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [toast, setToast] = useState({ visible: false, message: '' })
 
   const [companyId, setCompanyId] = useState(null)
@@ -104,11 +103,6 @@ export default function ContentStrategyPage() {
   const companySummaryTextareaRef = React.useRef(null)
   const tovTextareaRef = React.useRef(null)
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768)
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
 
   useEffect(() => {
     const fetchStrategy = async () => {
@@ -307,7 +301,7 @@ export default function ContentStrategyPage() {
       }, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
-          'x-api-key': process.env.N8N_SECRET_KEY || 'fallback-key',
+          'x-api-key': import.meta.env.N8N_SECRET_KEY || 'fallback-key',
           'Content-Type': 'application/json'
         }
       })
@@ -378,7 +372,7 @@ export default function ContentStrategyPage() {
       }, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
-          'x-api-key': process.env.N8N_SECRET_KEY || 'fallback-key',
+          'x-api-key': import.meta.env.N8N_SECRET_KEY || 'fallback-key',
           'Content-Type': 'application/json'
         }
       })

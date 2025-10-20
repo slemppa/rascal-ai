@@ -22,7 +22,7 @@ export const NotificationProvider = ({ children }) => {
 
   // Tarkista onko uusi versio - näytä aina jos versio on eri kuin edellinen
   const checkVersionUpdate = useCallback(() => {
-    const currentVersion = process.env.REACT_APP_VERSION || '1.56.0'
+    const currentVersion = import.meta.env.REACT_APP_VERSION || '1.56.0'
     const lastSeenVersion = localStorage.getItem('lastSeenVersion')
     
     // Näytä aina jos versio on eri kuin viimeksi nähty
@@ -33,7 +33,7 @@ export const NotificationProvider = ({ children }) => {
 
   // Merkitse versio nähdyksi
   const markVersionAsSeen = useCallback(() => {
-    const currentVersion = process.env.REACT_APP_VERSION || '1.56.0'
+    const currentVersion = import.meta.env.REACT_APP_VERSION || '1.56.0'
     localStorage.setItem('lastSeenVersion', currentVersion)
     setShowVersionNotification(false)
   }, [])

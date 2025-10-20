@@ -8,7 +8,7 @@ const VersionNotification = () => {
 
   if (!showVersionNotification) return null
 
-  const currentVersion = process.env.REACT_APP_VERSION || '1.67.0'
+  const currentVersion = import.meta.env.REACT_APP_VERSION || '1.67.0'
 
   return createPortal(
     <div 

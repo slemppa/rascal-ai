@@ -671,7 +671,7 @@ export default function SettingsPage() {
             </div>
 
             {/* DEBUG: Strategia-modal testausnappi */}
-            {process.env.NODE_ENV === 'development' && (
+            {import.meta.env.MODE === 'development' && (
               <div className={styles.card} style={{ padding: '20px' }}>
                 <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px' }}>🔧 Strategia Modal Debug</h3>
                 <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '12px' }}>

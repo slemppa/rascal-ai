@@ -1793,20 +1793,6 @@ export default function ManagePostsPage() {
       <div className="posts-container">
 
       {/* Tabs + Search and Filters */}
-      <div className="tabs">
-        <button 
-          className={`tab-button ${activeTab === 'kanban' ? 'active' : ''}`}
-          onClick={() => setActiveTab('kanban')}
-        >
-          Julkaisut
-        </button>
-        <button 
-          className={`tab-button ${activeTab === 'calendar' ? 'active' : ''}`}
-          onClick={() => setActiveTab('calendar')}
-        >
-          Kalenteri
-        </button>
-      </div>
 
       {/* Page Header */}
       <div className="posts-header">
@@ -1850,7 +1836,21 @@ export default function ManagePostsPage() {
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Tabs (moved below quotas, above search) */}
+      <div className="tabs">
+        <button 
+          className={`tab-button ${activeTab === 'kanban' ? 'active' : ''}`}
+          onClick={() => setActiveTab('kanban')}
+        >
+          Julkaisut
+        </button>
+        <button 
+          className={`tab-button ${activeTab === 'calendar' ? 'active' : ''}`}
+          onClick={() => setActiveTab('calendar')}
+        >
+          Kalenteri
+        </button>
+      </div>
 
       {/* Search and Filters */}
       <div className="search-filters">

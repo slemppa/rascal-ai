@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { createClient } from '@supabase/supabase-js'
 
-const N8N_STRATEGY_APPROVAL_URL = process.env.N8N_STRATEGY_ARPPVOMENT || 'https://samikiias.app.n8n.cloud/webhook/strategy-approvment'
+const N8N_STRATEGY_APPROVAL_URL = process.env.N8N_STRATEGY_APPROVEMENT || process.env.N8N_STRATEGY_ARPPVOMENT || 'https://samikiias.app.n8n.cloud/webhook/strategy-approvment'
 const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
 const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -20,9 +20,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { strategy_id, month, company_id, user_id } = req.body
+    const { strategy_id, company_id, user_id } = req.body
 
-    if (!strategy_id || !month || !company_id || !user_id) {
+    if (!strategy_id || !company_id || !user_id) {
       return res.status(400).json({ error: 'Missing required fields' })
     }
 
@@ -50,6 +50,20 @@ export default async function handler(req, res) {
     }
 
     const publicUserId = userData.id
+
+    // Hae strategian tiedot ja poimi kuukausi strategy_id:n perusteella
+    const { data: strategyData, error: strategyError } = await supabase
+      .from('content_strategy')
+      .select('month')
+      .eq('id', strategy_id)
+      .single()
+
+    if (strategyError || !strategyData) {
+      console.error('Error fetching strategy by id:', strategyError)
+      return res.status(404).json({ error: 'Strategiaa ei löytynyt annetulla strategy_id:llä' })
+    }
+
+    const month = strategyData.month || null
 
     console.log('🚀 Lähetetään strategian vahvistus webhook...')
     console.log('URL:', N8N_STRATEGY_APPROVAL_URL)

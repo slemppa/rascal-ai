@@ -745,6 +745,24 @@ export default function AdminPage() {
                                    <option value="enterprise">Enterprise</option>
                                  </select>
                                </div>
+                              <div className="form-group">
+                                <label className="form-label">Käyttäjän tila</label>
+                                <select
+                                  className="form-input"
+                                  value={modalChanges.status !== undefined ? modalChanges.status : (selectedUser.status || '')}
+                                  onChange={(e) => updateModalField('status', e.target.value)}
+                                >
+                                  <option value="">-</option>
+                                  <option value="New">New</option>
+                                  <option value="Processing">Processing</option>
+                                  <option value="Summarized">Summarized</option>
+                                  <option value="Create Content">Create Content</option>
+                                  <option value="Active">Active</option>
+                                  <option value="Demo">Demo</option>
+                                  <option value="Canceled">Canceled</option>
+                                  <option value="Pending">Pending</option>
+                                </select>
+                              </div>
                                <div className="form-group">
                                  <label className="form-label">Onboarding valmis</label>
                                  <div className="status-display">
@@ -1076,7 +1094,7 @@ export default function AdminPage() {
                     <div className="info-card">
                       <h3>Järjestelmä</h3>
                       <p>Versio: {pkg.version}</p>
-                      <p>Ympäristö: {process.env.NODE_ENV}</p>
+                     <p>Ympäristö: {import.meta.env.MODE}</p>
                       <p>Supabase: Aktiivinen</p>
                     </div>
                  </div>

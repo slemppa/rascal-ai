@@ -59,6 +59,7 @@ export default async function handler(req, res) {
             id,
             contact_email,
             contact_person,
+            status,
             role,
             company_id,
             webhook_url,

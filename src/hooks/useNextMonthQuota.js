@@ -31,15 +31,16 @@ export const useNextMonthQuota = () => {
         throw new Error('Käyttäjän ID ei löytynyt')
       }
 
-      // Laske seuraavan kuun päivämäärä
+      // Laske seuraavan kuun päivämäärä (paikallinen YYYY-MM-01, vältä UTC-heittelyä)
       const now = new Date()
       const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+      const pMonth = `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, '0')}-01`
       
       // Käytä get_user_quota_status funktiota seuraavan kuun tietojen hakemiseen
       const { data, error } = await supabase
         .rpc('get_user_quota_status', {
           p_user_id: userData.id,
-          p_month: nextMonth.toISOString().split('T')[0]
+          p_month: pMonth
         })
 
       if (error) {
@@ -47,16 +48,19 @@ export const useNextMonthQuota = () => {
         throw error
       }
 
-      const quotaInfo = data && data.length > 0 ? data[0] : {
+      const fallback = {
         subscription_status: userData.subscription_status || 'free',
         monthly_limit: 30,
         ai_generated_count: 0,
         remaining_quota: 30
       }
+      const quotaInfoRaw = Array.isArray(data) ? (data && data[0]) : data
+      const quotaInfo = quotaInfoRaw && typeof quotaInfoRaw === 'object' ? quotaInfoRaw : fallback
 
       // Määritä rajat subscription statusin mukaan
+      const subscriptionStatus = String(quotaInfo.subscription_status || 'free').toLowerCase()
       let monthlyLimit = 30
-      switch (quotaInfo.subscription_status) {
+      switch (subscriptionStatus) {
         case 'pro':
           monthlyLimit = 100
           break
@@ -67,14 +71,14 @@ export const useNextMonthQuota = () => {
           monthlyLimit = 30
       }
 
-      const nextMonthCount = quotaInfo.ai_generated_count || 0
+      const nextMonthCount = Number(quotaInfo.ai_generated_count) || 0
       const nextMonthRemaining = Math.max(0, monthlyLimit - nextMonthCount)
 
       setQuotaData({
         nextMonthCount,
         nextMonthLimit: monthlyLimit,
         nextMonthRemaining,
-        subscriptionStatus: quotaInfo.subscription_status,
+        subscriptionStatus,
         loading: false,
         error: null
       })

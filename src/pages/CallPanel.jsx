@@ -3711,11 +3711,10 @@ export default function CallPanel() {
           >
             <div 
               onClick={(e) => e.stopPropagation()}
-              className="modal-container mass-call-modal"
-              style={{ maxWidth: '600px' }}
+              className="modal-container modal-container--create mass-call-modal"
             >
               <div className="modal-header">
-                <h2 className="modal-title" style={{ fontSize: 22, color: '#1f2937', fontWeight: '700', backgroundColor: 'transparent' }}>
+                <h2 className="modal-title">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
                     <path d="M4.5 16.5c-1.5 1.5-1.5 4 0 5.5s4 1.5 5.5 0L12 20l2-2M20 6l-8.5 8.5a2.83 2.83 0 0 1-4 0 2.83 2.83 0 0 1 0-4L16 2"/>
                   </svg>
@@ -3735,7 +3734,7 @@ export default function CallPanel() {
                 </button>
               </div>
               
-              <div className="modal-body">
+              <div className="modal-content">
                 {/* Vaihe 1: Google Sheets validointi */}
                 {massCallStep === 1 && (
                   <div>

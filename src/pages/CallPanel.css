@@ -2,8 +2,8 @@
 @import url('../components/ModalComponents.css');
 
 /* Massapuhelumodaalin tyylit */
-.mass-call-modal .modal-container {
-  max-height: 90vh !important;
+.mass-call-modal .modal-content {
+  max-height: 70vh !important;
   overflow-y: auto !important;
 }
 

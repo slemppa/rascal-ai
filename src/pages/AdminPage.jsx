@@ -233,6 +233,9 @@ export default function AdminPage() {
   const openUserModal = (user) => {
     // Etsi päivitetyt käyttäjätiedot listasta
     const updatedUser = users.find(u => u.id === user.id)
+    console.log('Opening modal for user:', updatedUser || user)
+    console.log('Platforms data:', (updatedUser || user)?.platforms)
+    console.log('Onboarding completed:', (updatedUser || user)?.onboarding_completed)
     setSelectedUser(updatedUser || user)
     setModalChanges({}) // Tyhjennä muutokset
   }
@@ -251,9 +254,18 @@ export default function AdminPage() {
 
     setIsSaving(true)
     try {
+      // Käsittele platforms-kenttä erityisesti
+      const processedChanges = { ...modalChanges }
+      if (processedChanges.platforms && Array.isArray(processedChanges.platforms)) {
+        // Tallenna platforms JSON stringinä
+        processedChanges.platforms = JSON.stringify(processedChanges.platforms)
+      }
+
+      console.log('Saving changes:', processedChanges)
+
       const { error } = await supabase
         .from('users')
-        .update(modalChanges)
+        .update(processedChanges)
         .eq('id', selectedUser.id)
 
       if (error) throw error
@@ -655,7 +667,7 @@ export default function AdminPage() {
                    <div className="modal-overlay modal-overlay--light" onClick={closeModal}>
                      <div className="modal-container" style={{ maxWidth: '600px' }} onClick={(e) => e.stopPropagation()}>
                        <div className="modal-header">
-                         <h2 className="modal-title">Muokkaa käyttäjän teknisiä ID:itä</h2>
+                         <h2 className="modal-title">Muokkaa {selectedUser?.contact_person || selectedUser?.contact_email || 'käyttäjän'} käyttäjätietoja</h2>
                          {Object.keys(modalChanges).length > 0 && (
                            <span style={{ fontSize: '12px', color: '#666' }}>
                              Tallentamattomia muutoksia
@@ -669,75 +681,152 @@ export default function AdminPage() {
                          </button>
                        </div>
                        <div className="modal-content">
-                         <div className="form-group">
-                           <label className="form-label">Webhook URL</label>
-                           <input
-                             type="text"
-                             className="form-input"
-                             value={modalChanges.webhook_url !== undefined ? modalChanges.webhook_url : (selectedUser.webhook_url || '')}
-                             onChange={(e) => updateModalField('webhook_url', e.target.value)}
-                             placeholder="Webhook URL"
-                           />
-                         </div>
-                         <div className="form-group">
-                           <label className="form-label">Thread ID</label>
-                           <input
-                             type="text"
-                             className="form-input"
-                             value={modalChanges.thread_id !== undefined ? modalChanges.thread_id : (selectedUser.thread_id || '')}
-                             onChange={(e) => updateModalField('thread_id', e.target.value)}
-                             placeholder="Thread ID"
-                           />
-                         </div>
-                         <div className="form-group">
-                           <label className="form-label">VAPI Number ID</label>
-                           <input
-                             type="text"
-                             className="form-input"
-                             value={modalChanges.vapi_number_id !== undefined ? modalChanges.vapi_number_id : (selectedUser.vapi_number_id || '')}
-                             onChange={(e) => updateModalField('vapi_number_id', e.target.value)}
-                             placeholder="VAPI Number ID"
-                           />
-                         </div>
-                         <div className="form-group">
-                           <label className="form-label">VAPI Assistant ID</label>
-                           <input
-                             type="text"
-                             className="form-input"
-                             value={modalChanges.vapi_assistant_id !== undefined ? modalChanges.vapi_assistant_id : (selectedUser.vapi_assistant_id || '')}
-                             onChange={(e) => updateModalField('vapi_assistant_id', e.target.value)}
-                             placeholder="VAPI Assistant ID"
-                           />
-                         </div>
-                         <div className="form-group">
-                           <label className="form-label">Vector Store ID</label>
-                           <input
-                             type="text"
-                             className="form-input"
-                             value={modalChanges.vector_store_id !== undefined ? modalChanges.vector_store_id : (selectedUser.vector_store_id || '')}
-                             onChange={(e) => updateModalField('vector_store_id', e.target.value)}
-                             placeholder="Vector Store ID"
-                           />
-                         </div>
-                         <div className="form-group">
-                           <label className="form-label">Voice ID</label>
-                           <input
-                             type="text"
-                             className="form-input"
-                             value={modalChanges.voice_id !== undefined ? modalChanges.voice_id : (selectedUser.voice_id || '')}
-                             onChange={(e) => updateModalField('voice_id', e.target.value)}
-                             placeholder="Voice ID"
-                           />
-                         </div>
-                         <div className="form-group">
-                           <label className="form-label">Assistant ID</label>
-                           <input
-                             type="text"
-                             className="form-input"
-                             value={modalChanges.assistant_id !== undefined ? modalChanges.assistant_id : (selectedUser.assistant_id || '')}
-                             onChange={(e) => updateModalField('assistant_id', e.target.value)}
-                             placeholder="Assistant ID"
-                           />
+                         <div className="form-sections">
+                           {/* Synthflow-konfiguraatio */}
+                           <div className="form-section">
+                             <h3 className="section-title">Synthflow-konfiguraatio</h3>
+                             <div className="form-grid">
+                               <div className="form-group">
+                                 <label className="form-label">Assistant ID</label>
+                                 <input
+                                   type="text"
+                                   className="form-input"
+                                   value={modalChanges.vapi_assistant_id !== undefined ? modalChanges.vapi_assistant_id : (selectedUser.vapi_assistant_id || '')}
+                                   onChange={(e) => updateModalField('vapi_assistant_id', e.target.value)}
+                                   placeholder="Synthflow Assistant ID"
+                                 />
+                               </div>
+                               <div className="form-group">
+                                 <label className="form-label">Inbound Assistant ID</label>
+                                 <input
+                                   type="text"
+                                   className="form-input"
+                                   value={modalChanges.vapi_inbound_assistant_id !== undefined ? modalChanges.vapi_inbound_assistant_id : (selectedUser.vapi_inbound_assistant_id || '')}
+                                   onChange={(e) => updateModalField('vapi_inbound_assistant_id', e.target.value)}
+                                   placeholder="Synthflow Inbound Assistant ID"
+                                 />
+                               </div>
+                               <div className="form-group">
+                                 <label className="form-label">Puhelinnumero</label>
+                                 <input
+                                   type="text"
+                                   className="form-input"
+                                   value={modalChanges.vapi_phone_number !== undefined ? modalChanges.vapi_phone_number : (selectedUser.vapi_phone_number || '')}
+                                   onChange={(e) => updateModalField('vapi_phone_number', e.target.value)}
+                                   placeholder="Synthflow Phone Number"
+                                 />
+                               </div>
+                               <div className="form-group">
+                                 <label className="form-label">Voice ID</label>
+                                 <input
+                                   type="text"
+                                   className="form-input"
+                                   value={modalChanges.voice_id !== undefined ? modalChanges.voice_id : (selectedUser.voice_id || '')}
+                                   onChange={(e) => updateModalField('voice_id', e.target.value)}
+                                   placeholder="Voice ID"
+                                 />
+                               </div>
+                             </div>
+                           </div>
+
+                           {/* Käyttäjätiedot */}
+                           <div className="form-section">
+                             <h3 className="section-title">Käyttäjätiedot</h3>
+                             <div className="form-grid">
+                               <div className="form-group">
+                                 <label className="form-label">Tilausstatus</label>
+                                 <select
+                                   className="form-input"
+                                   value={modalChanges.subscription_status !== undefined ? modalChanges.subscription_status : (selectedUser.subscription_status || 'free')}
+                                   onChange={(e) => updateModalField('subscription_status', e.target.value)}
+                                 >
+                                   <option value="free">Free</option>
+                                   <option value="pro">Pro</option>
+                                   <option value="enterprise">Enterprise</option>
+                                 </select>
+                               </div>
+                               <div className="form-group">
+                                 <label className="form-label">Onboarding valmis</label>
+                                 <div className="status-display">
+                                   <span className={`status-text ${(modalChanges.onboarding_completed !== undefined ? modalChanges.onboarding_completed : (selectedUser.onboarding_completed || false)) ? 'status-yes' : 'status-no'}`}>
+                                     {(modalChanges.onboarding_completed !== undefined ? modalChanges.onboarding_completed : (selectedUser.onboarding_completed || false)) ? 'Kyllä' : 'Ei'}
+                                   </span>
+                                   <button
+                                     type="button"
+                                     className="status-toggle-btn"
+                                     onClick={() => {
+                                       const currentValue = modalChanges.onboarding_completed !== undefined ? modalChanges.onboarding_completed : (selectedUser.onboarding_completed || false);
+                                       updateModalField('onboarding_completed', !currentValue);
+                                     }}
+                                   >
+                                     Vaihda
+                                   </button>
+                                 </div>
+                               </div>
+                             </div>
+                           </div>
+
+                           {/* Alustat */}
+                           <div className="form-section">
+                             <h3 className="section-title">Alustat</h3>
+                             <div className="platforms-grid">
+                               {["Blog", "Newsletter", "Instagram Photo", "LinkedIn", "Instagram Carousel", "Instagram Reels"].map(platform => {
+                                 // Käsittele platforms-kenttä eri muodoista
+                                 const getCurrentPlatforms = () => {
+                                   const platformsData = modalChanges.platforms !== undefined ? modalChanges.platforms : (selectedUser.platforms || []);
+                                   
+                                   // Jos on jo array, palauta sellaisenaan
+                                   if (Array.isArray(platformsData)) {
+                                     return platformsData;
+                                   }
+                                   
+                                   // Jos on string, käsittele sitä
+                                   if (typeof platformsData === 'string') {
+                                     // Tyhjä string
+                                     if (!platformsData.trim()) {
+                                       return [];
+                                     }
+                                     
+                                     // Yritä parsia JSON array stringinä
+                                     try {
+                                       const parsed = JSON.parse(platformsData);
+                                       if (Array.isArray(parsed)) {
+                                         return parsed;
+                                       }
+                                     } catch (e) {
+                                       // Ei JSON, käsittele pilkuilla eroteltuna
+                                       return platformsData.split(',').map(p => p.trim()).filter(p => p);
+                                     }
+                                   }
+                                   
+                                   return [];
+                                 };
+                                 
+                                 const currentPlatforms = getCurrentPlatforms();
+                                 const isSelected = currentPlatforms.includes(platform);
+                                 
+                                 return (
+                                   <label key={platform} className="platform-option">
+                                     <input
+                                       type="checkbox"
+                                       checked={isSelected}
+                                       onChange={(e) => {
+                                         const platformsArray = getCurrentPlatforms();
+                                         let newPlatforms;
+                                         if (e.target.checked) {
+                                           newPlatforms = [...platformsArray, platform];
+                                         } else {
+                                           newPlatforms = platformsArray.filter(p => p !== platform);
+                                         }
+                                         updateModalField('platforms', newPlatforms);
+                                       }}
+                                     />
+                                     <span className="platform-label">{platform}</span>
+                                   </label>
+                                 );
+                               })}
+                             </div>
+                           </div>
                          </div>
                          <div className="modal-actions">
                            <div className="modal-actions-left">

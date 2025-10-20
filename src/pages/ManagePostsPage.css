@@ -99,6 +99,32 @@
   color: #dc2626;
 }
 
+/* Quota Indicators Container */
+.quota-indicators {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .quota-indicators {
+    flex-direction: row;
+    justify-content: center;
+    gap: 16px;
+  }
+}
+
+/* Next Month Quota Section */
+.next-month-quota-section {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+}
+
 /* Poistetaan h2 tyylit, koska ne ovat nyt inline-tyyleinä */
 
 /* Poistetaan p-elementin tyylit, koska sitä ei enää käytetä */

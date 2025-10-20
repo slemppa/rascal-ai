@@ -207,6 +207,23 @@ export default function ContentStrategyPage() {
     }
   }, [tovEditText, editingTov])
 
+  // ESC-näppäimen tuki modaalin sulkemiseen
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape' && editId) {
+        handleCancel()
+      }
+    }
+
+    if (editId) {
+      document.addEventListener('keydown', handleKeyDown)
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [editId])
+
   const handleEdit = (item) => {
     setEditId(item.id)
     setEditText(item.strategy || item.Strategy)
@@ -250,6 +267,88 @@ export default function ContentStrategyPage() {
     } catch (e) {
       console.error('Error in handleSave:', e)
       alert('Tallennus epäonnistui')
+    }
+  }
+
+  const handleSaveAndApprove = async (item) => {
+    try {
+      // Päivitä strategia ja hyväksy se Supabasessa
+      const { data: updatedStrategy, error } = await supabase
+        .from('content_strategy')
+        .update({ 
+          strategy: editText,
+          approved: true,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', item.id)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Error updating and approving strategy:', error)
+        alert('Tallennus ja hyväksyntä epäonnistui: ' + error.message)
+        return
+      }
+
+      // Lähetä hyväksyntä API:n kautta
+      console.log('🚀 Lähetetään strategian vahvistus API:n kautta...')
+      
+      // Hae access token
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        throw new Error('Käyttäjä ei ole kirjautunut')
+      }
+
+      const response = await axios.post('/api/strategy-approve', {
+        strategy_id: item.id,
+        month: item.month,
+        company_id: companyId,
+        user_id: user?.id
+      }, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'x-api-key': process.env.N8N_SECRET_KEY || 'fallback-key',
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      console.log('✅ Strategy approval sent successfully:', response.data)
+
+      // Päivitä myös käyttäjän status "Approved":ksi
+      const { error: userError } = await supabase
+        .from('users')
+        .update({ 
+          status: 'Approved',
+          strategy_approved_at: new Date().toISOString()
+        })
+        .eq('auth_user_id', user.id)
+
+      if (userError) {
+        console.error('Error updating user status:', userError)
+        // Ei keskeytetä prosessia tämän takia
+      }
+
+      // Päivitä paikallinen state
+      const updated = { 
+        ...item, 
+        strategy: editText, 
+        Strategy: editText, // Säilytetään myös vanha kenttä yhteensopivuuden vuoksi
+        approved: true,
+        updated_at: updatedStrategy.updated_at
+      }
+      setStrategy(strategy.map(s => s.id === item.id ? updated : s))
+      setEditId(null)
+
+      // Päivitä käyttäjän status kontekstissa
+      refreshUserStatus()
+
+      // Näytä toast-notifikaatio
+      setToast({ visible: true, message: 'Strategia tallennettu ja hyväksytty onnistuneesti!' })
+      setTimeout(() => setToast({ visible: false, message: '' }), 3000)
+
+    } catch (e) {
+      console.error('Error in handleSaveAndApprove:', e)
+      alert('Tallennus ja hyväksyntä epäonnistui: ' + e.message)
     }
   }
 
@@ -579,10 +678,38 @@ export default function ContentStrategyPage() {
     setTovEditText('')
   }
 
-  // Funktio kuukauden kirjoittamiseen isolla alkukirjaimella
+  // Funktio kuukauden käännökselle ja kirjoittamiseen isolla alkukirjaimella
+  const translateMonth = (month) => {
+    if (!month) return ''
+    
+    const monthTranslations = {
+      'january': 'tammikuu',
+      'february': 'helmikuu', 
+      'march': 'maaliskuu',
+      'april': 'huhtikuu',
+      'may': 'toukokuu',
+      'june': 'kesäkuu',
+      'july': 'heinäkuu',
+      'august': 'elokuu',
+      'september': 'syyskuu',
+      'october': 'lokakuu',
+      'november': 'marraskuu',
+      'december': 'joulukuu'
+    }
+    
+    const lowerMonth = month.toLowerCase()
+    const translatedMonth = monthTranslations[lowerMonth] || month
+    
+    return translatedMonth
+  }
+
   const formatMonth = (month) => {
     if (!month) return ''
-    return month.charAt(0).toUpperCase() + month.slice(1).toLowerCase()
+    
+    // Käännä kuukausi jos kieli on suomi
+    const translatedMonth = i18n.language === 'fi' ? translateMonth(month) : month
+    
+    return translatedMonth.charAt(0).toUpperCase() + translatedMonth.slice(1).toLowerCase()
   }
 
   const getStrategyStatus = (month) => {
@@ -592,15 +719,18 @@ export default function ContentStrategyPage() {
     const currentMonth = currentDate.getMonth() // 0-11
     const currentYear = currentDate.getFullYear()
     
+    // Käännä kuukausi suomeksi vertailua varten
+    const translatedMonth = translateMonth(month)
+    
     // Kuukausien nimet suomeksi
     const monthNames = [
       'tammikuu', 'helmikuu', 'maaliskuu', 'huhtikuu', 'toukokuu', 'kesäkuu',
       'heinäkuu', 'elokuu', 'syyskuu', 'lokakuu', 'marraskuu', 'joulukuu'
     ]
     
-    // Etsi kuukauden indeksi
+    // Etsi kuukauden indeksi käännetyllä nimellä
     const monthIndex = monthNames.findIndex(name => 
-      month.toLowerCase().includes(name.toLowerCase())
+      translatedMonth.toLowerCase().includes(name.toLowerCase())
     )
     
     if (monthIndex === -1) return 'old'
@@ -626,10 +756,10 @@ export default function ContentStrategyPage() {
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'current': return 'Current'
-      case 'upcoming': return 'Upcoming'
-      case 'old': return 'Old'
-      default: return 'Old'
+      case 'current': return i18n.language === 'fi' ? 'Nykyinen' : 'Current'
+      case 'upcoming': return i18n.language === 'fi' ? 'Tuleva' : 'Upcoming'
+      case 'old': return i18n.language === 'fi' ? 'Vanha' : 'Old'
+      default: return i18n.language === 'fi' ? 'Vanha' : 'Old'
     }
   }
 
@@ -1089,6 +1219,10 @@ export default function ContentStrategyPage() {
                 
                 console.log('Sorting by month:', { monthA, monthB })
                 
+                // Käännä kuukaudet suomeksi vertailua varten
+                const translatedMonthA = translateMonth(monthA)
+                const translatedMonthB = translateMonth(monthB)
+                
                 // Kuukausien järjestys (uusimmasta vanhimmaksi)
                 const monthOrder = [
                   'joulukuu', 'marraskuu', 'lokakuu', 'syyskuu', 'elokuu', 'heinäkuu',
@@ -1096,15 +1230,15 @@ export default function ContentStrategyPage() {
                 ]
                 
                 const indexA = monthOrder.findIndex(month => 
-                  monthA.toLowerCase().includes(month.toLowerCase()) || 
-                  month.toLowerCase().includes(monthA.toLowerCase())
+                  translatedMonthA.toLowerCase().includes(month.toLowerCase()) || 
+                  month.toLowerCase().includes(translatedMonthA.toLowerCase())
                 )
                 const indexB = monthOrder.findIndex(month => 
-                  monthB.toLowerCase().includes(month.toLowerCase()) || 
-                  month.toLowerCase().includes(monthB.toLowerCase())
+                  translatedMonthB.toLowerCase().includes(month.toLowerCase()) || 
+                  month.toLowerCase().includes(translatedMonthB.toLowerCase())
                 )
                 
-                console.log('Month indices:', { indexA, indexB, monthA, monthB })
+                console.log('Month indices:', { indexA, indexB, monthA, monthB, translatedMonthA, translatedMonthB })
                 
                 // Jos kuukausi löytyi, käytä sitä, muuten säilytä järjestys
                 if (indexA !== -1 && indexB !== -1) {
@@ -1142,33 +1276,43 @@ export default function ContentStrategyPage() {
                           fontWeight: 600,
                           textTransform: 'uppercase'
                         }}>
-                          {item.approved ? 'Hyväksytty' : 'Odottaa'}
+                          {item.approved ? (i18n.language === 'fi' ? 'Hyväksytty' : 'Approved') : (i18n.language === 'fi' ? 'Odottaa' : 'Pending')}
                         </div>
                       </div>
                     </div>
                     
-                    {editId === item.id ? (
-                      <div style={{ flex: 1 }}>
-                        <textarea
-                          ref={textareaRef}
-                          value={editText}
-                          onChange={e => setEditText(e.target.value)}
-                          className="strategy-textarea"
-                          style={{
-                            width: '100%',
-                            minHeight: 120,
-                            padding: 12,
-                            border: '2px solid #e5e7eb',
-                            borderRadius: 8,
-                            fontSize: 14,
-                            lineHeight: 1.6,
-                            fontFamily: 'inherit',
-                            background: '#f9fafb',
-                            boxSizing: 'border-box'
-                          }}
-                          placeholder={t('strategy.strategyCard.placeholder')}
-                        />
-                        <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ 
+                        fontSize: 15, 
+                        lineHeight: 1.6, 
+                        color: '#374151', 
+                        whiteSpace: 'pre-line',
+                        marginBottom: 16
+                      }}>
+                        {item.strategy || item.Strategy}
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: 12, color: '#9ca3af' }}>
+                          {new Date(item.created_at || item.createdTime).toLocaleDateString(i18n.language === 'fi' ? 'fi-FI' : 'en-US')}
+                        </span>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          {!item.approved && (
+                            <button 
+                              style={{
+                                background: '#f59e0b',
+                                color: '#ffffff',
+                                border: 'none',
+                                borderRadius: 8,
+                                padding: '8px 16px',
+                                fontSize: 14,
+                                fontWeight: 600,
+                                cursor: 'pointer'
+                              }}
+                              onClick={() => handleApproveStrategy(item)}
+                            >
+                              {i18n.language === 'fi' ? 'Hyväksy strategia' : 'Approve strategy'}
+                            </button>
+                          )}
                           <button 
                             style={{
                               background: '#22c55e',
@@ -1180,79 +1324,13 @@ export default function ContentStrategyPage() {
                               fontWeight: 600,
                               cursor: 'pointer'
                             }}
-                            onClick={() => handleSave(item)}
+                            onClick={() => handleEdit(item)}
                           >
-                            {t('strategy.buttons.save')}
-                          </button>
-                          <button 
-                            style={{
-                              background: '#6b7280',
-                              color: '#ffffff',
-                              border: 'none',
-                              borderRadius: 8,
-                              padding: '8px 16px',
-                              fontSize: 14,
-                              fontWeight: 600,
-                              cursor: 'pointer'
-                            }}
-                            onClick={handleCancel}
-                          >
-                            {t('strategy.buttons.cancel')}
+                            {t('strategy.buttons.edit')}
                           </button>
                         </div>
                       </div>
-                    ) : (
-                      <div style={{ flex: 1 }}>
-                        <div style={{ 
-                          fontSize: 15, 
-                          lineHeight: 1.6, 
-                          color: '#374151', 
-                          whiteSpace: 'pre-line',
-                          marginBottom: 16
-                        }}>
-                          {item.strategy || item.Strategy}
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontSize: 12, color: '#9ca3af' }}>
-                            {new Date(item.created_at || item.createdTime).toLocaleDateString(i18n.language === 'fi' ? 'fi-FI' : 'en-US')}
-                          </span>
-                          <div style={{ display: 'flex', gap: '8px' }}>
-                            {!item.approved && (
-                              <button 
-                                style={{
-                                  background: '#f59e0b',
-                                  color: '#ffffff',
-                                  border: 'none',
-                                  borderRadius: 8,
-                                  padding: '8px 16px',
-                                  fontSize: 14,
-                                  fontWeight: 600,
-                                  cursor: 'pointer'
-                                }}
-                                onClick={() => handleApproveStrategy(item)}
-                              >
-                                Hyväksy strategia
-                              </button>
-                            )}
-                            <button 
-                              style={{
-                                background: '#22c55e',
-                                color: '#ffffff',
-                                border: 'none',
-                                borderRadius: 8,
-                                padding: '8px 16px',
-                                fontSize: 14,
-                                fontWeight: 600,
-                                cursor: 'pointer'
-                              }}
-                              onClick={() => handleEdit(item)}
-                            >
-                              {t('strategy.buttons.edit')}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                    </div>
                   </div>
                 )
               }) : null}
@@ -1386,6 +1464,160 @@ export default function ContentStrategyPage() {
           }}
         >
           {toast.message}
+        </div>
+      )}
+
+      {/* Editointimodaali */}
+      {editId && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '20px'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              handleCancel()
+            }
+          }}
+        >
+          <div 
+            style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              padding: '24px',
+              maxWidth: '800px',
+              width: '100%',
+              maxHeight: '80vh',
+              overflow: 'auto',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '20px' 
+            }}>
+              <h3 style={{ 
+                margin: 0, 
+                fontSize: '20px', 
+                fontWeight: '700', 
+                color: '#374151' 
+              }}>
+                {i18n.language === 'fi' ? 'Muokkaa strategiaa' : 'Edit strategy'}
+              </h3>
+              <button
+                onClick={handleCancel}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                  padding: '4px',
+                  borderRadius: '4px'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#f3f4f6'}
+                onMouseOut={(e) => e.target.style.background = 'none'}
+              >
+                ×
+              </button>
+            </div>
+            
+            <textarea
+              ref={textareaRef}
+              value={editText}
+              onChange={e => setEditText(e.target.value)}
+              style={{
+                width: '100%',
+                minHeight: '300px',
+                padding: '16px',
+                border: '2px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '16px',
+                lineHeight: '1.6',
+                fontFamily: 'inherit',
+                background: '#f9fafb',
+                boxSizing: 'border-box',
+                resize: 'vertical'
+              }}
+              placeholder={t('strategy.strategyCard.placeholder')}
+            />
+            
+            <div style={{ 
+              display: 'flex', 
+              gap: '12px', 
+              marginTop: '20px', 
+              justifyContent: 'flex-end' 
+            }}>
+              <button 
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#16a34a'}
+                onMouseOut={(e) => e.target.style.background = '#22c55e'}
+                onClick={() => handleSave(strategy.find(s => s.id === editId))}
+              >
+                {t('strategy.buttons.save')}
+              </button>
+              {!strategy.find(s => s.id === editId)?.approved && (
+                <button 
+                  style={{
+                    background: '#f59e0b',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '12px 24px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseOver={(e) => e.target.style.background = '#d97706'}
+                  onMouseOut={(e) => e.target.style.background = '#f59e0b'}
+                  onClick={() => handleSaveAndApprove(strategy.find(s => s.id === editId))}
+                >
+                  {i18n.language === 'fi' ? 'Tallenna ja hyväksy' : 'Save and approve'}
+                </button>
+              )}
+              <button 
+                style={{
+                  background: '#6b7280',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#4b5563'}
+                onMouseOut={(e) => e.target.style.background = '#6b7280'}
+                onClick={handleCancel}
+              >
+                {t('strategy.buttons.cancel')}
+              </button>
+            </div>
+          </div>
         </div>
       )}
       </div>

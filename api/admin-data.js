@@ -73,7 +73,11 @@ export default async function handler(req, res) {
             assistant_id,
             crm_connected,
             features,
-            subscription_status
+            subscription_status,
+            platforms,
+            onboarding_completed,
+            vapi_inbound_assistant_id,
+            vapi_phone_number
           `)
           .order('created_at', { ascending: false })
 

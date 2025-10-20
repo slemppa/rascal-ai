@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { useMonthlyLimit } from '../hooks/useMonthlyLimit'
+import { useNextMonthQuota } from '../hooks/useNextMonthQuota'
 import Button from '../components/Button'
 import PostsCalendar from '../components/PostsCalendar'
 import PublishModal from '../components/PublishModal'
@@ -488,6 +489,7 @@ export default function ManagePostsPage() {
   const { t } = useTranslation('common')
   const { user } = useAuth()
   const monthlyLimit = useMonthlyLimit()
+  const nextMonthQuota = useNextMonthQuota()
   
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(false)
@@ -1789,27 +1791,6 @@ export default function ManagePostsPage() {
   return (
     <>
       <div className="posts-container">
-      {/* Page Header */}
-      <div className="posts-header">
-        <h2>{t('posts.header')}</h2>
-        {monthlyLimit.loading ? (
-          <div className="monthly-limit-indicator loading">
-            Ladataan kuukausirajaa...
-          </div>
-        ) : (
-          <div className={`monthly-limit-indicator ${monthlyLimit.remaining <= 5 ? 'warning' : 'normal'}`}>
-            <span className="limit-text">
-              {monthlyLimit.currentCount}/{monthlyLimit.monthlyLimit} generoitua sisältöä tässä kuussa
-            </span>
-            {monthlyLimit.remaining <= 5 && monthlyLimit.remaining > 0 && (
-              <span className="warning-text">Vain {monthlyLimit.remaining} jäljellä</span>
-            )}
-            {monthlyLimit.remaining === 0 && (
-              <span className="limit-reached">Kuukausiraja täynnä</span>
-            )}
-          </div>
-        )}
-      </div>
 
       {/* Tabs + Search and Filters */}
       <div className="tabs">
@@ -1826,6 +1807,50 @@ export default function ManagePostsPage() {
           Kalenteri
         </button>
       </div>
+
+      {/* Page Header */}
+      <div className="posts-header">
+        <h2>{t('posts.header')}</h2>
+        <div className="quota-indicators">
+          {monthlyLimit.loading ? (
+            <div className="monthly-limit-indicator loading">
+              Ladataan kuukausirajaa...
+            </div>
+          ) : (
+            <div className={`monthly-limit-indicator ${monthlyLimit.remaining <= 5 ? 'warning' : 'normal'}`}>
+              <span className="limit-text">
+                {monthlyLimit.currentCount}/{monthlyLimit.monthlyLimit} generoitua sisältöä tässä kuussa
+              </span>
+              {monthlyLimit.remaining <= 5 && monthlyLimit.remaining > 0 && (
+                <span className="warning-text">Vain {monthlyLimit.remaining} jäljellä</span>
+              )}
+              {monthlyLimit.remaining === 0 && (
+                <span className="limit-reached">Kuukausiraja täynnä</span>
+              )}
+            </div>
+          )}
+          
+          {nextMonthQuota.loading ? (
+            <div className="monthly-limit-indicator loading">
+              Ladataan seuraavan kuun kiintiötä...
+            </div>
+          ) : (
+            <div className={`monthly-limit-indicator ${nextMonthQuota.nextMonthRemaining <= 5 ? 'warning' : 'normal'}`}>
+              <span className="limit-text">
+                {nextMonthQuota.nextMonthCount}/{nextMonthQuota.nextMonthLimit} generoitua sisältöä seuraavassa kuussa
+              </span>
+              {nextMonthQuota.nextMonthRemaining <= 5 && nextMonthQuota.nextMonthRemaining > 0 && (
+                <span className="warning-text">Vain {nextMonthQuota.nextMonthRemaining} jäljellä</span>
+              )}
+              {nextMonthQuota.nextMonthRemaining === 0 && (
+                <span className="limit-reached">Seuraavan kuun kiintiö täynnä</span>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Tabs */}
 
       {/* Search and Filters */}
       <div className="search-filters">

@@ -1301,15 +1301,31 @@ export default function ManagePostsPage() {
         throw new Error(result.error || 'Ajastus epäonnistui')
       }
 
-      // Päivitetään UI
-      await fetchPosts()
-      if (post.source === 'reels') {
-        await fetchReelsPosts()
+      // Optimistinen UI-päivitys - siirretään postaus heti sarakkeeseen
+      const updatedPost = {
+        ...post,
+        status: 'Aikataulutettu',
+        scheduledDate: scheduledDate,
+        source: 'mixpost'
       }
+      
+      // Päivitetään paikallinen tila heti
+      setPosts(prevPosts => {
+        const filteredPosts = prevPosts.filter(p => p.id !== post.id)
+        return [...filteredPosts, updatedPost]
+      })
 
       setSuccessMessage(result.message || t('posts.messages.scheduleSuccess'))
       setShowEditModal(false)
       setEditingPost(null)
+
+      // Haetaan data taustalla varmistamaan synkronointi
+      setTimeout(async () => {
+        await fetchPosts()
+        if (post.source === 'reels') {
+          await fetchReelsPosts()
+        }
+      }, 1000)
       
     } catch (error) {
       console.error('Schedule error:', error)
@@ -1489,10 +1505,25 @@ export default function ManagePostsPage() {
         throw new Error(t('posts.messages.supabaseUpdateFailed'))
       }
 
-      // Päivitetään UI
-      await fetchPosts()
+      // Optimistinen UI-päivitys - siirretään postaus heti sarakkeeseen
+      const updatedPost = {
+        ...post,
+        status: newStatus,
+        updated_at: new Date().toISOString()
+      }
       
+      // Päivitetään paikallinen tila heti
+      setPosts(prevPosts => {
+        const filteredPosts = prevPosts.filter(p => p.id !== post.id)
+        return [...filteredPosts, updatedPost]
+      })
+
       setSuccessMessage(`Postaus siirretty sarakkeeseen: ${newStatus}`)
+
+      // Haetaan data taustalla varmistamaan synkronointi
+      setTimeout(async () => {
+        await fetchPosts()
+      }, 1000)
       
     } catch (error) {
       console.error('Move to next error:', error)

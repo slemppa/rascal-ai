@@ -160,10 +160,10 @@ const transformSupabaseData = (supabaseData) => {
       
       return {
         id: item.id,
-        title: isAvatar ? `Avatar ${item.id}` : (item.Idea || item.caption || t('posts.statuses.untitledReels')),
+        title: item.Idea || item.caption || t('posts.statuses.untitledReels'),
         status: status,
         thumbnail: item.media_urls?.[0] || null,
-        caption: isAvatar ? `Avatar-kuva ${item.id}` : (item.caption || 'Ei kuvausta'),
+        caption: item.caption || 'Ei kuvausta',
         type: isAvatar ? 'Avatar' : 'Reel',
         createdAt: item.createdTime || item.created_at ? new Date(item.createdTime || item.created_at).toISOString().split('T')[0] : null,
         scheduledDate: null,
@@ -1889,20 +1889,6 @@ export default function ManagePostsPage() {
         </div>
       </div>
 
-      {/* Loading State */}
-      {(loading || reelsLoading) && (
-        <div className="skeleton-loading">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="skeleton-card">
-              <div className="skeleton-thumbnail"></div>
-              <div className="skeleton-content">
-                <div className="skeleton-title"></div>
-                <div className="skeleton-caption"></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* Error State */}
       {(currentError || reelsError) && (

@@ -106,7 +106,8 @@ export default async function handler(req, res) {
           voiceover: voiceover,
           user_id: null,
           source: 'reels',
-          'Record ID': item['Record ID'] // Lisätään Record ID myös tähän
+          'Record ID': item['Record ID'], // Lisätään Record ID myös tähän
+          'Type (from Variables) (from Companies)': item['Type (from Variables) (from Companies)'] || []
         }
       })
       .filter(item => {

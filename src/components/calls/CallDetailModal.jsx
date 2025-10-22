@@ -60,6 +60,124 @@ function CallDetailModal({
       })
   }, [selectedLog.transcript])
 
+  // Tarkista onko äänitiedosto saatavilla
+  const hasAudioFile = useMemo(() => {
+    const recordingUrl = selectedLog.recording_url
+    if (!recordingUrl) return false
+    
+    // Käsittele sekä array että JSON string -muotoja
+    let urls = []
+    if (Array.isArray(recordingUrl)) {
+      urls = recordingUrl
+    } else if (typeof recordingUrl === 'string') {
+      try {
+        // Yritä parsia JSON string
+        const parsed = JSON.parse(recordingUrl)
+        if (Array.isArray(parsed)) {
+          urls = parsed
+        } else {
+          urls = [recordingUrl] // Jos ei ole array, käsittele stringinä
+        }
+      } catch {
+        urls = [recordingUrl] // Jos JSON parsing epäonnistuu, käsittele stringinä
+      }
+    }
+    
+    return urls.some(url => {
+      if (!url || typeof url !== 'string') return false
+      const lowerUrl = url.toLowerCase()
+      return lowerUrl.includes('.mp3') || lowerUrl.includes('.wav') || lowerUrl.includes('.m4a') || lowerUrl.includes('.ogg') || lowerUrl.includes('.mp4')
+    })
+  }, [selectedLog.recording_url])
+
+  // Hae ensimmäinen äänitiedosto
+  const audioUrl = useMemo(() => {
+    if (!hasAudioFile) return null
+    const recordingUrl = selectedLog.recording_url
+    
+    // Käsittele sekä array että JSON string -muotoja
+    let urls = []
+    if (Array.isArray(recordingUrl)) {
+      urls = recordingUrl
+    } else if (typeof recordingUrl === 'string') {
+      try {
+        // Yritä parsia JSON string
+        const parsed = JSON.parse(recordingUrl)
+        if (Array.isArray(parsed)) {
+          urls = parsed
+        } else {
+          urls = [recordingUrl] // Jos ei ole array, käsittele stringinä
+        }
+      } catch {
+        urls = [recordingUrl] // Jos JSON parsing epäonnistuu, käsittele stringinä
+      }
+    }
+    
+    return urls.find(url => {
+      if (!url || typeof url !== 'string') return false
+      const lowerUrl = url.toLowerCase()
+      return lowerUrl.includes('.mp3') || lowerUrl.includes('.wav') || lowerUrl.includes('.m4a') || lowerUrl.includes('.ogg') || lowerUrl.includes('.mp4')
+    })
+  }, [selectedLog.recording_url, hasAudioFile])
+
+  // Lataa äänitiedosto Supabase Storage:sta
+  const [audioBlobUrl, setAudioBlobUrl] = useState(null)
+  const [audioLoading, setAudioLoading] = useState(false)
+
+  useEffect(() => {
+    if (!hasAudioFile || !audioUrl) {
+      setAudioBlobUrl(null)
+      return
+    }
+
+    const downloadAudio = async () => {
+      try {
+        setAudioLoading(true)
+        
+        // Tarkista onko URL Supabase Storage authenticated URL
+        if (audioUrl.includes('/storage/v1/object/authenticated/')) {
+          // Pura bucket ja file path URL:ista
+          const urlParts = audioUrl.split('/storage/v1/object/authenticated/')
+          if (urlParts.length === 2) {
+            const pathParts = urlParts[1].split('/')
+            const bucket = pathParts[0]
+            const filePath = pathParts.slice(1).join('/')
+            
+            // Lataa tiedosto Supabase Storage:sta
+            const { data, error } = await supabase.storage
+              .from(bucket)
+              .download(filePath)
+            
+            if (error) {
+              console.error('Error downloading audio:', error)
+              return
+            }
+            
+            // Luo blob URL
+            const blobUrl = URL.createObjectURL(data)
+            setAudioBlobUrl(blobUrl)
+          }
+        } else {
+          // Jos ei ole Supabase Storage URL, käytä suoraan
+          setAudioBlobUrl(audioUrl)
+        }
+      } catch (error) {
+        console.error('Error processing audio:', error)
+      } finally {
+        setAudioLoading(false)
+      }
+    }
+
+    downloadAudio()
+
+    // Cleanup blob URL kun komponentti unmountataan
+    return () => {
+      if (audioBlobUrl && audioBlobUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(audioBlobUrl)
+      }
+    }
+  }, [hasAudioFile, audioUrl, supabase])
+
   // Renderöidään transkripti paginoiden, jotta avaus ja scroll on nopea
   const [transcriptLimit, setTranscriptLimit] = useState(200)
   useEffect(() => {
@@ -223,6 +341,22 @@ function CallDetailModal({
             >
               Transkripti
             </button>
+            {hasAudioFile && (
+              <button
+                onClick={() => setDetailActiveTab('audio')}
+                style={{
+                  padding: '10px 12px',
+                  border: 'none',
+                  background: 'transparent',
+                  color: detailActiveTab === 'audio' ? '#24170f' : '#6b7280',
+                  borderBottom: detailActiveTab === 'audio' ? '2px solid #ff6600' : '2px solid transparent',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                Ääni
+              </button>
+            )}
           </div>
 
           {/* Tab content */}
@@ -273,6 +407,67 @@ function CallDetailModal({
                 </div>
               </div>
             )}
+
+       {detailActiveTab === 'audio' && hasAudioFile && (
+         <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 10, padding: 16 }}>
+           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff6600" strokeWidth="2">
+               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+               <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+             </svg>
+             <div>
+               <div style={{ fontWeight: 700, color: '#111827', fontSize: 16 }}>Puhelun äänitiedosto</div>
+               <div style={{ color: '#6b7280', fontSize: 14 }}>
+                 {audioLoading ? 'Ladataan äänitiedostoa...' : 'Kuuntele puhelun tallenne'}
+               </div>
+             </div>
+           </div>
+           
+           {audioLoading ? (
+             <div style={{ 
+               display: 'flex', 
+               alignItems: 'center', 
+               justifyContent: 'center', 
+               padding: '20px',
+               color: '#6b7280'
+             }}>
+               <div style={{ 
+                 width: '20px', 
+                 height: '20px', 
+                 border: '2px solid #e5e7eb', 
+                 borderTop: '2px solid #ff6600', 
+                 borderRadius: '50%', 
+                 animation: 'spin 1s linear infinite',
+                 marginRight: '8px'
+               }}></div>
+               Ladataan...
+             </div>
+           ) : audioBlobUrl ? (
+             <audio 
+               controls 
+               style={{ width: '100%', height: 40 }}
+               preload="metadata"
+             >
+               <source src={audioBlobUrl} type="audio/mpeg" />
+               <source src={audioBlobUrl} type="audio/wav" />
+               <source src={audioBlobUrl} type="audio/mp4" />
+               <source src={audioBlobUrl} type="audio/ogg" />
+               <source src={audioBlobUrl} type="video/mp4" />
+               Selaimesi ei tue äänitiedostojen toistoa.
+             </audio>
+           ) : (
+             <div style={{ 
+               padding: '20px', 
+               textAlign: 'center', 
+               color: '#6b7280',
+               background: '#f3f4f6',
+               borderRadius: '8px'
+             }}>
+               Äänitiedoston lataus epäonnistui
+             </div>
+           )}
+         </div>
+       )}
           </div>
         </div>
       </div>

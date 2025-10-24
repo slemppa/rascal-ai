@@ -834,6 +834,176 @@
       "inbound": {
         "title": "Inbound settings",
         "close": "Close"
+      },
+      "addCallType": {
+        "title": "Add new call type",
+        "steps": {
+          "basics": "Basics",
+          "content": "Content",
+          "advanced": "Advanced",
+          "summary": "Summary",
+          "textMessages": "Text Messages",
+          "aiEnhancement": "AI Enhancement"
+        },
+        "fields": {
+          "name": "Name",
+          "status": "Status",
+          "version": "Version",
+          "agentName": "Agent Name",
+          "targetAudience": "Target Audience",
+          "agentPersona": "Agent Persona / Role",
+          "toneStyle": "Tone & Speaking Style",
+          "callGoals": "Call Objective / Goals",
+          "guidelines": "Guidelines & Rules",
+          "greeting": "Greeting",
+          "purposeIntro": "Purpose Introduction / Reason for Call",
+          "questions": "Product/Service Questions List",
+          "closing": "Call Closing / Goodbye",
+          "agentNotes": "Agent Notes / Special Instructions",
+          "firstSms": "First text message (SMS)",
+          "summary": "Summary (analytics)",
+          "successAssessment": "Success assessment (analytics)"
+        },
+        "statusOptions": {
+          "active": "Active",
+          "draft": "Draft",
+          "archived": "Archived"
+        },
+        "placeholders": {
+          "name": "e.g. sales, customer support",
+          "version": "v1.0",
+          "agentName": "Sarah from Sales",
+          "targetAudience": "B2B decision makers, CFOs at mid-size companies",
+          "agentPersona": "You are Sarah, a friendly sales consultant at TechCorp. You help business owners streamline their operations with our software solutions.",
+          "toneStyle": "Professional yet warm. Use clear, jargon-free language. Keep sentences short and pause naturally for responses.",
+          "callGoals": "1. Qualify budget and timeline\n2. Identify key pain points\n3. Determine decision-making process\n4. Book demo with qualified leads",
+          "guidelines": "Always confirm understanding before moving on. If prospect asks off-topic questions, acknowledge briefly and redirect. Never interrupt; let them finish speaking completely.",
+          "greeting": "Hi, this is Sarah from TechCorp!",
+          "purposeIntro": "I'm reaching out because you recently downloaded our pricing guide. I wanted to see if you had any questions and share how we've helped similar companies reduce costs by 30%.",
+          "questions": "1. What's your current process for [specific task]?\n   [wait for answer]\n2. What challenges are you facing with that approach?\n   [wait for answer]\n3. If you could wave a magic wand, what would the ideal solution look like?\n   [wait for answer]",
+          "closing": "This has been really helpful! Based on what you shared, I think a personalized demo would be valuable. I'll send you a calendar link - does Tuesday or Thursday work better for you?",
+          "agentNotes": "Record: Preferred contact time, current solution name, budget range mentioned, decision timeline, competitor mentions, specific pain points, and any follow-up commitments made.",
+          "firstSms": "SMS message sent to the customer before the call... (max 160 characters)",
+          "summary": "• 2–3 sentence summary in English.\n• What was discovered + agreed next steps.",
+          "successAssessment": "• In 2–3 sentences, assess whether the goals were met.\n• Why it succeeded/failed and what's missing."
+        },
+        "examples": {
+          "users": "Example",
+          "agentName": "\"Emma from Customer Success\" or \"Alex - Technical Support\"",
+          "targetAudience": "Be specific: \"HR managers at 50-500 employee companies\" instead of just \"HR managers\"",
+          "agentPersona": "\"You are Emma, a customer success specialist at CloudCo. You help clients maximize their ROI by identifying optimization opportunities and providing actionable recommendations.\"",
+          "toneStyle": "\"Conversational and consultative. Mirror the prospect's energy level. Use 'we' language to build partnership. Avoid technical terms unless the prospect uses them first.\"",
+          "callGoals": "\"1. Confirm current solution & satisfaction level\n2. Identify 2-3 specific challenges\n3. Gauge interest in ROI calculator\n4. Schedule next touchpoint\"",
+          "guidelines": "\"Ask permission before diving into questions. If they're busy, offer to reschedule immediately. Surface objections gently with 'It sounds like...' framing. Always end with a clear next step.\"",
+          "greeting": "\"Good morning! This is Alex calling from CloudCo.\" - Keep it natural and friendly.",
+          "purposeIntro": "\"I noticed you attended our webinar last week. I'm following up to see what resonated with you and answer any questions. Is now a good time for a quick chat, maybe 5-7 minutes?\"",
+          "questions": "1. How are you currently handling customer onboarding?\n   [wait for answer]\n   → If manual: How much time does that take per week?\n2. What's the biggest bottleneck in that process?\n   [wait for answer]\n3. Have you explored automation tools before?\n   [wait for answer]\n   → If yes: What didn't work about them?",
+          "closing": "\"Thanks for your time! I'll email you those resources we discussed plus our ROI calculator. Any final questions before I let you go? Perfect - talk soon!\"",
+          "agentNotes": "\"Flag as 'Hot Lead' if budget confirmed + decision timeline under 60 days. Tag with primary use case. Note any technical requirements or integration needs mentioned.\"",
+          "summary": "Summarize in 2–3 sentences: whether they attended [event], key interests/challenges, agreed next steps (time/method).",
+          "successAssessment": "Assess whether these were achieved: 1) attendance info, 2) interests/challenges, 3) follow-up agreement, 4) time/method of contact. Justify briefly."
+        },
+        "aiEnhancement": {
+          "title": "I want to enhance this with AI",
+          "description": "Send the call type to AI enhancement. You'll get back an optimized version that's better tailored to your customers.",
+          "benefits": {
+            "title": "Benefits of AI enhancement:",
+            "optimize": "Optimize call flow and questions",
+            "improve": "Improve response quality and naturalness",
+            "suggest": "Suggest improvements to script and approach"
+          },
+          "cta": "Send to AI enhancement"
+        },
+        "buttons": {
+          "previous": "Previous",
+          "next": "Next",
+          "addCallType": "Add call type"
+        }
+      },
+      "editCallType": {
+        "title": "Edit call type",
+        "steps": {
+          "basics": "Basics",
+          "content": "Content",
+          "advanced": "Advanced",
+          "summary": "Summary",
+          "textMessages": "Text Messages",
+          "aiEnhancement": "AI Enhancement"
+        },
+        "fields": {
+          "name": "Name",
+          "status": "Status",
+          "version": "Version",
+          "agentName": "Agent Name",
+          "targetAudience": "Target Audience",
+          "agentPersona": "Agent Persona / Role",
+          "toneStyle": "Tone & Speaking Style",
+          "callGoals": "Call Objective / Goals",
+          "guidelines": "Guidelines & Rules",
+          "greeting": "Greeting",
+          "purposeIntro": "Purpose Introduction / Reason for Call",
+          "questions": "Product/Service Questions List",
+          "closing": "Call Closing / Goodbye",
+          "agentNotes": "Agent Notes / Special Instructions",
+          "firstSms": "First text message (SMS)",
+          "afterCallSms": "SMS After Answered Call",
+          "missedCallSms": "SMS When Call Not Answered",
+          "summary": "Summary (analytics)",
+          "successAssessment": "Success assessment (analytics)"
+        },
+        "statusOptions": {
+          "active": "Active",
+          "draft": "Draft",
+          "archived": "Archived"
+        },
+        "placeholders": {
+          "agentName": "Sarah from Sales",
+          "targetAudience": "B2B decision makers, CFOs at mid-size companies",
+          "agentPersona": "You are Sarah, a friendly sales consultant at TechCorp. You help business owners streamline their operations with our software solutions.",
+          "toneStyle": "Professional yet warm. Use clear, jargon-free language. Keep sentences short and pause naturally for responses.",
+          "callGoals": "1. Qualify budget and timeline\n2. Identify key pain points\n3. Determine decision-making process\n4. Book demo with qualified leads",
+          "guidelines": "Always confirm understanding before moving on. If prospect asks off-topic questions, acknowledge briefly and redirect. Never interrupt; let them finish speaking completely.",
+          "greeting": "Hi, this is Sarah from TechCorp!",
+          "purposeIntro": "I'm reaching out because you recently downloaded our pricing guide. I wanted to see if you had any questions and share how we've helped similar companies reduce costs by 30%.",
+          "questions": "1. What's your current process for [specific task]?\n   [wait for answer]\n2. What challenges are you facing with that approach?\n   [wait for answer]\n3. If you could wave a magic wand, what would the ideal solution look like?\n   [wait for answer]",
+          "closing": "This has been really helpful! Based on what you shared, I think a personalized demo would be valuable. I'll send you a calendar link - does Tuesday or Thursday work better for you?",
+          "agentNotes": "Record: Preferred contact time, current solution name, budget range mentioned, decision timeline, competitor mentions, specific pain points, and any follow-up commitments made.",
+          "firstSms": "SMS message sent to the customer before the call... (max 160 characters)",
+          "summary": "• 2–3 sentence summary in English.\n• What was discovered + agreed next steps.",
+          "successAssessment": "• In 2–3 sentences, assess whether the goals were met.\n• Why it succeeded/failed and what's missing."
+        },
+        "examples": {
+          "users": "Example",
+          "agentName": "\"Emma from Customer Success\" or \"Alex - Technical Support\"",
+          "targetAudience": "Be specific: \"HR managers at 50-500 employee companies\" instead of just \"HR managers\"",
+          "agentPersona": "\"You are Emma, a customer success specialist at CloudCo. You help clients maximize their ROI by identifying optimization opportunities and providing actionable recommendations.\"",
+          "toneStyle": "\"Conversational and consultative. Mirror the prospect's energy level. Use 'we' language to build partnership. Avoid technical terms unless the prospect uses them first.\"",
+          "callGoals": "\"1. Confirm current solution & satisfaction level\n2. Identify 2-3 specific challenges\n3. Gauge interest in ROI calculator\n4. Schedule next touchpoint\"",
+          "decisionProcess": "\"Ask permission before diving into questions. If they're busy, offer to reschedule immediately. Surface objections gently with 'It sounds like...' framing. Always end with a clear next step.\"",
+          "greeting": "\"Good morning! This is Alex calling from CloudCo.\" - Keep it natural and friendly.",
+          "purposeIntro": "\"I noticed you attended our webinar last week. I'm following up to see what resonated with you and answer any questions. Is now a good time for a quick chat, maybe 5-7 minutes?\"",
+          "questions": "1. How are you currently handling customer onboarding?\n   [wait for answer]\n   → If manual: How much time does that take per week?\n2. What's the biggest bottleneck in that process?\n   [wait for answer]\n3. Have you explored automation tools before?\n   [wait for answer]\n   → If yes: What didn't work about them?",
+          "closing": "\"Thanks for your time! I'll email you those resources we discussed plus our ROI calculator. Any final questions before I let you go? Perfect - talk soon!\"",
+          "agentNotes": "\"Flag as 'Hot Lead' if budget confirmed + decision timeline under 60 days. Tag with primary use case. Note any technical requirements or integration needs mentioned.\"",
+          "summary": "Summarize in 2–3 sentences: whether they attended [event], key interests/challenges, agreed next steps (time/method).",
+          "successAssessment": "Assess whether these were achieved: 1) attendance info, 2) interests/challenges, 3) follow-up agreement, 4) time/method of contact. Justify briefly."
+        },
+        "aiEnhancement": {
+          "title": "I want to enhance this with AI",
+          "description": "Send the call type to AI enhancement. You'll get back an optimized version that's better tailored to your customers.",
+          "benefits": {
+            "title": "Benefits of AI enhancement:",
+            "optimize": "Optimize call flow and questions",
+            "improve": "Improve response quality and naturalness",
+            "suggest": "Suggest improvements to script and approach"
+          },
+          "cta": "Send to AI enhancement"
+        },
+        "buttons": {
+          "previous": "Previous",
+          "next": "Next",
+          "saveChanges": "Save changes"
+        }
       }
     }
     ,

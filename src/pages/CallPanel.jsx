@@ -79,7 +79,9 @@ export default function CallPanel() {
     status: 'Active', 
     summary: '', 
     success_assessment: '',
-    first_sms: '' // Uusi kenttä: Ensimmäinen SMS
+    first_sms: '', // Uusi kenttä: Ensimmäinen SMS
+    after_call_sms: '', // Uusi kenttä: SMS vastatun puhelun jälkeen
+    missed_call_sms: '' // Uusi kenttä: SMS kun puheluun ei vastattu
   })
   const [callTypes, setCallTypes] = useState([])
   const [loadingCallTypes, setLoadingCallTypes] = useState(true)
@@ -174,6 +176,8 @@ export default function CallPanel() {
   const [massCallStarting, setMassCallStarting] = useState(false)
   const [massCallScheduling, setMassCallScheduling] = useState(false)
   const [massCallSmsFirst, setMassCallSmsFirst] = useState(false)
+  const [massCallSmsAfterCall, setMassCallSmsAfterCall] = useState(false)
+  const [massCallSmsMissedCall, setMassCallSmsMissedCall] = useState(false)
   const [massCallCampaignId, setMassCallCampaignId] = useState('')
   const [massCallSegmentId, setMassCallSegmentId] = useState('')
   const [massCallCampaigns, setMassCallCampaigns] = useState([])
@@ -769,7 +773,9 @@ export default function CallPanel() {
           status: editingCallType.status || 'Active',
           summary: editingCallType.summary || '',
           success_assessment: editingCallType.success_assessment || '',
-          first_sms: editingCallType.first_sms || '' // Uusi kenttä
+          first_sms: editingCallType.first_sms || '', // Uusi kenttä
+          after_call_sms: editingCallType.after_call_sms || '', // Uusi kenttä
+          missed_call_sms: editingCallType.missed_call_sms || '' // Uusi kenttä
         }
 
         const { error } = await supabase.from('call_types').update(fields).eq('id', editingCallType.id)
@@ -1017,7 +1023,9 @@ export default function CallPanel() {
         status: newCallType.status || 'Active',
         summary: newCallType.summary || '',
         success_assessment: newCallType.success_assessment || '',
-        first_sms: newCallType.first_sms || '' // Uusi kenttä
+        first_sms: newCallType.first_sms || '', // Uusi kenttä
+        after_call_sms: newCallType.after_call_sms || '', // Uusi kenttä
+        missed_call_sms: newCallType.missed_call_sms || '' // Uusi kenttä
       }
       const { data: newCallTypeData, error } = await supabase.from('call_types').insert([insertData]).select().single()
       if (error) throw error
@@ -1947,6 +1955,8 @@ export default function CallPanel() {
           voice_id: selectedVoiceObj?.id,
           user_id: user?.id,
           sms_first: massCallSmsFirst === true,
+          sms_after_call: massCallSmsAfterCall === true,
+          sms_missed_call: massCallSmsMissedCall === true,
           newCampaignId: massCallCampaignId || null,
           contactSegmentId: massCallSegmentId || null
         })
@@ -1963,6 +1973,9 @@ export default function CallPanel() {
       setMassCallValidationResult(null)
       setMassCallCallType('')
       setMassCallSelectedVoice('rascal-nainen-1')
+      setMassCallSmsFirst(false)
+      setMassCallSmsAfterCall(false)
+      setMassCallSmsMissedCall(false)
       fetchCallLogs()
       return
       // Käytä normaalia mass-call API:a Google Sheets -datalle
@@ -2093,7 +2106,9 @@ export default function CallPanel() {
             duration: null,
                           summary: `Mass-call: ${massCallCallType}`,  // Käytä summary saraketta notes sijaan
             created_at: new Date().toISOString(),
-            sms_first: massCallSmsFirst === true
+            sms_first: massCallSmsFirst === true,
+            after_call_sms_sent: massCallSmsAfterCall === true,
+            missed_call_sms_sent: massCallSmsMissedCall === true
           })
         }
       }
@@ -2121,6 +2136,9 @@ export default function CallPanel() {
       setMassCallValidationResult(null)
       setMassCallCallType('')
       setMassCallSelectedVoice('rascal-nainen-1')
+      setMassCallSmsFirst(false)
+      setMassCallSmsAfterCall(false)
+      setMassCallSmsMissedCall(false)
       
       // Päivitä puheluloki
       fetchCallLogs()
@@ -2156,7 +2174,9 @@ export default function CallPanel() {
           user_id: user?.id,
           scheduledDate: massCallScheduledDate,
           scheduledTime: massCallScheduledTime,
-          sms_first: massCallSmsFirst === true
+          sms_first: massCallSmsFirst === true,
+          sms_after_call: massCallSmsAfterCall === true,
+          sms_missed_call: massCallSmsMissedCall === true
         })
       })
       const data = await res.json().catch(() => ({}))
@@ -2173,6 +2193,9 @@ export default function CallPanel() {
       setMassCallSelectedVoice('rascal-nainen-1')
       setMassCallScheduledDate('')
       setMassCallScheduledTime('')
+      setMassCallSmsFirst(false)
+      setMassCallSmsAfterCall(false)
+      setMassCallSmsMissedCall(false)
       fetchCallLogs()
       return
       // Tallenna ajastetut puhelut call_logs tauluun
@@ -2301,7 +2324,10 @@ export default function CallPanel() {
             answered: false,
             duration: null,
             summary: `Scheduled mass-call: ${massCallCallType}`,  // Käytä summary saraketta notes sijaan
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
+            sms_first: massCallSmsFirst === true,
+            after_call_sms_sent: massCallSmsAfterCall === true,
+            missed_call_sms_sent: massCallSmsMissedCall === true
           })
         }
       }
@@ -2331,6 +2357,9 @@ export default function CallPanel() {
       setMassCallSelectedVoice('rascal-nainen-1')
       setMassCallScheduledDate('')
       setMassCallScheduledTime('')
+      setMassCallSmsFirst(false)
+      setMassCallSmsAfterCall(false)
+      setMassCallSmsMissedCall(false)
       
       // Päivitä puheluloki
       fetchCallLogs()
@@ -2353,6 +2382,9 @@ export default function CallPanel() {
     setMassCallSelectedVoice('rascal-nainen-1')
     setMassCallScheduledDate('')
     setMassCallScheduledTime('')
+    setMassCallSmsFirst(false)
+    setMassCallSmsAfterCall(false)
+    setMassCallSmsMissedCall(false)
   }
 
   return (
@@ -3804,63 +3836,123 @@ export default function CallPanel() {
                       </p>
 
                       <div style={{ display: 'grid', gap: 16, marginTop: 8 }}>
-                        <div>
-                          <label className="label">{t('calls.modals.mass.step2.campaign.label')}</label>
-                          <select value={massCallCampaignId} onChange={e => setMassCallCampaignId(e.target.value)} className="select">
-                            <option value="">{t('calls.modals.mass.step2.campaign.select')}</option>
-                            {massCallCampaigns.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                          </select>
-                        </div>
-                        <div>
-                          <label className="label">{t('calls.modals.mass.step2.segment.label')}</label>
-                          <select value={massCallSegmentId} onChange={e => setMassCallSegmentId(e.target.value)} className="select">
-                            <option value="">{t('calls.modals.mass.step2.segment.none')}</option>
-                            {massCallSegments.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                          </select>
-                        </div>
-                        <div>
-                          <label className="label">{t('calls.modals.mass.step2.type.label')}</label>
-                          <select 
-                            value={massCallCallType} 
-                            onChange={e => setMassCallCallType(e.target.value)} 
-                            className="select"
-                          >
-                            {callTypes.map(type => (
-                              <option key={type.id} value={type.value}>{type.label}</option>
-                            ))}
-                          </select>
+                        {/* Ensimmäinen rivi: Kampanja ja Puhelun tyyppi vierekkäin */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                          <div>
+                            <label className="label">{t('calls.modals.mass.step2.campaign.label')}</label>
+                            <select value={massCallCampaignId} onChange={e => setMassCallCampaignId(e.target.value)} className="select">
+                              <option value="">{t('calls.modals.mass.step2.campaign.select')}</option>
+                              {massCallCampaigns.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                            </select>
+                          </div>
+                          <div>
+                            <label className="label">{t('calls.modals.mass.step2.type.label')}</label>
+                            <select 
+                              value={massCallCallType} 
+                              onChange={e => setMassCallCallType(e.target.value)} 
+                              className="select"
+                            >
+                              {callTypes.map(type => (
+                                <option key={type.id} value={type.value}>{type.label}</option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
 
-                        <div>
-                          <label className="label">{t('calls.modals.mass.step2.voice.label')}</label>
-                          <select 
-                            value={massCallSelectedVoice} 
-                            onChange={e => setMassCallSelectedVoice(e.target.value)} 
-                            className="select"
-                          >
-                            {getVoiceOptions().map(voice => (
-                              <option key={voice.value} value={voice.value}>{voice.label}</option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <label style={{ fontWeight: 600 }}>{t('calls.modals.mass.step2.smsFirst.label')}</label>
-                          <label className="switch">
-                            <input type="checkbox" checked={massCallSmsFirst} onChange={e => setMassCallSmsFirst(e.target.checked)} />
-                            <span className="slider round"></span>
-                          </label>
-                        </div>
-
-                        {massCallSmsFirst && (
-                          <div className="sms-preview-container">
-                            <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>{t('calls.modals.mass.step2.smsFirst.readonly')}</div>
-                            <div className="sms-preview-text">
-                              {(() => {
-                                const t = callTypes.find(t => t.value === massCallCallType)
-                                return t?.first_sms ? t.first_sms : t('calls.modals.mass.step2.smsFirst.missing')
-                              })()}
+                        {/* Toinen rivi: Ääni ja kolme SMS-valintaa */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                          <div>
+                            <label className="label">{t('calls.modals.mass.step2.voice.label')}</label>
+                            <select 
+                              value={massCallSelectedVoice} 
+                              onChange={e => setMassCallSelectedVoice(e.target.value)} 
+                              className="select"
+                            >
+                              {getVoiceOptions().map(voice => (
+                                <option key={voice.value} value={voice.value}>{voice.label}</option>
+                              ))}
+                            </select>
+                          </div>
+                          
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                            <label style={{ fontWeight: 600, fontSize: 14, marginBottom: 8 }}>Tekstiviestit</label>
+                            <div style={{ fontSize: 10, color: '#666', marginBottom: 8 }}>
+                              Debug: {massCallSmsFirst ? 'true' : 'false'}, {massCallSmsAfterCall ? 'true' : 'false'}, {massCallSmsMissedCall ? 'true' : 'false'}
                             </div>
+                            
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                              <label style={{ fontWeight: 500, fontSize: 13, minWidth: 120 }}>Ennen puhelua</label>
+                              <label className="switch" key={`sms-first-${massCallSmsFirst}`}>
+                                <input 
+                                  type="checkbox" 
+                                  checked={massCallSmsFirst} 
+                                  onChange={e => {
+                                    console.log('SMS First changed to:', e.target.checked)
+                                    setMassCallSmsFirst(e.target.checked)
+                                  }} 
+                                />
+                                <span className="slider round"></span>
+                              </label>
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                              <label style={{ fontWeight: 500, fontSize: 13, minWidth: 120 }}>Vastauksen jälkeen</label>
+                              <label className="switch" key={`sms-after-${massCallSmsAfterCall}`}>
+                                <input 
+                                  type="checkbox" 
+                                  checked={massCallSmsAfterCall} 
+                                  onChange={e => {
+                                    console.log('SMS After Call changed to:', e.target.checked)
+                                    setMassCallSmsAfterCall(e.target.checked)
+                                  }} 
+                                />
+                                <span className="slider round"></span>
+                              </label>
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                              <label style={{ fontWeight: 500, fontSize: 13, minWidth: 120 }}>Jos puheluun ei vastata</label>
+                              <label className="switch" key={`sms-missed-${massCallSmsMissedCall}`}>
+                                <input 
+                                  type="checkbox" 
+                                  checked={massCallSmsMissedCall} 
+                                  onChange={e => {
+                                    console.log('SMS Missed Call changed to:', e.target.checked)
+                                    setMassCallSmsMissedCall(e.target.checked)
+                                  }} 
+                                />
+                                <span className="slider round"></span>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* SMS-esikatselu */}
+                        {(massCallSmsFirst || massCallSmsAfterCall || massCallSmsMissedCall) && (
+                          <div className="sms-preview-container">
+                            <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>Valittujen SMS-viestien esikatselu:</div>
+                            {(() => {
+                              const selectedCallType = callTypes.find(t => t.value === massCallCallType)
+                              return (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                  {massCallSmsFirst && selectedCallType?.first_sms && (
+                                    <div style={{ padding: 8, background: '#f3f4f6', borderRadius: 6, fontSize: 12 }}>
+                                      <strong>Ennen puhelua:</strong> {selectedCallType.first_sms}
+                                    </div>
+                                  )}
+                                  {massCallSmsAfterCall && selectedCallType?.after_call_sms && (
+                                    <div style={{ padding: 8, background: '#f3f4f6', borderRadius: 6, fontSize: 12 }}>
+                                      <strong>Vastauksen jälkeen:</strong> {selectedCallType.after_call_sms}
+                                    </div>
+                                  )}
+                                  {massCallSmsMissedCall && selectedCallType?.missed_call_sms && (
+                                    <div style={{ padding: 8, background: '#f3f4f6', borderRadius: 6, fontSize: 12 }}>
+                                      <strong>Jos puheluun ei vastata:</strong> {selectedCallType.missed_call_sms}
+                                    </div>
+                                  )}
+                                </div>
+                              )
+                            })()}
                           </div>
                         )}
                       </div>

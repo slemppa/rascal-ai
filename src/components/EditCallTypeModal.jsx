@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import Button from './Button'
 import './ModalComponents.css'
 import { useTranslation } from 'react-i18next'
@@ -14,7 +15,7 @@ const EditCallTypeModal = ({
 }) => {
   const { t } = useTranslation('common')
   const [currentStep, setCurrentStep] = useState(1)
-  const totalSteps = 5
+  const totalSteps = 6
 
   // ESC-toiminnallisuus - pitää olla heti useState jälkeen
   useEffect(() => {
@@ -40,7 +41,8 @@ const EditCallTypeModal = ({
     { id: 2, label: t('calls.modals.editCallType.steps.content') },
     { id: 3, label: t('calls.modals.editCallType.steps.advanced') },
     { id: 4, label: t('calls.modals.editCallType.steps.summary') },
-    { id: 5, label: t('calls.modals.editCallType.steps.aiEnhancement') }
+    { id: 5, label: t('calls.modals.editCallType.steps.textMessages') },
+    { id: 6, label: t('calls.modals.editCallType.steps.aiEnhancement') }
   ]
 
   // Tyhjän tilan klikkaus
@@ -98,20 +100,19 @@ const EditCallTypeModal = ({
     }
   }
 
-  return (
+  return createPortal(
     <div className="modal-overlay modal-overlay--light" onClick={handleOverlayClick}>
-      <div className="modal-container edit-call-type-modal">
+      <div className="modal-container edit-call-type-modal" style={{ maxWidth: '1200px' }}>
         <div className="modal-header">
           <h2 className="modal-title">
-            Edit call type
+            {t('calls.modals.editCallType.title')}
           </h2>
-          <Button
+          <button
             onClick={onClose}
-            variant="secondary"
             className="modal-close-btn"
           >
-            ×
-          </Button>
+            ✕
+          </button>
         </div>
 
         {/* Vaiheindikaattori */}
@@ -180,103 +181,115 @@ const EditCallTypeModal = ({
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Agent Name</label>
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.agentName')}
+                  </label>
                   <input
                     type="text"
                     value={editingCallType.agent_name || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, agent_name: e.target.value })}
-                    placeholder="Sarah from Sales"
+                    placeholder={t('calls.modals.editCallType.placeholders.agentName')}
                     className="form-input"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
-                  <div style={{ lineHeight: 1.6 }}>"Emma from Customer Success" or "Alex - Technical Support"</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
+                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.agentName')}</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Target Audience</label>
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.targetAudience')}
+                  </label>
                   <input
                     type="text"
                     value={editingCallType.target_audience || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, target_audience: e.target.value })}
-                    placeholder="B2B decision makers, CFOs at mid-size companies"
+                    placeholder={t('calls.modals.editCallType.placeholders.targetAudience')}
                     className="form-input"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
-                  <div style={{ lineHeight: 1.6 }}>Be specific: "HR managers at 50-500 employee companies" instead of just "HR managers"</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
+                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.targetAudience')}</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Agent Persona / Role</label>
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.agentPersona')}
+                  </label>
                   <textarea
                     value={editingCallType.identity || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, identity: e.target.value })}
-                    placeholder="You are Sarah, a friendly sales consultant at TechCorp. You help business owners streamline their operations with our software solutions."
+                    placeholder={t('calls.modals.editCallType.placeholders.agentPersona')}
                     rows={5}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
-                  <div style={{ lineHeight: 1.6 }}>"You are Emma, a customer success specialist at CloudCo. You help clients maximize their ROI by identifying optimization opportunities and providing actionable recommendations."</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
+                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.agentPersona')}</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Tone & Speaking Style</label>
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.toneStyle')}
+                  </label>
                   <textarea
                     value={editingCallType.style || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, style: e.target.value })}
-                    placeholder="Professional yet warm. Use clear, jargon-free language. Keep sentences short and pause naturally for responses."
+                    placeholder={t('calls.modals.editCallType.placeholders.toneStyle')}
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
-                  <div style={{ lineHeight: 1.6 }}>"Conversational and consultative. Mirror the prospect's energy level. Use 'we' language to build partnership. Avoid technical terms unless the prospect uses them first."</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
+                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.toneStyle')}</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Call Objective / Goals</label>
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.callGoals')}
+                  </label>
                   <textarea
                     value={editingCallType.goals || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, goals: e.target.value })}
-                    placeholder="1. Qualify budget and timeline&#10;2. Identify key pain points&#10;3. Determine decision-making process&#10;4. Book demo with qualified leads"
+                    placeholder={t('calls.modals.editCallType.placeholders.callGoals')}
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
-                  <div style={{ lineHeight: 1.6 }}>"1. Confirm current solution & satisfaction level<br/>2. Identify 2-3 specific challenges<br/>3. Gauge interest in ROI calculator<br/>4. Schedule next touchpoint"</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
+                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.callGoals')}</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Guidelines & Rules</label>
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.guidelines')}
+                  </label>
                   <textarea
                     value={editingCallType.guidelines || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, guidelines: e.target.value })}
-                    placeholder="Always confirm understanding before moving on. If prospect asks off-topic questions, acknowledge briefly and redirect. Never interrupt; let them finish speaking completely."
+                    placeholder={t('calls.modals.editCallType.placeholders.guidelines')}
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
-                  <div style={{ lineHeight: 1.6 }}>"Ask permission before diving into questions. If they're busy, offer to reschedule immediately. Surface objections gently with 'It sounds like...' framing. Always end with a clear next step."</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
+                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.decisionProcess')}</div>
                 </div>
               </div>
             </div>
@@ -286,118 +299,165 @@ const EditCallTypeModal = ({
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Greeting</label>
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.greeting')}
+                  </label>
                   <input
                     type="text"
                     value={editingCallType.first_line || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, first_line: e.target.value })}
                     className="form-input"
-                    placeholder="Hi, this is Sarah from TechCorp!"
+                    placeholder={t('calls.modals.editCallType.placeholders.greeting')}
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
-                  <div style={{ lineHeight: 1.6 }}>"Good morning! This is Alex calling from CloudCo." - Keep it natural and friendly.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
+                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.greeting')}</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Purpose Introduction / Reason for Call</label>
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.purposeIntro')}
+                  </label>
                   <textarea
                     value={editingCallType.intro || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, intro: e.target.value })}
-                    placeholder="I'm reaching out because you recently downloaded our pricing guide. I wanted to see if you had any questions and share how we've helped similar companies reduce costs by 30%."
+                    placeholder={t('calls.modals.editCallType.placeholders.purposeIntro')}
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
-                  <div style={{ lineHeight: 1.6 }}>"I noticed you attended our webinar last week. I'm following up to see what resonated with you and answer any questions. Is now a good time for a quick chat, maybe 5-7 minutes?"</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
+                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.purposeIntro')}</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Product/Service Questions List</label>
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.questions')}
+                  </label>
                   <textarea
                     value={editingCallType.questions || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, questions: e.target.value })}
-                    placeholder="1. What's your current process for [specific task]?&#10;   [wait for answer]&#10;2. What challenges are you facing with that approach?&#10;   [wait for answer]&#10;3. If you could wave a magic wand, what would the ideal solution look like?&#10;   [wait for answer]"
+                    placeholder={t('calls.modals.editCallType.placeholders.questions')}
                     rows={8}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151', whiteSpace: 'pre-wrap' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
-                  <div style={{ lineHeight: 1.6 }}>{`1. How are you currently handling customer onboarding?\n   [wait for answer]\n   → If manual: How much time does that take per week?\n2. What's the biggest bottleneck in that process?\n   [wait for answer]\n3. Have you explored automation tools before?\n   [wait for answer]\n   → If yes: What didn't work about them?`}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
+                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.questions')}</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Call Closing / Goodbye</label>
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.closing')}
+                  </label>
                   <textarea
                     value={editingCallType.outro || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, outro: e.target.value })}
-                    placeholder="This has been really helpful! Based on what you shared, I think a personalized demo would be valuable. I'll send you a calendar link - does Tuesday or Thursday work better for you?"
+                    placeholder={t('calls.modals.editCallType.placeholders.closing')}
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151', whiteSpace: 'pre-wrap' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
-                  <div style={{ lineHeight: 1.6 }}>"Thanks for your time! I'll email you those resources we discussed plus our ROI calculator. Any final questions before I let you go? Perfect - talk soon!"</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
+                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.closing')}</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">Agent Notes / Special Instructions</label>
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.agentNotes')}
+                  </label>
                   <textarea
                     value={editingCallType.notes || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, notes: e.target.value })}
-                    placeholder="Record: Preferred contact time, current solution name, budget range mentioned, decision timeline, competitor mentions, specific pain points, and any follow-up commitments made."
+                    placeholder={t('calls.modals.editCallType.placeholders.agentNotes')}
                     rows={4}
                     className="form-textarea"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Example</div>
-                  <div style={{ lineHeight: 1.6 }}>"Flag as 'Hot Lead' if budget confirmed + decision timeline under 60 days. Tag with primary use case. Note any technical requirements or integration needs mentioned."</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
+                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.agentNotes')}</div>
                 </div>
               </div>
 
+            </div>
+          )}
+
+          {currentStep === 4 && (
+            <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
                 <div className="form-group">
-                  <label className="form-label">First text message (SMS)</label>
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.summary')}
+                  </label>
+                  <textarea
+                    value={editingCallType.summary || ''}
+                    onChange={e => setEditingCallType({ ...editingCallType, summary: e.target.value })}
+                    placeholder={t('calls.modals.editCallType.placeholders.summary')}
+                    rows={5}
+                    className="form-textarea"
+                  />
+                </div>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>{t('calls.modals.editCallType.examples.summary')}</div>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
+                <div className="form-group">
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.successAssessment')}
+                  </label>
+                  <textarea
+                    value={editingCallType.success_assessment || ''}
+                    onChange={e => setEditingCallType({ ...editingCallType, success_assessment: e.target.value })}
+                    placeholder={t('calls.modals.editCallType.placeholders.successAssessment')}
+                    rows={5}
+                    className="form-textarea"
+                  />
+                </div>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>{t('calls.modals.editCallType.examples.successAssessment')}</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {currentStep === 5 && (
+            <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
+                <div className="form-group">
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.firstSms')}
+                  </label>
                   <textarea
                     value={editingCallType.first_sms || ''}
                     onChange={e => {
                       const value = e.target.value
-                      // Rajoita 160 merkkiin
                       if (value.length <= 160) {
                         setEditingCallType({ ...editingCallType, first_sms: value })
                       }
                     }}
-                    placeholder="SMS message sent to the customer before the call... (max 160 characters)"
+                    placeholder={t('calls.modals.editCallType.placeholders.firstSms')}
                     rows={4}
                     maxLength={160}
                     className="form-textarea"
-                    style={{ 
-                      resize: 'none',
-                      overflowY: 'auto',
-                      maxHeight: '120px'
-                    }}
+                    style={{ resize: 'none', overflowY: 'auto', maxHeight: '120px' }}
                   />
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center', 
-                    marginTop: 4,
-                    fontSize: 12 
-                  }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4, fontSize: 12 }}>
                     <span style={{ color: '#6b7280' }}>
                       {editingCallType.first_sms ? `${editingCallType.first_sms.length}/160 characters` : '0/160 characters'}
                     </span>
@@ -414,53 +474,82 @@ const EditCallTypeModal = ({
                 </div>
               </div>
 
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
+                <div className="form-group">
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.afterCallSms')}
+                  </label>
+                  <textarea
+                    value={editingCallType.after_call_sms || ''}
+                    onChange={e => {
+                      const value = e.target.value
+                      if (value.length <= 160) {
+                        setEditingCallType({ ...editingCallType, after_call_sms: value })
+                      }
+                    }}
+                    placeholder={t('calls.modals.editCallType.placeholders.afterCallSms')}
+                    rows={4}
+                    maxLength={160}
+                    className="form-textarea"
+                    style={{ resize: 'none', overflowY: 'auto', maxHeight: '120px' }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4, fontSize: 12 }}>
+                    <span style={{ color: '#6b7280' }}>
+                      {editingCallType.after_call_sms ? `${editingCallType.after_call_sms.length}/160 characters` : '0/160 characters'}
+                    </span>
+                    {editingCallType.after_call_sms && editingCallType.after_call_sms.length > 140 && (
+                      <span style={{ color: '#f59e0b' }}>
+                        ⚠️ Long message ({editingCallType.after_call_sms.length > 150 ? '2 messages' : '1 message'})
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>Thank you for taking our call! This message is sent after the customer answers the phone and the call ends.</div>
+                </div>
+              </div>
 
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
+                <div className="form-group">
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.missedCallSms')}
+                  </label>
+                  <textarea
+                    value={editingCallType.missed_call_sms || ''}
+                    onChange={e => {
+                      const value = e.target.value
+                      if (value.length <= 160) {
+                        setEditingCallType({ ...editingCallType, missed_call_sms: value })
+                      }
+                    }}
+                    placeholder={t('calls.modals.editCallType.placeholders.missedCallSms')}
+                    rows={4}
+                    maxLength={160}
+                    className="form-textarea"
+                    style={{ resize: 'none', overflowY: 'auto', maxHeight: '120px' }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4, fontSize: 12 }}>
+                    <span style={{ color: '#6b7280' }}>
+                      {editingCallType.missed_call_sms ? `${editingCallType.missed_call_sms.length}/160 characters` : '0/160 characters'}
+                    </span>
+                    {editingCallType.missed_call_sms && editingCallType.missed_call_sms.length > 140 && (
+                      <span style={{ color: '#f59e0b' }}>
+                        ⚠️ Long message ({editingCallType.missed_call_sms.length > 150 ? '2 messages' : '1 message'})
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
+                  <div>We tried to reach you but couldn't connect. This message is sent when the customer doesn't answer the phone.</div>
+                </div>
+              </div>
             </div>
           )}
 
-          {currentStep === 4 && (
+          {currentStep === 6 && (
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
-                <div className="form-group">
-                  <label className="form-label">Summary (analytics)</label>
-                  <textarea
-                    value={editingCallType.summary || ''}
-                    onChange={e => setEditingCallType({ ...editingCallType, summary: e.target.value })}
-                    placeholder={
-`• 2–3 sentence summary in Finnish.\n• Describe what was learned + agreed next steps.`
-                    }
-                    rows={5}
-                    className="form-textarea"
-                  />
-                </div>
-                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>Summarize in 2–3 sentences: did [event] participate, key interests/challenges, agreed next steps (call time/method).</div>
-                </div>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
-                <div className="form-group">
-                  <label className="form-label">Success assessment (analytics)</label>
-                  <textarea
-                    value={editingCallType.success_assessment || ''}
-                    onChange={e => setEditingCallType({ ...editingCallType, success_assessment: e.target.value })}
-                    placeholder={
-`• Assess in 2–3 sentences, did the goals of the Goals section meet.\n• Describe why it succeeded/did not succeed and mention missing points.`
-                    }
-                    rows={5}
-                    className="form-textarea"
-                  />
-                </div>
-                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>Assess, did it achieve: 1) information intake, 2) interests/challenges, 3) follow-up, 4) contact method/time. Briefly justify.</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {currentStep === 5 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ textAlign: 'center', marginBottom: 16 }}>
                 <h3 style={{ fontSize: 18, fontWeight: 600, color: '#1f2937', margin: '0 0 8px 0' }}>
                   {t('calls.modals.editCallType.aiEnhancement.title')}
@@ -522,7 +611,7 @@ const EditCallTypeModal = ({
                 onClick={handlePrevious}
                 variant="secondary"
               >
-                Previous
+                {t('calls.modals.editCallType.buttons.previous')}
               </Button>
             )}
           </div>
@@ -533,20 +622,21 @@ const EditCallTypeModal = ({
                 type="button"
                 onClick={handleNext}
               >
-                {t('common.next')}
+                {t('calls.modals.editCallType.buttons.next')}
               </Button>
             ) : (
               <Button
                 type="button"
                 onClick={handleSubmit}
               >
-                Save changes
+                {t('calls.modals.editCallType.buttons.saveChanges')}
               </Button>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 

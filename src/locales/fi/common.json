@@ -174,8 +174,7 @@
   },
   "a11y": {
     "toggleMobileMenu": "Vaihda mobiilivalikko"
-  }
-  ,
+  },
   "auth": {
     "close": "Sulje",
     "signIn": "Kirjaudu sisään",
@@ -275,8 +274,7 @@
       "body": "Varmistetaan, että tekoälystä tulee teille uusi tiimin jäsen, joka vauhdittaa kasvua ja tehostaa arkea.",
       "button": "Varaa kartoitus"
     }
-  }
-  ,
+  },
   "dashboard": {
     "meta": {
       "title": "Dashboard - Rascal AI",
@@ -351,8 +349,7 @@
       "save": "Tallenna",
       "saving": "Tallennetaan..."
     }
-  }
-  ,
+  },
   "sidebar": {
     "sections": {
       "marketing": "Markkinointi",
@@ -375,8 +372,7 @@
     "settings": "Asetukset",
     "helpCenter": "Ohjekeskus",
     "logout": "Kirjaudu ulos"
-  }
-  ,
+  },
   "posts": {
     "header": "Sosiaalisen median sisältö",
     "searchPlaceholder": "Etsi sosiaalisen median sisältöä...",
@@ -477,8 +473,7 @@
       "moveFailed": "Siirtyminen epäonnistui: {message}",
       "reelsOnly": "Siirtyminen on mahdollista vain Supabase-postauksille"
     }
-  }
-  ,
+  },
   "blogNewsletter": {
     "header": "Blogit ja uutiskirjeet",
     "searchPlaceholder": "Etsi blogeja ja newslettereja...",
@@ -535,8 +530,7 @@
       "deleted": "Sisältö poistettu onnistuneesti!",
       "deleteFailed": "Poisto epäonnistui: {message}"
     }
-  }
-  ,
+  },
   "strategy": {
     "header": "Kohderyhmä, tavoitteet ja sisältösuunnitelma",
     "loading": "Ladataan sisältöstrategiaa...",
@@ -559,8 +553,7 @@
     "strategyCard": { "placeholder": "Kirjoita kuukauden sisältöstrategia tähän..." },
     "buttons": { "save": "Tallenna", "cancel": "Peruuta", "edit": "Muokkaa" },
     "empty": { "title": "Ei sisältöstrategioita vielä", "description": "Aloita luomalla ensimmäinen kuukausistrategia" }
-  }
-  ,
+  },
   "campaigns": {
     "header": { "title": "Kampanjat", "description": "Hallitse puhelukampanjoitasi ja seuraa niiden suorituskykyä" },
     "actions": { "create": "Luo kampanja", "creating": "Luodaan...", "cancel": "Peruuta" },
@@ -613,8 +606,7 @@
       "seriesAnswered": "Vastatut",
       "tooltipAnswer": "Vastaus%"
     }
-  }
-  ,
+  },
   "segments": {
     "header": { "title": "Segmentit", "description": "Organisoi kontaktisi ja seuraa segmenttien suorituskykyä" },
     "actions": { "create": "Luo segmentti", "creating": "Luodaan...", "cancel": "Peruuta" },
@@ -654,8 +646,7 @@
       "answerRateShort": "Vastaus%",
       "loading": "Ladataan tilastoja..."
     }
-  }
-  ,
+  },
   "calls": {
     "tabs": {
       "calls": "Puhelut",
@@ -775,8 +766,7 @@
         "edit": "Muokkaa",
         "save": "Tallenna"
       }
-    }
-    ,
+    },
     "modals": {
       "mass": {
         "title": "Massapuhelut",
@@ -854,22 +844,74 @@
         }
       },
       "addCallType": {
+        "title": "Lisää uusi puhelun tyyppi",
         "steps": {
           "basics": "Perustiedot",
           "content": "Sisältö",
           "advanced": "Lisäasetukset",
           "summary": "Yhteenveto",
+          "textMessages": "Tekstiviestit",
           "aiEnhancement": "AI-parannus"
         },
         "fields": {
           "name": "Nimi",
           "status": "Tila",
-          "version": "Versio"
+          "version": "Versio",
+          "agentName": "Agentin nimi",
+          "targetAudience": "Kohderyhmä",
+          "agentPersona": "Agentin persona / rooli",
+          "toneStyle": "Tyyli ja puhetapa",
+          "callGoals": "Puhelun tavoitteet",
+          "guidelines": "Ohjeet ja säännöt",
+          "greeting": "Tervehdys",
+          "purposeIntro": "Puhelun tarkoitus / syy",
+          "questions": "Tuote/palvelu kysymykset",
+          "closing": "Puhelun lopetus / hyvästit",
+          "agentNotes": "Agentin muistiinpanot",
+          "firstSms": "Ensimmäinen tekstiviesti (SMS)",
+          "afterCallSms": "Tekstiviesti vastatun puhelun jälkeen",
+          "missedCallSms": "Tekstiviesti kun puheluun ei vastattu",
+          "summary": "Yhteenveto (analytiikka)",
+          "successAssessment": "Onnistumisen arviointi (analytiikka)"
         },
         "statusOptions": {
           "active": "Aktiivinen",
           "draft": "Luonnos",
           "archived": "Arkistoitu"
+        },
+        "placeholders": {
+          "name": "esim. myynti, asiakaspalvelu",
+          "version": "v1.0",
+          "agentName": "Sarah myynnistä",
+          "targetAudience": "B2B päätöksentekijät, CFOt keskikokoisissa yrityksissä",
+          "agentPersona": "Olet Sarah, ystävällinen myyntikonsultti TechCorpissa. Autat yritysjohtajia virtaviivaistamaan toimintaansa ohjelmistoratkaisuillamme.",
+          "toneStyle": "Ammattimainen mutta lämminsydämminen. Käytä selkeää, ammattislangitonta kieltä. Pidä lauseet lyhyinä ja pausoi luonnollisesti vastauksia varten.",
+          "callGoals": "1. Kvalifioi budjetti ja aikataulu\n2. Tunnista keskeiset kipukohdat\n3. Määritä päätöksentekoprosessi\n4. Varaa demo kvalifioiduille liideille",
+          "guidelines": "Vahvista aina ymmärtäminen ennen eteenpäin siirtymistä. Jos asiakas kysyy aiheen ulkopuolisia kysymyksiä, tunnusta lyhyesti ja ohjaa takaisin aiheeseen. Älä koskaan keskeytä; anna heidän lopettaa puhuminen kokonaan.",
+          "greeting": "Hei, tämä on Sarah TechCorpista!",
+          "purposeIntro": "Otan yhteyttä koska latasit äsken hintalistamme. Halusin nähdä onko sinulla kysymyksiä ja kertoa miten olemme auttaneet vastaavia yrityksiä vähentämään kustannuksia 30%.",
+          "questions": "1. Mikä on nykyinen prosessisi [tietty tehtävä]?\n   [odota vastaus]\n2. Mitä haasteita kohtaat tuossa lähestymistavassa?\n   [odota vastaus]\n3. Jos voisit heiluttaa taikasauvaa, miltä ihannratkaisu näyttäisi?\n   [odota vastaus]",
+          "closing": "Tämä on ollut todella hyödyllistä! Sen perusteella mitä jaoit, ajattelen että henkilökohtainen demo olisi arvokas. Lähetän sinulle kalenterilinkin - sopiiko tiistai vai torstai paremmin?",
+          "agentNotes": "Tallenna: Suosittu yhteydenottoaika, nykyinen ratkaisun nimi, mainittu budjettialue, päätöksentekoaikataulu, kilpailijan maininnat, tietyn kipukohdat ja kaikki seurantavelvoitteet.",
+          "firstSms": "SMS-viesti joka lähetetään asiakkaalle ennen puhelua... (max 160 merkkiä)",
+          "summary": "• 2-3 lauseen yhteenveto suomeksi.\n• Kuvaa mitä opittiin + sovittu seuraavat askeleet.",
+          "successAssessment": "• Arvioi 2-3 lauseessa, täyttyivätkö Tavoitteet-osion tavoitteet.\n• Kuvaa miksi se onnistui/ei onnistunut ja mainitse puuttuvat kohdat."
+        },
+        "examples": {
+          "users": "Esimerkki",
+          "agentName": "\"Emma Customer Successistä\" tai \"Alex - Tekninen tuki\"",
+          "targetAudience": "Ole tarkka: \"HR-päälliköt 50-500 työntekijän yrityksissä\" \"HR-päälliköt\" sijaan",
+          "agentPersona": "\"Olet Emma, asiakastyön erikoistunut CloudCo:ssa. Autat asiakkaita maksimoimaan ROI:n tunnistamalla optimointimahdollisuudet ja tarjoamalla toimintasuosituksia.\"",
+          "toneStyle": "\"Keskusteluhenkinen ja konsultoiva. Peilaa asiakkaan energiatasoa. Käytä 'me'-kieltä rakentaaksesi kumppanuutta. Vältä teknisiä termejä ellei asiakas käytä niitä ensin.\"",
+          "callGoals": "\"1. Vahvista nykyinen ratkaisu & tyytyväisyystaso\n2. Tunnista 2-3 tiettyä haastetta\n3. Mittaa kiinnostusta ROI-laskuriin\n4. Aikatauluta seuraava kosketus\"",
+          "guidelines": "\"Kysy lupa ennen kysymysten syventämistä. Jos he ovat kiireisiä, tarjoa uudelleenaikataulutus heti. Esitä vastaväitteet lempeästi 'Kuulostaa siltä että...'-kehystelyllä. Lopeta aina selkeällä seuraavalla askeleella.\"",
+          "greeting": "\"Hyvää huomenta! Tämä on Alex CloudCo:sta.\" - Pidä luonnollinen ja ystävällinen.",
+          "purposeIntro": "\"Huomasin että osallistuit webinaariimme viime viikolla. Seuraan nähdäkseni mikä resonoi sinussa ja vastata kysymyksiisi. Onko nyt hyvä aika pikaiselle keskustelulle, ehkä 5-7 minuuttia?\"",
+          "questions": "1. Miten käsittelet tällä hetkellä asiakasintegrointia?\n   [odota vastaus]\n   → Jos manuaalinen: Kuinka paljon aikaa se vie viikossa?\n2. Mikä on suurin pullonkaula tuossa prosessissa?\n   [odota vastaus]\n3. Oletko tutkinut automatisointityökaluja aikaisemmin?\n   [odota vastaus]\n   → Jos kyllä: Mikä ei toiminut niissä?",
+          "closing": "\"Kiitos ajastasi! Lähetän sinulle sähköpostilla ne resurssit joista keskustelimme plus ROI-laskurimme. Onko viimeisiä kysymyksiä ennen kuin päästän sinut menemään? Täydellinen - puhutaan pian!\"",
+          "agentNotes": "\"Merkitse 'Kuumaksi liidiksi' jos budjetti vahvistettu + päätöksentekoaikataulu alle 60 päivää. Tägi ensisijaisella käyttötapauksella. Huomioi kaikki mainitut tekniset vaatimukset tai integrointitarpeet.\"",
+          "summary": "Yhteenveto 2-3 lauseessa: osallistuiko [tapahtuma], keskeiset kiinnostuksen kohteet/haasteet, sovittu seuraavat askeleet (puhelunaika/menetelmä).",
+          "successAssessment": "Arvioi, saavutettiinko: 1) tiedonotto, 2) kiinnostuksen kohteet/haasteet, 3) seuranta, 4) yhteydenoton menetelmä/aika. Perustele lyhyesti."
         },
         "aiEnhancement": {
           "title": "Haluan parantaa tätä AI:lla",
@@ -881,25 +923,80 @@
             "suggest": "Ehdota parannuksia skriptiin ja lähestymistapaan"
           },
           "cta": "Lähetä AI-parannukseen"
+        },
+        "buttons": {
+          "previous": "Edellinen",
+          "next": "Seuraava",
+          "addCallType": "Lisää puhelun tyyppi"
         }
       },
       "editCallType": {
+        "title": "Muokkaa puhelun tyyppiä",
         "steps": {
           "basics": "Perustiedot",
           "content": "Sisältö",
           "advanced": "Lisäasetukset",
           "summary": "Yhteenveto",
+          "textMessages": "Tekstiviestit",
           "aiEnhancement": "AI-parannus"
         },
         "fields": {
           "name": "Nimi",
           "status": "Tila",
-          "version": "Versio"
+          "version": "Versio",
+          "agentName": "Agentin nimi",
+          "targetAudience": "Kohderyhmä",
+          "agentPersona": "Agentin persona / rooli",
+          "toneStyle": "Tyyli ja puhetapa",
+          "callGoals": "Puhelun tavoitteet",
+          "guidelines": "Ohjeet ja säännöt",
+          "greeting": "Tervehdys",
+          "purposeIntro": "Puhelun tarkoitus / syy",
+          "questions": "Tuote/palvelu kysymykset",
+          "closing": "Puhelun lopetus / hyvästit",
+          "agentNotes": "Agentin muistiinpanot",
+          "firstSms": "Ensimmäinen tekstiviesti (SMS)",
+          "afterCallSms": "Tekstiviesti vastatun puhelun jälkeen",
+          "missedCallSms": "Tekstiviesti kun puheluun ei vastattu",
+          "summary": "Yhteenveto (analytiikka)",
+          "successAssessment": "Onnistumisen arviointi (analytiikka)"
         },
         "statusOptions": {
           "active": "Aktiivinen",
           "draft": "Luonnos",
           "archived": "Arkistoitu"
+        },
+        "placeholders": {
+          "agentName": "esim. Sarah myynnistä",
+          "targetAudience": "B2B päätöksentekijät, CFOt keskikokoisissa yrityksissä",
+          "agentPersona": "Olet Sarah, ystävällinen myyntikonsultti TechCorpissa. Autat yritysjohtajia virtaviivaistamaan toimintaansa ohjelmistoratkaisuillamme.",
+          "toneStyle": "Ammattimainen mutta lämminsydämminen. Käytä selkeää, ammattislangitonta kieltä. Pidä lauseet lyhyinä ja pausoi luonnollisesti vastauksia varten.",
+          "callGoals": "1. Kvalifioi budjetti ja aikataulu\n2. Tunnista keskeiset kipukohdat\n3. Määritä päätöksentekoprosessi\n4. Varaa demo kvalifioiduille liideille",
+          "guidelines": "Vahvista aina ymmärtäminen ennen eteenpäin siirtymistä. Jos asiakas kysyy aiheen ulkopuolisia kysymyksiä, tunnusta lyhyesti ja ohjaa takaisin aiheeseen. Älä koskaan keskeytä; anna heidän lopettaa puhuminen kokonaan.",
+          "greeting": "Hei, tämä on Sarah TechCorpista!",
+          "purposeIntro": "Otan yhteyttä koska latasit äsken hintalistamme. Halusin nähdä onko sinulla kysymyksiä ja kertoa miten olemme auttaneet vastaavia yrityksiä vähentämään kustannuksia 30%.",
+          "questions": "1. Mikä on nykyinen prosessisi [tietty tehtävä]?\n   [odota vastaus]\n2. Mitä haasteita kohtaat tuossa lähestymistavassa?\n   [odota vastaus]\n3. Jos voisit heiluttaa taikasauvaa, miltä ihannratkaisu näyttäisi?\n   [odota vastaus]",
+          "closing": "Tämä on ollut todella hyödyllistä! Sen perusteella mitä jaoit, ajattelen että henkilökohtainen demo olisi arvokas. Lähetän sinulle kalenterilinkin - sopiiko tiistai vai torstai paremmin?",
+          "agentNotes": "Tallenna: Suosittu yhteydenottoaika, nykyinen ratkaisun nimi, mainittu budjettialue, päätöksentekoaikataulu, kilpailijan maininnat, tietyn kipukohdat ja kaikki seurantavelvoitteet.",
+          "firstSms": "SMS-viesti joka lähetetään asiakkaalle ennen puhelua... (max 160 merkkiä)",
+          "summary": "• 2-3 lauseen yhteenveto suomeksi.\n• Kuvaa mitä opittiin + sovittu seuraavat askeleet.",
+          "successAssessment": "• Arvioi 2-3 lauseessa, täyttyivätkö Tavoitteet-osion tavoitteet.\n• Kuvaa miksi se onnistui/ei onnistunut ja mainitse puuttuvat kohdat."
+        },
+        "examples": {
+          "users": "Esimerkki",
+          "agentName": "\"Emma Customer Successistä\" tai \"Alex - Tekninen tuki\"",
+          "targetAudience": "Ole tarkka: \"HR-päälliköt 50-500 työntekijän yrityksissä\" \"HR-päälliköt\" sijaan",
+          "agentPersona": "\"Olet Emma, asiakastyön erikoistunut CloudCo:ssa. Autat asiakkaita maksimoimaan ROI:n tunnistamalla optimointimahdollisuudet ja tarjoamalla toimintasuosituksia.\"",
+          "toneStyle": "\"Keskusteluhenkinen ja konsultoiva. Peilaa asiakkaan energiatasoa. Käytä 'me'-kieltä rakentaaksesi kumppanuutta. Vältä teknisiä termejä ellei asiakas käytä niitä ensin.\"",
+          "callGoals": "\"1. Vahvista nykyinen ratkaisu & tyytyväisyystaso\n2. Tunnista 2-3 tiettyä haastetta\n3. Mittaa kiinnostusta ROI-laskuriin\n4. Aikatauluta seuraava kosketus\"",
+          "decisionProcess": "\"Kysy lupa ennen kysymysten syventämistä. Jos he ovat kiireisiä, tarjoa uudelleenaikataulutus heti. Esitä vastaväitteet lempeästi 'Kuulostaa siltä että...'-kehystelyllä. Lopeta aina selkeällä seuraavalla askeleella.\"",
+          "greeting": "\"Hyvää huomenta! Tämä on Alex CloudCo:sta.\" - Pidä luonnollinen ja ystävällinen.",
+          "purposeIntro": "\"Huomasin että osallistuit webinaariimme viime viikolla. Seuraan nähdäkseni mikä resonoi sinussa ja vastata kysymyksiisi. Onko nyt hyvä aika pikaiselle keskustelulle, ehkä 5-7 minuuttia?\"",
+          "questions": "1. Miten käsittelet tällä hetkellä asiakasintegrointia?\n   [odota vastaus]\n   → Jos manuaalinen: Kuinka paljon aikaa se vie viikossa?\n2. Mikä on suurin pullonkaula tuossa prosessissa?\n   [odota vastaus]\n3. Oletko tutkinut automatisointityökaluja aikaisemmin?\n   [odota vastaus]\n   → Jos kyllä: Mikä ei toiminut niissä?",
+          "closing": "\"Kiitos ajastasi! Lähetän sinulle sähköpostilla ne resurssit joista keskustelimme plus ROI-laskurimme. Onko viimeisiä kysymyksiä ennen kuin päästän sinut menemään? Täydellinen - puhutaan pian!\"",
+          "agentNotes": "\"Merkitse 'Kuumaksi liidiksi' jos budjetti vahvistettu + päätöksentekoaikataulu alle 60 päivää. Tägi ensisijaisella käyttötapauksella. Huomioi kaikki mainitut tekniset vaatimukset tai integrointitarpeet.\"",
+          "summary": "Yhteenveto 2-3 lauseessa: osallistuiko [tapahtuma], keskeiset kiinnostuksen kohteet/haasteet, sovittu seuraavat askeleet (puhelunaika/menetelmä).",
+          "successAssessment": "Arvioi, saavutettiinko: 1) tiedonotto, 2) kiinnostuksen kohteet/haasteet, 3) seuranta, 4) yhteydenoton menetelmä/aika. Perustele lyhyesti."
         },
         "aiEnhancement": {
           "title": "Haluan parantaa tätä AI:lla",
@@ -911,10 +1008,19 @@
             "suggest": "Ehdota parannuksia skriptiin ja lähestymistapaan"
           },
           "cta": "Lähetä AI-parannukseen"
+        },
+        "buttons": {
+          "previous": "Edellinen",
+          "next": "Seuraava",
+          "saveChanges": "Tallenna muutokset"
         }
+      },
+      "statusOptions": {
+        "active": "Aktiivinen",
+        "draft": "Luonnos",
+        "archived": "Arkistoitu"
       }
-    }
-    ,
+    },
     "manageTab": {
       "header": { "title": "Puhelun tyyppien hallinta" },
       "cta": { "addNew": "Lisää uusi tyyppi" },
@@ -934,8 +1040,7 @@
         "edit": "Muokkaa"
       }
     }
-  }
-  ,
+  },
   "assistant": {
     "loadingUser": "Ladataan käyttäjän tietoja...",
     "tabs": { "chat": "Keskustelu", "files": "Tietokanta" },
@@ -970,8 +1075,7 @@
         "delete": "Poista"
       }
     }
-  }
-  ,
+  },
   "settings": {
     "title": "Asetukset",
     "profile": { "title": "Käyttäjätiedot", "loading": "Ladataan käyttäjätietoja...", "notFoundSupport": "Käyttäjätietoja ei löytynyt. Ota yhteyttä tukeen.", "fetchError": "Virhe käyttäjätietojen haussa. Ota yhteyttä tukeen.", "updateSuccess": "Tiedot päivitetty onnistuneesti!" },
@@ -1136,5 +1240,3 @@
     "lastUpdated": "Päivitetty viimeksi"
   }
 }
-
-

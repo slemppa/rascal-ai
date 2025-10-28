@@ -77,6 +77,7 @@ export default function CallPanel() {
     notes: '', 
     version: '', 
     status: 'Active', 
+    language: 'fi', // Kieli: fi, en, sv
     summary: '', 
     success_assessment: '',
     first_sms: '', // Uusi kenttä: Ensimmäinen SMS
@@ -771,6 +772,7 @@ export default function CallPanel() {
           notes: editingCallType.notes || '',
           version: editingCallType.version || 'v1.0',
           status: editingCallType.status || 'Active',
+          language: editingCallType.language || 'fi',
           summary: editingCallType.summary || '',
           success_assessment: editingCallType.success_assessment || '',
           first_sms: editingCallType.first_sms || '', // Uusi kenttä
@@ -1021,6 +1023,7 @@ export default function CallPanel() {
         notes: newCallType.notes || '',
         version: newCallType.version || 'v1.0',
         status: newCallType.status || 'Active',
+        language: newCallType.language || 'fi',
         summary: newCallType.summary || '',
         success_assessment: newCallType.success_assessment || '',
         first_sms: newCallType.first_sms || '', // Uusi kenttä

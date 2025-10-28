@@ -163,16 +163,47 @@ const EditCallTypeModal = ({
                   <option value="Archived">{t('calls.modals.editCallType.statusOptions.archived')}</option>
                 </select>
               </div>
-              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+              <div className="form-group">
                 <label className="form-label">
-                  {t('calls.modals.editCallType.fields.version')}
+                  Kieli
                 </label>
-                <input
-                  type="text"
-                  value={editingCallType.version || 'v1.0'}
-                  onChange={e => setEditingCallType({ ...editingCallType, version: e.target.value })}
-                  className="form-input"
-                />
+                <select
+                  value={editingCallType.language || 'fi'}
+                  onChange={e => setEditingCallType({ ...editingCallType, language: e.target.value })}
+                  className="form-select"
+                >
+                  <option value="en-US">🇺🇸 English (US)</option>
+                  <option value="bg">🇧🇬 Български</option>
+                  <option value="cs">🇨🇿 Čeština</option>
+                  <option value="de-DE">🇩🇪 Deutsch</option>
+                  <option value="el">🇬🇷 Ελληνικά</option>
+                  <option value="fi">🇫🇮 Suomi</option>
+                  <option value="fr-FR">🇫🇷 Français</option>
+                  <option value="es-ES">🇪🇸 Español</option>
+                  <option value="hu">🇭🇺 Magyar</option>
+                  <option value="it">🇮🇹 Italiano</option>
+                  <option value="fr">🇫🇷 Français</option>
+                  <option value="pt-BR">🇧🇷 Português (Brasil)</option>
+                  <option value="nl-NL">🇳🇱 Nederlands</option>
+                  <option value="hi">🇮🇳 हिन्दी</option>
+                  <option value="zh-CN">🇨🇳 中文</option>
+                  <option value="no">🇳🇴 Norsk</option>
+                  <option value="sv-SE">🇸🇪 Svenska</option>
+                  <option value="da">🇩🇰 Dansk</option>
+                  <option value="da-DK">🇩🇰 Dansk (Danmark)</option>
+                  <option value="id">🇮🇩 Bahasa Indonesia</option>
+                  <option value="ja">🇯🇵 日本語</option>
+                  <option value="ko">🇰🇷 한국어</option>
+                  <option value="ms">🇲🇾 Bahasa Melayu</option>
+                  <option value="ro">🇷🇴 Română</option>
+                  <option value="ru">🇷🇺 Русский</option>
+                  <option value="sk">🇸🇰 Slovenčina</option>
+                  <option value="tr">🇹🇷 Türkçe</option>
+                  <option value="uk">🇺🇦 Українська</option>
+                  <option value="vi">🇻🇳 Tiếng Việt</option>
+                  <option value="th">🇹🇭 ไทย</option>
+                  <option value="pl">🇵🇱 Polski</option>
+                </select>
               </div>
             </div>
           )}

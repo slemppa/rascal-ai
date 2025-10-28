@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useConversation } from '@elevenlabs/react'
@@ -7,6 +8,7 @@ import './OnboardingModal.css'
 
 const OnboardingModal = () => {
   const { user } = useAuth()
+  const location = useLocation()
   const [shouldShow, setShouldShow] = useState(false)
   const [loading, setLoading] = useState(true)
   const [conversationId, setConversationId] = useState(null)
@@ -61,6 +63,24 @@ const OnboardingModal = () => {
 
   // Tarkista pitääkö modaali näyttää
   useEffect(() => {
+    // Estä näyttö tietyillä julkisilla/kriittisillä reiteillä
+    const BLOCKED_ROUTES = [
+      '/signin',
+      '/signup',
+      '/reset-password',
+      '/forgot-password',
+      '/auth/callback',
+      '/terms',
+      '/privacy'
+    ]
+
+    const isBlocked = BLOCKED_ROUTES.some((path) => location.pathname.includes(path))
+    if (isBlocked) {
+      setShouldShow(false)
+      setLoading(false)
+      return
+    }
+
     const checkOnboardingStatus = async () => {
       if (!user?.id) {
         setLoading(false)
@@ -87,7 +107,7 @@ const OnboardingModal = () => {
     }
 
     checkOnboardingStatus()
-  }, [user])
+  }, [user, location.pathname])
 
   const handleStartConversation = async () => {
     try {

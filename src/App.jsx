@@ -130,12 +130,12 @@ function LanguageRedirect() {
 export default function App() {
   return (
     <>
-      <OnboardingModal />
       <AuthProvider>
       <AutoLogoutProvider>
         <PostsProvider>
           <NotificationProvider>
             <StrategyStatusProvider>
+              <OnboardingModal />
               <Routes>
         {/* Julkiset reitit */}
         <Route path="/" element={<Navigate to="/fi" replace />} />

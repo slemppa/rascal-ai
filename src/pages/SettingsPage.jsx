@@ -656,8 +656,58 @@ export default function SettingsPage() {
             
             {/* Avatar-kuvat */}
             <div className={styles.card}>
-      
-              <AvatarSectionMulti companyId={userProfile?.company_id || null} />
+              <h2 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#1f2937' }}>Avatar</h2>
+              <div style={{ 
+                padding: '32px', 
+                textAlign: 'center', 
+                background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', 
+                borderRadius: '12px',
+                border: '2px dashed #cbd5e1',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                {/* Dekoratiivinen gradient */}
+                <div style={{
+                  position: 'absolute',
+                  top: '-50%',
+                  right: '-50%',
+                  width: '200%',
+                  height: '200%',
+                  background: 'radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%)',
+                  pointerEvents: 'none'
+                }} />
+                
+                {/* Sisältö */}
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <svg 
+                    width="48" 
+                    height="48" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="#10b981" 
+                    strokeWidth="2"
+                    style={{ margin: '0 auto 16px', display: 'block' }}
+                  >
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  <div style={{ 
+                    color: '#334155',
+                    fontSize: '16px',
+                    fontWeight: 600,
+                    marginBottom: '8px'
+                  }}>
+                    Tulossa uusi versio
+                  </div>
+                  <div style={{ 
+                    color: '#64748b',
+                    fontSize: '13px',
+                    lineHeight: '1.5'
+                  }}>
+                    Työskentelemme parhaillaan uuden<br/>avatar-toiminnallisuuden parissa
+                  </div>
+                </div>
+              </div>
             </div>
             
             {/* Äänitiedostot */}

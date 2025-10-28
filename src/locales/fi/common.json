@@ -367,7 +367,8 @@
       "assistentti": "Assistentti",
       "admin": "Ylläpito",
       "adminBlog": "Admin",
-      "meetingNotes": "Palaverimuistiot"
+      "meetingNotes": "Palaverimuistiot",
+      "accountManager": "Salkun hallinta"
     },
     "settings": "Asetukset",
     "helpCenter": "Ohjekeskus",

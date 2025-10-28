@@ -37,6 +37,7 @@ import CampaignDetailPage from './src/pages/CampaignDetailPage'
 import SegmentsPage from './src/pages/SegmentsPage'
 import SegmentCreatePage from './src/pages/SegmentCreatePage'
 import SegmentDetailPage from './src/pages/SegmentDetailPage'
+import AccountManagerPage from './src/pages/AccountManagerPage'
 
 // ConditionalChatbotWidget komponentti - ei tarvita enää
 function ConditionalChatbotWidget() {
@@ -285,6 +286,18 @@ export default function App() {
                       <MobileNavigation />
                       <div className="main-content">
                         <DevPage />
+                      </div>
+                    </div>
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/account-manager" element={
+                  <ProtectedRoute requiredRole="moderator">
+                    <div className="app-layout">
+                      <Sidebar />
+                      <MobileNavigation />
+                      <div className="main-content">
+                        <AccountManagerPage />
                       </div>
                     </div>
                   </ProtectedRoute>

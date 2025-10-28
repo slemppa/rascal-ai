@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -17,18 +17,15 @@ const ProtectedRoute = ({ children, requiredFeatures = [], requiredRole = null }
   const { user, loading } = auth
   const navigate = useNavigate()
   const { has: hasFeature, loading: featuresLoading } = useFeatures()
+  const [roleChecked, setRoleChecked] = useState(false)
+  const [hasAccess, setHasAccess] = useState(true)
 
-  if (loading || featuresLoading) {
-    return <div className="protected-route-loading">Ladataan...</div>
-  }
+  useEffect(() => {
+    if (!requiredRole || !user) {
+      setRoleChecked(true)
+      return
+    }
 
-  if (!user) {
-    return <Navigate to="/" replace />
-  }
-
-  // Tarkista rooli-vaatimukset
-  if (requiredRole) {
-    // Haetaan käyttäjän rooli Supabasesta
     const checkUserRole = async () => {
       try {
         const { data: userData, error } = await supabase
@@ -38,30 +35,49 @@ const ProtectedRoute = ({ children, requiredFeatures = [], requiredRole = null }
           .single()
 
         if (error || !userData) {
+          setHasAccess(false)
+          setRoleChecked(true)
           navigate('/')
-          return null
+          return
         }
 
         const isAdmin = userData.role === 'admin' || userData.company_id === 1
         const isModerator = userData.role === 'moderator' || isAdmin
 
-        if (requiredRole === 'admin' && !isAdmin) {
-          navigate('/')
-          return null
-        }
+        console.log('ProtectedRoute - User data:', userData)
+        console.log('ProtectedRoute - Required role:', requiredRole)
+        console.log('ProtectedRoute - isAdmin:', isAdmin, 'isModerator:', isModerator)
 
-        if (requiredRole === 'moderator' && !isModerator) {
+        if (requiredRole === 'admin' && !isAdmin) {
+          console.log('ProtectedRoute - Access denied: not admin')
+          setHasAccess(false)
           navigate('/')
-          return null
+        } else if (requiredRole === 'moderator' && !isModerator) {
+          console.log('ProtectedRoute - Access denied: not moderator')
+          setHasAccess(false)
+          navigate('/')
+        } else {
+          console.log('ProtectedRoute - Access granted')
+          setHasAccess(true)
         }
+        setRoleChecked(true)
       } catch (error) {
         console.error('Error checking user role:', error)
+        setHasAccess(false)
+        setRoleChecked(true)
         navigate('/')
-        return null
       }
     }
 
     checkUserRole()
+  }, [requiredRole, user, navigate])
+
+  if (loading || featuresLoading || !roleChecked) {
+    return <div className="protected-route-loading">Ladataan...</div>
+  }
+
+  if (!user || !hasAccess) {
+    return <Navigate to="/" replace />
   }
 
   // Tarkista features

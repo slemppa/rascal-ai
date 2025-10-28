@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
+import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { SpeedInsights } from '@vercel/speed-insights/react'
 import LandingPage from './pages/LandingPage'
 import DashboardPage from './pages/DashboardPage'
@@ -41,6 +41,7 @@ import CustomersPage from './pages/CustomersPage'
 import AdminBlogPage from './pages/AdminBlogPage'
 import AdminTestimonialsPage from './pages/AdminTestimonialsPage'
 import MeetingNotesPage from './pages/MeetingNotesPage'
+import AccountManagerPage from './pages/AccountManagerPage'
 // MixpostAnalyticsDashboard poistettu
 import CampaignsPage from './pages/CampaignsPage'
 import SegmentsPage from './pages/SegmentsPage'
@@ -104,8 +105,11 @@ function LanguageRedirect() {
   const location = useLocation();
 
   useEffect(() => {
-    // Älä uudelleenohjaa jos ollaan jo kieliprefiksissä
+    // Älä uudelleenohjaa jos ollaan jo kieliprefiksissä tai suojatuilla sivuilla
     if (location.pathname.startsWith('/fi') || location.pathname.startsWith('/en')) return;
+    // Älä uudelleenohjaa suojatuille sivuille (esim. /account-management)
+    const protectedPaths = ['/dashboard', '/admin', '/admin-blog', '/calls', '/settings', '/posts', '/strategy', '/ai-chat', '/help', '/meeting-notes', '/admin-testimonials', '/campaigns', '/segments', '/blog-newsletter', '/linkedin-test'];
+    if (protectedPaths.some(path => location.pathname.startsWith(path))) return;
 
     const getCookie = (name) => {
       const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
@@ -134,7 +138,7 @@ export default function App() {
             <StrategyStatusProvider>
               <Routes>
         {/* Julkiset reitit */}
-        <Route path="/" element={<LanguageRedirect />} />
+        <Route path="/" element={<Navigate to="/fi" replace />} />
         <Route path="/fi" element={<LandingPage />} />
         <Route path="/en" element={<LandingPage />} />
         <Route path="/fi/blog" element={<BlogPage />} />
@@ -362,6 +366,17 @@ export default function App() {
               <MobileNavigation />
               <div className="main-content">
                 <MeetingNotesPage />
+              </div>
+            </div>
+          </ProtectedRoute>
+        } />
+        <Route path="/account-manager" element={
+          <ProtectedRoute requiredRole="moderator">
+            <div className="app-layout">
+              <Sidebar />
+              <MobileNavigation />
+              <div className="main-content">
+                <AccountManagerPage />
               </div>
             </div>
           </ProtectedRoute>

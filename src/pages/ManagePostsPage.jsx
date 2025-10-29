@@ -1944,27 +1944,27 @@ export default function ManagePostsPage() {
             {columns.map(column => {
                               // Filteröidään postit statusin JA lähteen mukaan
               let columnPosts = filteredPosts.filter(post => {
+                // TODO: Avatar-sarakkeen toteutus palautetaan tulevaisuudessa
                 // Avatar-sarakkeessa näytetään reels-dataa Avatar-tyypin kanssa
-                if (column.status === 'Avatar') {
-                  return post.status === 'Kesken' && post.source === 'reels' && post.type === 'Avatar'
-                }
+                // if (column.status === 'Avatar') {
+                //   return post.status === 'Kesken' && post.source === 'reels' && post.type === 'Avatar'
+                // }
+                
                 // Kesken-sarakkeessa näytetään vain Supabase-dataa "Kesken" statusilla
-                else if (column.titleKey === 'posts.columns.inProgress') {
+                if (column.titleKey === 'posts.columns.inProgress') {
                   return post.status === 'Kesken' && post.source === 'supabase'
                 }
 
                 // Aikataulutettu-sarakkeessa näytetään Mixpost dataa
-                else if (column.status === 'Aikataulutettu') {
+                if (column.status === 'Aikataulutettu') {
                   return post.status === 'Aikataulutettu' && post.source === 'mixpost'
                 }
                 // Julkaistu-sarakkeessa näytetään sekä Supabase että Mixpost dataa
-                else if (column.status === 'Julkaistu') {
+                if (column.status === 'Julkaistu') {
                   return post.status === 'Julkaistu'
                 }
                 // Muissa sarakkeissa näytetään Supabase-data oikealla statusilla
-                else {
-                  return post.status === column.status && post.source === 'supabase'
-                }
+                return post.status === column.status && post.source === 'supabase'
               })
               
               return (
@@ -1977,40 +1977,59 @@ export default function ManagePostsPage() {
                 >
                   <h3 className="column-title">{t(column.titleKey)}</h3>
                   <div className="column-content">
-                    {columnPosts.length === 0 && column.titleKey === 'posts.columns.avatar' ? (
-                      <div className="empty-column-placeholder" style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '40px 20px',
-                        textAlign: 'center',
-                        color: '#6b7280',
-                        backgroundColor: '#f9fafb',
-                        borderRadius: '8px',
-                        border: '2px dashed #d1d5db',
-                        minHeight: '200px'
+                    {column.titleKey === 'posts.columns.avatar' ? (
+                      <div style={{ 
+                        padding: '32px', 
+                        textAlign: 'center', 
+                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', 
+                        borderRadius: '12px',
+                        border: '2px dashed #cbd5e1',
+                        position: 'relative',
+                        overflow: 'hidden'
                       }}>
-                        <div style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.5 }}>
-                          🎬
+                        {/* Dekoratiivinen gradient */}
+                        <div style={{
+                          position: 'absolute',
+                          top: '-50%',
+                          right: '-50%',
+                          width: '200%',
+                          height: '200%',
+                          background: 'radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%)',
+                          pointerEvents: 'none'
+                        }} />
+                        
+                        {/* Sisältö */}
+                        <div style={{ position: 'relative', zIndex: 1 }}>
+                          <svg 
+                            width="48" 
+                            height="48" 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            stroke="#10b981" 
+                            strokeWidth="2"
+                            style={{ margin: '0 auto 16px', display: 'block' }}
+                          >
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                          </svg>
+                          <div style={{ 
+                            color: '#334155',
+                            fontSize: '16px',
+                            fontWeight: 600,
+                            marginBottom: '8px'
+                          }}>
+                            Tulossa uusi versio
+                          </div>
+                          <div style={{ 
+                            color: '#64748b',
+                            fontSize: '13px',
+                            lineHeight: '1.5'
+                          }}>
+                            Työskentelemme parhaillaan uuden<br/>avatar-toiminnallisuuden parissa
+                          </div>
                         </div>
-                        <h4 style={{ 
-                          fontSize: '18px', 
-                          fontWeight: '600', 
-                          marginBottom: '8px',
-                          color: '#374151'
-                        }}>
-                          Ei Reels-sisältöä
-                        </h4>
-                        <p style={{ 
-                          fontSize: '14px', 
-                          lineHeight: '1.5',
-                          maxWidth: '200px'
-                        }}>
-                          Sinulla ei ole tällä hetkellä täällä mitään. Reels-sisältöä näkyy tässä sarakkeessa.
-                        </p>
                       </div>
-                    ) : (
+                    ) : columnPosts.length === 0 ? null : (
                       columnPosts.map(post => {
                         // Varmistetaan että post on oikeassa muodossa
                         const safePost = {

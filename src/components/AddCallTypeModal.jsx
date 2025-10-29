@@ -246,11 +246,10 @@ const AddCallTypeModal = ({
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Agentin nimi</div>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-Nimi: Ava
-Rooli: Ajanvarausagentti (Rascal Company)
-Tavoite: Sovi 15 min esittelypuhelu pätevien liidien kanssa.
-                  </div>
+                  <ul style={{ margin: 0, paddingLeft: 16, lineHeight: 1.6 }}>
+                    <li>"Ava – ajanvarausagentti" (selkeä rooli+tavoite)</li>
+                    <li>Ei small talkia, tiivis sävy</li>
+                  </ul>
                 </div>
               </div>
 
@@ -269,11 +268,11 @@ Tavoite: Sovi 15 min esittelypuhelu pätevien liidien kanssa.
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Kohdeyleisö</div>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-Kohdeyleisö: Toimitusjohtajat ja päättäjät B2B‑yrityksissä (10–200 hlö).
-Tarve: Kasvu ja laadukkaat inbound‑liidit.
-Arvolupaus: Rascal AI tuottaa jatkuvaa liidivirtaa ja säästää myynnin aikaa.
-                  </div>
+                  <ul style={{ margin: 0, paddingLeft: 16, lineHeight: 1.6 }}>
+                    <li>Päättäjät / yrittäjät</li>
+                    <li>Tarve: liidit / ajanvaraukset</li>
+                    <li>Arvolupaus 1–2 virkettä</li>
+                  </ul>
                 </div>
               </div>
 
@@ -292,11 +291,11 @@ Arvolupaus: Rascal AI tuottaa jatkuvaa liidivirtaa ja säästää myynnin aikaa.
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Agentin persoona</div>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-Persoona: Lämmin ja selkeä. Ei small talkia.
-Säännöt: Ei spekulointia. Tiivistä asiakkaan vastaus ennen seuraavaa kysymystä.
-Tunnetilanteet: Tunnista ja sanoita lyhyesti ("Ymmärrän, kuulostaa kiireiseltä").
-                  </div>
+                  <ul style={{ margin: 0, paddingLeft: 16, lineHeight: 1.6 }}>
+                    <li>Selkeä rooli + rajat (ei small talkia)</li>
+                    <li>Empatia + vastausten tiivistäminen</li>
+                    <li>Myöntää tarvittaessa "En tiedä" ja ohjaa eteenpäin</li>
+                  </ul>
                 </div>
               </div>
 
@@ -315,11 +314,11 @@ Tunnetilanteet: Tunnista ja sanoita lyhyesti ("Ymmärrän, kuulostaa kiireiselt�
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Sävystä</div>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-Tyyli: Lyhyet lauseet. Yksi kysymys kerrallaan.
-Malli: "Kiitos vastauksesta. Ymmärsinkö oikein, että…?" → seuraava kysymys.
-Brändiääni: selkeä, lämmin, ratkaisukeskeinen.
-                  </div>
+                  <ul style={{ margin: 0, paddingLeft: 16, lineHeight: 1.6 }}>
+                    <li>Lyhyet lauseet, yksi kysymys kerrallaan</li>
+                    <li>Tiivistä ennen siirtymistä</li>
+                    <li>Brändiääni: lämmin ja selkeä</li>
+                  </ul>
                 </div>
               </div>
 
@@ -338,11 +337,11 @@ Brändiääni: selkeä, lämmin, ratkaisukeskeinen.
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Tavoitteet</div>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-Päätavoite: Varaa 15 min esittelypuhelu pätevän liidin kanssa.
-IF: budjetti ja tarve ovat olemassa → THEN: tarjoa aikaa.
-IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
-                  </div>
+                  <ul style={{ margin: 0, paddingLeft: 16, lineHeight: 1.6 }}>
+                    <li>Päätavoite: ajanvaraus / lead</li>
+                    <li>IF/THEN‑säännöt etenemiselle</li>
+                    <li>Lopetus ystävällisesti jos ei sopimusta</li>
+                  </ul>
                 </div>
               </div>
 
@@ -361,11 +360,11 @@ IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Vastaväitteet & poikkeukset</div>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-"Liian kallis" → "Ymmärrän. Asiakkaamme säästävät keskimäärin 6–10 h/kk myynnin aikaa. Sopiiko, että näytän 15 min esittelyssä, miten?"
-"Vain katselen" → "Nopea 15 min demo auttaa näkemään, onko tästä hyötyä juuri teille. Sopiiko aika ensi viikolle?"
-"En tiedä" → "Sanon rehellisesti, jos en tiedä ja ohjaan kollegalle."
-                  </div>
+                  <ul style={{ margin: 0, paddingLeft: 16, lineHeight: 1.6 }}>
+                    <li>Hinnoittelu → tiivis hyöty + seuraava askel</li>
+                    <li>“Vain katselen” → yksi konkreettinen hyöty</li>
+                    <li>Ohjaa ihmiselle, jos malli ei tiedä</li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -491,7 +490,7 @@ IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div style={{ whiteSpace: 'pre-wrap' }}>Yhteenveto: Agentti kartoittaa tarpeen (budjetti, tavoite, aikataulu) ja varaa 15 min esittelyn, jos kriteerit täyttyvät. Tyyli: lämmin ja napakka, ei small talkia.</div>
+                  <div style={{ whiteSpace: 'pre-wrap' }}>"Yhteenveto: Agentti kartoittaa tarpeet ja varaa 15 min ajan, jos kriteerit täyttyvät. Sävynä lämmin ja napakka. Ei small talkia."</div>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
@@ -509,7 +508,11 @@ IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div style={{ whiteSpace: 'pre-wrap' }}>Onnistumiskriteerit: Varattu aika tai kelpuutettu liidi. Vastaukset lyhyitä ja johdonmukaisia. Noudattaa sääntöjä (ei small talkia, ei spekulointia).</div>
+                  <ul style={{ margin: 0, paddingLeft: 16, lineHeight: 1.6 }}>
+                    <li>onnistuminen = varattu aika / kelpuutettu liidi</li>
+                    <li>vastaukset lyhyitä ja johdonmukaisia</li>
+                    <li>ohjeita noudatettu (sävyt, rajat, IF/THEN)</li>
+                  </ul>
                 </div>
               </div>
             </div>

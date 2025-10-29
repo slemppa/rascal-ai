@@ -245,8 +245,12 @@ const AddCallTypeModal = ({
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.addCallType.examples.users')}</div>
-                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.addCallType.examples.agentName')}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Agentin nimi</div>
+                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+Nimi: Ava
+Rooli: Ajanvarausagentti (Rascal Company)
+Tavoite: Sovi 15 min esittelypuhelu pätevien liidien kanssa.
+                  </div>
                 </div>
               </div>
 
@@ -264,8 +268,12 @@ const AddCallTypeModal = ({
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.addCallType.examples.users')}</div>
-                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.addCallType.examples.targetAudience')}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Kohdeyleisö</div>
+                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+Kohdeyleisö: Toimitusjohtajat ja päättäjät B2B‑yrityksissä (10–200 hlö).
+Tarve: Kasvu ja laadukkaat inbound‑liidit.
+Arvolupaus: Rascal AI tuottaa jatkuvaa liidivirtaa ja säästää myynnin aikaa.
+                  </div>
                 </div>
               </div>
 
@@ -283,8 +291,12 @@ const AddCallTypeModal = ({
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.addCallType.examples.users')}</div>
-                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.addCallType.examples.agentPersona')}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Agentin persoona</div>
+                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+Persoona: Lämmin ja selkeä. Ei small talkia.
+Säännöt: Ei spekulointia. Tiivistä asiakkaan vastaus ennen seuraavaa kysymystä.
+Tunnetilanteet: Tunnista ja sanoita lyhyesti ("Ymmärrän, kuulostaa kiireiseltä").
+                  </div>
                 </div>
               </div>
 
@@ -302,8 +314,12 @@ const AddCallTypeModal = ({
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.addCallType.examples.users')}</div>
-                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.addCallType.examples.toneStyle')}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Sävystä</div>
+                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+Tyyli: Lyhyet lauseet. Yksi kysymys kerrallaan.
+Malli: "Kiitos vastauksesta. Ymmärsinkö oikein, että…?" → seuraava kysymys.
+Brändiääni: selkeä, lämmin, ratkaisukeskeinen.
+                  </div>
                 </div>
               </div>
 
@@ -321,8 +337,12 @@ const AddCallTypeModal = ({
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.addCallType.examples.users')}</div>
-                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.addCallType.examples.callGoals')}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Tavoitteet</div>
+                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+Päätavoite: Varaa 15 min esittelypuhelu pätevän liidin kanssa.
+IF: budjetti ja tarve ovat olemassa → THEN: tarjoa aikaa.
+IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
+                  </div>
                 </div>
               </div>
 
@@ -340,8 +360,12 @@ const AddCallTypeModal = ({
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.addCallType.examples.users')}</div>
-                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.addCallType.examples.guidelines')}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Vastaväitteet & poikkeukset</div>
+                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+"Liian kallis" → "Ymmärrän. Asiakkaamme säästävät keskimäärin 6–10 h/kk myynnin aikaa. Sopiiko, että näytän 15 min esittelyssä, miten?"
+"Vain katselen" → "Nopea 15 min demo auttaa näkemään, onko tästä hyötyä juuri teille. Sopiiko aika ensi viikolle?"
+"En tiedä" → "Sanon rehellisesti, jos en tiedä ja ohjaan kollegalle."
+                  </div>
                 </div>
               </div>
             </div>
@@ -466,8 +490,8 @@ const AddCallTypeModal = ({
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>{t('calls.modals.addCallType.examples.summary')}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
+                  <div style={{ whiteSpace: 'pre-wrap' }}>Yhteenveto: Agentti kartoittaa tarpeen (budjetti, tavoite, aikataulu) ja varaa 15 min esittelyn, jos kriteerit täyttyvät. Tyyli: lämmin ja napakka, ei small talkia.</div>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
@@ -484,8 +508,8 @@ const AddCallTypeModal = ({
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>{t('calls.modals.addCallType.examples.successAssessment')}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
+                  <div style={{ whiteSpace: 'pre-wrap' }}>Onnistumiskriteerit: Varattu aika tai kelpuutettu liidi. Vastaukset lyhyitä ja johdonmukaisia. Noudattaa sääntöjä (ei small talkia, ei spekulointia).</div>
                 </div>
               </div>
             </div>

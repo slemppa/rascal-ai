@@ -2,6 +2,56 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.80.0](https://github.com/slemppa/rascal-ai/compare/v1.79.3...v1.80.0) (2025-10-30)
+
+
+### 📚 Documentation
+
+* Päivitä CHANGELOG v1.79.3 ominaisuuksilla ([1833489](https://github.com/slemppa/rascal-ai/commit/1833489f1b159f4f683332b351b384dc18a7499a))
+
+
+### 🔧 Chores
+
+* trigger redeploy (local build ok) ([32a0288](https://github.com/slemppa/rascal-ai/commit/32a02883e32f2dda6610d3afe94555e69bdb5102))
+
+
+### 💄 Styles
+
+* **ui:** unify mass call modal with shared modal styles ([a8cb4ef](https://github.com/slemppa/rascal-ai/commit/a8cb4ef384ce5cd96c88299473c7398b47cf7f00))
+
+
+### 🐛 Bug Fixes
+
+* **build:** korjaa Vite env-viittaukset ([fe6a245](https://github.com/slemppa/rascal-ai/commit/fe6a245f558c2ccb77a4e0d38ee78db2e1befdf2))
+* improve Avatar column display and remove skeleton loading ([329ff29](https://github.com/slemppa/rascal-ai/commit/329ff29d630747def6a00d6cddddda2ebabd8699))
+* korjaa ESLint-virheet ja build-ongelmat ([c299ccf](https://github.com/slemppa/rascal-ai/commit/c299ccf1755990539f91481febc1e6c1bf617c34))
+* korjaa kuvan vaihto modaaleissa ja lisää media-validointi ([095e14c](https://github.com/slemppa/rascal-ai/commit/095e14ce15f1abb87095f9748fe5a21e764c84f7))
+* Korjaa kuvien upload-ongelma posts-sivulla ([1d77d55](https://github.com/slemppa/rascal-ai/commit/1d77d5556d27714eacfd0fc0f5410d20bb16e340))
+* Lisää näkyvät virheviestit kuvien upload-ongelmiin ([475e04d](https://github.com/slemppa/rascal-ai/commit/475e04d81c4afbd93695305bc762c81ea8cf9bb2))
+* resolve merge conflict in AddCallTypeModal ([28d8b55](https://github.com/slemppa/rascal-ai/commit/28d8b55dd65edbf5758e7d08b5a430142ea774df))
+* Restore OnboardingModal component content ([7d557fa](https://github.com/slemppa/rascal-ai/commit/7d557fa00ce824d09cda457546bee43c50cbbfaa))
+* Safari notification panel rendering issue ([1b83e1f](https://github.com/slemppa/rascal-ai/commit/1b83e1f951e479e601f98b7f0f4e53e128b548b6))
+* Skip button no longer modifies Supabase database ([901a9ef](https://github.com/slemppa/rascal-ai/commit/901a9ef9e97d882cdcd7174cb3d9a00dff195762))
+
+
+### ✨ Features
+
+* add account manager page for portfolio management ([68301d2](https://github.com/slemppa/rascal-ai/commit/68301d26656bff749a52b349fce555c2e78802d0)), closes [#cea78](https://github.com/slemppa/rascal-ai/issues/cea78) [#1a4a3](https://github.com/slemppa/rascal-ai/issues/1a4a3)
+* add language selector to call type modals ([0cd91b3](https://github.com/slemppa/rascal-ai/commit/0cd91b33824248234c21b18da370ad4fd1673b86))
+* add optimistic UI updates for post scheduling and status changes ([50a4535](https://github.com/slemppa/rascal-ai/commit/50a4535d5811568a600c6581a378ea7a5e8cb41d))
+* **api:** remove service-number blocking from mass calls and validation ([82f50f2](https://github.com/slemppa/rascal-ai/commit/82f50f2db46b7032479094a77783fc2b300e871c))
+* **auth:** block ICP onboarding and strategy modals on reset flows ([319d0ef](https://github.com/slemppa/rascal-ai/commit/319d0efc204b54ed13ab84055abdf4da515de9c2))
+* **calls:** refine AddCallTypeModal UI and behavior ([8bcd542](https://github.com/slemppa/rascal-ai/commit/8bcd5427bd8bb9867d749f9bc739c9920e1ecab6))
+* Complete onboarding modal with ElevenLabs integration ([8674031](https://github.com/slemppa/rascal-ai/commit/867403137cf0b211c987bc907ffd0c65b6392079))
+* fix SMS settings in mass call modals and API ([1484831](https://github.com/slemppa/rascal-ai/commit/1484831f8a9d5820238705169e1f08101048570d))
+* Lisää tiketöintisysteemi ([071b592](https://github.com/slemppa/rascal-ai/commit/071b592db02f6f08db497433db2499a2528378b2))
+* paranna strategiasivun käyttökokemusta ([23ad761](https://github.com/slemppa/rascal-ai/commit/23ad761a2a0465635f21e082beae03e81bc85317))
+* **posts:** align current-month quota with next-month logic ([23bac69](https://github.com/slemppa/rascal-ai/commit/23bac69a112773a1fa784849441e6c1893f83342))
+* Show onboarding modal to all users (not just admin) ([a1fca91](https://github.com/slemppa/rascal-ai/commit/a1fca91a31d61810510406767bbd850c66507390))
+* **ui:** add audio tab to call details modal ([54361cf](https://github.com/slemppa/rascal-ai/commit/54361cf3d3c63c84eb78b8d9a31177ecd2d8e86b))
+* update Avatar column with coming soon message ([0942135](https://github.com/slemppa/rascal-ai/commit/094213544d6bba7c695a44790518b2fd7759ff81))
+* update Avatar section in settings with modern coming soon design ([83eb4ae](https://github.com/slemppa/rascal-ai/commit/83eb4ae4485bc82f2bfdc1b6337148a50e811d24))
+
 ### [1.79.3](https://github.com/slemppa/rascal-ai/compare/v1.79.2...v1.79.3) (2025-10-14)
 
 ### ✨ Features

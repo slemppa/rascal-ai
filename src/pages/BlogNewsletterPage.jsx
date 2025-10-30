@@ -152,13 +152,15 @@ function ContentCard({ content, onView, onPublish, onArchive, onDownload, onEdit
               >
                 {t('blogNewsletter.actions.view')}
               </Button>
+            {content.status !== 'Valmis' && (
               <Button 
                 variant="secondary" 
                 onClick={() => onEdit(content)}
                 style={{ fontSize: '11px', padding: '6px 10px' }}
               >
-                ✏️ Muokkaa
+                Muokkaa
               </Button>
+            )}
               {/* Julkaisu-nappi vain jos status on "Tarkistuksessa" */}
               {content.status === 'Tarkistuksessa' && (
                 <Button
@@ -375,8 +377,7 @@ export default function BlogNewsletterPage() {
         .update({
           idea: contentData.title,
           caption: contentData.caption,
-          meta_description: contentData.meta_description,
-          type: contentData.type,
+          blog_post: contentData.blog_post,
           updated_at: new Date().toISOString()
         })
         .eq('id', contentData.id)
@@ -460,6 +461,13 @@ export default function BlogNewsletterPage() {
 
   const handlePublishContent = async (content) => {
     try {
+      // Estä julkaisu, jos blogiteksti puuttuu
+      if (!content?.blog_post || String(content.blog_post).trim().length === 0) {
+        setToast({ visible: true, message: 'Lisää blogiteksti ennen julkaisua' })
+        setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+        return
+      }
+
       // Haetaan media-data suoraan Supabase:sta
       let mediaUrls = []
       let segments = []
@@ -755,12 +763,8 @@ export default function BlogNewsletterPage() {
           className="status-filter"
         >
           <option value="">{t('blogNewsletter.filters.allStatuses')}</option>
-          <option value="Luonnos">{t('blogNewsletter.status.Luonnos')}</option>
-          <option value="Kesken">{t('blogNewsletter.status.Kesken')}</option>
           <option value="Tarkistuksessa">{t('blogNewsletter.status.Tarkistuksessa')}</option>
-          <option value="Aikataulutettu">{t('blogNewsletter.status.Aikataulutettu')}</option>
           <option value="Valmis">{t('blogNewsletter.status.Valmis')}</option>
-          <option value="Julkaistu">{t('blogNewsletter.status.Julkaistu')}</option>
         </select>
         <select 
           value={typeFilter} 
@@ -855,7 +859,7 @@ export default function BlogNewsletterPage() {
             }
           }}
         >
-          <div className="modal-container" style={{ maxWidth: '800px' }}>
+          <div className="modal-container" style={{ maxWidth: '900px', height: '80vh' }}>
             <div className="modal-header">
               <h2 className="modal-title">{t('blogNewsletter.createModal.title')}</h2>
               <button
@@ -949,7 +953,7 @@ export default function BlogNewsletterPage() {
                 onClick={() => setShowViewModal(false)}
                 className="modal-close-btn"
               >
-                ✕
+                X
               </button>
             </div>
             <div className="modal-content">
@@ -1029,6 +1033,18 @@ export default function BlogNewsletterPage() {
                   </Button>
                 </div>
                 <div className="modal-actions-right">
+                {viewingContent.status !== 'Valmis' && (
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={() => {
+                      handlePublishContent(viewingContent)
+                    }}
+                    style={{ marginRight: '8px', backgroundColor: '#22c55e', borderColor: '#16a34a' }}
+                  >
+                    {t('blogNewsletter.actions.publish')}
+                  </Button>
+                )}
                   <Button
                     type="button"
                     variant="danger"
@@ -1060,9 +1076,9 @@ export default function BlogNewsletterPage() {
             }
           }}
         >
-          <div className="modal-container" style={{ maxWidth: '800px' }}>
+          <div className="modal-container" style={{ maxWidth: '900px', height: '80vh' }}>
             <div className="modal-header">
-              <h2 className="modal-title">Muokkaa sisältöä</h2>
+              <h2 className="modal-title">{editingContent.title}</h2>
               <button
                 onClick={() => {
                   setShowEditModal(false)
@@ -1070,23 +1086,57 @@ export default function BlogNewsletterPage() {
                 }}
                 className="modal-close-btn"
               >
-                ✕
+                X
               </button>
             </div>
             <div className="modal-content">
+              {/* Yhtenäistetty esikatseluosio kuten katselumodaalissa */}
+              <div className="content-view">
+                {editingContent.thumbnail && editingContent.thumbnail !== '/placeholder.png' ? (
+                  <div className="view-thumbnail">
+                    <img
+                      src={editingContent.thumbnail}
+                      alt="Thumbnail"
+                      className="view-thumbnail-image"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div className="view-thumbnail-placeholder" style={{ display: 'none' }}>
+                      <img 
+                        src="/placeholder.png" 
+                        alt="Placeholder"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="view-thumbnail">
+                    <img 
+                      src="/placeholder.png" 
+                      alt="Placeholder"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }}
+                    />
+                  </div>
+                )}
+                <div className="content-meta">
+                  <span className="content-type">{editingContent.type === 'Blog' ? 'Blog' : 'Newsletter'}</span>
+                  <span className="content-date">{editingContent.createdAt || ''}</span>
+                </div>
+              </div>
               <form onSubmit={(e) => {
                 e.preventDefault()
                 const formData = new FormData(e.target)
                 handleUpdateContent({
                   id: editingContent.id,
                   title: formData.get('title'),
-                  caption: formData.get('caption'),
-                  meta_description: formData.get('meta_description'),
-                  type: formData.get('type')
+                  caption: editingContent.caption,
+                  blog_post: formData.get('blog_post')
                 })
               }}>
                 <div className="form-group">
-                  <label className="form-label">Otsikko</label>
+                  <label className="form-label" style={{ display: 'none' }}>Otsikko</label>
                   <input
                     name="title"
                     type="text"
@@ -1094,61 +1144,58 @@ export default function BlogNewsletterPage() {
                     className="form-input"
                     defaultValue={editingContent.title}
                     placeholder="Sisällön otsikko"
+                    style={{
+                      border: 'none',
+                      outline: 'none',
+                      background: 'transparent',
+                      padding: 0,
+                      fontSize: '20px',
+                      fontWeight: 600,
+                      marginBottom: '8px'
+                    }}
                   />
                 </div>
+                {/* Tyyppi näkyvissä (read-only) */}
                 <div className="form-group">
                   <label className="form-label">Tyyppi</label>
-                  <select
-                    name="type"
-                    required
-                    className="form-select"
-                    defaultValue={editingContent.type}
-                  >
-                    <option value="Blog">Blog</option>
-                    <option value="Newsletter">Newsletter</option>
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Kuvaus</label>
-                  <textarea
-                    name="caption"
-                    rows={4}
-                    className="form-textarea"
-                    defaultValue={editingContent.caption}
-                    placeholder="Sisällön kuvaus"
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Meta Description</label>
-                  <textarea
-                    name="meta_description"
-                    rows={3}
-                    className="form-textarea"
-                    defaultValue={editingContent.meta_description}
-                    placeholder="SEO-kuvaus (näkyy hakukoneissa)"
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Kuva</label>
-                  <div className="image-upload-section">
-                    {editingContent.thumbnail && editingContent.thumbnail !== '/placeholder.png' ? (
-                      <div className="current-image">
-                        <img src={editingContent.thumbnail} alt="Nykyinen kuva" style={{ maxWidth: '200px', borderRadius: '8px' }} />
-                        <p style={{ fontSize: '12px', color: '#666', margin: '8px 0 0 0' }}>
-                          Nykyinen kuva. Käytä "Vaihda kuva" -nappia vaihtaaksesi.
-                        </p>
-                      </div>
-                    ) : (
-                      <p style={{ fontSize: '14px', color: '#666' }}>Ei kuvaa</p>
-                    )}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleImageUpload(e, editingContent.id)}
-                      style={{ marginTop: '12px' }}
-                    />
+                  <div className="form-input" style={{ pointerEvents: 'none', opacity: 0.8 }}>
+                    {editingContent.type === 'Blog' ? 'Blog' : 'Newsletter'}
                   </div>
                 </div>
+                <div className="form-group">
+                  <label className="form-label">Blogiteksti</label>
+                  <textarea
+                    name="blog_post"
+                    rows={14}
+                    className="form-textarea"
+                    defaultValue={editingContent.blog_post || ''}
+                    placeholder="Blogiteksti markdownina"
+                  />
+                </div>
+                <div className="form-group" style={{ marginTop: '8px' }}>
+                  <div style={{
+                    background: '#f8fafc',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    padding: '10px',
+                    fontSize: '12px',
+                    color: '#475569'
+                  }}>
+                    <strong>Markdown-vinkit:</strong>
+                    <div style={{ marginTop: '6px' }}>
+                      <code># Otsikko 1</code>, <code>## Otsikko 2</code>, <code>### Otsikko 3</code>
+                    </div>
+                  </div>
+                </div>
+                {/* Meta description vain luettavana */}
+                {editingContent.meta_description && (
+                  <div className="form-group">
+                    <label className="form-label">Meta Description</label>
+                    <div className="form-textarea" style={{ pointerEvents: 'none', opacity: 0.8 }}>
+                      {editingContent.meta_description}
+                    </div>
+                  </div>
+                )}
                 <div className="modal-actions">
                   <div className="modal-actions-left">
                     <Button

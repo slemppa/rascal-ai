@@ -479,7 +479,7 @@
     "header": "Blogit ja uutiskirjeet",
     "searchPlaceholder": "Etsi blogeja ja newslettereja...",
     "filters": { "allStatuses": "Kaikki statukset", "allTypes": "Kaikki sisältötyypit" },
-    "types": { "blog": "📝 Blog-artikkelit", "newsletter": "📧 Newsletterit" },
+    "types": { "blog": "Blog-artikkelit", "newsletter": "Newsletterit" },
     "status": {
       "Luonnos": "Luonnos",
       "Kesken": "Kesken",

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.81.0](https://github.com/slemppa/rascal-ai/compare/v1.80.1...v1.81.0) (2025-10-31)
+
+
+### ✨ Features
+
+* näytä Kohderyhmä ja Tavoitteet aina ylhäällä ([61184ae](https://github.com/slemppa/rascal-ai/commit/61184ae31017ac6abbcc4585216ca224569b8cb4))
+
 ### [1.80.1](https://github.com/slemppa/rascal-ai/compare/v1.80.0...v1.80.1) (2025-10-31)
 
 

@@ -916,9 +916,8 @@ export default function ContentStrategyPage() {
             </div>
 
             {/* Kohderyhmä-kortti */}
-            {icpSummary && icpSummary.length > 0 && (
-              <div className="strategy-card">
-                <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>{t('strategy.icp.title')}</div>
+            <div className="strategy-card">
+              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>{t('strategy.icp.title')}</div>
               
               {editingIcp ? (
                 <div style={{ flex: 1 }}>
@@ -976,46 +975,70 @@ export default function ContentStrategyPage() {
                 </div>
               ) : (
                 <div style={{ flex: 1 }}>
-                  {icpSummary.map((summary, index) => (
-                    <div key={index} style={{ 
-                      marginBottom: 12 
-                    }}>
-                      <p style={{ margin: 0, color: '#374151', lineHeight: 1.6, fontSize: 14 }}>{summary}</p>
-                    </div>
-                  ))}
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
-                    <button 
-                      style={{
-                        background: '#22c55e',
-                        color: '#ffffff',
-                        border: 'none',
-                        borderRadius: 8,
-                        padding: '8px 16px',
-                        fontSize: 14,
-                        fontWeight: 600,
-                        cursor: 'pointer'
-                      }}
-                                              onClick={() => {
-                          setEditingIcp(true)
-                          setIcpEditText(icpSummary.join('\n'))
+                  {icpSummary && icpSummary.length > 0 ? (
+                    <>
+                      {icpSummary.map((summary, index) => (
+                        <div key={index} style={{ 
+                          marginBottom: 12 
+                        }}>
+                          <p style={{ margin: 0, color: '#374151', lineHeight: 1.6, fontSize: 14 }}>{summary}</p>
+                        </div>
+                      ))}
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+                        <button 
+                          style={{
+                            background: '#22c55e',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: 8,
+                            padding: '8px 16px',
+                            fontSize: 14,
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                          }}
+                          onClick={() => {
+                            setEditingIcp(true)
+                            setIcpEditText(icpSummary.join('\n'))
+                          }}
+                        >
+                          {t('strategy.icp.edit')}
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
+                      <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>{t('strategy.icp.empty')}</p>
+                      <button 
+                        style={{
+                          background: '#22c55e',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: 8,
+                          padding: '8px 16px',
+                          fontSize: 14,
+                          fontWeight: 600,
+                          cursor: 'pointer'
                         }}
-                    >
-                      {t('strategy.icp.edit')}
-                    </button>
-                  </div>
+                        onClick={() => {
+                          setEditingIcp(true)
+                          setIcpEditText('')
+                        }}
+                      >
+                        {t('strategy.icp.create')}
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-            )}
 
             
 
             {/* Tavoitteet-kortti */}
-            {kpiData && kpiData.length > 0 && (
-              <div className="strategy-card">
-                <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>{t('strategy.kpi.title')}</div>
+            <div className="strategy-card">
+              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>{t('strategy.kpi.title')}</div>
                 
-                {editingKpi ? (
+              {editingKpi ? (
                   <div style={{ flex: 1 }}>
                     <textarea
                       ref={kpiTextareaRef}
@@ -1071,37 +1094,62 @@ export default function ContentStrategyPage() {
                   </div>
                 ) : (
                   <div style={{ flex: 1 }}>
-                    {kpiData.map((kpi, index) => (
-                      <div key={index} style={{ 
-                        marginBottom: 12 
-                      }}>
-                        <p style={{ margin: 0, color: '#374151', lineHeight: 1.6, fontSize: 14 }}>{kpi}</p>
+                    {kpiData && kpiData.length > 0 ? (
+                      <>
+                        {kpiData.map((kpi, index) => (
+                          <div key={index} style={{ 
+                            marginBottom: 12 
+                          }}>
+                            <p style={{ margin: 0, color: '#374151', lineHeight: 1.6, fontSize: 14 }}>{kpi}</p>
+                          </div>
+                        ))}
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+                          <button 
+                            style={{
+                              background: '#22c55e',
+                              color: '#ffffff',
+                              border: 'none',
+                              borderRadius: 8,
+                              padding: '8px 16px',
+                              fontSize: 14,
+                              fontWeight: 600,
+                              cursor: 'pointer'
+                            }}
+                            onClick={() => {
+                              setEditingKpi(true)
+                              setKpiEditText(kpiData.join('\n'))
+                            }}
+                          >
+                            {t('strategy.kpi.edit')}
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
+                        <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>{t('strategy.kpi.empty')}</p>
+                        <button 
+                          style={{
+                            background: '#22c55e',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: 8,
+                            padding: '8px 16px',
+                            fontSize: 14,
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                          }}
+                          onClick={() => {
+                            setEditingKpi(true)
+                            setKpiEditText('')
+                          }}
+                        >
+                          {t('strategy.kpi.create')}
+                        </button>
                       </div>
-                    ))}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
-                      <button 
-                        style={{
-                          background: '#22c55e',
-                          color: '#ffffff',
-                          border: 'none',
-                          borderRadius: 8,
-                          padding: '8px 16px',
-                          fontSize: 14,
-                          fontWeight: 600,
-                          cursor: 'pointer'
-                        }}
-                        onClick={() => {
-                          setEditingKpi(true)
-                          setKpiEditText(kpiData.join('\n'))
-                        }}
-                      >
-                        {t('strategy.kpi.edit')}
-                      </button>
-                    </div>
+                    )}
                   </div>
                 )}
               </div>
-            )}
 
             {/* TOV-kortti */}
             <div className="strategy-card">
@@ -1367,63 +1415,7 @@ export default function ContentStrategyPage() {
           </div>
         )}
 
-        {/* Kohderyhmä jos ei ole vielä olemassa */}
-        {(!icpSummary || icpSummary.length === 0) && (
-          <div className="strategy-card">
-            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>👥 {t('strategy.icp.title')}</div>
-            <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
-              <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>{t('strategy.icp.empty')}</p>
-              <button 
-                style={{
-                  background: '#22c55e',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: 8,
-                  padding: '8px 16px',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: 'pointer'
-                }}
-                onClick={() => {
-                  setEditingIcp(true)
-                  setIcpEditText('')
-                }}
-              >
-                {t('strategy.icp.create')}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Yritysanalyysi-placeholder poistettu, koska kortti on aina top-rivissä */}
-
-        {/* Tavoitteet jos ei ole vielä olemassa */}
-        {(!kpiData || kpiData.length === 0) && (
-          <div className="strategy-card">
-            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🎯 {t('strategy.kpi.title')}</div>
-            <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
-              <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>{t('strategy.kpi.empty')}</p>
-              <button 
-                style={{
-                  background: '#22c55e',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: 8,
-                  padding: '8px 16px',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: 'pointer'
-                }}
-                onClick={() => {
-                  setEditingKpi(true)
-                  setKpiEditText('')
-                }}
-              >
-                {t('strategy.kpi.create')}
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Yritysanalyysi-placeholder, Kohderyhmä ja Tavoitteet ovat nyt aina top-rivissä */}
 
         {/* TOV jos ei ole vielä olemassa */}
         {(!tov || tov.length === 0) && (

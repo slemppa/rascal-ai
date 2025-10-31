@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.80.1](https://github.com/slemppa/rascal-ai/compare/v1.80.0...v1.80.1) (2025-10-31)
+
+
+### 🐛 Bug Fixes
+
+* estä OnboardingModal salasanan asettamisen aikana ([5713430](https://github.com/slemppa/rascal-ai/commit/5713430fe89de907eae4c60fdc774803aed537ff))
+* update PublishModal to 50/50 grid with contain scaling ([0fd2f4d](https://github.com/slemppa/rascal-ai/commit/0fd2f4dbe849d25eba22046c716ae1ad4527b696))
+
 ## [1.80.0](https://github.com/slemppa/rascal-ai/compare/v1.79.3...v1.80.0) (2025-10-30)
 
 

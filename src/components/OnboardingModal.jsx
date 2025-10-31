@@ -71,7 +71,8 @@ const OnboardingModal = () => {
       '/forgot-password',
       '/auth/callback',
       '/terms',
-      '/privacy'
+      '/privacy',
+      '/settings'
     ]
 
     const isBlocked = BLOCKED_ROUTES.some((path) => location.pathname.includes(path))
@@ -88,6 +89,18 @@ const OnboardingModal = () => {
       }
 
       try {
+        // Tarkista onko käyttäjällä vahva salasana asetettu
+        const { data: { user: authUser } } = await supabase.auth.getUser()
+        
+        // Jos käyttäjällä on recovery tai invite token aktiivisena, älä näytä modaalia
+        // Tämä estää modaalin näkymisen salasanan asettamisen aikana
+        if (!authUser?.email_confirmed_at && !authUser?.confirmed_at) {
+          console.log('⏸️ OnboardingModal: Käyttäjä ei ole vahvistanut sähköpostia, odotetaan...')
+          setLoading(false)
+          setShouldShow(false)
+          return
+        }
+
         const { data, error } = await supabase
           .from('users')
           .select('onboarding_completed, role')

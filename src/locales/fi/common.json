@@ -553,7 +553,7 @@
     "list": { "title": "Sisältöstrategiat" },
     "strategyCard": { "placeholder": "Kirjoita kuukauden sisältöstrategia tähän..." },
     "buttons": { "save": "Tallenna", "cancel": "Peruuta", "edit": "Muokkaa" },
-    "empty": { "title": "Ei sisältöstrategioita vielä", "description": "Aloita luomalla ensimmäinen kuukausistrategia" }
+    "empty": { "title": "Sinulla ei ole vielä strategiaa", "description": "Aloita luomalla ensimmäinen kuukausistrategia" }
   },
   "campaigns": {
     "header": { "title": "Kampanjat", "description": "Hallitse puhelukampanjoitasi ja seuraa niiden suorituskykyä" },

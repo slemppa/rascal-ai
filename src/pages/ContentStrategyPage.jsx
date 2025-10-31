@@ -8,19 +8,6 @@ import { useStrategyStatus } from '../contexts/StrategyStatusContext'
 import Button from '../components/Button'
 import '../components/ModalComponents.css'
 
-// Mock-data oikealla rakenteella
-const mockStrategy = [
-  {
-    id: 'recZLfAMUcAlUATis',
-    createdTime: '2025-06-18T14:17:19.000Z',
-    Month: 'Kesäkuu',
-    Companies: ['recdcrZw3YHefUXHZ'],
-    Strategy: `Rascal Company's content strategy should focus on delivering educational and actionable insights tailored to Finnish-speaking entrepreneurs and business owners, helping them overcome marketing challenges and improve customer acquisition. A blend of content formats such as blog posts, LinkedIn articles, practical video tutorials, and case studies should be implemented to demonstrate effectiveness and relatability. The tone should be direct, practical, and motivational, resonating with the target audience's entrepreneurial spirit. Suggested content themes include: 1) Step-by-step guides on digital ad creation and optimization, 2) Case studies showcasing successful marketing transformations, 3) Insights on overcoming common business growth barriers, 4) Updates on digital marketing trends for small businesses, 5) Spotlight features on Finnish entrepreneurs who have achieved results with Rascal's guidance, and 6) Engaging webinars focusing on practical marketing skills. Developing Q&A or myth-busting series about common marketing misconceptions and organizing interactive sessions with industry experts can further boost engagement.`
-  }
-]
-
-
-
 const STRATEGY_URL = import.meta.env.N8N_GET_STRATEGY_URL || 'https://samikiias.app.n8n.cloud/webhook/strategy-89777321'
 
 const getStrategy = async () => {
@@ -184,20 +171,21 @@ export default function ContentStrategyPage() {
           setCompanySummary(firstItem.summary || firstItem.companySummary || '')
           setTov(firstItem.tov || '')
         } else {
-          console.log('Using mock strategy data')
-          setStrategy(mockStrategy)
+          console.log('No strategy data available')
+          setStrategy([])
           setIcpSummary([])
           setKpiData([])
           setCompanySummary('')
           setTov('')
         }
       } catch (e) {
-        setStrategy(mockStrategy)
+        console.error('Error fetching strategy:', e)
+        setStrategy([])
         setIcpSummary([])
         setKpiData([])
         setCompanySummary('')
         setTov('')
-        setError('Ei saatu yhteyttä strategia-endpointiin, näytetään mock-data')
+        setError('Strategian hakeminen epäonnistui. Tarkista verkkoyhteys ja yritä uudelleen.')
       } finally {
         setLoading(false)
       }

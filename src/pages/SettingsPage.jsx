@@ -78,9 +78,25 @@ export default function SettingsPage() {
       }) || []
 
       // Etsi poistetut tilit (Supabasessa mutta ei Mixpostissa)
+      // HUOM: Älä poista tilejä joiden account_data sisältää "blotato"
       const accountsToRemove = existingAccounts?.filter(account => {
         const accountKey = `${account.provider}:${account.mixpost_account_uuid}`
-        return !mixpostAccountsSet.has(accountKey)
+        const notInMixpost = !mixpostAccountsSet.has(accountKey)
+        
+        // Jos tili löytyy Mixpostista, ei poisteta
+        if (!notInMixpost) return false
+        
+        // Jos account_data sisältää "blotato", ei poisteta
+        const accountDataStr = typeof account.account_data === 'string' 
+          ? account.account_data 
+          : JSON.stringify(account.account_data || {})
+        
+        if (accountDataStr.toLowerCase().includes('blotato')) {
+          console.log(`🔒 Tiliä ${account.account_name} (${account.provider}) ei poisteta, koska se sisältää "blotato"`)
+          return false
+        }
+        
+        return true
       }) || []
 
       // Lisää uudet tilit Supabaseen

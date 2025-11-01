@@ -134,8 +134,22 @@ export default async function handler(req, res) {
           })
           .filter(Boolean)
 
+        // Proxytä thumbnail URL jos se tulee Mixpostista
+        let proxiedThumbnail = thumbUrl || post.media?.[0]?.url || '/placeholder.png'
+        if (proxiedThumbnail && proxiedThumbnail.startsWith('https://mixpost.mak8r.fi')) {
+          proxiedThumbnail = `/api/mixpost-image-proxy?url=${encodeURIComponent(proxiedThumbnail)}`
+        }
+
+        // Destructure id ja uuid pois restistä, jotta ne eivät ylikirjoita meidän arvoja
+        const { id: mixpostNumericId, uuid: mixpostUuid, ...restPost } = post
+
         return {
-          // Lisätään frontend-tarvitsemat kentät ENSIN
+          // Alkuperäinen Mixpost-data ENSIN (paitsi id ja uuid)
+          ...restPost,
+          // Sitten ylikirjoitetaan frontend-tarvitsemat kentät
+          id: mixpostUuid, // Käytä Mixpost UUID:ta id-kenttänä
+          uuid: mixpostUuid, // Mixpost UUID (eksplisiittisesti uuid-kenttään)
+          mixpostId: mixpostNumericId, // Mixpost numeerinen ID
           title: body?.slice(0, 80) || (post.status === 'published' ? 'Julkaistu postaus' : 'Aikataulutettu postaus'),
           caption: body || post.content || post.caption || '',
           status: translatedStatus, // Käännä status suomeksi
@@ -144,11 +158,9 @@ export default async function handler(req, res) {
           createdAt: post.created_at || null,
           scheduledDate: scheduledDateFi,
           publishDate: publishDateISO, // ISO timestamp kalenteria varten
-          thumbnail: thumbUrl || post.media?.[0]?.url || '/placeholder.png',
+          thumbnail: proxiedThumbnail, // Käytä proxyttyä URL:ia
           type: isVideo ? 'Video' : 'Photo',
-          channelNames: channelNames,
-          // Alkuperäinen Mixpost-data viimeisenä (ei korvaa ylläolevia)
-          ...post
+          channelNames: channelNames
         }
       })
 

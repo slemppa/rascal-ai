@@ -181,7 +181,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
   return (
     <div 
       className={`post-card ${isDragging ? 'dragging' : ''}`}
-      draggable={post.source === 'supabase'}
+      draggable={true}
       onDragStart={(e) => onDragStart(e, post)}
       onDragEnd={onDragEnd}
       onClick={hideActions ? () => onEdit(post) : undefined}
@@ -1553,22 +1553,96 @@ export default function ManagePostsPage() {
     setDragOverColumn(null)
   }
 
+  const deleteMixpostPost = async (postUuid) => {
+    try {
+      console.log('🔵 deleteMixpostPost called with postUuid:', postUuid)
+      console.log('🔵 postUuid type:', typeof postUuid)
+      console.log('🔵 postUuid length:', postUuid?.length)
+      
+      // Hae access token
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        throw new Error('Käyttäjä ei ole kirjautunut')
+      }
+
+      console.log('🔵 Access token found:', session.access_token.substring(0, 20) + '...')
+
+      const requestBody = { postUuid }
+      console.log('🔵 Request body:', requestBody)
+
+      // Kutsu API endpointia
+      const response = await fetch('/api/mixpost-delete-post', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify(requestBody)
+      })
+
+      console.log('🔵 Response status:', response.status, response.statusText)
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error('❌ API error response:', errorData)
+        throw new Error(errorData.error || 'Postauksen poisto epäonnistui')
+      }
+
+      const result = await response.json()
+      console.log('✅ Post deleted successfully:', result)
+
+      // Päivitä paikallinen state
+      await fetchPosts()
+
+      return true
+    } catch (error) {
+      console.error('❌ Error deleting Mixpost post:', error)
+      throw error
+    }
+  }
+
   const handleDrop = async (e, targetStatus) => {
     e.preventDefault()
     setDragOverColumn(null)
     
     if (!draggedPost) return
+
+    // Jos status on sama, ei tehdä mitään
+    if (draggedPost.status === targetStatus) return
+
+    // Jos raahataan Mixpost-postausta pois Aikataulutettu-sarakkeesta
+    if (draggedPost.source === 'mixpost' && draggedPost.status === 'Aikataulutettu') {
+      try {
+        console.log('🟢 Dragging Mixpost post out of Aikataulutettu column')
+        console.log('🟢 draggedPost FULL:', draggedPost)
+        console.log('🟢 draggedPost.id:', draggedPost.id, 'type:', typeof draggedPost.id)
+        console.log('🟢 draggedPost.uuid:', draggedPost.uuid, 'type:', typeof draggedPost.uuid)
+        console.log('🟢 draggedPost.mixpostId:', draggedPost.mixpostId, 'type:', typeof draggedPost.mixpostId)
+        
+        const postUuidToDelete = draggedPost.uuid || draggedPost.id
+        console.log('🟢 Final postUuid to use:', postUuidToDelete, 'type:', typeof postUuidToDelete)
+        
+        // Poista Mixpostista ja päivitä Supabase (käytä UUID:ta)
+        await deleteMixpostPost(postUuidToDelete)
+        
+        // Päivitä UI poistamalla postaus
+        setMixpostPosts(prevPosts => prevPosts.filter(p => p.id !== draggedPost.id))
+        
+        setSuccessMessage('Postaus poistettu aikataulutuksesta')
+      } catch (error) {
+        console.error('❌ Error in handleDrop:', error)
+        setErrorMessage('Postauksen poisto epäonnistui: ' + error.message)
+      }
+      return
+    }
     
-    // Varmistetaan että kyseessä on Supabase-postaus
+    // Varmistetaan että kyseessä on Supabase-postaus muille siirroille
     if (draggedPost.source !== 'supabase') {
       setErrorMessage('Siirtyminen on mahdollista vain Supabase-postauksille')
       return
     }
 
-    // Jos status on sama, ei tehdä mitään
-    if (draggedPost.status === targetStatus) return
-
-    // Kutsutaan handleMoveToNext funktiota
+    // Kutsutaan handleMoveToNext funktiota Supabase-postauksille
     await handleMoveToNext(draggedPost, targetStatus)
   }
 

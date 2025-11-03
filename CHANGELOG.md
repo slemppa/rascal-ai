@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.81.1](https://github.com/slemppa/rascal-ai/compare/v1.81.0...v1.81.1) (2025-11-03)
+
+
+### 🐛 Bug Fixes
+
+* add extensive logging for Mixpost UUID tracking ([b3dbf1d](https://github.com/slemppa/rascal-ai/commit/b3dbf1d430bc0a3f197be8c5d3861e512a5b3407))
+* estä strategia modaali näkymästä ennen kirjautumista ([246d1ae](https://github.com/slemppa/rascal-ai/commit/246d1aeeab7493a4de2f23107d05c9c14ab37854))
+
 ## [1.81.0](https://github.com/slemppa/rascal-ai/compare/v1.80.1...v1.81.0) (2025-10-31)
 
 

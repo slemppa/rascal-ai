@@ -11,7 +11,7 @@ import StrategyConfirmationModal from './StrategyConfirmationModal'
  */
 export default function StrategyModalManager() {
   const context = useStrategyStatus()
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const location = useLocation()
   const [forceOpen, setForceOpen] = useState(false)
 
@@ -56,9 +56,16 @@ export default function StrategyModalManager() {
     return null
   }
 
-  // ⚠️ TÄRKEÄ: Älä renderöi modaalia jos käyttäjä ei ole kirjautunut TAI ollaan julkisella sivulla
+  // ⚠️ TÄRKEÄ: Älä renderöi modaalia jos:
+  // 1. Käyttäjätiedot ladataan vielä (loading = true)
+  // 2. Käyttäjä ei ole kirjautunut (user = null) JA lataus on valmis (loading = false)
+  // 3. Ollaan julkisella sivulla
+  if (loading) {
+    return null // Odotetaan että käyttäjätiedot latautuvat
+  }
+  
   if (!user || isPublicPage) {
-    return null
+    return null // Ei kirjautunut tai julkinen sivu
   }
 
   return (

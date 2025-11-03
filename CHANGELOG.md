@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.81.2](https://github.com/slemppa/rascal-ai/compare/v1.81.1...v1.81.2) (2025-11-03)
+
+
+### 🐛 Bug Fixes
+
+* korjaa strategia modalin näkyvyys kirjautuneille ([21db80a](https://github.com/slemppa/rascal-ai/commit/21db80a084218a8b59e669923b5b7981a84428d1))
+
 ### [1.81.1](https://github.com/slemppa/rascal-ai/compare/v1.81.0...v1.81.1) (2025-11-03)
 
 

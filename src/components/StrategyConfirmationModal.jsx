@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 const StrategyConfirmationModal = ({ isOpen, onClose, onRequestUpdate, loading }) => {
   const { t } = useTranslation('common')
 
-
   if (!isOpen) {
     return null
   }

@@ -15,18 +15,8 @@ export default function StrategyModalManager() {
   const location = useLocation()
   const [forceOpen, setForceOpen] = useState(false)
 
-  // Julkiset sivut joilla modaalia EI SAA näyttää (käyttäjä ei ole kirjautunut)
-  const PUBLIC_PAGES = [
-    '/',
-    '/signin',
-    '/signup',
-    '/forgot-password',
-    '/reset-password',
-    '/auth/callback'
-  ]
-
-  // Tarkista onko nykyinen sivu julkinen
-  const isPublicPage = PUBLIC_PAGES.some(page => location.pathname === page || location.pathname.startsWith(page))
+  // HUOM: Blacklist-logiikka hoidetaan StrategyStatusContext:issa
+  // Tämä komponentti tarkistaa vain että käyttäjä on kirjautunut
 
   // Kuuntele window eventejä modalin avaamiseen
   useEffect(() => {
@@ -58,14 +48,14 @@ export default function StrategyModalManager() {
 
   // ⚠️ TÄRKEÄ: Älä renderöi modaalia jos:
   // 1. Käyttäjätiedot ladataan vielä (loading = true)
-  // 2. Käyttäjä ei ole kirjautunut (user = null) JA lataus on valmis (loading = false)
-  // 3. Ollaan julkisella sivulla
+  // 2. Käyttäjä ei ole kirjautunut (user = null)
+  // Blacklist-sivu logiikka hoidetaan StrategyStatusContext:issa
   if (loading) {
     return null // Odotetaan että käyttäjätiedot latautuvat
   }
   
-  if (!user || isPublicPage) {
-    return null // Ei kirjautunut tai julkinen sivu
+  if (!user) {
+    return null // Ei kirjautunut
   }
 
   return (

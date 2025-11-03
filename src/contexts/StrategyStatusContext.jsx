@@ -23,6 +23,7 @@ export const StrategyStatusProvider = ({ children }) => {
 
   // Sivut joilla strategia-modal EI saa avautua (kriittiset toiminnot)
   const MODAL_BLACKLIST = [
+    '/',           // Etusivu / kirjautumissivu
     '/strategy',   // Strategia-sivu (käyttäjä jo käsittelee strategiaa)
     '/settings',   // Asetukset (salasanan vaihto, kriittiset asetukset)
     '/signin',     // Kirjautuminen
@@ -34,7 +35,13 @@ export const StrategyStatusProvider = ({ children }) => {
 
   // Tarkista onko nykyinen sivu blacklistillä
   const isOnBlockedPage = () => {
-    return MODAL_BLACKLIST.some(path => location.pathname.includes(path))
+    return MODAL_BLACKLIST.some(path => {
+      // Tarkkailtu "/" erikseen, jotta se ei osu kaikkiin polkuihin
+      if (path === '/') {
+        return location.pathname === '/'
+      }
+      return location.pathname === path || location.pathname.startsWith(path + '/')
+    })
   }
 
   // Hae käyttäjän status
@@ -65,7 +72,6 @@ export const StrategyStatusProvider = ({ children }) => {
           const event = new CustomEvent('strategy-modal-should-open', { detail: { reason: 'status-pending' } })
           window.dispatchEvent(event)
         }, 100)
-      } else if (data?.status === 'Pending' && isOnBlockedPage()) {
       }
     } catch (error) {
       console.error('StrategyStatus: Error fetching user status:', error)

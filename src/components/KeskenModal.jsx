@@ -217,6 +217,13 @@ const KeskenModal = ({
     setLoading(true)
     setError('')
 
+    // Validoi merkkimäärä
+    if (formData.caption.length > 2000) {
+      setError('Postauksen pituus ylittää maksimin 2000 merkkiä')
+      setLoading(false)
+      return
+    }
+
     try {
       // Hae käyttäjän user_id
       const { data: userData, error: userError } = await supabase
@@ -481,7 +488,16 @@ const KeskenModal = ({
               {/* Oikea sarake: Postaus */}
               <div className="edit-modal-fields">
                 <div className="form-group">
-                  <label className="form-label">Postaus</label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label className="form-label" style={{ marginBottom: 0 }}>Postaus</label>
+                    <span style={{ 
+                      fontSize: '12px', 
+                      color: formData.caption.length > 2000 ? '#ef4444' : '#6b7280',
+                      fontWeight: formData.caption.length > 2000 ? '600' : '400'
+                    }}>
+                      {formData.caption.length} / 2000
+                    </span>
+                  </div>
                   <div className="post-content-box" style={{ height: '500px' }}>
                     <textarea
                       name="caption"
@@ -490,7 +506,7 @@ const KeskenModal = ({
                       className="form-textarea"
                       placeholder="Kirjoita postauksen kuvaus..."
                       style={{ 
-                        border: '1px solid #e5e7eb', 
+                        border: formData.caption.length > 2000 ? '1px solid #ef4444' : '1px solid #e5e7eb', 
                         borderRadius: '8px', 
                         padding: '12px',
                         resize: 'none',
@@ -499,6 +515,16 @@ const KeskenModal = ({
                       }}
                     />
                   </div>
+                  {formData.caption.length > 2000 && (
+                    <p style={{ 
+                      color: '#ef4444', 
+                      fontSize: '12px', 
+                      marginTop: '4px',
+                      fontWeight: '500'
+                    }}>
+                      Postauksen pituus ylittää maksimin 2000 merkkiä
+                    </p>
+                  )}
                 </div>
 
               </div>
@@ -542,7 +568,7 @@ const KeskenModal = ({
                 <Button
                   type="submit"
                   variant="primary"
-                  disabled={loading}
+                  disabled={loading || formData.caption.length > 2000}
                 >
                   {loading ? 'Tallennetaan...' : 'Tallenna'}
                 </Button>

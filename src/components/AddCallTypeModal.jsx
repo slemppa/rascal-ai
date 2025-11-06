@@ -20,9 +20,6 @@ const AddCallTypeModal = ({
   const [currentStep, setCurrentStep] = useState(1)
   const totalSteps = 6
 
-  // Auto-resize viite Yhteenveto-kentälle
-  const summaryRef = useRef(null)
-
   // ESC-toiminnallisuus - pitää olla heti useState jälkeen
   useEffect(() => {
     const handleEscKey = (event) => {
@@ -39,14 +36,6 @@ const AddCallTypeModal = ({
       document.removeEventListener('keydown', handleEscKey)
     }
   }, [showModal, onClose])
-
-  // Säädä Yhteenveto-tekstialueen korkeus sisällön mukaan
-  useEffect(() => {
-    const el = summaryRef.current
-    if (!el) return
-    el.style.height = 'auto'
-    el.style.height = `${el.scrollHeight}px`
-  }, [newCallType.summary, currentStep, showModal])
 
   if (!showModal) return null
 
@@ -479,13 +468,11 @@ const AddCallTypeModal = ({
                     {t('calls.modals.addCallType.fields.summary')}
                   </label>
                   <textarea
-                    ref={summaryRef}
                     value={newCallType.summary || ''}
                     onChange={e => setNewCallType({ ...newCallType, summary: e.target.value })}
                     placeholder={t('calls.modals.addCallType.placeholders.summary')}
-                    rows={1}
+                    rows={4}
                     className="form-textarea"
-                    style={{ resize: 'none', overflow: 'hidden' }}
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>

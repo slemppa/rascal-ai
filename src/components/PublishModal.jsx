@@ -143,13 +143,22 @@ const PublishModal = ({
             <div className="publish-modal-right-column" style={{ height: '400px' }}>
               {/* Caption/Postaus */}
               <div className="publish-modal-fields" style={{ height: '50%' }}>
-                <h3 style={{ marginTop: 0, marginBottom: '12px', fontSize: '16px', fontWeight: '600', color: '#111827' }}>
-                  Postaus
-                </h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#111827' }}>
+                    Postaus
+                  </h3>
+                  <span style={{ 
+                    fontSize: '12px', 
+                    color: (publishingPost.caption?.length || 0) > 2000 ? '#ef4444' : '#6b7280',
+                    fontWeight: (publishingPost.caption?.length || 0) > 2000 ? '600' : '400'
+                  }}>
+                    {publishingPost.caption?.length || 0} / 2000
+                  </span>
+                </div>
                 <div style={{ 
                   padding: '12px', 
                   backgroundColor: '#ffffff', 
-                  border: '1px solid #e5e7eb', 
+                  border: (publishingPost.caption?.length || 0) > 2000 ? '1px solid #ef4444' : '1px solid #e5e7eb',
                   borderRadius: '8px',
                   height: 'calc(100% - 40px)',
                   overflowY: 'auto',
@@ -160,6 +169,16 @@ const PublishModal = ({
                 }}>
                   {publishingPost.caption || 'Ei kuvausta'}
                 </div>
+                {(publishingPost.caption?.length || 0) > 2000 && (
+                  <p style={{ 
+                    color: '#ef4444', 
+                    fontSize: '12px', 
+                    marginTop: '4px',
+                    fontWeight: '500'
+                  }}>
+                    Postauksen pituus ylittää maksimin 2000 merkkiä
+                  </p>
+                )}
               </div>
 
               {/* Julkaisupäivä */}
@@ -289,9 +308,9 @@ const PublishModal = ({
                 type="button" 
                 variant="primary" 
                 onClick={() => onConfirm(publishDate)}
-                disabled={selectedAccounts.length === 0 || !publishDate}
+                disabled={selectedAccounts.length === 0 || (publishingPost.caption?.length || 0) > 2000}
               >
-                Julkaise
+                {publishDate ? 'Aikatauluta' : 'Julkaise heti'}
               </Button>
             </div>
           </div>

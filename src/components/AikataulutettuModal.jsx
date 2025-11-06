@@ -29,21 +29,46 @@ const AikataulutettuModal = ({
     
     // Debug info removed
     
+    const currentContent = channelContents[accountId] || formData.content
+    const charCount = currentContent.length
+    
     return (
       <div key={accountId} className="border rounded-lg p-4 bg-gray-50">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          <span className="text-sm font-medium text-gray-900">{accountName}</span>
-        </label>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <label className="block text-sm font-medium text-gray-700 mb-0">
+            <span className="text-sm font-medium text-gray-900">{accountName}</span>
+          </label>
+          <span style={{ 
+            fontSize: '12px', 
+            color: charCount > 2000 ? '#ef4444' : '#6b7280',
+            fontWeight: charCount > 2000 ? '600' : '400'
+          }}>
+            {charCount} / 2000
+          </span>
+        </div>
         <textarea
           className="form-textarea"
           rows={4}
-          value={channelContents[accountId] || formData.content}
+          value={currentContent}
           onChange={(e) => setChannelContents({
             ...channelContents,
             [accountId]: e.target.value
           })}
           placeholder={`Teksti kanavalle ${accountName}...`}
+          style={{
+            border: charCount > 2000 ? '1px solid #ef4444' : undefined
+          }}
         />
+        {charCount > 2000 && (
+          <p style={{ 
+            color: '#ef4444', 
+            fontSize: '12px', 
+            marginTop: '4px',
+            fontWeight: '500'
+          }}>
+            Postauksen pituus ylittää maksimin 2000 merkkiä
+          </p>
+        )}
       </div>
     )
   }
@@ -201,6 +226,22 @@ const AikataulutettuModal = ({
     setLoading(true)
     setError('')
     setSuccess(false)
+
+    // Validoi merkkimäärät
+    if (formData.content.length > 2000) {
+      setError('Päätekstin pituus ylittää maksimin 2000 merkkiä')
+      setLoading(false)
+      return
+    }
+    
+    // Validoi kanavaspesifiset tekstit
+    for (const [accountId, content] of Object.entries(channelContents)) {
+      if (content.length > 2000) {
+        setError('Yhden tai useamman kanavan tekstin pituus ylittää maksimin 2000 merkkiä')
+        setLoading(false)
+        return
+      }
+    }
 
     try {
       // Haetaan käyttäjän user_id users taulusta (sama logiikka kuin ManagePostsPage)
@@ -643,14 +684,36 @@ const AikataulutettuModal = ({
 
 
           <div className="form-group">
-            <label className="form-label">Postaus (pääteksti)</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <label className="form-label" style={{ marginBottom: 0 }}>Postaus (pääteksti)</label>
+              <span style={{ 
+                fontSize: '12px', 
+                color: formData.content.length > 2000 ? '#ef4444' : '#6b7280',
+                fontWeight: formData.content.length > 2000 ? '600' : '400'
+              }}>
+                {formData.content.length} / 2000
+              </span>
+            </div>
             <textarea
               className="form-textarea"
               rows={6}
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               placeholder="Kirjoita postauksen teksti..."
+              style={{
+                border: formData.content.length > 2000 ? '1px solid #ef4444' : undefined
+              }}
             />
+            {formData.content.length > 2000 && (
+              <p style={{ 
+                color: '#ef4444', 
+                fontSize: '12px', 
+                marginTop: '4px',
+                fontWeight: '500'
+              }}>
+                Postauksen pituus ylittää maksimin 2000 merkkiä
+              </p>
+            )}
           </div>
 
           {/* Per-kanava muokkauskentät */}
@@ -707,7 +770,7 @@ const AikataulutettuModal = ({
                 type="button"
                 variant="primary"
                 onClick={handleSave}
-                disabled={loading}
+                disabled={loading || formData.content.length > 2000 || Object.values(channelContents).some(content => content.length > 2000)}
               >
                 {loading ? 'Tallennetaan...' : 'Tallenna'}
               </Button>

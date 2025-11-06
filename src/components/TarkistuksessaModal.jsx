@@ -58,8 +58,34 @@ const TarkistuksessaModal = ({
           </div>
 
           <div className="form-group">
-            <label className="form-label">Kuvaus</label>
-            <p className="form-text">{editingPost.caption || 'Ei kuvausta'}</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <label className="form-label" style={{ marginBottom: 0 }}>Kuvaus</label>
+              <span style={{ 
+                fontSize: '12px', 
+                color: (editingPost.caption?.length || 0) > 2000 ? '#ef4444' : '#6b7280',
+                fontWeight: (editingPost.caption?.length || 0) > 2000 ? '600' : '400'
+              }}>
+                {editingPost.caption?.length || 0} / 2000
+              </span>
+            </div>
+            <p className="form-text" style={{
+              border: (editingPost.caption?.length || 0) > 2000 ? '1px solid #ef4444' : undefined,
+              padding: '12px',
+              borderRadius: '6px',
+              backgroundColor: '#f8f9fa'
+            }}>
+              {editingPost.caption || 'Ei kuvausta'}
+            </p>
+            {(editingPost.caption?.length || 0) > 2000 && (
+              <p style={{ 
+                color: '#ef4444', 
+                fontSize: '12px', 
+                marginTop: '4px',
+                fontWeight: '500'
+              }}>
+                Postauksen pituus ylittää maksimin 2000 merkkiä
+              </p>
+            )}
           </div>
 
           <div className="form-group">
@@ -88,6 +114,7 @@ const TarkistuksessaModal = ({
                 variant="primary"
                 onClick={onPublish}
                 style={{ backgroundColor: '#22c55e' }}
+                disabled={(editingPost.caption?.length || 0) > 2000}
               >
                 Julkaise
               </Button>

@@ -21,16 +21,7 @@ function EditPostModal({ post, onClose, onSave }) {
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
-  const textareaRef = React.useRef(null)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600)
-
-  // Autoresize textarea
-  React.useEffect(() => {
-    if (textareaRef.current && textareaRef.current.style) {
-      textareaRef.current.style.height = 'auto'
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
-    }
-  }, [caption])
 
   React.useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 600)
@@ -108,7 +99,6 @@ function EditPostModal({ post, onClose, onSave }) {
           <div>
             <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#374151' }}>{t('dashboard.edit.ideaLabel')}</label>
             <textarea
-              ref={textareaRef}
               value={idea}
               onChange={(e) => setIdea(e.target.value)}
               style={{

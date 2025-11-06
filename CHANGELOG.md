@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.82.0](https://github.com/slemppa/rascal-ai/compare/v1.81.3...v1.82.0) (2025-11-06)
+
+
+### ✨ Features
+
+* lisää 2000 merkin raja ja laskuri postausten tekstikenttiin ([fae7282](https://github.com/slemppa/rascal-ai/commit/fae728260ec70ccbaba168741b22d41b719546fd))
+
 ### [1.81.3](https://github.com/slemppa/rascal-ai/compare/v1.81.2...v1.81.3) (2025-11-03)
 
 

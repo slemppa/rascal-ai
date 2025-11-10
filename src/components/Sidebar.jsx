@@ -155,6 +155,7 @@ export default function Sidebar() {
 
   const [isAdmin, setIsAdmin] = useState(false)
   const [isModerator, setIsModerator] = useState(false)
+  const [logoUrl, setLogoUrl] = useState(null)
   const { user, signOut } = useAuth()
   const { has: hasFeature } = useFeatures()
   const [openSections, setOpenSections] = useState({
@@ -180,7 +181,7 @@ export default function Sidebar() {
   const adminToolItems = menuItems.filter(i => ['/admin','/admin-blog','/admin-testimonials','/account-manager'].includes(i.path))
   const canShowTools = publicToolItems.some(isItemVisible) || adminToolItems.some(isItemVisible)
 
-  // Tarkista admin- ja moderator-oikeudet
+  // Tarkista admin- ja moderator-oikeudet + hae logo
   useEffect(() => {
     const checkUserRoles = async () => {
       if (!user) return
@@ -188,7 +189,7 @@ export default function Sidebar() {
       try {
         const { data: userData, error } = await supabase
           .from('users')
-          .select('role, company_id')
+          .select('role, company_id, logo_url')
           .eq('auth_user_id', user.id)
           .single()
 
@@ -198,6 +199,11 @@ export default function Sidebar() {
           
           setIsAdmin(isAdminUser)
           setIsModerator(isModeratorUser)
+          
+          // Aseta logo URL jos löytyy
+          if (userData.logo_url) {
+            setLogoUrl(userData.logo_url)
+          }
         }
       } catch (error) {
         console.error('Error checking user roles:', error)
@@ -226,17 +232,23 @@ export default function Sidebar() {
   const menu = (
     <>
       <div className={styles['profile-section']}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%' }}>
-          <div className={styles['profile-avatar']}>
-            <img src="/favicon.png" alt="Rascal AI" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <button className={styles['nav-link']} type="button" onClick={() => setLanguage('fi')}>{t('lang.shortFi')}</button>
-            <span style={{ opacity: 0.6 }}>/</span>
-            <button className={styles['nav-link']} type="button" onClick={() => setLanguage('en')}>{t('lang.shortEn')}</button>
-          </div>
+        <div className={styles['profile-avatar']}>
+          <img 
+            src={logoUrl || "/favicon.png"} 
+            alt={logoUrl ? "Company Logo" : "Rascal AI"} 
+            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
+            onError={(e) => {
+              // Fallback jos logo ei lataudu
+              e.target.src = '/favicon.png'
+            }}
+          />
         </div>
         <span className={styles['profile-name']}>{user?.email || 'user@example.com'}</span>
+        <div className={styles['language-selector']}>
+          <button className={styles['lang-btn']} type="button" onClick={() => setLanguage('fi')}>{t('lang.shortFi')}</button>
+          <span className={styles['lang-separator']}>/</span>
+          <button className={styles['lang-btn']} type="button" onClick={() => setLanguage('en')}>{t('lang.shortEn')}</button>
+        </div>
         <div className={styles['notification-bell-wrapper']}>
           <NotificationBell />
         </div>

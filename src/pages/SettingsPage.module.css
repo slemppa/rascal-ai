@@ -51,6 +51,16 @@
   font-size: 14px;
 }
 
+.logo-drop-zone {
+  position: relative;
+  user-select: none;
+}
+
+.logo-drop-zone:hover {
+  border-color: #ff6600 !important;
+  background: rgba(255, 102, 0, 0.03) !important;
+}
+
 .form-input {
   width: 100%;
   padding: 10px 14px;

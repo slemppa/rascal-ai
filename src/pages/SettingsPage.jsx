@@ -37,6 +37,11 @@ export default function SettingsPage() {
   const [userProfile, setUserProfile] = useState(null)
   const [profileLoading, setProfileLoading] = useState(true)
   const [syncInProgress, setSyncInProgress] = useState(false)
+  const [logoFile, setLogoFile] = useState(null)
+  const [logoPreview, setLogoPreview] = useState(null)
+  const [logoUploading, setLogoUploading] = useState(false)
+  const [logoMessage, setLogoMessage] = useState('')
+  const [logoDragActive, setLogoDragActive] = useState(false)
   
   // Mixpost-integration hook
   const { 
@@ -222,6 +227,168 @@ export default function SettingsPage() {
       ...prev,
       [name]: value
     }))
+  }
+
+  // Logo-tiedoston validointi ja käsittely
+  const validateAndSetLogoFile = (file) => {
+    if (!file) return false
+
+    // Tarkista tiedostotyyppi
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/svg+xml']
+    if (!allowedTypes.includes(file.type)) {
+      setLogoMessage('Sallitut tiedostotyypit: PNG, JPG, WEBP, SVG')
+      return false
+    }
+
+    // Tarkista tiedostokoko (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      setLogoMessage('Tiedosto on liian suuri. Maksimikoko on 2MB.')
+      return false
+    }
+
+    setLogoFile(file)
+    setLogoMessage('')
+
+    // Luo esikatselu
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setLogoPreview(reader.result)
+    }
+    reader.readAsDataURL(file)
+    return true
+  }
+
+  // Logo-tiedoston käsittely input-kentästä
+  const handleLogoFileChange = (e) => {
+    const file = e.target.files?.[0]
+    validateAndSetLogoFile(file)
+  }
+
+  // Drag & Drop -käsittelijät
+  const handleLogoDrag = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setLogoDragActive(true)
+    } else if (e.type === "dragleave") {
+      setLogoDragActive(false)
+    }
+  }
+
+  const handleLogoDrop = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setLogoDragActive(false)
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0]
+      validateAndSetLogoFile(file)
+    }
+  }
+
+  // Lataa logo Supabase Storageen
+  const handleLogoUpload = async () => {
+    if (!logoFile || !user?.id) return
+
+    setLogoUploading(true)
+    setLogoMessage('')
+
+    try {
+      // Luo uniikki tiedostonimi
+      const fileExt = logoFile.name.split('.').pop()
+      const fileName = `${user.id}/logo.${fileExt}`
+
+      // Lataa tiedosto Supabase Storageen
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('user-logos')
+        .upload(fileName, logoFile, {
+          upsert: true, // Korvaa vanha jos on olemassa
+          contentType: logoFile.type
+        })
+
+      if (uploadError) throw uploadError
+
+      // Hae julkinen URL
+      const { data: urlData } = supabase.storage
+        .from('user-logos')
+        .getPublicUrl(fileName)
+
+      const logoUrl = urlData.publicUrl
+
+      // Päivitä users-tauluun
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ logo_url: logoUrl, updated_at: new Date().toISOString() })
+        .eq('auth_user_id', user.id)
+
+      if (updateError) throw updateError
+
+      setLogoMessage('Logo päivitetty onnistuneesti!')
+      setLogoFile(null)
+      setLogoPreview(null)
+
+      // Päivitä käyttäjäprofiili
+      const { data: updatedUser } = await supabase
+        .from('users')
+        .select('*')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (updatedUser) {
+        setUserProfile(updatedUser)
+      }
+
+      // Päivitä sivu jotta logo näkyy sidebarissa
+      window.location.reload()
+
+    } catch (error) {
+      console.error('Logo upload error:', error)
+      setLogoMessage(`Virhe: ${error.message}`)
+    } finally {
+      setLogoUploading(false)
+    }
+  }
+
+  // Poista logo
+  const handleLogoRemove = async () => {
+    if (!user?.id) return
+
+    setLogoUploading(true)
+    setLogoMessage('')
+
+    try {
+      // Päivitä users-tauluun
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ logo_url: null, updated_at: new Date().toISOString() })
+        .eq('auth_user_id', user.id)
+
+      if (updateError) throw updateError
+
+      setLogoMessage('Logo poistettu onnistuneesti!')
+      setLogoFile(null)
+      setLogoPreview(null)
+
+      // Päivitä käyttäjäprofiili
+      const { data: updatedUser } = await supabase
+        .from('users')
+        .select('*')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (updatedUser) {
+        setUserProfile(updatedUser)
+      }
+
+      // Päivitä sivu jotta muutos näkyy sidebarissa
+      window.location.reload()
+
+    } catch (error) {
+      console.error('Logo remove error:', error)
+      setLogoMessage(`Virhe: ${error.message}`)
+    } finally {
+      setLogoUploading(false)
+    }
   }
 
   const handleSave = async () => {
@@ -517,6 +684,135 @@ export default function SettingsPage() {
                   />
                 </div>
                 
+                {/* Logo-lataus */}
+                <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
+                  <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Yrityksen Logo</h3>
+                  
+                  {/* Nykyinen logo */}
+                  {userProfile?.logo_url && !logoPreview && (
+                    <div style={{ marginBottom: '16px' }}>
+                      <label style={{ fontSize: '13px', color: '#6b7280', marginBottom: '8px', display: 'block' }}>Nykyinen logo:</label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <img 
+                          src={userProfile.logo_url} 
+                          alt="Company Logo" 
+                          style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                        />
+                        <button 
+                          onClick={handleLogoRemove} 
+                          disabled={logoUploading}
+                          className={`${styles.btn} ${styles.btnNeutral}`}
+                          style={{ fontSize: '13px' }}
+                        >
+                          {logoUploading ? 'Poistetaan...' : 'Poista logo'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Drag & Drop alue */}
+                  <div 
+                    className={styles['logo-drop-zone']}
+                    onDragEnter={handleLogoDrag}
+                    onDragLeave={handleLogoDrag}
+                    onDragOver={handleLogoDrag}
+                    onDrop={handleLogoDrop}
+                    style={{
+                      border: logoDragActive ? '2px dashed #ff6600' : '2px dashed #d1d5db',
+                      background: logoDragActive ? 'rgba(255, 102, 0, 0.05)' : '#f9fafb',
+                      borderRadius: '12px',
+                      padding: '24px',
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      marginBottom: '16px'
+                    }}
+                  >
+                    {logoPreview ? (
+                      <div>
+                        <img 
+                          src={logoPreview} 
+                          alt="Logo Preview" 
+                          style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '12px', border: '2px solid #e5e7eb', marginBottom: '16px' }}
+                        />
+                        <p style={{ fontSize: '14px', color: '#374151', fontWeight: 500, marginBottom: '8px' }}>
+                          Logo valittu!
+                        </p>
+                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center' }}>
+                          <button 
+                            onClick={handleLogoUpload}
+                            disabled={logoUploading}
+                            className={`${styles.btn} ${styles.btnPrimary}`}
+                            style={{ fontSize: '13px' }}
+                          >
+                            {logoUploading ? 'Ladataan...' : '✓ Tallenna logo'}
+                          </button>
+                          <button 
+                            onClick={() => {
+                              setLogoFile(null)
+                              setLogoPreview(null)
+                              setLogoMessage('')
+                            }}
+                            className={`${styles.btn} ${styles.btnNeutral}`}
+                            style={{ fontSize: '13px' }}
+                          >
+                            Peruuta
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div style={{ 
+                          width: '64px', 
+                          height: '64px', 
+                          margin: '0 auto 16px', 
+                          borderRadius: '12px',
+                          background: 'linear-gradient(135deg, rgba(255, 102, 0, 0.1) 0%, rgba(229, 94, 0, 0.1) 100%)',
+                          border: '2px solid rgba(255, 102, 0, 0.3)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}>
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="#ff6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M17 8l-5-5-5 5" stroke="#ff6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M12 3v12" stroke="#ff6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                        <p style={{ fontSize: '14px', color: '#374151', fontWeight: 500, marginBottom: '8px' }}>
+                          {logoDragActive ? 'Pudota logo tähän' : 'Vedä logo tähän'}
+                        </p>
+                        <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px' }}>
+                          tai
+                        </p>
+                        <label className={`${styles.btn} ${styles.btnSecondary}`} style={{ fontSize: '13px', cursor: 'pointer' }}>
+                          Valitse tiedosto
+                          <input 
+                            type="file"
+                            accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                            onChange={handleLogoFileChange}
+                            style={{ display: 'none' }}
+                          />
+                        </label>
+                        <p style={{ fontSize: '12px', color: '#9ca3af', marginTop: '12px' }}>
+                          PNG, JPG, WEBP, SVG (max 2MB)
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {logoMessage && (
+                    <p style={{ 
+                      marginTop: '8px', 
+                      fontSize: '13px', 
+                      color: logoMessage.includes('Virhe') || logoMessage.includes('liian') || logoMessage.includes('Sallitut') ? '#dc2626' : '#16a34a',
+                      textAlign: 'center'
+                    }}>
+                      {logoMessage}
+                    </p>
+                  )}
+                </div>
+                
                 {/* Salasanan vaihto */}
                 <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
@@ -735,67 +1031,6 @@ export default function SettingsPage() {
             <div className={styles.card}>
               <CarouselTemplateSelector />
             </div>
-
-            {/* DEBUG: Strategia-modal testausnappi */}
-            {import.meta.env.MODE === 'development' && (
-              <div className={styles.card} style={{ padding: '20px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px' }}>🔧 Strategia Modal Debug</h3>
-                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '12px' }}>
-                  Nykyinen status: <strong>{userStatus || 'ei tiedossa'}</strong>
-                </p>
-                <div style={{ display: 'flex', gap: '8px', flexDirection: 'column' }}>
-                  <button
-                    onClick={async () => {
-                      console.log('=== DEBUG: Aloitetaan status-päivitys ===')
-                      console.log('User ID:', user.id)
-                      console.log('Current status:', userStatus)
-                      
-                      try {
-                        // Päivitä status Pending:ksi
-                        const { error, data } = await supabase
-                          .from('users')
-                          .update({ status: 'Pending' })
-                          .eq('auth_user_id', user.id)
-                          .select()
-                        
-                        console.log('Update result:', { error, data })
-                        
-                        if (error) {
-                          console.error('Error updating status:', error)
-                          alert('Virhe statuksen päivityksessä: ' + error.message)
-                        } else {
-                          console.log('Status päivitetty Pending:ksi')
-                          // Odota hetki ja päivitä context
-                          setTimeout(async () => {
-                            await refreshUserStatus()
-                            console.log('Context päivitetty')
-                          }, 500)
-                          alert('Status päivitetty! Tarkista konsoli.')
-                        }
-                      } catch (err) {
-                        console.error('Error:', err)
-                        alert('Virhe: ' + err.message)
-                      }
-                    }}
-                    className={`${styles.btn} ${styles.btnPrimary}`}
-                  >
-                    1. Aseta status Pending
-                  </button>
-                  
-                  <button
-                    onClick={() => {
-                      console.log('=== DEBUG: Pakotetaan modal auki ===')
-                      // Avaa modal suoraan window-objektin kautta
-                      const event = new CustomEvent('force-strategy-modal-open')
-                      window.dispatchEvent(event)
-                    }}
-                    className={`${styles.btn} ${styles.btnSecondary}`}
-                  >
-                    2. Pakota modal auki (debug)
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

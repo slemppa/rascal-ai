@@ -38,6 +38,7 @@ import SegmentsPage from './src/pages/SegmentsPage'
 import SegmentCreatePage from './src/pages/SegmentCreatePage'
 import SegmentDetailPage from './src/pages/SegmentDetailPage'
 import AccountManagerPage from './src/pages/AccountManagerPage'
+import LeadMagnetPage from './src/pages/LeadMagnetPage'
 
 // ConditionalChatbotWidget komponentti - ei tarvita enää
 function ConditionalChatbotWidget() {
@@ -62,6 +63,9 @@ export default function App() {
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
+                
+                {/* Julkinen lead magnet -sivu */}
+                <Route path="/leadmagnet/:token" element={<LeadMagnetPage />} />
                 
                 {/* Suojatut reitit sidebarin kanssa */}
                 <Route path="/dashboard" element={

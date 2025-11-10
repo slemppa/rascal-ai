@@ -11,15 +11,21 @@ export default function LeadMagnetPage() {
   useEffect(() => {
     const fetchLeadMagnet = async () => {
       try {
-        const response = await fetch(`/api/leadmagnet/${token}`)
+        const response = await fetch('/api/leadmagnet', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ token })
+        })
         
         if (!response.ok) {
           throw new Error('Lead magnet not found')
         }
 
-        const result = await response.json()
-        setData(result)
-        setLoading(false)
+            const result = await response.json()
+            setData(result)
+            setLoading(false)
       } catch (err) {
         console.error('Error fetching lead magnet:', err)
         setError('Videota ei löytynyt tai se ei ole vielä valmis.')
@@ -50,7 +56,7 @@ export default function LeadMagnetPage() {
       <div className="leadmagnet-page">
         <div className="leadmagnet-container">
           <div className="leadmagnet-error">
-            <h1>❌ Videota ei löytynyt</h1>
+            <h1>Videota ei löytynyt</h1>
             <p>{error || 'Tarkista linkki sähköpostistasi.'}</p>
           </div>
         </div>
@@ -63,7 +69,7 @@ export default function LeadMagnetPage() {
       <div className="leadmagnet-page">
         <div className="leadmagnet-container">
           <div className="leadmagnet-processing">
-            <div className="pulse-animation">⚙️</div>
+            <div className="pulse-animation"></div>
             <h1>Videosi käsitellään</h1>
             <p>Videosi on parhaillaan työn alla ja valmistuu pian!</p>
             <p className="email-info">Lähetämme uuden linkin osoitteeseen <strong>{data.email}</strong> kun video on valmis.</p>
@@ -71,7 +77,7 @@ export default function LeadMagnetPage() {
               className="refresh-button"
               onClick={() => window.location.reload()}
             >
-              🔄 Päivitä sivu
+              Päivitä sivu
             </button>
           </div>
         </div>
@@ -83,24 +89,36 @@ export default function LeadMagnetPage() {
     <div className="leadmagnet-page">
       <div className="leadmagnet-container">
         <div className="leadmagnet-header">
-          <h1>Videosi on valmis! 🎉</h1>
+          <h1>Videosi on valmis</h1>
           <p>Katso henkilökohtainen videosi alta</p>
         </div>
+
+        {data.title && (
+          <div className="video-title">
+            <h2>{data.title}</h2>
+          </div>
+        )}
 
         <div className="leadmagnet-video-wrapper">
           <video 
             controls 
+            preload="metadata"
             className="leadmagnet-video"
-            poster="/assets/video-poster.jpg"
           >
             <source src={data.videoUrl} type="video/mp4" />
             Selaimesi ei tue videoita.
           </video>
+          
+          {data.description && (
+            <div className="video-description">
+              <p>{data.description}</p>
+            </div>
+          )}
         </div>
 
         <div className="leadmagnet-info">
           <div className="info-card">
-            <h2>💡 Mitä seuraavaksi?</h2>
+            <h2>Mitä seuraavaksi?</h2>
             <p>
               Haluatko oppia lisää siitä, miten voimme auttaa yritystäsi kasvamaan 
               tekoälyn avulla? Varaa maksuton konsultaatio asiantuntijamme kanssa.
@@ -111,33 +129,34 @@ export default function LeadMagnetPage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              📅 Varaa ilmainen konsultaatio
+              Varaa ilmainen konsultaatio
             </a>
           </div>
 
           <div className="info-card">
-            <h2>🚀 Rascal AI - Tekoäly työkalukanava</h2>
+            <h2>Rascal AI</h2>
             <p>
-              Automaatiolla tehostamme asiakaspalveluasi, markkinointiasi ja 
-              myyntiäsi. Rakennamme räätälöityjä tekoälyratkaisuja yrityksesi tarpeisiin.
+              Tekoälypohjainen assistentti myynnin, markkinoinnin ja johdon päivittäisiin 
+              toimintoihin. Vähennämme turhauttavia rutiinitehtäviä, jotta voit keskittyä 
+              asiakastyöhön ja kasvuun.
             </p>
             <div className="features-list">
-              <div className="feature-item">✅ AI-puhelinmyynti</div>
-              <div className="feature-item">✅ Asiakaspalvelubotit</div>
-              <div className="feature-item">✅ Markkinoinnin automaatio</div>
-              <div className="feature-item">✅ Räätälöidyt AI-ratkaisut</div>
+              <div className="feature-item">Sosiaalisen median hallinta</div>
+              <div className="feature-item">Sisällöntuotanto</div>
+              <div className="feature-item">Puhelut ja tekstiviestit</div>
+              <div className="feature-item">CRM-integraatiot</div>
             </div>
           </div>
 
           <div className="info-card contact-card">
-            <h2>📞 Ota yhteyttä</h2>
+            <h2>Ota yhteyttä</h2>
             <p>Kysyttävää? Autamme mielellämme!</p>
             <div className="contact-info">
-              <a href="mailto:info@rascal.fi" className="contact-link">
-                📧 info@rascal.fi
+              <a href="mailto:info@rascalcompany.fi" className="contact-link">
+                info@rascalcompany.fi
               </a>
-              <a href="https://rascal.fi" className="contact-link" target="_blank" rel="noopener noreferrer">
-                🌐 rascal.fi
+              <a href="https://rascalai.fi" className="contact-link" target="_blank" rel="noopener noreferrer">
+                rascalai.fi
               </a>
             </div>
           </div>

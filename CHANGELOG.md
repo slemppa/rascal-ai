@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.84.0](https://github.com/slemppa/rascal-ai/compare/v1.83.0...v1.84.0) (2025-11-10)
+
+
+### ✨ Features
+
+* lisää leadmagnet-sivu videosisällölle ([1b597f0](https://github.com/slemppa/rascal-ai/commit/1b597f042ab6bf146c274dc50f55fa40a762471e))
+
 ## [1.83.0](https://github.com/slemppa/rascal-ai/compare/v1.82.0...v1.83.0) (2025-11-10)
 
 

@@ -8,6 +8,9 @@ import { useFeatures } from '../hooks/useFeatures'
 import NotificationBell from './NotificationBell'
 import TicketButton from './TicketButton'
 
+// Default brändilogo jos käyttäjällä ei ole omaa logoa
+const DEFAULT_LOGO_URL = 'https://enrploxjigoyqajoqgkj.supabase.co/storage/v1/object/public/user-logos/1b60ac47-ac9a-4b0e-ba08-610a38380f3d/logo.png'
+
 const menuItems = [
   { 
     label: 'Etusivu', 
@@ -234,12 +237,12 @@ export default function Sidebar() {
       <div className={styles['profile-section']}>
         <div className={styles['profile-avatar']}>
           <img 
-            src={logoUrl || "/favicon.png"} 
+            src={logoUrl || DEFAULT_LOGO_URL} 
             alt={logoUrl ? "Company Logo" : "Rascal AI"} 
             style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
             onError={(e) => {
               // Fallback jos logo ei lataudu
-              e.target.src = '/favicon.png'
+              e.target.src = DEFAULT_LOGO_URL
             }}
           />
         </div>

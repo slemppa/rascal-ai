@@ -19,17 +19,23 @@ export default function AIChatPage() {
   const pendingQueueRef = useRef(loadPendingQueue())
   const enqueuePending = (item) => { pendingQueueRef.current = [...pendingQueueRef.current, item]; savePendingQueue(pendingQueueRef.current) }
   const dequeuePending = (id) => { pendingQueueRef.current = pendingQueueRef.current.filter(i => i.id !== id); savePendingQueue(pendingQueueRef.current) }
-  const [messages, setMessages] = useState(() => {
-    const saved = localStorage.getItem('rascalai_chat_messages')
-    return saved ? JSON.parse(saved) : []
-  })
+  // Viestit ladataan Zepistä, ei localStoragesta
+  const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [tab, setTab] = useState('chat')
+  const [sidebarOpen, setSidebarOpen] = useState(false) // Sidebar auki/kiinni
+  const [sidebarTab, setSidebarTab] = useState('threads') // 'database' tai 'threads' - oletuksena 'threads'
   const [files, setFiles] = useState([])
   const [filesLoading, setFilesLoading] = useState(false)
   const [filesError, setFilesError] = useState('')
   const [threadId, setThreadId] = useState(() => localStorage.getItem('rascalai_threadId') || null)
+  
+  // Thread-hallinta
+  const [threads, setThreads] = useState([])
+  const [threadsLoading, setThreadsLoading] = useState(false)
+  const [currentThreadId, setCurrentThreadId] = useState(null)
+  const [editingThreadId, setEditingThreadId] = useState(null)
+  const [editingTitle, setEditingTitle] = useState('')
   const [uploadLoading, setUploadLoading] = useState(false)
   
   // Debug: Seuraa uploadLoading tilan muutoksia
@@ -54,6 +60,26 @@ export default function AIChatPage() {
   const [loadingUserData, setLoadingUserData] = useState(true)
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
   const MAX_BATCH_BYTES = 4 * 1024 * 1024 // ei käytössä Blob-polussa, jätetty varalle
+  const messagesEndRef = useRef(null)
+  const textareaRef = useRef(null)
+  const sendingRef = useRef(false) // Estää duplikaattilähetykset
+
+  // Scrollaa viestit automaattisesti alas
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  // Automaattinen textarea koon kasvu
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
+    }
+  }, [input])
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages, loading])
 
   // Hae käyttäjän tiedot Supabase-tietokannasta
   useEffect(() => {
@@ -88,15 +114,35 @@ export default function AIChatPage() {
   // Hae companyName käyttäjän tiedoista
   const companyName = userData?.company_name || 'Company'
 
+  // Apufunktio: Poista system prompt viestistä
+  const cleanMessage = (content) => {
+    if (!content) return content
+    
+    // Poista [prompt: ...] -osuus (voi olla missä tahansa viestissä)
+    const promptRegex = /\[prompt:.*?\]/gi
+    let cleaned = content.replace(promptRegex, '').trim()
+    
+    // Jos viesti alkaa [viesti] tagilla, poista se
+    cleaned = cleaned.replace(/^\[viesti\]\s*/i, '').trim()
+    
+    // Poista system prompt joka alkaa "\n\nAnswer in a spartan style..."
+    // Tämä tulee Zepistä kun käyttäjän viesti sisältää promptin
+    const systemPromptPattern = /\n\nAnswer in a spartan style.*$/is
+    cleaned = cleaned.replace(systemPromptPattern, '').trim()
+    
+    return cleaned
+  }
+
   // Vieritä alas aina kun viestit päivittyvät (column-reverse hoitaa, joten ei tarvita)
   // useEffect ei enää tarpeen
 
-  // Hae tiedostot kun tietokanta-välilehti avataan
+  // Hae tiedostot heti kun käyttäjän tiedot on ladattu
   useEffect(() => {
-    if (tab === 'files' && files.length === 0) {
+    if (!loadingUserData && userData?.id) {
       fetchFiles()
     }
-  }, [tab])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadingUserData, userData?.id])
 
   // Seuraa ikkunan koon muutoksia responsiivisuutta varten
   useEffect(() => {
@@ -135,7 +181,7 @@ export default function AIChatPage() {
   }
 
   const fetchFiles = async () => {
-    console.log('fetchFiles alkaa, loadingUserData:', loadingUserData, 'userId:', userData?.id)
+    console.log('📁 fetchFiles alkaa, loadingUserData:', loadingUserData, 'userId:', userData?.id)
     if (loadingUserData) {
       setFilesError(t('assistant.loadingUser'))
       return
@@ -146,10 +192,14 @@ export default function AIChatPage() {
     }
     setFilesLoading(true)
     setFilesError('')
+    setFiles([]) // Tyhjennä vanhat tiedostot
     try {
       const response = await axios.post('/api/dev-knowledge', { action: 'list', userId: userData.id }, {
         headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
       })
+      
+      console.log('📁 API vastaus:', response.data)
+      
       // Tuki eri payload-rakenteille
       let arr = []
       if (Array.isArray(response.data.files)) {
@@ -166,6 +216,8 @@ export default function AIChatPage() {
           arr = response.data
         }
       }
+
+      console.log('📁 Parsittu array:', arr.length, 'tiedostoa')
 
       // Normalize: ensure we always have a visible filename and consistent id array
       const normalized = Array.isArray(arr) ? arr.map(item => {
@@ -184,18 +236,38 @@ export default function AIChatPage() {
         }
       }) : []
 
+      console.log('📁 Normalized:', normalized.length, 'tiedostoa')
+      console.log('📁 Ensimmäinen tiedosto:', normalized[0])
+      
       setFiles(normalized)
     } catch (error) {
-      console.error('Virhe haettaessa tiedostoja:', error)
+      console.error('❌ Virhe haettaessa tiedostoja:', error)
       setFilesError(t('assistant.files.list.error'))
     } finally {
       setFilesLoading(false)
     }
   }
 
+  const handleKeyDown = (e) => {
+    // Enter ilman Shiftia = lähetä viesti
+    // Shift + Enter = rivinvaihto
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      e.stopPropagation()
+      // Kutsu lähetyslogiikkaa suoraan
+      sendMessage()
+    }
+  }
+
   const handleSendMessage = async (e) => {
     e.preventDefault()
-    if (!input.trim() || loading || loadingUserData) return
+    await sendMessage()
+  }
+
+  // Varsinainen lähetyslogiikka (kutsutaan sekä formista että Enter-näppäimestä)
+  const sendMessage = async () => {
+    // Estä duplikaattilähetykset
+    if (!input.trim() || loading || loadingUserData || sendingRef.current) return
     
     if (!userData?.id) {
       const errorMessage = { role: 'assistant', content: 'Käyttäjän ID puuttuu. Ota yhteyttä ylläpitoon.' }
@@ -203,31 +275,98 @@ export default function AIChatPage() {
       return
     }
 
-    const userMessage = { role: 'user', content: input }
+    // Aseta lähetys käynnissä -lippu
+    sendingRef.current = true
+
+    const userMessageContent = input
+    const userMessage = { role: 'user', content: userMessageContent }
     setMessages(prev => [...prev, userMessage])
     setInput('')
+    
+    // Nollaa textarea korkeus
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+    }
+    
+    // Näytä "Käsitellään..." -viesti
+    const processingMessage = { 
+      role: 'assistant', 
+      content: 'Käsitellään vastausta...',
+      isProcessing: true 
+    }
+    setMessages(prev => [...prev, processingMessage])
+    
     setLoading(true)
 
     try {
-      const payload = { message: input, threadId, userId: userData?.id }
+      // Luo uusi thread jos ei ole olemassa
+      let activeThreadId = currentThreadId || threadId
+      if (!activeThreadId) {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.access_token) {
+          try {
+            const threadResponse = await axios.post('/api/ai-chat-threads', {
+              title: userMessageContent.substring(0, 50) // Käytä ensimmäistä viestiä otsikkona
+            }, {
+              headers: { 
+                'Authorization': `Bearer ${session.access_token}`,
+                'Content-Type': 'application/json'
+              }
+            })
+            activeThreadId = threadResponse.data.thread.id
+            setCurrentThreadId(activeThreadId)
+            setThreadId(activeThreadId) // Tämä menee Zepiin sessionId:nä
+            localStorage.setItem('rascalai_threadId', activeThreadId)
+            setThreads(prev => [threadResponse.data.thread, ...prev])
+          } catch (err) {
+            console.error('Threadin luonti epäonnistui:', err)
+          }
+        }
+      }
+
+      // Lähetä viesti N8N:ään (joka tallentaa Zepiin käyttäen threadId:tä sessionId:nä)
+      const payload = { 
+        message: userMessageContent, 
+        threadId: activeThreadId, // Zep käyttää tätä sessionId:nä
+        userId: userData?.id 
+      }
       const pendingId = `msg_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
       enqueuePending({ id: pendingId, payload })
-      const response = await axios.post('/api/chat', payload)
-
-      // Ota oikea vastausmuoto (array tai objekti)
-      const data = Array.isArray(response.data) ? response.data[0] : response.data;
-      const assistantMessage = { role: 'assistant', content: data.output || data.response }
-      setMessages(prev => [...prev, assistantMessage])
-      dequeuePending(pendingId)
-      if (data.threadId && !threadId) {
-        setThreadId(data.threadId)
-        localStorage.setItem('rascalai_threadId', data.threadId)
+      
+      // FIRE-AND-FORGET: Lähetä taustalle, älä odota vastausta
+      axios.post('/api/chat', payload)
+        .then(response => {
+          // Kun vastaus saapuu, päivitä viestit Zepistä
+          if (activeThreadId) {
+            loadThread(activeThreadId)
+          }
+          dequeuePending(pendingId)
+        })
+        .catch(error => {
+          console.error('Virhe viestin lähetyksessä:', error)
+          // Poista "Käsitellään..." ja näytä virhe
+          setMessages(prev => prev.filter(m => !m.isProcessing))
+          const errorMessage = { role: 'assistant', content: t('assistant.sendError') }
+          setMessages(prev => [...prev, errorMessage])
+          dequeuePending(pendingId)
+        })
+      
+      // Päivitä thread-aikaleima
+      if (activeThreadId) {
+        await updateThreadTimestamp(activeThreadId)
       }
+      
+      // Käyttäjä voi heti jatkaa - ei tarvitse odottaa vastausta
+      setLoading(false)
+      sendingRef.current = false
+      
     } catch (error) {
+      // Poista "Käsitellään..." ja näytä virhe
+      setMessages(prev => prev.filter(m => !m.isProcessing))
       const errorMessage = { role: 'assistant', content: t('assistant.sendError') }
       setMessages(prev => [...prev, errorMessage])
-    } finally {
       setLoading(false)
+      sendingRef.current = false
     }
   }
 
@@ -322,19 +461,268 @@ export default function AIChatPage() {
     )
   }
 
-  const handleFileDeletion = async (fileId) => {
+  const handleFileDeletion = async (fileIds) => {
+    // fileIds on array UUID:ta, koska yksi tiedosto voi olla jaettu useampaan dokumenttiin
+    if (!Array.isArray(fileIds) || fileIds.length === 0) {
+      console.error('Virheellinen fileIds:', fileIds)
+      return
+    }
+    
     try {
+      // Hae käyttäjän access token
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        alert('Kirjautuminen vaaditaan')
+        return
+      }
+
+      console.log('🗑️ Poistetaan tiedosto, IDs:', fileIds, 'userId:', userData?.id)
       await axios.post('/api/dev-delete-files', {
-        ids: [fileId]
+        ids: fileIds
       }, {
-        headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
+        headers: { 
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
       })
-      setFiles(prev => prev.filter(file => file.id !== fileId))
-      setSelectedFiles(prev => prev.filter(id => id !== fileId))
+      // Poista tiedosto listasta vertaamalla id-arrayja
+      setFiles(prev => prev.filter(file => 
+        JSON.stringify(file.id) !== JSON.stringify(fileIds)
+      ))
+      console.log('✅ Tiedosto poistettu')
     } catch (error) {
-      console.error('Virhe tiedoston poistamisessa:', error)
+      console.error('❌ Virhe tiedoston poistamisessa:', error)
+      alert('Tiedoston poisto epäonnistui. Yritä uudelleen.')
     }
   }
+
+  // Thread-hallinta funktiot
+  const fetchThreads = async () => {
+    if (!user) return
+    
+    try {
+      setThreadsLoading(true)
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) return
+
+      const response = await axios.get('/api/ai-chat-threads', {
+        headers: { 'Authorization': `Bearer ${session.access_token}` }
+      })
+      
+      setThreads(response.data.threads || [])
+    } catch (error) {
+      console.error('Virhe threadien haussa:', error)
+    } finally {
+      setThreadsLoading(false)
+    }
+  }
+
+  const createNewThread = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        alert('Kirjautuminen vaaditaan')
+        return
+      }
+
+      const response = await axios.post('/api/ai-chat-threads', {
+        title: 'Uusi keskustelu'
+      }, {
+        headers: { 
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      const newThread = response.data.thread
+      setThreads(prev => [newThread, ...prev])
+      setCurrentThreadId(newThread.id)
+      setThreadId(newThread.id)
+      setMessages([])
+      localStorage.setItem('rascalai_threadId', newThread.id)
+      console.log('✅ Uusi thread luotu:', newThread.id)
+    } catch (error) {
+      console.error('❌ Virhe threadin luonnissa:', error)
+      alert('Uuden keskustelun luonti epäonnistui')
+    }
+  }
+
+  const loadThread = async (threadIdToLoad) => {
+    try {
+      setCurrentThreadId(threadIdToLoad)
+      setThreadId(threadIdToLoad) // Zep käyttää tätä sessionId:nä
+      
+      // Älä tyhjennä viestejä jos ladataan samaa threadia (päivitys)
+      const isRefresh = threadIdToLoad === currentThreadId
+      if (!isRefresh) {
+        setMessages([]) // Tyhjennä vain jos vaihdetaan threadia
+      }
+      
+      setLoading(true)
+      localStorage.setItem('rascalai_threadId', threadIdToLoad)
+      
+      // Sulje sidebar mobiilissa
+      if (window.innerWidth <= 1024) {
+        setSidebarOpen(false)
+      }
+      
+      console.log(`🔄 Haetaan viestit Zepistä threadille: ${threadIdToLoad}`)
+      
+      // Hae viestit Zepistä
+      const response = await axios.get(`/api/zep-messages?threadId=${threadIdToLoad}`)
+      
+      const zepMessages = response.data?.messages || []
+      console.log(`✅ Ladattiin ${zepMessages.length} viestiä Zepistä`)
+      console.log('📝 Ensimmäinen viesti:', zepMessages[0])
+      
+      // Muunna Zep-viestit oikeaan muotoon ja siivoa system promptit
+      const formattedMessages = zepMessages
+        .filter(msg => msg.content) // Poista tyhjät viestit
+        .map(msg => {
+          // Normalisoi role: "Human" -> "user", "AI" -> "assistant"
+          let normalizedRole = msg.role
+          if (msg.role === 'Human' || msg.role === 'human') {
+            normalizedRole = 'user'
+          } else if (msg.role === 'AI' || msg.role === 'ai') {
+            normalizedRole = 'assistant'
+          }
+          
+          const formatted = {
+            role: normalizedRole,
+            content: cleanMessage(msg.content)
+          }
+          console.log(`📨 Formatoitu viesti - role: ${msg.role} -> ${formatted.role}, sisältö alkaa: ${formatted.content.substring(0, 50)}...`)
+          return formatted
+        })
+      
+      setMessages(formattedMessages)
+    } catch (error) {
+      console.error('❌ Virhe viestien lataamisessa:', error)
+      // Jos virhe, näytä tyhjä chat
+      setMessages([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const deleteThread = async (threadIdToDelete) => {
+    if (!confirm('Haluatko varmasti poistaa tämän keskustelun?')) return
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) return
+
+      await axios.delete('/api/ai-chat-threads', {
+        data: { threadId: threadIdToDelete },
+        headers: { 
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      setThreads(prev => prev.filter(t => t.id !== threadIdToDelete))
+      if (currentThreadId === threadIdToDelete) {
+        setCurrentThreadId(null)
+        setThreadId(null)
+        setMessages([])
+        localStorage.removeItem('rascalai_threadId')
+      }
+      console.log('✅ Thread poistettu:', threadIdToDelete)
+    } catch (error) {
+      console.error('❌ Virhe threadin poistossa:', error)
+      alert('Keskustelun poisto epäonnistui')
+    }
+  }
+
+  const updateThreadTimestamp = async (threadIdTarget) => {
+    // Päivitä threadin updated_at kun uusi viesti lähetetään
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) return
+
+      await supabase
+        .from('ai_chat_threads')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', threadIdTarget)
+    } catch (error) {
+      console.error('❌ Virhe threadin päivityksessä:', error)
+    }
+  }
+
+  const startEditingThread = (thread) => {
+    setEditingThreadId(thread.id)
+    setEditingTitle(thread.title)
+  }
+
+  const cancelEditingThread = () => {
+    setEditingThreadId(null)
+    setEditingTitle('')
+  }
+
+  const saveThreadTitle = async (threadId) => {
+    if (!editingTitle.trim()) {
+      alert('Otsikko ei voi olla tyhjä')
+      return
+    }
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        alert('Kirjautuminen vaaditaan')
+        return
+      }
+
+      const response = await axios.patch('/api/ai-chat-threads', {
+        threadId,
+        title: editingTitle.trim()
+      }, {
+        headers: { 
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      // Päivitä threadin otsikko listassa
+      setThreads(prev => prev.map(t => 
+        t.id === threadId ? { ...t, title: response.data.thread.title } : t
+      ))
+      
+      setEditingThreadId(null)
+      setEditingTitle('')
+      console.log('✅ Threadin otsikko päivitetty:', threadId)
+    } catch (error) {
+      console.error('❌ Virhe otsikon päivityksessä:', error)
+      alert('Otsikon päivitys epäonnistui')
+    }
+  }
+
+  // Lataa threadit kun käyttäjä kirjautuu
+  useEffect(() => {
+    if (user && !loadingUserData) {
+      fetchThreads()
+      
+      // Jos threadId on localStoragessa, lataa viestit automaattisesti
+      const savedThreadId = localStorage.getItem('rascalai_threadId')
+      if (savedThreadId && savedThreadId !== 'null') {
+        console.log('📥 Ladataan tallennettu thread:', savedThreadId)
+        loadThread(savedThreadId)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, loadingUserData])
+
+  // Päivitä viestit kun käyttäjä palaa sivulle
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && currentThreadId) {
+        console.log('👀 Sivu aktiivinen, päivitetään viestit')
+        loadThread(currentThreadId)
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [currentThreadId])
 
   // Drag & drop event handlers
   const handleDragOver = (e) => {
@@ -457,230 +845,327 @@ export default function AIChatPage() {
   }
 
   // UUSI: Assistentin tiedoston poisto (POST + action)
-  async function deleteAssistantKnowledgeFile({ fileId, userId }) {
+  async function deleteAssistantKnowledgeFile({ fileIds, userId }) {
     return axios.post('/api/dev-delete-files', {
-      ids: [fileId]
+      ids: fileIds  // fileIds on jo array
     }, {
       headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
     })
   }
 
   // Tyhjennä keskustelu
-  const handleNewChat = () => {
-    setMessages([])
-    localStorage.removeItem('rascalai_chat_messages')
-    setThreadId(null)
-    localStorage.removeItem('rascalai_threadId')
+  const handleNewChat = async () => {
+    // Luo uusi thread Supabaseen ja vaihda siihen
+    await createNewThread()
   }
 
-  useEffect(() => {
-    localStorage.setItem('rascalai_chat_messages', JSON.stringify(messages))
-  }, [messages])
+  // Ei enää tallenneta viestejä localStorageen, koska ne tulevat Zepistä
+  // useEffect(() => {
+  //   localStorage.setItem('rascalai_chat_messages', JSON.stringify(messages))
+  // }, [messages])
 
   return (
     <>
       {loadingUserData ? (
-        <div className="ai-chat-loading">
-          {t('assistant.loadingUser')}
+        <div className="modern-chat-loading">
+          <div className="loading-spinner"></div>
+          <p>{t('assistant.loadingUser')}</p>
         </div>
       ) : (
-        <div className="ai-chat-wrapper">
-          {/* Välilehdet */}
-          <div className="ai-chat-tabs">
-            <button onClick={() => setTab('chat')} className={`ai-chat-tab ${tab === 'chat' ? 'active' : ''}`}>
-              {t('assistant.tabs.chat')}
-            </button>
-            <button onClick={() => setTab('files')} className={`ai-chat-tab ${tab === 'files' ? 'active' : ''}`}>
-              {t('assistant.tabs.files')} ({files.length})
-            </button>
-          </div>
-          {/* Sisältö */}
-          <div style={{
-            flex: 1,
-            minHeight: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            margin: 0,
-            padding: 0
-          }}>
-            {tab === 'chat' ? (
-              <div style={{
-                flex: 1,
-                minHeight: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                margin: 0,
-                padding: 0,
-                height: '100%'
-              }}>
-                {/* Viestit */}
-                <div style={{
-                  flex: 1,
-                  minHeight: 0,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  margin: 0,
-                  padding: 0,
-                  overflow: 'hidden'
-                }}>
-                  <div style={{
-                    flex: 1,
-                    minHeight: 0,
-                    overflowY: 'auto',
-                    display: 'flex',
-                    flexDirection: 'column-reverse',
-                    gap: 12,
-                    margin: 0,
-                    padding: 24,
-                    width: '100%',
-                    height: '100%'
-                  }}>
-                    {(() => {
-                      const list = [...messages]
-                      if (loading) {
-                        list.push({ role: 'assistant', content: t('assistant.typing'), temp: true })
-                      }
-                      return list.slice().reverse().map((message, index) => (
-                        <div key={index} className={`ai-chat-message ${message.role === 'assistant' ? 'assistant' : ''}`}>
-                          <div className={`ai-chat-message-bubble ${message.role === 'assistant' ? 'assistant' : ''}`}>
-                            {message.temp ? (
-                              message.content
-                            ) : message.role === 'assistant' ? (
-                              <ReactMarkdown>{message.content}</ReactMarkdown>
-                            ) : (
-                              message.content
-                            )}
-                          </div>
-                        </div>
-                      ))
-                    })()}
-                  </div>
-                </div>
-                {/* Syöttökenttä ja uusi keskustelu -ikoni */}
-                <form onSubmit={handleSendMessage} className="ai-chat-input-form">
-                  <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder={t('assistant.inputPlaceholder')}
-                    disabled={loading}
-                    className="ai-chat-input"
-                  />
-                  <button
-                    type="submit"
-                    disabled={loading || !input.trim()}
-                    className="ai-chat-send-button"
-                  >
-                    {t('assistant.send')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleNewChat}
-                    title={t('assistant.newChatTitle')}
-                    className="ai-chat-newchat-button"
-                  >
-                    <span role="img" aria-label={t('assistant.newChatAria')}>➕</span>
-                  </button>
-                </form>
+        <div className="modern-chat-container">
+          {/* Sidebar - Tietokanta ja Keskustelut */}
+          <div className={`modern-chat-sidebar ${sidebarOpen ? 'open' : ''}`}>
+            <div className="sidebar-header">
+              <div className="sidebar-tabs">
+                <button 
+                  className={`sidebar-tab ${sidebarTab === 'threads' ? 'active' : ''}`}
+                  onClick={() => setSidebarTab('threads')}
+                >
+                  Keskustelut
+                </button>
+                <button 
+                  className={`sidebar-tab ${sidebarTab === 'database' ? 'active' : ''}`}
+                  onClick={() => setSidebarTab('database')}
+                >
+                  Tietokanta
+                </button>
               </div>
-            ) : (
-              <div style={{
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                padding: windowWidth <= 768 ? '16px' : windowWidth <= 480 ? '12px' : '24px',
-                gap: windowWidth <= 768 ? '20px' : windowWidth <= 480 ? '16px' : '24px',
-                overflow: 'hidden',
-                background: '#f7f8fc'
-              }}>
-                {/* Upload kortti - aina näkyvissä */}
-                <div className="ai-chat-upload-card" style={{ flexShrink: 0 }}>
-                  <h3>{t('assistant.files.uploadCard.title')}</h3>
-                  <p>{t('assistant.files.uploadCard.desc')}</p>
-                  {/* Drag & drop -alue */}
-                  <div
-                    ref={dropRef}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    className={`ai-chat-drag-drop ${dragActive ? 'active' : ''}`}
-                    onClick={() => dropRef.current && dropRef.current.querySelector('input[type=file]').click()}
-                  >
-                    {t('assistant.files.uploadCard.dragText')} <span>{t('assistant.files.uploadCard.chooseFiles')}</span>
-                    <input
-                      type="file"
-                      multiple
-                      accept=".pdf,.doc,.docx,.txt,.md,.rtf,image/*,audio/*"
-                      style={{ display: 'none' }}
-                      onChange={handleFileInput}
-                    />
-                  </div>
-                  {/* Valitut tiedostot */}
-                  {pendingFiles.length > 0 && (
-                    <div className="ai-chat-pending-files">
-                      {pendingFiles.map(f => (
-                        <div key={f.name + f.size} className="ai-chat-pending-file">
-                          <span className="ai-chat-pending-file-name">{f.name}</span>
-                          <span className="ai-chat-remove-file" onClick={() => handleRemovePending(f.name, f.size)}>{t('assistant.files.uploadCard.remove')}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <button
-                    onClick={() => {
-                      handleUploadPending()
-                    }}
-                    disabled={uploadLoading || pendingFiles.length === 0}
-                    className="ai-chat-upload-button"
-                  >
-                    {t('assistant.files.uploadCard.uploadBtn', { count: pendingFiles.length })}
+              <button onClick={() => setSidebarOpen(false)} className="close-sidebar">✕</button>
+            </div>
+            
+            {/* Keskustelut-tabi */}
+            {sidebarTab === 'threads' && (
+              <div className="sidebar-threads">
+                <div className="threads-header">
+                  <h3>Keskustelut ({threads.length})</h3>
+                  <button onClick={createNewThread} className="new-thread-btn" title="Uusi keskustelu">
+                    +
                   </button>
-                  {uploadLoading && <p className="ai-chat-loading-text">{t('assistant.files.uploadCard.uploading')}</p>}
-                  {uploadError && <p className="ai-chat-error-text">{uploadError}</p>}
-                  {uploadSuccess && <p className="ai-chat-success-text">{uploadSuccess}</p>}
                 </div>
                 
-                {/* Tiedostot - erillinen container */}
-                <div className="ai-chat-files-list">
-                  <h3>{t('assistant.files.list.title')}</h3>
-                  <div className="ai-chat-files-scroll" ref={filesListRef}>
-                    {filesLoading ? (
-                      <div className="ai-chat-loading">
-                        <span>{t('assistant.files.list.loading')}</span>
+                <div className="threads-list">
+                  {threadsLoading ? (
+                    <div className="loading-state">
+                      <div className="loading-spinner small"></div>
+                    </div>
+                  ) : threads.length === 0 ? (
+                    <p className="empty-state">Ei keskusteluja. Aloita uusi painamalla +</p>
+                  ) : (
+                    threads.map((thread) => (
+                      <div 
+                        key={thread.id} 
+                        className={`thread-item ${currentThreadId === thread.id ? 'active' : ''} ${editingThreadId === thread.id ? 'editing' : ''}`}
+                        onClick={() => editingThreadId !== thread.id && loadThread(thread.id)}
+                      >
+                        <div className="thread-info">
+                          {editingThreadId === thread.id ? (
+                            <input
+                              type="text"
+                              value={editingTitle}
+                              onChange={(e) => setEditingTitle(e.target.value)}
+                              onClick={(e) => e.stopPropagation()}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  saveThreadTitle(thread.id)
+                                } else if (e.key === 'Escape') {
+                                  cancelEditingThread()
+                                }
+                              }}
+                              className="thread-title-input"
+                              autoFocus
+                            />
+                          ) : (
+                            <span className="thread-title">{thread.title}</span>
+                          )}
+                          <span className="thread-date">
+                            {new Date(thread.updated_at).toLocaleDateString('fi-FI')}
+                          </span>
+                        </div>
+                        <div className="thread-actions">
+                          {editingThreadId === thread.id ? (
+                            <>
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); saveThreadTitle(thread.id); }} 
+                                className="save-thread-btn"
+                                title="Tallenna"
+                              >
+                                ✓
+                              </button>
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); cancelEditingThread(); }} 
+                                className="cancel-thread-btn"
+                                title="Peruuta"
+                              >
+                                ✕
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); startEditingThread(thread); }} 
+                                className="edit-thread-btn"
+                                title="Muokkaa nimeä"
+                              >
+                                ✎
+                              </button>
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); deleteThread(thread.id); }} 
+                                className="delete-thread-btn"
+                                title="Poista keskustelu"
+                              >
+                                ✕
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </div>
-                    ) : filesError ? (
-                      <div className="ai-chat-error">
-                        <span>{filesError}</span>
-                      </div>
-                    ) : files.length === 0 ? (
-                      <div className="ai-chat-empty-state">
-                        <img src="/placeholder.png" alt={t('assistant.files.list.emptyAlt')} />
-                        <div>{t('assistant.files.list.emptyTitle')}</div>
-                      </div>
-                    ) : (
-                      <>
-                        {files.map((file) => (
-                          <div key={file.file_name} className="ai-chat-file-item">
-                            <div className="ai-chat-file-info">
-                              <div className="ai-chat-file-name">{file.file_name || file.filename}</div>
-                            </div>
-                            <button
-                              onClick={() => handleFileDeletion(file.id)}
-                              className="ai-chat-delete-button"
-                            >
-                              {t('assistant.files.list.delete')}
-                            </button>
-                          </div>
-                        ))}
-                      </>
-                    )}
-                  </div>
+                    ))
+                  )}
                 </div>
               </div>
             )}
+            
+            {/* Tietokanta-tabi */}
+            {sidebarTab === 'database' && (
+              <>
+                {/* Upload-alue */}
+                <div className="sidebar-upload">
+              <div
+                ref={dropRef}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`file-drop-zone ${dragActive ? 'active' : ''}`}
+                onClick={() => dropRef.current && dropRef.current.querySelector('input[type=file]').click()}
+              >
+                <span className="drop-icon">↑</span>
+                <p>{t('assistant.files.uploadCard.dragText')} <span className="link-text">{t('assistant.files.uploadCard.chooseFiles')}</span></p>
+                <input
+                  type="file"
+                  multiple
+                  accept=".pdf,.doc,.docx,.txt,.md,.rtf,image/*,audio/*"
+                  style={{ display: 'none' }}
+                  onChange={handleFileInput}
+                />
+              </div>
+              
+              {pendingFiles.length > 0 && (
+                <div className="pending-files">
+                  {pendingFiles.map(f => (
+                    <div key={f.name + f.size} className="pending-file-item">
+                      <span className="file-name">{f.name}</span>
+                      <button onClick={() => handleRemovePending(f.name, f.size)} className="remove-btn">✕</button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={handleUploadPending}
+                    disabled={uploadLoading}
+                    className="upload-btn"
+                  >
+                    {uploadLoading ? t('assistant.files.uploadCard.uploading') : t('assistant.files.uploadCard.uploadBtn', { count: pendingFiles.length })}
+                  </button>
+                </div>
+              )}
+              
+              {uploadError && <p className="error-msg">{uploadError}</p>}
+              {uploadSuccess && <p className="success-msg">{uploadSuccess}</p>}
+            </div>
+            
+                {/* Tiedostolista */}
+                <div className="sidebar-files">
+                  <h3>{t('assistant.files.list.title')} ({files.length})</h3>
+                  <div className="files-list" ref={filesListRef}>
+                    {filesLoading ? (
+                      <div className="loading-state">
+                        <div className="loading-spinner small"></div>
+                      </div>
+                    ) : filesError ? (
+                      <p className="error-state">{filesError}</p>
+                    ) : files.length === 0 ? (
+                      <p className="empty-state">Ei tiedostoja</p>
+                    ) : (
+                      files.map((file) => (
+                        <div key={file.file_name} className="file-item">
+                          <span className="file-icon">•</span>
+                          <span className="file-name">{file.file_name || file.filename}</span>
+                          <button onClick={() => handleFileDeletion(file.id)} className="delete-btn">✕</button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Pääsisältö - Chat */}
+          <div className="modern-chat-main">
+            {/* Header */}
+            <div className="chat-header">
+              <h1>AI Assistant</h1>
+              <button 
+                onClick={() => { 
+                  setSidebarOpen(true); 
+                  setSidebarTab('database'); 
+                }} 
+                className="files-toggle"
+              >
+                Tietokanta ({files.length})
+              </button>
+            </div>
+
+            {/* Viestit */}
+            <div className="chat-messages">
+              <div className="messages-container">
+                {messages.length === 0 ? (
+                  <div className="welcome-screen">
+                    <div className="welcome-icon">AI</div>
+                    <h2>Tervetuloa AI Assistanttiin</h2>
+                    <p>Kysy mitä tahansa. Olen täällä auttamassa sinua.</p>
+                  </div>
+                ) : (
+                  <>
+                    {messages.map((message, index) => {
+                      // DEBUG: Tulosta role konsoliin
+                      console.log(`Viesti ${index}: role="${message.role}" (tyyppi: ${typeof message.role})`)
+                      
+                      return (
+                        <div key={index} className={`message ${message.role} ${message.isProcessing ? 'processing' : ''}`}>
+                          <div className="message-avatar" title={`Role: ${message.role}`}>
+                            {message.role === 'assistant' ? 'AI' : 'Me'}
+                          </div>
+                          <div className="message-content">
+                          {message.isProcessing ? (
+                            <div className="processing-content">
+                              <div className="typing-indicator">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                              </div>
+                              <span>{message.content}</span>
+                            </div>
+                          ) : message.role === 'assistant' ? (
+                            <ReactMarkdown>{message.content}</ReactMarkdown>
+                          ) : (
+                            <p>{message.content}</p>
+                          )}
+                        </div>
+                      </div>
+                    )
+                    })}
+                    {loading && (
+                      <div className="message assistant">
+                        <div className="message-avatar">AI</div>
+                        <div className="message-content">
+                          <div className="typing-indicator">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Syöttökenttä */}
+            <div className="chat-input-wrapper">
+              <form onSubmit={handleSendMessage} className="chat-input-form">
+                <button
+                  type="button"
+                  onClick={handleNewChat}
+                  className="new-chat-btn-input"
+                  title="Aloita uusi keskustelu"
+                >
+                  +
+                </button>
+                <textarea
+                  ref={textareaRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder={t('assistant.inputPlaceholder')}
+                  disabled={loading}
+                  className="chat-input"
+                  rows={1}
+                />
+                <button
+                  type="submit"
+                  disabled={loading || !input.trim()}
+                  className="send-btn"
+                  title={t('assistant.send')}
+                >
+                  {loading ? '...' : '→'}
+                </button>
+              </form>
+              <p className="input-hint">Enter lähettää • Shift + Enter uudelle riville</p>
+            </div>
           </div>
         </div>
       )}
     </>
   )
-} 
+}

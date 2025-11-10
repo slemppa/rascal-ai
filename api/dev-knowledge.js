@@ -8,8 +8,8 @@ export const config = {
   },
 }
 
-// Kovakoodattu DEV-webhook osoite (N8N)
-const DEV_KNOWLEDGE_WEBHOOK_URL = 'https://samikiias.app.n8n.cloud/webhook/vectorsupabase'
+// Webhook osoite N8N:ään (käytä env-muuttujaa tai oletusta)
+const DEV_KNOWLEDGE_WEBHOOK_URL = process.env.DEV_KNOWLEDGE_WEBHOOK_URL || 'https://samikiias.app.n8n.cloud/webhook/vectorsupabase'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {

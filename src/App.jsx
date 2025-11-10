@@ -44,6 +44,7 @@ import MeetingNotesPage from './pages/MeetingNotesPage'
 import AccountManagerPage from './pages/AccountManagerPage'
 // MixpostAnalyticsDashboard poistettu
 import CampaignsPage from './pages/CampaignsPage'
+import LeadMagnetPage from './pages/LeadMagnetPage'
 import SegmentsPage from './pages/SegmentsPage'
 import CampaignCreatePage from './pages/CampaignCreatePage'
 import CampaignDetailPage from './pages/CampaignDetailPage'
@@ -161,6 +162,7 @@ export default function App() {
         <Route path="/ai-due-diligence" element={<AIDueDiligencePage />} />
         <Route path="/assessment" element={<AssessmentFormPage />} />
         <Route path="/asiakkaat" element={<CustomersPage />} />
+        <Route path="/leadmagnet/:token" element={<LeadMagnetPage />} />
         <Route path="/admin-testimonials" element={
           <div className="app-layout">
             <Sidebar />

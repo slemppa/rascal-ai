@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.83.0](https://github.com/slemppa/rascal-ai/compare/v1.82.0...v1.83.0) (2025-11-10)
+
+
+### ♻️ Code Refactoring
+
+* modernize AI chat UI with brand colors and layout fixes ([264cb5f](https://github.com/slemppa/rascal-ai/commit/264cb5f050f5e3157327c16714ebd200177cd5a6)), closes [#ff6600](https://github.com/slemppa/rascal-ai/issues/ff6600) [#e55e00](https://github.com/slemppa/rascal-ai/issues/e55e00)
+
+
+### 🐛 Bug Fixes
+
+* use brand logo as default fallback instead of favicon ([765696a](https://github.com/slemppa/rascal-ai/commit/765696ad3418a1828c922252aea8db9e6fe67e46))
+
+
+### ✨ Features
+
+* add lead magnet video viewing system ([abeba09](https://github.com/slemppa/rascal-ai/commit/abeba092e1aed9240fb14f0916fd091b6301f139))
+* add user logo upload with drag & drop and sidebar improvements ([177ae7b](https://github.com/slemppa/rascal-ai/commit/177ae7b71f05b6353fe83a7e7b37ecec81320f58))
+
 ## [1.82.0](https://github.com/slemppa/rascal-ai/compare/v1.81.3...v1.82.0) (2025-11-06)
 
 

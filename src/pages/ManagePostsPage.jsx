@@ -408,7 +408,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
                 </span>
           </div>
           </div>
-            <p className="post-caption" style={{ minHeight: '3.6em', contain: 'layout style' }}>
+            <p className="post-caption" style={{ contain: 'layout style' }}>
               {post.caption}
             </p>
           <div className="post-footer">

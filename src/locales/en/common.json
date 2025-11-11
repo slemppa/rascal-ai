@@ -349,7 +349,8 @@
     "sections": {
       "marketing": "Marketing",
       "sales": "Sales",
-      "tools": "Tools"
+      "tools": "Tools",
+      "admin": "Administration"
     },
     "labels": {
       "dashboard": "Home",
@@ -360,6 +361,7 @@
       "segments": "Segments",
       "calls": "Calls",
       "assistentti": "Assistant",
+      "vastaaja": "Answering Service",
       "admin": "Admin",
       "adminBlog": "Admin",
       "meetingNotes": "Meeting Notes"
@@ -1224,6 +1226,33 @@
     "edit": "Edit",
     "delete": "Delete",
     "lastUpdated": "Last updated"
+  },
+  "vastaaja": {
+    "title": "Answering Service",
+    "subtitle": "Intelligent phone answering service",
+    "description": "Rascal AI Answering Service answers calls when you're busy or unavailable. AI handles customer service, books appointments, and collects important information.",
+    "features": {
+      "calls": {
+        "title": "Automatic answering",
+        "description": "The answering service answers calls automatically and handles customer contacts professionally."
+      },
+      "messages": {
+        "title": "Message handling",
+        "description": "Records messages and important information so you can process them later."
+      },
+      "schedule": {
+        "title": "Scheduling",
+        "description": "Books appointments and manages your calendar automatically."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "Track calls, messages, and customer service quality."
+      }
+    },
+    "actions": {
+      "configure": "Configure answering service",
+      "test": "Test answering service"
+    }
   }
 }
 

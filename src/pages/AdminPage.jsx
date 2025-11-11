@@ -39,7 +39,8 @@ export default function AdminPage() {
     'Social Media',
     'Marketing assistant',
     'Email marketing integration',
-    'Dev'
+    'Dev',
+    'Voicemail'
   ]
 
   const KNOWN_FEATURES = useMemo(() => {
@@ -614,9 +615,10 @@ export default function AdminPage() {
                                 <div style={{ display: 'grid', gap: 10, maxHeight: featuresMaxHeight[user.id] || 260, overflow: 'auto', paddingRight: 4 }}>
                                   {KNOWN_FEATURES.map(f => {
                                     const enabled = (Array.isArray(user.features) ? user.features : []).includes(f)
+                                    const featureLabel = f === 'Voicemail' ? 'Vastaaja' : f
                                     return (
                                       <div key={f} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span style={{ fontSize: 13, color: '#374151' }}>{f}</span>
+                                        <span style={{ fontSize: 13, color: '#374151' }}>{featureLabel}</span>
                                         <label className="switch">
                                           <input
                                             type="checkbox"
@@ -626,7 +628,7 @@ export default function AdminPage() {
                                               const next = e.target.checked ? Array.from(new Set([...current, f])) : current.filter(x => x !== f)
                                               updateUserField(user.id, 'features', next)
                                             }}
-                                            aria-label={f}
+                                            aria-label={featureLabel}
                                           />
                                           <span className="slider" />
                                         </label>

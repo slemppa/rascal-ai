@@ -101,6 +101,19 @@ const menuItems = [
     )
   },
   { 
+    label: 'Vastaaja', 
+    path: '/vastaaja', 
+    moderatorOnly: false,
+    feature: 'Voicemail',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M14.05 2a9 9 0 0 1 8 7.94" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M14.05 6A5 5 0 0 1 18 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    )
+  },
+  { 
     label: 'Ylläpito', 
     path: '/admin', 
     adminOnly: true, 
@@ -165,6 +178,7 @@ export default function Sidebar() {
     markkinointi: true,
     myynti: true,
     tyokalut: true,
+    yllapito: true,
     jarjestelma: true
   })
 
@@ -179,10 +193,13 @@ export default function Sidebar() {
     return !(adminOnly || moderatorOnly)
   }
 
-  const toolItems = menuItems.filter(i => ['/ai-chat','/admin','/admin-blog','/admin-testimonials','/meeting-notes','/account-manager'].includes(i.path))
-  const publicToolItems = menuItems.filter(i => ['/ai-chat','/meeting-notes'].includes(i.path))
-  const adminToolItems = menuItems.filter(i => ['/admin','/admin-blog','/admin-testimonials','/account-manager'].includes(i.path))
-  const canShowTools = publicToolItems.some(isItemVisible) || adminToolItems.some(isItemVisible)
+  // Työkalut - julkiset työkalut
+  const publicToolItems = menuItems.filter(i => ['/ai-chat','/vastaaja','/meeting-notes'].includes(i.path))
+  const canShowTools = publicToolItems.some(isItemVisible)
+  
+  // Ylläpito - admin/moderator-toiminnot
+  const adminItems = menuItems.filter(i => ['/admin','/admin-blog','/account-manager'].includes(i.path))
+  const canShowAdmin = adminItems.some(isItemVisible)
 
   // Tarkista admin- ja moderator-oikeudet + hae logo
   useEffect(() => {
@@ -341,9 +358,12 @@ export default function Sidebar() {
           </button>
           {openSections.tyokalut && (
             <ul className={styles['nav-menu']}>
-              {[...publicToolItems, ...adminToolItems].filter(isItemVisible).map(item => {
-                // Feature-gating Työkalut -osioon
-                // if (item.path === '/ai-chat' && !hasFeature('Dev')) return null // Poistettu - näkyy kaikille
+              {publicToolItems.filter(isItemVisible).map(item => {
+                // Feature-gating: Vastaaja
+                if (item.path === '/vastaaja' && item.feature) {
+                  if (!hasFeature(item.feature)) return null
+                }
+                // Feature-gating: Meeting Notes
                 if (item.path === '/meeting-notes') {
                   // Näytä vain jos käyttäjä on moderator/admin TAI feature on päällä
                   if (!(isModerator || isAdmin || hasFeature('Meeting Notes'))) return null
@@ -356,14 +376,41 @@ export default function Sidebar() {
                     >
                       <span className={styles['nav-icon']}>{item.icon}</span>
                       {item.path === '/ai-chat' ? t('sidebar.labels.assistentti') : 
+                       item.path === '/vastaaja' ? t('sidebar.labels.vastaaja') :
                        item.path === '/meeting-notes' ? t('sidebar.labels.meetingNotes') :
-                       item.path === '/admin' ? t('sidebar.labels.admin') :
-                       item.path === '/account-manager' ? t('sidebar.labels.accountManager') :
-                       t('sidebar.labels.adminBlog')}
+                       item.label}
                     </button>
                   </li>
                 )
               })}
+            </ul>
+          )}
+        </>
+      )}
+
+      {/* Ylläpito */}
+      {canShowAdmin && (
+        <>
+          <button className={styles['section-header']} onClick={() => toggleSection('yllapito')} type="button">
+            <span>{t('sidebar.sections.admin')}</span>
+            <span className={`${styles['chevron']} ${openSections.yllapito ? styles['open'] : ''}`}>▾</span>
+          </button>
+          {openSections.yllapito && (
+            <ul className={styles['nav-menu']}>
+              {adminItems.filter(isItemVisible).map(item => (
+                <li className={styles['nav-item']} key={item.path}>
+                  <button
+                    className={`${styles['nav-link']} ${location.pathname.startsWith(item.path) ? styles['active'] : ''}`}
+                    onClick={() => navigate(item.path)}
+                  >
+                    <span className={styles['nav-icon']}>{item.icon}</span>
+                    {item.path === '/admin' ? t('sidebar.labels.admin') :
+                     item.path === '/admin-blog' ? t('sidebar.labels.adminBlog') :
+                     item.path === '/account-manager' ? t('sidebar.labels.accountManager') :
+                     item.label}
+                  </button>
+                </li>
+              ))}
             </ul>
           )}
         </>

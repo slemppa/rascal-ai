@@ -354,7 +354,8 @@
     "sections": {
       "marketing": "Markkinointi",
       "sales": "Myynti",
-      "tools": "Työkalut"
+      "tools": "Työkalut",
+      "admin": "Ylläpito"
     },
     "labels": {
       "dashboard": "Etusivu",
@@ -365,6 +366,7 @@
       "segments": "Segmentit",
       "calls": "Puhelut",
       "assistentti": "Assistentti",
+      "vastaaja": "Vastaaja",
       "admin": "Ylläpito",
       "adminBlog": "Admin",
       "meetingNotes": "Palaverimuistiot",
@@ -1239,5 +1241,32 @@
     "edit": "Muokkaa",
     "delete": "Poista",
     "lastUpdated": "Päivitetty viimeksi"
+  },
+  "vastaaja": {
+    "title": "Vastaaja",
+    "subtitle": "Älykäs puhelinvastaaja",
+    "description": "Rascal AI Vastaaja vastaa puheluihin, kun et ehdi tai halua vastata itse. Tekoäly hoitaa asiakaspalvelua, varaa aikoja ja kerää tärkeät tiedot.",
+    "features": {
+      "calls": {
+        "title": "Automaattinen vastaus",
+        "description": "Vastaaja vastaa puheluihin automaattisesti ja käsittelee asiakkaiden yhteydenotot ammattimaisesti."
+      },
+      "messages": {
+        "title": "Viestien käsittely",
+        "description": "Tallentaa viestit ja tärkeät tiedot, jotta voit käsitellä ne myöhemmin."
+      },
+      "schedule": {
+        "title": "Aikataulutus",
+        "description": "Varaa tapaamisia ja hallitse kalenteriasi automaattisesti."
+      },
+      "analytics": {
+        "title": "Tilastot",
+        "description": "Seuraa puheluja, viestejä ja asiakaspalvelun laatua."
+      }
+    },
+    "actions": {
+      "configure": "Määritä vastaaja",
+      "test": "Testaa vastaajaa"
+    }
   }
 }

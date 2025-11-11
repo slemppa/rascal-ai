@@ -867,9 +867,9 @@ export default function ContentStrategyPage() {
                 <div style={{ flex: 1 }}>
                   {companySummary && companySummary.length > 0 ? (
                     <>
-                      <p style={{ margin: 0, color: '#374151', lineHeight: 1.6, fontSize: 14, whiteSpace: 'pre-line' }}>
+                      <div className="strategy-text">
                         {companySummary}
-                      </p>
+                      </div>
                       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
                         <button 
                           style={{
@@ -977,13 +977,9 @@ export default function ContentStrategyPage() {
                 <div style={{ flex: 1 }}>
                   {icpSummary && icpSummary.length > 0 ? (
                     <>
-                      {icpSummary.map((summary, index) => (
-                        <div key={index} style={{ 
-                          marginBottom: 12 
-                        }}>
-                          <p style={{ margin: 0, color: '#374151', lineHeight: 1.6, fontSize: 14 }}>{summary}</p>
-                        </div>
-                      ))}
+                      <div className="strategy-text">
+                        {icpSummary.map((summary) => `- ${summary}`).join('\n')}
+                      </div>
                       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
                         <button 
                           style={{
@@ -1096,13 +1092,9 @@ export default function ContentStrategyPage() {
                   <div style={{ flex: 1 }}>
                     {kpiData && kpiData.length > 0 ? (
                       <>
-                        {kpiData.map((kpi, index) => (
-                          <div key={index} style={{ 
-                            marginBottom: 12 
-                          }}>
-                            <p style={{ margin: 0, color: '#374151', lineHeight: 1.6, fontSize: 14 }}>{kpi}</p>
-                          </div>
-                        ))}
+                        <div className="strategy-text">
+                          {kpiData.map((kpi) => `- ${kpi}`).join('\n')}
+                        </div>
                         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
                           <button 
                             style={{
@@ -1213,9 +1205,9 @@ export default function ContentStrategyPage() {
                 <div style={{ flex: 1 }}>
                   {tov && tov.length > 0 ? (
                     <>
-                      <p style={{ margin: 0, color: '#374151', lineHeight: 1.6, fontSize: 14, whiteSpace: 'pre-line' }}>
+                      <div className="strategy-text">
                         {tov}
-                      </p>
+                      </div>
                       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
                         <button 
                           style={{
@@ -1352,13 +1344,9 @@ export default function ContentStrategyPage() {
                     </div>
                     
                     <div style={{ flex: 1 }}>
-                      <div style={{ 
-                        fontSize: 15, 
-                        lineHeight: 1.6, 
-                        color: '#374151', 
-                        whiteSpace: 'pre-line',
-                        marginBottom: 16
-                      }}>
+                      <div
+                        className="strategy-text"
+                      >
                         {item.strategy || item.Strategy}
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

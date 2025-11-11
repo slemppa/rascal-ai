@@ -586,6 +586,35 @@ export default function VastaajaPage() {
                             Tarvitsetko apua? Ota yhteyttä tukeen ja kerro, mitä vaihetta haluat tarkentaa.
                           </p>
                         </div>
+                        <div className="settings-section">
+                          <h3>Poista vastaaja käytöstä</h3>
+                          <p className="settings-text">
+                            Kun haluat purkaa soitonsiirron ja kytkeä vastaajan pois päältä, toimi näin:
+                          </p>
+                          <ol className="settings-instructions list-numbered">
+                            <li>
+                              <p className="settings-text">
+                                Avaa puhelimessa valintanäppäimistö ja anna seuraava koodi, joka poistaa kaikki siirrot:
+                              </p>
+                              <div className="settings-code">
+                                ##004#
+                              </div>
+                            </li>
+                            <li>
+                              <p className="settings-text">
+                                Paina <strong>soita</strong> ja odota vahvistusta.
+                              </p>
+                            </li>
+                            <li>
+                              <p className="settings-text">
+                                Soita lopuksi omaan numeroosi varmistaaksesi, että puhelut ohjautuvat suoraan sinulle.
+                              </p>
+                            </li>
+                          </ol>
+                          <p className="settings-text">
+                            Kun haluat ottaa vastaajan uudelleen käyttöön, noudata yllä olevia käyttöönoton ohjeita.
+                          </p>
+                        </div>
                       </>
                   </>
                 )}

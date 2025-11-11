@@ -603,7 +603,7 @@ export default function AdminPage() {
                                   const verticalPadding = 24 // popover padding yhteensä
                                   const spaceBelow = window.innerHeight - rect.bottom
                                   const spaceAbove = rect.top
-                                  const placeUp = spaceBelow < 320 && spaceAbove > spaceBelow
+                                  const placeUp = spaceAbove > spaceBelow
                                   setFeaturesPlacement(prev => ({ ...prev, [user.id]: placeUp ? 'up' : 'down' }))
                                   const availableSpace = placeUp ? spaceAbove - verticalPadding : spaceBelow - verticalPadding
                                   const maxH = Math.max(160, Math.min(availableSpace, 420))

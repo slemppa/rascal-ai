@@ -601,12 +601,12 @@ export default function AdminPage() {
                                 onClick={(e) => {
                                   const rect = e.currentTarget.getBoundingClientRect()
                                   const verticalPadding = 24 // popover padding yhteensä
-                                  const desiredHeight = 260 + verticalPadding
                                   const spaceBelow = window.innerHeight - rect.bottom
                                   const spaceAbove = rect.top
-                                  const placeUp = spaceBelow < desiredHeight && spaceAbove > spaceBelow
+                                  const placeUp = spaceBelow < 320 && spaceAbove > spaceBelow
                                   setFeaturesPlacement(prev => ({ ...prev, [user.id]: placeUp ? 'up' : 'down' }))
-                                  const maxH = placeUp ? Math.max(160, Math.min(260, spaceAbove - 24)) : Math.max(160, Math.min(260, spaceBelow - 24))
+                                  const availableSpace = placeUp ? spaceAbove - verticalPadding : spaceBelow - verticalPadding
+                                  const maxH = Math.max(160, Math.min(availableSpace, 420))
                                   setFeaturesMaxHeight(prev => ({ ...prev, [user.id]: maxH }))
                                   setFeaturesOpen(prev => ({ ...prev, [user.id]: !prev[user.id] }))
                                 }}

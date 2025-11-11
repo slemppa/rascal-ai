@@ -612,7 +612,7 @@ export default function AdminPage() {
                                 }}
                               >Näytä</button>
                               <div className="feature-popover" style={{ display: featuresOpen[user.id] ? 'block' : 'none', position: 'absolute', [featuresPlacement[user.id] === 'up' ? 'bottom' : 'top']: 36, left: 0, background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 12, boxShadow: '0 12px 30px rgba(0,0,0,0.12)', zIndex: 1000, minWidth: 260 }}>
-                                <div style={{ display: 'grid', gap: 10, maxHeight: featuresMaxHeight[user.id] || 260, overflow: 'auto', paddingRight: 4 }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: featuresMaxHeight[user.id] || 300, overflowY: 'auto', paddingRight: 4 }}>
                                   {KNOWN_FEATURES.map(f => {
                                     const enabled = (Array.isArray(user.features) ? user.features : []).includes(f)
                                     const featureLabel = f === 'Voicemail' ? 'Vastaaja' : f

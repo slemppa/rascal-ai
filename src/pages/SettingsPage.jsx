@@ -214,20 +214,46 @@ export default function SettingsPage() {
       // Päivitä käyttäjätiedot - hae uudet tiedot
       const refreshUserData = async () => {
         if (user?.id) {
-          // Päivitä Auth-konteksti
-          const { data: authData } = await supabase.auth.getUser()
-          if (authData?.user) {
-            console.log('Email changed successfully:', authData.user.email)
-          }
-          // Päivitä käyttäjäprofiili
-          const { data: profileData } = await supabase
-            .from('users')
-            .select('*')
-            .eq('auth_user_id', user.id)
-            .single()
-          
-          if (profileData) {
-            setUserProfile(profileData)
+          try {
+            // Hae uusi sähköpostiosoite Supabase Authista
+            const { data: authData, error: authError } = await supabase.auth.getUser()
+            if (authError) {
+              console.error('Error fetching auth user:', authError)
+              return
+            }
+            
+            if (authData?.user?.email) {
+              const newEmail = authData.user.email
+              console.log('Email changed successfully:', newEmail)
+              
+              // Päivitä users.contact_email kenttä uuteen sähköpostiosoitteeseen
+              const { error: updateError } = await supabase
+                .from('users')
+                .update({ 
+                  contact_email: newEmail,
+                  updated_at: new Date().toISOString()
+                })
+                .eq('auth_user_id', user.id)
+              
+              if (updateError) {
+                console.error('Error updating contact_email:', updateError)
+              }
+            }
+            
+            // Päivitä käyttäjäprofiili
+            const { data: profileData, error: profileError } = await supabase
+              .from('users')
+              .select('*')
+              .eq('auth_user_id', user.id)
+              .single()
+            
+            if (profileError) {
+              console.error('Error fetching user profile:', profileError)
+            } else if (profileData) {
+              setUserProfile(profileData)
+            }
+          } catch (error) {
+            console.error('Error refreshing user data:', error)
           }
         }
       }

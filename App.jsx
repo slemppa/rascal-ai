@@ -40,6 +40,7 @@ import SegmentDetailPage from './src/pages/SegmentDetailPage'
 import AccountManagerPage from './src/pages/AccountManagerPage'
 import LeadMagnetPage from './src/pages/LeadMagnetPage'
 import VastaajaPage from './src/pages/VastaajaPage'
+import LeadScrapingPage from './src/pages/LeadScrapingPage'
 
 // ConditionalChatbotWidget komponentti - ei tarvita enää
 function ConditionalChatbotWidget() {
@@ -315,6 +316,18 @@ export default function App() {
                       <MobileNavigation />
                       <div className="main-content">
                         <VastaajaPage />
+                      </div>
+                    </div>
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/lead-scraping" element={
+                  <ProtectedRoute>
+                    <div className="app-layout">
+                      <Sidebar />
+                      <MobileNavigation />
+                      <div className="main-content">
+                        <LeadScrapingPage />
                       </div>
                     </div>
                   </ProtectedRoute>

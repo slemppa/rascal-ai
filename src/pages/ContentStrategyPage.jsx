@@ -1089,48 +1089,43 @@ export default function ContentStrategyPage() {
             {console.log('Rendering strategies:', strategy.length, strategy)}
             {Array.isArray(strategy) && strategy.length > 0 ? strategy
               .sort((a, b) => {
-                // Järjestä uusimmasta vanhimmaksi
-                const dateA = new Date(a.created_at || a.createdTime || 0)
-                const dateB = new Date(b.created_at || b.createdTime || 0)
-                const timeA = dateA.getTime()
-                const timeB = dateB.getTime()
-
-                // Päivämäärä ensin: uusin ensin, puuttuva päivämäärä tulkitaan vanhimmaksi
-                if (timeA && timeB) return timeB - timeA
-                if (timeA && !timeB) return -1
-                if (!timeA && timeB) return 1
+                // Backend järjestää created_at mukaan, mutta varmistetaan oikea järjestys
+                // kuukauden nimen mukaan (englanniksi, kuten tietokannassa)
+                const monthA = (a.month || a.Month || '').toLowerCase().trim()
+                const monthB = (b.month || b.Month || '').toLowerCase().trim()
                 
-                // Muuten järjestä kuukauden mukaan (uusimmasta vanhimmaksi)
-                const monthA = a.month || a.Month || ''
-                const monthB = b.month || b.Month || ''
-                
-                console.log('Sorting by month:', { monthA, monthB })
-                
-                // Käännä kuukaudet suomeksi vertailua varten
-                const translatedMonthA = translateMonth(monthA)
-                const translatedMonthB = translateMonth(monthB)
-                
-                // Kuukausien järjestys (uusimmasta vanhimmaksi)
+                // Kuukausien järjestys englanniksi (uusimmasta vanhimmaksi) - indeksi 0 = uusin
                 const monthOrder = [
-                  'joulukuu', 'marraskuu', 'lokakuu', 'syyskuu', 'elokuu', 'heinäkuu',
-                  'kesäkuu', 'toukokuu', 'huhtikuu', 'maaliskuu', 'helmikuu', 'tammikuu'
+                  'december', 'november', 'october', 'september', 'august', 'july',
+                  'june', 'may', 'april', 'march', 'february', 'january'
                 ]
                 
-                const indexA = monthOrder.findIndex(month => 
-                  translatedMonthA.toLowerCase().includes(month.toLowerCase()) || 
-                  month.toLowerCase().includes(translatedMonthA.toLowerCase())
-                )
-                const indexB = monthOrder.findIndex(month => 
-                  translatedMonthB.toLowerCase().includes(month.toLowerCase()) || 
-                  month.toLowerCase().includes(translatedMonthB.toLowerCase())
-                )
-                
-                console.log('Month indices:', { indexA, indexB, monthA, monthB, translatedMonthA, translatedMonthB })
-                
-                // Jos kuukausi löytyi, käytä sitä, muuten säilytä järjestys
-                if (indexA !== -1 && indexB !== -1) {
-                  return indexA - indexB
+                // Etsi indeksi kuukauden nimen perusteella
+                const findMonthIndex = (monthName) => {
+                  if (!monthName) return -1
+                  return monthOrder.findIndex(month => {
+                    const monthLower = month.toLowerCase()
+                    const nameLower = monthName.toLowerCase()
+                    // Tarkka täsmäys
+                    if (monthLower === nameLower) return true
+                    // Sisältää-vertailu (jos kuukausi on esim. "november 2024")
+                    if (nameLower.includes(monthLower) || monthLower.includes(nameLower)) return true
+                    return false
+                  })
                 }
+                
+                const indexA = findMonthIndex(monthA)
+                const indexB = findMonthIndex(monthB)
+                
+                // Jos kuukausi löytyi, käytä sitä (pienempi indeksi = uudempi kuukausi)
+                // Koska monthOrder on jo uusimmasta vanhimpaan, pienempi indeksi tarkoittaa uudempaa
+                if (indexA !== -1 && indexB !== -1) {
+                  return indexA - indexB // Pienempi indeksi ensin = uusin ensin
+                }
+                
+                // Jos toinen löytyi mutta toinen ei, löytynyt menee ensin
+                if (indexA !== -1 && indexB === -1) return -1
+                if (indexA === -1 && indexB !== -1) return 1
                 
                 return 0
               })

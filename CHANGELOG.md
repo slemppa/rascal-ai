@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.84.2](https://github.com/slemppa/rascal-ai/compare/v1.84.1...v1.84.2) (2025-11-12)
+
+
+### 🐛 Bug Fixes
+
+* **settings:** päivitä contact_email sähköpostin vaihdon jälkeen ([cc8164f](https://github.com/slemppa/rascal-ai/commit/cc8164f431d48d51a446e305be4fd936ce5f32b3))
+
 ### [1.84.1](https://github.com/slemppa/rascal-ai/compare/v1.84.0...v1.84.1) (2025-11-12)
 
 

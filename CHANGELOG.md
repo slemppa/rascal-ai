@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.84.3](https://github.com/slemppa/rascal-ai/compare/v1.84.2...v1.84.3) (2025-11-12)
+
+
+### ♻️ Code Refactoring
+
+* yksittäinen puhelu yhdeksi sivumaiseksi + SMS-asetukset ([caacf5a](https://github.com/slemppa/rascal-ai/commit/caacf5a86d3278504fa6c034e5c1d98337c1d223))
+
 ### [1.84.2](https://github.com/slemppa/rascal-ai/compare/v1.84.1...v1.84.2) (2025-11-12)
 
 

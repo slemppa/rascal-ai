@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.84.1](https://github.com/slemppa/rascal-ai/compare/v1.84.0...v1.84.1) (2025-11-12)
+
+
+### ♻️ Code Refactoring
+
+* **settings:** siisti Avatar ja Ääniklooni, korjaa email-vaihto ([b5a181c](https://github.com/slemppa/rascal-ai/commit/b5a181cc0ca10b1effb2054ef2545c83cf5841b0))
+
 ## [1.84.0](https://github.com/slemppa/rascal-ai/compare/v1.83.0...v1.84.0) (2025-11-10)
 
 

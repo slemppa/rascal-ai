@@ -84,6 +84,14 @@ export default function ContentStrategyPage() {
   const [editingTov, setEditingTov] = useState(false)
   const [tovEditText, setTovEditText] = useState('')
   const [toast, setToast] = useState({ visible: false, message: '' })
+  const [viewingCompanySummary, setViewingCompanySummary] = useState(false)
+  const [viewingIcp, setViewingIcp] = useState(false)
+  const [viewingKpi, setViewingKpi] = useState(false)
+  const [viewingTov, setViewingTov] = useState(false)
+  const [editingCompanySummaryModal, setEditingCompanySummaryModal] = useState(false)
+  const [editingIcpModal, setEditingIcpModal] = useState(false)
+  const [editingKpiModal, setEditingKpiModal] = useState(false)
+  const [editingTovModal, setEditingTovModal] = useState(false)
 
   const [companyId, setCompanyId] = useState(null)
   const textareaRef = React.useRef(null)
@@ -231,19 +239,41 @@ export default function ContentStrategyPage() {
   // ESC-näppäimen tuki modaalin sulkemiseen
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === 'Escape' && editId) {
-        handleCancel()
+      if (event.key === 'Escape') {
+        if (editId) {
+          handleCancel()
+        } else if (editingCompanySummaryModal) {
+          setEditingCompanySummaryModal(false)
+          setCompanySummaryEditText(companySummary)
+        } else if (editingIcpModal) {
+          setEditingIcpModal(false)
+          setIcpEditText(icpSummary.join('\n'))
+        } else if (editingKpiModal) {
+          setEditingKpiModal(false)
+          setKpiEditText(kpiData.join('\n'))
+        } else if (editingTovModal) {
+          setEditingTovModal(false)
+          setTovEditText(tov)
+        } else if (viewingCompanySummary) {
+          setViewingCompanySummary(false)
+        } else if (viewingIcp) {
+          setViewingIcp(false)
+        } else if (viewingKpi) {
+          setViewingKpi(false)
+        } else if (viewingTov) {
+          setViewingTov(false)
+        }
       }
     }
 
-    if (editId) {
+    if (editId || editingCompanySummaryModal || editingIcpModal || editingKpiModal || editingTovModal || viewingCompanySummary || viewingIcp || viewingKpi || viewingTov) {
       document.addEventListener('keydown', handleKeyDown)
     }
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [editId])
+  }, [editId, editingCompanySummaryModal, editingIcpModal, editingKpiModal, editingTovModal, viewingCompanySummary, viewingIcp, viewingKpi, viewingTov, companySummary, icpSummary, kpiData, tov])
 
   const handleEdit = (item) => {
     setEditId(item.id)
@@ -809,177 +839,16 @@ export default function ContentStrategyPage() {
             {/* Yritysanalyysi-kortti */}
             <div className="strategy-card">
               <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>Yritysanalyysi</div>
-              {editingCompanySummary ? (
-                <div style={{ flex: 1 }}>
-                  <textarea
-                    ref={companySummaryTextareaRef}
-                    value={companySummaryEditText}
-                    onChange={e => setCompanySummaryEditText(e.target.value)}
-                    className="company-summary-textarea"
-                    style={{
-                      width: '100%',
-                      minHeight: 120,
-                      padding: 12,
-                      border: '2px solid #e5e7eb',
-                      borderRadius: 8,
-                      fontSize: 14,
-                      lineHeight: 1.6,
-                      fontFamily: 'inherit',
-                      background: '#f9fafb',
-                      boxSizing: 'border-box'
-                    }}
-                    placeholder="Kirjoita yrityksen analyysi..."
-                  />
-                  <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
-                    <button 
-                      style={{
-                        background: '#22c55e',
-                        color: '#ffffff',
-                        border: 'none',
-                        borderRadius: 8,
-                        padding: '8px 16px',
-                        fontSize: 14,
-                        fontWeight: 600,
-                        cursor: 'pointer'
-                      }}
-                      onClick={handleSaveCompanySummary}
+              <div style={{ flex: 1 }}>
+                {companySummary && companySummary.length > 0 ? (
+                  <>
+                    <div 
+                      className="strategy-text"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => setViewingCompanySummary(true)}
                     >
-                      {t('strategy.buttons.save')}
-                    </button>
-                    <button 
-                      style={{
-                        background: '#6b7280',
-                        color: '#ffffff',
-                        border: 'none',
-                        borderRadius: 8,
-                        padding: '8px 16px',
-                        fontSize: 14,
-                        fontWeight: 600,
-                        cursor: 'pointer'
-                      }}
-                      onClick={handleCancelCompanySummary}
-                    >
-                      {t('strategy.buttons.cancel')}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ flex: 1 }}>
-                  {companySummary && companySummary.length > 0 ? (
-                    <>
-                      <div className="strategy-text">
-                        {companySummary}
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
-                        <button 
-                          style={{
-                            background: '#22c55e',
-                            color: '#ffffff',
-                            border: 'none',
-                            borderRadius: 8,
-                            padding: '8px 16px',
-                            fontSize: 14,
-                            fontWeight: 600,
-                            cursor: 'pointer'
-                          }}
-                          onClick={handleEditCompanySummary}
-                        >
-                          Muokkaa
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
-                      <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Yritysanalyysi puuttuu. Lisää yrityksen kuvaus aloittaaksesi.</p>
-                      <button 
-                        style={{
-                          background: '#22c55e',
-                          color: '#ffffff',
-                          border: 'none',
-                          borderRadius: 8,
-                          padding: '8px 16px',
-                          fontSize: 14,
-                          fontWeight: 600,
-                          cursor: 'pointer'
-                        }}
-                        onClick={() => {
-                          setEditingCompanySummary(true)
-                          setCompanySummaryEditText('')
-                        }}
-                      >
-                        Luo yritysanalyysi
-                      </button>
+                      {companySummary}
                     </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Kohderyhmä-kortti */}
-            <div className="strategy-card">
-              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>{t('strategy.icp.title')}</div>
-              
-              {editingIcp ? (
-                <div style={{ flex: 1 }}>
-                  <textarea
-                    ref={icpTextareaRef}
-                    value={icpEditText}
-                    onChange={e => setIcpEditText(e.target.value)}
-                    className="icp-textarea"
-                    style={{
-                      width: '100%',
-                      minHeight: 120,
-                      padding: 12,
-                      border: '2px solid #e5e7eb',
-                      borderRadius: 8,
-                      fontSize: 14,
-                      lineHeight: 1.6,
-                      fontFamily: 'inherit',
-                      background: '#f9fafb',
-                      boxSizing: 'border-box'
-                    }}
-                    placeholder={t('strategy.icp.placeholder')}
-                  />
-                  <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
-                    <button 
-                      style={{
-                        background: '#22c55e',
-                        color: '#ffffff',
-                        border: 'none',
-                        borderRadius: 8,
-                        padding: '8px 16px',
-                        fontSize: 14,
-                        fontWeight: 600,
-                        cursor: 'pointer'
-                      }}
-                      onClick={handleSaveIcp}
-                    >
-                      {t('strategy.buttons.save')}
-                    </button>
-                    <button 
-                      style={{
-                        background: '#6b7280',
-                        color: '#ffffff',
-                        border: 'none',
-                        borderRadius: 8,
-                        padding: '8px 16px',
-                        fontSize: 14,
-                        fontWeight: 600,
-                        cursor: 'pointer'
-                      }}
-                      onClick={handleCancelIcp}
-                    >
-                      {t('strategy.buttons.cancel')}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ flex: 1 }}>
-                  {icpSummary && icpSummary.length > 0 ? (
-                    <>
-                      <div className="strategy-text">
-                        {icpSummary.map((summary) => `- ${summary}`).join('\n')}
-                      </div>
                       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
                         <button 
                           style={{
@@ -993,39 +862,98 @@ export default function ContentStrategyPage() {
                             cursor: 'pointer'
                           }}
                           onClick={() => {
-                            setEditingIcp(true)
+                            setEditingCompanySummaryModal(true)
+                            setCompanySummaryEditText(companySummary)
+                          }}
+                        >
+                          Muokkaa
+                        </button>
+                      </div>
+                  </>
+                ) : (
+                  <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
+                    <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Yritysanalyysi puuttuu. Lisää yrityksen kuvaus aloittaaksesi.</p>
+                    <button 
+                      style={{
+                        background: '#22c55e',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '8px 16px',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => {
+                        setEditingCompanySummaryModal(true)
+                        setCompanySummaryEditText('')
+                      }}
+                    >
+                      Luo yritysanalyysi
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Kohderyhmä-kortti */}
+            <div className="strategy-card">
+              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>{t('strategy.icp.title')}</div>
+              <div style={{ flex: 1 }}>
+                {icpSummary && icpSummary.length > 0 ? (
+                  <>
+                    <div 
+                      className="strategy-text"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => setViewingIcp(true)}
+                    >
+                      {icpSummary.map((summary) => `- ${summary}`).join('\n')}
+                    </div>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+                        <button 
+                          style={{
+                            background: '#22c55e',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: 8,
+                            padding: '8px 16px',
+                            fontSize: 14,
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                          }}
+                          onClick={() => {
+                            setEditingIcpModal(true)
                             setIcpEditText(icpSummary.join('\n'))
                           }}
                         >
                           {t('strategy.icp.edit')}
                         </button>
                       </div>
-                    </>
-                  ) : (
-                    <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
-                      <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>{t('strategy.icp.empty')}</p>
-                      <button 
-                        style={{
-                          background: '#22c55e',
-                          color: '#ffffff',
-                          border: 'none',
-                          borderRadius: 8,
-                          padding: '8px 16px',
-                          fontSize: 14,
-                          fontWeight: 600,
-                          cursor: 'pointer'
-                        }}
-                        onClick={() => {
-                          setEditingIcp(true)
-                          setIcpEditText('')
-                        }}
-                      >
-                        {t('strategy.icp.create')}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
+                  </>
+                ) : (
+                  <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
+                    <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>{t('strategy.icp.empty')}</p>
+                    <button 
+                      style={{
+                        background: '#22c55e',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '8px 16px',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => {
+                        setEditingIcpModal(true)
+                        setIcpEditText('')
+                      }}
+                    >
+                      {t('strategy.icp.create')}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             
@@ -1033,68 +961,16 @@ export default function ContentStrategyPage() {
             {/* Tavoitteet-kortti */}
             <div className="strategy-card">
               <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>{t('strategy.kpi.title')}</div>
-                
-              {editingKpi ? (
-                  <div style={{ flex: 1 }}>
-                    <textarea
-                      ref={kpiTextareaRef}
-                      value={kpiEditText}
-                      onChange={e => setKpiEditText(e.target.value)}
-                      className="kpi-textarea"
-                      style={{
-                        width: '100%',
-                        minHeight: 120,
-                        padding: 12,
-                        border: '2px solid #e5e7eb',
-                        borderRadius: 8,
-                        fontSize: 14,
-                        lineHeight: 1.6,
-                        fontFamily: 'inherit',
-                        background: '#f9fafb',
-                        boxSizing: 'border-box'
-                      }}
-                      placeholder={t('strategy.kpi.placeholder')}
-                    />
-                    <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
-                      <button 
-                        style={{
-                          background: '#22c55e',
-                          color: '#ffffff',
-                          border: 'none',
-                          borderRadius: 8,
-                          padding: '8px 16px',
-                          fontSize: 14,
-                          fontWeight: 600,
-                          cursor: 'pointer'
-                        }}
-                        onClick={handleSaveKpi}
-                      >
-                        {t('strategy.buttons.save')}
-                      </button>
-                      <button 
-                        style={{
-                          background: '#6b7280',
-                          color: '#ffffff',
-                          border: 'none',
-                          borderRadius: 8,
-                          padding: '8px 16px',
-                          fontSize: 14,
-                          fontWeight: 600,
-                          cursor: 'pointer'
-                        }}
-                        onClick={handleCancelKpi}
-                      >
-                        {t('strategy.buttons.cancel')}
-                      </button>
+              <div style={{ flex: 1 }}>
+                {kpiData && kpiData.length > 0 ? (
+                  <>
+                    <div 
+                      className="strategy-text"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => setViewingKpi(true)}
+                    >
+                      {kpiData.map((kpi) => `- ${kpi}`).join('\n')}
                     </div>
-                  </div>
-                ) : (
-                  <div style={{ flex: 1 }}>
-                    {kpiData && kpiData.length > 0 ? (
-                      <>
-                        <div className="strategy-text">
-                          {kpiData.map((kpi) => `- ${kpi}`).join('\n')}
-                        </div>
                         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
                           <button 
                             style={{
@@ -1108,67 +984,17 @@ export default function ContentStrategyPage() {
                               cursor: 'pointer'
                             }}
                             onClick={() => {
-                              setEditingKpi(true)
+                              setEditingKpiModal(true)
                               setKpiEditText(kpiData.join('\n'))
                             }}
                           >
                             {t('strategy.kpi.edit')}
                           </button>
                         </div>
-                      </>
-                    ) : (
-                      <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
-                        <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>{t('strategy.kpi.empty')}</p>
-                        <button 
-                          style={{
-                            background: '#22c55e',
-                            color: '#ffffff',
-                            border: 'none',
-                            borderRadius: 8,
-                            padding: '8px 16px',
-                            fontSize: 14,
-                            fontWeight: 600,
-                            cursor: 'pointer'
-                          }}
-                          onClick={() => {
-                            setEditingKpi(true)
-                            setKpiEditText('')
-                          }}
-                        >
-                          {t('strategy.kpi.create')}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-            {/* TOV-kortti */}
-            <div className="strategy-card">
-              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🎤 Äänenlaatu & TOV</div>
-              
-              {editingTov ? (
-                <div style={{ flex: 1 }}>
-                  <textarea
-                    ref={tovTextareaRef}
-                    value={tovEditText}
-                    onChange={e => setTovEditText(e.target.value)}
-                    className="tov-textarea"
-                    style={{
-                      width: '100%',
-                      minHeight: 120,
-                      padding: 12,
-                      border: '2px solid #e5e7eb',
-                      borderRadius: 8,
-                      fontSize: 14,
-                      lineHeight: 1.6,
-                      fontFamily: 'inherit',
-                      background: '#f9fafb',
-                      boxSizing: 'border-box'
-                    }}
-                    placeholder="Kuvaile yrityksen äänenlaatu ja TOV (Tone of Voice)..."
-                  />
-                  <div style={{ display: 'flex', gap: 12, marginTop: 16, justifyContent: 'flex-end' }}>
+                  </>
+                ) : (
+                  <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
+                    <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>{t('strategy.kpi.empty')}</p>
                     <button 
                       style={{
                         background: '#22c55e',
@@ -1180,34 +1006,31 @@ export default function ContentStrategyPage() {
                         fontWeight: 600,
                         cursor: 'pointer'
                       }}
-                      onClick={handleSaveTov}
-                    >
-                      {t('strategy.buttons.save')}
-                    </button>
-                    <button 
-                      style={{
-                        background: '#6b7280',
-                        color: '#ffffff',
-                        border: 'none',
-                        borderRadius: 8,
-                        padding: '8px 16px',
-                        fontSize: 14,
-                        fontWeight: 600,
-                        cursor: 'pointer'
+                      onClick={() => {
+                        setEditingKpiModal(true)
+                        setKpiEditText('')
                       }}
-                      onClick={handleCancelTov}
                     >
-                      {t('strategy.buttons.cancel')}
+                      {t('strategy.kpi.create')}
                     </button>
                   </div>
-                </div>
-              ) : (
-                <div style={{ flex: 1 }}>
-                  {tov && tov.length > 0 ? (
-                    <>
-                      <div className="strategy-text">
-                        {tov}
-                      </div>
+                )}
+              </div>
+            </div>
+
+            {/* TOV-kortti */}
+            <div className="strategy-card">
+              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🎤 Äänenlaatu & TOV</div>
+              <div style={{ flex: 1 }}>
+                {tov && tov.length > 0 ? (
+                  <>
+                    <div 
+                      className="strategy-text"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => setViewingTov(true)}
+                    >
+                      {tov}
+                    </div>
                       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
                         <button 
                           style={{
@@ -1220,37 +1043,39 @@ export default function ContentStrategyPage() {
                             fontWeight: 600,
                             cursor: 'pointer'
                           }}
-                          onClick={handleEditTov}
+                          onClick={() => {
+                            setEditingTovModal(true)
+                            setTovEditText(tov)
+                          }}
                         >
                           Muokkaa
                         </button>
                       </div>
-                    </>
-                  ) : (
-                    <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
-                      <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Äänenlaatu ja TOV puuttuu. Lisää yrityksen äänenlaatu aloittaaksesi.</p>
-                      <button 
-                        style={{
-                          background: '#22c55e',
-                          color: '#ffffff',
-                          border: 'none',
-                          borderRadius: 8,
-                          padding: '8px 16px',
-                          fontSize: 14,
-                          fontWeight: 600,
-                          cursor: 'pointer'
-                        }}
-                        onClick={() => {
-                          setEditingTov(true)
-                          setTovEditText('')
-                        }}
-                      >
-                        Luo TOV-kuvaus
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
+                  </>
+                ) : (
+                  <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
+                    <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Äänenlaatu ja TOV puuttuu. Lisää yrityksen äänenlaatu aloittaaksesi.</p>
+                    <button 
+                      style={{
+                        background: '#22c55e',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '8px 16px',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => {
+                        setEditingTovModal(true)
+                        setTovEditText('')
+                      }}
+                    >
+                      Luo TOV-kuvaus
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -1622,6 +1447,1086 @@ export default function ContentStrategyPage() {
                 onMouseOver={(e) => e.target.style.background = '#4b5563'}
                 onMouseOut={(e) => e.target.style.background = '#6b7280'}
                 onClick={handleCancel}
+              >
+                {t('strategy.buttons.cancel')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Yritysanalyysi-näyttömodaali */}
+      {viewingCompanySummary && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '20px'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setViewingCompanySummary(false)
+            }
+          }}
+        >
+          <div 
+            style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              padding: '24px',
+              maxWidth: '800px',
+              width: '100%',
+              maxHeight: '80vh',
+              overflow: 'auto',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '20px' 
+            }}>
+              <h3 style={{ 
+                margin: 0, 
+                fontSize: '20px', 
+                fontWeight: '700', 
+                color: '#374151' 
+              }}>
+                Yritysanalyysi
+              </h3>
+              <button
+                onClick={() => setViewingCompanySummary(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                  padding: '4px',
+                  borderRadius: '4px'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#f3f4f6'}
+                onMouseOut={(e) => e.target.style.background = 'none'}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div style={{
+              fontSize: '16px',
+              lineHeight: '1.7',
+              color: '#374151',
+              whiteSpace: 'pre-line',
+              marginBottom: '20px'
+            }}>
+              {companySummary}
+            </div>
+            
+            <div style={{ 
+              display: 'flex', 
+              gap: '12px', 
+              marginTop: '20px', 
+              justifyContent: 'flex-end' 
+            }}>
+              <button 
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#16a34a'}
+                onMouseOut={(e) => e.target.style.background = '#22c55e'}
+                onClick={() => {
+                  setViewingCompanySummary(false)
+                  setEditingCompanySummaryModal(true)
+                  setCompanySummaryEditText(companySummary)
+                }}
+              >
+                Muokkaa
+              </button>
+              <button 
+                style={{
+                  background: '#6b7280',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#4b5563'}
+                onMouseOut={(e) => e.target.style.background = '#6b7280'}
+                onClick={() => setViewingCompanySummary(false)}
+              >
+                Sulje
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Kohderyhmä-näyttömodaali */}
+      {viewingIcp && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '20px'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setViewingIcp(false)
+            }
+          }}
+        >
+          <div 
+            style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              padding: '24px',
+              maxWidth: '800px',
+              width: '100%',
+              maxHeight: '80vh',
+              overflow: 'auto',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '20px' 
+            }}>
+              <h3 style={{ 
+                margin: 0, 
+                fontSize: '20px', 
+                fontWeight: '700', 
+                color: '#374151' 
+              }}>
+                {t('strategy.icp.title')}
+              </h3>
+              <button
+                onClick={() => setViewingIcp(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                  padding: '4px',
+                  borderRadius: '4px'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#f3f4f6'}
+                onMouseOut={(e) => e.target.style.background = 'none'}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div style={{
+              fontSize: '16px',
+              lineHeight: '1.7',
+              color: '#374151',
+              whiteSpace: 'pre-line',
+              marginBottom: '20px'
+            }}>
+              {icpSummary.map((summary, index) => (
+                <div key={index} style={{ marginBottom: '12px' }}>
+                  <strong>- {summary}</strong>
+                </div>
+              ))}
+            </div>
+            
+            <div style={{ 
+              display: 'flex', 
+              gap: '12px', 
+              marginTop: '20px', 
+              justifyContent: 'flex-end' 
+            }}>
+              <button 
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#16a34a'}
+                onMouseOut={(e) => e.target.style.background = '#22c55e'}
+                onClick={() => {
+                  setViewingIcp(false)
+                  setEditingIcpModal(true)
+                  setIcpEditText(icpSummary.join('\n'))
+                }}
+              >
+                {t('strategy.icp.edit')}
+              </button>
+              <button 
+                style={{
+                  background: '#6b7280',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#4b5563'}
+                onMouseOut={(e) => e.target.style.background = '#6b7280'}
+                onClick={() => setViewingIcp(false)}
+              >
+                Sulje
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tavoitteet-näyttömodaali */}
+      {viewingKpi && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '20px'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setViewingKpi(false)
+            }
+          }}
+        >
+          <div 
+            style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              padding: '24px',
+              maxWidth: '800px',
+              width: '100%',
+              maxHeight: '80vh',
+              overflow: 'auto',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '20px' 
+            }}>
+              <h3 style={{ 
+                margin: 0, 
+                fontSize: '20px', 
+                fontWeight: '700', 
+                color: '#374151' 
+              }}>
+                {t('strategy.kpi.title')}
+              </h3>
+              <button
+                onClick={() => setViewingKpi(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                  padding: '4px',
+                  borderRadius: '4px'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#f3f4f6'}
+                onMouseOut={(e) => e.target.style.background = 'none'}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div style={{
+              fontSize: '16px',
+              lineHeight: '1.7',
+              color: '#374151',
+              whiteSpace: 'pre-line',
+              marginBottom: '20px'
+            }}>
+              {kpiData.map((kpi, index) => (
+                <div key={index} style={{ marginBottom: '12px' }}>
+                  <strong>- {kpi}</strong>
+                </div>
+              ))}
+            </div>
+            
+            <div style={{ 
+              display: 'flex', 
+              gap: '12px', 
+              marginTop: '20px', 
+              justifyContent: 'flex-end' 
+            }}>
+              <button 
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#16a34a'}
+                onMouseOut={(e) => e.target.style.background = '#22c55e'}
+                onClick={() => {
+                  setViewingKpi(false)
+                  setEditingKpiModal(true)
+                  setKpiEditText(kpiData.join('\n'))
+                }}
+              >
+                {t('strategy.kpi.edit')}
+              </button>
+              <button 
+                style={{
+                  background: '#6b7280',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#4b5563'}
+                onMouseOut={(e) => e.target.style.background = '#6b7280'}
+                onClick={() => setViewingKpi(false)}
+              >
+                Sulje
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TOV-näyttömodaali */}
+      {viewingTov && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '20px'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setViewingTov(false)
+            }
+          }}
+        >
+          <div 
+            style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              padding: '24px',
+              maxWidth: '800px',
+              width: '100%',
+              maxHeight: '80vh',
+              overflow: 'auto',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '20px' 
+            }}>
+              <h3 style={{ 
+                margin: 0, 
+                fontSize: '20px', 
+                fontWeight: '700', 
+                color: '#374151' 
+              }}>
+                🎤 Äänenlaatu & TOV
+              </h3>
+              <button
+                onClick={() => setViewingTov(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                  padding: '4px',
+                  borderRadius: '4px'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#f3f4f6'}
+                onMouseOut={(e) => e.target.style.background = 'none'}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div style={{
+              fontSize: '16px',
+              lineHeight: '1.7',
+              color: '#374151',
+              whiteSpace: 'pre-line',
+              marginBottom: '20px'
+            }}>
+              {tov}
+            </div>
+            
+            <div style={{ 
+              display: 'flex', 
+              gap: '12px', 
+              marginTop: '20px', 
+              justifyContent: 'flex-end' 
+            }}>
+              <button 
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#16a34a'}
+                onMouseOut={(e) => e.target.style.background = '#22c55e'}
+                onClick={() => {
+                  setViewingTov(false)
+                  setEditingTovModal(true)
+                  setTovEditText(tov)
+                }}
+              >
+                Muokkaa
+              </button>
+              <button 
+                style={{
+                  background: '#6b7280',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#4b5563'}
+                onMouseOut={(e) => e.target.style.background = '#6b7280'}
+                onClick={() => setViewingTov(false)}
+              >
+                Sulje
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Yritysanalyysi-muokkaustilamodaali */}
+      {editingCompanySummaryModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '20px'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setEditingCompanySummaryModal(false)
+            }
+          }}
+        >
+          <div 
+            style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              padding: '24px',
+              maxWidth: '800px',
+              width: '100%',
+              maxHeight: '80vh',
+              overflow: 'auto',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '20px' 
+            }}>
+              <h3 style={{ 
+                margin: 0, 
+                fontSize: '20px', 
+                fontWeight: '700', 
+                color: '#374151' 
+              }}>
+                Muokkaa yritysanalyysiä
+              </h3>
+              <button
+                onClick={() => setEditingCompanySummaryModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                  padding: '4px',
+                  borderRadius: '4px'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#f3f4f6'}
+                onMouseOut={(e) => e.target.style.background = 'none'}
+              >
+                ×
+              </button>
+            </div>
+            
+            <textarea
+              ref={companySummaryTextareaRef}
+              value={companySummaryEditText}
+              onChange={e => setCompanySummaryEditText(e.target.value)}
+              style={{
+                width: '100%',
+                minHeight: '300px',
+                padding: '16px',
+                border: '2px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '16px',
+                lineHeight: '1.6',
+                fontFamily: 'inherit',
+                background: '#f9fafb',
+                boxSizing: 'border-box',
+                resize: 'vertical'
+              }}
+              placeholder="Kirjoita yrityksen analyysi..."
+            />
+            
+            <div style={{ 
+              display: 'flex', 
+              gap: '12px', 
+              marginTop: '20px', 
+              justifyContent: 'flex-end' 
+            }}>
+              <button 
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#16a34a'}
+                onMouseOut={(e) => e.target.style.background = '#22c55e'}
+                onClick={async () => {
+                  await handleSaveCompanySummary()
+                  setEditingCompanySummaryModal(false)
+                }}
+              >
+                {t('strategy.buttons.save')}
+              </button>
+              <button 
+                style={{
+                  background: '#6b7280',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#4b5563'}
+                onMouseOut={(e) => e.target.style.background = '#6b7280'}
+                onClick={() => {
+                  setEditingCompanySummaryModal(false)
+                  setCompanySummaryEditText(companySummary)
+                }}
+              >
+                {t('strategy.buttons.cancel')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Kohderyhmä-muokkaustilamodaali */}
+      {editingIcpModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '20px'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setEditingIcpModal(false)
+            }
+          }}
+        >
+          <div 
+            style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              padding: '24px',
+              maxWidth: '800px',
+              width: '100%',
+              maxHeight: '80vh',
+              overflow: 'auto',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '20px' 
+            }}>
+              <h3 style={{ 
+                margin: 0, 
+                fontSize: '20px', 
+                fontWeight: '700', 
+                color: '#374151' 
+              }}>
+                {t('strategy.icp.title')}
+              </h3>
+              <button
+                onClick={() => setEditingIcpModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                  padding: '4px',
+                  borderRadius: '4px'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#f3f4f6'}
+                onMouseOut={(e) => e.target.style.background = 'none'}
+              >
+                ×
+              </button>
+            </div>
+            
+            <textarea
+              ref={icpTextareaRef}
+              value={icpEditText}
+              onChange={e => setIcpEditText(e.target.value)}
+              style={{
+                width: '100%',
+                minHeight: '300px',
+                padding: '16px',
+                border: '2px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '16px',
+                lineHeight: '1.6',
+                fontFamily: 'inherit',
+                background: '#f9fafb',
+                boxSizing: 'border-box',
+                resize: 'vertical'
+              }}
+              placeholder={t('strategy.icp.placeholder')}
+            />
+            
+            <div style={{ 
+              display: 'flex', 
+              gap: '12px', 
+              marginTop: '20px', 
+              justifyContent: 'flex-end' 
+            }}>
+              <button 
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#16a34a'}
+                onMouseOut={(e) => e.target.style.background = '#22c55e'}
+                onClick={async () => {
+                  await handleSaveIcp()
+                  setEditingIcpModal(false)
+                }}
+              >
+                {t('strategy.buttons.save')}
+              </button>
+              <button 
+                style={{
+                  background: '#6b7280',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#4b5563'}
+                onMouseOut={(e) => e.target.style.background = '#6b7280'}
+                onClick={() => {
+                  setEditingIcpModal(false)
+                  setIcpEditText(icpSummary.join('\n'))
+                }}
+              >
+                {t('strategy.buttons.cancel')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tavoitteet-muokkaustilamodaali */}
+      {editingKpiModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '20px'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setEditingKpiModal(false)
+            }
+          }}
+        >
+          <div 
+            style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              padding: '24px',
+              maxWidth: '800px',
+              width: '100%',
+              maxHeight: '80vh',
+              overflow: 'auto',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '20px' 
+            }}>
+              <h3 style={{ 
+                margin: 0, 
+                fontSize: '20px', 
+                fontWeight: '700', 
+                color: '#374151' 
+              }}>
+                {t('strategy.kpi.title')}
+              </h3>
+              <button
+                onClick={() => setEditingKpiModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                  padding: '4px',
+                  borderRadius: '4px'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#f3f4f6'}
+                onMouseOut={(e) => e.target.style.background = 'none'}
+              >
+                ×
+              </button>
+            </div>
+            
+            <textarea
+              ref={kpiTextareaRef}
+              value={kpiEditText}
+              onChange={e => setKpiEditText(e.target.value)}
+              style={{
+                width: '100%',
+                minHeight: '300px',
+                padding: '16px',
+                border: '2px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '16px',
+                lineHeight: '1.6',
+                fontFamily: 'inherit',
+                background: '#f9fafb',
+                boxSizing: 'border-box',
+                resize: 'vertical'
+              }}
+              placeholder={t('strategy.kpi.placeholder')}
+            />
+            
+            <div style={{ 
+              display: 'flex', 
+              gap: '12px', 
+              marginTop: '20px', 
+              justifyContent: 'flex-end' 
+            }}>
+              <button 
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#16a34a'}
+                onMouseOut={(e) => e.target.style.background = '#22c55e'}
+                onClick={async () => {
+                  await handleSaveKpi()
+                  setEditingKpiModal(false)
+                }}
+              >
+                {t('strategy.buttons.save')}
+              </button>
+              <button 
+                style={{
+                  background: '#6b7280',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#4b5563'}
+                onMouseOut={(e) => e.target.style.background = '#6b7280'}
+                onClick={() => {
+                  setEditingKpiModal(false)
+                  setKpiEditText(kpiData.join('\n'))
+                }}
+              >
+                {t('strategy.buttons.cancel')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TOV-muokkaustilamodaali */}
+      {editingTovModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '20px'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setEditingTovModal(false)
+            }
+          }}
+        >
+          <div 
+            style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              padding: '24px',
+              maxWidth: '800px',
+              width: '100%',
+              maxHeight: '80vh',
+              overflow: 'auto',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '20px' 
+            }}>
+              <h3 style={{ 
+                margin: 0, 
+                fontSize: '20px', 
+                fontWeight: '700', 
+                color: '#374151' 
+              }}>
+                🎤 Äänenlaatu & TOV
+              </h3>
+              <button
+                onClick={() => setEditingTovModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                  padding: '4px',
+                  borderRadius: '4px'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#f3f4f6'}
+                onMouseOut={(e) => e.target.style.background = 'none'}
+              >
+                ×
+              </button>
+            </div>
+            
+            <textarea
+              ref={tovTextareaRef}
+              value={tovEditText}
+              onChange={e => setTovEditText(e.target.value)}
+              style={{
+                width: '100%',
+                minHeight: '300px',
+                padding: '16px',
+                border: '2px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '16px',
+                lineHeight: '1.6',
+                fontFamily: 'inherit',
+                background: '#f9fafb',
+                boxSizing: 'border-box',
+                resize: 'vertical'
+              }}
+              placeholder="Kuvaile yrityksen äänenlaatu ja TOV (Tone of Voice)..."
+            />
+            
+            <div style={{ 
+              display: 'flex', 
+              gap: '12px', 
+              marginTop: '20px', 
+              justifyContent: 'flex-end' 
+            }}>
+              <button 
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#16a34a'}
+                onMouseOut={(e) => e.target.style.background = '#22c55e'}
+                onClick={async () => {
+                  await handleSaveTov()
+                  setEditingTovModal(false)
+                }}
+              >
+                {t('strategy.buttons.save')}
+              </button>
+              <button 
+                style={{
+                  background: '#6b7280',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#4b5563'}
+                onMouseOut={(e) => e.target.style.background = '#6b7280'}
+                onClick={() => {
+                  setEditingTovModal(false)
+                  setTovEditText(tov)
+                }}
               >
                 {t('strategy.buttons.cancel')}
               </button>

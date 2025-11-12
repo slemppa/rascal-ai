@@ -14,7 +14,7 @@ export default function AuthCallback() {
         const type = searchParams.get('type')
 
         if (token_hash && type) {
-          // Verify OTP kun tulee email linkistä
+          // Verify OTP kun tulee email linkistä (signup, recovery, email_change, jne.)
           const { data, error } = await supabase.auth.verifyOtp({
             token_hash,
             type: type
@@ -27,7 +27,12 @@ export default function AuthCallback() {
           }
           
           if (data.session) {
-            navigate('/dashboard')
+            // Sähköpostin vaihdon jälkeen ohjaa settings-sivulle
+            if (type === 'email_change') {
+              navigate('/settings?email=changed')
+            } else {
+              navigate('/dashboard')
+            }
             return
           }
         }

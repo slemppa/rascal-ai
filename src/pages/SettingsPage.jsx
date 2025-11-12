@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import PageHeader from '../components/PageHeader'
 import { useTranslation } from 'react-i18next'
+import { useSearchParams } from 'react-router-dom'
 import CarouselTemplateSelector from '../components/CarouselTemplateSelector'
 import SocialMediaConnect from '../components/SocialMediaConnect'
 import TimeoutSettings from '../components/TimeoutSettings'
@@ -16,6 +17,7 @@ export default function SettingsPage() {
   const { user } = useAuth()
   const { t } = useTranslation('common')
   const { refreshUserStatus, userStatus } = useStrategyStatus()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -199,6 +201,39 @@ export default function SettingsPage() {
       syncSocialAccountsToSupabase()
     }
   }, [socialAccounts, user?.id])
+
+  // Tarkista onko käyttäjä tullut takaisin vahvistuslinkistä
+  useEffect(() => {
+    const emailChanged = searchParams.get('email')
+    if (emailChanged === 'changed') {
+      setEmailMessage('Sähköpostiosoite vaihdettu onnistuneesti!')
+      setShowEmailChange(false)
+      setEmailData({ newEmail: '', confirmEmail: '' })
+      // Poista parametri URL:sta
+      setSearchParams({}, { replace: true })
+      // Päivitä käyttäjätiedot - hae uudet tiedot
+      const refreshUserData = async () => {
+        if (user?.id) {
+          // Päivitä Auth-konteksti
+          const { data: authData } = await supabase.auth.getUser()
+          if (authData?.user) {
+            console.log('Email changed successfully:', authData.user.email)
+          }
+          // Päivitä käyttäjäprofiili
+          const { data: profileData } = await supabase
+            .from('users')
+            .select('*')
+            .eq('auth_user_id', user.id)
+            .single()
+          
+          if (profileData) {
+            setUserProfile(profileData)
+          }
+        }
+      }
+      refreshUserData()
+    }
+  }, [searchParams, setSearchParams, user?.id])
 
   // Käyttäjätiedot public.users taulusta
   const email = userProfile?.contact_email || user?.email || null
@@ -526,30 +561,48 @@ export default function SettingsPage() {
 
   const handleEmailSave = async () => {
     if (!user) return
+    
+    // Validoi sähköpostit
     if (emailData.newEmail !== emailData.confirmEmail) {
       setEmailMessage(t('settings.email.mismatch'))
       return
     }
+    
     if (!isValidEmail(emailData.newEmail)) {
       setEmailMessage(t('settings.email.invalid'))
       return
     }
+    
+    // Tarkista ettei uusi sähköposti ole sama kuin nykyinen
+    if (emailData.newEmail === user.email) {
+      setEmailMessage('Uusi sähköpostiosoite on sama kuin nykyinen')
+      return
+    }
+    
     setEmailLoading(true)
     setEmailMessage('')
+    
     try {
-      const { error } = await supabase.auth.updateUser(
+      // Supabase lähettää vahvistuslinkin uuteen sähköpostiin
+      const { data, error } = await supabase.auth.updateUser(
         { email: emailData.newEmail },
-        { emailRedirectTo: `${window.location.origin}/auth/callback` }
+        { 
+          emailRedirectTo: `${window.location.origin}/auth/callback`
+        }
       )
+      
       if (error) {
-        setEmailMessage(`${t('settings.common.error')}: ${error.message}`)
+        console.error('Email change error:', error)
+        setEmailMessage(`Virhe: ${error.message}`)
       } else {
-        setEmailMessage(t('settings.email.changed'))
-        setShowEmailChange(false)
+        // Onnistui - vahvistuslinkki lähetetään uuteen sähköpostiin
+        setEmailMessage(`Vahvistuslinkki lähetetty sähköpostiosoitteeseen ${emailData.newEmail}. Vahvista sähköpostiosoitteesi klikkaamalla linkkiä sähköpostissa.`)
+        // Tyhjennä lomakkeen kentät, mutta jätä lomake näkyviin jotta käyttäjä näkee viestin
         setEmailData({ newEmail: '', confirmEmail: '' })
       }
     } catch (err) {
-      setEmailMessage(`${t('settings.common.error')}: ${err.message}`)
+      console.error('Email change exception:', err)
+      setEmailMessage(`Virhe: ${err.message}`)
     } finally {
       setEmailLoading(false)
     }
@@ -910,15 +963,33 @@ export default function SettingsPage() {
 
                   {emailMessage && (
                     <div style={{ 
-                      padding: '8px 12px', 
-                      borderRadius: '6px', 
+                      padding: '12px 16px', 
+                      borderRadius: '8px', 
                       marginBottom: '12px',
                       fontSize: '14px',
-                      background: emailMessage.includes('Virhe') ? '#fef2f2' : '#f0fdf4',
-                      color: emailMessage.includes('Virhe') ? '#dc2626' : '#16a34a',
-                      border: `1px solid ${emailMessage.includes('Virhe') ? '#fecaca' : '#bbf7d0'}`
+                      lineHeight: '1.5',
+                      background: emailMessage.includes('Virhe') || emailMessage.includes('sama kuin') ? '#fef2f2' : emailMessage.includes('Vahvistuslinkki') ? '#eff6ff' : '#f0fdf4',
+                      color: emailMessage.includes('Virhe') || emailMessage.includes('sama kuin') ? '#dc2626' : emailMessage.includes('Vahvistuslinkki') ? '#1e40af' : '#16a34a',
+                      border: `1px solid ${emailMessage.includes('Virhe') || emailMessage.includes('sama kuin') ? '#fecaca' : emailMessage.includes('Vahvistuslinkki') ? '#bfdbfe' : '#bbf7d0'}`
                     }}>
-                      {emailMessage}
+                      {emailMessage.includes('Vahvistuslinkki') ? (
+                        <div>
+                          <div style={{ fontWeight: 600, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                            </svg>
+                            Vahvistuslinkki lähetetty
+                          </div>
+                          <div style={{ fontSize: '13px', marginTop: '8px' }}>
+                            {emailMessage.split('.')[1]?.trim()}
+                          </div>
+                          <div style={{ fontSize: '12px', marginTop: '8px', color: '#64748b', fontStyle: 'italic' }}>
+                            Tarkista myös roskapostikansio. Sähköpostiosoitteesi vaihdetaan vasta kun klikkaat vahvistuslinkkiä sähköpostissa.
+                          </div>
+                        </div>
+                      ) : (
+                        emailMessage
+                      )}
                     </div>
                   )}
 
@@ -966,65 +1037,74 @@ export default function SettingsPage() {
               <SimpleSocialConnect />
             </div>
             
-            {/* Avatar-kuvat */}
+            {/* Avatar ja Ääniklooni */}
             <div className={styles.card}>
-              <h2 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#1f2937' }}>Avatar</h2>
-              <div style={{ 
-                padding: '32px', 
-                textAlign: 'center', 
-                background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', 
-                borderRadius: '12px',
-                border: '2px dashed #cbd5e1',
-                position: 'relative',
-                overflow: 'hidden'
-              }}>
-                {/* Dekoratiivinen gradient */}
-                <div style={{
-                  position: 'absolute',
-                  top: '-50%',
-                  right: '-50%',
-                  width: '200%',
-                  height: '200%',
-                  background: 'radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%)',
-                  pointerEvents: 'none'
-                }} />
-                
-                {/* Sisältö */}
-                <div style={{ position: 'relative', zIndex: 1 }}>
-                  <svg 
-                    width="48" 
-                    height="48" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="#10b981" 
-                    strokeWidth="2"
-                    style={{ margin: '0 auto 16px', display: 'block' }}
-                  >
-                    <circle cx="12" cy="12" r="10"/>
-                    <polyline points="12 6 12 12 16 14"/>
-                  </svg>
+              <div className={styles['avatar-voice-grid']}>
+                {/* Avatar-kuvat */}
+                <div className={styles['avatar-voice-section']}>
+                  <h2 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#1f2937' }}>Avatar</h2>
                   <div style={{ 
-                    color: '#334155',
-                    fontSize: '16px',
-                    fontWeight: 600,
-                    marginBottom: '8px'
+                    padding: '32px', 
+                    textAlign: 'center', 
+                    background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', 
+                    borderRadius: '12px',
+                    border: '2px dashed #cbd5e1',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    minHeight: '200px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center'
                   }}>
-                    Tulossa uusi versio
-                  </div>
-                  <div style={{ 
-                    color: '#64748b',
-                    fontSize: '13px',
-                    lineHeight: '1.5'
-                  }}>
-                    Työskentelemme parhaillaan uuden<br/>avatar-toiminnallisuuden parissa
+                    {/* Dekoratiivinen gradient */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '-50%',
+                      right: '-50%',
+                      width: '200%',
+                      height: '200%',
+                      background: 'radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%)',
+                      pointerEvents: 'none'
+                    }} />
+                    
+                    {/* Sisältö */}
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                      <svg 
+                        width="48" 
+                        height="48" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="#10b981" 
+                        strokeWidth="2"
+                        style={{ margin: '0 auto 16px', display: 'block' }}
+                      >
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                      </svg>
+                      <div style={{ 
+                        color: '#334155',
+                        fontSize: '16px',
+                        fontWeight: 600,
+                        marginBottom: '8px'
+                      }}>
+                        Tulossa uusi versio
+                      </div>
+                      <div style={{ 
+                        color: '#64748b',
+                        fontSize: '13px',
+                        lineHeight: '1.5'
+                      }}>
+                        Työskentelemme parhaillaan uuden<br/>avatar-toiminnallisuuden parissa
+                      </div>
+                    </div>
                   </div>
                 </div>
+                
+                {/* Ääniklooni */}
+                <div className={styles['avatar-voice-section']}>
+                  <VoiceSection companyId={userProfile?.company_id || null} />
+                </div>
               </div>
-            </div>
-            
-            {/* Äänitiedostot */}
-            <div className={styles.card}>
-              <VoiceSection companyId={userProfile?.company_id || null} />
             </div>
             
             {/* Karuselli-mallit */}
@@ -1530,110 +1610,170 @@ function VoiceSection({ companyId }) {
     }
   };
 
+  // Tarkista onko ääni löytynyt (placeholder tai oikea)
+  const hasAudio = audioFiles.length > 0;
+  
   return (
     <div>
-      <h2 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#1f2937' }}>{t('settings.voice.title')}</h2>
+      <h2 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#1f2937' }}>Ääniklooni</h2>
       {loading ? (
         <div style={{ color: '#6b7280', fontSize: 14 }}>{t('settings.voice.loading')}</div>
+      ) : hasAudio ? (
+        // Ääni löytyi - näytä samanlainen laatikko kuin Avatar-kohdassa
+        <div style={{ 
+          padding: '32px', 
+          textAlign: 'center', 
+          background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', 
+          borderRadius: '12px',
+          border: '2px dashed #cbd5e1',
+          position: 'relative',
+          overflow: 'hidden',
+          minHeight: '200px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}>
+          {/* Dekoratiivinen gradient */}
+          <div style={{
+            position: 'absolute',
+            top: '-50%',
+            right: '-50%',
+            width: '200%',
+            height: '200%',
+            background: 'radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%)',
+            pointerEvents: 'none'
+          }} />
+          
+          {/* Sisältö */}
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            {/* Mikrofonikuvake */}
+            <svg 
+              width="48" 
+              height="48" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="#10b981" 
+              strokeWidth="2"
+              style={{ margin: '0 auto 16px', display: 'block' }}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+              />
+            </svg>
+            <div style={{ 
+              color: '#334155',
+              fontSize: '16px',
+              fontWeight: 600,
+              marginBottom: '8px'
+            }}>
+              Ääni kloonattu
+            </div>
+            <div style={{ 
+              color: '#64748b',
+              fontSize: '13px',
+              lineHeight: '1.5'
+            }}>
+              Äänikloonisi on valmis käyttöön
+            </div>
+          </div>
+        </div>
       ) : (
-        <div className={styles['avatar-grid']}>
-          {[0].map((slot) => {
-            const audio = audioFiles[slot];
-            return audio ? (
-              <div
-                key={audio.id || slot}
-                className="relative group rounded-xl overflow-hidden shadow-sm border border-gray-200 bg-white transition hover:shadow-lg flex items-center justify-center aspect-square w-16 h-16 sm:w-20 sm:h-20 mx-auto"
-              >
-                {/* Äänitiedoston ikoni */}
-                <div className="flex flex-col items-center justify-center w-full h-full p-2">
-                  {audio.status === 'uploading' ? (
-                    <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-blue-600"></div>
-                  ) : audio.isPlaceholder ? (
-                    <svg
-                      className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                      />
-                    </svg>
-                                      ) : (
-                      <svg
-                        className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        viewBox="0 0 24 24"
-                      >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                      />
-                    </svg>
-                  )}
-                  <span className="text-xs text-gray-600 mt-1 text-center truncate w-full">
-                    {audio.filename}
-                  </span>
-                  <span className={`text-xs mt-1 text-center ${audio.isPlaceholder ? 'text-green-600' : 'text-green-600'}`}>
-                    {audio.status === 'uploading' ? t('settings.voice.processing') : t('settings.voice.added')}
-                  </span>
-                </div>
-
-              </div>
-            ) : (
-              <div
-                key={slot}
-                className="bg-gray-100 rounded-xl flex flex-col items-center justify-center aspect-square w-16 h-16 sm:w-20 sm:h-20 border-2 border-dashed border-gray-300 hover:border-blue-500 cursor-pointer transition group relative mx-auto"
-                onClick={openFileDialog}
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") openFileDialog();
-                }}
-                role="button"
-                aria-label={t('settings.voice.addNewAria')}
-              >
-                <svg
-                  className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-blue-500 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                <span className="mt-1 text-gray-500 text-xs group-hover:text-blue-500 transition text-center">
-                  {t('settings.voice.add')}
-                </span>
-              </div>
-            );
-          })}
+        // Ääntä ei löydy - näytä "Lisää tiedosto" -laatikko
+        <div
+          style={{
+            padding: '32px',
+            textAlign: 'center',
+            background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+            borderRadius: '12px',
+            border: '2px dashed #cbd5e1',
+            position: 'relative',
+            overflow: 'hidden',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            minHeight: '200px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center'
+          }}
+          onClick={openFileDialog}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = '#3b82f6';
+            e.currentTarget.style.background = 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = '#cbd5e1';
+            e.currentTarget.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
+          }}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") openFileDialog();
+          }}
+          role="button"
+          aria-label={t('settings.voice.addNewAria')}
+        >
+          {/* Dekoratiivinen gradient */}
+          <div style={{
+            position: 'absolute',
+            top: '-50%',
+            right: '-50%',
+            width: '200%',
+            height: '200%',
+            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%)',
+            pointerEvents: 'none'
+          }} />
+          
+          {/* Sisältö */}
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <svg 
+              width="48" 
+              height="48" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="#9ca3af" 
+              strokeWidth="2"
+              style={{ margin: '0 auto 16px', display: 'block' }}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            <div style={{ 
+              color: '#334155',
+              fontSize: '16px',
+              fontWeight: 600,
+              marginBottom: '8px'
+            }}>
+              Lisää äänitiedosto
+            </div>
+            <div style={{ 
+              color: '#64748b',
+              fontSize: '13px',
+              lineHeight: '1.5'
+            }}>
+              Valitse tiedosto tai vedä se tähän
+            </div>
+          </div>
         </div>
       )}
       {/* Piilotettu file input */}
       <input
         type="file"
         accept="audio/*"
-        className="hidden"
+        style={{ display: 'none' }}
         ref={fileInputRef}
         onChange={handleAddAudio}
         disabled={audioFiles.length >= 1}
       />
-      {/* Info-teksti */}
-      <div style={{ color: '#6b7280', fontSize: 11, marginTop: 8 }}>
-        {audioFiles.length === 0
-          ? t('settings.voice.infoNone', { count: audioFiles.length })
-          : t('settings.voice.infoSome', { count: audioFiles.length })}
-      </div>
+      {/* Info-teksti - näytetään vain jos ei ole ääntä */}
+      {audioFiles.length === 0 && (
+        <div style={{ color: '#6b7280', fontSize: 11, marginTop: 8 }}>
+          {t('settings.voice.infoNone', { count: audioFiles.length })}
+        </div>
+      )}
       {error && <div style={{ color: '#ef4444', fontSize: 11, marginTop: 6 }}>{error}</div>}
     </div>
   );

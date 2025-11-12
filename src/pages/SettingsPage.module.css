@@ -125,6 +125,27 @@
   align-items: center;
 }
 
+.avatar-voice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  width: 100%;
+}
+
+.avatar-voice-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.voice-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 120px;
+}
+
 /* Mobiilioptimointi */
 @media (max-width: 900px) {
   .settings-container {
@@ -146,6 +167,11 @@
   
   .avatar-grid {
     gap: 12px;
+  }
+  
+  .avatar-voice-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
   
   .form-group label {
@@ -174,6 +200,11 @@
   
   .avatar-grid {
     gap: 8px;
+  }
+  
+  .avatar-voice-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
   
   .form-group {
@@ -208,6 +239,11 @@
   
   .avatar-grid {
     gap: 6px;
+  }
+  
+  .avatar-voice-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
   
   .form-group {

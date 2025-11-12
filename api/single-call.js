@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { phoneNumber, name, callType, callTypeId, script, voice, voiceId, userId, sms_first } = req.body
+    const { phoneNumber, name, callType, callTypeId, script, voice, voiceId, userId, sms_first, sms_after_call, sms_missed_call } = req.body
 
     // Validointi
     if (!name || !name.trim()) {
@@ -78,6 +78,8 @@ export default async function handler(req, res) {
       voice_id: voiceToUse,
       userId: publicUserId,
       sms_first: Boolean(sms_first) === true,
+      sms_after_call: Boolean(sms_after_call) === true,
+      sms_missed_call: Boolean(sms_missed_call) === true,
       timestamp: new Date().toISOString(),
       source: 'rascal-ai-dashboard'
     }

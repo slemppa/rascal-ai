@@ -46,6 +46,8 @@ export default function CallPanel() {
   const [name, setName] = useState('')
   const [calling, setCalling] = useState(false)
   const [singleCallSmsFirst, setSingleCallSmsFirst] = useState(false)
+  const [singleCallSmsAfterCall, setSingleCallSmsAfterCall] = useState(false)
+  const [singleCallSmsMissedCall, setSingleCallSmsMissedCall] = useState(false)
   const [inboundVoice, setInboundVoice] = useState('rascal-nainen-1')
   const [inboundScript, setInboundScript] = useState('Kiitos soitostasi! Olen AI-assistentti ja autan sinua mielellään...')
   const [inboundWelcomeMessage, setInboundWelcomeMessage] = useState('Kiitos soitostasi! Olen AI-assistentti ja autan sinua mielellään...')
@@ -186,7 +188,6 @@ export default function CallPanel() {
   
   // Yksittäisen puhelun modaali
   const [showSingleCallModal, setShowSingleCallModal] = useState(false)
-  const [singleCallStep, setSingleCallStep] = useState(1) // 1: tyyppi/ääni, 2: tiedot
 
   useEffect(() => {
     const fetchUserVoiceId = async () => {
@@ -229,7 +230,7 @@ export default function CallPanel() {
 
   // Helperit tabin avauksiin
   const openMassCallModal = () => setShowMassCallModal(true)
-  const openSingleCallModal = () => { setShowSingleCallModal(true); setSingleCallStep(1) }
+  const openSingleCallModal = () => { setShowSingleCallModal(true) }
 
   // Pysäytä kaikki äänielementit
   const stopAllAudio = () => {
@@ -614,7 +615,9 @@ export default function CallPanel() {
         script,
         voiceId: voiceId,
         userId: user?.id,
-        sms_first: singleCallSmsFirst === true
+        sms_first: singleCallSmsFirst === true,
+        sms_after_call: singleCallSmsAfterCall === true,
+        sms_missed_call: singleCallSmsMissedCall === true
       })
       
       const result = response.data
@@ -4106,13 +4109,13 @@ export default function CallPanel() {
         {/* Yksittäisen puhelun modaali */}
         {showSingleCallModal && createPortal(
           <div 
-            onClick={() => { setShowSingleCallModal(false); setSingleCallStep(1) }}
+            onClick={() => { setShowSingleCallModal(false) }}
             className="modal-overlay modal-overlay--dark"
           >
             <div 
               onClick={(e) => e.stopPropagation()}
               className="modal-container"
-              style={{ maxWidth: '560px' }}
+              style={{ maxWidth: '800px' }}
             >
               <div className="modal-header">
                 <h2 className="modal-title" style={{ fontSize: 22, color: '#1f2937', fontWeight: '700', backgroundColor: 'transparent' }}>
@@ -4122,7 +4125,7 @@ export default function CallPanel() {
                   Yksittäinen puhelu
                 </h2>
                 <Button
-                  onClick={() => { setShowSingleCallModal(false); setSingleCallStep(1) }}
+                  onClick={() => { setShowSingleCallModal(false) }}
                   variant="secondary"
                   className="modal-close-btn"
                 >
@@ -4134,21 +4137,15 @@ export default function CallPanel() {
               </div>
 
               <div className="modal-body">
-                {singleCallStep === 1 && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                  {/* Vasen sarake: Ääni + Puhelun tyyppi */}
                   <div>
-                    <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937', backgroundColor: 'transparent' }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
-                        <circle cx="12" cy="12" r="3"/>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                      </svg>
-                      Vaihe 1: Puhelun asetukset
-                    </h3>
                     <label className="label">Puhelun tyyppi</label>
                     <select 
                       value={callType} 
                       onChange={e => { setCallType(e.target.value); updateScriptFromCallType(e.target.value) }} 
                       className="select"
-                      style={{ width: '100%', marginBottom: 16 }}
+                      style={{ width: '100%', marginBottom: 20 }}
                     >
                       <option value="">Valitse puhelun tyyppi...</option>
                       {callTypes.map(type => (
@@ -4161,81 +4158,131 @@ export default function CallPanel() {
                       value={selectedVoice} 
                       onChange={e => setSelectedVoice(e.target.value)}
                       className="select"
-                      style={{ width: '100%', marginBottom: 16 }}
+                      style={{ width: '100%', marginBottom: 20 }}
                     >
                       {getVoiceOptions().map(voice => (
                         <option key={voice.value} value={voice.value}>{voice.label}</option>
                       ))}
                     </select>
-
-                    <div style={{ display: 'flex', gap: 12, justifyContent: 'space-between' }}>
-                      <Button onClick={() => { setShowSingleCallModal(false); setSingleCallStep(1) }} variant="secondary">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="18" y1="6" x2="6" y2="18"></line>
-                          <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                      </Button>
-                      <Button onClick={() => setSingleCallStep(2)} disabled={!callType || !selectedVoice} variant="primary">Jatka →</Button>
-                    </div>
                   </div>
-                )}
 
-                {singleCallStep === 2 && (
+                  {/* Oikea sarake: Nimi + Puhelinnumero */}
                   <div>
-                    <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937', backgroundColor: 'transparent' }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                      </svg>
-                      Vaihe 2: Asiakkaan tiedot
-                    </h3>
                     <label className="label">Nimi</label>
-                    <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Matti Meikäläinen" className="input" />
+                    <input 
+                      type="text" 
+                      value={name} 
+                      onChange={e => setName(e.target.value)} 
+                      placeholder="Matti Meikäläinen" 
+                      className="input" 
+                      style={{ marginBottom: 20 }}
+                    />
+                    
                     <label className="label">Puhelinnumero</label>
-                    <input type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="040 123 4567 tai +358401234567" className="input" />
+                    <input 
+                      type="tel" 
+                      value={phoneNumber} 
+                      onChange={e => setPhoneNumber(e.target.value)} 
+                      placeholder="040 123 4567 tai +358401234567" 
+                      className="input" 
+                      style={{ marginBottom: 20 }}
+                    />
 
-                    <div style={{ color: '#6b7280', fontSize: 13, margin: '6px 0 12px' }}>
-                      Skripti: {script ? <span style={{ color: '#111827' }}>{script.slice(0, 140)}{script.length > 140 ? '…' : ''}</span> : 'Valitse puhelun tyyppi niin skripti tulee näkyviin.'}
+                    {/* SMS-kytkimet */}
+                    <div style={{ marginTop: 8, marginBottom: 12 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                        <label style={{ fontWeight: 500, fontSize: 13, minWidth: 120 }}>Ennen puhelua</label>
+                        <label className="switch">
+                          <input
+                            type="checkbox"
+                            checked={singleCallSmsFirst}
+                            onChange={e => setSingleCallSmsFirst(e.target.checked)}
+                            disabled={!(() => { const t = callTypes.find(t => t.value === callType); return t?.first_sms && t.first_sms.trim().length > 0 })()}
+                          />
+                          <span className="slider round"></span>
+                        </label>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                        <label style={{ fontWeight: 500, fontSize: 13, minWidth: 120 }}>Vastauksen jälkeen</label>
+                        <label className="switch">
+                          <input
+                            type="checkbox"
+                            checked={singleCallSmsAfterCall}
+                            onChange={e => setSingleCallSmsAfterCall(e.target.checked)}
+                            disabled={!(() => { const t = callTypes.find(t => t.value === callType); return t?.after_call_sms && t.after_call_sms.trim().length > 0 })()}
+                          />
+                          <span className="slider round"></span>
+                        </label>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                        <label style={{ fontWeight: 500, fontSize: 13, minWidth: 120 }}>Jos puheluun ei vastata</label>
+                        <label className="switch">
+                          <input
+                            type="checkbox"
+                            checked={singleCallSmsMissedCall}
+                            onChange={e => setSingleCallSmsMissedCall(e.target.checked)}
+                            disabled={!(() => { const t = callTypes.find(t => t.value === callType); return t?.missed_call_sms && t.missed_call_sms.trim().length > 0 })()}
+                          />
+                          <span className="slider round"></span>
+                        </label>
+                      </div>
                     </div>
 
-                    {/* Tekstari ensin -kytkin ja esikatselu */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8, marginBottom: 8 }}>
-                      <label style={{ fontWeight: 600 }}>Tekstari ensin</label>
-                      <label className="switch">
-                        <input
-                          type="checkbox"
-                          checked={singleCallSmsFirst}
-                          onChange={e => setSingleCallSmsFirst(e.target.checked)}
-                          disabled={!(() => { const t = callTypes.find(t => t.value === callType); return t?.first_sms && t.first_sms.trim().length > 0 })()}
-                        />
-                        <span className="slider round"></span>
-                      </label>
-                      {(() => { const t = callTypes.find(t => t.value === callType); return !(t?.first_sms && t.first_sms.trim().length > 0) })() && (
-                        <span style={{ fontSize: 12, color: '#dc2626' }}>Lisää ensin SMS teksti puhelutyypille</span>
-                      )}
-                    </div>
-
-                    {singleCallSmsFirst && (() => { const t = callTypes.find(t => t.value === callType); return t?.first_sms && t.first_sms.trim().length > 0 })() && (
-                      <div className="sms-preview-container">
-                        <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>Ensimmäinen SMS (vain luku)</div>
-                        <div className="sms-preview-text">
-                          {(() => { const t = callTypes.find(t => t.value === callType); return t?.first_sms || '' })()}
-                        </div>
+                    {/* SMS-esikatselu */}
+                    {(singleCallSmsFirst || singleCallSmsAfterCall || singleCallSmsMissedCall) && (
+                      <div className="sms-preview-container" style={{ marginTop: 12 }}>
+                        <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>Valittujen SMS-viestien esikatselu:</div>
+                        {(() => {
+                          const selectedCallType = callTypes.find(t => t.value === callType)
+                          return (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                              {singleCallSmsFirst && selectedCallType?.first_sms && (
+                                <div style={{ padding: 8, background: '#f3f4f6', borderRadius: 6, fontSize: 12 }}>
+                                  <strong>Ennen puhelua:</strong> {selectedCallType.first_sms}
+                                </div>
+                              )}
+                              {singleCallSmsAfterCall && selectedCallType?.after_call_sms && (
+                                <div style={{ padding: 8, background: '#f3f4f6', borderRadius: 6, fontSize: 12 }}>
+                                  <strong>Vastauksen jälkeen:</strong> {selectedCallType.after_call_sms}
+                                </div>
+                              )}
+                              {singleCallSmsMissedCall && selectedCallType?.missed_call_sms && (
+                                <div style={{ padding: 8, background: '#f3f4f6', borderRadius: 6, fontSize: 12 }}>
+                                  <strong>Jos puheluun ei vastata:</strong> {selectedCallType.missed_call_sms}
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })()}
                       </div>
                     )}
-
-                    <div style={{ display: 'flex', gap: 12, justifyContent: 'space-between', marginTop: 12 }}>
-                      <Button onClick={() => setSingleCallStep(1)} variant="secondary">← Takaisin</Button>
-                      <Button onClick={handleSingleCall} disabled={calling || !name.trim() || !phoneNumber.trim() || !callType || !script.trim() || !selectedVoice} variant="primary">
-                        {calling ? 'Soittaa…' : 'Soita'}
-                      </Button>
-                    </div>
-
-                    {singleCallError && (
-                      <div className="status-error" style={{ marginTop: 8 }}>{singleCallError}</div>
-                    )}
                   </div>
-                )}
+                </div>
+
+                {/* Soita-nappi ja virheilmoitukset */}
+                <div style={{ marginTop: 24, paddingTop: 24, borderTop: '1px solid #e5e7eb' }}>
+                  <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+                    <Button 
+                      onClick={() => { setShowSingleCallModal(false) }} 
+                      variant="secondary"
+                    >
+                      Peruuta
+                    </Button>
+                    <Button 
+                      onClick={handleSingleCall} 
+                      disabled={calling || !name.trim() || !phoneNumber.trim() || !callType || !script.trim() || !selectedVoice} 
+                      variant="primary"
+                    >
+                      {calling ? 'Soittaa…' : 'Soita'}
+                    </Button>
+                  </div>
+
+                  {singleCallError && (
+                    <div className="status-error" style={{ marginTop: 12 }}>{singleCallError}</div>
+                  )}
+                </div>
               </div>
             </div>
           </div>,

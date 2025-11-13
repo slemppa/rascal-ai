@@ -30,6 +30,9 @@ export default function AIChatPage() {
   const [filesError, setFilesError] = useState('')
   const [threadId, setThreadId] = useState(() => localStorage.getItem('rascalai_threadId') || null)
   
+  // Assistenttityyppi: 'marketing' tai 'sales'
+  const [assistantType, setAssistantType] = useState('marketing')
+  
   // Thread-hallinta
   const [threads, setThreads] = useState([])
   const [threadsLoading, setThreadsLoading] = useState(false)
@@ -261,22 +264,27 @@ export default function AIChatPage() {
 
   const handleSendMessage = async (e) => {
     e.preventDefault()
+    // Estä duplikaattilähetys jos lähetys on jo käynnissä
+    if (sendingRef.current || loading || !input.trim()) return
     await sendMessage()
   }
 
   // Varsinainen lähetyslogiikka (kutsutaan sekä formista että Enter-näppäimestä)
   const sendMessage = async () => {
-    // Estä duplikaattilähetykset
-    if (!input.trim() || loading || loadingUserData || sendingRef.current) return
+    // Estä duplikaattilähetykset - tarkista ja aseta flag heti
+    if (sendingRef.current || !input.trim() || loading || loadingUserData) {
+      return
+    }
+    
+    // Aseta lähetys käynnissä -lippu HETI, ennen muita operaatioita
+    sendingRef.current = true
     
     if (!userData?.id) {
+      sendingRef.current = false
       const errorMessage = { role: 'assistant', content: 'Käyttäjän ID puuttuu. Ota yhteyttä ylläpitoon.' }
       setMessages(prev => [...prev, errorMessage])
       return
     }
-
-    // Aseta lähetys käynnissä -lippu
-    sendingRef.current = true
 
     const userMessageContent = input
     const userMessage = { role: 'user', content: userMessageContent }
@@ -306,7 +314,8 @@ export default function AIChatPage() {
         if (session?.access_token) {
           try {
             const threadResponse = await axios.post('/api/ai-chat-threads', {
-              title: userMessageContent.substring(0, 50) // Käytä ensimmäistä viestiä otsikkona
+              title: userMessageContent.substring(0, 50), // Käytä ensimmäistä viestiä otsikkona
+              assistant_type: assistantType
             }, {
               headers: { 
                 'Authorization': `Bearer ${session.access_token}`,
@@ -328,7 +337,8 @@ export default function AIChatPage() {
       const payload = { 
         message: userMessageContent, 
         threadId: activeThreadId, // Zep käyttää tätä sessionId:nä
-        userId: userData?.id 
+        userId: userData?.id,
+        assistantType: assistantType // 'marketing' tai 'sales'
       }
       const pendingId = `msg_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
       enqueuePending({ id: pendingId, payload })
@@ -502,16 +512,21 @@ export default function AIChatPage() {
     
     try {
       setThreadsLoading(true)
+      // Tyhjennä threadit ennen uusien lataamista
+      setThreads([])
+      
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) return
 
       const response = await axios.get('/api/ai-chat-threads', {
-        headers: { 'Authorization': `Bearer ${session.access_token}` }
+        headers: { 'Authorization': `Bearer ${session.access_token}` },
+        params: { assistant_type: assistantType }
       })
       
       setThreads(response.data.threads || [])
     } catch (error) {
       console.error('Virhe threadien haussa:', error)
+      setThreads([]) // Tyhjennä threadit virheen sattuessa
     } finally {
       setThreadsLoading(false)
     }
@@ -526,7 +541,8 @@ export default function AIChatPage() {
       }
 
       const response = await axios.post('/api/ai-chat-threads', {
-        title: 'Uusi keskustelu'
+        title: 'Uusi keskustelu',
+        assistant_type: assistantType
       }, {
         headers: { 
           'Authorization': `Bearer ${session.access_token}`,
@@ -549,6 +565,13 @@ export default function AIChatPage() {
 
   const loadThread = async (threadIdToLoad) => {
     try {
+      // Tarkista että thread kuuluu nykyiseen assistenttityyppiin
+      const thread = threads.find(t => t.id === threadIdToLoad)
+      if (!thread) {
+        console.warn('Thread ei kuulu nykyiseen assistenttityyppiin:', threadIdToLoad)
+        return
+      }
+      
       setCurrentThreadId(threadIdToLoad)
       setThreadId(threadIdToLoad) // Zep käyttää tätä sessionId:nä
       
@@ -696,20 +719,22 @@ export default function AIChatPage() {
     }
   }
 
-  // Lataa threadit kun käyttäjä kirjautuu
+  // Lataa threadit kun käyttäjä kirjautuu tai assistantType muuttuu
   useEffect(() => {
     if (user && !loadingUserData) {
-      fetchThreads()
-      
-      // Jos threadId on localStoragessa, lataa viestit automaattisesti
-      const savedThreadId = localStorage.getItem('rascalai_threadId')
-      if (savedThreadId && savedThreadId !== 'null') {
-        console.log('📥 Ladataan tallennettu thread:', savedThreadId)
-        loadThread(savedThreadId)
+      // Kun assistantType muuttuu, tyhjennetään nykyinen thread ja viestit
+      if (assistantType) {
+        setCurrentThreadId(null)
+        setThreadId(null)
+        setMessages([])
+        localStorage.removeItem('rascalai_threadId')
       }
+      
+      // Lataa threadit nykyiselle assistenttityypille
+      fetchThreads()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, loadingUserData])
+  }, [user, loadingUserData, assistantType])
 
   // Päivitä viestit kun käyttäjä palaa sivulle
   useEffect(() => {
@@ -1063,6 +1088,38 @@ export default function AIChatPage() {
             {/* Header */}
             <div className="chat-header">
               <h1>AI Assistant</h1>
+              <div className="assistant-type-selector">
+                <button
+                  className={`assistant-type-btn ${assistantType === 'marketing' ? 'active' : ''}`}
+                  onClick={() => {
+                    if (assistantType !== 'marketing') {
+                      setAssistantType('marketing')
+                      setCurrentThreadId(null)
+                      setThreadId(null)
+                      setMessages([])
+                      localStorage.removeItem('rascalai_threadId')
+                      fetchThreads()
+                    }
+                  }}
+                >
+                  Markkinointi
+                </button>
+                <button
+                  className={`assistant-type-btn ${assistantType === 'sales' ? 'active' : ''}`}
+                  onClick={() => {
+                    if (assistantType !== 'sales') {
+                      setAssistantType('sales')
+                      setCurrentThreadId(null)
+                      setThreadId(null)
+                      setMessages([])
+                      localStorage.removeItem('rascalai_threadId')
+                      fetchThreads()
+                    }
+                  }}
+                >
+                  Myynti
+                </button>
+              </div>
               <button 
                 onClick={() => { 
                   setSidebarOpen(true); 

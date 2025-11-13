@@ -39,31 +39,38 @@ export default async function handler(req, res) {
 
     const userId = userData.id
 
-    // GET - Hae kaikki threadit (vain metadata, viestit ovat Zepissä)
+    // GET - Hae threadit (vain metadata, viestit ovat Zepissä)
     if (req.method === 'GET') {
-      const { data: threads, error } = await supabase
+      const assistant_type = req.query?.assistant_type || 'marketing'
+      
+      let query = supabase
         .from('ai_chat_threads')
-        .select('id, title, created_at, updated_at')
+        .select('id, title, created_at, updated_at, assistant_type')
         .eq('user_id', userId)
+        .eq('assistant_type', assistant_type)
         .order('updated_at', { ascending: false })
+
+      const { data: threads, error } = await query
 
       if (error) {
         console.error('[ai-chat-threads] GET error:', error)
         return res.status(500).json({ error: 'Threadien haku epäonnistui', details: error.message })
       }
 
-      return res.status(200).json({ threads })
+      return res.status(200).json({ threads: threads || [] })
     }
 
     // POST - Luo uusi thread
     if (req.method === 'POST') {
-      const { title } = req.body || {}
+      const { title, assistant_type } = req.body || {}
+      const finalAssistantType = assistant_type === 'sales' ? 'sales' : 'marketing'
 
       const { data: newThread, error } = await supabase
         .from('ai_chat_threads')
         .insert({
           user_id: userId,
-          title: title || 'Uusi keskustelu'
+          title: title || 'Uusi keskustelu',
+          assistant_type: finalAssistantType
         })
         .select()
         .single()

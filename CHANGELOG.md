@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.85.0](https://github.com/slemppa/rascal-ai/compare/v1.84.4...v1.85.0) (2025-11-13)
+
+
+### ✨ Features
+
+* add assistant type selection (marketing/sales) to AI chat ([6f75b53](https://github.com/slemppa/rascal-ai/commit/6f75b530aa8dcf81dfa69b0946ab79f1ea0af7d8))
+* add lead scraping feature with Pipeline Labs-style filters ([10de1ba](https://github.com/slemppa/rascal-ai/commit/10de1ba730720d0df7a06451571269b69e678b72))
+
 ### [1.84.4](https://github.com/slemppa/rascal-ai/compare/v1.84.3...v1.84.4) (2025-11-12)
 
 

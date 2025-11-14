@@ -318,13 +318,13 @@ export default function AccountDetailsModal({ account, onClose }) {
               </div>
 
               <div className="details-section">
-                <h3>TOV (Time on Value)</h3>
+                <h3>ToV (Tone of Voice)</h3>
                 <textarea
                   value={accountDetails.company.tov || ''}
                   onChange={(e) => handleFieldUpdate('tov', e.target.value)}
                   className="editable-textarea"
                   rows="3"
-                  placeholder="Time on Value..."
+                  placeholder="Tone of Voice..."
                 />
               </div>
             </>

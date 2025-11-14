@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
-import AccountDetailsModal from '../components/AccountDetailsModal'
 import './AccountManagerPage.css'
 
 export default function AccountManagerPage() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [accounts, setAccounts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [currentUserId, setCurrentUserId] = useState(null)
   const [isAdmin, setIsAdmin] = useState(false)
-  const [selectedAccount, setSelectedAccount] = useState(null)
 
   useEffect(() => {
     loadCurrentUser()
@@ -217,7 +217,7 @@ export default function AccountManagerPage() {
               <div className="card-footer">
                 <button
                   className="view-details-btn"
-                  onClick={() => setSelectedAccount(account)}
+                  onClick={() => navigate(`/account-manager/${account.id}`)}
                 >
                   Näytä tiedot
                 </button>
@@ -225,13 +225,6 @@ export default function AccountManagerPage() {
             </div>
           ))}
         </div>
-      )}
-
-      {selectedAccount && (
-        <AccountDetailsModal
-          account={selectedAccount}
-          onClose={() => setSelectedAccount(null)}
-        />
       )}
     </div>
   )

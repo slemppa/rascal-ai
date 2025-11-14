@@ -38,6 +38,7 @@ import SegmentsPage from './src/pages/SegmentsPage'
 import SegmentCreatePage from './src/pages/SegmentCreatePage'
 import SegmentDetailPage from './src/pages/SegmentDetailPage'
 import AccountManagerPage from './src/pages/AccountManagerPage'
+import AccountDetailsPage from './src/pages/AccountDetailsPage'
 import LeadMagnetPage from './src/pages/LeadMagnetPage'
 import VastaajaPage from './src/pages/VastaajaPage'
 import LeadScrapingPage from './src/pages/LeadScrapingPage'
@@ -304,6 +305,18 @@ export default function App() {
                       <MobileNavigation />
                       <div className="main-content">
                         <AccountManagerPage />
+                      </div>
+                    </div>
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/account-manager/:id" element={
+                  <ProtectedRoute requiredRole="moderator">
+                    <div className="app-layout">
+                      <Sidebar />
+                      <MobileNavigation />
+                      <div className="main-content">
+                        <AccountDetailsPage />
                       </div>
                     </div>
                   </ProtectedRoute>

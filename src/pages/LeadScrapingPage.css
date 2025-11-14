@@ -19,6 +19,7 @@
   gap: 0;
   min-height: 0;
   height: 100%;
+  align-items: stretch;
 }
 
 .lead-scraping-header {
@@ -77,7 +78,7 @@
   flex-direction: column;
   flex: 0 0 280px;
   height: 100%;
-  min-height: 100%;
+  align-self: stretch;
   overflow: hidden;
 }
 

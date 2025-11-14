@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.86.0](https://github.com/slemppa/rascal-ai/compare/v1.85.0...v1.86.0) (2025-11-14)
+
+
+### ✨ Features
+
+* add collapsible sidebar and improve lead scraping page ([df8f15e](https://github.com/slemppa/rascal-ai/commit/df8f15e0b0d30a7f995e2dc5938aa306e861ff51))
+* improve lead scraping filters and add search ([69356a6](https://github.com/slemppa/rascal-ai/commit/69356a65560373575f3dde577f3285e644f6b4c4))
+
+
+### 🐛 Bug Fixes
+
+* ensure filters sidebar fills full height ([a352e35](https://github.com/slemppa/rascal-ai/commit/a352e35853947088007ef593f1b03a8a826d01b7))
+
 ## [1.85.0](https://github.com/slemppa/rascal-ai/compare/v1.84.4...v1.85.0) (2025-11-13)
 
 

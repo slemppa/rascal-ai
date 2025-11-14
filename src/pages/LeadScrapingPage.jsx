@@ -21,7 +21,8 @@ export default function LeadScrapingPage() {
     departments: false,
     names: false,
     company: false,
-    location: false
+    location: false,
+    leadLimit: false
   })
   
   // Contact Filters
@@ -57,7 +58,15 @@ export default function LeadScrapingPage() {
   const [foundedYearTo, setFoundedYearTo] = useState('')
   const [companyDomains, setCompanyDomains] = useState('')
   
-  // Location Filters
+  // Location Filters - People
+  const [peopleCountryIncludes, setPeopleCountryIncludes] = useState([])
+  const [peopleCountryExcludes, setPeopleCountryExcludes] = useState([])
+  const [peopleStateIncludes, setPeopleStateIncludes] = useState([])
+  const [peopleStateExcludes, setPeopleStateExcludes] = useState([])
+  const [peopleCityIncludes, setPeopleCityIncludes] = useState('')
+  const [peopleCityExcludes, setPeopleCityExcludes] = useState('')
+  
+  // Location Filters - Company
   const [companyCountryIncludes, setCompanyCountryIncludes] = useState([])
   const [companyCountryExcludes, setCompanyCountryExcludes] = useState([])
   const [companyStateIncludes, setCompanyStateIncludes] = useState([])
@@ -179,31 +188,51 @@ export default function LeadScrapingPage() {
   ]
 
   const countryOptions = [
-    { value: 'United States', label: 'United States' },
-    { value: 'United Kingdom', label: 'United Kingdom' },
-    { value: 'India', label: 'India' },
-    { value: 'France', label: 'France' },
-    { value: 'Canada', label: 'Canada' },
-    { value: 'Netherlands', label: 'Netherlands' },
-    { value: 'Brazil', label: 'Brazil' },
-    { value: 'Australia', label: 'Australia' },
-    { value: 'Germany', label: 'Germany' },
-    { value: 'Spain', label: 'Spain' },
-    { value: 'Italy', label: 'Italy' },
-    { value: 'Switzerland', label: 'Switzerland' },
-    { value: 'Finland', label: 'Finland' },
-    { value: 'Sweden', label: 'Sweden' },
-    { value: 'Norway', label: 'Norway' },
+    { value: 'Albania', label: 'Albania' },
+    { value: 'Andorra', label: 'Andorra' },
+    { value: 'Austria', label: 'Austria' },
+    { value: 'Belarus', label: 'Belarus' },
+    { value: 'Belgium', label: 'Belgium' },
+    { value: 'Bosnia and Herzegovina', label: 'Bosnia and Herzegovina' },
+    { value: 'Bulgaria', label: 'Bulgaria' },
+    { value: 'Croatia', label: 'Croatia' },
+    { value: 'Cyprus', label: 'Cyprus' },
+    { value: 'Czech Republic', label: 'Czech Republic' },
     { value: 'Denmark', label: 'Denmark' },
+    { value: 'Estonia', label: 'Estonia' },
+    { value: 'Finland', label: 'Finland' },
+    { value: 'France', label: 'France' },
+    { value: 'Germany', label: 'Germany' },
+    { value: 'Greece', label: 'Greece' },
+    { value: 'Hungary', label: 'Hungary' },
+    { value: 'Iceland', label: 'Iceland' },
+    { value: 'Ireland', label: 'Ireland' },
+    { value: 'Italy', label: 'Italy' },
+    { value: 'Latvia', label: 'Latvia' },
+    { value: 'Liechtenstein', label: 'Liechtenstein' },
+    { value: 'Lithuania', label: 'Lithuania' },
+    { value: 'Luxembourg', label: 'Luxembourg' },
+    { value: 'Malta', label: 'Malta' },
+    { value: 'Moldova', label: 'Moldova' },
+    { value: 'Monaco', label: 'Monaco' },
+    { value: 'Montenegro', label: 'Montenegro' },
+    { value: 'Netherlands', label: 'Netherlands' },
+    { value: 'North Macedonia', label: 'North Macedonia' },
+    { value: 'Norway', label: 'Norway' },
     { value: 'Poland', label: 'Poland' },
-    { value: 'Japan', label: 'Japan' },
-    { value: 'China', label: 'China' },
-    { value: 'Singapore', label: 'Singapore' },
-    { value: 'South Korea', label: 'South Korea' },
-    { value: 'Mexico', label: 'Mexico' },
-    { value: 'Argentina', label: 'Argentina' },
-    { value: 'South Africa', label: 'South Africa' },
-    { value: 'New Zealand', label: 'New Zealand' }
+    { value: 'Portugal', label: 'Portugal' },
+    { value: 'Romania', label: 'Romania' },
+    { value: 'Russia', label: 'Russia' },
+    { value: 'San Marino', label: 'San Marino' },
+    { value: 'Serbia', label: 'Serbia' },
+    { value: 'Slovakia', label: 'Slovakia' },
+    { value: 'Slovenia', label: 'Slovenia' },
+    { value: 'Spain', label: 'Spain' },
+    { value: 'Sweden', label: 'Sweden' },
+    { value: 'Switzerland', label: 'Switzerland' },
+    { value: 'Ukraine', label: 'Ukraine' },
+    { value: 'United Kingdom', label: 'United Kingdom' },
+    { value: 'Vatican City', label: 'Vatican City' }
   ]
   
   // Lead limit
@@ -256,7 +285,15 @@ export default function LeadScrapingPage() {
     if (foundedYearTo) filters.foundedYearTo = parseInt(foundedYearTo)
     if (companyDomains) filters.companyDomains = companyDomains
     
-    // Location Filters
+    // Location Filters - People
+    if (peopleCountryIncludes.length > 0) filters.peopleCountryIncludes = peopleCountryIncludes
+    if (peopleCountryExcludes.length > 0) filters.peopleCountryExcludes = peopleCountryExcludes
+    if (peopleStateIncludes.length > 0) filters.peopleStateIncludes = peopleStateIncludes
+    if (peopleStateExcludes.length > 0) filters.peopleStateExcludes = peopleStateExcludes
+    if (peopleCityIncludes) filters.peopleCityIncludes = peopleCityIncludes
+    if (peopleCityExcludes) filters.peopleCityExcludes = peopleCityExcludes
+    
+    // Location Filters - Company
     if (companyCountryIncludes.length > 0) filters.companyCountryIncludes = companyCountryIncludes
     if (companyCountryExcludes.length > 0) filters.companyCountryExcludes = companyCountryExcludes
     if (companyStateIncludes.length > 0) filters.companyStateIncludes = companyStateIncludes
@@ -303,6 +340,12 @@ export default function LeadScrapingPage() {
         foundedYearFrom: foundedYearFrom ? parseInt(foundedYearFrom) : null,
         foundedYearTo: foundedYearTo ? parseInt(foundedYearTo) : null,
         companyDomains: companyDomains || null,
+        peopleCountryIncludes: peopleCountryIncludes || [],
+        peopleCountryExcludes: peopleCountryExcludes || [],
+        peopleStateIncludes: peopleStateIncludes || [],
+        peopleStateExcludes: peopleStateExcludes || [],
+        peopleCityIncludes: peopleCityIncludes || null,
+        peopleCityExcludes: peopleCityExcludes || null,
         companyCountryIncludes: companyCountryIncludes || [],
         companyCountryExcludes: companyCountryExcludes || [],
         companyStateIncludes: companyStateIncludes || [],
@@ -438,6 +481,14 @@ export default function LeadScrapingPage() {
         return companyCount
       case 'location':
         let locationCount = 0
+        // People location
+        if (peopleCountryIncludes.length > 0) locationCount++
+        if (peopleCountryExcludes.length > 0) locationCount++
+        if (peopleStateIncludes.length > 0) locationCount++
+        if (peopleStateExcludes.length > 0) locationCount++
+        if (peopleCityIncludes) locationCount++
+        if (peopleCityExcludes) locationCount++
+        // Company location
         if (companyCountryIncludes.length > 0) locationCount++
         if (companyCountryExcludes.length > 0) locationCount++
         if (companyStateIncludes.length > 0) locationCount++
@@ -472,48 +523,58 @@ export default function LeadScrapingPage() {
       <div className="lead-scraping-content-wrapper">
         {/* Filters Sidebar */}
         <div className="lead-scraping-filters">
-        <div className="filters-actions">
-          <Button onClick={() => {
-            setEmailStatus('')
-            setOnlyWithEmail(false)
-            setOnlyWithPhone(false)
-            setJobTitlesIncludes([])
-            setJobTitlesExcludes([])
-            setIncludeSimilarTitles(false)
-            setAdditionalTitles('')
-            setManagementLevelIncludes([])
-            setManagementLevelExcludes([])
-            setDepartmentsIncludes([])
-            setDepartmentsExcludes([])
-            setFirstNameIncludes('')
-            setFirstNameExcludes('')
-            setLastNameIncludes('')
-            setLastNameExcludes('')
-            setEmployeeRange([])
-            setIndustriesIncludes([])
-            setIndustriesExcludes([])
-            setFoundedYearFrom('')
-            setFoundedYearTo('')
-            setCompanyDomains('')
-            setCompanyCountryIncludes([])
-            setCompanyCountryExcludes([])
-            setCompanyStateIncludes([])
-            setCompanyStateExcludes([])
-            setCompanyCityIncludes('')
-            setCompanyCityExcludes('')
-          }}>
-            Reset Filters
-          </Button>
-          <Button 
-            variant="primary" 
-            onClick={handleStartScraping}
-            disabled={loading}
-          >
-            {loading ? 'Aloitetaan...' : 'Aloita'}
-          </Button>
-        </div>
+          <div className="filters-actions">
+            <div className="filters-actions-buttons">
+              <Button onClick={() => {
+                setEmailStatus('')
+                setOnlyWithEmail(false)
+                setOnlyWithPhone(false)
+                setJobTitlesIncludes([])
+                setJobTitlesExcludes([])
+                setIncludeSimilarTitles(false)
+                setAdditionalTitles('')
+                setManagementLevelIncludes([])
+                setManagementLevelExcludes([])
+                setDepartmentsIncludes([])
+                setDepartmentsExcludes([])
+                setFirstNameIncludes('')
+                setFirstNameExcludes('')
+                setLastNameIncludes('')
+                setLastNameExcludes('')
+                setEmployeeRange([])
+                setIndustriesIncludes([])
+                setIndustriesExcludes([])
+                setFoundedYearFrom('')
+                setFoundedYearTo('')
+                setCompanyDomains('')
+                setPeopleCountryIncludes([])
+                setPeopleCountryExcludes([])
+                setPeopleStateIncludes([])
+                setPeopleStateExcludes([])
+                setPeopleCityIncludes('')
+                setPeopleCityExcludes('')
+                setCompanyCountryIncludes([])
+                setCompanyCountryExcludes([])
+                setCompanyStateIncludes([])
+                setCompanyStateExcludes([])
+                setCompanyCityIncludes('')
+                setCompanyCityExcludes('')
+                setLeadLimit(10000)
+              }}>
+                Reset Filters
+              </Button>
+              <Button 
+                variant="primary" 
+                onClick={handleStartScraping}
+                disabled={loading}
+              >
+                {loading ? 'Aloitetaan...' : 'Aloita'}
+              </Button>
+            </div>
+          </div>
 
-        {/* Contact Filters */}
+          <div className="filters-content">
+            {/* Contact Filters */}
         <div className="filter-group">
           <button 
             className="filter-group-header"
@@ -595,6 +656,7 @@ export default function LeadScrapingPage() {
                   value={industriesIncludes}
                   onChange={setIndustriesIncludes}
                   placeholder="Select industries to include..."
+                  searchable={true}
                 />
               </div>
               <div className="form-field">
@@ -604,6 +666,7 @@ export default function LeadScrapingPage() {
                   value={industriesExcludes}
                   onChange={setIndustriesExcludes}
                   placeholder="Select industries to exclude..."
+                  searchable={true}
                 />
               </div>
               <div className="form-field-row">
@@ -656,59 +719,126 @@ export default function LeadScrapingPage() {
           </button>
           {openFilters.location && (
             <div className="filter-group-content">
-              <div className="form-field">
-                <MultiSelect
-                  label="Company country — Includes"
-                  options={countryOptions}
-                  value={companyCountryIncludes}
-                  onChange={setCompanyCountryIncludes}
-                  placeholder="Select countries to include..."
-                />
+              {/* People Location */}
+              <div style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #e5e7eb' }}>
+                <h4 style={{ fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '12px' }}>People Location</h4>
+                <div className="form-field">
+                  <MultiSelect
+                    label="People country — Includes"
+                    options={countryOptions}
+                    value={peopleCountryIncludes}
+                    onChange={setPeopleCountryIncludes}
+                    placeholder="Select countries to include..."
+                    searchable={true}
+                  />
+                </div>
+                <div className="form-field">
+                  <MultiSelect
+                    label="People country — Excludes"
+                    options={countryOptions}
+                    value={peopleCountryExcludes}
+                    onChange={setPeopleCountryExcludes}
+                    placeholder="Select countries to exclude..."
+                    searchable={true}
+                  />
+                </div>
+                <div className="form-field">
+                  <MultiSelect
+                    label="People state/region — Includes"
+                    options={[]}
+                    value={peopleStateIncludes}
+                    onChange={setPeopleStateIncludes}
+                    placeholder="Select states/regions to include..."
+                  />
+                </div>
+                <div className="form-field">
+                  <MultiSelect
+                    label="People state/region — Excludes"
+                    options={[]}
+                    value={peopleStateExcludes}
+                    onChange={setPeopleStateExcludes}
+                    placeholder="Select states/regions to exclude..."
+                  />
+                </div>
+                <div className="form-field">
+                  <label>People city — Includes</label>
+                  <input
+                    type="text"
+                    value={peopleCityIncludes}
+                    onChange={(e) => setPeopleCityIncludes(e.target.value)}
+                    placeholder="Enter cities to include..."
+                  />
+                </div>
+                <div className="form-field">
+                  <label>People city — Excludes</label>
+                  <input
+                    type="text"
+                    value={peopleCityExcludes}
+                    onChange={(e) => setPeopleCityExcludes(e.target.value)}
+                    placeholder="Enter cities to exclude..."
+                  />
+                </div>
               </div>
-              <div className="form-field">
-                <MultiSelect
-                  label="Company country — Excludes"
-                  options={countryOptions}
-                  value={companyCountryExcludes}
-                  onChange={setCompanyCountryExcludes}
-                  placeholder="Select countries to exclude..."
-                />
-              </div>
-              <div className="form-field">
-                <MultiSelect
-                  label="Company state/region — Includes"
-                  options={[]}
-                  value={companyStateIncludes}
-                  onChange={setCompanyStateIncludes}
-                  placeholder="Select states/regions to include..."
-                />
-              </div>
-              <div className="form-field">
-                <MultiSelect
-                  label="Company state/region — Excludes"
-                  options={[]}
-                  value={companyStateExcludes}
-                  onChange={setCompanyStateExcludes}
-                  placeholder="Select states/regions to exclude..."
-                />
-              </div>
-              <div className="form-field">
-                <label>Company city — Includes</label>
-                <input
-                  type="text"
-                  value={companyCityIncludes}
-                  onChange={(e) => setCompanyCityIncludes(e.target.value)}
-                  placeholder="Enter cities to include..."
-                />
-              </div>
-              <div className="form-field">
-                <label>Company city — Excludes</label>
-                <input
-                  type="text"
-                  value={companyCityExcludes}
-                  onChange={(e) => setCompanyCityExcludes(e.target.value)}
-                  placeholder="Enter cities to exclude..."
-                />
+              
+              {/* Company Location */}
+              <div>
+                <h4 style={{ fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '12px' }}>Company Location</h4>
+                <div className="form-field">
+                  <MultiSelect
+                    label="Company country — Includes"
+                    options={countryOptions}
+                    value={companyCountryIncludes}
+                    onChange={setCompanyCountryIncludes}
+                    placeholder="Select countries to include..."
+                    searchable={true}
+                  />
+                </div>
+                <div className="form-field">
+                  <MultiSelect
+                    label="Company country — Excludes"
+                    options={countryOptions}
+                    value={companyCountryExcludes}
+                    onChange={setCompanyCountryExcludes}
+                    placeholder="Select countries to exclude..."
+                    searchable={true}
+                  />
+                </div>
+                <div className="form-field">
+                  <MultiSelect
+                    label="Company state/region — Includes"
+                    options={[]}
+                    value={companyStateIncludes}
+                    onChange={setCompanyStateIncludes}
+                    placeholder="Select states/regions to include..."
+                  />
+                </div>
+                <div className="form-field">
+                  <MultiSelect
+                    label="Company state/region — Excludes"
+                    options={[]}
+                    value={companyStateExcludes}
+                    onChange={setCompanyStateExcludes}
+                    placeholder="Select states/regions to exclude..."
+                  />
+                </div>
+                <div className="form-field">
+                  <label>Company city — Includes</label>
+                  <input
+                    type="text"
+                    value={companyCityIncludes}
+                    onChange={(e) => setCompanyCityIncludes(e.target.value)}
+                    placeholder="Enter cities to include..."
+                  />
+                </div>
+                <div className="form-field">
+                  <label>Company city — Excludes</label>
+                  <input
+                    type="text"
+                    value={companyCityExcludes}
+                    onChange={(e) => setCompanyCityExcludes(e.target.value)}
+                    placeholder="Enter cities to exclude..."
+                  />
+                </div>
               </div>
             </div>
           )}
@@ -738,6 +868,7 @@ export default function LeadScrapingPage() {
                   value={jobTitlesIncludes}
                   onChange={setJobTitlesIncludes}
                   placeholder="Select job titles to include..."
+                  searchable={true}
                 />
               </div>
               <div className="form-field">
@@ -757,6 +888,7 @@ export default function LeadScrapingPage() {
                   value={jobTitlesExcludes}
                   onChange={setJobTitlesExcludes}
                   placeholder="Select job titles to exclude..."
+                  searchable={true}
                 />
               </div>
               <div className="form-field">
@@ -796,6 +928,7 @@ export default function LeadScrapingPage() {
                   value={managementLevelIncludes}
                   onChange={setManagementLevelIncludes}
                   placeholder="Select management levels to include..."
+                  searchable={true}
                 />
               </div>
               <div className="form-field">
@@ -805,6 +938,7 @@ export default function LeadScrapingPage() {
                   value={managementLevelExcludes}
                   onChange={setManagementLevelExcludes}
                   placeholder="Select management levels to exclude..."
+                  searchable={true}
                 />
               </div>
             </div>
@@ -835,6 +969,7 @@ export default function LeadScrapingPage() {
                   value={departmentsIncludes}
                   onChange={setDepartmentsIncludes}
                   placeholder="Select departments to include..."
+                  searchable={true}
                 />
               </div>
               <div className="form-field">
@@ -844,6 +979,7 @@ export default function LeadScrapingPage() {
                   value={departmentsExcludes}
                   onChange={setDepartmentsExcludes}
                   placeholder="Select departments to exclude..."
+                  searchable={true}
                 />
               </div>
             </div>
@@ -905,6 +1041,40 @@ export default function LeadScrapingPage() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* Lead Limit */}
+        <div className="filter-group">
+          <button 
+            className="filter-group-header"
+            onClick={() => toggleFilter('leadLimit')}
+            type="button"
+          >
+            <span>Tulosten määrä</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span className={`chevron ${openFilters.leadLimit ? 'open' : ''}`}>▾</span>
+            </span>
+          </button>
+          {openFilters.leadLimit && (
+            <div className="filter-group-content">
+              <div className="form-field">
+                <label htmlFor="lead-limit">Tulosten määrä</label>
+                <input
+                  id="lead-limit"
+                  type="number"
+                  min="1"
+                  max="50000"
+                  value={leadLimit}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value) || 0
+                    setLeadLimit(Math.min(Math.max(value, 1), 50000))
+                  }}
+                  placeholder="10000"
+                />
+              </div>
+            </div>
+          )}
+        </div>
         </div>
         </div>
 

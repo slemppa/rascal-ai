@@ -6,21 +6,31 @@ export default function MultiSelect({
   value = [], 
   onChange, 
   placeholder = 'Select...',
-  label 
+  label,
+  searchable = false
 }) {
   const [isOpen, setIsOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
   const dropdownRef = useRef(null)
+  const searchInputRef = useRef(null)
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false)
+        setSearchTerm('')
       }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
+
+  useEffect(() => {
+    if (isOpen && searchable && searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+  }, [isOpen, searchable])
 
   const toggleOption = (optionValue) => {
     const newValue = value.includes(optionValue)
@@ -29,14 +39,27 @@ export default function MultiSelect({
     onChange(newValue)
   }
 
+  const filteredOptions = searchable && searchTerm
+    ? options.filter(option => 
+        option.label.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : options
+
   const selectedLabels = value.map(v => options.find(o => o.value === v)?.label || v).join(', ')
+
+  const handleDropdownClick = (e) => {
+    if (e.target.closest('.multiselect-search')) {
+      return
+    }
+    setIsOpen(!isOpen)
+  }
 
   return (
     <div className="multiselect-wrapper" ref={dropdownRef}>
       {label && <label className="multiselect-label">{label}</label>}
       <div 
         className={`multiselect ${isOpen ? 'open' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleDropdownClick}
       >
         <div className="multiselect-value">
           {value.length > 0 ? (
@@ -49,10 +72,23 @@ export default function MultiSelect({
       </div>
       {isOpen && (
         <div className="multiselect-dropdown">
-          {options.length === 0 ? (
-            <div className="multiselect-option">No options available</div>
+          {searchable && (
+            <div className="multiselect-search">
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                className="multiselect-search-input"
+              />
+            </div>
+          )}
+          {filteredOptions.length === 0 ? (
+            <div className="multiselect-option">No options found</div>
           ) : (
-            options.map(option => (
+            filteredOptions.map(option => (
               <label key={option.value} className="multiselect-option">
                 <input
                   type="checkbox"

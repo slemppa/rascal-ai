@@ -17,6 +17,8 @@
   flex: 1;
   overflow: hidden;
   gap: 0;
+  min-height: 0;
+  height: 100%;
 }
 
 .lead-scraping-header {
@@ -71,28 +73,12 @@
   min-width: 280px;
   background: #ffffff;
   border-right: 1px solid #e5e7eb;
-  overflow-y: auto;
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  flex: 0 0 280px;
   height: 100%;
-}
-
-.lead-scraping-filters::-webkit-scrollbar {
-  width: 6px;
-}
-
-.lead-scraping-filters::-webkit-scrollbar-track {
-  background: #f9fafb;
-}
-
-.lead-scraping-filters::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 3px;
-}
-
-.lead-scraping-filters::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  min-height: 100%;
+  overflow: hidden;
 }
 
 .filters-actions {
@@ -104,7 +90,38 @@
   flex-shrink: 0;
 }
 
-.filters-actions button {
+.filters-actions-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  width: 100%;
+}
+
+.filters-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+.filters-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filters-content::-webkit-scrollbar-track {
+  background: #f9fafb;
+}
+
+.filters-content::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.filters-content::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.filters-actions-buttons button {
   flex: 1;
   min-width: 0;
   padding: 8px 12px !important;

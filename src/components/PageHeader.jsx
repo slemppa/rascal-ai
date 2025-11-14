@@ -6,7 +6,6 @@ import './PageHeader.css'
 
 export default function PageHeader({ title, background = 'var(--brand-dark)', color = '#fff', children }) {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  const left = isMobile ? 0 : 250;
   const paddingLeft = isMobile ? 16 : 32;
   const navigate = useNavigate()
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -28,7 +27,7 @@ export default function PageHeader({ title, background = 'var(--brand-dark)', co
   }
 
   return (
-    <div className="page-header" style={{ left, paddingLeft }}>
+    <div className="page-header" style={{ paddingLeft }}>
       <h1 className="page-header-title" style={{ color }}>{title}</h1>
       <div className="page-header-user">
         <div className={`page-header-user-button ${dropdownOpen ? 'active' : ''}`} onClick={() => setDropdownOpen(v => !v)}>

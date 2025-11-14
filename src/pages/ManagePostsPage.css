@@ -3,8 +3,8 @@
   flex: 1;
   min-height: 100vh;
   background-color: #F8F5ED; /* Vaalea tausta */
-  margin-left: 250px; /* Sidebar width */
-  width: calc(100vw - 250px); /* Full viewport width minus sidebar */
+  margin-left: var(--sidebar-width, 250px); /* Sidebar width */
+  width: calc(100vw - var(--sidebar-width, 250px)); /* Full viewport width minus sidebar */
   transition: margin-left 0.3s ease, width 0.3s ease;
 }
 

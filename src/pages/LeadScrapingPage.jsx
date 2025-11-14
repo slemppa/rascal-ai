@@ -15,13 +15,13 @@ export default function LeadScrapingPage() {
   
   // Filter states
   const [openFilters, setOpenFilters] = useState({
-    contact: true,
-    jobTitle: true,
-    management: true,
-    departments: true,
-    names: true,
-    company: true,
-    location: true
+    contact: false,
+    jobTitle: false,
+    management: false,
+    departments: false,
+    names: false,
+    company: false,
+    location: false
   })
   
   // Contact Filters
@@ -208,9 +208,6 @@ export default function LeadScrapingPage() {
   
   // Lead limit
   const [leadLimit, setLeadLimit] = useState(10000)
-  const [showLimitModal, setShowLimitModal] = useState(false)
-  const [showJsonModal, setShowJsonModal] = useState(false)
-  const [generatedJson, setGeneratedJson] = useState('')
   
   // Results
   const [leads, setLeads] = useState([])
@@ -394,74 +391,64 @@ export default function LeadScrapingPage() {
     }
   }, [user?.id, currentPage, resultsPerPage])
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text)
-    setSuccess('JSON kopioitu leikepöydälle!')
-    setTimeout(() => setSuccess(''), 3000)
-  }
-
-  const handleGenerateJson = () => {
-    const json = generateApifyJson()
-    setGeneratedJson(json)
-    setShowJsonModal(true)
-  }
-
-  const handleGenerateFinalJson = () => {
-    const filters = {}
-    
-    // Contact Filters
-    if (emailStatus) filters.emailStatus = emailStatus
-    if (onlyWithEmail) filters.onlyWithEmail = true
-    if (onlyWithPhone) filters.onlyWithPhone = true
-    
-    // Job Title Filters
-    if (jobTitlesIncludes.length > 0) filters.jobTitlesIncludes = jobTitlesIncludes
-    if (jobTitlesExcludes.length > 0) filters.jobTitlesExcludes = jobTitlesExcludes
-    if (includeSimilarTitles) filters.includeSimilarTitles = true
-    if (additionalTitles) filters.additionalTitles = additionalTitles
-    
-    // Management Level Filters
-    if (managementLevelIncludes.length > 0) filters.managementLevelIncludes = managementLevelIncludes
-    if (managementLevelExcludes.length > 0) filters.managementLevelExcludes = managementLevelExcludes
-    
-    // Departments & Job Function Filters
-    if (departmentsIncludes.length > 0) filters.departmentsIncludes = departmentsIncludes
-    if (departmentsExcludes.length > 0) filters.departmentsExcludes = departmentsExcludes
-    
-    // Name Filters
-    if (firstNameIncludes) filters.firstNameIncludes = firstNameIncludes
-    if (firstNameExcludes) filters.firstNameExcludes = firstNameExcludes
-    if (lastNameIncludes) filters.lastNameIncludes = lastNameIncludes
-    if (lastNameExcludes) filters.lastNameExcludes = lastNameExcludes
-    
-    // Company Filters
-    if (employeeRange.length > 0) filters.employeeRange = employeeRange
-    if (industriesIncludes.length > 0) filters.industriesIncludes = industriesIncludes
-    if (industriesExcludes.length > 0) filters.industriesExcludes = industriesExcludes
-    if (foundedYearFrom) filters.foundedYearFrom = parseInt(foundedYearFrom)
-    if (foundedYearTo) filters.foundedYearTo = parseInt(foundedYearTo)
-    if (companyDomains) filters.companyDomains = companyDomains
-    
-    // Location Filters
-    if (companyCountryIncludes.length > 0) filters.companyCountryIncludes = companyCountryIncludes
-    if (companyCountryExcludes.length > 0) filters.companyCountryExcludes = companyCountryExcludes
-    if (companyStateIncludes.length > 0) filters.companyStateIncludes = companyStateIncludes
-    if (companyStateExcludes.length > 0) filters.companyStateExcludes = companyStateExcludes
-    if (companyCityIncludes) filters.companyCityIncludes = companyCityIncludes
-    if (companyCityExcludes) filters.companyCityExcludes = companyCityExcludes
-
-    const finalJson = {
-      ...filters,
-      maxResults: Math.min(leadLimit, 50000)
-    }
-
-    const jsonString = JSON.stringify(finalJson, null, 2)
-    setGeneratedJson(jsonString)
-    setShowLimitModal(false)
-    setShowJsonModal(true)
-  }
 
   const totalPages = Math.ceil(totalLeads / resultsPerPage)
+
+  // Count active filters for each group
+  const getFilterCount = (group) => {
+    switch(group) {
+      case 'contact':
+        let contactCount = 0
+        if (emailStatus) contactCount++
+        if (onlyWithEmail) contactCount++
+        if (onlyWithPhone) contactCount++
+        return contactCount
+      case 'jobTitle':
+        let jobTitleCount = 0
+        if (jobTitlesIncludes.length > 0) jobTitleCount++
+        if (jobTitlesExcludes.length > 0) jobTitleCount++
+        if (includeSimilarTitles) jobTitleCount++
+        if (additionalTitles) jobTitleCount++
+        return jobTitleCount
+      case 'management':
+        let managementCount = 0
+        if (managementLevelIncludes.length > 0) managementCount++
+        if (managementLevelExcludes.length > 0) managementCount++
+        return managementCount
+      case 'departments':
+        let departmentsCount = 0
+        if (departmentsIncludes.length > 0) departmentsCount++
+        if (departmentsExcludes.length > 0) departmentsCount++
+        return departmentsCount
+      case 'names':
+        let namesCount = 0
+        if (firstNameIncludes) namesCount++
+        if (firstNameExcludes) namesCount++
+        if (lastNameIncludes) namesCount++
+        if (lastNameExcludes) namesCount++
+        return namesCount
+      case 'company':
+        let companyCount = 0
+        if (employeeRange.length > 0) companyCount++
+        if (industriesIncludes.length > 0) companyCount++
+        if (industriesExcludes.length > 0) companyCount++
+        if (foundedYearFrom) companyCount++
+        if (foundedYearTo) companyCount++
+        if (companyDomains) companyCount++
+        return companyCount
+      case 'location':
+        let locationCount = 0
+        if (companyCountryIncludes.length > 0) locationCount++
+        if (companyCountryExcludes.length > 0) locationCount++
+        if (companyStateIncludes.length > 0) locationCount++
+        if (companyStateExcludes.length > 0) locationCount++
+        if (companyCityIncludes) locationCount++
+        if (companyCityExcludes) locationCount++
+        return locationCount
+      default:
+        return 0
+    }
+  }
 
   return (
     <div className="lead-scraping-page">
@@ -471,19 +458,20 @@ export default function LeadScrapingPage() {
       </div>
 
       {error && (
-        <div className="lead-scraping-error">
+        <div className="lead-scraping-error" style={{ margin: '0 24px', marginTop: '16px' }}>
           {error}
         </div>
       )}
 
       {success && (
-        <div className="lead-scraping-success">
+        <div className="lead-scraping-success" style={{ margin: '0 24px', marginTop: '16px' }}>
           {success}
         </div>
       )}
 
-      {/* Filters Section */}
-      <div className="lead-scraping-filters">
+      <div className="lead-scraping-content-wrapper">
+        {/* Filters Sidebar */}
+        <div className="lead-scraping-filters">
         <div className="filters-actions">
           <Button onClick={() => {
             setEmailStatus('')
@@ -521,13 +509,7 @@ export default function LeadScrapingPage() {
             onClick={handleStartScraping}
             disabled={loading}
           >
-            {loading ? 'Aloitetaan...' : 'Search Database'}
-          </Button>
-          <Button 
-            variant="secondary" 
-            onClick={() => setShowLimitModal(true)}
-          >
-            Generate Apify JSON
+            {loading ? 'Aloitetaan...' : 'Aloita'}
           </Button>
         </div>
 
@@ -539,7 +521,12 @@ export default function LeadScrapingPage() {
             type="button"
           >
             <span>Contact Filters</span>
-            <span className={`chevron ${openFilters.contact ? 'open' : ''}`}>▾</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {getFilterCount('contact') > 0 && (
+                <span className="filter-count-badge">{getFilterCount('contact')}</span>
+              )}
+              <span className={`chevron ${openFilters.contact ? 'open' : ''}`}>▾</span>
+            </span>
           </button>
           {openFilters.contact && (
             <div className="filter-group-content">
@@ -583,7 +570,12 @@ export default function LeadScrapingPage() {
             type="button"
           >
             <span>Company Filters</span>
-            <span className={`chevron ${openFilters.company ? 'open' : ''}`}>▾</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {getFilterCount('company') > 0 && (
+                <span className="filter-count-badge">{getFilterCount('company')}</span>
+              )}
+              <span className={`chevron ${openFilters.company ? 'open' : ''}`}>▾</span>
+            </span>
           </button>
           {openFilters.company && (
             <div className="filter-group-content">
@@ -655,7 +647,12 @@ export default function LeadScrapingPage() {
             type="button"
           >
             <span>Location Filters</span>
-            <span className={`chevron ${openFilters.location ? 'open' : ''}`}>▾</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {getFilterCount('location') > 0 && (
+                <span className="filter-count-badge">{getFilterCount('location')}</span>
+              )}
+              <span className={`chevron ${openFilters.location ? 'open' : ''}`}>▾</span>
+            </span>
           </button>
           {openFilters.location && (
             <div className="filter-group-content">
@@ -725,7 +722,12 @@ export default function LeadScrapingPage() {
             type="button"
           >
             <span>Job Title Filters</span>
-            <span className={`chevron ${openFilters.jobTitle ? 'open' : ''}`}>▾</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {getFilterCount('jobTitle') > 0 && (
+                <span className="filter-count-badge">{getFilterCount('jobTitle')}</span>
+              )}
+              <span className={`chevron ${openFilters.jobTitle ? 'open' : ''}`}>▾</span>
+            </span>
           </button>
           {openFilters.jobTitle && (
             <div className="filter-group-content">
@@ -778,7 +780,12 @@ export default function LeadScrapingPage() {
             type="button"
           >
             <span>Management Level Filters</span>
-            <span className={`chevron ${openFilters.management ? 'open' : ''}`}>▾</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {getFilterCount('management') > 0 && (
+                <span className="filter-count-badge">{getFilterCount('management')}</span>
+              )}
+              <span className={`chevron ${openFilters.management ? 'open' : ''}`}>▾</span>
+            </span>
           </button>
           {openFilters.management && (
             <div className="filter-group-content">
@@ -812,7 +819,12 @@ export default function LeadScrapingPage() {
             type="button"
           >
             <span>Departments & Job Function Filters</span>
-            <span className={`chevron ${openFilters.departments ? 'open' : ''}`}>▾</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {getFilterCount('departments') > 0 && (
+                <span className="filter-count-badge">{getFilterCount('departments')}</span>
+              )}
+              <span className={`chevron ${openFilters.departments ? 'open' : ''}`}>▾</span>
+            </span>
           </button>
           {openFilters.departments && (
             <div className="filter-group-content">
@@ -846,7 +858,12 @@ export default function LeadScrapingPage() {
             type="button"
           >
             <span>Name Filters</span>
-            <span className={`chevron ${openFilters.names ? 'open' : ''}`}>▾</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {getFilterCount('names') > 0 && (
+                <span className="filter-count-badge">{getFilterCount('names')}</span>
+              )}
+              <span className={`chevron ${openFilters.names ? 'open' : ''}`}>▾</span>
+            </span>
           </button>
           {openFilters.names && (
             <div className="filter-group-content">
@@ -889,23 +906,10 @@ export default function LeadScrapingPage() {
             </div>
           )}
         </div>
-
-      </div>
-
-      {/* Email Filter Message */}
-      <div className="email-filter-message">
-        <div className="email-filter-content">
-          <div className="email-filter-inner">
-            💡 <strong>Need only results with emails and/or phones?</strong> Check the "Only show leads with email addresses" and/or "Only show leads with phone numbers" options in the Contact Filters section above.
-          </div>
-          <div className="email-filter-inner">
-            ⚠️ <strong>"<span className="found">✓ Found</span>" indicates contact data available</strong> - use Generate JSON to scrape full emails, phones & LinkedIn URLs.
-          </div>
         </div>
-      </div>
 
-      {/* Results Section */}
-      <div className="lead-scraping-results">
+        {/* Results Section */}
+        <div className="lead-scraping-results">
         <div className="results-header">
           <h2>Scraped Liidit</h2>
           <div className="results-controls">
@@ -1002,86 +1006,8 @@ export default function LeadScrapingPage() {
             )}
           </>
         )}
+        </div>
       </div>
-
-      {/* Lead Limit Modal */}
-      {showLimitModal && (
-        <div className="modal-overlay modal-overlay--light" role="dialog" aria-modal="true" onClick={(e) => e.target === e.currentTarget && setShowLimitModal(false)}>
-          <div className="modal-container">
-            <div className="modal-header">
-              <h2 className="modal-title">📊 Lead Extraction Settings</h2>
-              <button className="modal-close-btn" onClick={() => setShowLimitModal(false)} type="button">×</button>
-            </div>
-            <div className="modal-content">
-              <div style={{ background: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.3)', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '1.5rem', marginRight: '8px' }}>💡</span>
-                  <strong>Maximum leads per run: 50,000</strong>
-                </div>
-                <p style={{ margin: '8px 0 0 0', fontSize: '14px', lineHeight: '1.4', color: '#6b7280' }}>
-                  You can set any limit below this. Our actor is designed to be persistent - if you have a search of 100k leads,
-                  you can run a 50k scrape and then run another 50k scrape starting where you left off.
-                </p>
-              </div>
-              <div className="form-field">
-                <label htmlFor="total-results-input" style={{ fontWeight: 600, marginBottom: '8px', display: 'block' }}>
-                  How many leads do you want to extract?
-                </label>
-                <input
-                  type="number"
-                  id="total-results-input"
-                  min="1"
-                  max="50000"
-                  value={leadLimit}
-                  onChange={(e) => setLeadLimit(Math.min(parseInt(e.target.value) || 10000, 50000))}
-                  placeholder="Enter number of leads (max 50,000)"
-                  style={{ width: '100%', padding: '12px 16px', border: '2px solid #e5e7eb', borderRadius: '8px', fontSize: '14px' }}
-                />
-              </div>
-              <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-                <Button variant="primary" onClick={handleGenerateFinalJson}>
-                  Generate JSON
-                </Button>
-                <Button variant="secondary" onClick={() => setShowLimitModal(false)}>
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* JSON Output Modal */}
-      {showJsonModal && (
-        <div className="modal-overlay modal-overlay--light" role="dialog" aria-modal="true" onClick={(e) => e.target === e.currentTarget && setShowJsonModal(false)}>
-          <div className="modal-container" style={{ maxWidth: '800px' }}>
-            <div className="modal-header">
-              <h2 className="modal-title">🚀 Apify Actor Input JSON</h2>
-              <button className="modal-close-btn" onClick={() => setShowJsonModal(false)} type="button">×</button>
-            </div>
-            <div className="modal-content">
-              <div style={{ marginBottom: '20px' }}>
-                <h4 style={{ marginBottom: '12px', fontWeight: 600 }}>How to use this JSON:</h4>
-                <ol style={{ paddingLeft: '20px', color: '#6b7280' }}>
-                  <li style={{ marginBottom: '8px' }}>Copy the JSON below</li>
-                  <li style={{ marginBottom: '8px' }}>Go to your Apify actor dashboard</li>
-                  <li style={{ marginBottom: '8px' }}>Paste this JSON as the input configuration</li>
-                  <li style={{ marginBottom: '8px' }}>Run the actor to extract the specified number of leads</li>
-                  <li style={{ marginBottom: '8px' }}>Download your results when the run completes</li>
-                </ol>
-              </div>
-              <div style={{ margin: '20px 0' }}>
-                <pre style={{ background: '#f9fafb', padding: '20px', borderRadius: '8px', fontFamily: 'monospace', fontSize: '12px', whiteSpace: 'pre-wrap', wordBreak: 'break-all', margin: 0, border: '1px solid #e5e7eb', color: '#1f2937', lineHeight: '1.5', maxHeight: '400px', overflow: 'auto' }}>
-                  {generatedJson}
-                </pre>
-              </div>
-              <Button variant="primary" onClick={() => copyToClipboard(generatedJson)}>
-                Copy to Clipboard
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

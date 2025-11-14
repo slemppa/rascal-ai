@@ -468,10 +468,21 @@ export default function Sidebar() {
     </>
   )
 
+  const [isCollapsed, setIsCollapsed] = useState(true)
+
+  // Update CSS variable when sidebar collapses/expands
+  useEffect(() => {
+    document.documentElement.style.setProperty('--sidebar-width', isCollapsed ? '70px' : '250px')
+  }, [isCollapsed])
+
   return (
     <>
       {/* Desktop sidebar - näytetään vain desktopilla */}
-      <div className={styles.sidebar}>
+      <div 
+        className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ''}`}
+        onMouseEnter={() => setIsCollapsed(false)}
+        onMouseLeave={() => setIsCollapsed(true)}
+      >
         {menu}
       </div>
       <TicketButton />

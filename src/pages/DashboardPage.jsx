@@ -275,7 +275,7 @@ export default function DashboardPage() {
   const [schedule, setSchedule] = useState([])
   const [scheduleLoading, setScheduleLoading] = useState(true)
   const [socialAccounts, setSocialAccounts] = useState([]) // Supabase social accounts
-  const { user } = useAuth()
+  const { user, organization } = useAuth()
   const [imageModalUrl, setImageModalUrl] = useState(null)
   const [showScheduledModal, setShowScheduledModal] = useState(false)
   const [selectedPost, setSelectedPost] = useState(null)
@@ -298,16 +298,11 @@ export default function DashboardPage() {
     setChartLoading(true)
     
     try {
-      // Hae käyttäjän user_id ensin
-      const { data: userRow } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const { getUserOrgId } = await import('../lib/getUserOrgId')
+      const userId = await getUserOrgId(user.id)
       
-      if (!userRow) return
-      
-      const userId = userRow.id
+      if (!userId) return
       const now = new Date()
       let startDate
       
@@ -531,15 +526,17 @@ export default function DashboardPage() {
       setLoading(true)
       setError(null)
       
-      // Hae käyttäjän user_id ensin
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
       let userId = null
       if (user) {
-        const { data: userRow } = await supabase
-          .from('users')
-          .select('id')
-          .eq('auth_user_id', user.id)
-          .single()
-        userId = userRow?.id
+        const { getUserOrgId } = await import('../lib/getUserOrgId')
+        userId = await getUserOrgId(user.id)
+      }
+      
+      if (!userId) {
+        setError('Käyttäjän ID ei löytynyt')
+        setLoading(false)
+        return
       }
       
       // Hakee kirjautuneen käyttäjän postaukset - vain käyttäjän omat
@@ -557,15 +554,11 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchCallPrice = async () => {
-      // Hae käyttäjän user_id ensin
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
       let userId = null
       if (user) {
-        const { data: userRow } = await supabase
-          .from('users')
-          .select('id')
-          .eq('auth_user_id', user.id)
-          .single()
-        userId = userRow?.id
+        const { getUserOrgId } = await import('../lib/getUserOrgId')
+        userId = await getUserOrgId(user.id)
       }
 
       // Hae kuluvan kuukauden puheluiden kokonaishinta - vain käyttäjän omat
@@ -597,37 +590,20 @@ export default function DashboardPage() {
 
       setStatsLoading(true)
       try {
-        // Hae käyttäjän user_id ensin
-        const { data: userRow, error: userError } = await supabase
-          .from('users')
-          .select('id, features')
-          .eq('auth_user_id', user.id)
-          .single()
-
-        if (userError || !userRow?.id) {
-          console.error('User not found:', userError)
-          setStatsLoading(false)
-          return
-        }
-
-        // Haetaan oikea user_id users taulusta (sama logiikka kuin posts-sivulla)
-        const { data: userData, error: userDataError } = await supabase
-          .from('users')
-          .select('id')
-          .eq('auth_user_id', user.id)
-          .single()
+        // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+        const { getUserOrgId } = await import('../lib/getUserOrgId')
+        const userId = await getUserOrgId(user.id)
         
-        if (userDataError || !userData?.id) {
-          console.error('User data not found:', userDataError)
+        if (!userId) {
+          console.error('User ID not found')
           setStatsLoading(false)
           return
         }
         
-        const userId = userData.id
         const now = new Date()
         const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
         
-        // Hae kaikki tiedot rinnakkain
+        // Hae kaikki tiedot rinnakkain käyttäen userId:tä (organisaation ID kutsutuille käyttäjille)
         const [
           { count: upcomingCount, error: upcomingError },
           { count: monthlyCount, error: monthlyError },
@@ -690,7 +666,7 @@ export default function DashboardPage() {
       }
     }
     fetchStats()
-  }, [user])
+  }, [user, organization])
 
   // Hae käyttäjän social accounts Supabasesta
   useEffect(() => {
@@ -727,15 +703,12 @@ export default function DashboardPage() {
 
       setScheduleLoading(true)
       try {
-        // Hae käyttäjän user_id
-        const { data: userRow, error: userError } = await supabase
-          .from('users')
-          .select('id')
-          .eq('auth_user_id', user.id)
-          .single()
+        // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+        const { getUserOrgId } = await import('../lib/getUserOrgId')
+        const userId = await getUserOrgId(user.id)
 
-        if (userError || !userRow?.id) {
-          console.error('User not found for schedule:', userError)
+        if (!userId) {
+          console.error('User not found for schedule')
           setSchedule([])
           setScheduleLoading(false)
           return
@@ -745,7 +718,7 @@ export default function DashboardPage() {
         const { data: supabaseData, error } = await supabase
           .from('content')
           .select('id, type, idea, status, publish_date, created_at, media_urls, caption')
-          .eq('user_id', userRow.id)
+          .eq('user_id', userId)
           .order('publish_date', { ascending: true, nullsFirst: true })
           .limit(20)
 

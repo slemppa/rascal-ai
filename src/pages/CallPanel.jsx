@@ -14,6 +14,7 @@ import MessageLogsTab from '../components/calls/MessageLogsTab'
 import { useTranslation } from 'react-i18next'
 import Button from '../components/Button'
 import { useAuth } from '../contexts/AuthContext'
+import { getUserOrgId } from '../lib/getUserOrgId'
 import axios from 'axios'
 import PageMeta from '../components/PageMeta'
 import '../components/ModalComponents.css'
@@ -414,25 +415,18 @@ export default function CallPanel() {
         // Hae user_id Supabasesta
         const user_id = user?.id
 
-        // Hae ensin public.users.id käyttäen auth_user_id:tä
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('id')
-          .eq('auth_user_id', user_id)
-          .single()
-
-        if (userError || !userData) {
-          throw new Error('Käyttäjää ei löytynyt')
+        // Hae organisaation ID (public.users.id)
+        const publicUserId = await getUserOrgId(user_id)
+        if (!publicUserId) {
+          throw new Error('Organisaation ID ei löytynyt')
         }
-
-        const publicUserId = userData.id
 
         // Hae call_type_id call_types taulusta
         const { data: callTypeData, error: callTypeError } = await supabase
           .from('call_types')
           .select('id')
           .eq('name', callType)
-          .eq('user_id', publicUserId)
+          .eq('user_id', publicUserId) // Käytetään organisaation ID:tä
           .single()
 
         if (callTypeError || !callTypeData) {
@@ -864,23 +858,18 @@ export default function CallPanel() {
         return
       }
       
-      // Hae ensin users.id käyttäen auth_user_id:tä
-      const { data: userProfile, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-      
-      if (userError || !userProfile) {
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
         setCallTypes([])
         return
       }
       
-      // Hae call_types käyttäen users.id:tä
+      // Hae call_types käyttäen organisaation ID:tä
       const { data, error } = await supabase
         .from('call_types')
         .select('*')
-        .eq('user_id', userProfile.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .order('created_at', { ascending: false })
       
       if (error) throw error
@@ -948,10 +937,17 @@ export default function CallPanel() {
       }
 
       // Hae inbound-asetukset
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        setInboundCallTypes([])
+        return
+      }
+
       const { data: inboundData, error: inboundError } = await supabase
         .from('inbound_call_types')
         .select('*')
-        .eq('user_id', userProfile.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('is_active', true)
         .single()
 
@@ -995,23 +991,16 @@ export default function CallPanel() {
         return
       }
       
-      // Hae ensin users.id käyttäen auth_user_id:tä
-      const { data: userProfile, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-
-      if (userError || !userProfile) {
-        setAddTypeError('Käyttäjää ei löytynyt!')
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        setAddTypeError('Organisaation ID ei löytynyt!')
         setAddTypeLoading(false)
         return
       }
 
-
-
       const insertData = {
-        user_id: userProfile.id,
+        user_id: orgId, // Käytetään organisaation ID:tä
         name: newCallType.callType,
         agent_name: newCallType.agent_name || '',
         target_audience: newCallType.target_audience || '',
@@ -1136,14 +1125,9 @@ export default function CallPanel() {
     try {
       if (!user?.id) return
 
-      // Hae users.id
-      const { data: userProfile, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-      
-      if (userError || !userProfile) return
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) return
 
       // Hae tilastot COUNT-kyselyillä (paljon tehokkaampi kuin kaikkien rivien haku)
       
@@ -1151,13 +1135,13 @@ export default function CallPanel() {
       const { count: totalCalls, error: totalError } = await supabase
         .from('call_logs')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', userProfile.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
 
       // Vastatut (done + answered)
       const { count: answered, error: answeredError } = await supabase
         .from('call_logs')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', userProfile.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('call_status', 'done')
         .eq('answered', true)
 
@@ -1165,14 +1149,14 @@ export default function CallPanel() {
       const { count: successful, error: successfulError } = await supabase
         .from('call_logs')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', userProfile.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('call_outcome', 'successful')
 
       // Epäonnistuneet (done + !answered)
       const { count: failed, error: failedError } = await supabase
         .from('call_logs')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', userProfile.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('call_status', 'done')
         .eq('answered', false)
 
@@ -1180,14 +1164,14 @@ export default function CallPanel() {
       const { count: pending, error: pendingError } = await supabase
         .from('call_logs')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', userProfile.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('call_status', 'pending')
 
       // Jonossa
       const { count: inProgress, error: inProgressError } = await supabase
         .from('call_logs')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', userProfile.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('call_status', 'in progress')
 
       if (totalError || answeredError || successfulError || failedError || pendingError || inProgressError) {
@@ -1218,15 +1202,10 @@ export default function CallPanel() {
         return
       }
 
-      // Hae ensin users.id käyttäen auth_user_id:tä
-      const { data: userProfile, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-      
-      if (userError || !userProfile) {
-        setCallLogsError('Käyttäjää ei löytynyt!')
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        setCallLogsError('Organisaation ID ei löytynyt!')
         return
       }
 
@@ -1234,7 +1213,7 @@ export default function CallPanel() {
       let countQuery = supabase
         .from('call_logs')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', userProfile.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
 
       // Lisää suodattimet count-kyselyyn
       if (searchTerm) {
@@ -1306,7 +1285,7 @@ export default function CallPanel() {
         let query = supabase
           .from('call_logs')
           .select('*')
-          .eq('user_id', userProfile.id)
+          .eq('user_id', orgId) // Käytetään organisaation ID:tä
           .range(startIndex, endIndex)
 
         // Lisää järjestäminen
@@ -1409,22 +1388,17 @@ export default function CallPanel() {
         return
       }
 
-      // Hae ensin users.id käyttäen auth_user_id:tä
-      const { data: userProfile, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-      
-      if (userError || !userProfile) {
-        setMessageLogsError('Käyttäjää ei löytynyt!')
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        setMessageLogsError('Organisaation ID ei löytynyt!')
         return
       }
 
       const { data: logs, error } = await supabase
         .from('message_logs')
         .select('*')
-        .eq('user_id', userProfile.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .order('created_at', { ascending: false })
 
       if (error) {
@@ -1987,25 +1961,18 @@ export default function CallPanel() {
       // Käytä normaalia mass-call API:a Google Sheets -datalle
       const user_id = user?.id
 
-      // Hae ensin public.users.id käyttäen auth_user_id:tä
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user_id)
-        .single()
-
-      if (userError || !userData) {
-        throw new Error('Käyttäjää ei löytynyt')
+      // Hae organisaation ID (public.users.id)
+      const publicUserId = await getUserOrgId(user_id)
+      if (!publicUserId) {
+        throw new Error('Organisaation ID ei löytynyt')
       }
-
-      const publicUserId = userData.id
 
       // Hae call_type_id call_types taulusta
       const { data: callTypeData, error: callTypeError } = await supabase
         .from('call_types')
         .select('id')
         .eq('name', massCallCallType)
-        .eq('user_id', publicUserId)
+        .eq('user_id', publicUserId) // Käytetään organisaation ID:tä
         .single()
 
       if (callTypeError || !callTypeData) {
@@ -2207,25 +2174,18 @@ export default function CallPanel() {
       // Tallenna ajastetut puhelut call_logs tauluun
       const user_id = user?.id
 
-      // Hae ensin public.users.id käyttäen auth_user_id:tä
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user_id)
-        .single()
-
-      if (userError || !userData) {
-        throw new Error('Käyttäjää ei löytynyt')
+      // Hae organisaation ID (public.users.id)
+      const publicUserId = await getUserOrgId(user_id)
+      if (!publicUserId) {
+        throw new Error('Organisaation ID ei löytynyt')
       }
-
-      const publicUserId = userData.id
 
       // Hae call_type_id call_types taulusta
       const { data: callTypeData, error: callTypeError } = await supabase
         .from('call_types')
         .select('id')
         .eq('name', massCallCallType)
-        .eq('user_id', publicUserId)
+        .eq('user_id', publicUserId) // Käytetään organisaation ID:tä
         .single()
 
       if (callTypeError || !callTypeData) {

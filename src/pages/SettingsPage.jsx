@@ -10,11 +10,12 @@ import TimeoutSettings from '../components/TimeoutSettings'
 import SimpleSocialConnect from '../components/SimpleSocialConnect'
 import { useMixpostIntegration } from '../components/SocialMedia/hooks/useMixpostIntegration'
 import { useStrategyStatus } from '../contexts/StrategyStatusContext'
+import { getUserOrgId } from '../lib/getUserOrgId'
 
 import styles from './SettingsPage.module.css'
 
 export default function SettingsPage() {
-  const { user } = useAuth()
+  const { user, organization } = useAuth()
   const { t } = useTranslation('common')
   const { refreshUserStatus, userStatus } = useStrategyStatus()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -58,6 +59,19 @@ export default function SettingsPage() {
   const syncSocialAccountsToSupabase = async () => {
     if (!user?.id || syncInProgress) return
 
+    // Hae organisaation ID
+    let orgUserId = null
+    if (organization?.id) {
+      orgUserId = organization.id
+    } else {
+      orgUserId = await getUserOrgId(user.id)
+    }
+    
+    if (!orgUserId) {
+      console.error('Organisaation ID puuttuu, ei voida synkronoida sometilejä')
+      return
+    }
+
     setSyncInProgress(true)
     try {
       console.log('🔄 Synkronoidaan sometilejä Supabaseen...')
@@ -66,7 +80,7 @@ export default function SettingsPage() {
       const { data: existingAccounts } = await supabase
         .from('user_social_accounts')
         .select('id, mixpost_account_uuid, provider')
-        .eq('user_id', user.id)
+        .eq('user_id', orgUserId)
 
       // Luo Set Mixpost-tileistä (provider + mixpost_account_uuid)
       const mixpostAccountsSet = new Set(
@@ -110,14 +124,19 @@ export default function SettingsPage() {
       if (newAccounts.length > 0) {
         console.log(`📝 Lisätään ${newAccounts.length} uutta tiliä Supabaseen`)
         
+        // Hae käyttäjän auth ID
+        const { data: { user: authUser } } = await supabase.auth.getUser()
+        
         const accountsToInsert = newAccounts.map(account => ({
-          user_id: user.id,
+          user_id: orgUserId,
           mixpost_account_uuid: account.id,
           provider: account.provider,
           account_name: account.name || account.username,
           username: account.username,
           profile_image_url: account.profile_image_url || account.image || account.picture,
           is_authorized: true,
+          visibility: 'public', // Oletuksena public (organisaation sisäinen)
+          created_by: authUser?.id || null, // Tallenna kuka loi tilin
           account_data: account,
           last_synced_at: new Date().toISOString(),
           created_at: new Date().toISOString()
@@ -172,10 +191,20 @@ export default function SettingsPage() {
       if (!user?.id) return
       
       try {
+        // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+        const userId = await getUserOrgId(user.id)
+        
+        if (!userId) {
+          console.error('Error: User ID not found')
+          setMessage(t('settings.profile.notFoundSupport'))
+          setProfileLoading(false)
+          return
+        }
+
         const { data, error } = await supabase
           .from('users')
           .select('*')
-          .eq('auth_user_id', user.id)
+          .eq('id', userId)
           .single()
         
         if (error) {
@@ -226,31 +255,39 @@ export default function SettingsPage() {
               const newEmail = authData.user.email
               console.log('Email changed successfully:', newEmail)
               
-              // Päivitä users.contact_email kenttä uuteen sähköpostiosoitteeseen
-              const { error: updateError } = await supabase
-                .from('users')
-                .update({ 
-                  contact_email: newEmail,
-                  updated_at: new Date().toISOString()
-                })
-                .eq('auth_user_id', user.id)
+              // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+              const userId = await getUserOrgId(user.id)
               
-              if (updateError) {
-                console.error('Error updating contact_email:', updateError)
+              if (userId) {
+                // Päivitä users.contact_email kenttä uuteen sähköpostiosoitteeseen
+                const { error: updateError } = await supabase
+                  .from('users')
+                  .update({ 
+                    contact_email: newEmail,
+                    updated_at: new Date().toISOString()
+                  })
+                  .eq('id', userId)
+                
+                if (updateError) {
+                  console.error('Error updating contact_email:', updateError)
+                }
               }
             }
             
             // Päivitä käyttäjäprofiili
-            const { data: profileData, error: profileError } = await supabase
-              .from('users')
-              .select('*')
-              .eq('auth_user_id', user.id)
-              .single()
-            
-            if (profileError) {
-              console.error('Error fetching user profile:', profileError)
-            } else if (profileData) {
-              setUserProfile(profileData)
+            const userId = await getUserOrgId(user.id)
+            if (userId) {
+              const { data: profileData, error: profileError } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', userId)
+                .single()
+              
+              if (profileError) {
+                console.error('Error fetching user profile:', profileError)
+              } else if (profileData) {
+                setUserProfile(profileData)
+              }
             }
           } catch (error) {
             console.error('Error refreshing user data:', error)
@@ -262,10 +299,13 @@ export default function SettingsPage() {
   }, [searchParams, setSearchParams, user?.id])
 
   // Käyttäjätiedot public.users taulusta
-  const email = userProfile?.contact_email || user?.email || null
-  const name = userProfile?.contact_person || null
-  const companyName = userProfile?.company_name || null
-  const industry = userProfile?.industry || null
+  // Kutsutut käyttäjät näkevät vain henkilökohtaiset tiedot (sähköposti)
+  // Organisaation tiedot näytetään erikseen
+  const isInvitedUser = organization && organization.role !== 'owner'
+  const email = isInvitedUser ? (user?.email || null) : (userProfile?.contact_email || user?.email || null)
+  const name = isInvitedUser ? null : (userProfile?.contact_person || null)
+  const companyName = isInvitedUser ? (organization?.data?.company_name || null) : (userProfile?.company_name || null)
+  const industry = isInvitedUser ? (organization?.data?.industry || null) : (userProfile?.industry || null)
 
   // Muokattavat kentät
   const [formData, setFormData] = useState({
@@ -376,11 +416,18 @@ export default function SettingsPage() {
 
       const logoUrl = urlData.publicUrl
 
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user.id)
+      
+      if (!userId) {
+        throw new Error('Käyttäjää ei löytynyt')
+      }
+
       // Päivitä users-tauluun
       const { error: updateError } = await supabase
         .from('users')
         .update({ logo_url: logoUrl, updated_at: new Date().toISOString() })
-        .eq('auth_user_id', user.id)
+        .eq('id', userId)
 
       if (updateError) throw updateError
 
@@ -392,7 +439,7 @@ export default function SettingsPage() {
       const { data: updatedUser } = await supabase
         .from('users')
         .select('*')
-        .eq('auth_user_id', user.id)
+        .eq('id', userId)
         .single()
 
       if (updatedUser) {
@@ -418,11 +465,18 @@ export default function SettingsPage() {
     setLogoMessage('')
 
     try {
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user.id)
+      
+      if (!userId) {
+        throw new Error('Käyttäjää ei löytynyt')
+      }
+
       // Päivitä users-tauluun
       const { error: updateError } = await supabase
         .from('users')
         .update({ logo_url: null, updated_at: new Date().toISOString() })
-        .eq('auth_user_id', user.id)
+        .eq('id', userId)
 
       if (updateError) throw updateError
 
@@ -434,7 +488,7 @@ export default function SettingsPage() {
       const { data: updatedUser } = await supabase
         .from('users')
         .select('*')
-        .eq('auth_user_id', user.id)
+        .eq('id', userId)
         .single()
 
       if (updatedUser) {
@@ -453,7 +507,16 @@ export default function SettingsPage() {
   }
 
   const handleSave = async () => {
-    if (!user?.id || !userProfile?.id) return
+    if (!user?.id) return
+    
+    // Kutsutut käyttäjät eivät voi muokata organisaation tietoja
+    if (isInvitedUser) {
+      setMessage('Kutsutut käyttäjät eivät voi muokata organisaation tietoja')
+      setIsEditing(false)
+      return
+    }
+    
+    if (!userProfile?.id) return
     
     setLoading(true)
     setMessage('')
@@ -656,12 +719,14 @@ export default function SettingsPage() {
             ) : (
               <>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                  <h2 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#1f2937' }}>{t('settings.profile.title')}</h2>
-                  {!isEditing ? (
+                  <h2 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#1f2937' }}>
+                    {isInvitedUser ? 'Henkilökohtaiset tiedot' : t('settings.profile.title')}
+                  </h2>
+                  {!isInvitedUser && !isEditing ? (
                     <button onClick={() => setIsEditing(true)} className={`${styles.btn} ${styles.btnSecondary}`}>
                       {t('settings.buttons.edit')}
                     </button>
-                  ) : (
+                  ) : !isInvitedUser && isEditing ? (
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <button onClick={handleSave} disabled={loading} className={`${styles.btn} ${styles.btnPrimary}`}>
                         {loading ? t('settings.buttons.saving') : t('settings.buttons.save')}
@@ -670,8 +735,24 @@ export default function SettingsPage() {
                         {t('settings.buttons.cancel')}
                       </button>
                     </div>
-                  )}
+                  ) : null}
                 </div>
+                
+                {isInvitedUser && (
+                  <div style={{ 
+                    marginBottom: 16, 
+                    padding: 12, 
+                    backgroundColor: '#f0f9ff', 
+                    border: '1px solid #bae6fd', 
+                    borderRadius: 8,
+                    fontSize: 14,
+                    color: '#0369a1'
+                  }}>
+                    <strong>Organisaatio:</strong> {organization?.data?.company_name || 'Ei nimeä'}
+                    <br />
+                    <strong>Rooli:</strong> {organization?.role === 'admin' ? 'Admin' : organization?.role === 'member' ? 'Jäsen' : 'Omistaja'}
+                  </div>
+                )}
             
                 {message && (
                   <div className={`${styles.message} ${message.includes(t('settings.common.error')) ? styles.messageError : styles.messageSuccess}`}>
@@ -679,30 +760,39 @@ export default function SettingsPage() {
                   </div>
                 )}
 
-                <div className={styles['form-group']}>
-                  <label>{t('settings.fields.name')}</label>
-                  {isEditing ? (
-                    <input 
-                      type="text" 
-                      name="contact_person"
-                      value={formData.contact_person} 
-                      onChange={handleInputChange}
-                      className={styles['form-input']}
-                      placeholder={t('settings.fields.namePlaceholder')}
-                    />
-                  ) : (
-                    <input 
-                      type="text" 
-                      value={name || t('settings.common.notSet')} 
-                      readOnly 
-                      className={`${styles['form-input']} ${styles.readonly}`} 
-                    />
-                  )}
-                </div>
+                {!isInvitedUser && (
+                  <div className={styles['form-group']}>
+                    <label>{t('settings.fields.name')}</label>
+                    {isEditing ? (
+                      <input 
+                        type="text" 
+                        name="contact_person"
+                        value={formData.contact_person} 
+                        onChange={handleInputChange}
+                        className={styles['form-input']}
+                        placeholder={t('settings.fields.namePlaceholder')}
+                      />
+                    ) : (
+                      <input 
+                        type="text" 
+                        value={name || t('settings.common.notSet')} 
+                        readOnly 
+                        className={`${styles['form-input']} ${styles.readonly}`} 
+                      />
+                    )}
+                  </div>
+                )}
                 
                 <div className={styles['form-group']}>
                   <label>{t('settings.fields.email')}</label>
-                  {isEditing ? (
+                  {isInvitedUser ? (
+                    <input 
+                      type="email" 
+                      value={email || t('settings.common.notAvailable')} 
+                      readOnly 
+                      className={`${styles['form-input']} ${styles.readonly}`} 
+                    />
+                  ) : isEditing ? (
                     <input 
                       type="email" 
                       name="contact_email"
@@ -721,49 +811,54 @@ export default function SettingsPage() {
                   )}
                 </div>
                 
-                <div className={styles['form-group']}>
-                  <label>{t('settings.fields.company')}</label>
-                  {isEditing ? (
-                    <input 
-                      type="text" 
-                      name="company_name"
-                      value={formData.company_name} 
-                      onChange={handleInputChange}
-                      className={styles['form-input']}
-                      placeholder={t('settings.fields.companyPlaceholder')}
-                    />
-                  ) : (
-                    <input 
-                      type="text" 
-                      value={companyName || t('settings.common.notSet')} 
-                      readOnly 
-                      className={`${styles['form-input']} ${styles.readonly}`} 
-                    />
-                  )}
-                </div>
+                {!isInvitedUser && (
+                  <>
+                    <div className={styles['form-group']}>
+                      <label>{t('settings.fields.company')}</label>
+                      {isEditing ? (
+                        <input 
+                          type="text" 
+                          name="company_name"
+                          value={formData.company_name} 
+                          onChange={handleInputChange}
+                          className={styles['form-input']}
+                          placeholder={t('settings.fields.companyPlaceholder')}
+                        />
+                      ) : (
+                        <input 
+                          type="text" 
+                          value={companyName || t('settings.common.notSet')} 
+                          readOnly 
+                          className={`${styles['form-input']} ${styles.readonly}`} 
+                        />
+                      )}
+                    </div>
+                    
+                    <div className={styles['form-group']}>
+                      <label>{t('settings.fields.industry')}</label>
+                      <input 
+                        type="text" 
+                        value={industry || t('settings.common.notSet')} 
+                        readOnly 
+                        className={`${styles['form-input']} ${styles.readonly}`} 
+                      />
+                    </div>
+                    
+                    <div className={styles['form-group']}>
+                      <label>{t('settings.fields.userId')}</label>
+                      <input 
+                        type="text" 
+                        value={userProfile?.id || user?.id || t('settings.common.notAvailable')} 
+                        readOnly 
+                        className={`${styles['form-input']} ${styles.readonly}`} 
+                        style={{fontFamily: 'monospace', fontSize: '12px'}} 
+                      />
+                    </div>
+                  </>
+                )}
                 
-                <div className={styles['form-group']}>
-                  <label>{t('settings.fields.industry')}</label>
-                  <input 
-                    type="text" 
-                    value={industry || t('settings.common.notSet')} 
-                    readOnly 
-                    className={`${styles['form-input']} ${styles.readonly}`} 
-                  />
-                </div>
-                
-                <div className={styles['form-group']}>
-                  <label>{t('settings.fields.userId')}</label>
-                  <input 
-                    type="text" 
-                    value={userProfile?.id || user?.id || t('settings.common.notAvailable')} 
-                    readOnly 
-                    className={`${styles['form-input']} ${styles.readonly}`} 
-                    style={{fontFamily: 'monospace', fontSize: '12px'}} 
-                  />
-                </div>
-                
-                {/* Logo-lataus */}
+                {/* Logo-lataus - vain omistajille */}
+                {!isInvitedUser && (
                 <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
                   <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Yrityksen Logo</h3>
                   
@@ -891,6 +986,7 @@ export default function SettingsPage() {
                     </p>
                   )}
                 </div>
+                )}
                 
                 {/* Salasanan vaihto */}
                 <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
@@ -1058,10 +1154,12 @@ export default function SettingsPage() {
           {/* Oikea sarake: Muut asetukset */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             
-            {/* Sosiaalisen median yhdistäminen */}
-            <div className={styles.card}>
-              <SimpleSocialConnect />
-            </div>
+            {/* Sosiaalisen median yhdistäminen - vain owner/admin */}
+            {organization?.role !== 'member' && (
+              <div className={styles.card}>
+                <SimpleSocialConnect />
+              </div>
+            )}
             
             {/* Avatar ja Ääniklooni */}
             <div className={styles.card}>

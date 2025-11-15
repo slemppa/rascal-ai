@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { getUserOrgId } from '../lib/getUserOrgId'
 import { useMonthlyLimit } from '../hooks/useMonthlyLimit'
 import { useNextMonthQuota } from '../hooks/useNextMonthQuota'
 import Button from '../components/Button'
@@ -226,22 +227,17 @@ export default function BlogNewsletterPage() {
       setLoading(true)
       setError(null)
       
-      // Haetaan käyttäjän user_id users taulusta
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-      
-      if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        throw new Error('Organisaation ID ei löytynyt')
       }
       
-      // Haetaan käyttäjän Blog ja Newsletter sisältö
+      // Haetaan organisaation Blog ja Newsletter sisältö
       const { data, error } = await supabase
         .from('content')
         .select('*')
-        .eq('user_id', userData.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .in('type', ['Blog', 'Newsletter'])
         .order('created_at', { ascending: false })
       
@@ -291,16 +287,20 @@ export default function BlogNewsletterPage() {
         setTimeout(() => setToast({ visible: false, message: '' }), 2500)
         return
       }
-      // Haetaan käyttäjän user_id ja company_id users taulusta
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        throw new Error('Organisaation ID ei löytynyt')
+      }
+      
+      // Hae myös company_id jos tarvitaan
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('id, company_id')
-        .eq('auth_user_id', user.id)
+        .select('company_id')
+        .eq('id', orgId)
         .single()
       
-      if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
-      }
+      const companyId = userData?.company_id || null
 
       // Lähetetään idea-generation kutsu N8N:lle
       try {
@@ -315,7 +315,7 @@ export default function BlogNewsletterPage() {
             idea: contentData.title,
             content: contentData.content,
             type: contentData.type,
-            companyId: userData.company_id
+            companyId: companyId
           })
         })
 
@@ -360,15 +360,10 @@ export default function BlogNewsletterPage() {
 
   const handleUpdateContent = async (contentData) => {
     try {
-      // Haetaan käyttäjän user_id users taulusta
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-      
-      if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        throw new Error('Organisaation ID ei löytynyt')
       }
 
       // Päivitetään content Supabase:sta
@@ -381,7 +376,7 @@ export default function BlogNewsletterPage() {
           updated_at: new Date().toISOString()
         })
         .eq('id', contentData.id)
-        .eq('user_id', userData.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
 
       if (error) {
         throw error
@@ -406,21 +401,16 @@ export default function BlogNewsletterPage() {
     if (!file) return
 
     try {
-      // Haetaan käyttäjän user_id users taulusta
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-
-      if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        throw new Error('Organisaation ID ei löytynyt')
       }
 
       const formData = new FormData()
       formData.append('image', file)
       formData.append('contentId', contentId)
-      formData.append('userId', userData.id)
+      formData.append('userId', orgId) // Käytetään organisaation ID:tä
       formData.append('replaceMode', 'true')
 
       const response = await fetch('/api/content-media-management', {
@@ -473,22 +463,17 @@ export default function BlogNewsletterPage() {
       let segments = []
       let mixpostConfig = null
       
-      // Haetaan käyttäjän user_id users taulusta
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-
-      if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        throw new Error('Organisaation ID ei löytynyt')
       }
 
-      // Haetaan Mixpost config data
+      // Haetaan Mixpost config data käyttäen organisaation ID:tä
       const { data: mixpostConfigData, error: mixpostError } = await supabase
         .from('user_mixpost_config')
         .select('mixpost_api_token, mixpost_workspace_uuid')
-        .eq('user_id', user.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('is_active', true)
         .single()
 
@@ -503,7 +488,7 @@ export default function BlogNewsletterPage() {
         .from('content')
         .select('*')
         .eq('id', content.id)
-        .eq('user_id', userData.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .single()
 
       if (contentError) {
@@ -559,22 +544,17 @@ export default function BlogNewsletterPage() {
 
   const handleArchiveContent = async (content) => {
     try {
-      // Haetaan käyttäjän user_id users-taulusta
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-
-      if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        throw new Error('Organisaation ID ei löytynyt')
       }
 
       const { error } = await supabase
         .from('content')
         .update({ status: 'Archived' })
         .eq('id', content.id)
-        .eq('user_id', userData.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
 
       if (error) throw error
 
@@ -589,15 +569,10 @@ export default function BlogNewsletterPage() {
 
   const handleDeleteContent = async (contentId) => {
     try {
-      // Haetaan käyttäjän user_id users taulusta
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-      
-      if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        throw new Error('Organisaation ID ei löytynyt')
       }
 
       // Poistetaan sisältö Supabase:sta
@@ -605,7 +580,7 @@ export default function BlogNewsletterPage() {
         .from('content')
         .delete()
         .eq('id', contentId)
-        .eq('user_id', userData.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
 
       if (error) {
         throw error

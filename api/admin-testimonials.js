@@ -1,34 +1,19 @@
+import { withOrganization } from './middleware/with-organization.js'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 const serviceClient = createClient(supabaseUrl, supabaseServiceKey)
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   try {
-    // Auth header required
-    const token = req.headers.authorization?.replace('Bearer ', '')
-    if (!token) return res.status(401).json({ error: 'Authorization token required' })
+    // req.organization.role = käyttäjän rooli ('owner', 'admin', 'member')
+    // req.supabase = authenticated Supabase client
 
-    // Create client with user token
-    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: `Bearer ${token}` } }
-    })
-
-    const { data: authResult, error: authError } = await userClient.auth.getUser(token)
-    if (authError || !authResult?.user) return res.status(401).json({ error: 'Invalid token' })
-
-    // Check role from users table
-    const { data: userData, error: userError } = await userClient
-      .from('users')
-      .select('role, company_id')
-      .eq('auth_user_id', authResult.user.id)
-      .single()
-    if (userError || !userData) return res.status(403).json({ error: 'User not found' })
-
-    const isAdmin = userData.role === 'admin' || userData.company_id === 1
-    const isModerator = userData.role === 'moderator' || isAdmin
+    // Tarkista moderator/admin-oikeudet
+    const isAdmin = req.organization.role === 'admin' || req.organization.role === 'owner'
+    const isModerator = req.organization.role === 'moderator' || isAdmin
     if (!isModerator) return res.status(403).json({ error: 'Moderator access required' })
 
     if (req.method === 'GET') {
@@ -82,5 +67,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Internal server error' })
   }
 }
+
+export default withOrganization(handler)
 
 

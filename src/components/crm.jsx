@@ -72,8 +72,10 @@ const CRM = ({
       if (!selectedCallTypeData) { throw new Error('Valittua puhelun tyyppiä ei löytynyt') }
       const script = selectedCallTypeData?.intro || 'Hei! Soitan sinulle...'
       const callTypeId = selectedCallTypeData.id || 'ef0ae790-b6c0-4264-a798-a913549ef8ea'
-      const { data: userProfile, error: userError } = await supabase.from('users').select('id').eq('auth_user_id', user?.id).single()
-      if (userError || !userProfile) { throw new Error('Käyttäjää ei löytynyt') }
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const { getUserOrgId } = await import('../lib/getUserOrgId')
+      const userId = await getUserOrgId(user?.id)
+      if (!userId) { throw new Error('Käyttäjää ei löytynyt') }
       const callLogs = []
       let startedCalls = 0
       let failedCalls = 0
@@ -91,7 +93,7 @@ const CRM = ({
             const selectedVoiceObj = voiceOptions.find(v => v.value === selectedVoiceForMika)
             const voiceId = selectedVoiceObj?.id || selectedVoiceForMika
             callLogs.push({
-              user_id: userProfile.id,
+              user_id: userId,
               customer_name: name,
               phone_number: normalizedPhoneNumber,
               call_type: selectedCallTypeForMika,

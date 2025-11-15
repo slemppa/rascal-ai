@@ -1,40 +1,20 @@
-import { createClient } from '@supabase/supabase-js'
+import { withOrganization } from './middleware/with-organization.js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://your-project.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key'
-
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
   try {
-    // JWT token validointi
-    const token = req.headers.authorization?.replace('Bearer ', '')
-    let authUser = null
-    
-    if (token) {
-      // Luo Supabase client käyttäjän tokenilla
-      const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-        global: { headers: { Authorization: `Bearer ${token}` } }
-      })
+    // req.organization.id = organisaation ID (public.users.id)
+    // req.supabase = authenticated Supabase client
+    const orgId = req.organization.id
 
-      // Hae käyttäjän tiedot
-      const { data: user, error: authError } = await supabase.auth.getUser(token)
-      if (!authError && user) {
-        authUser = user
-      }
-    }
-    
-    if (!authUser) {
-      return res.status(401).json({ error: 'Not authenticated' })
-    }
-
-    // Hae käyttäjän workspace konfiguraatio
-    const { data: workspaceConfig, error: configError } = await supabase
+    // Hae organisaation workspace konfiguraatio
+    const { data: workspaceConfig, error: configError } = await req.supabase
       .from('user_mixpost_config')
       .select('mixpost_api_token, mixpost_workspace_uuid, is_active')
-      .eq('user_id', authUser.user.id)
+      .eq('user_id', orgId)
       .single()
 
     if (configError) {
@@ -56,4 +36,6 @@ export default async function handler(req, res) {
     console.error('Workspace config API error:', error)
     return res.status(500).json({ error: 'Internal server error' })
   }
-} 
+}
+
+export default withOrganization(handler) 

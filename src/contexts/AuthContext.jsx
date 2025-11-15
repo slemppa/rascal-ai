@@ -14,18 +14,86 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
+  const [organization, setOrganization] = useState(null)
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
   const fetchUserProfile = useCallback(async (sessionUser) => {
+    // Palautetaan heti käyttäjätiedot ilman organisaatiota, jotta kirjautuminen ei jää jumiin
+    // Organisaatiotiedot haetaan myöhemmin taustalla
+    const defaultFeatures = ['Social Media', 'Phone Calls', 'Email marketing integration', 'Marketing assistant']
     
-    // Käytä suoraan session useria features-tiedoilla - ei users-taulun hakua
-    const userWithFeatures = {
+    // Palautetaan heti perustiedot
+    const basicUser = {
       ...sessionUser,
-      features: ['Social Media', 'Phone Calls', 'Email marketing integration', 'Marketing assistant']
+      features: defaultFeatures
+    }
+
+    // Yritetään hakea organisaatiotiedot taustalla (ei estä kirjautumista)
+    try {
+      const orgPromise = supabase
+        .from('org_members')
+        .select('org_id, role')
+        .eq('auth_user_id', sessionUser.id)
+        .maybeSingle()
+        .then(async ({ data: orgMember, error: orgError }) => {
+          if (!orgError && orgMember) {
+            // Hae organisaation tiedot erikseen users-taulusta
+            const { data: orgData, error: orgDataError } = await supabase
+              .from('users')
+              .select('*')
+              .eq('id', orgMember.org_id)
+              .single()
+            
+            // Aseta organisaatiotiedot kun ne löytyvät
+            setOrganization({
+              id: orgMember.org_id,
+              role: orgMember.role,
+              data: orgData || null
+            })
+            
+            // Päivitä features jos löytyi
+            const features = Array.isArray(orgData?.features) 
+              ? orgData.features 
+              : defaultFeatures
+            
+            setUser(prev => prev ? {
+              ...prev,
+              features: features,
+              organizationId: orgMember.org_id,
+              organizationRole: orgMember.role
+            } : null)
+          } else if (orgError) {
+            // Jos org_members haussa virhe, yritetään hakea suoraan users-taulusta
+            supabase
+              .from('users')
+              .select('*')
+              .eq('auth_user_id', sessionUser.id)
+              .maybeSingle()
+              .then(({ data: userData, error: userError }) => {
+                if (!userError && userData) {
+                  const features = Array.isArray(userData.features) 
+                    ? userData.features 
+                    : defaultFeatures
+                  
+                  setUser(prev => prev ? {
+                    ...prev,
+                    features: features
+                  } : null)
+                }
+              })
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching organization (background):', err)
+        })
+      
+      // Ei odoteta organisaatiotietoja - palautetaan heti
+    } catch (error) {
+      console.error('Error in fetchUserProfile:', error)
     }
     
-    return userWithFeatures
+    return basicUser
   }, [])
 
   useEffect(() => {
@@ -59,6 +127,7 @@ export const AuthProvider = ({ children }) => {
             }
           })
           setUser(null)
+          setOrganization(null)
           setLoading(false)
           
           // Hae logout-syy sessionStoragesta
@@ -77,6 +146,7 @@ export const AuthProvider = ({ children }) => {
           setUser(userWithProfile)
         } else {
           setUser(null)
+          setOrganization(null)
         }
         
         if (event !== 'SIGNED_OUT') {
@@ -103,6 +173,7 @@ export const AuthProvider = ({ children }) => {
         console.error('Error signing out:', error.message)
         // Jos Supabase logout epäonnistuu, tyhjennetään silti local state
         setUser(null)
+        setOrganization(null)
         navigate('/', { 
           state: { 
             logoutReason: 'Virhe kirjautumisessa ulos',
@@ -114,6 +185,7 @@ export const AuthProvider = ({ children }) => {
       console.error('SignOut error:', err)
       // Jos tapahtuu poikkeus, tyhjennetään silti local state
       setUser(null)
+      setOrganization(null)
       navigate('/', { 
         state: { 
           logoutReason: 'Virhe kirjautumisessa ulos',
@@ -125,6 +197,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user: user,
+    organization: organization,
     loading: loading,
     signOut: signOut,
     fetchUserProfile: fetchUserProfile

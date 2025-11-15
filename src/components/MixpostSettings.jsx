@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { getUserOrgId } from '../lib/getUserOrgId'
 import Button from './Button'
 
 export default function WorkspaceSettings() {
-  const { user } = useAuth()
+  const { user, organization } = useAuth()
+  const [orgId, setOrgId] = useState(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [config, setConfig] = useState({
@@ -17,12 +19,26 @@ export default function WorkspaceSettings() {
   const [testResult, setTestResult] = useState(null)
 
   useEffect(() => {
-    if (user) {
+    const fetchOrgId = async () => {
+      if (organization?.id) {
+        setOrgId(organization.id);
+      } else if (user?.id) {
+        const id = await getUserOrgId(user.id);
+        setOrgId(id);
+      }
+    };
+    fetchOrgId();
+  }, [user?.id, organization?.id]);
+
+  useEffect(() => {
+    if (orgId) {
       loadWorkspaceConfig()
     }
-  }, [user])
+  }, [orgId])
 
   const loadWorkspaceConfig = async () => {
+    if (!orgId) return;
+    
     try {
       setLoading(true)
       setError('')
@@ -30,7 +46,7 @@ export default function WorkspaceSettings() {
       const { data, error } = await supabase
         .from('user_mixpost_config')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', orgId)
         .single()
 
       if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
@@ -59,10 +75,15 @@ export default function WorkspaceSettings() {
       setError('')
       setSuccess('')
 
+      if (!orgId) {
+        setError('Organisaation ID puuttuu')
+        return;
+      }
+
       const { error } = await supabase
         .from('user_mixpost_config')
         .upsert({
-          user_id: user.id,
+          user_id: orgId,
           mixpost_api_token: config.mixpost_api_token,
           mixpost_workspace_uuid: config.mixpost_workspace_uuid,
           is_active: config.is_active,

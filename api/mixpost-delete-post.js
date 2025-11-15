@@ -1,9 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
+import { withOrganization } from './middleware/with-organization.js'
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY
-
-export default async function handler(req, res) {
+async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'DELETE, OPTIONS')
@@ -18,21 +15,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const access_token = req.headers['authorization']?.replace('Bearer ', '')
-    if (!access_token) {
-      return res.status(401).json({ error: 'Unauthorized: access token puuttuu' })
-    }
-
-    // Luo Supabase-yhteys käyttäjän tokenilla
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: `Bearer ${access_token}` } }
-    })
-
-    // Hae käyttäjän tiedot
-    const { data: userData, error: userError } = await supabase.auth.getUser()
-    if (userError || !userData?.user) {
-      return res.status(401).json({ error: 'Käyttäjätietojen haku epäonnistui' })
-    }
+    // req.organization.id = organisaation ID (public.users.id)
+    // req.supabase = authenticated Supabase client
+    const orgId = req.organization.id
 
     const { postUuid } = req.body
 
@@ -40,11 +25,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'postUuid puuttuu' })
     }
 
-    // Hae Mixpost-konfiguraatio
-    const { data: configData, error: configError } = await supabase
+    // Hae Mixpost-konfiguraatio käyttäen organisaation ID:tä
+    const { data: configData, error: configError } = await req.supabase
       .from('user_mixpost_config')
       .select('mixpost_workspace_uuid, mixpost_api_token')
-      .eq('user_id', userData.user.id)
+      .eq('user_id', orgId) // Käytetään organisaation ID:tä
       .single()
 
     if (configError || !configData?.mixpost_workspace_uuid || !configData?.mixpost_api_token) {
@@ -81,23 +66,14 @@ export default async function handler(req, res) {
     console.log('✅ Mixpost post deleted successfully:', postUuid)
 
     // Päivitä Supabase content-taulun status takaisin "Under Review"
-    // Hae käyttäjän user_id users-taulusta
-    const { data: userRecord, error: userRecordError } = await supabase
-      .from('users')
-      .select('id')
-      .eq('auth_user_id', userData.user.id)
-      .single()
-
-    if (userRecordError || !userRecord?.id) {
-      console.warn('⚠️ User ID not found, skipping content status update')
-    } else {
-      console.log('🔍 Searching for content with mixpost_post_id:', postUuid, 'type:', typeof postUuid, 'user_id:', userRecord.id)
+    // Käytetään organisaation ID:tä (orgId)
+    console.log('🔍 Searching for content with mixpost_post_id:', postUuid, 'type:', typeof postUuid, 'user_id:', orgId)
       
       // Etsi content-rivi jossa mixpost_post_id === postUuid
-      const { data: contentRow, error: contentError } = await supabase
+    const { data: contentRow, error: contentError } = await req.supabase
         .from('content')
         .select('id, status, mixpost_post_id')
-        .eq('user_id', userRecord.id)
+      .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('mixpost_post_id', postUuid)
         .maybeSingle() // Käytetään maybeSingle() jos ei välttämättä löydy
 
@@ -109,18 +85,18 @@ export default async function handler(req, res) {
       } else if (!contentRow) {
         console.warn('⚠️ Content row not found for mixpost_post_id:', postUuid)
         
-        // Debug: Hae kaikki rivit tältä käyttäjältä joilla on mixpost_post_id
-        const { data: allRows } = await supabase
+      // Debug: Hae kaikki rivit tältä organisaatiolta joilla on mixpost_post_id
+      const { data: allRows } = await req.supabase
           .from('content')
           .select('id, mixpost_post_id')
-          .eq('user_id', userRecord.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
           .not('mixpost_post_id', 'is', null)
           .limit(10)
         
         console.log('📊 Sample of content rows with mixpost_post_id:', allRows)
       } else {
         // Päivitä status takaisin "Under Review"
-        const { error: updateError } = await supabase
+      const { error: updateError } = await req.supabase
           .from('content')
           .update({
             status: 'Under Review',
@@ -133,7 +109,6 @@ export default async function handler(req, res) {
           console.error('❌ Failed to update content status:', updateError)
         } else {
           console.log('✅ Content status updated to "Under Review"')
-        }
       }
     }
 
@@ -150,4 +125,6 @@ export default async function handler(req, res) {
     })
   }
 }
+
+export default withOrganization(handler)
 

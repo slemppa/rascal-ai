@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useAuth } from './AuthContext'
 import { supabase } from '../lib/supabase'
+import { getUserOrgId } from '../lib/getUserOrgId'
 
 const StrategyStatusContext = createContext({})
 
@@ -51,10 +52,18 @@ export const StrategyStatusProvider = ({ children }) => {
     }
 
     try {
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user.id)
+      
+      if (!userId) {
+        console.error('StrategyStatus: User ID not found')
+        return
+      }
+
       const { data, error } = await supabase
         .from('users')
         .select('status, strategy_approved_at')
-        .eq('auth_user_id', user.id)
+        .eq('id', userId)
         .single()
 
       if (error) {

@@ -1,10 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
+import { withOrganization } from './middleware/with-organization.js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-export default async function handler(req, res) {
+async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
@@ -16,48 +12,23 @@ export default async function handler(req, res) {
   }
 
   try {
-    const access_token = req.headers['authorization']?.replace('Bearer ', '')
-    
-    if (!access_token) {
-      return res.status(401).json({ error: 'Unauthorized: access token puuttuu' })
-    }
+    // req.organization.id = organisaation ID (public.users.id)
+    // req.supabase = authenticated Supabase client
 
-    // Luo Supabase-yhteys käyttäjän tokenilla
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: `Bearer ${access_token}` } }
-    })
-
-    // Hae käyttäjän tiedot
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
-      return res.status(401).json({ error: 'Unauthorized: käyttäjä ei löytynyt' })
-    }
-
-    // Hae public.users.id käyttäen auth_user_id:tä
-    const { data: userData, error: userDataError } = await supabase
-      .from('users')
-      .select('id')
-      .eq('auth_user_id', user.id)
-      .single()
-
-    if (userDataError || !userData) {
-      return res.status(401).json({ error: 'Unauthorized: käyttäjätiedot ei löytynyt' })
-    }
-
-    const userId = userData.id
+    const orgId = req.organization.id
 
     switch (req.method) {
       case 'GET':
-        return await getNotifications(supabase, userId, req, res)
+        return await getNotifications(req.supabase, orgId, req, res)
       
       case 'POST':
-        return await createNotification(supabase, userId, req, res)
+        return await createNotification(req.supabase, orgId, req, res)
       
       case 'PUT':
-        return await updateNotification(supabase, userId, req, res)
+        return await updateNotification(req.supabase, orgId, req, res)
       
       case 'DELETE':
-        return await deleteNotification(supabase, userId, req, res)
+        return await deleteNotification(req.supabase, orgId, req, res)
       
       default:
         return res.status(405).json({ error: 'Method not allowed' })
@@ -69,15 +40,17 @@ export default async function handler(req, res) {
   }
 }
 
-// Hae käyttäjän notifikaatiot
-async function getNotifications(supabase, userId, req, res) {
+export default withOrganization(handler)
+
+// Hae organisaation notifikaatiot
+async function getNotifications(supabase, orgId, req, res) {
   try {
     const { limit = 50, offset = 0, unread_only = false } = req.query
 
     let query = supabase
       .from('notifications')
       .select('*')
-      .eq('user_id', userId)
+      .eq('user_id', orgId)
       .eq('is_deleted', false)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1)
@@ -97,7 +70,7 @@ async function getNotifications(supabase, userId, req, res) {
     const { count: unreadCount, error: countError } = await supabase
       .from('notifications')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
+      .eq('user_id', orgId)
       .eq('is_read', false)
       .eq('is_deleted', false)
 
@@ -118,7 +91,7 @@ async function getNotifications(supabase, userId, req, res) {
 }
 
 // Luo uusi notifikaatio (vain service role)
-async function createNotification(supabase, userId, req, res) {
+async function createNotification(supabase, orgId, req, res) {
   try {
     const { type = 'inbound_call', title, message, data = {} } = req.body
 
@@ -129,7 +102,7 @@ async function createNotification(supabase, userId, req, res) {
     const { data: notification, error } = await supabase
       .from('notifications')
       .insert({
-        user_id: userId,
+        user_id: orgId,
         type,
         title,
         message,
@@ -152,7 +125,7 @@ async function createNotification(supabase, userId, req, res) {
 }
 
 // Päivitä notifikaatio (merkitse luetuksi/poistetuksi)
-async function updateNotification(supabase, userId, req, res) {
+async function updateNotification(supabase, orgId, req, res) {
   try {
     const { notification_id } = req.query
     const { is_read, is_deleted } = req.body
@@ -179,7 +152,7 @@ async function updateNotification(supabase, userId, req, res) {
       .from('notifications')
       .update(updateData)
       .eq('id', notification_id)
-      .eq('user_id', userId)
+      .eq('user_id', orgId)
       .select()
       .single()
 
@@ -201,7 +174,7 @@ async function updateNotification(supabase, userId, req, res) {
 }
 
 // Poista notifikaatio
-async function deleteNotification(supabase, userId, req, res) {
+async function deleteNotification(supabase, orgId, req, res) {
   try {
     const { notification_id } = req.query
 
@@ -213,7 +186,7 @@ async function deleteNotification(supabase, userId, req, res) {
       .from('notifications')
       .delete()
       .eq('id', notification_id)
-      .eq('user_id', userId)
+      .eq('user_id', orgId)
 
     if (error) {
       console.error('Error deleting notification:', error)

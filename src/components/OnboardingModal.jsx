@@ -101,6 +101,21 @@ const OnboardingModal = () => {
           return
         }
 
+        // Tarkista onko käyttäjä kutsuttu käyttäjä (on organisaatiossa)
+        // Jos on, ei näytetä onboardingia koska hän on kutsuttu käyttäjä
+        const { data: orgMember, error: orgError } = await supabase
+          .from('org_members')
+          .select('org_id')
+          .eq('auth_user_id', user.id)
+          .maybeSingle()
+
+        if (!orgError && orgMember) {
+          console.log('⏸️ OnboardingModal: Käyttäjä on kutsuttu käyttäjä (organisaatiossa), ei näytetä onboardingia')
+          setLoading(false)
+          setShouldShow(false)
+          return
+        }
+
         const { data, error } = await supabase
           .from('users')
           .select('onboarding_completed, role')

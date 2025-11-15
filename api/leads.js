@@ -1,58 +1,25 @@
-import { createClient } from '@supabase/supabase-js'
+import { withOrganization } from './middleware/with-organization.js'
 
-const supabaseUrl = process.env.SUPABASE_URL 
-  || process.env.VITE_SUPABASE_URL 
-  || process.env.NEXT_PUBLIC_SUPABASE_URL
-
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY 
-  || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
   try {
-    // Validoi käyttäjä
-    const authHeader = req.headers.authorization || req.headers.Authorization || ''
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null
-    
-    if (!token) {
-      return res.status(401).json({ error: 'Authorization token required' })
-    }
-
-    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: `Bearer ${token}` } }
-    })
-
-    // Hae käyttäjän tiedot
-    const { data: { user: authUser }, error: authError } = await userClient.auth.getUser(token)
-    if (authError || !authUser) {
-      return res.status(401).json({ error: 'Invalid or expired token' })
-    }
-
-    // Hae public.users.id
-    const { data: userData, error: userError } = await userClient
-      .from('users')
-      .select('id')
-      .eq('auth_user_id', authUser.id)
-      .single()
-
-    if (userError || !userData) {
-      return res.status(403).json({ error: 'User profile not found' })
-    }
-
-    const publicUserId = userData.id
+    // req.organization.id = organisaation ID (public.users.id)
+    // req.supabase = authenticated Supabase client
+    const orgId = req.organization.id
 
     // Hae query parametrit
     const currentPage = parseInt(req.query.page) || 1
     const resultsPerPage = parseInt(req.query.perPage) || 20
 
-    // Hae liidit Supabasesta käyttäen userClientia (käyttäjän tokenilla)
-    const { data: leadsData, error: leadsError, count } = await userClient
+    // Hae liidit Supabasesta käyttäen organisaation ID:tä
+    // RLS-politiikat varmistavat että käyttäjä näkee vain oman organisaationsa datan
+    const { data: leadsData, error: leadsError, count } = await req.supabase
       .from('scraped_leads')
       .select('*', { count: 'exact' })
-      .eq('user_id', publicUserId)
+      .eq('user_id', orgId)
       .order('created_at', { ascending: false })
       .range((currentPage - 1) * resultsPerPage, currentPage * resultsPerPage - 1)
 
@@ -78,4 +45,6 @@ export default async function handler(req, res) {
     })
   }
 }
+
+export default withOrganization(handler)
 

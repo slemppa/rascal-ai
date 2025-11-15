@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '../contexts/AuthContext'
 import { useMixpostIntegration } from './SocialMedia/hooks/useMixpostIntegration'
 import styles from '../pages/SettingsPage.module.css'
 
 // Yksinkertainen somet-yhdistys komponentti
 export default function SimpleSocialConnect() {
   const { t } = useTranslation('common')
+  const { organization } = useAuth()
   const { connectSocialAccount, socialAccounts, savedSocialAccounts, fetchSavedSocialAccounts } = useMixpostIntegration()
   const [connecting, setConnecting] = useState(false)
   const [error, setError] = useState('')
+  
+  // Member-rooli näkee sometilit mutta ei voi yhdistää uusia
+  const canConnect = organization?.role !== 'member'
 
   // Käytä Mixpostista haettuja tilejä oletuksena, mutta näytä myös tallennetut tilit
   const connectedAccounts = socialAccounts.length > 0 ? socialAccounts : savedSocialAccounts
@@ -207,33 +212,47 @@ export default function SimpleSocialConnect() {
         </div>
       )}
 
-      {/* Yhdistä nappi */}
-      <button
-        onClick={handleConnectSocial}
-        disabled={connecting}
-        className={`${styles.btn} ${styles.btnPrimary}`}
-        style={{
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          fontSize: '14px',
-          fontWeight: '600'
-        }}
-      >
-        {connecting ? (
-          <>
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-            Yhdistetään...
-          </>
-        ) : (
-          <>
-            <span>🔗</span>
-            Yhdistä somet
-          </>
-        )}
-      </button>
+      {/* Yhdistä nappi - vain owner/admin */}
+      {canConnect ? (
+        <button
+          onClick={handleConnectSocial}
+          disabled={connecting}
+          className={`${styles.btn} ${styles.btnPrimary}`}
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            fontSize: '14px',
+            fontWeight: '600'
+          }}
+        >
+          {connecting ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              Yhdistetään...
+            </>
+          ) : (
+            <>
+              <span>🔗</span>
+              Yhdistä somet
+            </>
+          )}
+        </button>
+      ) : (
+        <div style={{
+          padding: '12px',
+          backgroundColor: '#f0f9ff',
+          border: '1px solid #bae6fd',
+          borderRadius: '8px',
+          fontSize: '13px',
+          color: '#0369a1',
+          textAlign: 'center'
+        }}>
+          <strong>Jäsen-rooli:</strong> Voit tarkastella yhdistettyjä sometilejä, mutta et voi yhdistää uusia. Ota yhteyttä organisaation ylläpitoon uusien tilien yhdistämiseksi.
+        </div>
+      )}
 
       {/* Virheviesti */}
       {error && (

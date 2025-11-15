@@ -1,35 +1,20 @@
-import { createClient } from '@supabase/supabase-js'
+import { withOrganization } from './middleware/with-organization.js'
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY
-
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'PUT') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
   try {
-    const access_token = req.headers['authorization']?.replace('Bearer ', '')
-    if (!access_token) {
-      return res.status(401).json({ error: 'Unauthorized: access token puuttuu' })
-    }
+    // req.organization.id = organisaation ID (public.users.id)
+    // req.supabase = authenticated Supabase client
+    const orgId = req.organization.id
 
-    // Luo Supabase-yhteys käyttäjän tokenilla
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: `Bearer ${access_token}` } }
-    })
-
-    // Hae käyttäjän tiedot
-    const { data: userData, error: userError } = await supabase.auth.getUser()
-    if (userError || !userData?.user) {
-      return res.status(401).json({ error: 'Käyttäjätietojen haku epäonnistui' })
-    }
-
-    // Hae Mixpost-konfiguraatio
-    const { data: configData, error: configError } = await supabase
+    // Hae Mixpost-konfiguraatio käyttäen organisaation ID:tä
+    const { data: configData, error: configError } = await req.supabase
       .from('user_mixpost_config')
       .select('mixpost_workspace_uuid, mixpost_api_token')
-      .eq('user_id', userData.user.id)
+      .eq('user_id', orgId) // Käytetään organisaation ID:tä
       .single()
 
     if (configError || !configData?.mixpost_workspace_uuid || !configData?.mixpost_api_token) {
@@ -76,4 +61,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: error.message || 'Virhe postauksen päivityksessä' })
   }
 }
+
+export default withOrganization(handler)
 

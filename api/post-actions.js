@@ -1,9 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
+import { withOrganization } from './middleware/with-organization.js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
-
-export default async function handler(req, res) {
+async function handler(req, res) {
   console.log('post-actions API called:', req.method, req.url)
   
   // CORS headers
@@ -24,7 +21,6 @@ export default async function handler(req, res) {
     console.log('post-actions request body:', req.body)
     const { 
       post_id,
-      user_id,
       auth_user_id,
       content,
       media_urls = [],
@@ -38,50 +34,61 @@ export default async function handler(req, res) {
       selected_accounts = [] // Valitut somekanavat
     } = req.body
 
-    if (!post_id || !user_id) {
+    if (!post_id) {
       return res.status(400).json({ 
-        error: 'Missing required fields: post_id, user_id' 
+        error: 'Missing required fields: post_id' 
       })
     }
 
-    // Ota access token headerista
-    const access_token = req.headers['authorization']?.replace('Bearer ', '')
-    if (!access_token) {
-      return res.status(401).json({ error: 'Unauthorized: access token puuttuu' })
-    }
+    // req.organization.id = organisaation ID (public.users.id)
+    // req.supabase = authenticated Supabase client
+    const orgId = req.organization.id
 
-    // Luo Supabase-yhteys käyttäjän tokenilla
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: `Bearer ${access_token}` } }
-    })
+    console.log('post-actions: Using orgId:', orgId)
 
     // Haetaan Mixpost konfiguraatio ja sometilit Supabase:sta
     let mixpostConfig = null
     let socialAccounts = null
 
     try {
-      // Haetaan Mixpost konfiguraatio
-      const { data: configData, error: configError } = await supabase
+      // Haetaan Mixpost konfiguraatio käyttäen organisaation ID:tä
+      console.log('post-actions: Fetching Mixpost config for orgId:', orgId)
+      const { data: configData, error: configError } = await req.supabase
         .from('user_mixpost_config')
         .select('mixpost_workspace_uuid, mixpost_api_token')
-        .eq('user_id', user_id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .single()
 
-      if (configError) {
+      console.log('post-actions: Config query result:', { configData, configError })
+
+      if (configError || !configData || !configData.mixpost_workspace_uuid || !configData.mixpost_api_token) {
         console.error('Error fetching mixpost config:', configError)
+        console.error('Config data:', configData)
+        console.error('Org ID used:', orgId)
+        
+        // Tarkista onko konfiguraatio olemassa mutta eri user_id:llä (vanha data)
+        const { data: allConfigs } = await req.supabase
+          .from('user_mixpost_config')
+          .select('user_id, mixpost_workspace_uuid')
+          .limit(5)
+        
+        console.log('post-actions: Sample configs in database:', allConfigs)
+        
         return res.status(400).json({ 
           error: 'Mixpost konfiguraatio ei löytynyt',
-          details: configError.message
+          details: configError?.message || 'Konfiguraatio puuttuu tai on epätäydellinen',
+          orgId: orgId,
+          hint: 'Varmista että Mixpost-konfiguraatio on tallennettu käyttäen organisaation ID:tä (public.users.id)'
         })
       }
 
       mixpostConfig = configData
 
-      // Haetaan yhdistetyt sometilit
-      const { data: accountsData, error: accountsError } = await supabase
+      // Haetaan yhdistetyt sometilit käyttäen organisaation ID:tä
+      const { data: accountsData, error: accountsError } = await req.supabase
         .from('user_social_accounts')
         .select('mixpost_account_uuid, provider, account_name')
-        .eq('user_id', user_id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('is_authorized', true)
 
       if (accountsError) {
@@ -153,8 +160,8 @@ export default async function handler(req, res) {
     
     const webhookData = {
       post_id,
-      user_id,
-      auth_user_id,
+      user_id: orgId, // Käytetään organisaation ID:tä
+      auth_user_id: req.authUser?.id || auth_user_id, // auth.users.id
       content,
       media_urls,
       segments,
@@ -236,4 +243,6 @@ export default async function handler(req, res) {
       error: error.message
     })
   }
-} 
+}
+
+export default withOrganization(handler) 

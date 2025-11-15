@@ -44,12 +44,31 @@ export default async function handler(req, res) {
       const { data: userData, error: userError } = await supabase.auth.getUser()
       
       if (!userError && userData?.user) {
-        // Hae Mixpost-konfiguraatio
-        const { data: configData } = await supabase
-          .from('user_mixpost_config')
-          .select('mixpost_api_token')
-          .eq('user_id', userData.user.id)
-          .single()
+        // Hae organisaation ID käyttäen getUserOrgId funktiota
+        // Tämä vaatii importin, mutta koska tämä on GET-endpoint joka ei välttämättä tarvitse organisaatiota,
+        // käytetään yksinkertaista tapaa: haetaan ensin users.id auth_user_id:llä
+        const { data: userRecord } = await supabase
+          .from('users')
+          .select('id')
+          .eq('auth_user_id', userData.user.id)
+          .maybeSingle()
+        
+        // Jos käyttäjä on org_members taulussa, hae org_id
+        const { data: orgMember } = await supabase
+          .from('org_members')
+          .select('org_id')
+          .eq('auth_user_id', userData.user.id)
+          .maybeSingle()
+        
+        const userId = orgMember?.org_id || userRecord?.id
+        
+        if (userId) {
+          // Hae Mixpost-konfiguraatio käyttäen organisaation ID:tä
+          const { data: configData } = await supabase
+            .from('user_mixpost_config')
+            .select('mixpost_api_token')
+            .eq('user_id', userId) // Käytetään organisaation ID:tä
+            .single()
 
         if (configData?.mixpost_api_token) {
           mixpostApiToken = configData.mixpost_api_token

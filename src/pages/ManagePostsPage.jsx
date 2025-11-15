@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { useMonthlyLimit } from '../hooks/useMonthlyLimit'
 import { useNextMonthQuota } from '../hooks/useNextMonthQuota'
+import { getUserOrgId } from '../lib/getUserOrgId'
 import Button from '../components/Button'
 import PostsCalendar from '../components/PostsCalendar'
 import PublishModal from '../components/PublishModal'
@@ -585,11 +586,20 @@ export default function ManagePostsPage() {
         setAvatarLoading(true)
         setAvatarError('')
 
+        // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+        const userId = await getUserOrgId(user.id)
+        
+        if (!userId) {
+          setAvatarImages([])
+          setAvatarError('Käyttäjää ei löytynyt')
+          return
+        }
+
         // Hae company_id Supabasesta
         const { data: userData, error: userError } = await supabase
           .from('users')
           .select('company_id')
-          .eq('auth_user_id', user.id)
+          .eq('id', userId)
           .single()
 
         if (userError || !userData?.company_id) {
@@ -688,14 +698,10 @@ export default function ManagePostsPage() {
       setLoading(true)
       setError(null)
       
-      // Haetaan käyttäjän user_id users taulusta
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user.id)
       
-      if (userError || !userData?.id) {
+      if (!userId) {
         throw new Error(t('posts.messages.userIdNotFound'))
       }
       
@@ -703,7 +709,7 @@ export default function ManagePostsPage() {
       const { data, error } = await supabase
         .from('content')
         .select('*')
-        .eq('user_id', userData.id)
+        .eq('user_id', userId)
         .neq('type', 'Blog')
         .neq('type', 'Newsletter')
         .neq('status', 'Deleted')
@@ -773,11 +779,19 @@ export default function ManagePostsPage() {
     try {
       setLoadingAccounts(true)
       
-      // Haetaan yhdistetyt sometilit - käytetään auth_user_id:tä suoraan
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        console.error('Organisaation ID ei löytynyt')
+        setSocialAccounts([])
+        return
+      }
+      
+      // Haetaan yhdistetyt sometilit käyttäen organisaation ID:tä
       const { data: accountsData, error: accountsError } = await supabase
         .from('user_social_accounts')
-        .select('mixpost_account_uuid, provider, account_name, profile_image_url')
-        .eq('user_id', user.id) // Käytetään auth_user_id:tä suoraan
+        .select('mixpost_account_uuid, provider, account_name, profile_image_url, username')
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('is_authorized', true)
         .order('last_synced_at', { ascending: false })
 
@@ -817,10 +831,17 @@ export default function ManagePostsPage() {
     try {
       setReelsLoading(true)
       setReelsError(null)
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user.id)
+      
+      if (!userId) {
+        return
+      }
+
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('company_id')
-        .eq('auth_user_id', user.id)
+        .eq('id', userId)
         .single()
       if (userError || !userData?.company_id) {
         return
@@ -933,15 +954,22 @@ export default function ManagePostsPage() {
         return
       }
 
-      // Haetaan käyttäjän user_id ja company_id users taulusta
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user.id)
+      
+      if (!userId) {
+        throw new Error(t('posts.messages.userIdNotFound'))
+      }
+
+      // Hae company_id users taulusta
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('id, company_id')
-        .eq('auth_user_id', user.id)
+        .select('company_id')
+        .eq('id', userId)
         .single()
       
-      if (userError || !userData?.id) {
-        throw new Error(t('posts.messages.userIdNotFound'))
+      if (userError || !userData?.company_id) {
+        throw new Error(t('posts.messages.companyIdNotFound'))
       }
 
       // Lähetetään idea-generation kutsu N8N:lle
@@ -1121,10 +1149,17 @@ export default function ManagePostsPage() {
            if (updatedData.voiceoverReady && (editingPost.source === 'reels' || editingPost.type === 'Reels') && (editingPost.status === 'Kesken' || editingPost.source === 'reels')) {
              try {
                        // Haetaan company_id käyttäjälle
+               // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+               const userId = await getUserOrgId(user.id)
+               
+               if (!userId) {
+                 return
+               }
+
                const { data: userData, error: userError } = await supabase
                  .from('users')
                  .select('company_id')
-                 .eq('auth_user_id', user.id)
+                 .eq('id', userId)
                  .single()
 
                if (userError || !userData?.company_id) {
@@ -1171,15 +1206,11 @@ export default function ManagePostsPage() {
       try {
 
 
-        // Haetaan käyttäjän user_id users taulusta
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('id')
-          .eq('auth_user_id', user.id)
-          .single()
+        // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+        const userId = await getUserOrgId(user.id)
 
-        if (userError || !userData?.id) {
-          console.error('Could not fetch user_id:', userError)
+        if (!userId) {
+          console.error('Could not fetch user_id')
           setErrorMessage('Käyttäjätietojen haku epäonnistui')
           return
         }
@@ -1194,7 +1225,7 @@ export default function ManagePostsPage() {
             updated_at: new Date().toISOString()
           })
           .eq('id', editingPost.id)
-          .eq('user_id', userData.id)
+          .eq('user_id', userId)
 
         if (updateError) {
           console.error('Supabase update error:', updateError)
@@ -1228,14 +1259,10 @@ export default function ManagePostsPage() {
   const handleDeletePost = async (post) => {
     if (window.confirm(t('posts.messages.confirmDelete'))) {
       try {
-        // Haetaan käyttäjän data
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('id')
-          .eq('auth_user_id', user.id)
-          .single()
+        // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+        const userId = await getUserOrgId(user.id)
 
-        if (userError || !userData?.id) {
+        if (!userId) {
           throw new Error(t('posts.messages.userIdNotFound'))
         }
 
@@ -1244,7 +1271,7 @@ export default function ManagePostsPage() {
           .from('content')
           .update({ status: 'Deleted' })
           .eq('id', post.id)
-          .eq('user_id', userData.id)
+          .eq('user_id', userId)
 
         if (updateError) {
           throw new Error(t('posts.messages.statusUpdateFailed') + ' ' + updateError.message)
@@ -1358,14 +1385,10 @@ export default function ManagePostsPage() {
       let segments = []
       
       if (publishingPost.source === 'supabase') {
-        // Haetaan käyttäjän user_id users taulusta
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('id')
-          .eq('auth_user_id', user.id)
-          .single()
+        // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+        const userId = await getUserOrgId(user.id)
 
-        if (userError || !userData?.id) {
+        if (!userId) {
           throw new Error(t('posts.messages.userIdNotFound'))
         }
 
@@ -1374,7 +1397,7 @@ export default function ManagePostsPage() {
           .from('content')
           .select('*')
           .eq('id', publishingPost.id)
-          .eq('user_id', userData.id)
+          .eq('user_id', userId)
           .single()
 
         if (contentError) {
@@ -1467,14 +1490,10 @@ export default function ManagePostsPage() {
         return
       }
 
-      // Haetaan käyttäjän user_id users taulusta
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user.id)
 
-      if (userError || !userData?.id) {
+      if (!userId) {
         throw new Error(t('posts.messages.userIdNotFound'))
       }
 
@@ -1499,7 +1518,7 @@ export default function ManagePostsPage() {
           updated_at: new Date().toISOString()
         })
         .eq('id', post.id)
-        .eq('user_id', userData.id)
+        .eq('user_id', userId)
 
       if (updateError) {
         throw new Error(t('posts.messages.supabaseUpdateFailed'))
@@ -1649,14 +1668,10 @@ export default function ManagePostsPage() {
   // Kuvien hallinta content-media bucket:iin
   const handleDeleteImage = async (imageUrl, contentId) => {
     try {
-      // Haetaan käyttäjän user_id users taulusta
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
-
-      if (userError || !userData?.id) {
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user.id)
+      
+      if (!userId) {
         throw new Error('User ID not found')
       }
 
@@ -1717,20 +1732,17 @@ export default function ManagePostsPage() {
   const handleAddImage = async (file, contentId) => {
     try {
       // Haetaan käyttäjän user_id users taulusta
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user.id)
 
-      if (userError || !userData?.id) {
+      if (!userId) {
         throw new Error('User ID not found')
       }
 
       const formData = new FormData()
       formData.append('image', file)
       formData.append('contentId', contentId)
-      formData.append('userId', userData.id)
+      formData.append('userId', userId)
 
       // Hae session ja tarkista että se on voimassa
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
@@ -1738,7 +1750,7 @@ export default function ManagePostsPage() {
         throw new Error('Session expired or invalid. Please log in again.')
       }
 
-      console.log('DEBUG - Sending image upload request:', { contentId, userId: userData.id })
+      console.log('DEBUG - Sending image upload request:', { contentId, userId })
 
       // Luodaan AbortController timeout:lle
       const controller = new AbortController()
@@ -2344,13 +2356,10 @@ export default function ManagePostsPage() {
                     setLoading(true)
                     
                     // 1. Hae user_id users-taulusta
-                    const { data: userData, error: userError } = await supabase
-                      .from('users')
-                      .select('id')
-                      .eq('auth_user_id', user.id)
-                      .single()
+                    // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+                    const userId = await getUserOrgId(user.id)
                     
-                    if (userError || !userData?.id) {
+                    if (!userId) {
                       throw new Error('Käyttäjän ID ei löytynyt')
                     }
 
@@ -2358,7 +2367,7 @@ export default function ManagePostsPage() {
                     const bucket = 'content-media'
                     const fileExt = file.name.split('.').pop()
                     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-                    const filePath = `${userData.id}/${fileName}`
+                    const filePath = `${userId}/${fileName}`
 
                     const { error: uploadError } = await supabase.storage
                       .from(bucket)
@@ -2382,7 +2391,7 @@ export default function ManagePostsPage() {
                     const { error: insertError } = await supabase
                       .from('content')
                       .insert({
-                        user_id: userData.id,
+                        user_id: userId,
                         type: type,
                         idea: title || 'Tuotu julkaisu',
                         caption: caption || '',
@@ -3351,10 +3360,18 @@ export default function ManagePostsPage() {
                           if (!selectedAvatar) return
                           try {
                             // Hae company_id
+                            // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+                            const userId = await getUserOrgId(user.id)
+                            
+                            if (!userId) {
+                              setErrorMessage(t('posts.messages.userIdNotFound'))
+                              return
+                            }
+
                             const { data: userData, error: userError } = await supabase
                               .from('users')
                               .select('company_id')
-                              .eq('auth_user_id', user.id)
+                              .eq('id', userId)
                               .single()
                             if (userError || !userData?.company_id) {
                               setErrorMessage(t('posts.messages.errorCompanyId'))

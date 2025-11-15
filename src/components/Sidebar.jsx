@@ -171,6 +171,19 @@ const menuItems = [
         </svg>
       )
     },
+    {
+      label: 'Organisaation hallinta',
+      path: '/organization-members',
+      adminOnly: false, // Tarkistetaan erikseen owner/admin roolilla
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      )
+    },
 ]
 
 
@@ -182,7 +195,7 @@ export default function Sidebar() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [isModerator, setIsModerator] = useState(false)
   const [logoUrl, setLogoUrl] = useState(null)
-  const { user, signOut } = useAuth()
+  const { user, signOut, organization } = useAuth()
   const { has: hasFeature } = useFeatures()
   const [openSections, setOpenSections] = useState({
     markkinointi: true,
@@ -198,6 +211,11 @@ export default function Sidebar() {
 
   // Apufunktiot näkyvyyden arviointiin
   const isItemVisible = (item) => {
+    // Organisaation hallinta näkyy vain owner/admin roolilla
+    if (item.path === '/organization-members') {
+      const orgRole = organization?.role
+      return orgRole === 'owner' || orgRole === 'admin'
+    }
     const adminOnly = item.adminOnly && !isAdmin
     const moderatorOnly = item.moderatorOnly && !isModerator
     return !(adminOnly || moderatorOnly)
@@ -208,7 +226,7 @@ export default function Sidebar() {
   const canShowTools = publicToolItems.some(isItemVisible)
   
   // Ylläpito - admin/moderator-toiminnot
-  const adminItems = menuItems.filter(i => ['/admin','/admin-blog','/account-manager'].includes(i.path))
+  const adminItems = menuItems.filter(i => ['/admin','/admin-blog','/account-manager','/organization-members'].includes(i.path))
   const canShowAdmin = adminItems.some(isItemVisible)
 
   // Tarkista admin- ja moderator-oikeudet + hae logo
@@ -422,6 +440,7 @@ export default function Sidebar() {
                     {item.path === '/admin' ? t('sidebar.labels.admin') :
                      item.path === '/admin-blog' ? t('sidebar.labels.adminBlog') :
                      item.path === '/account-manager' ? t('sidebar.labels.accountManager') :
+                     item.path === '/organization-members' ? 'Organisaation hallinta' :
                      item.label}
                   </button>
                 </li>

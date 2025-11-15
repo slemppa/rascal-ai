@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useCallback, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
+import { getUserOrgId } from '../lib/getUserOrgId'
 
 // Initial state
 const initialState = {
@@ -250,14 +251,11 @@ export const PostsProvider = ({ children }) => {
       setLoading(true)
       setError(null)
       
-      // Haetaan käyttäjän user_id users taulusta
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', userId)
-        .single()
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const { getUserOrgId } = await import('../lib/getUserOrgId')
+      const userDataId = await getUserOrgId(userId)
       
-      if (userError || !userData?.id) {
+      if (!userDataId) {
         throw new Error('Käyttäjän ID ei löytynyt')
       }
       
@@ -265,7 +263,7 @@ export const PostsProvider = ({ children }) => {
       const { data, error } = await supabase
         .from('content')
         .select('*')
-        .eq('user_id', userData.id)
+        .eq('user_id', userDataId)
         .neq('type', 'Blog')
         .neq('type', 'Newsletter')
         .neq('status', 'Deleted')
@@ -321,12 +319,20 @@ export const PostsProvider = ({ children }) => {
     try {
       dispatch({ type: ACTIONS.SET_ACCOUNTS_LOADING, payload: true })
       
-      // Käytä user_social_accounts taulua suoraan auth_user_id:llä
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(userId)
+      if (!orgId) {
+        console.error('Organisaation ID ei löytynyt')
+        dispatch({ type: ACTIONS.SET_SOCIAL_ACCOUNTS, payload: [] })
+        return
+      }
+      
+      // Käytä user_social_accounts taulua organisaation ID:llä
       try {
         const { data, error } = await supabase
           .from('user_social_accounts')
           .select('*')
-          .eq('user_id', userId)
+          .eq('user_id', orgId) // Käytetään organisaation ID:tä
           .eq('is_authorized', true)
         
         if (error) {

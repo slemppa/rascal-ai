@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { supabase } from '../../../lib/supabase';
+import { getUserOrgId } from '../../../lib/getUserOrgId';
 
 export const useMixpostIntegration = () => {
-  const { user } = useAuth();
-  const userId = user?.id;
+  const { user, organization } = useAuth();
+  // Käytetään organisaation ID:tä (public.users.id) sen sijaan että käytetään auth.users.id
+  const [orgId, setOrgId] = useState(null);
   
   const [mixpostConfig, setMixpostConfig] = useState(null);
   const [socialAccounts, setSocialAccounts] = useState([]);
@@ -12,15 +14,32 @@ export const useMixpostIntegration = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Hae organisaation ID kun user tai organization muuttuu
+  useEffect(() => {
+    const fetchOrgId = async () => {
+      if (organization?.id) {
+        // Jos organization contextista löytyy ID, käytä sitä
+        setOrgId(organization.id);
+      } else if (user?.id) {
+        // Muuten hae getUserOrgId:llä
+        const id = await getUserOrgId(user.id);
+        setOrgId(id);
+      } else {
+        setOrgId(null);
+      }
+    };
+    fetchOrgId();
+  }, [user?.id, organization?.id]);
+
   // Hae Mixpost-konfiguraatio
   const fetchMixpostConfig = async () => {
-    if (!userId) return;
+    if (!orgId) return;
     
     try {
       const { data, error } = await supabase
         .from('user_mixpost_config')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', orgId)
         .single();
 
       if (error && error.code !== 'PGRST116') {
@@ -38,14 +57,17 @@ export const useMixpostIntegration = () => {
   };
 
   // Hae tallennetut sometilit Supabasesta
+  // Näytetään sekä public että private tilit (private vain omalle käyttäjälle)
   const fetchSavedSocialAccounts = async () => {
-    if (!userId) return [];
+    if (!orgId) return [];
     
     try {
+      // Hae kaikki organisaation sometilit (public + private)
+      // RLS-politiikat varmistavat että käyttäjä näkee vain oikeat tilit
       const { data, error } = await supabase
         .from('user_social_accounts')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', orgId)
         .eq('is_authorized', true)
         .order('last_synced_at', { ascending: false });
 
@@ -197,16 +219,26 @@ export const useMixpostIntegration = () => {
 
       console.log('Tallennetaan tili:', latestAccount);
 
+      if (!orgId) {
+        console.error('Organisaation ID puuttuu, ei voida tallentaa sometiliä');
+        return;
+      }
+
+      // Hae käyttäjän auth ID
+      const { data: { user: authUser } } = await supabase.auth.getUser()
+      
       const { error } = await supabase
         .from('user_social_accounts')
         .upsert({
-          user_id: userId,
+          user_id: orgId,
           mixpost_account_uuid: latestAccount.id,
           provider: platform,
           account_name: latestAccount.name || latestAccount.username,
           username: latestAccount.username,
           profile_image_url: latestAccount.profile_image_url || latestAccount.image || latestAccount.picture,
           is_authorized: true,
+          visibility: 'public', // Oletuksena public (organisaation sisäinen)
+          created_by: authUser?.id || null, // Tallenna kuka loi tilin
           account_data: latestAccount,
           last_synced_at: new Date().toISOString(),
           created_at: new Date().toISOString()
@@ -262,7 +294,7 @@ export const useMixpostIntegration = () => {
 
   // Alustus
   useEffect(() => {
-    if (userId) {
+    if (orgId) {
       const initialize = async () => {
         setLoading(true);
         setError(null);
@@ -271,8 +303,10 @@ export const useMixpostIntegration = () => {
         setLoading(false);
       };
       initialize();
+    } else {
+      setLoading(false);
     }
-  }, [userId]);
+  }, [orgId]);
 
   // Hae sometilit kun konfiguraatio on saatavilla
   useEffect(() => {

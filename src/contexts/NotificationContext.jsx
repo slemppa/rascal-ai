@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from './AuthContext'
+import { getUserOrgId } from '../lib/getUserOrgId'
 
 const NotificationContext = createContext()
 
@@ -51,22 +52,17 @@ export const NotificationProvider = ({ children }) => {
         throw new Error('No session found')
       }
 
-      // Hae käyttäjän public.users.id
-      const { data: userData } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', session.user.id)
-        .single()
-
-      if (!userData) {
-        throw new Error('User data not found')
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(session.user.id)
+      if (!orgId) {
+        throw new Error('Organisaation ID ei löytynyt')
       }
 
       // Hae notifikaatiot suoraan Supabasesta
       const { data: notifications, error: notificationsError } = await supabase
         .from('notifications')
         .select('*')
-        .eq('user_id', userData.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('is_deleted', false)
         .order('created_at', { ascending: false })
         .limit(limit)
@@ -80,7 +76,7 @@ export const NotificationProvider = ({ children }) => {
       const { count: unreadCount, error: countError } = await supabase
         .from('notifications')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', userData.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('is_read', false)
         .eq('is_deleted', false)
 
@@ -108,15 +104,10 @@ export const NotificationProvider = ({ children }) => {
         throw new Error('No session found')
       }
 
-      // Hae käyttäjän public.users.id
-      const { data: userData } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', session.user.id)
-        .single()
-
-      if (!userData) {
-        throw new Error('User data not found')
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(session.user.id)
+      if (!orgId) {
+        throw new Error('Organisaation ID ei löytynyt')
       }
 
       // Päivitä notifikaatio suoraan Supabasessa
@@ -127,7 +118,7 @@ export const NotificationProvider = ({ children }) => {
           read_at: new Date().toISOString() 
         })
         .eq('id', notificationId)
-        .eq('user_id', userData.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
 
       if (error) {
         throw error
@@ -158,15 +149,10 @@ export const NotificationProvider = ({ children }) => {
         throw new Error('No session found')
       }
 
-      // Hae käyttäjän public.users.id
-      const { data: userData } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', session.user.id)
-        .single()
-
-      if (!userData) {
-        throw new Error('User data not found')
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(session.user.id)
+      if (!orgId) {
+        throw new Error('Organisaation ID ei löytynyt')
       }
 
       // Merkitse kaikki lukemattomat luetuksi suoraan Supabasessa
@@ -176,7 +162,7 @@ export const NotificationProvider = ({ children }) => {
           is_read: true, 
           read_at: new Date().toISOString() 
         })
-        .eq('user_id', userData.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('is_read', false)
         .eq('is_deleted', false)
 
@@ -209,15 +195,10 @@ export const NotificationProvider = ({ children }) => {
         throw new Error('No session found')
       }
 
-      // Hae käyttäjän public.users.id
-      const { data: userData } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', session.user.id)
-        .single()
-
-      if (!userData) {
-        throw new Error('User data not found')
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(session.user.id)
+      if (!orgId) {
+        throw new Error('Organisaation ID ei löytynyt')
       }
 
       // Poista notifikaatio suoraan Supabasesta
@@ -225,7 +206,7 @@ export const NotificationProvider = ({ children }) => {
         .from('notifications')
         .delete()
         .eq('id', notificationId)
-        .eq('user_id', userData.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
 
       if (error) {
         throw error
@@ -252,20 +233,15 @@ export const NotificationProvider = ({ children }) => {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) return
 
-      // Hae käyttäjän public.users.id
-      const { data: userData } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', session.user.id)
-        .single()
-
-      if (!userData) return
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(session.user.id)
+      if (!orgId) return
 
       // Hae vain lukemattomien määrä
       const { count: unreadCount, error: countError } = await supabase
         .from('notifications')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', userData.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('is_read', false)
         .eq('is_deleted', false)
 

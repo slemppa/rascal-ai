@@ -85,10 +85,35 @@ export default async function handler(req, res) {
         global: { headers: { Authorization: `Bearer ${token}` } }
       })
       
+      // Hae organisaation ID
+      const { data: orgMember } = await supabase
+        .from('org_members')
+        .select('org_id')
+        .eq('auth_user_id', authUser.user.id)
+        .maybeSingle()
+      
+      let orgId = null
+      if (orgMember?.org_id) {
+        orgId = orgMember.org_id
+      } else {
+        // Fallback: hae users taulusta
+        const { data: userData } = await supabase
+          .from('users')
+          .select('id')
+          .eq('auth_user_id', authUser.user.id)
+          .maybeSingle()
+        orgId = userData?.id
+      }
+      
+      if (!orgId) {
+        console.error('Organisaation ID ei löytynyt')
+        return
+      }
+      
       const { data: config, error: configError } = await supabase
         .from('user_mixpost_config')
         .select('mixpost_api_token, mixpost_workspace_uuid, is_active')
-        .eq('user_id', authUser.user.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .single()
 
       workspaceConfig = config
@@ -108,12 +133,37 @@ export default async function handler(req, res) {
       try {
         console.log('Fetching user accounts from MCP for user:', authUser.user.email)
         
-        // Hae käyttäjän social accounts MCP:n kautta
-        // user_social_accounts.user_id viittaa auth.users.id:hen
+        // Hae organisaation social accounts
+        // user_social_accounts.user_id viittaa nyt public.users.id:hen (organisaatio)
+        // Hae ensin organisaation ID
+        const { data: orgMember } = await supabase
+          .from('org_members')
+          .select('org_id')
+          .eq('auth_user_id', authUser.user.id)
+          .maybeSingle()
+        
+        let orgId = null
+        if (orgMember?.org_id) {
+          orgId = orgMember.org_id
+        } else {
+          // Fallback: hae users taulusta
+          const { data: userData } = await supabase
+            .from('users')
+            .select('id')
+            .eq('auth_user_id', authUser.user.id)
+            .maybeSingle()
+          orgId = userData?.id
+        }
+        
+        if (!orgId) {
+          console.error('Organisaation ID ei löytynyt')
+          return
+        }
+        
         const { data: socialAccounts, error: socialError } = await supabase
           .from('user_social_accounts')
           .select('*')
-          .eq('user_id', authUser.user.id) // Tämä on auth.users.id
+          .eq('user_id', orgId) // Käytetään organisaation ID:tä
           .eq('is_authorized', true)
         
         if (socialError) {

@@ -39,6 +39,7 @@ import SegmentCreatePage from './src/pages/SegmentCreatePage'
 import SegmentDetailPage from './src/pages/SegmentDetailPage'
 import AccountManagerPage from './src/pages/AccountManagerPage'
 import AccountDetailsPage from './src/pages/AccountDetailsPage'
+import OrganizationMembersPage from './src/pages/OrganizationMembersPage'
 import LeadMagnetPage from './src/pages/LeadMagnetPage'
 import VastaajaPage from './src/pages/VastaajaPage'
 import LeadScrapingPage from './src/pages/LeadScrapingPage'
@@ -270,6 +271,18 @@ export default function App() {
                       <MobileNavigation />
                       <div className="main-content">
                         <SettingsPage />
+                      </div>
+                    </div>
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/organization-members" element={
+                  <ProtectedRoute>
+                    <div className="app-layout">
+                      <Sidebar />
+                      <MobileNavigation />
+                      <div className="main-content">
+                        <OrganizationMembersPage />
                       </div>
                     </div>
                   </ProtectedRoute>

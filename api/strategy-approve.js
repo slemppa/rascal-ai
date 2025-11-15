@@ -1,12 +1,10 @@
 import axios from 'axios'
-import { createClient } from '@supabase/supabase-js'
+import { withOrganization } from './middleware/with-organization.js'
 
 const N8N_STRATEGY_APPROVAL_URL = process.env.N8N_STRATEGY_APPROVEMENT || process.env.N8N_STRATEGY_ARPPVOMENT || 'https://samikiias.app.n8n.cloud/webhook/strategy-approvment'
 const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY
-const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
@@ -26,33 +24,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required fields' })
     }
 
-    // Hae access token headerista
-    const access_token = req.headers['authorization']?.replace('Bearer ', '')
-    if (!access_token) {
-      return res.status(401).json({ error: 'Authorization token required' })
-    }
-
-    // Luo Supabase client käyttäjän tokenilla
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: `Bearer ${access_token}` } }
-    })
-
-    // Hae public.users.id käyttäen auth_user_id:tä
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('id')
-      .eq('auth_user_id', user_id)
-      .single()
-
-    if (userError || !userData) {
-      console.error('Error fetching user data:', userError)
-      return res.status(500).json({ error: 'Käyttäjätietojen haku epäonnistui' })
-    }
-
-    const publicUserId = userData.id
+    // req.organization.id = organisaation ID (public.users.id)
+    // req.supabase = authenticated Supabase client
+    const publicUserId = req.organization.id
 
     // Hae strategian tiedot ja poimi kuukausi strategy_id:n perusteella
-    const { data: strategyData, error: strategyError } = await supabase
+    const { data: strategyData, error: strategyError } = await req.supabase
       .from('content_strategy')
       .select('month')
       .eq('id', strategy_id)
@@ -68,16 +45,16 @@ export default async function handler(req, res) {
     console.log('🚀 Lähetetään strategian vahvistus webhook...')
     console.log('URL:', N8N_STRATEGY_APPROVAL_URL)
     console.log('API Key:', N8N_SECRET_KEY ? '✅ Asetettu' : '❌ Puuttuu')
-    console.log('Auth user_id:', user_id)
-    console.log('Public user_id:', publicUserId)
+    console.log('Auth user_id:', req.authUser?.id || user_id)
+    console.log('Public user_id (orgId):', publicUserId)
 
     const response = await axios.post(N8N_STRATEGY_APPROVAL_URL, {
       action: 'strategy_approved',
       strategy_id,
       month,
       company_id,
-      user_id: publicUserId, // Käytetään public.users.id:tä
-      auth_user_id: user_id, // Säilytetään myös auth.users.id referenssinä
+      user_id: publicUserId, // Käytetään organisaation ID:tä (public.users.id)
+      auth_user_id: req.authUser?.id || user_id, // Säilytetään myös auth.users.id referenssinä
       approved_at: new Date().toISOString()
     }, {
       headers: {
@@ -102,3 +79,5 @@ export default async function handler(req, res) {
     })
   }
 }
+
+export default withOrganization(handler)

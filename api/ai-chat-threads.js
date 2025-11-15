@@ -1,52 +1,19 @@
-import { createClient } from '@supabase/supabase-js'
+import { withOrganization } from './middleware/with-organization.js'
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY
-
-export default async function handler(req, res) {
+async function handler(req, res) {
   try {
-    // Tarkista käyttäjän access token
-    const access_token = req.headers['authorization']?.replace('Bearer ', '')
-    if (!access_token) {
-      return res.status(401).json({ error: 'Unauthorized: access token puuttuu' })
-    }
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      return res.status(500).json({ error: 'Supabase asetukset puuttuvat' })
-    }
-
-    // Luo Supabase-yhteys käyttäjän tokenilla
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: `Bearer ${access_token}` } }
-    })
-
-    // Tarkista käyttäjän autentikointi
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
-      return res.status(401).json({ error: 'Käyttäjän autentikointi epäonnistui' })
-    }
-
-    // Hae käyttäjän tiedot public.users taulusta
-    const { data: userData, error: userDataError } = await supabase
-      .from('users')
-      .select('id')
-      .eq('auth_user_id', user.id)
-      .single()
-
-    if (userDataError || !userData?.id) {
-      return res.status(404).json({ error: 'Käyttäjää ei löytynyt' })
-    }
-
-    const userId = userData.id
+    // req.organization.id = organisaation ID (public.users.id)
+    // req.supabase = authenticated Supabase client
+    const orgId = req.organization.id
 
     // GET - Hae threadit (vain metadata, viestit ovat Zepissä)
     if (req.method === 'GET') {
       const assistant_type = req.query?.assistant_type || 'marketing'
       
-      let query = supabase
+      let query = req.supabase
         .from('ai_chat_threads')
         .select('id, title, created_at, updated_at, assistant_type')
-        .eq('user_id', userId)
+        .eq('user_id', orgId)
         .eq('assistant_type', assistant_type)
         .order('updated_at', { ascending: false })
 
@@ -65,10 +32,10 @@ export default async function handler(req, res) {
       const { title, assistant_type } = req.body || {}
       const finalAssistantType = assistant_type === 'sales' ? 'sales' : 'marketing'
 
-      const { data: newThread, error } = await supabase
+      const { data: newThread, error } = await req.supabase
         .from('ai_chat_threads')
         .insert({
-          user_id: userId,
+          user_id: orgId,
           title: title || 'Uusi keskustelu',
           assistant_type: finalAssistantType
         })
@@ -91,11 +58,11 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'threadId vaaditaan' })
       }
 
-      const { error } = await supabase
+      const { error } = await req.supabase
         .from('ai_chat_threads')
         .delete()
         .eq('id', threadId)
-        .eq('user_id', userId)
+        .eq('user_id', orgId)
 
       if (error) {
         console.error('[ai-chat-threads] DELETE error:', error)
@@ -113,11 +80,11 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'threadId ja title vaaditaan' })
       }
 
-      const { data: updatedThread, error } = await supabase
+      const { data: updatedThread, error } = await req.supabase
         .from('ai_chat_threads')
         .update({ title })
         .eq('id', threadId)
-        .eq('user_id', userId)
+        .eq('user_id', orgId)
         .select()
         .single()
 
@@ -135,4 +102,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Internal server error', details: e.message })
   }
 }
+
+export default withOrganization(handler)
 

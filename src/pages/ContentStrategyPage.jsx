@@ -4,6 +4,7 @@ import axios from 'axios'
 import './ContentStrategyPage.css'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { getUserOrgId } from '../lib/getUserOrgId'
 import { useStrategyStatus } from '../contexts/StrategyStatusContext'
 import Button from '../components/Button'
 import '../components/ModalComponents.css'
@@ -12,16 +13,23 @@ const STRATEGY_URL = import.meta.env.N8N_GET_STRATEGY_URL || 'https://samikiias.
 
 const getStrategy = async () => {
   try {
-    // Haetaan käyttäjän company_id ja user_id Supabase:sta
+    // Haetaan käyttäjän tiedot
     const { data: { session } } = await supabase.auth.getSession()
     if (!session?.user) {
       throw new Error('Käyttäjä ei ole kirjautunut')
     }
 
+    // Hae organisaation ID (public.users.id)
+    const orgId = await getUserOrgId(session.user.id)
+    if (!orgId) {
+      throw new Error('Organisaation ID ei löytynyt')
+    }
+
+    // Hae organisaation tiedot (company_id)
     const { data: userRecord, error: userError } = await supabase
       .from('users')
-      .select('company_id, id')
-      .eq('auth_user_id', session.user.id)
+      .select('company_id')
+      .eq('id', orgId)
       .single()
 
     if (userError || !userRecord?.company_id) {
@@ -29,9 +37,9 @@ const getStrategy = async () => {
     }
 
     const companyId = userRecord.company_id
-    const userId = userRecord.id
+    const userId = orgId // Käytetään organisaation ID:tä
 
-    // Kutsu API endpointia company_id:llä ja user_id:llä
+    // Kutsu API endpointia company_id:llä ja user_id:llä (organisaation ID)
     const url = `/api/strategy?companyId=${companyId}&userId=${userId}`
     
     // Hae käyttäjän token
@@ -57,8 +65,9 @@ const getStrategy = async () => {
 
 export default function ContentStrategyPage() {
   const { t, i18n } = useTranslation('common')
-  const { user } = useAuth()
+  const { user, organization } = useAuth()
   const { refreshUserStatus } = useStrategyStatus()
+  const [orgId, setOrgId] = useState(null)
   const [strategy, setStrategy] = useState([])
   
   // Debug: log strategy changes
@@ -100,26 +109,38 @@ export default function ContentStrategyPage() {
   const companySummaryTextareaRef = React.useRef(null)
   const tovTextareaRef = React.useRef(null)
 
+  // Aseta orgId kun käyttäjä on kirjautunut
+  useEffect(() => {
+    const setOrgIdFromUser = async () => {
+      if (user?.id) {
+        const userId = await getUserOrgId(user.id)
+        if (userId) {
+          setOrgId(userId)
+        }
+      } else if (organization?.id) {
+        // Fallback: käytä organization.id:ta jos se on saatavilla
+        setOrgId(organization.id)
+      }
+    }
+    setOrgIdFromUser()
+  }, [user?.id, organization?.id])
+
   const fetchGeneratedCount = async (strategyId) => {
     try {
       setGeneratedCountLoading(true)
 
-      // Hae käyttäjän public users.id auth_user_id:n perusteella
+      // Hae organisaation ID
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.user) return
 
-      const { data: userRecord, error: userErr } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', session.user.id)
-        .single()
-      if (userErr || !userRecord?.id) return
+      const orgId = await getUserOrgId(session.user.id)
+      if (!orgId) return
 
       // Laske generoidut sisällöt tälle strategialle
       const { count, error: cntErr } = await supabase
         .from('content')
         .select('id', { count: 'exact', head: true })
-        .eq('user_id', userRecord.id)
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('strategy_id', strategyId)
         .eq('is_generated', true)
 
@@ -147,14 +168,18 @@ export default function ContentStrategyPage() {
         // Haetaan company_id ensin
         const { data: { session } } = await supabase.auth.getSession()
         if (session?.user) {
-          const { data: userRecord } = await supabase
-            .from('users')
-            .select('company_id')
-            .eq('auth_user_id', session.user.id)
-            .single()
-          
-          if (userRecord?.company_id) {
-            setCompanyId(userRecord.company_id)
+          // Hae organisaation ID
+          const orgId = await getUserOrgId(session.user.id)
+          if (orgId) {
+            const { data: userRecord } = await supabase
+              .from('users')
+              .select('company_id')
+              .eq('id', orgId)
+              .single()
+            
+            if (userRecord?.company_id) {
+              setCompanyId(userRecord.company_id)
+            }
           }
         }
         
@@ -198,8 +223,10 @@ export default function ContentStrategyPage() {
         setLoading(false)
       }
     }
-    fetchStrategy()
-  }, [])
+    if (orgId) {
+      fetchStrategy()
+    }
+  }, [orgId])
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -351,11 +378,15 @@ export default function ContentStrategyPage() {
         throw new Error('Käyttäjä ei ole kirjautunut')
       }
 
+      if (!orgId) {
+        throw new Error('Organisaation ID puuttuu')
+      }
+
       const response = await axios.post('/api/strategy-approve', {
         strategy_id: item.id,
         month: item.month,
         company_id: companyId,
-        user_id: user?.id
+        user_id: orgId // Käytetään organisaation ID:tä
       }, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
@@ -366,14 +397,14 @@ export default function ContentStrategyPage() {
       
       console.log('✅ Strategy approval sent successfully:', response.data)
 
-      // Päivitä myös käyttäjän status "Approved":ksi
+      // Päivitä myös organisaation status "Approved":ksi
       const { error: userError } = await supabase
         .from('users')
         .update({ 
           status: 'Approved',
           strategy_approved_at: new Date().toISOString()
         })
-        .eq('auth_user_id', user.id)
+        .eq('id', orgId) // Käytetään organisaation ID:tä
 
       if (userError) {
         console.error('Error updating user status:', userError)
@@ -409,11 +440,15 @@ export default function ContentStrategyPage() {
     try {
       // Lähetä ensin axios-kutsu API endpointin kautta
       console.log('🚀 Lähetetään strategian vahvistus API:n kautta...')
+      if (!orgId) {
+        throw new Error('Organisaation ID puuttuu')
+      }
+
       console.log('Data:', {
         strategy_id: item.id,
         month: item.month,
         company_id: companyId,
-        user_id: user?.id
+        user_id: orgId // Käytetään organisaation ID:tä
       })
 
       // Hae access token
@@ -422,11 +457,15 @@ export default function ContentStrategyPage() {
         throw new Error('Käyttäjä ei ole kirjautunut')
       }
 
+      if (!orgId) {
+        throw new Error('Organisaation ID puuttuu')
+      }
+
       const response = await axios.post('/api/strategy-approve', {
         strategy_id: item.id,
         month: item.month,
         company_id: companyId,
-        user_id: user?.id
+        user_id: orgId // Käytetään organisaation ID:tä
       }, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
@@ -454,14 +493,14 @@ export default function ContentStrategyPage() {
         return
       }
 
-      // Päivitä myös käyttäjän status "Approved":ksi
+      // Päivitä myös organisaation status "Approved":ksi
       const { error: userError } = await supabase
         .from('users')
         .update({ 
           status: 'Approved',
           strategy_approved_at: new Date().toISOString()
         })
-        .eq('auth_user_id', user.id)
+        .eq('id', orgId) // Käytetään organisaation ID:tä
 
       if (userError) {
         console.error('Error updating user status:', userError)
@@ -510,21 +549,8 @@ export default function ContentStrategyPage() {
     try {
       const newIcpSummary = icpEditText.split('\n').filter(line => line.trim() !== '')
       
-      // Haetaan käyttäjän user_id
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.user) {
-        alert('Käyttäjä ei ole kirjautunut')
-        return
-      }
-
-      const { data: userRecord } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', session.user.id)
-        .single()
-
-      if (!userRecord?.id) {
-        alert('Käyttäjätiedot eivät löytyneet')
+      if (!orgId) {
+        alert('Organisaation ID puuttuu')
         return
       }
       
@@ -535,7 +561,7 @@ export default function ContentStrategyPage() {
           icp_summary: newIcpSummary.join('\n'),
           updated_at: new Date().toISOString()
         })
-        .eq('id', userRecord.id)
+        .eq('id', orgId) // Käytetään organisaation ID:tä
 
       if (error) {
         console.error('Error updating ICP:', error)
@@ -561,21 +587,8 @@ export default function ContentStrategyPage() {
     try {
       const newKpiData = kpiEditText.split('\n').filter(line => line.trim() !== '')
       
-      // Haetaan käyttäjän user_id
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.user) {
-        alert('Käyttäjä ei ole kirjautunut')
-        return
-      }
-
-      const { data: userRecord } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', session.user.id)
-        .single()
-
-      if (!userRecord?.id) {
-        alert('Käyttäjätiedot eivät löytyneet')
+      if (!orgId) {
+        alert('Organisaation ID puuttuu')
         return
       }
       
@@ -586,7 +599,7 @@ export default function ContentStrategyPage() {
           kpi: newKpiData.join('\n'),
           updated_at: new Date().toISOString()
         })
-        .eq('id', userRecord.id)
+        .eq('id', orgId) // Käytetään organisaation ID:tä
 
       if (error) {
         console.error('Error updating KPI:', error)
@@ -622,21 +635,8 @@ export default function ContentStrategyPage() {
 
   const handleSaveCompanySummary = async () => {
     try {
-      // Haetaan käyttäjän user_id
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.user) {
-        alert('Käyttäjä ei ole kirjautunut')
-        return
-      }
-
-      const { data: userRecord } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', session.user.id)
-        .single()
-
-      if (!userRecord?.id) {
-        alert('Käyttäjätiedot eivät löytyneet')
+      if (!orgId) {
+        alert('Organisaation ID puuttuu')
         return
       }
       
@@ -647,7 +647,7 @@ export default function ContentStrategyPage() {
           company_summary: companySummaryEditText,
           updated_at: new Date().toISOString()
         })
-        .eq('id', userRecord.id)
+        .eq('id', orgId) // Käytetään organisaation ID:tä
 
       if (error) {
         console.error('Error updating company summary:', error)
@@ -683,21 +683,8 @@ export default function ContentStrategyPage() {
 
   const handleSaveTov = async () => {
     try {
-      // Haetaan käyttäjän user_id
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.user) {
-        alert('Käyttäjä ei ole kirjautunut')
-        return
-      }
-
-      const { data: userRecord } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', session.user.id)
-        .single()
-
-      if (!userRecord?.id) {
-        alert('Käyttäjätiedot eivät löytyneet')
+      if (!orgId) {
+        alert('Organisaation ID puuttuu')
         return
       }
       
@@ -708,7 +695,7 @@ export default function ContentStrategyPage() {
           tov: tovEditText,
           updated_at: new Date().toISOString()
         })
-        .eq('id', userRecord.id)
+        .eq('id', orgId) // Käytetään organisaation ID:tä
 
       if (error) {
         console.error('Error updating TOV:', error)

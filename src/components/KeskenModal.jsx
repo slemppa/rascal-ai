@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
+import { getUserOrgId } from '../lib/getUserOrgId'
 import Button from './Button'
 
 const KeskenModal = ({ 
@@ -63,14 +64,11 @@ const KeskenModal = ({
     setError('')
     
     try {
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user?.id)
-        .single()
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user?.id)
 
-      if (userError || !userData?.id) {
-        setError('Käyttäjätietojen haku epäonnistui: ' + (userError?.message || 'Käyttäjää ei löytynyt'))
+      if (!userId) {
+        setError('Käyttäjätietojen haku epäonnistui: Käyttäjää ei löytynyt')
         return
       }
 
@@ -120,14 +118,11 @@ const KeskenModal = ({
     setError('')
 
     try {
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user?.id)
-        .single()
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user?.id)
 
-      if (userError || !userData?.id) {
-        setError('Käyttäjätietojen haku epäonnistui: ' + (userError?.message || 'Käyttäjää ei löytynyt'))
+      if (!userId) {
+        setError('Käyttäjätietojen haku epäonnistui: Käyttäjää ei löytynyt')
         return
       }
 
@@ -158,7 +153,7 @@ const KeskenModal = ({
       const formData = new FormData()
       formData.append('image', file)
       formData.append('contentId', editingPost.id)
-      formData.append('userId', userData.id)
+      formData.append('userId', userId)
       formData.append('replaceMode', 'true') // Flag että tämä on "vaihda kuva" -toiminto
 
       const response = await fetch('/api/content-media-management', {
@@ -225,15 +220,11 @@ const KeskenModal = ({
     }
 
     try {
-      // Hae käyttäjän user_id
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user?.id)
-        .single()
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user?.id)
 
-      if (userError || !userData?.id) {
-        setError('Käyttäjätietojen haku epäonnistui: ' + (userError?.message || 'Käyttäjää ei löytynyt'))
+      if (!userId) {
+        setError('Käyttäjätietojen haku epäonnistui: Käyttäjää ei löytynyt')
         return
       }
 
@@ -245,7 +236,7 @@ const KeskenModal = ({
           updated_at: new Date().toISOString()
         })
         .eq('id', editingPost.id)
-        .eq('user_id', userData.id)
+        .eq('user_id', userId)
 
       if (updateError) {
         setError('Tietojen tallentaminen epäonnistui')

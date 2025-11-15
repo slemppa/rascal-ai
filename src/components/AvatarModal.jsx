@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
+import { getUserOrgId } from '../lib/getUserOrgId'
 import Button from './Button'
 
 const AvatarModal = ({ 
@@ -34,11 +35,20 @@ const AvatarModal = ({
         setAvatarLoading(true)
         setAvatarError('')
 
+        // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+        const userId = await getUserOrgId(user.id)
+        
+        if (!userId) {
+          setAvatarImages([])
+          setAvatarError('Käyttäjää ei löytynyt')
+          return
+        }
+
         // Hae company_id Supabasesta
         const { data: userData, error: userError } = await supabase
           .from('users')
           .select('company_id')
-          .eq('auth_user_id', user.id)
+          .eq('id', userId)
           .single()
 
         if (userError || !userData?.company_id) {
@@ -293,11 +303,19 @@ const AvatarModal = ({
                           return
                         }
 
+                        // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+                        const userId = await getUserOrgId(user.id)
+                        
+                        if (!userId) {
+                          setAvatarError('Käyttäjää ei löytynyt')
+                          return
+                        }
+
                         // Hae company_id
                         const { data: userData, error: userError } = await supabase
                           .from('users')
                           .select('company_id')
-                          .eq('auth_user_id', user.id)
+                          .eq('id', userId)
                           .single()
 
                         if (userError || !userData?.company_id) {

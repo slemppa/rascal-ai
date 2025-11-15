@@ -1,13 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
+import { withOrganization } from './middleware/with-organization.js'
 
-const supabaseUrl = process.env.SUPABASE_URL 
-  || process.env.VITE_SUPABASE_URL 
-  || process.env.NEXT_PUBLIC_SUPABASE_URL
-
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY 
-  || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-export default async function handler(req, res) {
+async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
@@ -21,33 +14,18 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    return res.status(500).json({ 
-      error: 'Supabase config missing',
-      hasUrl: Boolean(supabaseUrl),
-      hasKey: Boolean(supabaseAnonKey)
-    })
-  }
-
   try {
+    // req.organization.id = organisaation ID (public.users.id)
+    // req.supabase = authenticated Supabase client
+
     const idParam = req.query.user_id
     if (!idParam) {
       return res.status(400).json({ error: 'user_id puuttuu kyselystä' })
     }
 
-    const authHeader = req.headers.authorization || req.headers.Authorization || ''
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null
-    if (!token) {
-      return res.status(401).json({ error: 'Authorization token required' })
-    }
-
-    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: `Bearer ${token}` } }
-    })
-
     // Mapataan mahdollinen auth.users.id → public.users.id
     let publicUserId = null
-    const { data: directUser } = await userClient
+    const { data: directUser } = await req.supabase
       .from('users')
       .select('id')
       .eq('id', idParam)
@@ -55,19 +33,21 @@ export default async function handler(req, res) {
     if (directUser?.id) publicUserId = directUser.id
 
     if (!publicUserId) {
-      const { data: byAuthUser } = await userClient
-        .from('users')
-        .select('id')
+      // Tarkista onko idParam auth_user_id ja hae org_id org_members kautta
+      const { data: orgMember } = await req.supabase
+        .from('org_members')
+        .select('org_id')
         .eq('auth_user_id', idParam)
         .maybeSingle()
-      if (byAuthUser?.id) publicUserId = byAuthUser.id
+      if (orgMember?.org_id) publicUserId = orgMember.org_id
     }
 
     if (!publicUserId) {
-      return res.status(200).json([])
+      // Jos ei löydy, käytetään käyttäjän omaa organisaatiota
+      publicUserId = req.organization.id
     }
 
-    const { data: segments, error } = await userClient
+    const { data: segments, error } = await req.supabase
       .from('contact_segments')
       .select('*')
       .eq('user_id', publicUserId)
@@ -83,5 +63,7 @@ export default async function handler(req, res) {
     res.status(500).json({ error: 'Internal server error', details: error.message })
   }
 }
+
+export default withOrganization(handler)
 
 

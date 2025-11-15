@@ -19,10 +19,16 @@ const PublishModal = ({
   const [publishDate, setPublishDate] = React.useState('')
 
   const toggleAccount = (accountId) => {
+    console.log('toggleAccount called with:', accountId)
+    console.log('Current selectedAccounts:', selectedAccounts)
     if (selectedAccounts.includes(accountId)) {
-      setSelectedAccounts(selectedAccounts.filter(id => id !== accountId))
+      const newAccounts = selectedAccounts.filter(id => id !== accountId)
+      console.log('Removing account, new selectedAccounts:', newAccounts)
+      setSelectedAccounts(newAccounts)
     } else {
-      setSelectedAccounts([...selectedAccounts, accountId])
+      const newAccounts = [...selectedAccounts, accountId]
+      console.log('Adding account, new selectedAccounts:', newAccounts)
+      setSelectedAccounts(newAccounts)
     }
   }
 
@@ -248,7 +254,11 @@ const PublishModal = ({
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          onChange={() => {}}
+                          onChange={(e) => {
+                            e.stopPropagation() // Estä div:n onClick kun klikataan checkboxia
+                            toggleAccount(account.mixpost_account_uuid)
+                          }}
+                          onClick={(e) => e.stopPropagation()} // Estä myös onClick event
                           style={{
                             width: '18px',
                             height: '18px',
@@ -272,7 +282,7 @@ const PublishModal = ({
                             {account.account_name}
                           </div>
                           <div style={{ fontSize: '12px', color: '#6b7280' }}>
-                            {account.provider} • @{account.username}
+                            {account.provider} • {account.username ? `@${account.username}` : account.account_name}
                           </div>
                         </div>
                       </div>

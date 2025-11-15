@@ -1,13 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
+import { withOrganization } from './middleware/with-organization.js'
 
-const supabaseUrl = process.env.SUPABASE_URL 
-  || process.env.VITE_SUPABASE_URL 
-  || process.env.NEXT_PUBLIC_SUPABASE_URL
-
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY 
-  || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-export default async function handler(req, res) {
+async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
@@ -17,39 +10,20 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' })
 
   try {
-    if (!supabaseUrl || !supabaseAnonKey) {
-      return res.status(500).json({ error: 'Supabase config missing' })
-    }
-
-    const authHeader = req.headers.authorization || req.headers.Authorization || ''
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null
-    if (!token) return res.status(401).json({ error: 'Authorization token required' })
-
-    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: `Bearer ${token}` } }
-    })
-
-    // Vahvista käyttäjä
-    const { data: authData, error: authErr } = await userClient.auth.getUser(token)
-    if (authErr || !authData?.user) return res.status(401).json({ error: 'Invalid token' })
+    // req.organization.id = organisaation ID (public.users.id)
+    // req.supabase = authenticated Supabase client
 
     const days = Math.max(1, Math.min(parseInt(req.query.days || '30', 10) || 30, 90))
     const now = new Date()
     const start = new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
 
-    // Hae public.users.id
-    const { data: userRow, error: userErr } = await userClient
-      .from('users')
-      .select('id')
-      .eq('auth_user_id', authData.user.id)
-      .single()
-    if (userErr || !userRow?.id) return res.status(403).json({ error: 'User profile not found' })
+    const orgId = req.organization.id
 
     // Hae rivien kokonaismäärä ja sivuta (PostgREST default max 1000 per haku)
-    const { count: totalCount, error: countErr } = await userClient
+    const { count: totalCount, error: countErr } = await req.supabase
       .from('call_logs')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', userRow.id)
+      .eq('user_id', orgId)
       .gte('created_at', start.toISOString())
       .lte('created_at', now.toISOString())
 
@@ -62,10 +36,10 @@ export default async function handler(req, res) {
       for (let page = 1; page <= totalPages; page++) {
         const startIndex = (page - 1) * pageSize
         const endIndex = Math.min(startIndex + pageSize - 1, totalCount - 1)
-        const { data: pageLogs, error: pageErr } = await userClient
+        const { data: pageLogs, error: pageErr } = await req.supabase
           .from('call_logs')
           .select('created_at, call_date, answered, call_outcome')
-          .eq('user_id', userRow.id)
+          .eq('user_id', orgId)
           .gte('created_at', start.toISOString())
           .lte('created_at', now.toISOString())
           .order('created_at', { ascending: true })
@@ -118,5 +92,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Internal server error' })
   }
 }
+
+export default withOrganization(handler)
 
 

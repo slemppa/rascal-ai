@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import { getUserOrgId } from '../lib/getUserOrgId'
 
 export const useNextMonthQuota = () => {
   const [quotaData, setQuotaData] = useState({
@@ -20,15 +21,22 @@ export const useNextMonthQuota = () => {
     setQuotaData(prev => ({ ...prev, loading: true, error: null }))
 
     try {
-      // Hae käyttäjän user_id users taulusta
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user.id)
+      
+      if (!userId) {
+        throw new Error('Käyttäjän ID ei löytynyt')
+      }
+
+      // Hae käyttäjän tilaustaso
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('id, subscription_status')
-        .eq('auth_user_id', user.id)
+        .select('subscription_status')
+        .eq('id', userId)
         .single()
       
-      if (userError || !userData?.id) {
-        throw new Error('Käyttäjän ID ei löytynyt')
+      if (userError || !userData) {
+        throw new Error('Käyttäjän tietoja ei löytynyt')
       }
 
       // Selvitä seuraavan kuun strategia ja laske generoidut sisällöt strategy_id:n perusteella
@@ -43,7 +51,7 @@ export const useNextMonthQuota = () => {
       const { data: strategyRow, error: strategyErr } = await supabase
         .from('content_strategy')
         .select('id, month')
-        .eq('user_id', userData.id)
+        .eq('user_id', userId)
         .ilike('month', `%${targetMonthName}%`)
         .order('created_at', { ascending: false })
         .limit(1)
@@ -73,7 +81,7 @@ export const useNextMonthQuota = () => {
         const { count, error: cntErr } = await supabase
           .from('content')
           .select('id', { count: 'exact', head: true })
-          .eq('user_id', userData.id)
+          .eq('user_id', userId)
           .eq('strategy_id', strategyRow.id)
           .eq('is_generated', true)
 

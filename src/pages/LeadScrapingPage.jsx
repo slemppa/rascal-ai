@@ -24,7 +24,8 @@ export default function LeadScrapingPage() {
     departments: false,
     names: false,
     company: false,
-    location: false,
+    peopleLocation: false,
+    companyLocation: false,
     leadLimit: false
   })
   
@@ -77,34 +78,10 @@ export default function LeadScrapingPage() {
   const [companyCityIncludes, setCompanyCityIncludes] = useState('')
   const [companyCityExcludes, setCompanyCityExcludes] = useState('')
 
-  // Options for dropdowns - Laajennetut listat
+  // Options for dropdowns - Pipeline Labs mukaan
   const jobTitleOptions = [
-    { value: 'Director', label: 'Director' },
-    { value: 'Manager', label: 'Manager' },
-    { value: 'Founder', label: 'Founder' },
-    { value: 'General Manager', label: 'General Manager' },
-    { value: 'Consultant', label: 'Consultant' },
-    { value: 'CEO', label: 'CEO' },
-    { value: 'Co-Founder', label: 'Co-Founder' },
-    { value: 'Account Manager', label: 'Account Manager' },
-    { value: 'CFO', label: 'CFO' },
-    { value: 'Human Resources Manager', label: 'Human Resources Manager' },
-    { value: 'CTO', label: 'CTO' },
-    { value: 'CMO', label: 'CMO' },
-    { value: 'VP Sales', label: 'VP Sales' },
-    { value: 'VP Marketing', label: 'VP Marketing' },
-    { value: 'VP Engineering', label: 'VP Engineering' },
-    { value: 'Marketing Manager', label: 'Marketing Manager' },
-    { value: 'Sales Manager', label: 'Sales Manager' },
-    { value: 'Product Manager', label: 'Product Manager' },
-    { value: 'Business Development', label: 'Business Development' },
-    { value: 'Owner', label: 'Owner' },
-    { value: 'President', label: 'President' },
-    { value: 'Chief Executive Officer', label: 'Chief Executive Officer' },
-    { value: 'Chief Technology Officer', label: 'Chief Technology Officer' },
-    { value: 'Chief Financial Officer', label: 'Chief Financial Officer' },
-    { value: 'Chief Marketing Officer', label: 'Chief Marketing Officer' }
-  ]
+    'Director', 'Manager', 'Founder', 'General Manager', 'Consultant', 'Chief Executive Officer', 'Co-Founder', 'Account Manager', 'Chief Financial Officer', 'Human Resources Manager', 'Director Of Marketing', 'Executive Director', 'Executive Assistant', 'Administrative Assistant', 'Director Of Human Resources', 'Associate', 'Chief Operating Officer', 'HR Manager', 'Account Executive', 'Business Development Manager', 'Director Of Operations', 'Controller', 'Chief Technology Officer', 'Chief Information Officer', 'Founder & CEO', 'Attorney', 'IT Manager', 'Assistant Manager', 'Engineer', 'Business Analyst', 'Accountant', 'Chief Marketing Officer', 'Creative Director', 'Director Of Sales', 'Graphic Designer', 'Analyst', 'Human Resources Director', 'Founder And CEO', 'Digital Marketing Manager', 'Business Owner', 'Assistant Professor', 'Branch Manager', 'HR Director', 'Administrator', 'Customer Service Representative', 'HR Business Partner', 'Designer', 'Intern', 'Lecturer', 'Architect', 'Information Technology Manager', 'Co-Founder & CEO', 'Co-Owner', 'Business Development', 'IT Director', 'Associate Professor', 'Finance Manager', 'Director Of Business Development', 'Developer', 'Business Manager', 'Director Of Engineering', 'Human Resources', 'Customer Service', 'Key Account Manager', 'Executive Vice President', 'Financial Analyst', 'HR Generalist', 'Financial Advisor', 'Instructor', 'Engineering Manager', 'Art Director', 'Director Of Sales And Marketing', 'Area Manager', 'CEO & Founder', 'Director Of Finance', 'Data Analyst', 'Associate Director', 'Accounting Manager', 'Customer Service Manager', 'IT Specialist', 'Account Director', 'Data Scientist', 'District Manager', 'Human Resources Business Partner', 'Co-Founder And CEO', 'Assistant Principal', 'Information Technology Director', 'Facilities Manager', 'Director Human Resources', 'Executive', 'Human Resources Generalist', 'Design Engineer', 'CEO & Co-Founder', 'IT Project Manager', 'Electrical Engineer', 'Finance Director', 'Head Of Marketing', 'Independent Consultant', 'Agent', 'Brand Manager', 'Buyer', 'Financial Controller', 'Broker', 'Human Resource Manager', 'Adjunct Professor', 'Customer Success Manager', 'Artist', 'Chairman', 'Graduate Student', 'CEO And Founder', 'Director Of IT', 'Educator', 'Founder/CEO', 'IT Consultant', 'HR Coordinator', 'Lawyer', 'Chief Human Resources Officer', 'Dentist', 'Editor', 'Legal Assistant', 'Director Of Technology', 'Interior Designer', 'Chief Operations Officer', 'Business Development Executive', 'HR Specialist', 'Devops', 'Community Manager', 'Civil Engineer', 'Attorney At Law', 'Associate Consultant', 'CEO And Co-Founder', 'Electrician', 'General Counsel', 'District Sales Manager', 'Director Of Product Management', 'Assistant', 'Driver', 'Auditor', 'Director Marketing', 'Business Consultant', 'Assistant Vice President', 'Digital Marketing Specialist', 'Deputy Manager', 'Human Resources Coordinator', 'English Teacher', 'Board Member', 'IT Analyst', 'Insurance Agent', 'Founding Partner', 'Event Manager', 'Director Of Development', 'Co-Founder & CTO', 'Auxiliar Administrativo', 'Database Administrator', 'Admin', 'Graduate Research Assistant', 'Associate Attorney', 'Chief Information Security Officer', 'Director Of HR', 'Chief Engineer', 'Communications Manager', 'Construction Manager', 'Coordinator', 'Director Of Communications', 'Estimator', 'Corporate Recruiter', 'Business Development Director', 'Enterprise Architect', 'Case Manager', 'Bookkeeper', 'Chief Revenue Officer', 'Analista', 'Assistente Administrativo', 'Bartender', 'Advisor', 'Development Manager', 'Co-Founder', 'CEO', 'Human Resources Specialist', 'Broker Associate', 'Doctor', 'Assistant Director', 'Consultor', 'CTO/Cio', 'Event Coordinator', 'Chef', 'Chief Product Officer', 'Director Of Digital Marketing', 'Application Developer', 'HR Assistant', 'HR Executive', 'Directeur', 'Executive Administrative Assistant', 'Captain', 'Licensed Realtor', 'Business Development Representative', 'Associate Broker', 'Director Of Sales & Marketing', 'Commercial Manager', 'HR Consultant', 'Management Trainee', 'Finance', 'Flight Attendant', 'Lead Engineer', 'Director Of Marketing And Communications', 'Manager', 'Human Resources', 'Assistant Project Manager', 'Application Engineer', 'Logistics Manager', 'Assistant General Manager', 'Lead Software Engineer', 'Employee', 'Founder And President', 'Independent Distributor', 'Director Of Recruiting', 'CEO/Founder', 'Associate Creative Director', 'Assistant Store Manager', 'Barista', 'Director Of Product Marketing', 'Corporate Controller', 'Director Of Talent Acquisition', 'Administrativo', 'Assistant Controller', 'Legal Secretary', 'Author', 'Commercial Director', 'Chief People Officer', 'Inside Sales Representative', 'Devops Engineer', 'Co-Founder And CTO', 'Broker/Owner', 'Advogado', 'Field Engineer', 'Maintenance Manager', 'Clerk', 'Field Service Engineer', 'Cofounder', 'Human Resources Assistant', 'Executive Chef', 'IT Administrator', 'General Sales Manager', 'Director', 'Business Development', 'Franchise Owner', 'Customer Service Supervisor', 'Adjunct Faculty', 'Benefits Manager', 'Inside Sales', 'Abogado', 'Java Developer', 'Head Of Product', 'Management Consultant', 'Contracts Manager', 'Freelance Writer', 'CEO/President/Owner', 'Journalist', 'Associate Software Engineer', 'Head Of HR', 'Internal Auditor', 'Head Of Information Technology', 'Founder & President', 'Accounting', 'Freelancer', 'Front Office Manager', 'Entrepreneur', 'HR Administrator', 'Graduate Teaching Assistant', 'Director Of Sales Operations', 'Diretor', 'Data Engineer', 'Librarian', 'Facility Manager', 'Administration', 'IT Architect', 'Legal Counsel', 'Maintenance Supervisor', 'Head Of Operations', 'Founder / CEO', 'Chief Strategy Officer', 'Communications Director', 'Development Director', 'Content Marketing Manager', 'Internship', 'Counselor', 'Assistant Superintendent', 'Business Systems Analyst', 'Design Director', 'CEO/President', 'Manager', 'Marketing', 'Coach', 'Freelance Graphic Designer', 'Lead Developer', 'Associate Manager', 'Android Developer', 'IT Department Manager', 'IT Engineer', 'Chiropractor', 'Credit Analyst', 'Independent Business Owner', 'Adjunct Instructor', 'Head Of Human Resources', 'Brand Ambassador', 'Copywriter', 'Chairman & CEO', 'Email Marketing Manager', 'Frontend Developer', 'Human Resource Director', 'Client Services Manager', 'IT Support Specialist', 'Contract Manager', 'Impiegato', 'CEO', 'Founder', 'Chief Medical Officer', 'Banker', 'Director Information Technology', 'Director Of Product', 'Director', 'Product Management', 'Country Manager', 'Financial Consultant', 'Administrador', 'Executive Assistant To CEO', 'Advogada', 'Field Marketing Manager', 'Business Intelligence Analyst', 'Director Marketing', 'Loan Officer', 'Freelance Photographer', 'Actor', 'Chef De Projet', 'Foreman', 'Information Technology Project Manager', 'Graduate Assistant', 'Inside Sales Manager', 'Department Manager', 'HR Officer', 'Account Coordinator', 'Deputy Director', 'Director Of Facilities', 'Executive Recruiter', 'IT Technician', 'CEO', 'Co-Founder', 'Full Stack Developer', 'CEO / Founder', 'Counsel', 'Logistics Coordinator', 'Founder And Chief Executive Officer', 'Chairman And CEO', 'Administrative Coordinator', 'Director Business Development', 'Category Manager', 'Data Architect', 'Information Technology', 'Head Of Sales', 'Chief Information Officer (Cio)', 'IT Recruiter', 'Information Security Analyst', 'Associate General Counsel', 'Inspector', 'Admin Assistant', 'Dispatcher', 'Contractor', 'Design Manager', 'Ecommerce Manager', 'Chief Technical Officer', 'Field Service Technician', 'Executive Secretary', 'Co-Founder', 'CTO', 'Director', 'Talent Acquisition', 'Accounting Assistant', 'Director', 'IT', 'Account Supervisor', 'Human Resources Administrator', 'Faculty', 'Administrative Officer', 'Front End Developer', 'Content Manager', 'Freelance', 'Maintenance Technician', 'Business Development Specialist', 'Business Development Consultant', 'Communications Specialist', 'Director', 'Product Marketing', 'Client Manager', 'Compliance Officer', 'Executive Producer', 'Customer Service Specialist', 'Certified Personal Trainer', 'Human Resources Executive', 'Chief Executive', 'HR Advisor', 'Compliance Manager', 'Head Of IT', 'IT Business Analyst', 'Homemaker', 'Events Manager', 'Fleet Manager', 'CEO & President', 'Carpenter', 'HR Recruiter', 'Director', 'Digital Marketing', 'Laboratory Technician', 'Associate Product Manager', 'Director Product Management', 'Independent Contractor', 'Accounts Payable', 'Digital Marketing Director', 'Instructional Designer', 'Digital Project Manager', 'Audit Manager', 'Estudante', 'Credit Manager', 'Eigenaar', 'Business Developer', 'Head Of Business Development', 'Avvocato', 'Chief Administrative Officer', 'Asset Manager', 'Accounts Payable Specialist', 'Chief Compliance Officer', 'Empleado', 'Digital Marketing Executive', 'Account Representative', 'Campaign Manager', 'Director', 'Engineering', 'Engagement Manager', 'Management', 'Delivery Manager', 'Manager Human Resources', 'Cook', 'Director Of Product Development', 'Information Technology Specialist', 'Chief Of Staff', 'Associate Vice President', 'Company Director', 'Chief Technology Officer (CTO)', 'Digital Marketing Consultant', 'Firefighter', 'Business Operations Manager', 'Crew Member', 'Director - Human Resources', 'Caregiver', 'Customer Experience Manager', 'Financial Accountant', 'Customer Service Rep', 'Bank Teller', 'IT Operations Manager', 'Management Accountant', 'Digital Marketing', 'Investigator', 'Enterprise Account Executive', 'Logistics', 'Deputy General Manager', 'Freelance Designer', 'Economist', 'Digital Marketing Coordinator', 'Co-Founder & COO', 'Chief Architect', 'Learning And Development Manager', 'Director General', 'Distributor', 'Associate Marketing Manager', 'Abogada', 'Assistant General Counsel', 'Machine Operator', 'Delivery Driver', 'Comercial', 'Chemist', 'Hostess', 'Lead Consultant', 'Director Of Training', 'Financial Representative', 'Maintenance', 'Audit Associate', 'Housewife', 'Assistant Accountant', 'Financial Manager', 'Maintenance Engineer', 'Contract Administrator', 'First Officer', 'Director Of Marketing Communications', 'Comptable', 'Finance Officer', 'Financial Planner', 'Automation Engineer', 'Administrativa', 'Estudiante', 'Accounts Manager', 'Customer Service Associate', 'Investment Banking Analyst', 'Director HR'
+  ].map(title => ({ value: title, label: title }))
 
   const managementLevelOptions = [
     { value: 'Entry', label: 'Entry' },
@@ -121,26 +98,8 @@ export default function LeadScrapingPage() {
   ]
 
   const departmentOptions = [
-    { value: 'Sales', label: 'Sales' },
-    { value: 'Marketing', label: 'Marketing' },
-    { value: 'Engineering', label: 'Engineering' },
-    { value: 'Product', label: 'Product' },
-    { value: 'Operations', label: 'Operations' },
-    { value: 'Finance', label: 'Finance' },
-    { value: 'HR', label: 'HR' },
-    { value: 'Human Resources', label: 'Human Resources' },
-    { value: 'Business Development', label: 'Business Development' },
-    { value: 'Customer Success', label: 'Customer Success' },
-    { value: 'Support', label: 'Support' },
-    { value: 'IT', label: 'IT' },
-    { value: 'Legal', label: 'Legal' },
-    { value: 'Accounting', label: 'Accounting' },
-    { value: 'Procurement', label: 'Procurement' },
-    { value: 'Supply Chain', label: 'Supply Chain' },
-    { value: 'Quality Assurance', label: 'Quality Assurance' },
-    { value: 'Research & Development', label: 'Research & Development' },
-    { value: 'R&D', label: 'R&D' }
-  ]
+    'Accounting', 'Administrative', 'Arts & Design', 'Business Development', 'Consulting', 'Data Science', 'Education', 'Engineering', 'Entrepreneurship', 'Finance', 'Human Resources', 'Information Technology', 'Legal', 'Marketing', 'Media & Communications', 'Operations', 'Product Management', 'Research', 'Sales', 'Support'
+  ].map(dept => ({ value: dept, label: dept }))
 
   const employeeRangeOptions = [
     { value: 'Unknown', label: 'Unknown' },
@@ -158,85 +117,12 @@ export default function LeadScrapingPage() {
   ]
 
   const industryOptions = [
-    { value: 'Accounting', label: 'Accounting' },
-    { value: 'Agriculture', label: 'Agriculture' },
-    { value: 'Airlines/Aviation', label: 'Airlines/Aviation' },
-    { value: 'Apparel & Fashion', label: 'Apparel & Fashion' },
-    { value: 'Architecture & Planning', label: 'Architecture & Planning' },
-    { value: 'Automotive', label: 'Automotive' },
-    { value: 'Banking', label: 'Banking' },
-    { value: 'Biotechnology', label: 'Biotechnology' },
-    { value: 'Computer Software', label: 'Computer Software' },
-    { value: 'Technology', label: 'Technology' },
-    { value: 'Healthcare', label: 'Healthcare' },
-    { value: 'Finance', label: 'Finance' },
-    { value: 'Education', label: 'Education' },
-    { value: 'Retail', label: 'Retail' },
-    { value: 'Manufacturing', label: 'Manufacturing' },
-    { value: 'Real Estate', label: 'Real Estate' },
-    { value: 'Consulting', label: 'Consulting' },
-    { value: 'Media', label: 'Media' },
-    { value: 'Transportation', label: 'Transportation' },
-    { value: 'Energy', label: 'Energy' },
-    { value: 'Food & Beverage', label: 'Food & Beverage' },
-    { value: 'Hospitality', label: 'Hospitality' },
-    { value: 'Legal', label: 'Legal' },
-    { value: 'Non-profit', label: 'Non-profit' },
-    { value: 'Telecommunications', label: 'Telecommunications' },
-    { value: 'Construction', label: 'Construction' },
-    { value: 'Pharmaceuticals', label: 'Pharmaceuticals' },
-    { value: 'Insurance', label: 'Insurance' },
-    { value: 'Entertainment', label: 'Entertainment' },
-    { value: 'Sports', label: 'Sports' }
-  ]
+    'Accounting', 'Agriculture', 'Airlines/Aviation', 'Alternative Dispute Resolution', 'Animation', 'Apparel & Fashion', 'Architecture & Planning', 'Arts & Crafts', 'Automotive', 'Aviation & Aerospace', 'Banking', 'Biotechnology', 'Broadcast Media', 'Building Materials', 'Business Supplies & Equipment', 'Capital Markets', 'Chemicals', 'Civic & Social Organization', 'Civil Engineering', 'Commercial Real Estate', 'Computer & Network Security', 'Computer Games', 'Computer Hardware', 'Computer Networking', 'Computer Software', 'Construction', 'Consumer Electronics', 'Consumer Goods', 'Consumer Services', 'Cosmetics', 'Dairy', 'Defense & Space', 'Design', 'E-Learning', 'Education Management', 'Electrical/Electronic Manufacturing', 'Entertainment', 'Environmental Services', 'Events Services', 'Executive Office', 'Facilities Services', 'Farming', 'Financial Services', 'Fine Art', 'Food & Beverages', 'Food Production', 'Fundraising', 'Furniture', 'Gambling & Casinos', 'Glass', 'Ceramics & Concrete', 'Government Administration', 'Government Relations', 'Graphic Design', 'Health', 'Wellness & Fitness', 'Higher Education', 'Hospital & Health Care', 'Hospitality', 'Human Resources', 'Import & Export', 'Individual & Family Services', 'Industrial Automation', 'Information Services', 'Information Technology & Services', 'Insurance', 'International Affairs', 'International Trade & Development', 'Internet', 'Investment Banking', 'Investment Management', 'Judiciary', 'Law Enforcement', 'Law Practice', 'Legal Services', 'Legislative Office', 'Leisure', 'Travel & Tourism', 'Libraries', 'Logistics & Supply Chain', 'Luxury Goods & Jewelry', 'Machinery', 'Management Consulting', 'Maritime', 'Market Research', 'Marketing & Advertising', 'Mechanical or Industrial Engineering', 'Media Production', 'Medical Devices', 'Medical Practice', 'Mental Health Care', 'Military', 'Mining & Metals', 'Motion Pictures & Film', 'Museums & Institutions', 'Music', 'Nanotechnology', 'Newspapers', 'Non-Profit Organization Management', 'Non-Profits & Non-Profit Services', 'Oil & Energy', 'Online Media', 'Outsourcing/Offshoring', 'Package/Freight Delivery', 'Packaging & Containers', 'Paper & Forest Products', 'Performing Arts', 'Pharmaceuticals', 'Philanthropy', 'Photography', 'Plastics', 'Political Organization', 'Primary/Secondary Education', 'Printing', 'Professional Training & Coaching', 'Program Development', 'Public Policy', 'Public Relations & Communications', 'Public Safety', 'Publishing', 'Railroad Manufacture', 'Ranching', 'Real Estate', 'Recreation & Sports', 'Recreational Facilities & Services', 'Religious Institutions', 'Renewables & Environment', 'Research', 'Restaurants', 'Retail', 'Security & Investigations', 'Semiconductors', 'Shipbuilding', 'Sporting Goods', 'Sports', 'Staffing & Recruiting', 'Supermarkets', 'Telecommunications', 'Textiles', 'Think Tanks', 'Tobacco', 'Translation & Localization', 'Transportation/Trucking/Railroad', 'Utilities', 'Venture Capital & Private Equity', 'Veterinary', 'Warehousing', 'Wholesale', 'Wine & Spirits', 'Wireless', 'Writing & Editing'
+  ].map(industry => ({ value: industry, label: industry }))
 
   const countryOptions = [
-    { value: 'Albania', label: 'Albania' },
-    { value: 'Andorra', label: 'Andorra' },
-    { value: 'Austria', label: 'Austria' },
-    { value: 'Belarus', label: 'Belarus' },
-    { value: 'Belgium', label: 'Belgium' },
-    { value: 'Bosnia and Herzegovina', label: 'Bosnia and Herzegovina' },
-    { value: 'Bulgaria', label: 'Bulgaria' },
-    { value: 'Croatia', label: 'Croatia' },
-    { value: 'Cyprus', label: 'Cyprus' },
-    { value: 'Czech Republic', label: 'Czech Republic' },
-    { value: 'Denmark', label: 'Denmark' },
-    { value: 'Estonia', label: 'Estonia' },
-    { value: 'Finland', label: 'Finland' },
-    { value: 'France', label: 'France' },
-    { value: 'Germany', label: 'Germany' },
-    { value: 'Greece', label: 'Greece' },
-    { value: 'Hungary', label: 'Hungary' },
-    { value: 'Iceland', label: 'Iceland' },
-    { value: 'Ireland', label: 'Ireland' },
-    { value: 'Italy', label: 'Italy' },
-    { value: 'Latvia', label: 'Latvia' },
-    { value: 'Liechtenstein', label: 'Liechtenstein' },
-    { value: 'Lithuania', label: 'Lithuania' },
-    { value: 'Luxembourg', label: 'Luxembourg' },
-    { value: 'Malta', label: 'Malta' },
-    { value: 'Moldova', label: 'Moldova' },
-    { value: 'Monaco', label: 'Monaco' },
-    { value: 'Montenegro', label: 'Montenegro' },
-    { value: 'Netherlands', label: 'Netherlands' },
-    { value: 'North Macedonia', label: 'North Macedonia' },
-    { value: 'Norway', label: 'Norway' },
-    { value: 'Poland', label: 'Poland' },
-    { value: 'Portugal', label: 'Portugal' },
-    { value: 'Romania', label: 'Romania' },
-    { value: 'Russia', label: 'Russia' },
-    { value: 'San Marino', label: 'San Marino' },
-    { value: 'Serbia', label: 'Serbia' },
-    { value: 'Slovakia', label: 'Slovakia' },
-    { value: 'Slovenia', label: 'Slovenia' },
-    { value: 'Spain', label: 'Spain' },
-    { value: 'Sweden', label: 'Sweden' },
-    { value: 'Switzerland', label: 'Switzerland' },
-    { value: 'Ukraine', label: 'Ukraine' },
-    { value: 'United Kingdom', label: 'United Kingdom' },
-    { value: 'Vatican City', label: 'Vatican City' }
-  ]
+    'Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Czechia', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Italy', 'Kosovo', 'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Moldova', 'Monaco', 'Montenegro', 'Netherlands', 'North Macedonia', 'Macedonia (FYROM)', 'Norway', 'Poland', 'Portugal', 'Romania', 'Russia', 'San Marino', 'Serbia', 'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Ukraine', 'United Kingdom', 'Vatican City'
+  ].map(country => ({ value: country, label: country }))
   
   // Lead limit
   const [leadLimit, setLeadLimit] = useState(10000)
@@ -472,23 +358,24 @@ export default function LeadScrapingPage() {
         if (foundedYearTo) companyCount++
         if (companyDomains) companyCount++
         return companyCount
-      case 'location':
-        let locationCount = 0
-        // People location
-        if (peopleCountryIncludes.length > 0) locationCount++
-        if (peopleCountryExcludes.length > 0) locationCount++
-        if (peopleStateIncludes.length > 0) locationCount++
-        if (peopleStateExcludes.length > 0) locationCount++
-        if (peopleCityIncludes) locationCount++
-        if (peopleCityExcludes) locationCount++
-        // Company location
-        if (companyCountryIncludes.length > 0) locationCount++
-        if (companyCountryExcludes.length > 0) locationCount++
-        if (companyStateIncludes.length > 0) locationCount++
-        if (companyStateExcludes.length > 0) locationCount++
-        if (companyCityIncludes) locationCount++
-        if (companyCityExcludes) locationCount++
-        return locationCount
+      case 'peopleLocation':
+        let peopleLocationCount = 0
+        if (peopleCountryIncludes.length > 0) peopleLocationCount++
+        if (peopleCountryExcludes.length > 0) peopleLocationCount++
+        if (peopleStateIncludes.length > 0) peopleLocationCount++
+        if (peopleStateExcludes.length > 0) peopleLocationCount++
+        if (peopleCityIncludes) peopleLocationCount++
+        if (peopleCityExcludes) peopleLocationCount++
+        return peopleLocationCount
+      case 'companyLocation':
+        let companyLocationCount = 0
+        if (companyCountryIncludes.length > 0) companyLocationCount++
+        if (companyCountryExcludes.length > 0) companyLocationCount++
+        if (companyStateIncludes.length > 0) companyLocationCount++
+        if (companyStateExcludes.length > 0) companyLocationCount++
+        if (companyCityIncludes) companyLocationCount++
+        if (companyCityExcludes) companyLocationCount++
+        return companyLocationCount
       default:
         return 0
     }
@@ -695,143 +582,155 @@ export default function LeadScrapingPage() {
           )}
         </div>
 
-        {/* Location Filters */}
+        {/* People Location Filters */}
         <div className="filter-group">
           <button 
             className="filter-group-header"
-            onClick={() => toggleFilter('location')}
+            onClick={() => toggleFilter('peopleLocation')}
             type="button"
           >
-            <span>Location Filters</span>
+            <span>People Location Filters</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {getFilterCount('location') > 0 && (
-                <span className="filter-count-badge">{getFilterCount('location')}</span>
+              {getFilterCount('peopleLocation') > 0 && (
+                <span className="filter-count-badge">{getFilterCount('peopleLocation')}</span>
               )}
-              <span className={`chevron ${openFilters.location ? 'open' : ''}`}>▾</span>
+              <span className={`chevron ${openFilters.peopleLocation ? 'open' : ''}`}>▾</span>
             </span>
           </button>
-          {openFilters.location && (
+          {openFilters.peopleLocation && (
             <div className="filter-group-content">
-              {/* People Location */}
-              <div style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #e5e7eb' }}>
-                <h4 style={{ fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '12px' }}>People Location</h4>
-                <div className="form-field">
-                  <MultiSelect
-                    label="People country — Includes"
-                    options={countryOptions}
-                    value={peopleCountryIncludes}
-                    onChange={setPeopleCountryIncludes}
-                    placeholder="Select countries to include..."
-                    searchable={true}
-                  />
-                </div>
-                <div className="form-field">
-                  <MultiSelect
-                    label="People country — Excludes"
-                    options={countryOptions}
-                    value={peopleCountryExcludes}
-                    onChange={setPeopleCountryExcludes}
-                    placeholder="Select countries to exclude..."
-                    searchable={true}
-                  />
-                </div>
-                <div className="form-field">
-                  <MultiSelect
-                    label="People state/region — Includes"
-                    options={[]}
-                    value={peopleStateIncludes}
-                    onChange={setPeopleStateIncludes}
-                    placeholder="Select states/regions to include..."
-                  />
-                </div>
-                <div className="form-field">
-                  <MultiSelect
-                    label="People state/region — Excludes"
-                    options={[]}
-                    value={peopleStateExcludes}
-                    onChange={setPeopleStateExcludes}
-                    placeholder="Select states/regions to exclude..."
-                  />
-                </div>
-                <div className="form-field">
-                  <label>People city — Includes</label>
-                  <input
-                    type="text"
-                    value={peopleCityIncludes}
-                    onChange={(e) => setPeopleCityIncludes(e.target.value)}
-                    placeholder="Enter cities to include..."
-                  />
-                </div>
-                <div className="form-field">
-                  <label>People city — Excludes</label>
-                  <input
-                    type="text"
-                    value={peopleCityExcludes}
-                    onChange={(e) => setPeopleCityExcludes(e.target.value)}
-                    placeholder="Enter cities to exclude..."
-                  />
-                </div>
+              <div className="form-field">
+                <MultiSelect
+                  label="People country — Includes"
+                  options={countryOptions}
+                  value={peopleCountryIncludes}
+                  onChange={setPeopleCountryIncludes}
+                  placeholder="Select countries to include..."
+                  searchable={true}
+                />
               </div>
-              
-              {/* Company Location */}
-              <div>
-                <h4 style={{ fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '12px' }}>Company Location</h4>
-                <div className="form-field">
-                  <MultiSelect
-                    label="Company country — Includes"
-                    options={countryOptions}
-                    value={companyCountryIncludes}
-                    onChange={setCompanyCountryIncludes}
-                    placeholder="Select countries to include..."
-                    searchable={true}
-                  />
-                </div>
-                <div className="form-field">
-                  <MultiSelect
-                    label="Company country — Excludes"
-                    options={countryOptions}
-                    value={companyCountryExcludes}
-                    onChange={setCompanyCountryExcludes}
-                    placeholder="Select countries to exclude..."
-                    searchable={true}
-                  />
-                </div>
-                <div className="form-field">
-                  <MultiSelect
-                    label="Company state/region — Includes"
-                    options={[]}
-                    value={companyStateIncludes}
-                    onChange={setCompanyStateIncludes}
-                    placeholder="Select states/regions to include..."
-                  />
-                </div>
-                <div className="form-field">
-                  <MultiSelect
-                    label="Company state/region — Excludes"
-                    options={[]}
-                    value={companyStateExcludes}
-                    onChange={setCompanyStateExcludes}
-                    placeholder="Select states/regions to exclude..."
-                  />
-                </div>
-                <div className="form-field">
-                  <label>Company city — Includes</label>
-                  <input
-                    type="text"
-                    value={companyCityIncludes}
-                    onChange={(e) => setCompanyCityIncludes(e.target.value)}
-                    placeholder="Enter cities to include..."
-                  />
-                </div>
-                <div className="form-field">
-                  <label>Company city — Excludes</label>
-                  <input
-                    type="text"
-                    value={companyCityExcludes}
-                    onChange={(e) => setCompanyCityExcludes(e.target.value)}
-                    placeholder="Enter cities to exclude..."
-                  />
-                </div>
+              <div className="form-field">
+                <MultiSelect
+                  label="People country — Excludes"
+                  options={countryOptions}
+                  value={peopleCountryExcludes}
+                  onChange={setPeopleCountryExcludes}
+                  placeholder="Select countries to exclude..."
+                  searchable={true}
+                />
+              </div>
+              <div className="form-field">
+                <MultiSelect
+                  label="People state/region — Includes"
+                  options={[]}
+                  value={peopleStateIncludes}
+                  onChange={setPeopleStateIncludes}
+                  placeholder="Select states/regions to include..."
+                />
+              </div>
+              <div className="form-field">
+                <MultiSelect
+                  label="People state/region — Excludes"
+                  options={[]}
+                  value={peopleStateExcludes}
+                  onChange={setPeopleStateExcludes}
+                  placeholder="Select states/regions to exclude..."
+                />
+              </div>
+              <div className="form-field">
+                <label>People city — Includes</label>
+                <input
+                  type="text"
+                  value={peopleCityIncludes}
+                  onChange={(e) => setPeopleCityIncludes(e.target.value)}
+                  placeholder="Enter cities to include..."
+                />
+              </div>
+              <div className="form-field">
+                <label>People city — Excludes</label>
+                <input
+                  type="text"
+                  value={peopleCityExcludes}
+                  onChange={(e) => setPeopleCityExcludes(e.target.value)}
+                  placeholder="Enter cities to exclude..."
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Company Location Filters */}
+        <div className="filter-group">
+          <button 
+            className="filter-group-header"
+            onClick={() => toggleFilter('companyLocation')}
+            type="button"
+          >
+            <span>Company Location Filters</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {getFilterCount('companyLocation') > 0 && (
+                <span className="filter-count-badge">{getFilterCount('companyLocation')}</span>
+              )}
+              <span className={`chevron ${openFilters.companyLocation ? 'open' : ''}`}>▾</span>
+            </span>
+          </button>
+          {openFilters.companyLocation && (
+            <div className="filter-group-content">
+              <div className="form-field">
+                <MultiSelect
+                  label="Company country — Includes"
+                  options={countryOptions}
+                  value={companyCountryIncludes}
+                  onChange={setCompanyCountryIncludes}
+                  placeholder="Select countries to include..."
+                  searchable={true}
+                />
+              </div>
+              <div className="form-field">
+                <MultiSelect
+                  label="Company country — Excludes"
+                  options={countryOptions}
+                  value={companyCountryExcludes}
+                  onChange={setCompanyCountryExcludes}
+                  placeholder="Select countries to exclude..."
+                  searchable={true}
+                />
+              </div>
+              <div className="form-field">
+                <MultiSelect
+                  label="Company state/region — Includes"
+                  options={[]}
+                  value={companyStateIncludes}
+                  onChange={setCompanyStateIncludes}
+                  placeholder="Select states/regions to include..."
+                />
+              </div>
+              <div className="form-field">
+                <MultiSelect
+                  label="Company state/region — Excludes"
+                  options={[]}
+                  value={companyStateExcludes}
+                  onChange={setCompanyStateExcludes}
+                  placeholder="Select states/regions to exclude..."
+                />
+              </div>
+              <div className="form-field">
+                <label>Company city — Includes</label>
+                <input
+                  type="text"
+                  value={companyCityIncludes}
+                  onChange={(e) => setCompanyCityIncludes(e.target.value)}
+                  placeholder="Enter cities to include..."
+                />
+              </div>
+              <div className="form-field">
+                <label>Company city — Excludes</label>
+                <input
+                  type="text"
+                  value={companyCityExcludes}
+                  onChange={(e) => setCompanyCityExcludes(e.target.value)}
+                  placeholder="Enter cities to exclude..."
+                />
               </div>
             </div>
           )}

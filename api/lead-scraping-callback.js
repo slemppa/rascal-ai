@@ -36,35 +36,91 @@ export default async function handler(req, res) {
 
     console.log(`Processing ${leads.length} leads for user ${user_id}`)
 
-    // Muotoile data Supabase-muotoon
+    // Funktio parsimaan string-muotoiset arrayt (esim. "['value1', 'value2']" -> ['value1', 'value2'])
+    const parseArrayField = (value) => {
+      if (!value) return null
+      if (Array.isArray(value)) return value
+      if (typeof value === 'string') {
+        const cleaned = value.trim()
+        
+        // Jos on tyhjä string, palautetaan null
+        if (cleaned === '') return null
+        
+        // Jos alkaa [ ja päättyy ], yritetään parsia
+        if (cleaned.startsWith('[') && cleaned.endsWith(']')) {
+          try {
+            // Yritetään ensin JSON.parse (jos on tuplalainausmerkit)
+            const parsed = JSON.parse(cleaned)
+            return Array.isArray(parsed) ? parsed : [parsed]
+          } catch (e) {
+            // Jos JSON.parse epäonnistuu, yritetään parsia yksinkertaisilla lainausmerkeillä
+            try {
+              // Poistetaan [ ja ] ja jaetaan pilkulla
+              const inner = cleaned.slice(1, -1).trim()
+              if (inner === '') return []
+              
+              // Jaetaan pilkulla ja poistetaan lainausmerkit
+              const items = inner.split(',').map(item => {
+                const trimmed = item.trim()
+                // Poistetaan ympäröivät lainausmerkit (sekä ' että ")
+                return trimmed.replace(/^['"]|['"]$/g, '')
+              })
+              
+              return items.filter(item => item !== '')
+            } catch (e2) {
+              // Jos kaikki epäonnistuu, palautetaan yksittäinen arvo arrayksi
+              return [cleaned]
+            }
+          }
+        }
+        
+        // Jos ei ole array-muodossa, palautetaan yksittäinen arvo arrayksi
+        return [cleaned]
+      }
+      return [value]
+    }
+
+    // Funktio parsimaan integer-kentät
+    const parseInteger = (value) => {
+      if (!value) return null
+      if (typeof value === 'number') return value
+      if (typeof value === 'string') {
+        const parsed = parseInt(value, 10)
+        return isNaN(parsed) ? null : parsed
+      }
+      return null
+    }
+
+    // Muotoile data Supabase-muotoon (camelCase-kentät)
     const leadsToInsert = leads.map(lead => {
-      // Map Pipeline Labs / Apify data format to our schema
       return {
         user_id,
-        first_name: lead.firstName || lead.first_name || null,
-        last_name: lead.lastName || lead.last_name || null,
-        full_name: lead.fullName || lead.full_name || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || null,
+        firstName: lead.firstName || null,
+        lastName: lead.lastName || null,
+        fullName: lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || null,
         email: lead.email || null,
         phone: lead.phone || null,
-        position: lead.position || lead.jobTitle || null,
+        position: lead.position || null,
         city: lead.city || null,
         state: lead.state || null,
         country: lead.country || null,
-        linkedin_url: lead.linkedIn || lead.linkedin_url || lead.linkedinUrl || null,
+        linkedinUrl: lead.linkedinUrl || null,
         seniority: lead.seniority || null,
-        functions: Array.isArray(lead.functions) ? lead.functions : (lead.functions ? [lead.functions] : null),
-        email_status: lead.emailStatus || lead.email_status || null,
-        org_name: lead.orgName || lead.org_name || lead.organizationName || lead.company || null,
-        org_website: lead.orgWebsite || lead.org_website || lead.organizationWebsite || null,
-        org_linkedin: lead.orgLinkedIn || lead.org_linkedin || lead.organizationLinkedIn || null,
-        org_founded_year: lead.foundedYear || lead.founded_year || lead.orgFoundedYear || null,
-        org_industry: lead.industry || lead.orgIndustry || lead.organizationIndustry || null,
-        org_size: lead.size || lead.orgSize || lead.organizationSize || null,
-        org_description: lead.description || lead.orgDescription || lead.organizationDescription || null,
-        org_specialties: Array.isArray(lead.specialties) ? lead.specialties : (lead.specialties ? [lead.specialties] : null),
-        org_city: lead.orgCity || lead.organizationCity || null,
-        org_state: lead.orgState || lead.organizationState || null,
-        org_country: lead.orgCountry || lead.organizationCountry || null,
+        functional: parseArrayField(lead.functional),
+        email_status: lead.emailStatus || null,
+        orgName: lead.orgName || null,
+        orgWebsite: lead.orgWebsite || null,
+        orgLinkedinUrl: parseArrayField(lead.orgLinkedinUrl),
+        orgFoundedYear: parseInteger(lead.orgFoundedYear),
+        orgIndustry: parseArrayField(lead.orgIndustry),
+        orgSize: lead.orgSize || null,
+        orgDescription: lead.orgDescription || null,
+        org_specialties: Array.isArray(lead.org_specialties) ? lead.org_specialties : (lead.org_specialties ? [lead.org_specialties] : null),
+        orgCity: lead.orgCity || null,
+        orgState: lead.orgState || null,
+        orgCountry: lead.orgCountry || null,
+        ppeIndex: parseInteger(lead.ppeIndex),
+        ppeBatchIndex: parseInteger(lead.ppeBatchIndex),
         search_query: search_query || null,
         source: source || 'apify_pipeline_labs',
         status: 'scraped',

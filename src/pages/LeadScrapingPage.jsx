@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import axios from 'axios'
+import { createPortal } from 'react-dom'
 import Button from '../components/Button'
 import MultiSelect from '../components/MultiSelect'
+import '../components/ModalComponents.css'
 import './LeadScrapingPage.css'
 
 export default function LeadScrapingPage() {
@@ -244,62 +247,51 @@ export default function LeadScrapingPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [resultsPerPage, setResultsPerPage] = useState(20)
   const [totalLeads, setTotalLeads] = useState(0)
+  
+  // Lead details modal
+  const [selectedLead, setSelectedLead] = useState(null)
+  const [showLeadModal, setShowLeadModal] = useState(false)
 
   const toggleFilter = (key) => {
     setOpenFilters(prev => ({ ...prev, [key]: !prev[key] }))
   }
 
   const generateApifyJson = () => {
-    const filters = {}
-    
-    // Contact Filters
-    if (emailStatus) filters.emailStatus = emailStatus
-    if (onlyWithEmail) filters.onlyWithEmail = true
-    if (onlyWithPhone) filters.onlyWithPhone = true
-    
-    // Job Title Filters
-    if (jobTitlesIncludes.length > 0) filters.jobTitlesIncludes = jobTitlesIncludes
-    if (jobTitlesExcludes.length > 0) filters.jobTitlesExcludes = jobTitlesExcludes
-    if (includeSimilarTitles) filters.includeSimilarTitles = true
-    if (additionalTitles) filters.additionalTitles = additionalTitles
-    
-    // Management Level Filters
-    if (managementLevelIncludes.length > 0) filters.managementLevelIncludes = managementLevelIncludes
-    if (managementLevelExcludes.length > 0) filters.managementLevelExcludes = managementLevelExcludes
-    
-    // Departments & Job Function Filters
-    if (departmentsIncludes.length > 0) filters.departmentsIncludes = departmentsIncludes
-    if (departmentsExcludes.length > 0) filters.departmentsExcludes = departmentsExcludes
-    
-    // Name Filters
-    if (firstNameIncludes) filters.firstNameIncludes = firstNameIncludes
-    if (firstNameExcludes) filters.firstNameExcludes = firstNameExcludes
-    if (lastNameIncludes) filters.lastNameIncludes = lastNameIncludes
-    if (lastNameExcludes) filters.lastNameExcludes = lastNameExcludes
-    
-    // Company Filters
-    if (employeeRange.length > 0) filters.employeeRange = employeeRange
-    if (industriesIncludes.length > 0) filters.industriesIncludes = industriesIncludes
-    if (industriesExcludes.length > 0) filters.industriesExcludes = industriesExcludes
-    if (foundedYearFrom) filters.foundedYearFrom = parseInt(foundedYearFrom)
-    if (foundedYearTo) filters.foundedYearTo = parseInt(foundedYearTo)
-    if (companyDomains) filters.companyDomains = companyDomains
-    
-    // Location Filters - People
-    if (peopleCountryIncludes.length > 0) filters.peopleCountryIncludes = peopleCountryIncludes
-    if (peopleCountryExcludes.length > 0) filters.peopleCountryExcludes = peopleCountryExcludes
-    if (peopleStateIncludes.length > 0) filters.peopleStateIncludes = peopleStateIncludes
-    if (peopleStateExcludes.length > 0) filters.peopleStateExcludes = peopleStateExcludes
-    if (peopleCityIncludes) filters.peopleCityIncludes = peopleCityIncludes
-    if (peopleCityExcludes) filters.peopleCityExcludes = peopleCityExcludes
-    
-    // Location Filters - Company
-    if (companyCountryIncludes.length > 0) filters.companyCountryIncludes = companyCountryIncludes
-    if (companyCountryExcludes.length > 0) filters.companyCountryExcludes = companyCountryExcludes
-    if (companyStateIncludes.length > 0) filters.companyStateIncludes = companyStateIncludes
-    if (companyStateExcludes.length > 0) filters.companyStateExcludes = companyStateExcludes
-    if (companyCityIncludes) filters.companyCityIncludes = companyCityIncludes
-    if (companyCityExcludes) filters.companyCityExcludes = companyCityExcludes
+    const filters = {
+      emailStatus: emailStatus || null,
+      onlyWithEmail: onlyWithEmail || false,
+      onlyWithPhone: onlyWithPhone || false,
+      jobTitlesIncludes: jobTitlesIncludes || [],
+      jobTitlesExcludes: jobTitlesExcludes || [],
+      includeSimilarTitles: includeSimilarTitles || false,
+      additionalTitles: additionalTitles || null,
+      managementLevelIncludes: managementLevelIncludes || [],
+      managementLevelExcludes: managementLevelExcludes || [],
+      departmentsIncludes: departmentsIncludes || [],
+      departmentsExcludes: departmentsExcludes || [],
+      firstNameIncludes: firstNameIncludes || null,
+      firstNameExcludes: firstNameExcludes || null,
+      lastNameIncludes: lastNameIncludes || null,
+      lastNameExcludes: lastNameExcludes || null,
+      employeeRange: employeeRange || [],
+      industriesIncludes: industriesIncludes || [],
+      industriesExcludes: industriesExcludes || [],
+      foundedYearFrom: foundedYearFrom ? parseInt(foundedYearFrom) : null,
+      foundedYearTo: foundedYearTo ? parseInt(foundedYearTo) : null,
+      companyDomains: companyDomains || null,
+      peopleCountryIncludes: peopleCountryIncludes || [],
+      peopleCountryExcludes: peopleCountryExcludes || [],
+      peopleStateIncludes: peopleStateIncludes || [],
+      peopleStateExcludes: peopleStateExcludes || [],
+      peopleCityIncludes: peopleCityIncludes || null,
+      peopleCityExcludes: peopleCityExcludes || null,
+      companyCountryIncludes: companyCountryIncludes || [],
+      companyCountryExcludes: companyCountryExcludes || [],
+      companyStateIncludes: companyStateIncludes || [],
+      companyStateExcludes: companyStateExcludes || [],
+      companyCityIncludes: companyCityIncludes || null,
+      companyCityExcludes: companyCityExcludes || null
+    }
     
     return JSON.stringify(filters, null, 2)
   }
@@ -356,26 +348,22 @@ export default function LeadScrapingPage() {
 
       const apifyJson = generateApifyJson()
 
-      const response = await fetch('/api/lead-scraping', {
-        method: 'POST',
+      const response = await axios.post('/api/lead-scraping', {
+        filters,
+        apifyJson,
+        leadLimit: Math.min(leadLimit, 50000)
+      }, {
         headers: {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {})
-        },
-        body: JSON.stringify({
-          filters,
-          apifyJson,
-          leadLimit: Math.min(leadLimit, 50000)
-        })
+        }
       })
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
-        throw new Error(errorData.error || 'Scraping aloitus epäonnistui')
+      if (response.data.success) {
+        setSuccess('Scraping aloitettu onnistuneesti! Tarkista tulokset hetken kuluttua.')
+      } else {
+        throw new Error(response.data.error || 'Scraping aloitus epäonnistui')
       }
-
-      const result = await response.json()
-      setSuccess('Scraping aloitettu onnistuneesti! Tarkista tulokset hetken kuluttua.')
       setTimeout(() => setSuccess(''), 5000)
       
       // Lataa liidit heti
@@ -385,7 +373,7 @@ export default function LeadScrapingPage() {
 
     } catch (err) {
       console.error('Error starting scraping:', err)
-      setError(err.message || 'Scraping aloitus epäonnistui')
+      setError(err.response?.data?.error || err.message || 'Scraping aloitus epäonnistui')
     } finally {
       setLoading(false)
     }
@@ -398,31 +386,36 @@ export default function LeadScrapingPage() {
     setError('')
 
     try {
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae käyttäjän token
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData?.session?.access_token
 
-      if (userError || !userData) {
-        throw new Error('Käyttäjää ei löytynyt')
+      if (!token) {
+        throw new Error('Kirjaudu sisään jatkaaksesi')
       }
 
-      const { data: leadsData, error: leadsError, count } = await supabase
-        .from('scraped_leads')
-        .select('*', { count: 'exact' })
-        .eq('user_id', userData.id)
-        .order('created_at', { ascending: false })
-        .range((currentPage - 1) * resultsPerPage, currentPage * resultsPerPage - 1)
+      // Hae liidit API-endpointin kautta
+      const response = await axios.get('/api/leads', {
+        params: {
+          page: currentPage,
+          perPage: resultsPerPage
+        },
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
 
-      if (leadsError) throw leadsError
-
-      setLeads(leadsData || [])
-      setTotalLeads(count || 0)
+      if (response.data.success) {
+        setLeads(response.data.leads || [])
+        setTotalLeads(response.data.total || 0)
+      } else {
+        throw new Error(response.data.error || 'Liidien haku epäonnistui')
+      }
 
     } catch (err) {
       console.error('Error fetching leads:', err)
-      setError('Liidien haku epäonnistui: ' + err.message)
+      setError('Liidien haku epäonnistui: ' + (err.response?.data?.error || err.message))
     } finally {
       setLoadingLeads(false)
     }
@@ -1123,21 +1116,22 @@ export default function LeadScrapingPage() {
                     <th>LinkedIn</th>
                     <th>Pisteet</th>
                     <th>Tila</th>
+                    <th>Toiminnot</th>
                   </tr>
                 </thead>
                 <tbody>
                   {leads.map((lead) => (
                     <tr key={lead.id}>
-                      <td>{lead.full_name || `${lead.first_name || ''} ${lead.last_name || ''}`.trim() || '-'}</td>
+                      <td>{lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || '-'}</td>
                       <td>{lead.email || '-'}</td>
                       <td>{lead.phone || '-'}</td>
                       <td>{lead.position || '-'}</td>
-                      <td>{lead.org_name || '-'}</td>
-                      <td>{lead.city || lead.org_city || '-'}</td>
-                      <td>{lead.country || lead.org_country || '-'}</td>
+                      <td>{lead.orgName || '-'}</td>
+                      <td>{lead.city || lead.orgCity || '-'}</td>
+                      <td>{lead.country || lead.orgCountry || '-'}</td>
                       <td>
-                        {lead.linkedin_url ? (
-                          <a href={lead.linkedin_url} target="_blank" rel="noopener noreferrer">
+                        {lead.linkedinUrl ? (
+                          <a href={lead.linkedinUrl} target="_blank" rel="noopener noreferrer">
                             LinkedIn
                           </a>
                         ) : '-'}
@@ -1147,6 +1141,18 @@ export default function LeadScrapingPage() {
                         <span className={`status-badge status-${lead.status || 'pending'}`}>
                           {lead.status || 'pending'}
                         </span>
+                      </td>
+                      <td>
+                        <button
+                          className="view-details-btn"
+                          onClick={() => {
+                            setSelectedLead(lead)
+                            setShowLeadModal(true)
+                          }}
+                          title="Näytä kaikki tiedot"
+                        >
+                          Näytä
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -1178,6 +1184,175 @@ export default function LeadScrapingPage() {
         )}
         </div>
       </div>
+
+      {/* Lead Details Modal */}
+      {showLeadModal && selectedLead && createPortal(
+        <div 
+          className="modal-overlay modal-overlay--light"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowLeadModal(false)
+              setSelectedLead(null)
+            }
+          }}
+        >
+          <div className="lead-details-modal modal-container">
+            <div className="modal-header">
+              <h2 className="modal-title">Liidin kaikki tiedot</h2>
+              <button
+                onClick={() => {
+                  setShowLeadModal(false)
+                  setSelectedLead(null)
+                }}
+                className="modal-close-btn"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-content lead-details-content">
+              {/* Henkilön tiedot */}
+              <div className="lead-details-section">
+                <h3>Henkilön tiedot</h3>
+                <div className="lead-details-grid">
+                  <div className="lead-detail-item">
+                    <label>Etunimi:</label>
+                    <span>{selectedLead.firstName || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Sukunimi:</label>
+                    <span>{selectedLead.lastName || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Koko nimi:</label>
+                    <span>{selectedLead.fullName || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Sähköposti:</label>
+                    <span>{selectedLead.email || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Puhelin:</label>
+                    <span>{selectedLead.phone || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Tehtävä:</label>
+                    <span>{selectedLead.position || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Seniority:</label>
+                    <span>{selectedLead.seniority || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Functional:</label>
+                    <span>
+                      {Array.isArray(selectedLead.functional) 
+                        ? selectedLead.functional.join(', ') 
+                        : selectedLead.functional || '-'}
+                    </span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>LinkedIn:</label>
+                    <span>
+                      {selectedLead.linkedinUrl ? (
+                        <a href={selectedLead.linkedinUrl} target="_blank" rel="noopener noreferrer">
+                          {selectedLead.linkedinUrl}
+                        </a>
+                      ) : '-'}
+                    </span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Kaupunki:</label>
+                    <span>{selectedLead.city || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Osavaltio/Maakunta:</label>
+                    <span>{selectedLead.state || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Maa:</label>
+                    <span>{selectedLead.country || '-'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Organisaation tiedot */}
+              <div className="lead-details-section">
+                <h3>Organisaation tiedot</h3>
+                <div className="lead-details-grid">
+                  <div className="lead-detail-item">
+                    <label>Yrityksen nimi:</label>
+                    <span>{selectedLead.orgName || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Verkkosivusto:</label>
+                    <span>
+                      {selectedLead.orgWebsite ? (
+                        <a href={selectedLead.orgWebsite} target="_blank" rel="noopener noreferrer">
+                          {selectedLead.orgWebsite}
+                        </a>
+                      ) : '-'}
+                    </span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>LinkedIn URL:</label>
+                    <span>
+                      {Array.isArray(selectedLead.orgLinkedinUrl) && selectedLead.orgLinkedinUrl.length > 0
+                        ? selectedLead.orgLinkedinUrl.map((url, idx) => (
+                            <span key={idx}>
+                              <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+                              {idx < selectedLead.orgLinkedinUrl.length - 1 && ', '}
+                            </span>
+                          ))
+                        : selectedLead.orgLinkedinUrl || '-'}
+                    </span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Perustettu:</label>
+                    <span>{selectedLead.orgFoundedYear || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Toimiala:</label>
+                    <span>
+                      {Array.isArray(selectedLead.orgIndustry) 
+                        ? selectedLead.orgIndustry.join(', ') 
+                        : selectedLead.orgIndustry || '-'}
+                    </span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Koko:</label>
+                    <span>{selectedLead.orgSize || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item lead-detail-item--full">
+                    <label>Kuvaus:</label>
+                    <span>{selectedLead.orgDescription || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Kaupunki:</label>
+                    <span>{selectedLead.orgCity || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Osavaltio/Maakunta:</label>
+                    <span>{selectedLead.orgState || '-'}</span>
+                  </div>
+                  <div className="lead-detail-item">
+                    <label>Maa:</label>
+                    <span>{selectedLead.orgCountry || '-'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <Button onClick={() => {
+                setShowLeadModal(false)
+                setSelectedLead(null)
+              }}>
+                Sulje
+              </Button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   )
 }

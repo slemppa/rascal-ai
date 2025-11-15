@@ -96,12 +96,12 @@ export default async function handler(req, res) {
         criteria.hasPhone = true
       }
 
-      if (lead.linkedin_url) {
+      if (lead.linkedinUrl) {
         score += 15
         criteria.hasLinkedIn = true
       }
 
-      if (lead.org_name) {
+      if (lead.orgName) {
         score += 15
         criteria.hasCompany = true
       }
@@ -117,7 +117,7 @@ export default async function handler(req, res) {
       }
 
       // Bonus-pisteet jos on kaikki yhteystiedot
-      if (lead.email && lead.phone && lead.linkedin_url) {
+      if (lead.email && lead.phone && lead.linkedinUrl) {
         score += 10
       }
 

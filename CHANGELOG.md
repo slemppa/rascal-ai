@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.87.0](https://github.com/slemppa/rascal-ai/compare/v1.86.0...v1.87.0) (2025-11-15)
+
+
+### ♻️ Code Refactoring
+
+* pilkko AccountDetailsPage tabien omiksi komponenteiksi ([866c8ce](https://github.com/slemppa/rascal-ai/commit/866c8ce3f33b165cbad638dc04dd0cf5bf58ef13))
+
+
+### 🐛 Bug Fixes
+
+* DashboardPage data fetching for multi-tenancy ([d63af96](https://github.com/slemppa/rascal-ai/commit/d63af967df1175c601f4b4121949838f02f7fb55))
+* multi-tenancy support for strategy page and modals ([655a1aa](https://github.com/slemppa/rascal-ai/commit/655a1aa7340bcb4d3f27cc9cbe76d179ba5cc116))
+* update filter options to match API allowed values ([1e37f53](https://github.com/slemppa/rascal-ai/commit/1e37f53de59a617e0295fde9d5a45c32cb542c43))
+
+
+### ✨ Features
+
+* add company name to sidebar profile section ([34dec94](https://github.com/slemppa/rascal-ai/commit/34dec949024d71267238ae2ea64658f5293b888a))
+* add lead details modal and update lead scraping ([4404e8a](https://github.com/slemppa/rascal-ai/commit/4404e8a7303f60945cc9bfd191ae8b882c524c79))
+* Lisätty uusi ääni Jessica äänivalintoihin ([60278d5](https://github.com/slemppa/rascal-ai/commit/60278d583fc3c32ae13d04790442e5312a70d338))
+* update lead scraping filters to match Pipeline Labs ([1b82a55](https://github.com/slemppa/rascal-ai/commit/1b82a551df8eef94dc1828646914175918cde135))
+
 ## [1.86.0](https://github.com/slemppa/rascal-ai/compare/v1.85.0...v1.86.0) (2025-11-14)
 
 

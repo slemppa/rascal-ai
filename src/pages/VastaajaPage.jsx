@@ -59,6 +59,7 @@ export default function VastaajaPage() {
   const voiceOptions = [
     { value: 'rascal-nainen-1', label: 'Aurora (Nainen, Lämmin)', id: 'GGiK1UxbDRh5IRtHCTlK' },
     { value: 'rascal-nainen-2', label: 'Lumi (Nainen, Positiivinen)', id: 'bEe5jYFAF6J2nz6vM8oo' },
+    { value: 'rascal-nainen-3', label: 'Jessica', id: 'cgSgspJ2msm6clMCkdW9' },
     { value: 'rascal-mies-1', label: 'Kai (Mies, Rauhallinen)', id: 'waueh7VTxMDDIYKsIaYC' },
     { value: 'rascal-mies-2', label: 'Veeti (Mies, Energinen)', id: 's6UtVF1khAck9KlohM9j' }
   ]

@@ -472,10 +472,20 @@ export default function DashboardPage() {
     const fetchCampaigns = async () => {
       if (!user) return
       try {
+        // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+        const { getUserOrgId } = await import('../lib/getUserOrgId')
+        const userId = await getUserOrgId(user.id)
+        
+        if (!userId) {
+          console.error('User ID not found for campaigns')
+          setCampaignMetrics([])
+          return
+        }
+        
         const session = await supabase.auth.getSession()
         const token = session?.data?.session?.access_token
         if (!token) return
-        const res = await fetch(`/api/campaigns?user_id=${encodeURIComponent(user.id)}`, {
+        const res = await fetch(`/api/campaigns?user_id=${encodeURIComponent(userId)}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         const json = await res.json()
@@ -495,7 +505,7 @@ export default function DashboardPage() {
       }
     }
     fetchCampaigns()
-  }, [user])
+  }, [user, organization])
 
   // Platform värit
   const getPlatformColor = (platform) => {
@@ -636,6 +646,7 @@ export default function DashboardPage() {
             .from('content')
             .select('*', { count: 'exact', head: true })
             .eq('user_id', userId)
+            .eq('is_generated', true)
             .gte('created_at', firstDay.toISOString())
         ])
 
@@ -650,12 +661,23 @@ export default function DashboardPage() {
         const totalCallPrice = (callData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
         const totalMessagePrice = (messageData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
         
+        // Hae käyttäjän features users taulusta
+        const { data: userData, error: userDataError } = await supabase
+          .from('users')
+          .select('features')
+          .eq('id', userId)
+          .single()
+        
+        if (userDataError) {
+          console.error('Error fetching user features:', userDataError)
+        }
+        
         setStatsData({
           upcomingCount: upcomingCount || 0,
           monthlyCount: monthlyCount || 0,
           totalCallPrice: totalCallPrice || 0,
           totalMessagePrice: totalMessagePrice || 0,
-          features: userRow.features || [],
+          features: userData?.features || organization?.data?.features || [],
           aiUsage: aiUsage || 0
         })
       } catch (e) {
@@ -674,10 +696,19 @@ export default function DashboardPage() {
       if (!user?.id) return
       
       try {
+        // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+        const { getUserOrgId } = await import('../lib/getUserOrgId')
+        const userId = await getUserOrgId(user.id)
+        
+        if (!userId) {
+          console.error('User ID not found for social accounts')
+          return
+        }
+        
         const { data, error } = await supabase
           .from('user_social_accounts')
           .select('mixpost_account_uuid, provider, account_name, username, profile_image_url')
-          .eq('user_id', user.id)
+          .eq('user_id', userId) // Käytetään organisaation ID:tä
           .eq('is_authorized', true)
         
         if (error) {
@@ -691,7 +722,7 @@ export default function DashboardPage() {
       }
     }
     fetchSocialAccounts()
-  }, [user?.id])
+  }, [user?.id, organization?.id])
 
   useEffect(() => {
     const fetchSchedule = async () => {

@@ -291,6 +291,9 @@ export default function Sidebar() {
             }}
           />
         </div>
+        {organization?.data?.company_name && (
+          <span className={styles['company-name']}>{organization.data.company_name}</span>
+        )}
         <span className={styles['profile-name']}>{user?.email || 'user@example.com'}</span>
         <div className={styles['language-selector']}>
           <button className={styles['lang-btn']} type="button" onClick={() => setLanguage('fi')}>{t('lang.shortFi')}</button>

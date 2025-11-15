@@ -89,6 +89,24 @@
   display: none;
 }
 
+.company-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+  text-align: center;
+  word-break: break-word;
+  max-width: 100%;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar.collapsed .company-name {
+  display: none;
+}
+
 .language-selector {
   display: flex;
   align-items: center;

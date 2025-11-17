@@ -141,17 +141,161 @@ export default function LeadScrapingPage() {
   
   // Results
   const [leads, setLeads] = useState([])
+  const [allLeads, setAllLeads] = useState([]) // Kaikki haetut liidit (ennen filtteröintiä)
   const [loadingLeads, setLoadingLeads] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [resultsPerPage, setResultsPerPage] = useState(20)
   const [totalLeads, setTotalLeads] = useState(0)
   
+  // Result filters
+  const [filterEmail, setFilterEmail] = useState('') // '' = kaikki, 'has' = löytyy, 'missing' = ei löydy
+  const [filterPosition, setFilterPosition] = useState('')
+  const [filterCity, setFilterCity] = useState('')
+  const [filterScoreMin, setFilterScoreMin] = useState('')
+  const [filterScoreMax, setFilterScoreMax] = useState('')
+  
   // Lead details modal
   const [selectedLead, setSelectedLead] = useState(null)
   const [showLeadModal, setShowLeadModal] = useState(false)
+  
+  // Export modal
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exportFields, setExportFields] = useState({
+    fullName: true,
+    firstName: false,
+    lastName: false,
+    email: true,
+    phone: true,
+    position: true,
+    orgName: true,
+    city: true,
+    orgCity: false,
+    state: false,
+    orgState: false,
+    country: true,
+    orgCountry: false,
+    linkedinUrl: true,
+    orgWebsite: false,
+    orgLinkedinUrl: false,
+    orgFoundedYear: false,
+    orgIndustry: false,
+    orgSize: false,
+    orgDescription: false,
+    score: true,
+    status: true,
+    seniority: false,
+    functional: false
+  })
 
   const toggleFilter = (key) => {
     setOpenFilters(prev => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  // CSV Export funktio
+  const exportToCSV = () => {
+    try {
+      // Hae filtteröidyt liidit (kaikki, ei vain nykyinen sivu)
+      const filteredLeads = applyFilters(allLeads)
+      
+      if (!filteredLeads.length) {
+        setError('Ei liidejä exportattavaksi!')
+        setTimeout(() => setError(''), 3000)
+        return
+      }
+
+      // Valitse valitut kentät
+      const selectedFields = Object.entries(exportFields)
+        .filter(([_, selected]) => selected)
+        .map(([field, _]) => field)
+
+      if (selectedFields.length === 0) {
+        setError('Valitse vähintään yksi kenttä exportattavaksi!')
+        setTimeout(() => setError(''), 3000)
+        return
+      }
+
+      // Määritä kenttien nimet suomeksi
+      const fieldLabels = {
+        fullName: 'Koko nimi',
+        firstName: 'Etunimi',
+        lastName: 'Sukunimi',
+        email: 'Sähköposti',
+        phone: 'Puhelin',
+        position: 'Tehtävä',
+        orgName: 'Yritys',
+        city: 'Kaupunki',
+        orgCity: 'Yrityksen kaupunki',
+        state: 'Osavaltio/Maakunta',
+        orgState: 'Yrityksen osavaltio/Maakunta',
+        country: 'Maa',
+        orgCountry: 'Yrityksen maa',
+        linkedinUrl: 'LinkedIn URL',
+        orgWebsite: 'Yrityksen verkkosivusto',
+        orgLinkedinUrl: 'Yrityksen LinkedIn URL',
+        orgFoundedYear: 'Perustettu',
+        orgIndustry: 'Toimiala',
+        orgSize: 'Yrityksen koko',
+        orgDescription: 'Yrityksen kuvaus',
+        score: 'Pisteet',
+        status: 'Tila',
+        seniority: 'Seniority',
+        functional: 'Functional'
+      }
+
+      // Luo CSV headerit
+      const headers = selectedFields.map(field => fieldLabels[field] || field)
+
+      // Luo CSV rivit
+      const csvRows = filteredLeads.map(lead => {
+        return selectedFields.map(field => {
+          let value = lead[field] || ''
+          
+          // Käsittele erityistapaukset
+          if (field === 'orgIndustry' && Array.isArray(value)) {
+            value = value.join('; ')
+          } else if (field === 'orgLinkedinUrl' && Array.isArray(value)) {
+            value = value.join('; ')
+          } else if (field === 'functional' && Array.isArray(value)) {
+            value = value.join('; ')
+          } else if (value === null || value === undefined) {
+            value = ''
+          }
+          
+          // Escapoi CSV-merkinnät
+          const stringValue = String(value)
+          if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+            return `"${stringValue.replace(/"/g, '""')}"`
+          }
+          return stringValue
+        })
+      })
+
+      // Yhdistä CSV
+      const csvContent = [
+        headers.join(','),
+        ...csvRows.map(row => row.join(','))
+      ].join('\n')
+
+      // Lataa tiedosto
+      const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+      const url = URL.createObjectURL(blob)
+      link.setAttribute('href', url)
+      link.setAttribute('download', `liidit_${new Date().toISOString().split('T')[0]}.csv`)
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+
+      setShowExportModal(false)
+      setSuccess(`Exportattu ${filteredLeads.length} liidiä CSV-muodossa!`)
+      setTimeout(() => setSuccess(''), 3000)
+    } catch (error) {
+      console.error('Export epäonnistui:', error)
+      setError('Export epäonnistui: ' + error.message)
+      setTimeout(() => setError(''), 5000)
+    }
   }
 
   // Save buyer persona to database
@@ -328,6 +472,41 @@ export default function LeadScrapingPage() {
     }
   }
 
+  // Filtteröi liidit
+  const applyFilters = (leadsToFilter) => {
+    return leadsToFilter.filter(lead => {
+      // Sähköposti filtteri
+      if (filterEmail === 'has' && !lead.email) return false
+      if (filterEmail === 'missing' && lead.email) return false
+      
+      // Tehtävä filtteri
+      if (filterPosition && lead.position) {
+        const positionLower = lead.position.toLowerCase()
+        const filterLower = filterPosition.toLowerCase()
+        if (!positionLower.includes(filterLower)) return false
+      } else if (filterPosition && !lead.position) {
+        return false
+      }
+      
+      // Kaupunki filtteri
+      if (filterCity) {
+        const city = (lead.city || lead.orgCity || '').toLowerCase()
+        const filterLower = filterCity.toLowerCase()
+        if (!city.includes(filterLower)) return false
+      }
+      
+      // Pisteet filtteri
+      if (filterScoreMin && (lead.score === null || lead.score === undefined || lead.score < parseFloat(filterScoreMin))) {
+        return false
+      }
+      if (filterScoreMax && (lead.score === null || lead.score === undefined || lead.score > parseFloat(filterScoreMax))) {
+        return false
+      }
+      
+      return true
+    })
+  }
+
   const fetchLeads = async () => {
     if (!user?.id) return
 
@@ -343,11 +522,11 @@ export default function LeadScrapingPage() {
         throw new Error('Kirjaudu sisään jatkaaksesi')
       }
 
-      // Hae liidit API-endpointin kautta
+      // Hae liidit API-endpointin kautta (haetaan kaikki, filtteröidään client-side)
       const response = await axios.get('/api/leads', {
         params: {
-          page: currentPage,
-          perPage: resultsPerPage
+          page: 1,
+          perPage: 10000 // Hae kaikki, filtteröidään client-side
         },
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -356,8 +535,19 @@ export default function LeadScrapingPage() {
       })
 
       if (response.data.success) {
-        setLeads(response.data.leads || [])
-        setTotalLeads(response.data.total || 0)
+        const allFetchedLeads = response.data.leads || []
+        setAllLeads(allFetchedLeads)
+        
+        // Filtteröi liidit
+        const filteredLeads = applyFilters(allFetchedLeads)
+        
+        // Paginoidaan filtteröidyt tulokset
+        const startIndex = (currentPage - 1) * resultsPerPage
+        const endIndex = startIndex + resultsPerPage
+        const paginatedLeads = filteredLeads.slice(startIndex, endIndex)
+        
+        setLeads(paginatedLeads)
+        setTotalLeads(filteredLeads.length)
       } else {
         throw new Error(response.data.error || 'Liidien haku epäonnistui')
       }
@@ -398,11 +588,32 @@ export default function LeadScrapingPage() {
     loadBuyerPersona()
   }, [user?.id])
 
+  // Resetoi sivu kun filtterit muuttuvat
+  useEffect(() => {
+    if (allLeads.length > 0 && currentPage !== 1) {
+      setCurrentPage(1)
+    }
+  }, [filterEmail, filterPosition, filterCity, filterScoreMin, filterScoreMax])
+
+  // Filtteröi ja paginoi liidit kun filtterit, sivu tai resultsPerPage muuttuu
+  useEffect(() => {
+    if (allLeads.length > 0) {
+      const filteredLeads = applyFilters(allLeads)
+      const startIndex = (currentPage - 1) * resultsPerPage
+      const endIndex = startIndex + resultsPerPage
+      const paginatedLeads = filteredLeads.slice(startIndex, endIndex)
+      
+      setLeads(paginatedLeads)
+      setTotalLeads(filteredLeads.length)
+    }
+  }, [allLeads, filterEmail, filterPosition, filterCity, filterScoreMin, filterScoreMax, currentPage, resultsPerPage])
+
+  // Hae liidit kun käyttäjä muuttuu
   useEffect(() => {
     if (user?.id) {
       fetchLeads()
     }
-  }, [user?.id, currentPage, resultsPerPage])
+  }, [user?.id])
 
 
   const totalPages = Math.ceil(totalLeads / resultsPerPage)
@@ -475,8 +686,8 @@ export default function LeadScrapingPage() {
   return (
     <div className="lead-scraping-page">
       <div className="lead-scraping-header">
-        <h1>Liidien Scrapeeminen (Työnalla)</h1>
-        <p>Määritä hakukriteerit ja aloita liidien haku Apifyn kautta</p>
+        <h1>Liidien etsintä</h1>
+        <p>Määritä hakukriteerit ja aloita liidien haku</p>
       </div>
 
       {error && (
@@ -1081,23 +1292,145 @@ export default function LeadScrapingPage() {
         {/* Results Section */}
         <div className="lead-scraping-results">
         <div className="results-header">
-          <h2>Scraped Liidit</h2>
-          <div className="results-controls">
-            <select 
-              value={resultsPerPage} 
-              onChange={(e) => {
-                setResultsPerPage(parseInt(e.target.value))
-                setCurrentPage(1)
-              }}
-            >
-              <option value="10">10 per sivu</option>
-              <option value="20">20 per sivu</option>
-              <option value="50">50 per sivu</option>
-              <option value="100">100 per sivu</option>
-            </select>
-            <Button variant="secondary" onClick={fetchLeads} disabled={loadingLeads}>
-              {loadingLeads ? 'Ladataan...' : 'Päivitä'}
-            </Button>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', width: '100%' }}>
+            <h2>Kerätyt liidit</h2>
+            <div className="results-controls">
+              <select 
+                value={resultsPerPage} 
+                onChange={(e) => {
+                  setResultsPerPage(parseInt(e.target.value))
+                  setCurrentPage(1)
+                }}
+              >
+                <option value="10">10 per sivu</option>
+                <option value="20">20 per sivu</option>
+                <option value="50">50 per sivu</option>
+                <option value="100">100 per sivu</option>
+              </select>
+              <Button variant="secondary" onClick={fetchLeads} disabled={loadingLeads}>
+                {loadingLeads ? 'Ladataan...' : 'Päivitä'}
+              </Button>
+              <Button variant="secondary" onClick={() => setShowExportModal(true)}>
+                Export
+              </Button>
+            </div>
+          </div>
+          <div className="results-filters">
+            <div className="result-filter-group">
+              <label htmlFor="filter-email">Sähköposti</label>
+              <select
+                id="filter-email"
+                value={filterEmail}
+                onChange={(e) => setFilterEmail(e.target.value)}
+                style={{
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  background: '#ffffff',
+                  color: '#374151',
+                  cursor: 'pointer',
+                  width: '100%'
+                }}
+              >
+                <option value="">Kaikki</option>
+                <option value="has">Löytyy</option>
+                <option value="missing">Ei löydy</option>
+              </select>
+            </div>
+            <div className="result-filter-group">
+              <label htmlFor="filter-position">Tehtävä</label>
+              <input
+                id="filter-position"
+                type="text"
+                value={filterPosition}
+                onChange={(e) => setFilterPosition(e.target.value)}
+                placeholder="Etsi tehtävää..."
+                style={{
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  background: '#ffffff',
+                  color: '#374151',
+                  width: '100%'
+                }}
+              />
+            </div>
+            <div className="result-filter-group">
+              <label htmlFor="filter-city">Kaupunki</label>
+              <input
+                id="filter-city"
+                type="text"
+                value={filterCity}
+                onChange={(e) => setFilterCity(e.target.value)}
+                placeholder="Etsi kaupunkia..."
+                style={{
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  background: '#ffffff',
+                  color: '#374151',
+                  width: '100%'
+                }}
+              />
+            </div>
+            <div className="result-filter-group">
+              <label htmlFor="filter-score-min">Pisteet</label>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input
+                  id="filter-score-min"
+                  type="number"
+                  value={filterScoreMin}
+                  onChange={(e) => setFilterScoreMin(e.target.value)}
+                  placeholder="Min"
+                  style={{
+                    padding: '8px 12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    background: '#ffffff',
+                    color: '#374151',
+                    width: '80px'
+                  }}
+                />
+                <span style={{ color: '#6b7280', fontSize: '14px' }}>-</span>
+                <input
+                  id="filter-score-max"
+                  type="number"
+                  value={filterScoreMax}
+                  onChange={(e) => setFilterScoreMax(e.target.value)}
+                  placeholder="Max"
+                  style={{
+                    padding: '8px 12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    background: '#ffffff',
+                    color: '#374151',
+                    width: '80px'
+                  }}
+                />
+              </div>
+            </div>
+            {(filterEmail || filterPosition || filterCity || filterScoreMin || filterScoreMax) && (
+              <div className="result-filter-group" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setFilterEmail('')
+                    setFilterPosition('')
+                    setFilterCity('')
+                    setFilterScoreMin('')
+                    setFilterScoreMax('')
+                  }}
+                  style={{ alignSelf: 'flex-end', marginTop: '24px' }}
+                >
+                  Tyhjennä filtterit
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -1191,6 +1524,239 @@ export default function LeadScrapingPage() {
         )}
         </div>
       </div>
+
+      {/* Export Modal */}
+      {showExportModal && createPortal(
+        <div 
+          className="modal-overlay modal-overlay--light"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowExportModal(false)
+            }
+          }}
+        >
+          <div 
+            className="modal-container export-modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '800px', width: '90%' }}
+          >
+            <div className="modal-header">
+              <h2 className="modal-title">Export CSV</h2>
+              <button
+                onClick={() => setShowExportModal(false)}
+                className="modal-close-btn"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-content" style={{ padding: '24px 32px' }}>
+              <div className="export-info">
+                <p style={{ margin: '0 0 8px 0', color: '#374151', fontSize: '14px', fontWeight: '500' }}>
+                  Valitse kentät, jotka halutaan sisällyttää CSV-tiedostoon
+                </p>
+                <p style={{ margin: '0', color: '#6b7280', fontSize: '13px' }}>
+                  Exportataan <strong>{applyFilters(allLeads).length}</strong> liidiä (filtteröidyt tulokset)
+                </p>
+              </div>
+              
+              <div className="export-fields-container">
+                {/* Henkilön tiedot */}
+                <div className="export-field-group">
+                  <div className="export-field-group-header">
+                    <h3 className="export-field-group-title">Henkilön tiedot</h3>
+                    <button
+                      type="button"
+                      className="export-select-all-btn"
+                      onClick={() => {
+                        const personFields = ['fullName', 'firstName', 'lastName', 'email', 'phone', 'position', 'seniority', 'functional']
+                        const allSelected = personFields.every(field => exportFields[field])
+                        setExportFields(prev => {
+                          const updated = { ...prev }
+                          personFields.forEach(field => {
+                            updated[field] = !allSelected
+                          })
+                          return updated
+                        })
+                      }}
+                    >
+                      {['fullName', 'firstName', 'lastName', 'email', 'phone', 'position', 'seniority', 'functional'].every(field => exportFields[field]) ? 'Poista kaikki' : 'Valitse kaikki'}
+                    </button>
+                  </div>
+                  <div className="export-fields-grid">
+                    {[
+                      { key: 'fullName', label: 'Koko nimi' },
+                      { key: 'firstName', label: 'Etunimi' },
+                      { key: 'lastName', label: 'Sukunimi' },
+                      { key: 'email', label: 'Sähköposti' },
+                      { key: 'phone', label: 'Puhelin' },
+                      { key: 'position', label: 'Tehtävä' },
+                      { key: 'seniority', label: 'Seniority' },
+                      { key: 'functional', label: 'Functional' }
+                    ].map(field => (
+                      <label key={field.key} className="export-field-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={exportFields[field.key]}
+                          onChange={(e) => setExportFields(prev => ({ ...prev, [field.key]: e.target.checked }))}
+                        />
+                        <span>{field.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Sijainti */}
+                <div className="export-field-group">
+                  <div className="export-field-group-header">
+                    <h3 className="export-field-group-title">Sijainti</h3>
+                    <button
+                      type="button"
+                      className="export-select-all-btn"
+                      onClick={() => {
+                        const locationFields = ['city', 'state', 'country']
+                        const allSelected = locationFields.every(field => exportFields[field])
+                        setExportFields(prev => {
+                          const updated = { ...prev }
+                          locationFields.forEach(field => {
+                            updated[field] = !allSelected
+                          })
+                          return updated
+                        })
+                      }}
+                    >
+                      {['city', 'state', 'country'].every(field => exportFields[field]) ? 'Poista kaikki' : 'Valitse kaikki'}
+                    </button>
+                  </div>
+                  <div className="export-fields-grid">
+                    {[
+                      { key: 'city', label: 'Kaupunki' },
+                      { key: 'state', label: 'Osavaltio/Maakunta' },
+                      { key: 'country', label: 'Maa' }
+                    ].map(field => (
+                      <label key={field.key} className="export-field-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={exportFields[field.key]}
+                          onChange={(e) => setExportFields(prev => ({ ...prev, [field.key]: e.target.checked }))}
+                        />
+                        <span>{field.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Yrityksen tiedot */}
+                <div className="export-field-group">
+                  <div className="export-field-group-header">
+                    <h3 className="export-field-group-title">Yrityksen tiedot</h3>
+                    <button
+                      type="button"
+                      className="export-select-all-btn"
+                      onClick={() => {
+                        const orgFields = ['orgName', 'orgCity', 'orgState', 'orgCountry', 'orgWebsite', 'orgLinkedinUrl', 'orgFoundedYear', 'orgIndustry', 'orgSize', 'orgDescription']
+                        const allSelected = orgFields.every(field => exportFields[field])
+                        setExportFields(prev => {
+                          const updated = { ...prev }
+                          orgFields.forEach(field => {
+                            updated[field] = !allSelected
+                          })
+                          return updated
+                        })
+                      }}
+                    >
+                      {['orgName', 'orgCity', 'orgState', 'orgCountry', 'orgWebsite', 'orgLinkedinUrl', 'orgFoundedYear', 'orgIndustry', 'orgSize', 'orgDescription'].every(field => exportFields[field]) ? 'Poista kaikki' : 'Valitse kaikki'}
+                    </button>
+                  </div>
+                  <div className="export-fields-grid">
+                    {[
+                      { key: 'orgName', label: 'Yritys' },
+                      { key: 'orgCity', label: 'Yrityksen kaupunki' },
+                      { key: 'orgState', label: 'Yrityksen osavaltio/Maakunta' },
+                      { key: 'orgCountry', label: 'Yrityksen maa' },
+                      { key: 'orgWebsite', label: 'Yrityksen verkkosivusto' },
+                      { key: 'orgLinkedinUrl', label: 'Yrityksen LinkedIn URL' },
+                      { key: 'orgFoundedYear', label: 'Perustettu' },
+                      { key: 'orgIndustry', label: 'Toimiala' },
+                      { key: 'orgSize', label: 'Yrityksen koko' },
+                      { key: 'orgDescription', label: 'Yrityksen kuvaus' }
+                    ].map(field => (
+                      <label key={field.key} className="export-field-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={exportFields[field.key]}
+                          onChange={(e) => setExportFields(prev => ({ ...prev, [field.key]: e.target.checked }))}
+                        />
+                        <span>{field.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Muut */}
+                <div className="export-field-group">
+                  <div className="export-field-group-header">
+                    <h3 className="export-field-group-title">Muut</h3>
+                    <button
+                      type="button"
+                      className="export-select-all-btn"
+                      onClick={() => {
+                        const otherFields = ['linkedinUrl', 'score', 'status']
+                        const allSelected = otherFields.every(field => exportFields[field])
+                        setExportFields(prev => {
+                          const updated = { ...prev }
+                          otherFields.forEach(field => {
+                            updated[field] = !allSelected
+                          })
+                          return updated
+                        })
+                      }}
+                    >
+                      {['linkedinUrl', 'score', 'status'].every(field => exportFields[field]) ? 'Poista kaikki' : 'Valitse kaikki'}
+                    </button>
+                  </div>
+                  <div className="export-fields-grid">
+                    {[
+                      { key: 'linkedinUrl', label: 'LinkedIn URL' },
+                      { key: 'score', label: 'Pisteet' },
+                      { key: 'status', label: 'Tila' }
+                    ].map(field => (
+                      <label key={field.key} className="export-field-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={exportFields[field.key]}
+                          onChange={(e) => setExportFields(prev => ({ ...prev, [field.key]: e.target.checked }))}
+                        />
+                        <span>{field.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer" style={{ 
+              padding: '20px 32px',
+              borderTop: '1px solid #e5e7eb',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: '12px'
+            }}>
+              <Button 
+                variant="secondary"
+                onClick={() => setShowExportModal(false)}
+              >
+                Peruuta
+              </Button>
+              <Button 
+                variant="primary" 
+                onClick={exportToCSV}
+              >
+                Export CSV
+              </Button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
       {/* Buyer Persona Modal */}
       {showBuyerPersonaModal && createPortal(

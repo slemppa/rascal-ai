@@ -252,7 +252,7 @@
   align-items: center;
   padding: 1.5rem;
   border-bottom: 1px solid #e5e7eb;
-  background: linear-gradient(135deg, #1a4a3a 0%, #2d5f47 100%);
+  background: linear-gradient(135deg, #ff6600 0%, #e55e00 100%); /* Rascal AI oranssi */
   color: white;
   border-radius: 1rem 1rem 0 0;
 }
@@ -437,14 +437,14 @@
 }
 
 .save-btn {
-  background-color: #1a4a3a;
+  background-color: #ff6600; /* Rascal AI oranssi */
   color: white;
 }
 
 .save-btn:hover:not(:disabled) {
-  background-color: #2d5f47;
+  background-color: #e55e00;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(26, 74, 58, 0.3);
+  box-shadow: 0 4px 12px rgba(255, 102, 0, 0.3);
 }
 
 .save-btn:disabled {

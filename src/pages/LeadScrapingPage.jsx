@@ -29,6 +29,11 @@ export default function LeadScrapingPage() {
     leadLimit: false
   })
   
+  // Buyer Persona / Ideal Customer
+  const [buyerPersona, setBuyerPersona] = useState('')
+  const [savingPersona, setSavingPersona] = useState(false)
+  const [showBuyerPersonaModal, setShowBuyerPersonaModal] = useState(false)
+  
   // Contact Filters
   const [emailStatus, setEmailStatus] = useState('')
   const [onlyWithEmail, setOnlyWithEmail] = useState(false)
@@ -147,6 +152,57 @@ export default function LeadScrapingPage() {
 
   const toggleFilter = (key) => {
     setOpenFilters(prev => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  // Save buyer persona to database
+  const saveBuyerPersona = async () => {
+    if (!user?.id) {
+      setError('Kirjaudu sisään jatkaaksesi')
+      return
+    }
+
+    setSavingPersona(true)
+    setError('')
+
+    try {
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData?.session?.access_token
+
+      if (!token) {
+        throw new Error('Kirjaudu sisään jatkaaksesi')
+      }
+
+      // Hae käyttäjän public.users.id
+      const { data: { user: authUser } } = await supabase.auth.getUser(token)
+      if (!authUser) throw new Error('Käyttäjätietoja ei löytynyt')
+
+      const { data: userData } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', authUser.id)
+        .single()
+
+      if (!userData) throw new Error('Käyttäjäprofiilia ei löytynyt')
+
+      // Päivitä buyer_persona
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ buyer_persona: buyerPersona || null })
+        .eq('id', userData.id)
+
+      if (updateError) throw updateError
+
+      setSuccess('Ostajapersoona tallennettu onnistuneesti!')
+      setTimeout(() => {
+        setSuccess('')
+        setShowBuyerPersonaModal(false)
+      }, 1500)
+    } catch (err) {
+      console.error('Error saving buyer persona:', err)
+      setError('Ostajapersoonan tallennus epäonnistui: ' + (err.message || 'Tuntematon virhe'))
+    } finally {
+      setSavingPersona(false)
+    }
   }
 
   const generateApifyJson = () => {
@@ -314,6 +370,34 @@ export default function LeadScrapingPage() {
     }
   }
 
+  // Load buyer persona from database
+  useEffect(() => {
+    const loadBuyerPersona = async () => {
+      if (!user?.id) return
+      
+      try {
+        const { data: sessionData } = await supabase.auth.getSession()
+        const token = sessionData?.session?.access_token
+        
+        if (!token) return
+
+        const { data: userData, error } = await supabase
+          .from('users')
+          .select('buyer_persona')
+          .eq('auth_user_id', user.id)
+          .single()
+
+        if (!error && userData?.buyer_persona) {
+          setBuyerPersona(userData.buyer_persona)
+        }
+      } catch (err) {
+        console.error('Error loading buyer persona:', err)
+      }
+    }
+
+    loadBuyerPersona()
+  }, [user?.id])
+
   useEffect(() => {
     if (user?.id) {
       fetchLeads()
@@ -412,50 +496,12 @@ export default function LeadScrapingPage() {
         <div className="lead-scraping-filters">
           <div className="filters-actions">
             <div className="filters-actions-buttons">
-              <Button onClick={() => {
-                setEmailStatus('')
-                setOnlyWithEmail(false)
-                setOnlyWithPhone(false)
-                setJobTitlesIncludes([])
-                setJobTitlesExcludes([])
-                setIncludeSimilarTitles(false)
-                setAdditionalTitles('')
-                setManagementLevelIncludes([])
-                setManagementLevelExcludes([])
-                setDepartmentsIncludes([])
-                setDepartmentsExcludes([])
-                setFirstNameIncludes('')
-                setFirstNameExcludes('')
-                setLastNameIncludes('')
-                setLastNameExcludes('')
-                setEmployeeRange([])
-                setIndustriesIncludes([])
-                setIndustriesExcludes([])
-                setFoundedYearFrom('')
-                setFoundedYearTo('')
-                setCompanyDomains('')
-                setPeopleCountryIncludes([])
-                setPeopleCountryExcludes([])
-                setPeopleStateIncludes([])
-                setPeopleStateExcludes([])
-                setPeopleCityIncludes('')
-                setPeopleCityExcludes('')
-                setCompanyCountryIncludes([])
-                setCompanyCountryExcludes([])
-                setCompanyStateIncludes([])
-                setCompanyStateExcludes([])
-                setCompanyCityIncludes('')
-                setCompanyCityExcludes('')
-                setLeadLimit(10000)
-              }}>
-                Reset Filters
-              </Button>
               <Button 
-                variant="primary" 
-                onClick={handleStartScraping}
-                disabled={loading}
+                variant="secondary"
+                onClick={() => setShowBuyerPersonaModal(true)}
+                style={{ width: '100%' }}
               >
-                {loading ? 'Aloitetaan...' : 'Aloita'}
+                {buyerPersona ? '✓ Ostajapersoona' : 'Ostajapersoona'}
               </Button>
             </div>
           </div>
@@ -979,6 +1025,57 @@ export default function LeadScrapingPage() {
           )}
         </div>
         </div>
+
+        {/* Action Buttons at Bottom */}
+        <div className="filters-actions" style={{ borderTop: '1px solid #f3f4f6', marginTop: 'auto' }}>
+          <div className="filters-actions-buttons">
+            <Button onClick={() => {
+              setEmailStatus('')
+              setOnlyWithEmail(false)
+              setOnlyWithPhone(false)
+              setJobTitlesIncludes([])
+              setJobTitlesExcludes([])
+              setIncludeSimilarTitles(false)
+              setAdditionalTitles('')
+              setManagementLevelIncludes([])
+              setManagementLevelExcludes([])
+              setDepartmentsIncludes([])
+              setDepartmentsExcludes([])
+              setFirstNameIncludes('')
+              setFirstNameExcludes('')
+              setLastNameIncludes('')
+              setLastNameExcludes('')
+              setEmployeeRange([])
+              setIndustriesIncludes([])
+              setIndustriesExcludes([])
+              setFoundedYearFrom('')
+              setFoundedYearTo('')
+              setCompanyDomains('')
+              setPeopleCountryIncludes([])
+              setPeopleCountryExcludes([])
+              setPeopleStateIncludes([])
+              setPeopleStateExcludes([])
+              setPeopleCityIncludes('')
+              setPeopleCityExcludes('')
+              setCompanyCountryIncludes([])
+              setCompanyCountryExcludes([])
+              setCompanyStateIncludes([])
+              setCompanyStateExcludes([])
+              setCompanyCityIncludes('')
+              setCompanyCityExcludes('')
+              setLeadLimit(10000)
+            }}>
+              Reset Filters
+            </Button>
+            <Button 
+              variant="primary" 
+              onClick={handleStartScraping}
+              disabled={loading}
+            >
+              {loading ? 'Aloitetaan...' : 'Aloita'}
+            </Button>
+          </div>
+        </div>
         </div>
 
         {/* Results Section */}
@@ -1094,6 +1191,106 @@ export default function LeadScrapingPage() {
         )}
         </div>
       </div>
+
+      {/* Buyer Persona Modal */}
+      {showBuyerPersonaModal && createPortal(
+        <div 
+          className="modal-overlay modal-overlay--light"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowBuyerPersonaModal(false)
+            }
+          }}
+        >
+          <div 
+            className="modal-container"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '700px', width: '90%' }}
+          >
+            <div className="modal-header">
+              <h2 className="modal-title">Ostajapersoona / Ihanneasiakas</h2>
+              <button
+                onClick={() => setShowBuyerPersonaModal(false)}
+                className="modal-close-btn"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-content" style={{ padding: '24px 32px' }}>
+              <div className="form-field" style={{ marginBottom: '24px' }}>
+                <label htmlFor="buyer-persona-textarea" style={{ 
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: '#374151'
+                }}>
+                  Kuvaile ihanneasiakas / ostajapersoona
+                </label>
+                <textarea
+                  id="buyer-persona-textarea"
+                  value={buyerPersona}
+                  onChange={(e) => setBuyerPersona(e.target.value)}
+                  placeholder="Esimerkki: CEO tai CMO, 50-200 työntekijää, IT-alalla, Suomessa, kasvava yritys, kiinnostunut markkinointiautomaatiosta..."
+                  rows={8}
+                  style={{
+                    padding: '12px 16px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                    background: '#ffffff',
+                    color: '#1f2937',
+                    width: '100%',
+                    resize: 'vertical',
+                    fontFamily: 'inherit',
+                    lineHeight: '1.5'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.outline = 'none'
+                    e.target.style.borderColor = '#3b82f6'
+                    e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)'
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d1d5db'
+                    e.target.style.boxShadow = 'none'
+                  }}
+                />
+                <p style={{ 
+                  fontSize: '13px', 
+                  color: '#6b7280', 
+                  margin: '12px 0 0 0',
+                  lineHeight: '1.6'
+                }}>
+                  Määrittele tarkasti kuka on sinun ihanneasiakas. Tätä tietoa voidaan käyttää myöhemmin liidien pisteytyksessä ja priorisoinnissa. Voit kuvata esimerkiksi tehtävän, yrityksen koon, toimialan, sijainnin ja muut relevantit kriteerit.
+                </p>
+              </div>
+            </div>
+            <div className="modal-footer" style={{ 
+              padding: '20px 32px',
+              borderTop: '1px solid #e5e7eb',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: '12px'
+            }}>
+              <Button 
+                variant="secondary"
+                onClick={() => setShowBuyerPersonaModal(false)}
+              >
+                Peruuta
+              </Button>
+              <Button 
+                variant="primary" 
+                onClick={saveBuyerPersona}
+                disabled={savingPersona}
+              >
+                {savingPersona ? 'Tallennetaan...' : 'Tallenna'}
+              </Button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
       {/* Lead Details Modal */}
       {showLeadModal && selectedLead && createPortal(

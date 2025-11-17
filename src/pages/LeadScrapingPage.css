@@ -80,6 +80,7 @@
   height: 100%;
   align-self: stretch;
   overflow: hidden;
+  position: relative;
 }
 
 .filters-actions {

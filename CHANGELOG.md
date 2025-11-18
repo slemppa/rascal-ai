@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.88.0](https://github.com/slemppa/rascal-ai/compare/v1.87.0...v1.88.0) (2025-11-18)
+
+
+### ✨ Features
+
+* Filtteröinti ja CSV export lead scraping -sivulle ([1055479](https://github.com/slemppa/rascal-ai/commit/10554793ac4153ceec087d5a431252fb11bae111))
+* Ostajapersoona lead scraping -sivulle ja modaalien headerit ([800986c](https://github.com/slemppa/rascal-ai/commit/800986ce4b0314ad931e9931ccd0493f02efe02c))
+
+
+### 🐛 Bug Fixes
+
+* korjaa tekstin katoaminen KeskenModalissa kuvan vaihdon jälkeen ([748a0aa](https://github.com/slemppa/rascal-ai/commit/748a0aa8a221a20a099f6ddec4d8a1a27accc163))
+
 ## [1.87.0](https://github.com/slemppa/rascal-ai/compare/v1.86.0...v1.87.0) (2025-11-15)
 
 

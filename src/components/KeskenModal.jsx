@@ -46,13 +46,39 @@ const KeskenModal = ({
   }
 
   // Päivitä formData kun editingPost muuttuu
+  // TÄRKEÄ: Älä resetoi formDataa jos käyttäjä on jo muuttanut sitä
+  // Tämä estää tekstin katoamisen kun kuva vaihdetaan
+  const hasUserEdited = useRef(false)
+  const currentPostId = useRef(null)
+  
   useEffect(() => {
     if (editingPost) {
-      setFormData({
-        caption: editingPost.caption || ''
-      })
+      // Jos postaus on vaihtunut (eri ID), resetoi muokkaus-tila
+      if (currentPostId.current !== editingPost.id) {
+        hasUserEdited.current = false
+        currentPostId.current = editingPost.id
+        setFormData({
+          caption: editingPost.caption || ''
+        })
+        return
+      }
+      
+      // Jos sama postaus ja käyttäjä ei ole vielä muuttanut tekstiä, päivitä formData
+      if (!hasUserEdited.current) {
+        setFormData({
+          caption: editingPost.caption || ''
+        })
+      }
+      // Jos käyttäjä on muuttanut tekstiä, säilytä muokkaukset
+      // Älä resetoi formDataa vaikka editingPost päivittyisi kuvan vaihdon jälkeen
     }
   }, [editingPost])
+  
+  // Seuraa kun käyttäjä muuttaa caption-kenttää
+  const handleCaptionChange = (e) => {
+    hasUserEdited.current = true
+    setFormData({...formData, caption: e.target.value})
+  }
 
   if (!show || !editingPost) return null
 
@@ -172,12 +198,37 @@ const KeskenModal = ({
       // Päivitä editingPost data
       const result = await response.json()
       
-      // Päivitä editingPost state uudella kuvalla
+      // Tallenna myös caption tietokantaan samalla kun kuva vaihdetaan
+      // Näin muokattu teksti ei katoa
+      try {
+        const userId = await getUserOrgId(user?.id)
+        if (userId && formData.caption !== undefined) {
+          const { error: updateError } = await supabase
+            .from('content')
+            .update({
+              caption: formData.caption || null,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', editingPost.id)
+            .eq('user_id', userId)
+
+          if (updateError) {
+            console.error('Caption update error:', updateError)
+            // Jatketaan silti kuvan päivitystä
+          }
+        }
+      } catch (captionError) {
+        console.error('Error saving caption:', captionError)
+        // Jatketaan silti kuvan päivitystä
+      }
+      
+      // Päivitä editingPost state uudella kuvalla JA captionilla
       const updatedPost = {
         ...editingPost,
         media_urls: [result.publicUrl],
         mediaUrls: [result.publicUrl],
-        thumbnail: result.publicUrl
+        thumbnail: result.publicUrl,
+        caption: formData.caption || editingPost.caption || ''
       }
       
       // Tyhjennä file input Safari-yhteensopivuuden vuoksi
@@ -193,6 +244,7 @@ const KeskenModal = ({
       }))
       
       // Kutsu onSave pienen viiveen jälkeen, jotta state ehtii päivittyä
+      // Älä sulje modaalia - anna käyttäjän nähdä uusi kuva ja jatkaa muokkausta
       setTimeout(() => {
         onSave(updatedPost)
       }, 100)
@@ -493,7 +545,7 @@ const KeskenModal = ({
                     <textarea
                       name="caption"
                       value={formData.caption}
-                      onChange={(e) => setFormData({...formData, caption: e.target.value})}
+                      onChange={handleCaptionChange}
                       className="form-textarea"
                       placeholder="Kirjoita postauksen kuvaus..."
                       style={{ 

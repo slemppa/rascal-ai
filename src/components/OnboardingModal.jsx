@@ -101,19 +101,24 @@ const OnboardingModal = () => {
           return
         }
 
-        // Tarkista onko käyttäjä kutsuttu käyttäjä (on organisaatiossa)
-        // Jos on, ei näytetä onboardingia koska hän on kutsuttu käyttäjä
+        // Tarkista onko käyttäjä kutsuttu käyttäjä (ei owner)
+        // Vain owner-käyttäjät (jotka luovat oman organisaationsa) näkevät onboardingin
+        // Kutsutut käyttäjät (member/admin) ohitetaan
         const { data: orgMember, error: orgError } = await supabase
           .from('org_members')
-          .select('org_id')
+          .select('org_id, role')
           .eq('auth_user_id', user.id)
           .maybeSingle()
 
         if (!orgError && orgMember) {
-          console.log('⏸️ OnboardingModal: Käyttäjä on kutsuttu käyttäjä (organisaatiossa), ei näytetä onboardingia')
-          setLoading(false)
-          setShouldShow(false)
-          return
+          // Jos käyttäjä on kutsuttu käyttäjä (ei owner), ei näytetä onboardingia
+          if (orgMember.role !== 'owner') {
+            console.log('⏸️ OnboardingModal: Käyttäjä on kutsuttu käyttäjä (rooli:', orgMember.role, '), ei näytetä onboardingia')
+            setLoading(false)
+            setShouldShow(false)
+            return
+          }
+          // Owner-käyttäjät jatkavat onboarding-tarkistukseen
         }
 
         const { data, error } = await supabase

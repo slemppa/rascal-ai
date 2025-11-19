@@ -502,6 +502,7 @@ export default function ManagePostsPage() {
   const [dataSourceToggle, setDataSourceToggle] = useState('all') // 'all', 'supabase', 'reels'
   const [activeTab, setActiveTab] = useState('kanban') // 'kanban' | 'calendar'
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [createModalCount, setCreateModalCount] = useState(1)
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [uploadDragActive, setUploadDragActive] = useState(false)
   const [uploadPreviewUrl, setUploadPreviewUrl] = useState(null)
@@ -947,11 +948,25 @@ export default function ManagePostsPage() {
 
   const handleCreatePost = async (postData) => {
     try {
+      const count = postData.count || 1
+      
       // Tarkista kuukausiraja ennen luontia
+      // Jos luodaan useampi postaus, tarkista että riittää tilaa
       if (!monthlyLimit.canCreate) {
         setShowCreateModal(false)
         setErrorMessage('Kuukausiraja täynnä')
         return
+      }
+      
+      // Tarkista että kuukausiraja riittää useamman postauksen luomiseen
+      if (count > 1) {
+        const remaining = monthlyLimit.remaining || 0
+        if (remaining < count) {
+          setShowCreateModal(false)
+          setErrorMessage(`Kuukausiraja ei riitä. Voit luoda vielä ${remaining} postausta tässä kuussa.`)
+          monthlyLimit.refresh()
+          return
+        }
       }
 
       // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
@@ -983,7 +998,8 @@ export default function ManagePostsPage() {
             idea: postData.title,
             type: postData.type,
             companyId: userData.company_id,
-            caption: postData.caption
+            caption: postData.caption,
+            count: count
           })
         })
 
@@ -1007,7 +1023,11 @@ export default function ManagePostsPage() {
       }
 
       setShowCreateModal(false)
-      setSuccessMessage(t('posts.messages.ideaSent'))
+      if (count > 1) {
+        setSuccessMessage(`${count} postausta lähetetty generoitavaksi`)
+      } else {
+        setSuccessMessage(t('posts.messages.ideaSent'))
+      }
       monthlyLimit.refresh() // Päivitä raja-tiedot onnistuneen luonnin jälkeen
       
     } catch (error) {
@@ -1994,6 +2014,7 @@ export default function ManagePostsPage() {
             variant="primary"
             onClick={() => {
               if (monthlyLimit.canCreate) {
+                setCreateModalCount(1)
                 setShowCreateModal(true)
               } else {
                 setErrorMessage('Kuukausiraja täynnä')
@@ -2256,8 +2277,9 @@ export default function ManagePostsPage() {
                 const formData = new FormData(e.target)
                 handleCreatePost({
                   title: formData.get('title'),
-                  type: formData.get('type'),
-                  caption: formData.get('caption')
+                  type: createModalCount === 1 ? formData.get('type') : null,
+                  caption: formData.get('caption'),
+                  count: parseInt(formData.get('count') || '1', 10)
                 })
                 }}
               >
@@ -2271,18 +2293,42 @@ export default function ManagePostsPage() {
                     placeholder="Anna julkaisulle otsikko..."
                   />
                 </div>
+                {createModalCount === 1 && (
+                  <div className="form-group">
+                    <label className="form-label">Tyyppi</label>
+                    <select
+                      name="type"
+                      required
+                      className="form-select"
+                    >
+                      <option value="Photo">Photo</option>
+                      <option value="Carousel">Carousel</option>
+                      <option value="Reels">Reels</option>
+                      <option value="LinkedIn">LinkedIn</option>
+                    </select>
+                  </div>
+                )}
                 <div className="form-group">
-                  <label className="form-label">Tyyppi</label>
-                  <select
-                    name="type"
+                  <label className="form-label">Lukumäärä</label>
+                  <input
+                    name="count"
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={createModalCount}
+                    onChange={(e) => setCreateModalCount(parseInt(e.target.value) || 1)}
                     required
-                    className="form-select"
-                  >
-                                          <option value="Photo">Photo</option>
-                                          <option value="Carousel">Carousel</option>
-                    <option value="Reels">Reels</option>
-                                          <option value="LinkedIn">LinkedIn</option>
-                  </select>
+                    className="form-input"
+                    placeholder="Kuinka monta postausta generoidaan?"
+                    style={{ width: '100%' }}
+                  />
+                  <p style={{ 
+                    marginTop: '4px', 
+                    fontSize: '12px', 
+                    color: '#6b7280' 
+                  }}>
+                    Valitse kuinka monta postausta haluat generoida (1-10)
+                  </p>
                 </div>
                 <div className="form-group">
                   <label className="form-label">Kuvaus (valinnainen)</label>
@@ -3474,6 +3520,7 @@ export default function ManagePostsPage() {
           onClose={() => setShowLimitWarning(false)}
           onCreateAnyway={() => {
             setShowLimitWarning(false)
+            setCreateModalCount(1)
             setShowCreateModal(true)
           }}
         />,

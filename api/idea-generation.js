@@ -4,10 +4,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { idea, content, type, companyId, caption } = req.body
+    const { idea, content, type, companyId, caption, count } = req.body
 
-    if (!idea || !type || !companyId) {
-      return res.status(400).json({ error: 'Missing required fields: idea, type, companyId' })
+    if (!idea || !companyId) {
+      return res.status(400).json({ error: 'Missing required fields: idea, companyId' })
+    }
+    
+    // Varmista että count on validi numero (1-10)
+    const postCount = count ? Math.max(1, Math.min(10, parseInt(count, 10))) : 1
+    
+    // Type on pakollinen vain jos luodaan yksi postaus
+    if (postCount === 1 && !type) {
+      return res.status(400).json({ error: 'Missing required field: type (required when count is 1)' })
     }
 
     // N8N webhook URL
@@ -26,11 +34,13 @@ export default async function handler(req, res) {
       type,
       companyId,
       caption,
+      count: postCount,
       timestamp: new Date().toISOString(),
       action: 'idea_generation'
     }
 
     console.log('Sending idea generation request to N8N:', webhookData)
+    console.log('Post count:', postCount)
     console.log('Company ID:', companyId)
     console.log('API Key available:', !!process.env.N8N_SECRET_KEY)
     console.log('N8N Webhook URL:', n8nWebhookUrl)

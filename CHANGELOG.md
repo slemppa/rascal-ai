@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.89.3](https://github.com/slemppa/rascal-ai/compare/v1.89.2...v1.89.3) (2025-11-20)
+
+
+### ✨ Features
+
+* paranna organisaation hallintaa ja poista dark mode ([49bbfa8](https://github.com/slemppa/rascal-ai/commit/49bbfa8bf88629e5adc2f05c9fd28d905f60cc8c))
+
 ### [1.89.2](https://github.com/slemppa/rascal-ai/compare/v1.89.1...v1.89.2) (2025-11-20)
 
 

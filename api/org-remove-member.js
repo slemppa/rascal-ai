@@ -41,12 +41,14 @@ async function handler(req, res) {
       return res.status(404).json({ error: 'Member not found in organization' })
     }
 
-    // Poista jäsen
-    // Käytetään Service Role Keyta jos saatavilla (ohittaa RLS:n)
+    // Poista jäsen sekä org_members taulusta että Supabase Authista
+    // Käytetään Service Role Keyta jos saatavilla (ohittaa RLS:n ja mahdollistaa Auth-poiston)
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL
     
     let deleteClient = req.supabase
+    let serviceClient = null
+    
     if (supabaseServiceKey && supabaseUrl) {
       const { createClient } = await import('@supabase/supabase-js')
       deleteClient = createClient(supabaseUrl, supabaseServiceKey, {
@@ -55,11 +57,37 @@ async function handler(req, res) {
           persistSession: false
         }
       })
+      serviceClient = deleteClient
       console.log('org-remove-member: Using Service Role Key for delete (bypasses RLS)')
     } else {
       console.warn('org-remove-member: Service Role Key not available, using regular client (may fail due to RLS)')
     }
     
+    // Poista käyttäjä Supabase Authista (vaatii Service Role Keyn)
+    if (serviceClient) {
+      try {
+        console.log('Deleting user from Supabase Auth:', auth_user_id)
+        const { error: authDeleteError } = await serviceClient.auth.admin.deleteUser(auth_user_id)
+        
+        if (authDeleteError) {
+          console.error('Error deleting user from Auth:', {
+            message: authDeleteError.message,
+            auth_user_id: auth_user_id
+          })
+          // Jatketaan org_members poistoon vaikka Auth-poisto epäonnistui
+          console.warn('Failed to delete user from Auth, but continuing with org_members removal')
+        } else {
+          console.log('User deleted from Supabase Auth successfully:', auth_user_id)
+        }
+      } catch (authErr) {
+        console.error('Exception deleting user from Auth:', authErr)
+        // Jatketaan org_members poistoon vaikka Auth-poisto epäonnistui
+      }
+    } else {
+      console.warn('Service Role Key not available, skipping Auth user deletion')
+    }
+    
+    // Poista jäsen org_members taulusta
     const { error: deleteError } = await deleteClient
       .from('org_members')
       .delete()
@@ -67,7 +95,7 @@ async function handler(req, res) {
       .eq('auth_user_id', auth_user_id)
 
     if (deleteError) {
-      console.error('Error removing member:', {
+      console.error('Error removing member from org_members:', {
         message: deleteError.message,
         code: deleteError.code,
         details: deleteError.details,

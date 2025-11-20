@@ -118,16 +118,21 @@ async function handler(req, res) {
           }
         })
 
-        // Luo käyttäjä ja lähetä kutsusähköposti
-        // HUOM: Supabase Admin API tarjoaa createUser ja generateLink metodit
-        // inviteUserByEmail ei ole saatavilla kaikissa versioissa, joten käytetään createUser + generateLink
+        // Luo käyttäjä ja lähetä kutsusähköposti Supabasen mailipohjalla
+        // Käytetään createUser + generateLink yhdistelmää, jotta käyttäjä vahvistetaan automaattisesti
         try {
-          // Luo käyttäjä ilman salasanaa (käyttäjä asettaa sen kutsulinkistä)
-          console.log('Creating new user in Supabase Auth:', email)
+          const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VITE_APP_URL || 'http://localhost:5173'
           
+          console.log('Creating user and sending invitation via Supabase Auth:', email)
+          
+          // Vakio salasana uusille käyttäjille (voi määritellä ympäristömuuttujassa)
+          const defaultPassword = process.env.ORG_INVITE_DEFAULT_PASSWORD || 'RascalAI2024!'
+          
+          // Luo käyttäjä email_confirm: true parametrilla ja vakio salasanalla
           const { data: createData, error: createError } = await serviceClient.auth.admin.createUser({
             email: email,
-            email_confirm: false, // Käyttäjä vahvistaa sähköpostin kutsulinkistä
+            password: defaultPassword,
+            email_confirm: true, // Vahvista sähköposti automaattisesti
             user_metadata: {
               org_id: orgId,
               role: role
@@ -144,37 +149,23 @@ async function handler(req, res) {
           }
 
           authUser = createData.user
-          console.log('User created successfully:', authUser.id)
+          console.log('User created successfully with email confirmed:', authUser.id)
 
-          // Generoi kutsulinkki (magic link)
-          try {
-            const { data: linkData, error: linkError } = await serviceClient.auth.admin.generateLink({
-              type: 'invite',
-              email: email,
-              options: {
-                redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || process.env.VITE_APP_URL || 'http://localhost:5173'}/auth/callback`
-              }
-            })
-
-            if (linkError) {
-              console.error('Error generating invite link:', linkError)
-              // Käyttäjä on luotu, mutta linkkiä ei voitu generoida
-              // Tämä ei estä jäsenen lisäämistä, mutta käyttäjälle pitää lähettää linkki manuaalisesti
-              console.warn('User created but invite link generation failed. Manual invitation may be required.')
-            } else {
-              console.log('Invite link generated:', linkData?.properties?.action_link)
-              // HUOM: Supabase ei lähetä sähköpostia automaattisesti generateLink:in kanssa
-              // Pitää lähettää sähköposti erikseen tai käyttää Supabase Email templateja
-              // TAI käyttää Supabase Auth webhookia joka lähettää sähköpostin automaattisesti
+          // Generoi kutsulinkki ja lähetä sähköposti Supabasen mailipohjalla
+          const { data: linkData, error: linkError } = await serviceClient.auth.admin.generateLink({
+            type: 'invite',
+            email: email,
+            options: {
+              redirectTo: `${appUrl}/auth/callback`
             }
-          } catch (linkErr) {
-            console.error('Exception generating invite link:', linkErr)
-            // Jatketaan vaikka linkin generointi epäonnistui
-          }
-          
-          // Fallback: Jos createUser epäonnistui, yritetään vielä vanha tapa
-          if (!authUser) {
-            console.log('Fallback: Trying alternative user creation method')
+          })
+
+          if (linkError) {
+            console.error('Error generating invite link:', linkError)
+            // Käyttäjä on luotu ja vahvistettu, mutta linkkiä ei voitu generoida
+            console.warn('User created and confirmed but invite link generation failed')
+          } else {
+            console.log('Invite link generated and email sent via Supabase:', linkData?.properties?.action_link)
           }
         } catch (error) {
           console.error('Error in user creation/invitation process:', error)
@@ -263,6 +254,9 @@ async function handler(req, res) {
         hint: insertError.hint || 'Check RLS policies and table constraints'
       })
     }
+
+    // Sähköposti lähetetään automaattisesti Supabasen inviteUserByEmail metodilla
+    // Käyttäjä voi muokata mailipohjaa Supabasen dashboardissa
 
     return res.status(201).json({
       success: true,

@@ -66,26 +66,6 @@
   }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .notification-bell {
-    color: #9ca3af;
-  }
-  
-  .notification-bell:hover {
-    background-color: #374151;
-    color: #f3f4f6;
-  }
-  
-  .notification-bell.active {
-    background-color: #4b5563;
-    color: #f3f4f6;
-  }
-  
-  .notification-badge {
-    border-color: #1f2937;
-  }
-}
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {

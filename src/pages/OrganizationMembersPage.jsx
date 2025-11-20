@@ -1,5 +1,6 @@
 // src/pages/OrganizationMembersPage.jsx
 import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import Button from '../components/Button'
@@ -38,24 +39,19 @@ const OrganizationMembersPage = () => {
         return
       }
 
-      const res = await fetch('/api/org-members', {
+      const response = await axios.get('/api/org-members', {
         headers: { Authorization: `Bearer ${token}` }
       })
 
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`)
-      }
-
-      const json = await res.json()
-      console.log('Fetched members from API:', json.members)
+      console.log('Fetched members from API:', response.data.members)
       // Näytä jokaisen jäsenen rooli
-      if (json.members && json.members.length > 0) {
-        console.log('Members with roles:', json.members.map(m => ({ email: m.email, role: m.role, auth_user_id: m.auth_user_id })))
+      if (response.data.members && response.data.members.length > 0) {
+        console.log('Members with roles:', response.data.members.map(m => ({ email: m.email, role: m.role, auth_user_id: m.auth_user_id })))
       }
-      setMembers(json.members || [])
+      setMembers(response.data.members || [])
     } catch (e) {
       console.error('Error fetching members:', e)
-      setError('Virhe jäsenten haussa')
+      setError(e.response?.data?.error || 'Virhe jäsenten haussa')
     } finally {
       setLoading(false)
     }
@@ -76,26 +72,15 @@ const OrganizationMembersPage = () => {
         return
       }
 
-      const res = await fetch('/api/org-invite', {
-        method: 'POST',
+      await axios.post('/api/org-invite', {
+        email: inviteEmail,
+        role: inviteRole
+      }, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          email: inviteEmail,
-          role: inviteRole
-        })
+        }
       })
-
-      if (!res.ok) {
-        const errorData = await res.json()
-        // Näytä myös hint ja details jos saatavilla
-        const errorMessage = errorData.error || 'Virhe kutsussa'
-        const hint = errorData.hint ? `\n${errorData.hint}` : ''
-        const details = errorData.details ? `\n${errorData.details}` : ''
-        throw new Error(`${errorMessage}${hint}${details}`)
-      }
 
       // Päivitä jäsenlista
       await fetchMembers()
@@ -104,7 +89,12 @@ const OrganizationMembersPage = () => {
       setShowInviteForm(false)
     } catch (e) {
       console.error('Error inviting member:', e)
-      setError(e.message || 'Virhe käyttäjän kutsussa')
+      // Näytä myös hint ja details jos saatavilla
+      const errorData = e.response?.data || {}
+      const errorMessage = errorData.error || 'Virhe käyttäjän kutsussa'
+      const hint = errorData.hint ? `\n${errorData.hint}` : ''
+      const details = errorData.details ? `\n${errorData.details}` : ''
+      setError(`${errorMessage}${hint}${details}`)
     } finally {
       setInviting(false)
     }
@@ -121,28 +111,21 @@ const OrganizationMembersPage = () => {
         return
       }
 
-      const res = await fetch('/api/org-update-role', {
-        method: 'PUT',
+      await axios.put('/api/org-update-role', {
+        auth_user_id: authUserId,
+        role: newRole
+      }, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          auth_user_id: authUserId,
-          role: newRole
-        })
+        }
       })
-
-      if (!res.ok) {
-        const errorData = await res.json()
-        throw new Error(errorData.error || 'Virhe roolin päivityksessä')
-      }
 
       // Päivitä jäsenlista
       await fetchMembers()
     } catch (e) {
       console.error('Error updating role:', e)
-      setError(e.message || 'Virhe roolin päivityksessä')
+      setError(e.response?.data?.error || e.message || 'Virhe roolin päivityksessä')
     }
   }
 
@@ -161,23 +144,20 @@ const OrganizationMembersPage = () => {
         return
       }
 
-      const res = await fetch(`/api/org-remove-member?auth_user_id=${authUserId}`, {
-        method: 'DELETE',
+      await axios.delete('/api/org-remove-member', {
+        params: {
+          auth_user_id: authUserId
+        },
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
 
-      if (!res.ok) {
-        const errorData = await res.json()
-        throw new Error(errorData.error || 'Virhe jäsenen poistamisessa')
-      }
-
       // Päivitä jäsenlista
       await fetchMembers()
     } catch (e) {
       console.error('Error removing member:', e)
-      setError(e.message || 'Virhe jäsenen poistamisessa')
+      setError(e.response?.data?.error || e.message || 'Virhe jäsenen poistamisessa')
     }
   }
 

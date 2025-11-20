@@ -302,18 +302,33 @@
 }
 
 .file-item .delete-btn {
-  background: none;
+  background: rgba(239, 68, 68, 0.1);
   border: none;
+  border-radius: 6px;
   font-size: 16px;
+  color: #000000;
   cursor: pointer;
-  padding: 4px;
-  opacity: 0.6;
-  transition: opacity 0.2s;
+  padding: 6px 10px;
+  opacity: 0.8;
+  transition: all 0.2s;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  min-height: 28px;
+}
+
+.file-item:hover .delete-btn {
+  opacity: 1;
+  background: rgba(239, 68, 68, 0.15);
 }
 
 .file-item .delete-btn:hover {
   opacity: 1;
+  background: rgba(239, 68, 68, 0.2);
+  color: #000000;
+  transform: scale(1.1);
 }
 
 /* === Thread-lista === */

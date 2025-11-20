@@ -478,6 +478,15 @@ export default function AIChatPage() {
       return
     }
     
+    // Etsi tiedoston nimi vahvistusdialogia varten
+    const file = files.find(f => JSON.stringify(f.id) === JSON.stringify(fileIds))
+    const fileName = file?.file_name || 'tiedosto'
+    
+    // Vahvista poisto
+    if (!confirm(`Haluatko varmasti poistaa tiedoston "${fileName}"?`)) {
+      return
+    }
+    
     try {
       // Hae käyttäjän access token
       const { data: { session } } = await supabase.auth.getSession()

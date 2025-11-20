@@ -947,7 +947,7 @@ export default function ContentStrategyPage() {
 
             {/* Tavoitteet-kortti */}
             <div className="strategy-card">
-              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>{t('strategy.kpi.title')}</div>
+              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>{t('strategy.kpi.title', 'Tavoitteet')}</div>
               <div style={{ flex: 1 }}>
                 {kpiData && kpiData.length > 0 ? (
                   <>
@@ -1744,7 +1744,7 @@ export default function ContentStrategyPage() {
                 fontWeight: '700', 
                 color: '#374151' 
               }}>
-                {t('strategy.kpi.title')}
+                {t('strategy.kpi.title', 'Tavoitteet')}
               </h3>
               <button
                 onClick={() => setViewingKpi(false)}
@@ -2284,7 +2284,7 @@ export default function ContentStrategyPage() {
                 fontWeight: '700', 
                 color: '#374151' 
               }}>
-                {t('strategy.kpi.title')}
+                {t('strategy.kpi.title', 'Tavoitteet')}
               </h3>
               <button
                 onClick={() => setEditingKpiModal(false)}

@@ -2275,23 +2275,43 @@ export default function ManagePostsPage() {
                 onSubmit={(e) => {
                 e.preventDefault()
                 const formData = new FormData(e.target)
+                const title = formData.get('title')?.trim() || ''
+                const count = createModalCount || 1
+                
+                // Validoi: otsikko vaaditaan vain jos lukumäärä on 1
+                if (count === 1 && !title) {
+                  alert('Otsikko on pakollinen kun luodaan yksi julkaisu')
+                  return
+                }
+                
                 handleCreatePost({
-                  title: formData.get('title'),
-                  type: createModalCount === 1 ? formData.get('type') : null,
+                  title: title,
+                  type: count === 1 ? formData.get('type') : null,
                   caption: formData.get('caption'),
-                  count: parseInt(formData.get('count') || '1', 10)
+                  count: count
                 })
                 }}
               >
                 <div className="form-group">
-                  <label className="form-label">Otsikko</label>
+                  <label className="form-label">
+                    Otsikko {createModalCount === 1 && <span style={{ color: '#ef4444' }}>*</span>}
+                  </label>
                   <input
                     name="title"
                     type="text"
-                    required
+                    required={createModalCount === 1}
                     className="form-input"
                     placeholder="Anna julkaisulle otsikko..."
                   />
+                  {createModalCount > 1 && (
+                    <p style={{ 
+                      marginTop: '4px', 
+                      fontSize: '12px', 
+                      color: '#6b7280' 
+                    }}>
+                      Otsikko on valinnainen useamman julkaisun luonnissa
+                    </p>
+                  )}
                 </div>
                 {createModalCount === 1 && (
                   <div className="form-group">
@@ -2316,7 +2336,11 @@ export default function ManagePostsPage() {
                     min="1"
                     max="10"
                     value={createModalCount}
-                    onChange={(e) => setCreateModalCount(parseInt(e.target.value) || 1)}
+                    onChange={(e) => {
+                      const newValue = parseInt(e.target.value) || 1
+                      const clampedValue = Math.min(Math.max(newValue, 1), 10)
+                      setCreateModalCount(clampedValue)
+                    }}
                     required
                     className="form-input"
                     placeholder="Kuinka monta postausta generoidaan?"

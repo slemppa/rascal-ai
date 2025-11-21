@@ -118,17 +118,16 @@ async function handler(req, res) {
           }
         })
 
-        // Luo käyttäjä ja lähetä kutsusähköposti Supabasen mailipohjalla
-        // Käytetään createUser + generateLink yhdistelmää, jotta käyttäjä vahvistetaan automaattisesti
+        // Luo käyttäjä salasanalla ja lähetä sitten invite-sähköposti Supabasesta
         try {
           const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VITE_APP_URL || 'http://localhost:5173'
-          
-          console.log('Creating user and sending invitation via Supabase Auth:', email)
           
           // Vakio salasana uusille käyttäjille (voi määritellä ympäristömuuttujassa)
           const defaultPassword = process.env.ORG_INVITE_DEFAULT_PASSWORD || 'RascalAI2024!'
           
-          // Luo käyttäjä email_confirm: true parametrilla ja vakio salasanalla
+          console.log('Creating user with password first:', email)
+          
+          // 1. Luo käyttäjä salasanalla ja vahvista sähköposti
           const { data: createData, error: createError } = await serviceClient.auth.admin.createUser({
             email: email,
             password: defaultPassword,
@@ -149,23 +148,24 @@ async function handler(req, res) {
           }
 
           authUser = createData.user
-          console.log('User created successfully with email confirmed:', authUser.id)
+          console.log('User created successfully with password and email confirmed:', authUser.id)
 
-          // Generoi kutsulinkki ja lähetä sähköposti Supabasen mailipohjalla
-          const { data: linkData, error: linkError } = await serviceClient.auth.admin.generateLink({
-            type: 'invite',
-            email: email,
-            options: {
-              redirectTo: `${appUrl}/auth/callback`
+          // 2. Lähetä invite-sähköposti Supabasesta
+          console.log('Sending invite email via Supabase:', email)
+          const { data: inviteData, error: inviteError } = await serviceClient.auth.admin.inviteUserByEmail(email, {
+            redirectTo: `${appUrl}/auth/callback`,
+            data: {
+              org_id: orgId,
+              role: role
             }
           })
 
-          if (linkError) {
-            console.error('Error generating invite link:', linkError)
-            // Käyttäjä on luotu ja vahvistettu, mutta linkkiä ei voitu generoida
-            console.warn('User created and confirmed but invite link generation failed')
+          if (inviteError) {
+            console.error('Error sending invite email:', inviteError)
+            // Käyttäjä on luotu, mutta sähköpostin lähetys epäonnistui
+            console.warn('User created but invite email sending failed')
           } else {
-            console.log('Invite link generated and email sent via Supabase:', linkData?.properties?.action_link)
+            console.log('Invite email sent successfully via Supabase:', inviteData?.user?.id || authUser.id)
           }
         } catch (error) {
           console.error('Error in user creation/invitation process:', error)

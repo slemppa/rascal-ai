@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.89.5](https://github.com/slemppa/rascal-ai/compare/v1.89.4...v1.89.5) (2025-11-21)
+
+
+### 🐛 Bug Fixes
+
+* korjaa Generoi uusi julkaisu -lomakkeen validointi ([19dda2f](https://github.com/slemppa/rascal-ai/commit/19dda2fd789ddf25005bbf073c3e36af60df9106))
+
 ### [1.89.4](https://github.com/slemppa/rascal-ai/compare/v1.89.3...v1.89.4) (2025-11-21)
 
 

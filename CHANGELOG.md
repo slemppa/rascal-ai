@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.89.4](https://github.com/slemppa/rascal-ai/compare/v1.89.3...v1.89.4) (2025-11-21)
+
+
+### 🐛 Bug Fixes
+
+* korjaa käyttäjän kutsun sähköpostin lähetysjärjestys ([95f6b95](https://github.com/slemppa/rascal-ai/commit/95f6b95c2e1df42a655f680d82b7e048904edde8))
+
 ### [1.89.3](https://github.com/slemppa/rascal-ai/compare/v1.89.2...v1.89.3) (2025-11-20)
 
 

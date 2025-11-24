@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.90.0](https://github.com/slemppa/rascal-ai/compare/v1.89.6...v1.90.0) (2025-11-24)
+
+
+### ✨ Features
+
+* Add user secrets encryption and Make webhook integration ([b35a685](https://github.com/slemppa/rascal-ai/commit/b35a68595d0a7161db5659e790e154dd6b633aca))
+
 ### [1.89.6](https://github.com/slemppa/rascal-ai/compare/v1.89.5...v1.89.6) (2025-11-24)
 
 

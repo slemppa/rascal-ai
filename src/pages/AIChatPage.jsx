@@ -66,6 +66,9 @@ export default function AIChatPage() {
   const messagesEndRef = useRef(null)
   const textareaRef = useRef(null)
   const sendingRef = useRef(false) // Estää duplikaattilähetykset
+  const pollingIntervalRef = useRef(null) // Polling-intervallia varten
+  const lastMessageCountRef = useRef(0) // Viimeisin viestimäärä, jotta voidaan havaita uusia viestejä
+  const lastAssistantMessageRef = useRef(null) // Viimeisin assistentin viesti, jotta voidaan havaita uusi vastaus
 
   // Scrollaa viestit automaattisesti alas
   const scrollToBottom = () => {
@@ -343,17 +346,48 @@ export default function AIChatPage() {
       const pendingId = `msg_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
       enqueuePending({ id: pendingId, payload })
       
+      // Aseta viestimäärä ja viimeisin assistentin viesti heti kun viesti lähetetään
+      // Tämä auttaa havaitsemaan kun uusi vastaus tulee
+      if (activeThreadId) {
+        try {
+          const currentResponse = await axios.get(`/api/zep-messages?threadId=${activeThreadId}`)
+          const currentMessages = currentResponse.data?.messages || []
+          // Aseta viestimääräksi nykyinen määrä (käyttäjän uusi viesti lisätään pian Zepiin)
+          lastMessageCountRef.current = currentMessages.length
+          
+          // Etsi viimeisin assistentin viesti
+          const assistantMessages = currentMessages
+            .filter(msg => (msg.role === 'AI' || msg.role === 'ai' || msg.role === 'assistant') && msg.content)
+          if (assistantMessages.length > 0) {
+            const latestAssistantMsg = assistantMessages[assistantMessages.length - 1]
+            lastAssistantMessageRef.current = cleanMessage(latestAssistantMsg.content)
+          } else {
+            lastAssistantMessageRef.current = null
+          }
+          
+          console.log(`📊 Asetettiin alkuperäinen viestimäärä: ${lastMessageCountRef.current}, viimeisin assistentin viesti: ${lastAssistantMessageRef.current ? 'löytyi' : 'ei löytynyt'}`)
+        } catch (err) {
+          console.error('Virhe nykyisten viestien haussa:', err)
+          // Jos haussa virhe, käytä oletusarvoa
+          lastMessageCountRef.current = messages.length
+          lastAssistantMessageRef.current = null
+        }
+        
+        // Aloita polling heti - se havaitsee kun uusi vastaus tulee Zepiin
+        setTimeout(() => {
+          startPolling(activeThreadId)
+        }, 500) // Aloita polling 0.5 sekunnin kuluttua
+      }
+      
       // FIRE-AND-FORGET: Lähetä taustalle, älä odota vastausta
       axios.post('/api/chat', payload)
         .then(response => {
-          // Kun vastaus saapuu, päivitä viestit Zepistä
-          if (activeThreadId) {
-            loadThread(activeThreadId)
-          }
           dequeuePending(pendingId)
         })
         .catch(error => {
           console.error('Virhe viestin lähetyksessä:', error)
+          // Lopeta polling jos se on käynnissä
+          stopPolling()
           // Poista "Käsitellään..." ja näytä virhe
           setMessages(prev => prev.filter(m => !m.isProcessing))
           const errorMessage = { role: 'assistant', content: t('assistant.sendError') }
@@ -572,7 +606,96 @@ export default function AIChatPage() {
     }
   }
 
-  const loadThread = async (threadIdToLoad) => {
+  // Lopeta polling jos se on käynnissä
+  const stopPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current)
+      pollingIntervalRef.current = null
+    }
+  }
+
+  // Aloita polling joka tarkistaa uusia viestejä säännöllisesti
+  const startPolling = (threadIdToPoll) => {
+    // Lopeta vanha polling jos se on käynnissä
+    stopPolling()
+    
+    if (!threadIdToPoll) return
+    
+    console.log(`🔄 Aloitetaan polling threadille: ${threadIdToPoll}`)
+    
+    let pollCount = 0
+    const MAX_POLLS = 60 // Maksimi 2 minuuttia (60 * 2 sekuntia)
+    
+    // Tarkista viestit 1.5 sekunnin välein (nopeampi responssi)
+    pollingIntervalRef.current = setInterval(async () => {
+      pollCount++
+      
+      // Lopeta polling jos se on kestänyt liian kauan
+      if (pollCount > MAX_POLLS) {
+        console.log('⏱️ Polling loppui, maksimikesto ylittyi')
+        stopPolling()
+        // Poista "Käsitellään..." -viesti jos vastaus ei ole vielä tullut
+        setMessages(prev => prev.filter(m => !m.isProcessing))
+        return
+      }
+      
+      try {
+        const response = await axios.get(`/api/zep-messages?threadId=${threadIdToPoll}`)
+        const zepMessages = response.data?.messages || []
+        
+        // Tarkista onko viestejä enemmän kuin viimeksi
+        const hasNewMessages = zepMessages.length > lastMessageCountRef.current
+        
+        if (hasNewMessages) {
+          // Etsi viimeisin viesti ja tarkista onko se assistentin viesti
+          const lastMessage = zepMessages[zepMessages.length - 1]
+          const isLastMessageFromAssistant = lastMessage && 
+            (lastMessage.role === 'AI' || lastMessage.role === 'ai' || lastMessage.role === 'assistant') &&
+            lastMessage.content && 
+            lastMessage.content.trim().length > 0
+          
+          // Etsi viimeisin assistentin viesti
+          const assistantMessages = zepMessages
+            .filter(msg => (msg.role === 'AI' || msg.role === 'ai' || msg.role === 'assistant') && msg.content)
+          const latestAssistantMsg = assistantMessages.length > 0 
+            ? cleanMessage(assistantMessages[assistantMessages.length - 1].content) 
+            : null
+          
+          // Tarkista onko viimeisin viesti assistentin uusi vastaus
+          const hasNewAssistantResponse = isLastMessageFromAssistant && 
+            latestAssistantMsg && 
+            latestAssistantMsg !== lastAssistantMessageRef.current &&
+            latestAssistantMsg.trim().length > 0
+          
+          if (hasNewAssistantResponse) {
+            console.log(`✅ Löydettiin uusi assistentin vastaus: ${zepMessages.length} viestiä (aiemmin ${lastMessageCountRef.current})`)
+            lastMessageCountRef.current = zepMessages.length
+            lastAssistantMessageRef.current = latestAssistantMsg
+            
+            // Lataa viestit uudelleen käyttäen loadThread-funktiota
+            await loadThread(threadIdToPoll, true)
+            
+            // Lopeta polling kun vastaus on saatu
+            stopPolling()
+          } else {
+            // Jos viestejä on enemmän mutta viimeisin viesti on käyttäjän viesti, 
+            // päivitetään viestimäärä mutta ei vielä ladata viestejä
+            console.log(`📝 Uusia viestejä, mutta viimeisin on käyttäjän viesti: ${zepMessages.length} viestiä`)
+            lastMessageCountRef.current = zepMessages.length
+            // Päivitä viimeisin assistentin viesti jos se on muuttunut
+            if (latestAssistantMsg && latestAssistantMsg !== lastAssistantMessageRef.current) {
+              lastAssistantMessageRef.current = latestAssistantMsg
+            }
+          }
+        }
+      } catch (error) {
+        console.error('❌ Virhe pollingissa:', error)
+        // Älä lopeta pollingia virheen vuoksi, yritä uudelleen seuraavalla kierroksella
+      }
+    }, 1500) // 1.5 sekunnin välein (nopeampi kuin 2 sekuntia)
+  }
+
+  const loadThread = async (threadIdToLoad, isPollingUpdate = false) => {
     try {
       // Tarkista että thread kuuluu nykyiseen assistenttityyppiin
       const thread = threads.find(t => t.id === threadIdToLoad)
@@ -586,15 +709,17 @@ export default function AIChatPage() {
       
       // Älä tyhjennä viestejä jos ladataan samaa threadia (päivitys)
       const isRefresh = threadIdToLoad === currentThreadId
-      if (!isRefresh) {
+      if (!isRefresh && !isPollingUpdate) {
         setMessages([]) // Tyhjennä vain jos vaihdetaan threadia
       }
       
-      setLoading(true)
+      if (!isPollingUpdate) {
+        setLoading(true)
+      }
       localStorage.setItem('rascalai_threadId', threadIdToLoad)
       
       // Sulje sidebar mobiilissa
-      if (window.innerWidth <= 1024) {
+      if (window.innerWidth <= 1024 && !isPollingUpdate) {
         setSidebarOpen(false)
       }
       
@@ -606,6 +731,17 @@ export default function AIChatPage() {
       const zepMessages = response.data?.messages || []
       console.log(`✅ Ladattiin ${zepMessages.length} viestiä Zepistä`)
       console.log('📝 Ensimmäinen viesti:', zepMessages[0])
+      
+      // Päivitä viestimäärä ja viimeisin assistentin viesti
+      lastMessageCountRef.current = zepMessages.length
+      
+      // Etsi viimeisin assistentin viesti
+      const assistantMessages = zepMessages
+        .filter(msg => (msg.role === 'AI' || msg.role === 'ai' || msg.role === 'assistant') && msg.content)
+      if (assistantMessages.length > 0) {
+        const latestAssistantMsg = assistantMessages[assistantMessages.length - 1]
+        lastAssistantMessageRef.current = cleanMessage(latestAssistantMsg.content)
+      }
       
       // Muunna Zep-viestit oikeaan muotoon ja siivoa system promptit
       const formattedMessages = zepMessages
@@ -628,12 +764,23 @@ export default function AIChatPage() {
         })
       
       setMessages(formattedMessages)
+      
+      // Lopeta polling jos se on käynnissä (vastaus on nyt nähtävissä)
+      if (isPollingUpdate || pollingIntervalRef.current) {
+        stopPolling()
+      }
     } catch (error) {
       console.error('❌ Virhe viestien lataamisessa:', error)
       // Jos virhe, näytä tyhjä chat
-      setMessages([])
+      if (!isPollingUpdate) {
+        setMessages([])
+      }
+      // Lopeta polling myös virheen sattuessa
+      stopPolling()
     } finally {
-      setLoading(false)
+      if (!isPollingUpdate) {
+        setLoading(false)
+      }
     }
   }
 
@@ -756,6 +903,13 @@ export default function AIChatPage() {
 
     document.addEventListener('visibilitychange', handleVisibilityChange)
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [currentThreadId])
+
+  // Lopeta polling kun komponentti unmountataan tai thread vaihtuu
+  useEffect(() => {
+    return () => {
+      stopPolling()
+    }
   }, [currentThreadId])
 
   // Drag & drop event handlers

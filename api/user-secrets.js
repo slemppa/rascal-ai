@@ -184,10 +184,13 @@ async function handlePost(req, res) {
         console.warn('⚠️ No webhook URL configured (MAKE_INTEGRATION_WEBHOOK_URL or N8N_INTEGRATION_WEBHOOK_URL not set)')
         console.warn('   Webhook notification will be skipped')
       } else {
-        // Hae API URL ympäristöstä tai requestista
-        const apiBaseUrl = process.env.VERCEL_URL 
-          ? `https://${process.env.VERCEL_URL}`
-          : (req.headers.host ? `${req.headers['x-forwarded-proto'] || 'https'}://${req.headers.host}` : 'https://your-api-domain.com')
+        // Hae API URL ympäristöstä (production URL)
+        // Production URL: app.rascalai.fi
+        let apiBaseUrl = process.env.NEXT_PUBLIC_APP_URL 
+          || process.env.VITE_APP_URL
+          || 'https://app.rascalai.fi'
+        
+        console.log('🔗 API Base URL:', apiBaseUrl)
 
         const webhookPayload = {
           action: 'integration_created',
@@ -198,9 +201,16 @@ async function handlePost(req, res) {
           metadata: metadata || {},
           secret_id: data,
           timestamp: new Date().toISOString(),
-          // Tärkeää: Tässä on endpoint josta voi hakea puretun avaimen
+          // Endpoint josta voi hakea puretun API-avaimen
           get_secret_url: `${apiBaseUrl}/api/user-secrets-service`,
-          instructions: `Hae purettu API-avain GET-pyynnöllä: ${apiBaseUrl}/api/user-secrets-service?secret_type=${secret_type}&secret_name=${encodeURIComponent(secret_name)}&user_id=${orgId} (tarvitsee x-api-key headerin)`
+          get_secret_params: {
+            secret_type: secret_type,
+            secret_name: secret_name,
+            user_id: orgId
+          },
+          // Autentikointi: tarvitsee x-api-key headerin (N8N_SECRET_KEY tai MAKE_WEBHOOK_SECRET)
+          requires_auth: true,
+          auth_header: 'x-api-key'
         }
 
         console.log('📤 Sending integration webhook to:', webhookUrl)

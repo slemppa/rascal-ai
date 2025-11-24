@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.89.6](https://github.com/slemppa/rascal-ai/compare/v1.89.5...v1.89.6) (2025-11-24)
+
+
+### 🐛 Bug Fixes
+
+* korjaa kampanjan kiinnitys massapuheluihin ja call_time muoto ([fbb3a7f](https://github.com/slemppa/rascal-ai/commit/fbb3a7f20b36438c8a6fd286bdeaa9bd68fe224d))
+
 ### [1.89.5](https://github.com/slemppa/rascal-ai/compare/v1.89.4...v1.89.5) (2025-11-21)
 
 

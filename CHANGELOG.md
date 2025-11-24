@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.90.1](https://github.com/slemppa/rascal-ai/compare/v1.90.0...v1.90.1) (2025-11-24)
+
+
+### 🐛 Bug Fixes
+
+* Use correct production URL for user-secrets webhook ([1f2cfd9](https://github.com/slemppa/rascal-ai/commit/1f2cfd952fb0bd8a0c79a9f7fbd1e0451d3cde07))
+
 ## [1.90.0](https://github.com/slemppa/rascal-ai/compare/v1.89.6...v1.90.0) (2025-11-24)
 
 

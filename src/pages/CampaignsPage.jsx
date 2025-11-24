@@ -87,6 +87,9 @@ export default function CampaignsPage() {
             onStatusChange={(fresh) => {
               setCampaigns(prev => prev.map(c => c.id === fresh.id ? { ...c, status: fresh.status } : c))
             }}
+            onDelete={async (deletedId) => {
+              setCampaigns(prev => prev.filter(c => c.id !== deletedId))
+            }}
           />
         ))}
       </div>

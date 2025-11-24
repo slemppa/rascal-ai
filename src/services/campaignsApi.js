@@ -75,4 +75,22 @@ export async function pauseCampaign(id) {
   return response.json()
 }
 
+export async function deleteCampaign(id) {
+  const { data } = await supabase.auth.getSession()
+  const token = data?.session?.access_token
+  const response = await fetch('/api/campaign-delete', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify({ id })
+  })
+  if (!response.ok) {
+    const text = await response.text().catch(() => '')
+    throw new Error(`Kampanjan poisto epäonnistui: ${response.status} ${text}`)
+  }
+  return response.json()
+}
+
 

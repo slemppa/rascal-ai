@@ -2277,6 +2277,7 @@ export default function ManagePostsPage() {
                 const formData = new FormData(e.target)
                 const title = formData.get('title')?.trim() || ''
                 const count = createModalCount || 1
+                const type = formData.get('type') || ''
                 
                 // Validoi: otsikko vaaditaan vain jos lukumäärä on 1
                 if (count === 1 && !title) {
@@ -2284,13 +2285,20 @@ export default function ManagePostsPage() {
                   return
                 }
                 
+                // Validoi: tyyppi vaaditaan vain jos lukumäärä on 1
+                if (count === 1 && !type) {
+                  alert('Tyyppi on pakollinen kun luodaan yksi julkaisu')
+                  return
+                }
+                
                 handleCreatePost({
                   title: title,
-                  type: count === 1 ? formData.get('type') : null,
+                  type: count === 1 ? type : null,
                   caption: formData.get('caption'),
                   count: count
                 })
                 }}
+                noValidate
               >
                 <div className="form-group">
                   <label className="form-label">
@@ -2299,7 +2307,6 @@ export default function ManagePostsPage() {
                   <input
                     name="title"
                     type="text"
-                    required={createModalCount === 1}
                     className="form-input"
                     placeholder="Anna julkaisulle otsikko..."
                   />
@@ -2315,11 +2322,11 @@ export default function ManagePostsPage() {
                 </div>
                 {createModalCount === 1 && (
                   <div className="form-group">
-                    <label className="form-label">Tyyppi</label>
+                    <label className="form-label">Tyyppi <span style={{ color: '#ef4444' }}>*</span></label>
                     <select
                       name="type"
-                      required
                       className="form-select"
+                      defaultValue="Photo"
                     >
                       <option value="Photo">Photo</option>
                       <option value="Carousel">Carousel</option>

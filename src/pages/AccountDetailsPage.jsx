@@ -5,6 +5,7 @@ import CompanyTab from '../components/AccountDetailsTabs/CompanyTab'
 import StrategiesTab from '../components/AccountDetailsTabs/StrategiesTab'
 import PostsTab from '../components/AccountDetailsTabs/PostsTab'
 import CallTypesTab from '../components/AccountDetailsTabs/CallTypesTab'
+import FeaturesTab from '../components/AccountDetailsTabs/FeaturesTab'
 import './AccountDetailsPage.css'
 
 export default function AccountDetailsPage() {
@@ -12,6 +13,7 @@ export default function AccountDetailsPage() {
   const navigate = useNavigate()
   const [account, setAccount] = useState(null)
   const [accountDetails, setAccountDetails] = useState(null)
+  const [accountFeatures, setAccountFeatures] = useState([])
   const [isSaving, setIsSaving] = useState(false)
   const [saveMessage, setSaveMessage] = useState('')
   const [activeTab, setActiveTab] = useState('company')
@@ -45,7 +47,35 @@ export default function AccountDetailsPage() {
     // Nollaa paginointi kun vaihdetaan tabia
     setCurrentPage(1)
     setCallTypesCurrentPage(1)
-  }, [activeTab])
+    
+    // Lataa featuret uudelleen kun features-tabia avataan
+    if (activeTab === 'features' && account) {
+      loadFeatures()
+    }
+  }, [activeTab, account])
+
+  const loadFeatures = async () => {
+    if (!account) return
+
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('features')
+        .eq('id', account.id)
+        .single()
+
+      if (error) {
+        console.error('Error loading features:', error)
+        return
+      }
+
+      const features = Array.isArray(data?.features) ? data.features : []
+      console.log('Reloaded features for account:', account.id, features)
+      setAccountFeatures(features)
+    } catch (error) {
+      console.error('Error in loadFeatures:', error)
+    }
+  }
 
   useEffect(() => {
     const handleEsc = (event) => {
@@ -126,11 +156,18 @@ export default function AccountDetailsPage() {
       // Hae yrityksen tiedot
       const { data: companyData, error: companyError } = await supabase
         .from('users')
-        .select('company_summary, icp_summary, kpi, tov')
+        .select('company_summary, icp_summary, kpi, tov, features')
         .eq('id', account.id)
         .single()
 
-      if (companyError) console.error('Error loading company data:', companyError)
+      if (companyError) {
+        console.error('Error loading company data:', companyError)
+      } else {
+        // Aseta featuret - varmista että ne ovat aina array
+        const features = Array.isArray(companyData?.features) ? companyData.features : []
+        console.log('Loaded features for account:', account.id, features)
+        setAccountFeatures(features)
+      }
 
       // Hae puhelutyypit
       console.log('Fetching call types for user_id:', account.id)
@@ -486,6 +523,47 @@ export default function AccountDetailsPage() {
     }
   }
 
+  const handleFeatureToggle = async (newFeatures) => {
+    if (!account) return
+
+    console.log('Feature toggle - current:', accountFeatures, 'new:', newFeatures)
+    
+    setIsSaving(true)
+    setSaveMessage('')
+    
+    try {
+      // Varmista että newFeatures on array
+      const featuresToSave = Array.isArray(newFeatures) ? newFeatures : []
+      
+      console.log('Saving features to database:', featuresToSave)
+      
+      const { error, data } = await supabase
+        .from('users')
+        .update({ features: featuresToSave })
+        .eq('id', account.id)
+        .select('features')
+        .single()
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      // Päivitä state tietokannasta saadulla datalla
+      const savedFeatures = Array.isArray(data?.features) ? data.features : []
+      console.log('Features saved successfully:', savedFeatures)
+      setAccountFeatures(savedFeatures)
+      setSaveMessage('Ominaisuudet päivitetty!')
+      setTimeout(() => setSaveMessage(''), 3000)
+    } catch (error) {
+      console.error('Error updating features:', error)
+      setSaveMessage('Virhe ominaisuuksien päivityksessä: ' + error.message)
+      setTimeout(() => setSaveMessage(''), 3000)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="account-details-page">
@@ -545,6 +623,12 @@ export default function AccountDetailsPage() {
         >
           Puhelutyypit ({accountDetails.callTypes.length})
         </button>
+        <button
+          className={`tab ${activeTab === 'features' ? 'active' : ''}`}
+          onClick={() => setActiveTab('features')}
+        >
+          Ominaisuudet ({accountFeatures.length})
+        </button>
       </div>
 
       <div className="page-body">
@@ -603,6 +687,14 @@ export default function AccountDetailsPage() {
             onSave={handleSaveCallType}
             onEditValueChange={(field, value) => setCallTypeEditValues({ ...callTypeEditValues, [field]: value })}
             onPageChange={setCallTypesCurrentPage}
+          />
+        )}
+
+        {activeTab === 'features' && (
+          <FeaturesTab
+            features={accountFeatures}
+            isSaving={isSaving}
+            onFeatureToggle={handleFeatureToggle}
           />
         )}
       </div>

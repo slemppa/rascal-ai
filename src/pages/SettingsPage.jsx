@@ -11,6 +11,7 @@ import SimpleSocialConnect from '../components/SimpleSocialConnect'
 import { useMixpostIntegration } from '../components/SocialMedia/hooks/useMixpostIntegration'
 import { useStrategyStatus } from '../contexts/StrategyStatusContext'
 import { getUserOrgId } from '../lib/getUserOrgId'
+import SettingsIntegrationsTab from '../components/SettingsIntegrationsTab'
 
 import styles from './SettingsPage.module.css'
 
@@ -45,6 +46,7 @@ export default function SettingsPage() {
   const [logoUploading, setLogoUploading] = useState(false)
   const [logoMessage, setLogoMessage] = useState('')
   const [logoDragActive, setLogoDragActive] = useState(false)
+  const [activeTab, setActiveTab] = useState('profile')
   
   // Mixpost-integration hook
   const { 
@@ -703,15 +705,35 @@ export default function SettingsPage() {
     setEmailMessage('')
   }
 
+
   return (
     <>
       <div className={styles['settings-container']}>
         <div className={styles['settings-header']}>
           <h2 className={styles['page-title']}>{t('settings.title')}</h2>
         </div>
-        <div className={styles['settings-bentogrid']}>
-          {/* Vasen sarake: Käyttäjätiedot */}
-          <div className={styles.card}>
+        
+        {/* Tab-napit */}
+        <div className={styles['settings-tabs']}>
+          <button
+            className={`${styles['settings-tab']} ${activeTab === 'profile' ? styles['settings-tab-active'] : ''}`}
+            onClick={() => setActiveTab('profile')}
+          >
+            Profiili
+          </button>
+          <button
+            className={`${styles['settings-tab']} ${activeTab === 'features' ? styles['settings-tab-active'] : ''}`}
+            onClick={() => setActiveTab('features')}
+          >
+            Ominaisuudet
+          </button>
+        </div>
+        
+        {/* Profiili-tab */}
+        {activeTab === 'profile' && (
+          <div className={styles['settings-bentogrid']}>
+            {/* Vasen sarake: Käyttäjätiedot */}
+            <div className={styles.card}>
             {profileLoading ? (
               <div style={{ textAlign: 'center', padding: '40px 20px' }}>
                 <div style={{ fontSize: '16px', color: '#6b7280' }}>{t('settings.profile.loading')}</div>
@@ -1236,7 +1258,17 @@ export default function SettingsPage() {
               <CarouselTemplateSelector />
             </div>
           </div>
-        </div>
+          </div>
+        )}
+        
+            {/* Ominaisuudet-tab */}
+            {activeTab === 'features' && (
+              <div className={styles['settings-bentogrid']}>
+                <div className={styles.card} style={{ gridColumn: '1 / -1' }}>
+                  <SettingsIntegrationsTab />
+                </div>
+              </div>
+            )}
       </div>
     </>
   )

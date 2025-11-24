@@ -9,6 +9,249 @@
   margin-bottom: 24px;
 }
 
+.settings-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0;
+}
+
+.settings-tab {
+  padding: 12px 24px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-weight: 600;
+  font-size: 16px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: -2px;
+}
+
+.settings-tab:hover {
+  color: #1f2937;
+  background: #f9fafb;
+}
+
+.settings-tab-active {
+  color: #ff6600;
+  border-bottom-color: #ff6600;
+  background: transparent;
+}
+
+/* Settings Integrations Tab Styles */
+.settings-integrations-container {
+  width: 100%;
+}
+
+.integrations-description {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.integrations-description p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.integrations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.integration-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.integration-item:hover {
+  background: #ffffff;
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.integration-info {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.integration-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.integration-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.integration-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.integration-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #1f2937;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.4;
+}
+
+.integration-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.4;
+}
+
+.integration-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+  flex-shrink: 0;
+  margin-left: 0;
+}
+
+.integration-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #d1d5db;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.integration-switch input:checked + .switch-slider {
+  background-color: #ff6600;
+}
+
+.integration-switch input:focus + .switch-slider {
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2);
+}
+
+.integration-switch input:checked + .switch-slider:before {
+  transform: translateX(24px);
+}
+
+.integration-switch input:disabled + .switch-slider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.no-integrations-message {
+  text-align: center;
+  padding: 2rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px dashed #d1d5db;
+  margin-bottom: 2rem;
+}
+
+.no-integrations-message p {
+  margin: 0;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.integrations-summary {
+  padding-top: 1.5rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.summary-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.summary-value {
+  font-weight: 700;
+  color: #ff6600;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .settings-tabs {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .settings-tab {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .integration-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .integration-info {
+    width: 100%;
+  }
+
+  .integration-switch {
+    margin-left: 0;
+    align-self: flex-end;
+  }
+}
+
 .settings-bentogrid {
   display: grid;
   grid-template-columns: 1fr 2fr;

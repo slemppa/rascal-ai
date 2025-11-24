@@ -2,13 +2,16 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import CampaignDetailModal from './CampaignDetailModal'
 // Ei tehdä suoria Supabase-hakuja tässä – käytetään backendin rikastamia arvoja
-import { pauseCampaign, fetchCampaignById } from '../../services/campaignsApi'
+import { pauseCampaign, fetchCampaignById, deleteCampaign } from '../../services/campaignsApi'
 
-export default function CampaignCard({ campaign, onStatusChange }) {
+export default function CampaignCard({ campaign, onStatusChange, onDelete }) {
   const { t } = useTranslation('common')
   const [open, setOpen] = useState(false)
   const [pausing, setPausing] = useState(false)
   const [pauseError, setPauseError] = useState('')
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const totalCalls = campaign.total_calls || 0
   const answeredCalls = campaign.answered_calls || 0
   const successfulCalls = campaign.successful_calls || 0
@@ -75,7 +78,7 @@ export default function CampaignCard({ campaign, onStatusChange }) {
               <div style={{ fontWeight: 600 }}>{totalCalls}</div>
             </div>
           </div>
-          <div style={{ marginTop: 12, display: 'flex', gap: 8 }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }} onClick={(e) => e.stopPropagation()}>
             <button
               type="button"
               onClick={async () => {
@@ -105,7 +108,24 @@ export default function CampaignCard({ campaign, onStatusChange }) {
             >
               {pausing ? 'Keskeytetään…' : status === 'paused' ? 'Keskeytetty' : 'Keskeytä kampanja'}
             </button>
+            <button
+              type="button"
+              onClick={() => setShowDeleteConfirm(true)}
+              disabled={deleting}
+              style={{
+                background: '#dc2626',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 8,
+                padding: '8px 12px',
+                fontWeight: 700,
+                cursor: deleting ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {deleting ? 'Poistetaan…' : 'Poista'}
+            </button>
             {pauseError && <div style={{ color: '#dc2626', alignSelf: 'center' }}>{pauseError}</div>}
+            {deleteError && <div style={{ color: '#dc2626', alignSelf: 'center' }}>{deleteError}</div>}
           </div>
           {/* Jäljellä */}
           <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -124,6 +144,72 @@ export default function CampaignCard({ campaign, onStatusChange }) {
           campaignId={campaign.id}
           onClose={() => setOpen(false)}
         />
+      )}
+      {showDeleteConfirm && (
+        <div className="modal-overlay modal-overlay--light" role="dialog" aria-modal="true" onClick={(e) => {
+          if (e.target === e.currentTarget) setShowDeleteConfirm(false)
+        }}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="modal-title">Vahvista poisto</h2>
+              <button className="modal-close-btn" onClick={() => setShowDeleteConfirm(false)} type="button">×</button>
+            </div>
+            <div className="modal-content">
+              <p style={{ marginBottom: 16 }}>Haluatko varmasti poistaa kampanjan "{campaign.name}"? Tätä toimintoa ei voi perua.</p>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={deleting}
+                  style={{
+                    background: '#e5e7eb',
+                    color: '#374151',
+                    border: '1px solid #d1d5db',
+                    borderRadius: 8,
+                    padding: '8px 16px',
+                    fontWeight: 600,
+                    cursor: deleting ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  Peruuta
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      setDeleting(true)
+                      setDeleteError('')
+                      await deleteCampaign(campaign.id)
+                      setShowDeleteConfirm(false)
+                      onDelete && onDelete(campaign.id)
+                    } catch (e) {
+                      setDeleteError(e.message || 'Poisto epäonnistui')
+                    } finally {
+                      setDeleting(false)
+                    }
+                  }}
+                  disabled={deleting}
+                  style={{
+                    background: '#dc2626',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 8,
+                    padding: '8px 16px',
+                    fontWeight: 600,
+                    cursor: deleting ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {deleting ? 'Poistetaan…' : 'Poista'}
+                </button>
+              </div>
+              {deleteError && (
+                <div style={{ marginTop: 12, padding: 12, border: '1px solid #fecaca', background: '#fef2f2', color: '#991b1b', borderRadius: 8 }}>
+                  {deleteError}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </>
   )

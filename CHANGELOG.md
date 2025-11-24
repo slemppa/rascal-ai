@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.90.2](https://github.com/slemppa/rascal-ai/compare/v1.90.1...v1.90.2) (2025-11-24)
+
+
+### 🐛 Bug Fixes
+
+* Improve error handling and logging for user-secrets-service ([ca173f6](https://github.com/slemppa/rascal-ai/commit/ca173f629d6e698b424d564c9e901b91f9117cd5))
+
 ### [1.90.1](https://github.com/slemppa/rascal-ai/compare/v1.90.0...v1.90.1) (2025-11-24)
 
 

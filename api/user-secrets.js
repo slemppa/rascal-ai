@@ -196,8 +196,9 @@ async function handlePost(req, res) {
           action: 'integration_created',
           integration_type: secret_type,
           integration_name: secret_name,
-          user_id: orgId,
-          auth_user_id: req.authUser?.id,
+          // TÄRKEÄÄ: Käytä user_id (public.users.id = organisaation ID) kun haet API-avainta!
+          user_id: orgId,  // public.users.id - käytä tätä get_secret_params.user_id:ssä!
+          auth_user_id: req.authUser?.id,  // auth.users.id - EI käytä tätä API-avaimen haussa!
           metadata: metadata || {},
           secret_id: data,
           timestamp: new Date().toISOString(),
@@ -206,8 +207,10 @@ async function handlePost(req, res) {
           get_secret_params: {
             secret_type: secret_type,
             secret_name: secret_name,
-            user_id: orgId
+            user_id: orgId  // HUOM: Käytä tätä! Älä käytä auth_user_id!
           },
+          // Valmis URL esimerkki
+          get_secret_example: `${apiBaseUrl}/api/user-secrets-service?secret_type=${secret_type}&secret_name=${encodeURIComponent(secret_name)}&user_id=${orgId}`,
           // Autentikointi: tarvitsee x-api-key headerin (N8N_SECRET_KEY tai MAKE_WEBHOOK_SECRET)
           requires_auth: true,
           auth_header: 'x-api-key'

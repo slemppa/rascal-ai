@@ -63,12 +63,34 @@ export default async function handler(req, res) {
   }
 
   if (!ENCRYPTION_KEY) {
-    return res.status(500).json({ error: 'Salausavain ei ole konfiguroitu' })
+    console.error('❌ USER_SECRETS_ENCRYPTION_KEY not set!')
+    return res.status(500).json({ 
+      error: 'Salausavain ei ole konfiguroitu',
+      hint: 'Aseta USER_SECRETS_ENCRYPTION_KEY ympäristömuuttujaksi Verceliin'
+    })
   }
 
   try {
-    console.log('Service request for secret:', { secret_type, secret_name, user_id })
+    console.log('🔍 Service request for secret:', { 
+      secret_type, 
+      secret_name, 
+      user_id,
+      user_id_type: typeof user_id,
+      user_id_length: user_id?.length
+    })
+    console.log('🔑 Encryption key status:', ENCRYPTION_KEY ? 'SET (length: ' + ENCRYPTION_KEY.length + ')' : 'NOT SET')
 
+    // Validoi parametrit ennen RPC-kutsua
+    if (!user_id || typeof user_id !== 'string' || user_id.length < 10) {
+      console.error('❌ Invalid user_id:', user_id)
+      return res.status(400).json({
+        error: 'Virheellinen user_id',
+        details: 'user_id pitää olla validi UUID (public.users.id)'
+      })
+    }
+
+    console.log('📞 Calling Supabase RPC: get_user_secret...')
+    
     // Kutsutaan Supabase-funktiota, joka puraa arvon
     const { data, error } = await supabaseAdmin.rpc('get_user_secret', {
       p_user_id: user_id,
@@ -76,19 +98,47 @@ export default async function handler(req, res) {
       p_secret_name: secret_name,
       p_encryption_key: ENCRYPTION_KEY
     })
+    
+    console.log('📞 RPC response:', { 
+      hasData: !!data, 
+      hasError: !!error,
+      errorMessage: error?.message,
+      errorCode: error?.code
+    })
 
     if (error) {
-      console.error('Error decrypting secret (service):', error)
+      console.error('❌ Error decrypting secret (service):', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+        fullError: error
+      })
       return res.status(500).json({ 
         error: 'Virhe salaisuuden purussa',
-        details: error.message
+        details: error.message || 'Tuntematon virhe',
+        code: error.code,
+        hint: error.hint
       })
     }
 
     if (!data) {
+      // Lisää debug-tietoja, jos salaisuutta ei löydy
+      console.error('Secret not found with params:', {
+        user_id,
+        secret_type,
+        secret_name,
+        note: 'user_id pitää olla public.users.id (organisaation ID), ei auth.users.id'
+      })
+      
       return res.status(404).json({ 
         error: 'Salaisuus ei löytynyt',
-        hint: 'Tarkista että secret_type, secret_name ja user_id ovat oikein'
+        hint: 'Tarkista että secret_type, secret_name ja user_id ovat oikein. HUOM: user_id pitää olla public.users.id (organisaation ID), ei auth.users.id (auth_user_id)',
+        received_params: {
+          user_id,
+          secret_type,
+          secret_name
+        }
       })
     }
 
@@ -101,10 +151,16 @@ export default async function handler(req, res) {
       timestamp: new Date().toISOString()
     })
   } catch (error) {
-    console.error('Error in user-secrets-service:', error)
+    console.error('❌ Error in user-secrets-service:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      fullError: error
+    })
     return res.status(500).json({ 
       error: 'Sisäinen palvelinvirhe',
-      details: error.message
+      details: error.message || 'Tuntematon virhe',
+      ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
     })
   }
 }

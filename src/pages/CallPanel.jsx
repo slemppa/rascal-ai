@@ -1926,6 +1926,14 @@ export default function CallPanel() {
       const token = session?.data?.session?.access_token
       
       
+      // Debug: tarkista kampanja ennen lähetystä
+      console.log('🔍 Frontend - sending campaign ID:', { 
+        massCallCampaignId, 
+        type: typeof massCallCampaignId,
+        isEmpty: !massCallCampaignId || massCallCampaignId === '',
+        campaigns: massCallCampaigns.map(c => ({ id: c.id, name: c.name }))
+      })
+      
       const res = await fetch('/api/mass-call', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
@@ -1938,8 +1946,8 @@ export default function CallPanel() {
           sms_first: massCallSmsFirst === true,
           sms_after_call: massCallSmsAfterCall === true,
           sms_missed_call: massCallSmsMissedCall === true,
-          newCampaignId: massCallCampaignId || null,
-          contactSegmentId: massCallSegmentId || null
+          newCampaignId: massCallCampaignId && massCallCampaignId.trim() ? massCallCampaignId.trim() : null,
+          contactSegmentId: massCallSegmentId && massCallSegmentId.trim() ? massCallSegmentId.trim() : null
         })
       })
       const data = await res.json().catch(() => ({}))
@@ -2137,6 +2145,14 @@ export default function CallPanel() {
       const selectedVoiceObj2 = getVoiceOptions().find(v => v.value === massCallSelectedVoice)
       const session2 = await supabase.auth.getSession()
       const token2 = session2?.data?.session?.access_token
+      // Debug: tarkista kampanja ennen lähetystä (ajastus)
+      console.log('🔍 Frontend - sending campaign ID (schedule):', { 
+        massCallCampaignId, 
+        type: typeof massCallCampaignId,
+        isEmpty: !massCallCampaignId || massCallCampaignId === '',
+        campaigns: massCallCampaigns.map(c => ({ id: c.id, name: c.name }))
+      })
+      
       const res = await fetch('/api/mass-call', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(token2 ? { Authorization: `Bearer ${token2}` } : {}) },
@@ -2150,7 +2166,9 @@ export default function CallPanel() {
           scheduledTime: massCallScheduledTime,
           sms_first: massCallSmsFirst === true,
           sms_after_call: massCallSmsAfterCall === true,
-          sms_missed_call: massCallSmsMissedCall === true
+          sms_missed_call: massCallSmsMissedCall === true,
+          newCampaignId: massCallCampaignId && massCallCampaignId.trim() ? massCallCampaignId.trim() : null,
+          contactSegmentId: massCallSegmentId && massCallSegmentId.trim() ? massCallSegmentId.trim() : null
         })
       })
       const data = await res.json().catch(() => ({}))

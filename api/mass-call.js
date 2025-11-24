@@ -31,9 +31,12 @@ export default async function handler(req, res) {
 
   try {
     const { sheetUrl, callType, script, voice, voice_id, user_id, scheduledDate, scheduledTime, sms_first, sms_after_call, sms_missed_call, newCampaignId, contactSegmentId } = req.body
+    // Normalisoi newCampaignId: tyhjä string -> null, muuten käytä UUID:ta sellaisenaan
+    let normalizedCampaignId = (newCampaignId && typeof newCampaignId === 'string' && newCampaignId.trim()) ? newCampaignId.trim() : null
+    console.log('🔍 Campaign ID debug:', { newCampaignId, normalizedCampaignId, type: typeof newCampaignId })
     const access_token = req.headers['authorization']?.replace('Bearer ', '')
 
-    console.log('🔍 Mass-call endpoint sai dataa:', { sheetUrl, callType, scriptExists: Boolean(script), voice, voice_idExists: Boolean(voice_id), user_id, scheduledDate, scheduledTime, sms_first: Boolean(sms_first), sms_after_call: Boolean(sms_after_call), sms_missed_call: Boolean(sms_missed_call), hasAccessToken: Boolean(access_token), usingServiceRole: Boolean(supabaseServiceKey) })
+    console.log('🔍 Mass-call endpoint sai dataa:', { sheetUrl, callType, scriptExists: Boolean(script), voice, voice_idExists: Boolean(voice_id), user_id, scheduledDate, scheduledTime, sms_first: Boolean(sms_first), sms_after_call: Boolean(sms_after_call), sms_missed_call: Boolean(sms_missed_call), newCampaignId, hasAccessToken: Boolean(access_token), usingServiceRole: Boolean(supabaseServiceKey) })
 
     // Luo Supabase client
     const supabase = createClient(
@@ -76,6 +79,24 @@ export default async function handler(req, res) {
 
     const publicUserId = userData.id
 
+    // Varmista että kampanja on olemassa jos se on annettu
+    if (normalizedCampaignId) {
+      const { data: campaignData, error: campaignError } = await supabase
+        .from('campaigns')
+        .select('id')
+        .eq('id', normalizedCampaignId)
+        .eq('user_id', publicUserId)
+        .single()
+
+      if (campaignError || !campaignData) {
+        console.warn('⚠️ Campaign not found or access denied:', { normalizedCampaignId, error: campaignError?.message })
+        // Jos kampanjaa ei löydy, aseta null
+        normalizedCampaignId = null
+      } else {
+        console.log('✅ Campaign found:', normalizedCampaignId)
+      }
+    }
+
     // Hae call_type_id call_types taulusta käyttäen public.users.id:tä
     const { data: callTypeData, error: callTypeError } = await supabase
       .from('call_types')
@@ -97,33 +118,36 @@ export default async function handler(req, res) {
     // Valmistele päivämäärä ja kellonaika
     const now = new Date()
     const today = now.toISOString().split('T')[0]
-    const toHHMMSS = (dateObj) => `${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}:${String(dateObj.getSeconds()).padStart(2, '0')}`
+    // Palauta aika HH:MM muodossa (yhteensopiva inbound-call-webhook.js:n kanssa)
+    const toHHMM = (dateObj) => `${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`
     const normalizeTime = (t) => {
       if (!t) return null
       let x = String(t).trim()
       // Vaihda mahdolliset pisteet kaksoispisteiksi
       x = x.replace(/\./g, ':')
-      // Lisää sekunnit jos puuttuu
-      if (/^\d{2}:\d{2}$/.test(x)) return `${x}:00`
-      // Jos jo HH:MM:SS muodossa, palauta sellaisenaan
-      if (/^\d{2}:\d{2}:\d{2}$/.test(x)) return x
-      // Viimeinen yritys: jos vain tunnit/minuutit, yritä parsia
+      // Jos jo HH:MM muodossa, palauta sellaisenaan
+      if (/^\d{2}:\d{2}$/.test(x)) return x
+      // Jos HH:MM:SS muodossa, poista sekunnit
+      if (/^\d{2}:\d{2}:\d{2}$/.test(x)) {
+        const [h, m] = x.split(':')
+        return `${h}:${m}`
+      }
+      // Viimeinen yritys: yritä parsia
       try {
-        const [h, m, s] = x.split(':')
+        const [h, m] = x.split(':')
         const hh = String(Number(h)).padStart(2, '0')
         // Pyöristä 00 tai 30
         const minutesNum = Number(m || 0)
         const mm = minutesNum >= 30 ? '30' : '00'
-        const ss = String(Number(s || 0)).padStart(2, '0')
-        return `${hh}:${mm}:${ss}`
+        return `${hh}:${mm}`
       } catch {
-        return toHHMMSS(now)
+        return toHHMM(now)
       }
     }
 
     const isScheduled = Boolean(scheduledDate && scheduledTime)
     const effectiveDate = isScheduled ? String(scheduledDate).slice(0, 10) : today
-    const effectiveTime = isScheduled ? normalizeTime(scheduledTime) : normalizeTime(toHHMMSS(now))
+    const effectiveTime = isScheduled ? normalizeTime(scheduledTime) : toHHMM(now)
 
     // Tarkista että URL on Google Sheets -muotoa ja poimi sheet ID
     const googleSheetsRegex = /^https:\/\/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/
@@ -326,13 +350,22 @@ export default async function handler(req, res) {
             call_date: effectiveDate,
             call_time: effectiveTime,
             call_status: 'pending',
-            campaign_id: `mass-call-${Date.now()}`,
-            new_campaign_id: newCampaignId || null,
-            contact_segment_id: contactSegmentId || null,
+            campaign_id: normalizedCampaignId || `mass-call-${Date.now()}`,
+            new_campaign_id: normalizedCampaignId, // Käytä normalisoitua arvoa (null jos ei valittu)
+            contact_segment_id: contactSegmentId && contactSegmentId.trim() ? contactSegmentId.trim() : null,
             summary: script && script.trim() ? `Mass-call: ${script.trim().substring(0, 100)}...` : `Mass-call: ${callType}`,
             sms_first: Boolean(sms_first),
             after_call_sms_sent: Boolean(sms_after_call),
             missed_call_sms_sent: Boolean(sms_missed_call)
+          }
+          
+          // Debug: ensimmäinen entry
+          if (callLogs.length === 0) {
+            console.log('🔍 First call log entry:', { 
+              new_campaign_id: callLogEntry.new_campaign_id, 
+              normalizedCampaignId,
+              campaign_id: callLogEntry.campaign_id 
+            })
           }
           
           
@@ -346,6 +379,12 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Puhelinnumeroita ei löytynyt tiedostosta' })
       }
       
+      // Debug: tarkista ensimmäinen entry ennen insertiä
+      if (callLogs.length > 0) {
+        console.log('🔍 Before insert - first entry new_campaign_id:', callLogs[0].new_campaign_id)
+        console.log('🔍 Before insert - normalizedCampaignId:', normalizedCampaignId)
+      }
+
       // Kirjoita call_logs tauluun Supabaseen
       const { data: insertedLogs, error: insertError } = await supabase
         .from('call_logs')
@@ -358,6 +397,11 @@ export default async function handler(req, res) {
           error: 'Virhe call_logs kirjoittamisessa',
           details: insertError.message 
         })
+      }
+
+      // Debug: tarkista ensimmäinen entry insertin jälkeen
+      if (insertedLogs && insertedLogs.length > 0) {
+        console.log('🔍 After insert - first entry new_campaign_id:', insertedLogs[0].new_campaign_id)
       }
 
       successCount = insertedLogs.length

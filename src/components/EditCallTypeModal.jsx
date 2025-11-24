@@ -224,12 +224,8 @@ const EditCallTypeModal = ({
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Agentin nimi</div>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-Nimi: Ava
-Rooli: Ajanvarausagentti (Rascal Company)
-Tavoite: Sovi 15 min esittelypuhelu pätevien liidien kanssa.
-                  </div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>Olet [Nimi], [Yrityksen] tekoälyavustaja. Autat [kohdeyleisöä] [aiheessa] ja ohjaat ihmisasiantuntijalle tarvittaessa.</div>
                 </div>
               </div>
 
@@ -247,12 +243,8 @@ Tavoite: Sovi 15 min esittelypuhelu pätevien liidien kanssa.
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Kohdeyleisö</div>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-Kohdeyleisö: Toimitusjohtajat ja päättäjät B2B‑yrityksissä (10–200 hlö).
-Tarve: Kasvu ja laadukkaat inbound‑liidit.
-Arvolupaus: Rascal AI tuottaa jatkuvaa liidivirtaa ja säästää myynnin aikaa.
-                  </div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>Olet [Nimi], [Yrityksen] tekoälyavustaja. Autat [kohdeyleisöä] [aiheessa] ja ohjaat ihmisasiantuntijalle tarvittaessa.</div>
                 </div>
               </div>
 
@@ -270,12 +262,8 @@ Arvolupaus: Rascal AI tuottaa jatkuvaa liidivirtaa ja säästää myynnin aikaa.
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Agentin persoona</div>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-Persoona: Lämmin ja selkeä. Ei small talkia.
-Säännöt: Ei spekulointia. Tiivistä asiakkaan vastaus ennen seuraavaa kysymystä.
-Tunnetilanteet: Tunnista ja sanoita lyhyesti ("Ymmärrän, kuulostaa kiireiseltä").
-                  </div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>Olet [Nimi], [Yrityksen] tekoälyavustaja. Autat [kohdeyleisöä] [aiheessa] ja ohjaat ihmisasiantuntijalle tarvittaessa.</div>
                 </div>
               </div>
 
@@ -293,12 +281,8 @@ Tunnetilanteet: Tunnista ja sanoita lyhyesti ("Ymmärrän, kuulostaa kiireiselt�
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Sävystä</div>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-Tyyli: Lyhyet lauseet. Yksi kysymys kerrallaan.
-Malli: "Kiitos vastauksesta. Ymmärsinkö oikein, että…?" → seuraava kysymys.
-Brändiääni: selkeä, lämmin, ratkaisukeskeinen.
-                  </div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>Puhu selkeästi ja lämpimästi; pidä se ytimekkäänä. Vältä ammattislangia. Käytä lyhyitä lauseita ja luonnollisia taukoja (… tai –).</div>
                 </div>
               </div>
 
@@ -316,12 +300,8 @@ Brändiääni: selkeä, lämmin, ratkaisukeskeinen.
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Tavoitteet</div>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-Päätavoite: Varaa 15 min esittelypuhelu pätevän liidin kanssa.
-IF: budjetti ja tarve ovat olemassa → THEN: tarjoa aikaa.
-IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
-                  </div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>1) Selvitä [X]. 2) Kartoita [kiinnostukset/haasteet]. 3) Tarjoa hyödyllinen vaihtoehto. 4) Kysy seurantaa. 5) Kerää paras aika ja yhteystapa.</div>
                 </div>
               </div>
 
@@ -339,12 +319,8 @@ IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 Esimerkki: Vastaväitteet & poikkeukset</div>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-"Liian kallis" → "Ymmärrän. Asiakkaamme säästävät keskimäärin 6–10 h/kk myynnin aikaa. Sopiiko, että näytän 15 min esittelyssä, miten?"
-"Vain katselen" → "Nopea 15 min demo auttaa näkemään, onko tästä hyötyä juuri teille. Sopiiko aika ensi viikolle?"
-"En tiedä" → "Sanon rehellisesti, jos en tiedä ja ohjaan kollegalle."
-                  </div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>Kysy yksi kysymys kerrallaan ja odota. Jos epäselvä, pyydä esimerkkiä. Vastaa lyhyesti ja jatka skriptiä.</div>
                 </div>
               </div>
             </div>
@@ -366,8 +342,8 @@ IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
-                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.greeting')}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>Tämä on se, mitä avustaja sanoo ensimmäisenä, kun puhelu alkaa.</div>
                 </div>
               </div>
 
@@ -385,8 +361,8 @@ IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
-                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.purposeIntro')}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>Hei! Tämä on [Nimi], [Yrityksen] tekoälyavustaja. Soitan/vastaan, koska [syy]. Jos sopii, kysyn muutaman ytimekkään kysymyksen — aloitetaanko?</div>
                 </div>
               </div>
 
@@ -404,8 +380,8 @@ IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151', whiteSpace: 'pre-wrap' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
-                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.questions')}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>{`1) Osallistuitko [tapahtumaan]?\nodota vastausta\nJos ei → kysy haluaisivatko he linkin tai tallenteen.\nodota vastausta\n2) Mikä sai sinut kiinnostumaan [aiheesta]?\nodota vastausta\n3) Missä näet suurimman haasteen: [vaihtoehdot]?\nodota vastausta\n4) Haluaisitko, että asiantuntija ottaa sinuun yhteyttä?\nodota vastausta\nJos kyllä → kysy paras aika ja tapa (puhelu/sähköposti).`}</div>
                 </div>
               </div>
 
@@ -423,8 +399,8 @@ IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151', whiteSpace: 'pre-wrap' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
-                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.closing')}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>{`Kiitos keskustelusta! Lähetänkö lyhyen yhteenvedon ja linkit sähköpostitse?\nodota vastausta\nSovitaan tästä: [seuraava askel]. Mukavaa päivää – hei hei!`}</div>
                 </div>
               </div>
 
@@ -442,8 +418,8 @@ IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, color: '#0f172a' }}>💡 {t('calls.modals.editCallType.examples.users')}</div>
-                  <div style={{ lineHeight: 1.6 }}>{t('calls.modals.editCallType.examples.agentNotes')}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>Tallenna: suosittu yhteysaika, tapa, sähköposti, pyyntö webinaarilinkistä/tallenteesta, lyhyt yhteenveto haasteista/tavoitteista.</div>
                 </div>
               </div>
 
@@ -466,8 +442,8 @@ IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div style={{ whiteSpace: 'pre-wrap' }}>Yhteenveto: Ava kartoittaa tarpeen (budjetti, tavoite, aikataulu) ja varaa 15 min esittelyn, jos kriteerit täyttyvät. Tyyli: lämmin ja napakka, ei small talkia.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>Tiivistä 2–3 lauseessa: osallistuiko [tapahtumaan], keskeiset kiinnostukset/haasteet, sovitut seuraavat askeleet (aika/tapa).</div>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
@@ -484,8 +460,8 @@ IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini‑esimerkki</div>
-                  <div style={{ whiteSpace: 'pre-wrap' }}>Onnistumiskriteerit: Varattu aika tai kelpuutettu liidi. Vastaukset lyhyitä ja johdonmukaisia. Noudattaa sääntöjä (ei small talkia, ei spekulointia).</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>Arvioi, saavutettiinko: 1) tiedonkeruu, 2) kiinnostukset/haasteet, 3) seuranta, 4) yhteystapa/aika. Perustele lyhyesti.</div>
                 </div>
               </div>
             </div>
@@ -524,8 +500,8 @@ IF: ei sopiva hetki → THEN: ystävällinen lopetus + lupa palata myöhemmin.
                   </div>
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>Write a concise and warm message that introduces the call and sets expectations. This message is sent automatically before the call.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>Kirjoita ytimekäs ja lämmin viesti, joka esittelee puhelun ja asettaa odotukset. Tämä viesti lähetetään automaattisesti ennen puhelua.</div>
                 </div>
               </div>
 

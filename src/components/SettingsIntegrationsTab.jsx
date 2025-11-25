@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import axios from 'axios'
+import { getUserOrgId } from '../lib/getUserOrgId'
 import './SettingsIntegrationsTab.css'
 
 // WordPress Logo SVG Component (WordPress "W" logo)
@@ -54,12 +55,107 @@ const AVAILABLE_INTEGRATIONS = [
 ]
 
 export default function SettingsIntegrationsTab() {
-  const { user } = useAuth()
+  const { user, organization } = useAuth()
   const [integrations, setIntegrations] = useState([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' })
   const [expandedCard, setExpandedCard] = useState(null)
+  
+  // AI-mallin valinta
+  const [aiModel, setAiModel] = useState('gemini')
+  const [aiModelLoading, setAiModelLoading] = useState(true)
+  const [aiModelSaving, setAiModelSaving] = useState(false)
+  const [aiModelMessage, setAiModelMessage] = useState('')
+
+  // Lataa AI-mallin valinta
+  const loadAiModel = useCallback(async () => {
+    if (!user?.id) return
+
+    setAiModelLoading(true)
+    try {
+      // Hae organisaation ID
+      let orgUserId = null
+      if (organization?.id) {
+        orgUserId = organization.id
+      } else {
+        orgUserId = await getUserOrgId(user.id)
+      }
+
+      if (!orgUserId) {
+        console.error('Organisaation ID puuttuu')
+        setAiModelLoading(false)
+        return
+      }
+
+      const { data, error } = await supabase
+        .from('users')
+        .select('preferred_ai_model')
+        .eq('id', orgUserId)
+        .single()
+
+      if (error) {
+        console.error('Error loading AI model:', error)
+      } else {
+        setAiModel(data?.preferred_ai_model || 'gemini')
+      }
+    } catch (error) {
+      console.error('Error loading AI model:', error)
+    } finally {
+      setAiModelLoading(false)
+    }
+  }, [user?.id, organization?.id])
+
+  // Tallenna AI-mallin valinta
+  const handleAiModelChange = async (newModel) => {
+    if (!user?.id || aiModelSaving) return
+
+    setAiModelSaving(true)
+    setAiModelMessage('')
+
+    try {
+      // Hae organisaation ID
+      let orgUserId = null
+      if (organization?.id) {
+        orgUserId = organization.id
+      } else {
+        orgUserId = await getUserOrgId(user.id)
+      }
+
+      if (!orgUserId) {
+        throw new Error('Organisaation ID puuttuu')
+      }
+
+      const { error } = await supabase
+        .from('users')
+        .update({ 
+          preferred_ai_model: newModel,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', orgUserId)
+
+      if (error) {
+        throw error
+      }
+
+      setAiModel(newModel)
+      setAiModelMessage('AI-malli päivitetty onnistuneesti!')
+      setTimeout(() => setAiModelMessage(''), 3000)
+    } catch (error) {
+      console.error('Error saving AI model:', error)
+      setAiModelMessage('Virhe AI-mallin tallennuksessa')
+      setTimeout(() => setAiModelMessage(''), 5000)
+    } finally {
+      setAiModelSaving(false)
+    }
+  }
+
+  // Lataa AI-malli kun komponentti latautuu
+  useEffect(() => {
+    if (user?.id) {
+      loadAiModel()
+    }
+  }, [user?.id, loadAiModel])
 
   // Lataa integraatiot ja niiden asetukset
   const loadIntegrations = useCallback(async () => {
@@ -291,6 +387,111 @@ export default function SettingsIntegrationsTab() {
 
   return (
     <div className="settings-integrations-container">
+      {/* AI-mallin valinta */}
+      <div className="ai-model-selector" style={{
+        marginBottom: '24px',
+        padding: '20px',
+        backgroundColor: '#fff',
+        borderRadius: '12px',
+        border: '1px solid #e5e7eb',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+      }}>
+        <h3 style={{ 
+          margin: '0 0 12px 0', 
+          fontSize: '16px', 
+          fontWeight: 600, 
+          color: '#1f2937' 
+        }}>
+          AI-malli
+        </h3>
+        <p style={{ 
+          margin: '0 0 16px 0', 
+          fontSize: '14px', 
+          color: '#6b7280' 
+        }}>
+          Valitse mikä AI-malli käytetään sisällöntuotannossa
+        </p>
+
+        {aiModelMessage && (
+          <div style={{
+            padding: '8px 12px',
+            marginBottom: '16px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            backgroundColor: aiModelMessage.includes('Virhe') ? '#fef2f2' : '#f0fdf4',
+            color: aiModelMessage.includes('Virhe') ? '#dc2626' : '#16a34a',
+            border: `1px solid ${aiModelMessage.includes('Virhe') ? '#fecaca' : '#bbf7d0'}`
+          }}>
+            {aiModelMessage}
+          </div>
+        )}
+
+        {aiModelLoading ? (
+          <div style={{ color: '#6b7280', fontSize: '14px' }}>Ladataan...</div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <label style={{ 
+              fontSize: '14px', 
+              fontWeight: 500, 
+              color: aiModel === 'gemini' ? '#1f2937' : '#9ca3af',
+              cursor: 'pointer',
+              transition: 'color 0.2s'
+            }}>
+              Gemini 3
+            </label>
+            
+            {/* Liukukytkin */}
+            <button
+              type="button"
+              onClick={() => handleAiModelChange(aiModel === 'gemini' ? 'mistral' : 'gemini')}
+              disabled={aiModelSaving}
+              style={{
+                position: 'relative',
+                width: '52px',
+                height: '28px',
+                borderRadius: '14px',
+                border: 'none',
+                cursor: aiModelSaving ? 'not-allowed' : 'pointer',
+                backgroundColor: aiModel === 'gemini' ? '#10b981' : '#6b7280',
+                transition: 'background-color 0.3s',
+                outline: 'none',
+                padding: '2px'
+              }}
+              onMouseEnter={(e) => {
+                if (!aiModelSaving) {
+                  e.target.style.opacity = '0.9'
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.opacity = '1'
+              }}
+            >
+              <div style={{
+                position: 'absolute',
+                top: '2px',
+                left: aiModel === 'gemini' ? '2px' : '26px',
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                backgroundColor: '#fff',
+                transition: 'left 0.3s',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
+              }} />
+            </button>
+
+            <label style={{ 
+              fontSize: '14px', 
+              fontWeight: 500, 
+              color: aiModel === 'mistral' ? '#1f2937' : '#9ca3af',
+              cursor: 'pointer',
+              transition: 'color 0.2s'
+            }}>
+              Mistral
+            </label>
+          </div>
+        )}
+      </div>
+
       <div className="integrations-description">
         <p>Yhdistä Rascal AI muihin palveluihin. Määritä API-avaimet ja asetukset jokaiselle alustalle.</p>
       </div>

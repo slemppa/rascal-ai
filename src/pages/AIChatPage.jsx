@@ -69,6 +69,7 @@ export default function AIChatPage() {
   const pollingIntervalRef = useRef(null) // Polling-intervallia varten
   const lastMessageCountRef = useRef(0) // Viimeisin viestimäärä, jotta voidaan havaita uusia viestejä
   const lastAssistantMessageRef = useRef(null) // Viimeisin assistentin viesti, jotta voidaan havaita uusi vastaus
+  const [, forceUpdate] = useState(0) // Safari-optimointi: Pakota re-render
 
   // Scrollaa viestit automaattisesti alas
   const scrollToBottom = () => {
@@ -86,6 +87,18 @@ export default function AIChatPage() {
   useEffect(() => {
     scrollToBottom()
   }, [messages, loading])
+
+  // Safari-optimointi: Pakota re-render kun viestit muuttuvat
+  useEffect(() => {
+    // Tämä useEffect varmistaa että Safari renderöi viestit oikein
+    if (messages.length > 0) {
+      console.log('📨 Viestit muuttuivat, viestejä:', messages.length)
+      // Pakota scrollaus päivittymään
+      setTimeout(() => {
+        scrollToBottom()
+      }, 50)
+    }
+  }, [messages])
 
   // Hae käyttäjän tiedot Supabase-tietokannasta
   useEffect(() => {
@@ -609,12 +622,13 @@ export default function AIChatPage() {
   // Lopeta polling jos se on käynnissä
   const stopPolling = () => {
     if (pollingIntervalRef.current) {
-      clearInterval(pollingIntervalRef.current)
+      clearTimeout(pollingIntervalRef.current)
       pollingIntervalRef.current = null
     }
   }
 
   // Aloita polling joka tarkistaa uusia viestejä säännöllisesti
+  // Käytetään setTimeout-rekursiota setIntervalin sijaan paremman Safari-tuen vuoksi
   const startPolling = (threadIdToPoll) => {
     // Lopeta vanha polling jos se on käynnissä
     stopPolling()
@@ -624,10 +638,15 @@ export default function AIChatPage() {
     console.log(`🔄 Aloitetaan polling threadille: ${threadIdToPoll}`)
     
     let pollCount = 0
-    const MAX_POLLS = 60 // Maksimi 2 minuuttia (60 * 2 sekuntia)
+    const MAX_POLLS = 80 // Maksimi 2 minuuttia (80 * 1.5 sekuntia)
+    const POLL_INTERVAL = 1500 // 1.5 sekunnin välein
     
-    // Tarkista viestit 1.5 sekunnin välein (nopeampi responssi)
-    pollingIntervalRef.current = setInterval(async () => {
+    const poll = async () => {
+      // Tarkista että polling on vielä aktiivinen
+      if (!pollingIntervalRef.current) {
+        return // Polling on lopetettu
+      }
+      
       pollCount++
       
       // Lopeta polling jos se on kestänyt liian kauan
@@ -639,14 +658,24 @@ export default function AIChatPage() {
         return
       }
       
+      // Älä tarkista jos tab on piilossa (Safari optimointi)
+      if (document.visibilityState === 'hidden') {
+        // Ajoita seuraava tarkistus kun tab tulee näkyviin
+        pollingIntervalRef.current = setTimeout(poll, POLL_INTERVAL)
+        return
+      }
+      
       try {
         const response = await axios.get(`/api/zep-messages?threadId=${threadIdToPoll}`)
         const zepMessages = response.data?.messages || []
+        
+        console.log(`🔍 Safari polling: Tarkistetaan viestejä. Zepissä: ${zepMessages.length}, Viimeksi: ${lastMessageCountRef.current}`)
         
         // Tarkista onko viestejä enemmän kuin viimeksi
         const hasNewMessages = zepMessages.length > lastMessageCountRef.current
         
         if (hasNewMessages) {
+          console.log(`📊 Safari: Löydettiin uusia viestejä! ${zepMessages.length} vs ${lastMessageCountRef.current}`)
           // Etsi viimeisin viesti ja tarkista onko se assistentin viesti
           const lastMessage = zepMessages[zepMessages.length - 1]
           const isLastMessageFromAssistant = lastMessage && 
@@ -672,11 +701,52 @@ export default function AIChatPage() {
             lastMessageCountRef.current = zepMessages.length
             lastAssistantMessageRef.current = latestAssistantMsg
             
-            // Lataa viestit uudelleen käyttäen loadThread-funktiota
-            await loadThread(threadIdToPoll, true)
+            // Safari-optimointi: Päivitä viestit suoraan ilman loadThread-kutsua
+            // Tämä varmistaa että state päivittyy oikein Safari-ssa
+            const formattedMessages = zepMessages
+              .filter(msg => msg.content)
+              .map(msg => {
+                let normalizedRole = msg.role
+                if (msg.role === 'Human' || msg.role === 'human') {
+                  normalizedRole = 'user'
+                } else if (msg.role === 'AI' || msg.role === 'ai') {
+                  normalizedRole = 'assistant'
+                }
+                
+                return {
+                  role: normalizedRole,
+                  content: cleanMessage(msg.content)
+                }
+              })
+            
+            // Safari-optimointi: Käytä funktiota joka pakottaa päivityksen
+            console.log('🔄 Safari: Päivitetään viestit suoraan. Uusia viestejä:', formattedMessages.length)
+            setMessages(formattedMessages) // Aseta suoraan, poista processing-viestit automaattisesti
+            
+            // Safari-optimointi: Varmista että viestit näkyvät
+            // Tehdään useita päivityksiä jotta Safari varmasti renderöi ne
+            setTimeout(() => {
+              setMessages(current => {
+                console.log('🔍 Safari: Varmistetaan viestit:', current.length)
+                // Palauta sama array mutta varmista että referenssi muuttuu
+                return [...current]
+              })
+              forceUpdate(prev => prev + 1)
+            }, 0)
+            
+            setTimeout(() => {
+              forceUpdate(prev => prev + 1)
+              scrollToBottom()
+            }, 100)
+            
+            setTimeout(() => {
+              forceUpdate(prev => prev + 1)
+              scrollToBottom()
+            }, 300)
             
             // Lopeta polling kun vastaus on saatu
             stopPolling()
+            return
           } else {
             // Jos viestejä on enemmän mutta viimeisin viesti on käyttäjän viesti, 
             // päivitetään viestimäärä mutta ei vielä ladata viestejä
@@ -692,7 +762,15 @@ export default function AIChatPage() {
         console.error('❌ Virhe pollingissa:', error)
         // Älä lopeta pollingia virheen vuoksi, yritä uudelleen seuraavalla kierroksella
       }
-    }, 1500) // 1.5 sekunnin välein (nopeampi kuin 2 sekuntia)
+      
+      // Ajoita seuraava polling-kierros (rekursiivinen setTimeout)
+      if (pollingIntervalRef.current) {
+        pollingIntervalRef.current = setTimeout(poll, POLL_INTERVAL)
+      }
+    }
+    
+    // Aloita ensimmäinen polling-kierros
+    pollingIntervalRef.current = setTimeout(poll, POLL_INTERVAL)
   }
 
   const loadThread = async (threadIdToLoad, isPollingUpdate = false) => {
@@ -763,7 +841,18 @@ export default function AIChatPage() {
           return formatted
         })
       
-      setMessages(formattedMessages)
+      // Safari-optimointi: Varmista että viestit päivittyvät oikein
+      // Poista ensin "Käsitellään..." -viesti jos se on olemassa
+      setMessages(prev => {
+        // Poista processing-viestit ennen uusien viestien asettamista
+        const withoutProcessing = prev.filter(m => !m.isProcessing)
+        // Aseta uudet viestit
+        return formattedMessages
+      })
+      
+      // Safari-optimointi: Pakota komponentin uudelleenrenderöinti
+      // Tämä varmistaa että Safari näyttää muutokset oikein
+      await new Promise(resolve => setTimeout(resolve, 0))
       
       // Lopeta polling jos se on käynnissä (vastaus on nyt nähtävissä)
       if (isPollingUpdate || pollingIntervalRef.current) {
@@ -892,18 +981,27 @@ export default function AIChatPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, loadingUserData, assistantType])
 
-  // Päivitä viestit kun käyttäjä palaa sivulle
+  // Päivitä viestit kun käyttäjä palaa sivulle ja jatka pollingia jos se on kesken
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible' && currentThreadId) {
         console.log('👀 Sivu aktiivinen, päivitetään viestit')
+        // Päivitä viestit heti kun tab tulee näkyviin
         loadThread(currentThreadId)
+        // Jos polling on kesken, jatka sitä
+        if (pollingIntervalRef.current) {
+          console.log('🔄 Jatketaan pollingia kun tab tulee näkyviin')
+        } else if (messages.some(m => m.isProcessing)) {
+          // Jos on "Käsitellään..." -viesti, aloita polling uudelleen
+          console.log('🔄 Aloitetaan polling uudelleen kun tab tulee näkyviin')
+          startPolling(currentThreadId)
+        }
       }
     }
 
     document.addEventListener('visibilitychange', handleVisibilityChange)
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [currentThreadId])
+  }, [currentThreadId, messages])
 
   // Lopeta polling kun komponentti unmountataan tai thread vaihtuu
   useEffect(() => {
@@ -1309,8 +1407,13 @@ export default function AIChatPage() {
                       // DEBUG: Tulosta role konsoliin
                       console.log(`Viesti ${index}: role="${message.role}" (tyyppi: ${typeof message.role})`)
                       
+                      // Safari-optimointi: Käytä sisällön perusteella luotua keyta joka varmistaa re-renderin kun sisältö muuttuu
+                      // Yhdistä role, sisältö ja index stabiiliksi keyksi
+                      const contentHash = message.content ? message.content.substring(0, 100).replace(/\s/g, '') : ''
+                      const messageKey = `${message.role}-${index}-${contentHash}`
+                      
                       return (
-                        <div key={index} className={`message ${message.role} ${message.isProcessing ? 'processing' : ''}`}>
+                        <div key={messageKey} className={`message ${message.role} ${message.isProcessing ? 'processing' : ''}`}>
                           <div className="message-avatar" title={`Role: ${message.role}`}>
                             {message.role === 'assistant' ? 'AI' : 'Me'}
                           </div>

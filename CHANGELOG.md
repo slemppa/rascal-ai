@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.90.4](https://github.com/slemppa/rascal-ai/compare/v1.90.3...v1.90.4) (2025-11-25)
+
+
+### 🔧 Chores
+
+* tyhjä commit ([7246918](https://github.com/slemppa/rascal-ai/commit/72469189ae7663e46a5e49fc214264f88ff0ae34))
+
+
+### 🐛 Bug Fixes
+
+* Safari-optimointit ai-chat sivulle vastausten näyttämiseen ([c099232](https://github.com/slemppa/rascal-ai/commit/c0992323e2e3ed7e5fe0c435c0941e3eba8cc717))
+
 ### [1.90.3](https://github.com/slemppa/rascal-ai/compare/v1.90.2...v1.90.3) (2025-11-24)
 
 

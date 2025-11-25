@@ -219,9 +219,15 @@ async function handlePost(req, res) {
         console.log('📤 Sending integration webhook to:', webhookUrl)
         console.log('📦 Webhook payload:', JSON.stringify(webhookPayload, null, 2))
 
-        // Muodosta headerit - Make-webhookit eivät vaadi autentikointia
+        // Muodosta headerit - N8N webhookit vaativat x-api-key headerin
         const headers = {
           'Content-Type': 'application/json'
+        }
+        
+        // Lisää x-api-key header jos N8N_SECRET_KEY on asetettu
+        const n8nSecretKey = process.env.N8N_SECRET_KEY
+        if (n8nSecretKey) {
+          headers['x-api-key'] = n8nSecretKey
         }
 
         console.log('🚀 Starting webhook POST request (SYNC)...')
@@ -229,7 +235,7 @@ async function handlePost(req, res) {
         console.log('   Headers:', headers)
         
         // Lähetä webhook SYNKRONISESTI, jotta se ehditään lähettää ennen kuin vastaus palautetaan
-        // HUOM: Make-webhookit eivät vaadi autentikointia
+        // HUOM: N8N webhookit vaativat x-api-key headerin (N8N_SECRET_KEY)
         try {
           const webhookResponse = await axios.post(webhookUrl, webhookPayload, {
             headers: headers,

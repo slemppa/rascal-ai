@@ -63,19 +63,26 @@ const AVAILABLE_INTEGRATIONS = [
     secretName: 'WordPress REST API Key',
     fields: [
       {
-        id: 'api_key',
-        label: 'REST API Key',
-        type: 'password',
-        placeholder: 'wp_xxxxxxxxxxxxxxxxxxxx',
+        id: 'username',
+        label: 'Username',
+        type: 'text',
+        placeholder: 'Käyttäjätunnus',
         required: true
       },
       {
-        id: 'endpoint',
-        label: 'WordPress URL',
+        id: 'password',
+        label: 'Password',
+        type: 'password',
+        placeholder: 'Salasana',
+        required: true
+      },
+      {
+        id: 'url',
+        label: 'URL',
         type: 'url',
         placeholder: 'https://example.com',
         required: true,
-        helpText: 'WordPress-sivustosi URL-osoite (ilman /wp-json)'
+        helpText: 'WordPress-sivustosi URL-osoite'
       }
     ]
   },
@@ -249,8 +256,9 @@ export default function SettingsIntegrationsTab() {
         let formData = {}
         if (integration.id === 'wordpress') {
           formData = {
-            api_key: '', // Ei näytetä, koska se on salattu
-            endpoint: metadata.endpoint || ''
+            username: metadata.username || '',
+            password: '', // Ei näytetä, koska se on salattu
+            url: metadata.url || ''
           }
         } else if (integration.id === 'google_analytics') {
           // Google Analytics: Client ID ja Client Secret metadataan JSON-muodossa
@@ -311,7 +319,7 @@ export default function SettingsIntegrationsTab() {
       
       // Validoi pakolliset kentät integraatiokohtaisesti
       if (integration.id === 'wordpress') {
-        if (!formData.api_key || !formData.endpoint) {
+        if (!formData.username || !formData.password || !formData.url) {
           setMessage({
             type: 'error',
             text: 'Täytä kaikki pakolliset kentät'
@@ -334,13 +342,14 @@ export default function SettingsIntegrationsTab() {
       let requestData = {}
       
       if (integration.id === 'wordpress') {
-        // WordPress: tallenna API-avain plaintext_value-kenttään ja endpoint metadataan
+        // WordPress: tallenna salasana plaintext_value-kenttään ja username sekä url metadataan
         requestData = {
           secret_type: integration.secretType,
           secret_name: integration.secretName,
-          plaintext_value: formData.api_key,
+          plaintext_value: formData.password,
           metadata: {
-            endpoint: formData.endpoint,
+            username: formData.username,
+            url: formData.url,
             description: `${integration.name} integraatio`
           }
         }

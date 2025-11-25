@@ -216,6 +216,8 @@ export default function BlogNewsletterPage() {
   const [showEditModal, setShowEditModal] = useState(false)
   const [viewingContent, setViewingContent] = useState(null)
   const [editingContent, setEditingContent] = useState(null)
+  const [socialAccounts, setSocialAccounts] = useState([])
+  const [loadingAccounts, setLoadingAccounts] = useState(false)
  
   const hasInitialized = useRef(false)
 
@@ -256,11 +258,50 @@ export default function BlogNewsletterPage() {
     }
   }
 
+  // Hae somekanavat Supabasesta
+  const fetchSocialAccounts = async () => {
+    if (!user) return
+    
+    try {
+      setLoadingAccounts(true)
+      
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        console.error('Organisaation ID ei löytynyt')
+        setSocialAccounts([])
+        return
+      }
+      
+      // Haetaan yhdistetyt sometilit käyttäen organisaation ID:tä
+      const { data: accountsData, error: accountsError } = await supabase
+        .from('user_social_accounts')
+        .select('mixpost_account_uuid, provider, account_name, profile_image_url, username')
+        .eq('user_id', orgId) // Käytetään organisaation ID:tä
+        .eq('is_authorized', true)
+        .order('last_synced_at', { ascending: false })
+
+      if (accountsError) {
+        console.error('Error fetching social accounts:', accountsError)
+        setSocialAccounts([])
+        return
+      }
+      setSocialAccounts(accountsData || [])
+      
+    } catch (error) {
+      console.error('Error fetching social accounts:', error)
+      setSocialAccounts([])
+    } finally {
+      setLoadingAccounts(false)
+    }
+  }
+
   useEffect(() => {
     if (!user || hasInitialized.current) return
     
     hasInitialized.current = true
     fetchContents()
+    fetchSocialAccounts() // Haetaan somekanavat
   }, [user])
 
   // Filtteröidään sisältö
@@ -497,6 +538,19 @@ export default function BlogNewsletterPage() {
         mediaUrls = contentData.media_urls || []
       }
 
+      // Haetaan sometilit jos ne eivät ole vielä haettu
+      if (socialAccounts.length === 0) {
+        await fetchSocialAccounts()
+      }
+      
+      // Valitse ensimmäinen yhdistetty tili automaattisesti jos tilejä on saatavilla
+      let selectedAccountIds = []
+      if (socialAccounts.length > 0) {
+        selectedAccountIds = [socialAccounts[0].mixpost_account_uuid]
+      } else {
+        throw new Error('Sometilejä ei löydy. Yhdistä sometilit asetuksista ennen julkaisua.')
+      }
+      
       // Lähetetään data backend:iin, joka hoitaa Supabase-kyselyt
       const publishData = {
         post_id: content.id,
@@ -507,7 +561,8 @@ export default function BlogNewsletterPage() {
         scheduled_date: content.scheduledDate || null,
         publish_date: content.publishDate || null,
         post_type: content.type === 'Newsletter' ? 'post' : 'post', // Blog ja Newsletter ovat 'post' tyyppiä
-        action: 'publish'
+        action: 'publish',
+        selected_accounts: selectedAccountIds // Lisätään valitut somekanavat
       }
       
       // Lisää Mixpost config data jos saatavilla

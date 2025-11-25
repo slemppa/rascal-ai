@@ -156,7 +156,7 @@ export default function AccountDetailsPage() {
       // Hae yrityksen tiedot
       const { data: companyData, error: companyError } = await supabase
         .from('users')
-        .select('company_summary, icp_summary, kpi, tov, features')
+        .select('company_summary, icp_summary, kpi, tov, features, onboarding_completed')
         .eq('id', account.id)
         .single()
 
@@ -695,6 +695,7 @@ export default function AccountDetailsPage() {
             features={accountFeatures}
             isSaving={isSaving}
             onFeatureToggle={handleFeatureToggle}
+            userId={account?.id}
           />
         )}
       </div>

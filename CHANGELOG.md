@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.92.0](https://github.com/slemppa/rascal-ai/compare/v1.91.0...v1.92.0) (2025-11-25)
+
+
+### ✨ Features
+
+* paranna Aikataulutettu-sarakkeen toiminnallisuutta ([651a3af](https://github.com/slemppa/rascal-ai/commit/651a3afd19e029f43e62c140c06b89275e72cb70))
+
 ## [1.91.0](https://github.com/slemppa/rascal-ai/compare/v1.90.4...v1.91.0) (2025-11-25)
 
 

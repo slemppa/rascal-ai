@@ -432,21 +432,67 @@ const AikataulutettuModal = ({
           }
 
           const scheduleResult = await scheduleResponse.json()
+          
+          console.log('AikataulutettuModal - scheduleResult:', scheduleResult)
+          console.log('AikataulutettuModal - editingPost.source:', editingPost.source)
+          console.log('AikataulutettuModal - editingPost.status:', editingPost.status)
+          
+          // Jos postaus ajastettiin onnistuneesti ja se oli Supabase-postaus, 
+          // palautetaan tieto callbackille
+          // Tarkistetaan myös status, koska "Tarkistuksessa" -sarakkeessa olevat postaukset ovat Supabase-postauksia
+          const isSupabasePost = editingPost.source === 'supabase' || editingPost.status === 'Tarkistuksessa'
+          
+          if (isSupabasePost && scheduleResult) {
+            console.log('AikataulutettuModal - Ajastetaan Supabase-postaus, palautetaan tiedot callbackille')
+            // Palautetaan tiedot siitä, että postaus ajastettiin
+            if (onEdit) {
+              onEdit({ 
+                wasScheduled: true, 
+                originalPost: editingPost,
+                mixpostUuid: scheduleResult.uuid || scheduleResult.id || postUuid,
+                scheduledAt: scheduleResult.scheduled_at || `${formData.date} ${formData.time}:00`
+              })
+            }
+            if (onSave) {
+              onSave({ 
+                wasScheduled: true, 
+                originalPost: editingPost,
+                mixpostUuid: scheduleResult.uuid || scheduleResult.id || postUuid
+              })
+            }
+          } else {
+            console.log('AikataulutettuModal - Ei Supabase-postaus tai scheduleResult puuttuu, kutsutaan callbackia normaalisti')
+            // Muuten kutsutaan callbackia normaalisti
+            if (onEdit) {
+              onEdit()
+            }
+            if (onSave) {
+              onSave(editingPost)
+            }
+          }
         } catch (scheduleError) {
           // Ei heitä virhettä, koska sisältö päivittyi onnistuneesti
           setError(`Sisältö päivittyi, mutta ajastus epäonnistui: ${scheduleError.message}`)
+          // Kutsutaan callbackia silti
+          if (onEdit) {
+            onEdit()
+          }
+          if (onSave) {
+            onSave(editingPost)
+          }
+        }
+      } else {
+        // Jos ei ajastettu, kutsutaan callbackia normaalisti
+        setSuccess(true)
+        if (onEdit) {
+          onEdit()
+        }
+        if (onSave) {
+          onSave(editingPost)
         }
       }
 
       setSuccess(true)
-      
-      // Kutsutaan onEdit tai onSave callbackia jos se on määritelty
-      if (onEdit) {
-        onEdit()
-      }
-      if (onSave) {
-        onSave(editingPost)
-      }
 
       // Suljetaan modaali 1.5 sekunnin kuluttua
       setTimeout(() => {

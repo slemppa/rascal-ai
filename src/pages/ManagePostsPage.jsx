@@ -559,10 +559,36 @@ export default function ManagePostsPage() {
         'failed': 'Epäonnistui'
       }
       
-      const translatedPosts = mixpostPosts.map(post => ({
-        ...post,
-        status: statusMap[post.status] || post.status
-      }))
+      const translatedPosts = mixpostPosts.map(post => {
+        // Poimi media-tiedot versions[0].content[0].media -kentästä
+        let thumbnail = null
+        let mediaUrls = []
+        
+        if (post.versions && post.versions.length > 0) {
+          const firstVersion = post.versions[0]
+          if (firstVersion.content && firstVersion.content.length > 0) {
+            const firstContent = firstVersion.content[0]
+            if (firstContent.media && firstContent.media.length > 0) {
+              // Käytä thumb_url:ia jos saatavilla (videot), muuten url:ia
+              const firstMedia = firstContent.media[0]
+              thumbnail = firstMedia.thumb_url || firstMedia.url || null
+              
+              // Kerää kaikki media-URLit
+              mediaUrls = firstContent.media.map(media => media.thumb_url || media.url).filter(Boolean)
+            }
+          }
+        }
+        
+        return {
+          ...post,
+          status: statusMap[post.status] || post.status,
+          thumbnail: thumbnail,
+          mediaUrls: mediaUrls,
+          media_urls: mediaUrls,
+          // Säilytetään myös versions-data, jotta se on saatavilla PostCard-komponentissa
+          versions: post.versions || []
+        }
+      })
       
       // Näytä kaikki Mixpost-postaukset (sekä scheduled että published)
       setMixpostPosts(translatedPosts)
@@ -2723,12 +2749,69 @@ export default function ManagePostsPage() {
           setShowEditModal(false)
           setEditingPost(null)
         }}
-        onEdit={async () => {
-          console.log('Post updated successfully')
+        onEdit={async (result) => {
+          console.log('ManagePostsPage - onEdit callback called with:', result)
+          console.log('ManagePostsPage - result type:', typeof result)
+          console.log('ManagePostsPage - result.wasScheduled:', result?.wasScheduled)
+          console.log('ManagePostsPage - result.originalPost:', result?.originalPost)
+          
+          // Jos postaus ajastettiin Supabase-postauksesta, muunnetaan se Mixpost-postauksen muotoon
+          // ja lisätään se mixpostPosts-listaan heti, jotta se näkyy "Aikataulutettu" -sarakkeessa
+          if (result && result.wasScheduled && result.originalPost) {
+            console.log('ManagePostsPage - Ajastetaan Supabase-postaus, muunnetaan Mixpost-postaukseksi')
+            const originalPost = result.originalPost
+            
+            // Muunnetaan Supabase-postaus Mixpost-postauksen muotoon
+            const mixpostPost = {
+              id: result.mixpostUuid || originalPost.id,
+              uuid: result.mixpostUuid || originalPost.id,
+              title: originalPost.title || originalPost.caption || 'Ei otsikkoa',
+              caption: originalPost.caption || '',
+              status: 'Aikataulutettu',
+              source: 'mixpost',
+              thumbnail: originalPost.thumbnail || null,
+              type: originalPost.type || 'Photo',
+              scheduled_at: result.scheduledAt || null,
+              createdAt: originalPost.createdAt || new Date().toISOString().split('T')[0],
+              accounts: originalPost.accounts || [],
+              versions: originalPost.versions || [],
+              publishDate: result.scheduledAt ? new Date(result.scheduledAt).toISOString().slice(0, 16) : null,
+              mediaUrls: originalPost.mediaUrls || originalPost.media_urls || [],
+              media_urls: originalPost.mediaUrls || originalPost.media_urls || [],
+              originalData: originalPost.originalData || {}
+            }
+            
+            // Poistetaan postaus posts-listasta
+            setPosts(prevPosts => prevPosts.filter(p => p.id !== originalPost.id))
+            
+            // Lisätään se mixpostPosts-listaan heti
+            setMixpostPosts(prevPosts => {
+              // Varmistetaan ettei postaus ole jo listassa
+              const exists = prevPosts.some(p => p.uuid === mixpostPost.uuid || p.id === mixpostPost.id)
+              if (exists) {
+                // Päivitetään olemassa oleva postaus
+                return prevPosts.map(p => 
+                  (p.uuid === mixpostPost.uuid || p.id === mixpostPost.id) ? mixpostPost : p
+                )
+              }
+              // Lisätään uusi postaus
+              return [...prevPosts, mixpostPost]
+            })
+            
+            // Haetaan Mixpost-postaukset taustalla varmistamaan synkronointi
+            fetchMixpostPosts().catch(err => {
+              console.warn('Mixpost-postauksien haku epäonnistui, mutta postaus näkyy jo listassa:', err)
+            })
+          } else {
+            // Muuten päivitetään molemmat datalähteet
+            await Promise.all([
+              fetchPosts(),
+              fetchMixpostPosts()
+            ])
+          }
+          
           setShowEditModal(false)
           setEditingPost(null)
-          // Päivitä data
-          await fetchPosts()
         }}
         t={t}
       />

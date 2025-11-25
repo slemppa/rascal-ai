@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.91.0](https://github.com/slemppa/rascal-ai/compare/v1.90.4...v1.91.0) (2025-11-25)
+
+
+### ✨ Features
+
+* Add AI model selection and onboarding toggle ([0080fe3](https://github.com/slemppa/rascal-ai/commit/0080fe34620c1adb9e96b69b5b185a5949bda16f))
+
 ### [1.90.4](https://github.com/slemppa/rascal-ai/compare/v1.90.3...v1.90.4) (2025-11-25)
 
 

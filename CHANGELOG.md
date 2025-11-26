@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.95.0](https://github.com/slemppa/rascal-ai/compare/v1.93.1...v1.95.0) (2025-11-26)
+
+
+### ✨ Features
+
+* add export modal with field selection for call logs ([04a3b8b](https://github.com/slemppa/rascal-ai/commit/04a3b8b15bb29dd10acf63fd687a8dc17d722164))
+
+## [1.94.0](https://github.com/slemppa/rascal-ai/compare/v1.93.1...v1.94.0) (2025-11-26)
+
+
+### ✨ Features
+
+* add export modal with field selection for call logs ([04a3b8b](https://github.com/slemppa/rascal-ai/commit/04a3b8b15bb29dd10acf63fd687a8dc17d722164))
+
 ### [1.93.1](https://github.com/slemppa/rascal-ai/compare/v1.93.0...v1.93.1) (2025-11-26)
 
 

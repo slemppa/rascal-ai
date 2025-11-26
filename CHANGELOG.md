@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.96.0](https://github.com/slemppa/rascal-ai/compare/v1.95.0...v1.96.0) (2025-11-26)
+
+
+### 🐛 Bug Fixes
+
+* korjaa kampanjan tilastojen laskenta ja vastausprosentti ([ba61977](https://github.com/slemppa/rascal-ai/commit/ba61977dacd3ed78bd15095fca8d1114aa9e641f))
+
+
+### ✨ Features
+
+* vaihda Toiminnot-sarake Soittoyritykset-sarakkeeksi ([447a0c2](https://github.com/slemppa/rascal-ai/commit/447a0c2b4877b234aa588fa76403e2433abd5fe9))
+
 ### [1.95.2](https://github.com/slemppa/rascal-ai/compare/v1.95.1...v1.95.2) (2025-11-26)
 
 ### [1.95.1](https://github.com/slemppa/rascal-ai/compare/v1.95.0...v1.95.1) (2025-11-26)

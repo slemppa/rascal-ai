@@ -108,7 +108,9 @@ export default function CallPanel() {
     failed: 0,
     pending: 0,
     inProgress: 0,
-    totalCalls: 0
+    totalCalls: 0,
+    outbound: 0,
+    inbound: 0
   })
   
   // Viestilokin state-muuttujat
@@ -125,6 +127,7 @@ export default function CallPanel() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [callTypeFilter, setCallTypeFilter] = useState('')
+  const [directionFilter, setDirectionFilter] = useState('')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   
@@ -1132,11 +1135,18 @@ export default function CallPanel() {
 
       // Hae tilastot COUNT-kyselyillä (paljon tehokkaampi kuin kaikkien rivien haku)
       
-      // Yhteensä
-      const { count: totalCalls, error: totalError } = await supabase
+      // Soittoyritykset: summa attempt_count-arvot (NULL = 1), ei pending-statusta
+      const { data: attemptCounts, error: totalError } = await supabase
         .from('call_logs')
-        .select('*', { count: 'exact', head: true })
+        .select('attempt_count')
         .eq('user_id', orgId) // Käytetään organisaation ID:tä
+        .neq('call_status', 'pending') // Ei pending-statusta
+      
+      const totalCalls = attemptCounts?.reduce((sum, log) => {
+        // Jos attempt_count on NULL tai undefined, lasketaan 1
+        const attempts = log.attempt_count != null ? Number(log.attempt_count) : 1
+        return sum + attempts
+      }, 0) || 0
 
       // Vastatut (done + answered)
       const { count: answered, error: answeredError } = await supabase
@@ -1146,12 +1156,15 @@ export default function CallPanel() {
         .eq('call_status', 'done')
         .eq('answered', true)
 
-      // Onnistuneet (call_outcome = 'successful')
+      // Onnistuneet: status === 'done' && answered === true && (outcome === 'success' || outcome === 'successful')
+      // Sama logiikka kuin Kampanja-sivulla (api/campaigns.js)
       const { count: successful, error: successfulError } = await supabase
         .from('call_logs')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', orgId) // Käytetään organisaation ID:tä
-        .eq('call_outcome', 'successful')
+        .eq('call_status', 'done')
+        .eq('answered', true)
+        .or('call_outcome.eq.success,call_outcome.eq.successful')
 
       // Epäonnistuneet (done + !answered)
       const { count: failed, error: failedError } = await supabase
@@ -1180,13 +1193,24 @@ export default function CallPanel() {
         return
       }
 
+      // Laske outbound/inbound tilastot
+      const { data: directionLogs, error: directionError } = await supabase
+        .from('call_logs')
+        .select('direction')
+        .eq('user_id', orgId)
+      
+      const outbound = directionLogs?.filter(log => log.direction === 'outbound').length || 0
+      const inbound = directionLogs?.filter(log => log.direction === 'inbound').length || 0
+
       setStats({
         answered: answered || 0,
         successful: successful || 0,
         failed: failed || 0,
         pending: pending || 0,
         inProgress: inProgress || 0,
-        totalCalls: totalCalls || 0
+        totalCalls: totalCalls || 0,
+        outbound: outbound,
+        inbound: inbound
       })
     } catch (error) {
       console.error('Tilastojen haku epäonnistui:', error)
@@ -1225,8 +1249,12 @@ export default function CallPanel() {
             // Vastatut: done + answered (sama kuin tilastoissa)
             countQuery = countQuery.eq('call_status', 'done').eq('answered', true)
           } else if (statusFilter === 'successful') {
-            // Onnistuneet: call_outcome = 'successful' (sama kuin tilastoissa, ei call_status ehtoa)
-            countQuery = countQuery.eq('call_outcome', 'successful')
+            // Onnistuneet: status === 'done' && answered === true && (outcome === 'success' || outcome === 'successful')
+            // Sama logiikka kuin Kampanja-sivulla (api/campaigns.js)
+            countQuery = countQuery
+              .eq('call_status', 'done')
+              .eq('answered', true)
+              .or('call_outcome.eq.success,call_outcome.eq.successful')
           } else if (statusFilter === 'failed') {
             // Epäonnistuneet: done + !answered (sama kuin tilastoissa)
             countQuery = countQuery.eq('call_status', 'done').eq('answered', false)
@@ -1242,17 +1270,27 @@ export default function CallPanel() {
       }
       if (callTypeFilter) {
         if (callTypeFilter === 'successful') {
-          // Onnistuneet: call_outcome = 'successful' (sama kuin tilastoissa)
-          countQuery = countQuery.eq('call_outcome', 'successful')
+          // Onnistuneet: status === 'done' && answered === true && (outcome === 'success' || outcome === 'successful')
+          // Sama logiikka kuin Kampanja-sivulla (api/campaigns.js)
+          countQuery = countQuery
+            .eq('call_status', 'done')
+            .eq('answered', true)
+            .or('call_outcome.eq.success,call_outcome.eq.successful')
         } else {
           countQuery = countQuery.eq('call_type', callTypeFilter)
         }
       }
+      if (directionFilter) {
+        countQuery = countQuery.eq('direction', directionFilter)
+      }
       if (dateFrom) {
+          // dateFrom: alkaen 00:00:00
           countQuery = countQuery.gte('call_date', dateFrom)
       }
       if (dateTo) {
-          countQuery = countQuery.lte('call_date', dateTo)
+          // dateTo: asti 23:59:59.999 (koko päivä)
+          const dateToEndOfDay = `${dateTo}T23:59:59.999Z`
+          countQuery = countQuery.lte('call_date', dateToEndOfDay)
       }
 
       const { count: totalCount, error: countError } = await countQuery
@@ -1310,8 +1348,12 @@ export default function CallPanel() {
               // Vastatut: done + answered (sama kuin tilastoissa)
               query = query.eq('call_status', 'done').eq('answered', true)
             } else if (statusFilter === 'successful') {
-              // Onnistuneet: call_outcome = 'successful' (sama kuin tilastoissa, ei call_status ehtoa)
-              query = query.eq('call_outcome', 'successful')
+              // Onnistuneet: status === 'done' && answered === true && (outcome === 'success' || outcome === 'successful')
+              // Sama logiikka kuin Kampanja-sivulla (api/campaigns.js)
+              query = query
+                .eq('call_status', 'done')
+                .eq('answered', true)
+                .or('call_outcome.eq.success,call_outcome.eq.successful')
             } else if (statusFilter === 'failed') {
               // Epäonnistuneet: done + !answered (sama kuin tilastoissa)
               query = query.eq('call_status', 'done').eq('answered', false)
@@ -1327,17 +1369,27 @@ export default function CallPanel() {
         }
         if (callTypeFilter) {
           if (callTypeFilter === 'successful') {
-            // Onnistuneet: call_outcome = 'successful' (sama kuin tilastoissa)
-            query = query.eq('call_outcome', 'successful')
+            // Onnistuneet: status === 'done' && answered === true && (outcome === 'success' || outcome === 'successful')
+            // Sama logiikka kuin Kampanja-sivulla (api/campaigns.js)
+            query = query
+              .eq('call_status', 'done')
+              .eq('answered', true)
+              .or('call_outcome.eq.success,call_outcome.eq.successful')
           } else {
             query = query.eq('call_type', callTypeFilter)
           }
         }
+        if (directionFilter) {
+          query = query.eq('direction', directionFilter)
+        }
         if (dateFrom) {
+            // dateFrom: alkaen 00:00:00
             query = query.gte('call_date', dateFrom)
         }
         if (dateTo) {
-            query = query.lte('call_date', dateTo)
+            // dateTo: asti 23:59:59.999 (koko päivä)
+            const dateToEndOfDay = `${dateTo}T23:59:59.999Z`
+            query = query.lte('call_date', dateToEndOfDay)
         }
 
         const { data: pageLogs, error } = await query
@@ -1352,13 +1404,28 @@ export default function CallPanel() {
 
       setCallLogs(allLogs)
       // Päivitä KPI-tilastot suoraan suodatetusta callLogs-datasta, jotta laatikot seuraavat filttereitä
+      // Sama logiikka kuin Kampanja-sivulla (api/campaigns.js)
+      // Soittoyritykset: summa attempt_count-arvot (NULL = 1), ei pending-statusta
+      const totalCalls = allLogs
+        .filter(log => log.call_status !== 'pending') // Ei pending-statusta
+        .reduce((sum, log) => {
+          const attempts = log.attempt_count != null ? Number(log.attempt_count) : 1
+          return sum + attempts
+        }, 0)
+      
       const nextStats = {
         answered: allLogs.filter(log => log.call_status === 'done' && log.answered === true).length,
-        successful: allLogs.filter(log => log.call_outcome === 'successful').length,
+        successful: allLogs.filter(log => {
+          const status = (log.call_status || '').toLowerCase()
+          const outcome = (log.call_outcome || '').toLowerCase()
+          return status === 'done' && log.answered === true && (outcome === 'success' || outcome === 'successful')
+        }).length,
         failed: allLogs.filter(log => log.call_status === 'done' && log.answered === false).length,
         pending: allLogs.filter(log => log.call_status === 'pending').length,
         inProgress: allLogs.filter(log => log.call_status === 'in progress').length,
-        totalCalls: allLogs.length
+        totalCalls: totalCalls,
+        outbound: allLogs.filter(log => log.direction === 'outbound').length,
+        inbound: allLogs.filter(log => log.direction === 'inbound').length
       }
       setStats(nextStats)
       setCurrentPage(page)
@@ -1628,6 +1695,7 @@ export default function CallPanel() {
     setSearchTerm('')
     setStatusFilter('')
     setCallTypeFilter('')
+    setDirectionFilter('')
     setDateFrom('')
     setDateTo('')
     setSortField('created_at')
@@ -2589,6 +2657,29 @@ export default function CallPanel() {
                     ))}
                   </select>
                 </div>
+                
+                <div>
+                  <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
+                    Suunta
+                  </label>
+                  <select
+                    value={directionFilter}
+                    onChange={(e) => setDirectionFilter(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: 6,
+                      fontSize: 14,
+                      color: '#1f2937',
+                      background: '#fff'
+                    }}
+                  >
+                    <option value="">Kaikki</option>
+                    <option value="outbound">Lähtevät</option>
+                    <option value="inbound">Saapuvat</option>
+                  </select>
+                </div>
               </div>
               
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 16 }}>
@@ -2658,6 +2749,19 @@ export default function CallPanel() {
               gap: 24, 
               marginBottom: 32 
             }}>
+              {/* Soittoyritykset - ensimmäinen kortti */}
+              <div style={{ 
+                background: '#f8fafc', 
+                padding: 24, 
+                borderRadius: 12, 
+                border: '1px solid #e2e8f0' 
+              }}>
+                <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1', marginBottom: 8 }}>
+                    {stats.totalCalls}
+                </div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>Soittoyritykset</div>
+              </div>
+              
               <div style={{ 
                 background: '#f8fafc', 
                 padding: 24, 
@@ -2738,7 +2842,7 @@ export default function CallPanel() {
                 border: '1px solid #e2e8f0' 
               }}>
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#1d4ed8', marginBottom: 8 }}>
-                  {callLogs.filter(log => log.direction === 'outbound').length}
+                  {stats.outbound}
                 </div>
                 <div style={{ fontSize: 14, color: '#6b7280' }}>Lähtevät puhelut</div>
               </div>
@@ -2750,7 +2854,7 @@ export default function CallPanel() {
                 border: '1px solid #e2e8f0' 
               }}>
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#92400e', marginBottom: 8 }}>
-                  {callLogs.filter(log => log.direction === 'inbound').length}
+                  {stats.inbound}
                 </div>
                 <div style={{ fontSize: 14, color: '#6b7280' }}>Saapuvat puhelut</div>
               </div>

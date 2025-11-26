@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.95.1](https://github.com/slemppa/rascal-ai/compare/v1.95.0...v1.95.1) (2025-11-26)
+
+
+### 🐛 Bug Fixes
+
+* korjaa kampanjan tilastojen laskenta ja vastausprosentti ([ba61977](https://github.com/slemppa/rascal-ai/commit/ba61977dacd3ed78bd15095fca8d1114aa9e641f))
+
 ## [1.95.0](https://github.com/slemppa/rascal-ai/compare/v1.93.1...v1.95.0) (2025-11-26)
 
 

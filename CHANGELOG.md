@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.93.0](https://github.com/slemppa/rascal-ai/compare/v1.92.1...v1.93.0) (2025-11-26)
+
+
+### ✨ Features
+
+* parannettu Puheluloki-sivun filttereitä ja tilastoja ([90f5429](https://github.com/slemppa/rascal-ai/commit/90f5429c46428de21204edbf15d8571377090ef8))
+
 ### [1.92.1](https://github.com/slemppa/rascal-ai/compare/v1.92.0...v1.92.1) (2025-11-25)
 
 

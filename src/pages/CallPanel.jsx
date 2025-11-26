@@ -3126,7 +3126,7 @@ export default function CallPanel() {
                             </span>
                           )}
                         </th>
-                        <th style={{ padding: '8px', textAlign: 'right', fontWeight: 600 }}>Toiminnot</th>
+                        <th style={{ padding: '8px', textAlign: 'right', fontWeight: 600 }}>Soittoyritykset</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -3245,33 +3245,13 @@ export default function CallPanel() {
                                    log.call_status === 'in progress' ? 'Jonossa' : 'Tuntematon'}
                             </span>
                           </td>
-                          <td style={{ padding: '8px', textAlign: 'right', whiteSpace: 'nowrap' }} onClick={(e) => e.stopPropagation()}>
+                          <td style={{ padding: '8px', textAlign: 'right', whiteSpace: 'nowrap' }}>
                             {log.call_status === 'pending' ? (
-                              <div style={{ display: 'inline-flex', gap: 8 }}>
-                                <select
-                                  value={log.call_type || ''}
-                                  onChange={(e) => handleUpdateCallType(log, e.target.value)}
-                                  onClick={(e) => e.stopPropagation()}
-                                  onMouseDown={(e) => e.stopPropagation()}
-                                  disabled={!!updatingLogIds[log.id]}
-                                  style={{ padding: '4px 8px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 12, color: '#1f2937', background: '#fff' }}
-                                >
-                                  <option value="">Vaihda tyyppi...</option>
-                                  {callTypes.map(type => (
-                                    <option key={type.id} value={type.name}>{type.name}</option>
-                                  ))}
-                                </select>
-                                <Button
-                                  variant="secondary"
-                                  onClick={(e) => { e.stopPropagation(); handleCancelCall(log) }}
-                                  disabled={!!updatingLogIds[log.id]}
-                                  style={{ padding: '4px 10px', fontSize: 12, background: '#ef4444', color: '#fff' }}
-                                >
-                                  Peruuta
-                                </Button>
-                              </div>
+                              <span style={{ color: '#9ca3af', fontSize: 14 }}>—</span>
                             ) : (
-                              <span style={{ color: '#9ca3af', fontSize: 12 }}>—</span>
+                              <span style={{ color: '#1f2937', fontSize: 14, fontWeight: 500 }}>
+                                {log.attempt_count != null ? log.attempt_count : 1}
+                              </span>
                             )}
                           </td>
                         </tr>

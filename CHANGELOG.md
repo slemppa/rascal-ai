@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.93.1](https://github.com/slemppa/rascal-ai/compare/v1.93.0...v1.93.1) (2025-11-26)
+
+
+### 🐛 Bug Fixes
+
+* korjattu modaalien scrollaus ja features-vivut ([baead23](https://github.com/slemppa/rascal-ai/commit/baead23d23d64cb59ad50d94e66a7320e540e250))
+
 ## [1.93.0](https://github.com/slemppa/rascal-ai/compare/v1.92.1...v1.93.0) (2025-11-26)
 
 

@@ -16,9 +16,23 @@ export default function CampaignCard({ campaign, onStatusChange, onDelete }) {
   const answeredCalls = campaign.answered_calls || 0
   const successfulCalls = campaign.successful_calls || 0
   const calledCalls = campaign.called_calls || 0
-  const answerRate = totalCalls > 0 ? Math.round((answeredCalls / totalCalls) * 100) : 0
+  const attemptCount = campaign.attempt_count || 0 // Soittoyritykset
+  // Vastausprosentti = vastatut / soittoyritykset (sama logiikka kuin Puhelulokit-sivulla)
+  const answerRate = attemptCount > 0 ? Math.round((answeredCalls / attemptCount) * 100) : 0
   // Jäljellä = vain aktiiviset (pending + in progress), ei paused
   const remainingCalls = (campaign.pending_calls || 0) + (campaign.in_progress_calls || 0)
+  
+  // Debug: tarkista mitä kortti näyttää
+  if (campaign.id === '88f7e74a-2f4d-429f-984a-e7b447a7277b') {
+    console.log('=== CAMPAIGN CARD DEBUG ===', {
+      campaignId: campaign.id,
+      campaignName: campaign.name,
+      attempt_count: campaign.attempt_count,
+      called_calls: campaign.called_calls,
+      successful_calls: campaign.successful_calls,
+      fullCampaign: campaign
+    })
+  }
   
 
   const statusLabelMap = {
@@ -60,7 +74,11 @@ export default function CampaignCard({ campaign, onStatusChange, onDelete }) {
           )}
         </div>
         <div style={{ padding: 16, borderTop: '1px solid #f3f4f6' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12, fontSize: 14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr', gap: 12, fontSize: 14 }}>
+            <div>
+              <div style={{ color: '#6b7280' }}>Soittoyritykset</div>
+              <div style={{ fontWeight: 600 }}>{attemptCount}</div>
+            </div>
             <div>
               <div style={{ color: '#6b7280' }}>{t('campaigns.stats.calledCalls')}</div>
               <div style={{ fontWeight: 600 }}>{calledCalls}</div>

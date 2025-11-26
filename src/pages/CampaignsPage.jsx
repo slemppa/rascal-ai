@@ -28,6 +28,22 @@ export default function CampaignsPage() {
       }
       try {
         const data = await fetchCampaigns(userId)
+        // Debug: tarkista mitä API palauttaa
+        console.log('=== CAMPAIGNS PAGE DEBUG ===')
+        console.log('API response:', data)
+        const debugCampaign = data?.find(c => c.id === '88f7e74a-2f4d-429f-984a-e7b447a7277b')
+        if (debugCampaign) {
+          console.log('Debug campaign (rAHALIVE KAMPPIS):', {
+            id: debugCampaign.id,
+            name: debugCampaign.name,
+            attempt_count: debugCampaign.attempt_count,
+            called_calls: debugCampaign.called_calls,
+            successful_calls: debugCampaign.successful_calls,
+            answered_calls: debugCampaign.answered_calls,
+            failed_calls: debugCampaign.failed_calls,
+            total_calls: debugCampaign.total_calls
+          })
+        }
         if (mounted) setCampaigns(Array.isArray(data) ? data : [])
       } catch (err) {
         console.error('CampaignsPage: Error fetching data:', err)

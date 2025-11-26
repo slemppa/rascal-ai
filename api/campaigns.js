@@ -15,19 +15,13 @@ async function handler(req, res) {
   }
 
   try {
-    // req.organization.id = organisaation ID (public.users.id)
-    // req.supabase = authenticated Supabase client
-
     const idParam = req.query.user_id
     if (!idParam) {
       return res.status(400).json({ error: 'user_id puuttuu kyselystä' })
     }
 
-    // idParam voi olla joko public.users.id TAI auth.users.id
-    // Selvitetään public.users.id ennen kampanjoiden hakua
+    // Selvitetään public.users.id
     let publicUserId = null
-
-    // Selvitä public.users.id joko suoraan idParamista tai org_members kautta
     const { data: directUser } = await req.supabase
       .from('users')
       .select('id')
@@ -36,7 +30,6 @@ async function handler(req, res) {
     if (directUser?.id) publicUserId = directUser.id
 
     if (!publicUserId) {
-      // Tarkista onko idParam auth_user_id ja hae org_id org_members kautta
       const { data: orgMember } = await req.supabase
         .from('org_members')
         .select('org_id')
@@ -46,11 +39,10 @@ async function handler(req, res) {
     }
 
     if (!publicUserId) {
-      // Jos ei löydy, käytetään käyttäjän omaa organisaatiota
       publicUserId = req.organization.id
     }
 
-    // Hae kampanjat ja call_types-relaatio
+    // Hae kampanjat
     const { data: campaigns, error: campaignsError } = await req.supabase
       .from('campaigns')
       .select('*, call_types(name)')
@@ -65,110 +57,153 @@ async function handler(req, res) {
       return res.status(200).json([])
     }
 
-    const campaignIds = campaigns.map(c => c.id)
+    // Laske tilastot jokaiselle kampanjalle erikseen käyttäen samaa logiikkaa kuin Puhelulokit-sivu
+    const enriched = await Promise.all(campaigns.map(async (campaign) => {
+      const campaignId = campaign.id
+      const orgId = campaign.user_id || publicUserId
 
-    // Hae call_logs rivit ja laske aggregaatit muistissa
-    // Käytä paginationia hakeakseen kaikki rivit (Supabase palauttaa vain 1000 riviä oletuksena)
-    
-    // Hae ensin rivien kokonaismäärä
-    const { count: totalCount, error: countError } = await req.supabase
-      .from('call_logs')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', publicUserId)
-      .in('new_campaign_id', campaignIds)
-
-    if (countError) {
-      console.error('API: Error counting call logs:', countError)
-      return res.status(500).json({ error: 'Failed to count call logs', details: countError.message })
-    }
-
-
-    // Jos ei ole rivejä, palauta kampanjat ilman tilastoja
-    if (totalCount === 0) {
-      return res.status(200).json(campaigns.map(c => ({
-        ...c,
-        total_calls: 0,
-        answered_calls: 0,
-        successful_calls: 0
-      })))
-    }
-
-    // Hae kaikki rivit erissä (1000 riviä per sivu)
-    const pageSize = 1000
-    const totalPages = Math.ceil(totalCount / pageSize)
-    let allLogs = []
-
-    for (let page = 1; page <= totalPages; page++) {
-      const startIndex = (page - 1) * pageSize
-      const endIndex = Math.min(startIndex + pageSize - 1, totalCount - 1)
-
-      const { data: pageLogs, error: pageError } = await req.supabase
+      // Soittoyritykset: summa attempt_count-arvot (NULL = 1), ei pending-statusta
+      let attemptCountsBaseQuery = req.supabase
         .from('call_logs')
-        .select('new_campaign_id, answered, call_outcome, call_status, created_at, user_id')
-        .eq('user_id', publicUserId)
-        .in('new_campaign_id', campaignIds)
-        .order('created_at', { ascending: true })
-        .range(startIndex, endIndex)
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', orgId)
+        .eq('new_campaign_id', campaignId)
+        .neq('call_status', 'pending')
 
-      if (pageError) {
-        console.error(`API: Error fetching call logs page ${page}:`, pageError)
-        return res.status(500).json({ error: `Failed to fetch call logs page ${page}`, details: pageError.message })
-      }
+      const { count: attemptCountsTotal, error: countError } = await attemptCountsBaseQuery
 
-      allLogs = allLogs.concat(pageLogs || [])
-    }
+      let attempt_count = 0
+      if (!countError && attemptCountsTotal && attemptCountsTotal > 0) {
+        const pageSize = 1000
+        const totalPages = Math.ceil(attemptCountsTotal / pageSize)
+        let allAttemptCounts = []
 
+        for (let page = 1; page <= totalPages; page++) {
+          const startIndex = (page - 1) * pageSize
+          const endIndex = Math.min(startIndex + pageSize - 1, attemptCountsTotal - 1)
 
-    // Laske tilastot kaikista logeista Puheluloki-KPI-logiikalla
-    const statsByCampaign = {}
-    for (const log of allLogs) {
-      const cid = log.new_campaign_id
-      if (!cid) continue
-      
-      if (!statsByCampaign[cid]) {
-        statsByCampaign[cid] = { 
-          total_calls: 0, 
-          answered_calls: 0, 
-          successful_calls: 0, 
-          failed_calls: 0,
-          pending_calls: 0,
-          in_progress_calls: 0,
-          called_calls: 0 
+          const { data: pageAttemptCounts, error: pageError } = await req.supabase
+            .from('call_logs')
+            .select('attempt_count')
+            .eq('user_id', orgId)
+            .eq('new_campaign_id', campaignId)
+            .neq('call_status', 'pending')
+            .range(startIndex, endIndex)
+
+          if (pageError) break
+          allAttemptCounts = allAttemptCounts.concat(pageAttemptCounts || [])
         }
-      }
-      // Kaikki puhelut
-      statsByCampaign[cid].total_calls += 1
-      const status = (log.call_status || '').toLowerCase()
-      // Vastatut puhelut (vain valmiit)
-      if (status === 'done' && log.answered === true) statsByCampaign[cid].answered_calls += 1
-      // Onnistuneet puhelut: answered === true JA call_outcome = 'success' tai 'successful'
-      const outcome = (log.call_outcome || '').toLowerCase()
-      if (status === 'done' && log.answered === true && (outcome === 'success' || outcome === 'successful')) {
-        statsByCampaign[cid].successful_calls += 1
-      }
-      // Epäonnistuneet: valmiit ja ei-vastatut
-      if (status === 'done' && log.answered === false) {
-        statsByCampaign[cid].failed_calls += 1
-      }
-      // Pending
-      if (status === 'pending') statsByCampaign[cid].pending_calls += 1
-      // In progress
-      if (status === 'in progress') statsByCampaign[cid].in_progress_calls += 1
-      // Soitetut puhelut: vain valmiit (done). Paused EI ole soittettu.
-      if (status === 'done') statsByCampaign[cid].called_calls += 1
-    }
 
-    const enriched = campaigns.map(c => ({
-      ...c,
-      total_calls: statsByCampaign[c.id]?.total_calls || 0,
-      answered_calls: statsByCampaign[c.id]?.answered_calls || 0,
-      successful_calls: statsByCampaign[c.id]?.successful_calls || 0,
-      failed_calls: statsByCampaign[c.id]?.failed_calls || 0,
-      pending_calls: statsByCampaign[c.id]?.pending_calls || 0,
-      in_progress_calls: statsByCampaign[c.id]?.in_progress_calls || 0,
-      called_calls: statsByCampaign[c.id]?.called_calls || 0
+        attempt_count = allAttemptCounts.reduce((sum, log) => {
+          const attempts = log.attempt_count != null ? Number(log.attempt_count) : 1
+          return sum + attempts
+        }, 0)
+      }
+
+      // Vastatut (done + answered)
+      const { count: answered_calls } = await req.supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', orgId)
+        .eq('new_campaign_id', campaignId)
+        .eq('call_status', 'done')
+        .eq('answered', true)
+
+      // Onnistuneet
+      const { count: successful_calls } = await req.supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', orgId)
+        .eq('new_campaign_id', campaignId)
+        .eq('call_status', 'done')
+        .eq('answered', true)
+        .or('call_outcome.eq.success,call_outcome.eq.successful')
+
+      // Epäonnistuneet: vastatut puhelut (answered=true) joilla call_outcome ei ole 'success' tai 'successful'
+      // HUOM: Käytetään paginationia, koska Supabase palauttaa vain 1000 riviä oletuksena
+      let failedBaseQuery = req.supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', orgId)
+        .eq('new_campaign_id', campaignId)
+        .eq('call_status', 'done')
+        .eq('answered', true)
+
+      const { count: failedTotal } = await failedBaseQuery
+
+      let failed_calls = 0
+      if (failedTotal && failedTotal > 0) {
+        const pageSize = 1000
+        const totalPages = Math.ceil(failedTotal / pageSize)
+        let allFailedLogs = []
+
+        for (let page = 1; page <= totalPages; page++) {
+          const startIndex = (page - 1) * pageSize
+          const endIndex = Math.min(startIndex + pageSize - 1, failedTotal - 1)
+
+          const { data: pageFailedLogs } = await req.supabase
+            .from('call_logs')
+            .select('call_outcome')
+            .eq('user_id', orgId)
+            .eq('new_campaign_id', campaignId)
+            .eq('call_status', 'done')
+            .eq('answered', true)
+            .range(startIndex, endIndex)
+
+          if (pageFailedLogs) {
+            allFailedLogs = allFailedLogs.concat(pageFailedLogs)
+          }
+        }
+
+        failed_calls = allFailedLogs.filter(log => {
+          const outcome = (log.call_outcome || '').toLowerCase()
+          return outcome !== 'success' && outcome !== 'successful'
+        }).length
+      }
+
+      // Aikataulutettu
+      const { count: pending_calls } = await req.supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', orgId)
+        .eq('new_campaign_id', campaignId)
+        .eq('call_status', 'pending')
+
+      // Jonossa: in progress + calling (sama logiikka kuin Puhelulokit-sivulla)
+      const { count: in_progress_calls } = await req.supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', orgId)
+        .eq('new_campaign_id', campaignId)
+        .in('call_status', ['in progress', 'calling'])
+
+      // Yhteensä: kaikki puhelut
+      const { count: total_calls } = await req.supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', orgId)
+        .eq('new_campaign_id', campaignId)
+
+      // Soitetut: vain valmiit (done)
+      const { count: called_calls } = await req.supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', orgId)
+        .eq('new_campaign_id', campaignId)
+        .eq('call_status', 'done')
+
+      return {
+        ...campaign,
+        attempt_count: attempt_count || 0,
+        answered_calls: answered_calls || 0,
+        successful_calls: successful_calls || 0,
+        failed_calls: failed_calls || 0,
+        pending_calls: pending_calls || 0,
+        in_progress_calls: in_progress_calls || 0,
+        total_calls: total_calls || 0,
+        called_calls: called_calls || 0
+      }
     }))
-
 
     res.status(200).json(enriched)
   } catch (error) {
@@ -178,5 +213,3 @@ async function handler(req, res) {
 }
 
 export default withOrganization(handler)
-
-

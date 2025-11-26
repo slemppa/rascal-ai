@@ -521,6 +521,30 @@ export default function SettingsIntegrationsTab() {
     ))
   }
 
+  // Kuuntele popupin postMessage-viestejä
+  useEffect(() => {
+    const handleMessage = (event) => {
+      // Varmista tarvittaessa origin tietoturvasyistä
+      // if (event.origin !== window.location.origin) return;
+
+      if (event.data && event.data.type === 'GOOGLE_AUTH_RESULT') {
+        setOauthConnecting(false);
+        
+        if (event.data.status === 'success') {
+          setMessage({ type: 'success', text: event.data.message });
+          setTimeout(() => {
+            loadIntegrations();
+          }, 1000);
+        } else {
+          setMessage({ type: 'error', text: event.data.message });
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [loadIntegrations]);
+
   // Käynnistä Google Analytics OAuth -virta
   const handleGoogleAnalyticsOAuth = async () => {
     if (!user?.id || oauthConnecting) return
@@ -549,26 +573,37 @@ export default function SettingsIntegrationsTab() {
         throw new Error('OAuth URL ei saatu')
       }
 
-      // Avaa OAuth-ikkuna
+      // Avaa popup keskelle ruutua
+      const width = 600
+      const height = 700
+      const left = window.screenX + (window.outerWidth - width) / 2
+      const top = window.screenY + (window.outerHeight - height) / 2
+      
       const popup = window.open(
         authUrl,
         'google_analytics_oauth',
-        'width=600,height=700,menubar=no,toolbar=no,location=yes,status=no,scrollbars=yes,resizable=yes'
+        `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=yes,status=no`
       )
 
       if (!popup) {
-        throw new Error('Popup estetty. Salli popup-ikkunat tälle sivustolle.')
+        setOauthConnecting(false)
+        setMessage({ type: 'error', text: 'Popup estetty. Salli popup-ikkunat tälle sivustolle.' })
+        return
       }
 
-      // Seuraa popupin sulkeutumista (callback hoitaa uudelleenohjauksen)
+      // Fallback: jos postMessage ei toimi tai ikkuna suljetaan manuaalisesti ilman viestiä
       const checkPopup = setInterval(() => {
         if (popup.closed) {
           clearInterval(checkPopup)
-          setOauthConnecting(false)
-          // Lataa integraatiot uudelleen callbackin jälkeen
-          setTimeout(() => {
-            loadIntegrations()
-          }, 2000)
+          // Jos tila on yhä "connecting", käyttäjä todennäköisesti sulki ikkunan manuaalisesti
+          setOauthConnecting((prev) => {
+            if (prev) {
+              // Voimme yrittää ladata integraatiot varmuuden vuoksi, jos viesti jäi saamatta
+              loadIntegrations()
+              return false
+            }
+            return false
+          })
         }
       }, 1000)
 

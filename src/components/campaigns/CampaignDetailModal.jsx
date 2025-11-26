@@ -83,6 +83,112 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
                 </button>
                 {pauseError && <div style={{ color: '#dc2626', alignSelf: 'center' }}>{pauseError}</div>}
               </div>
+              
+              {/* Tilastot - samalla tavalla kuin Puhelulokit-sivulla */}
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                gap: 24, 
+                marginBottom: 16 
+              }}>
+                {/* Soittoyritykset - ensimmäinen kortti */}
+                <div style={{ 
+                  background: '#f8fafc', 
+                  padding: 24, 
+                  borderRadius: 12, 
+                  border: '1px solid #e2e8f0' 
+                }}>
+                  <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1', marginBottom: 8 }}>
+                    {campaign.attempt_count || 0}
+                  </div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>Soittoyritykset</div>
+                </div>
+                
+                <div style={{ 
+                  background: '#f8fafc', 
+                  padding: 24, 
+                  borderRadius: 12, 
+                  border: '1px solid #e2e8f0' 
+                }}>
+                  <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e', marginBottom: 8 }}>
+                    {campaign.answered_calls || 0}
+                  </div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>Vastatut puhelut</div>
+                </div>
+                
+                <div style={{ 
+                  background: '#f8fafc', 
+                  padding: 24, 
+                  borderRadius: 12, 
+                  border: '1px solid #e2e8f0' 
+                }}>
+                  <div style={{ fontSize: 32, fontWeight: 700, color: '#10b981', marginBottom: 8 }}>
+                    {campaign.successful_calls || 0}
+                  </div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>Onnistuneet puhelut</div>
+                </div>
+                
+                <div style={{ 
+                  background: '#f8fafc', 
+                  padding: 24, 
+                  borderRadius: 12, 
+                  border: '1px solid #e2e8f0' 
+                }}>
+                  <div style={{ fontSize: 32, fontWeight: 700, color: '#ef4444', marginBottom: 8 }}>
+                    {campaign.failed_calls || 0}
+                  </div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>Epäonnistuneet</div>
+                </div>
+                
+                <div style={{ 
+                  background: '#f8fafc', 
+                  padding: 24, 
+                  borderRadius: 12, 
+                  border: '1px solid #e2e8f0' 
+                }}>
+                  <div style={{ fontSize: 32, fontWeight: 700, color: '#f59e0b', marginBottom: 8 }}>
+                    {campaign.pending_calls || 0}
+                  </div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>Aikataulutettu</div>
+                </div>
+
+                <div style={{ 
+                  background: '#f8fafc', 
+                  padding: 24, 
+                  borderRadius: 12, 
+                  border: '1px solid #e2e8f0' 
+                }}>
+                  <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6', marginBottom: 8 }}>
+                    {campaign.in_progress_calls || 0}
+                  </div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>Jonossa</div>
+                </div>
+                  
+                <div style={{ 
+                  background: '#f8fafc', 
+                  padding: 24, 
+                  borderRadius: 12, 
+                  border: '1px solid #e2e8f0' 
+                }}>
+                  <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1', marginBottom: 8 }}>
+                    {campaign.total_calls || 0}
+                  </div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>Yhteensä</div>
+                </div>
+                
+                <div style={{ 
+                  background: '#f8fafc', 
+                  padding: 24, 
+                  borderRadius: 12, 
+                  border: '1px solid #e2e8f0' 
+                }}>
+                  <div style={{ fontSize: 32, fontWeight: 700, color: '#1d4ed8', marginBottom: 8 }}>
+                    {campaign.called_calls || 0}
+                  </div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>Soitetut</div>
+                </div>
+              </div>
+              
               <CampaignStats campaignId={campaign.id} />
             </div>
           )}

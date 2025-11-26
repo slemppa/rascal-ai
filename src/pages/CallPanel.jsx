@@ -114,7 +114,9 @@ export default function CallPanel() {
     failed: 0,
     pending: 0,
     inProgress: 0,
-    totalCalls: 0,
+    totalCalls: 0, // Soittoyritykset (summa attempt_count, ei pending)
+    totalLogs: 0, // Yhteensä (kaikki puhelut)
+    calledCalls: 0, // Soitetut (vain done)
     outbound: 0,
     inbound: 0
   })
@@ -1166,60 +1168,153 @@ export default function CallPanel() {
       const orgId = await getUserOrgId(user.id)
       if (!orgId) return
 
+      // Helper-funktio filttereiden soveltamiseen
+      // HUOM: statusFilter ei vaikuta tilastoihin, vaan vain listan näyttämiseen
+      const applyFilters = (query) => {
+        // call_type filtteri (ei 'successful', koska se on erityinen filtteri)
+        if (callTypeFilter && callTypeFilter !== 'successful') {
+          query = query.eq('call_type', callTypeFilter)
+        }
+        // direction filtteri
+        if (directionFilter) {
+          query = query.eq('direction', directionFilter)
+        }
+        // wants_contact filtteri
+        if (wantsContactFilter !== '') {
+          if (wantsContactFilter === 'true') {
+            query = query.eq('wants_contact', true)
+          } else if (wantsContactFilter === 'false') {
+            query = query.eq('wants_contact', false)
+          }
+        }
+        // Päivämäärä filtterit
+        if (dateFrom) {
+          query = query.gte('call_date', dateFrom)
+        }
+        if (dateTo) {
+          const dateToEndOfDay = `${dateTo}T23:59:59.999Z`
+          query = query.lte('call_date', dateToEndOfDay)
+        }
+        return query
+      }
+
       // Hae tilastot COUNT-kyselyillä (paljon tehokkaampi kuin kaikkien rivien haku)
+      // HUOM: Tilastot lasketaan filtteröidystä datasta (paitsi statusFilter, koska se määrittää mitä tilastoa näytetään)
       
       // Soittoyritykset: summa attempt_count-arvot (NULL = 1), ei pending-statusta
-      const { data: attemptCounts, error: totalError } = await supabase
+      // HUOM: Käytetään paginationia, koska Supabase palauttaa vain 1000 riviä oletuksena
+      let attemptCountsBaseQuery = supabase
         .from('call_logs')
-        .select('attempt_count')
+        .select('*', { count: 'exact', head: true })
         .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .neq('call_status', 'pending') // Ei pending-statusta
       
-      const totalCalls = attemptCounts?.reduce((sum, log) => {
-        // Jos attempt_count on NULL tai undefined, lasketaan 1
-        const attempts = log.attempt_count != null ? Number(log.attempt_count) : 1
-        return sum + attempts
-      }, 0) || 0
+      // Sovella filtterit (paitsi statusFilter, koska se määrittää mitä tilastoa näytetään)
+      attemptCountsBaseQuery = applyFilters(attemptCountsBaseQuery)
+      
+      // Hae ensin rivien kokonaismäärä
+      const { count: attemptCountsTotal, error: countError } = await attemptCountsBaseQuery
+      
+      let totalCalls = 0
+      let totalError = countError
+      
+      if (countError) {
+        console.error('Soittoyritykset: Rivien määrän haku epäonnistui:', countError)
+      } else if (attemptCountsTotal && attemptCountsTotal > 0) {
+        // Hae kaikki rivit erissä (1000 riviä per sivu)
+        const pageSize = 1000
+        const totalPages = Math.ceil(attemptCountsTotal / pageSize)
+        let allAttemptCounts = []
+        
+        for (let page = 1; page <= totalPages; page++) {
+          const startIndex = (page - 1) * pageSize
+          const endIndex = Math.min(startIndex + pageSize - 1, attemptCountsTotal - 1)
+          
+          let attemptCountsQuery = supabase
+            .from('call_logs')
+            .select('attempt_count')
+            .eq('user_id', orgId)
+            .neq('call_status', 'pending')
+          attemptCountsQuery = applyFilters(attemptCountsQuery)
+          attemptCountsQuery = attemptCountsQuery.range(startIndex, endIndex)
+          
+          const { data: pageAttemptCounts, error: pageError } = await attemptCountsQuery
+          
+          if (pageError) {
+            console.error(`Soittoyritykset: Sivun ${page} haku epäonnistui:`, pageError)
+            totalError = pageError
+            break
+          }
+          
+          allAttemptCounts = allAttemptCounts.concat(pageAttemptCounts || [])
+        }
+        
+        // Laske summa
+        totalCalls = allAttemptCounts.reduce((sum, log) => {
+          // Jos attempt_count on NULL tai undefined, lasketaan 1
+          const attempts = log.attempt_count != null ? Number(log.attempt_count) : 1
+          return sum + attempts
+        }, 0)
+      }
 
       // Vastatut (done + answered)
-      const { count: answered, error: answeredError } = await supabase
+      let answeredQuery = supabase
         .from('call_logs')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('call_status', 'done')
         .eq('answered', true)
+      answeredQuery = applyFilters(answeredQuery)
+      const { count: answered, error: answeredError } = await answeredQuery
 
       // Onnistuneet: status === 'done' && answered === true && (outcome === 'success' || outcome === 'successful')
       // Sama logiikka kuin Kampanja-sivulla (api/campaigns.js)
-      const { count: successful, error: successfulError } = await supabase
+      let successfulQuery = supabase
         .from('call_logs')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('call_status', 'done')
         .eq('answered', true)
         .or('call_outcome.eq.success,call_outcome.eq.successful')
+      successfulQuery = applyFilters(successfulQuery)
+      const { count: successful, error: successfulError } = await successfulQuery
 
-      // Epäonnistuneet (done + !answered)
-      const { count: failed, error: failedError } = await supabase
+      // Epäonnistuneet: vastatut puhelut (answered=true) joilla call_outcome ei ole 'success' tai 'successful'
+      // Tämä sisältää: failed, voice mail, ja muut epäonnistuneet tulokset
+      // HUOM: Supabase ei tue .not('call_outcome', 'in', ...) suoraan, joten haetaan kaikki vastatut
+      // ja suodatetaan ne joilla call_outcome ei ole 'success' tai 'successful'
+      let failedQuery = supabase
         .from('call_logs')
-        .select('*', { count: 'exact', head: true })
+        .select('call_outcome')
         .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('call_status', 'done')
-        .eq('answered', false)
+        .eq('answered', true)
+      failedQuery = applyFilters(failedQuery)
+      const { data: failedLogs, error: failedError } = await failedQuery
+      
+      // Suodata client-puolella: poista ne joilla call_outcome on 'success' tai 'successful'
+      const failed = failedLogs?.filter(log => {
+        const outcome = (log.call_outcome || '').toLowerCase()
+        return outcome !== 'success' && outcome !== 'successful'
+      }).length || 0
 
       // Aikataulutettu
-      const { count: pending, error: pendingError } = await supabase
+      let pendingQuery = supabase
         .from('call_logs')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('call_status', 'pending')
+      pendingQuery = applyFilters(pendingQuery)
+      const { count: pending, error: pendingError } = await pendingQuery
 
       // Jonossa
-      const { count: inProgress, error: inProgressError } = await supabase
+      let inProgressQuery = supabase
         .from('call_logs')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('call_status', 'in progress')
+      inProgressQuery = applyFilters(inProgressQuery)
+      const { count: inProgress, error: inProgressError } = await inProgressQuery
 
       if (totalError || answeredError || successfulError || failedError || pendingError || inProgressError) {
         console.error('Tilastojen haku epäonnistui:', { totalError, answeredError, successfulError, failedError, pendingError, inProgressError })
@@ -1227,13 +1322,73 @@ export default function CallPanel() {
       }
 
       // Laske outbound/inbound tilastot
-      const { data: directionLogs, error: directionError } = await supabase
+      // HUOM: Käytetään paginationia, koska Supabase palauttaa vain 1000 riviä oletuksena
+      let directionCountQuery = supabase
         .from('call_logs')
-        .select('direction')
+        .select('*', { count: 'exact', head: true })
         .eq('user_id', orgId)
+      directionCountQuery = applyFilters(directionCountQuery)
+      const { count: directionTotal, error: directionCountError } = await directionCountQuery
       
-      const outbound = directionLogs?.filter(log => log.direction === 'outbound').length || 0
-      const inbound = directionLogs?.filter(log => log.direction === 'inbound').length || 0
+      let outbound = 0
+      let inbound = 0
+      let directionError = directionCountError
+      
+      if (directionCountError) {
+        console.error('Lähtevät/Saapuvat: Rivien määrän haku epäonnistui:', directionCountError)
+      } else if (directionTotal && directionTotal > 0) {
+        // Hae kaikki rivit erissä (1000 riviä per sivu)
+        const pageSize = 1000
+        const totalPages = Math.ceil(directionTotal / pageSize)
+        let allDirectionLogs = []
+        
+        for (let page = 1; page <= totalPages; page++) {
+          const startIndex = (page - 1) * pageSize
+          const endIndex = Math.min(startIndex + pageSize - 1, directionTotal - 1)
+          
+          let directionQuery = supabase
+            .from('call_logs')
+            .select('direction')
+            .eq('user_id', orgId)
+          directionQuery = applyFilters(directionQuery)
+          directionQuery = directionQuery.range(startIndex, endIndex)
+          
+          const { data: pageDirectionLogs, error: pageError } = await directionQuery
+          
+          if (pageError) {
+            console.error(`Lähtevät/Saapuvat: Sivun ${page} haku epäonnistui:`, pageError)
+            directionError = pageError
+            break
+          }
+          
+          allDirectionLogs = allDirectionLogs.concat(pageDirectionLogs || [])
+        }
+        
+        // Laske outbound/inbound
+        outbound = allDirectionLogs.filter(log => log.direction === 'outbound').length || 0
+        inbound = allDirectionLogs.filter(log => log.direction === 'inbound').length || 0
+      }
+
+      // Yhteensä: kaikki puhelut (sama logiikka kuin Kampanjat-sivulla)
+      let totalLogsQuery = supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', orgId)
+      totalLogsQuery = applyFilters(totalLogsQuery)
+      const { count: totalLogs, error: totalLogsError } = await totalLogsQuery
+
+      // Soitetut: vain valmiit (done) - sama logiikka kuin Kampanjat-sivulla
+      let calledCallsQuery = supabase
+        .from('call_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', orgId)
+        .eq('call_status', 'done')
+      calledCallsQuery = applyFilters(calledCallsQuery)
+      const { count: calledCalls, error: calledCallsError } = await calledCallsQuery
+
+      if (totalLogsError || calledCallsError) {
+        console.error('Tilastojen haku epäonnistui:', { totalLogsError, calledCallsError })
+      }
 
       setStats({
         answered: answered || 0,
@@ -1241,7 +1396,9 @@ export default function CallPanel() {
         failed: failed || 0,
         pending: pending || 0,
         inProgress: inProgress || 0,
-        totalCalls: totalCalls || 0,
+        totalCalls: totalCalls || 0, // Soittoyritykset
+        totalLogs: totalLogs || 0, // Yhteensä (kaikki puhelut)
+        calledCalls: calledCalls || 0, // Soitetut (vain done)
         outbound: outbound,
         inbound: inbound
       })
@@ -1450,31 +1607,8 @@ export default function CallPanel() {
       }
 
       setCallLogs(allLogs)
-      // Päivitä KPI-tilastot suoraan suodatetusta callLogs-datasta, jotta laatikot seuraavat filttereitä
-      // Sama logiikka kuin Kampanja-sivulla (api/campaigns.js)
-      // Soittoyritykset: summa attempt_count-arvot (NULL = 1), ei pending-statusta
-      const totalCalls = allLogs
-        .filter(log => log.call_status !== 'pending') // Ei pending-statusta
-        .reduce((sum, log) => {
-          const attempts = log.attempt_count != null ? Number(log.attempt_count) : 1
-          return sum + attempts
-        }, 0)
-      
-      const nextStats = {
-        answered: allLogs.filter(log => log.call_status === 'done' && log.answered === true).length,
-        successful: allLogs.filter(log => {
-          const status = (log.call_status || '').toLowerCase()
-          const outcome = (log.call_outcome || '').toLowerCase()
-          return status === 'done' && log.answered === true && (outcome === 'success' || outcome === 'successful')
-        }).length,
-        failed: allLogs.filter(log => log.call_status === 'done' && log.answered === false).length,
-        pending: allLogs.filter(log => log.call_status === 'pending').length,
-        inProgress: allLogs.filter(log => log.call_status === 'in progress').length,
-        totalCalls: totalCalls,
-        outbound: allLogs.filter(log => log.direction === 'outbound').length,
-        inbound: allLogs.filter(log => log.direction === 'inbound').length
-      }
-      setStats(nextStats)
+      // Älä päivitä tilastoja filtteröidystä datasta - käytetään aina fetchStats() funktiosta saatuja tilastoja
+      // Tämä varmistaa että tilastot näyttävät oikeat luvut ilman filttereitä
       setCurrentPage(page)
       setTotalCount(totalCount)
       
@@ -1488,9 +1622,10 @@ export default function CallPanel() {
 
     useEffect(() => {
       if (user?.id && activeTab === 'logs') {
-      fetchCallLogs()
+        fetchStats() // Hae tilastot filttereiden kanssa
+        fetchCallLogs()
       }
-  }, [user, activeTab, sortField, sortDirection]) // Suoritetaan kun user, activeTab, sortField tai sortDirection muuttuu
+  }, [user, activeTab, sortField, sortDirection, callTypeFilter, directionFilter, wantsContactFilter, dateFrom, dateTo]) // Suoritetaan kun user, activeTab, sortField, sortDirection tai filtterit muuttuvat
 
   // Hae viestiloki
   const fetchMessageLogs = async () => {
@@ -2830,7 +2965,7 @@ export default function CallPanel() {
                 border: '1px solid #e2e8f0' 
               }}>
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1', marginBottom: 8 }}>
-                    {stats.totalCalls}
+                    {stats.totalLogs}
                 </div>
                 <div style={{ fontSize: 14, color: '#6b7280' }}>Yhteensä</div>
               </div>

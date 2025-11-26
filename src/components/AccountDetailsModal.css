@@ -17,11 +17,12 @@
   border-radius: 1rem;
   max-width: 1200px;
   width: 90%;
-  height: 90vh;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   border: 2px solid #cea78d;
+  overflow: hidden;
 }
 
 .modal-header {
@@ -115,7 +116,9 @@
 .modal-body {
   padding: 1.5rem;
   overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
+  min-height: 0; /* Tärkeä flexbox-scrollauksen kannalta */
 }
 
 .details-section {
@@ -186,6 +189,8 @@
   font-size: 0.95rem;
   font-family: inherit;
   resize: vertical;
+  overflow-y: auto;
+  overflow-x: hidden;
   transition: border-color 0.2s;
 }
 

@@ -537,22 +537,20 @@ export default function AccountDetailsPage() {
       
       console.log('Saving features to database:', featuresToSave)
       
-      const { error, data } = await supabase
+      // Päivitä features tietokantaan
+      const { error } = await supabase
         .from('users')
         .update({ features: featuresToSave })
         .eq('id', account.id)
-        .select('features')
-        .single()
 
       if (error) {
         console.error('Supabase error:', error)
         throw error
       }
 
-      // Päivitä state tietokannasta saadulla datalla
-      const savedFeatures = Array.isArray(data?.features) ? data.features : []
-      console.log('Features saved successfully:', savedFeatures)
-      setAccountFeatures(savedFeatures)
+      // Päivitä state suoraan tallennettuun arvoon (RLS voi estää select-kyselyn)
+      console.log('Features saved successfully:', featuresToSave)
+      setAccountFeatures(featuresToSave)
       setSaveMessage('Ominaisuudet päivitetty!')
       setTimeout(() => setSaveMessage(''), 3000)
     } catch (error) {

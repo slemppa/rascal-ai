@@ -378,6 +378,8 @@
   font-size: 0.95rem;
   font-family: inherit;
   resize: vertical;
+  overflow-y: auto;
+  overflow-x: hidden;
   transition: border-color 0.2s;
 }
 

@@ -96,6 +96,62 @@ const SocialMediaConnect = () => {
     return null;
   };
 
+  // Apufunktio joka laskee päivät ja palauttaa varoitustiedot
+  const getReauthorizationWarning = (account) => {
+    if (!account) return null;
+
+    // Määritä raja-arvot alustakohtaisesti
+    const expirationDays = {
+      'facebook': 90,
+      'instagram': 90,
+      'linkedin': 365
+    };
+
+    const maxDays = expirationDays[account.provider];
+    if (!maxDays) return null;
+
+    // Käytä last_synced_at jos saatavilla, muuten created_at
+    const lastDate = account.last_synced_at || account.created_at;
+    if (!lastDate) return null;
+
+    const lastDateObj = new Date(lastDate);
+    const now = new Date();
+    const daysSince = Math.floor((now - lastDateObj) / (1000 * 60 * 60 * 24));
+    const daysRemaining = maxDays - daysSince;
+
+    // Jos ylitetty, palauta expired
+    if (daysRemaining <= 0) {
+      return {
+        level: 'expired',
+        daysRemaining: 0,
+        daysSince: daysSince,
+        maxDays: maxDays
+      };
+    }
+
+    // Jos alle 7 päivää jäljellä, palauta warning
+    if (daysRemaining <= 7) {
+      return {
+        level: 'warning',
+        daysRemaining: daysRemaining,
+        daysSince: daysSince,
+        maxDays: maxDays
+      };
+    }
+
+    // Jos alle 30 päivää jäljellä, palauta info
+    if (daysRemaining <= 30) {
+      return {
+        level: 'info',
+        daysRemaining: daysRemaining,
+        daysSince: daysSince,
+        maxDays: maxDays
+      };
+    }
+
+    return null;
+  };
+
   return (
     <div className="social-media-connect">
       <style>{spinAnimation}</style>
@@ -129,51 +185,95 @@ const SocialMediaConnect = () => {
         
         <div className="accounts-grid">
           {/* Yhdistetyt tilit */}
-          {connectedAccounts.map((account, index) => (
-            <div key={index} className="account-card">
-              {/* Profiilikuva */}
-              <div className={`profile-image ${account.provider}`}>
-                {getProfileImageUrl(account) ? (
-                  <img 
-                    src={getProfileImageUrl(account)} 
-                    alt={account.name || account.username}
-                    className="profile-img"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                ) : null}
-                <div className="profile-fallback">
-                  {(account.name || account.username || '?').charAt(0).toUpperCase()}
+          {connectedAccounts.map((account, index) => {
+            const warning = getReauthorizationWarning(account);
+            
+            return (
+              <div key={index} className={`account-card ${warning ? `warning-${warning.level}` : ''}`}>
+                {/* Profiilikuva */}
+                <div className={`profile-image ${account.provider}`}>
+                  {getProfileImageUrl(account) ? (
+                    <img 
+                      src={getProfileImageUrl(account)} 
+                      alt={account.name || account.username}
+                      className="profile-img"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div className="profile-fallback">
+                    {(account.name || account.username || '?').charAt(0).toUpperCase()}
+                  </div>
+                  {/* Platform-ikoni profiilikuvan alaosassa */}
+                  <div className="profile-platform-icon">
+                    {account.provider === 'instagram' ? '📷' :
+                     account.provider === 'facebook' ? '📘' : 
+                     account.provider === 'linkedin' ? '💼' : '?'}
+                  </div>
                 </div>
-                {/* Platform-ikoni profiilikuvan alaosassa */}
-                <div className="profile-platform-icon">
-                  {account.provider === 'instagram' ? '📷' :
-                   account.provider === 'facebook' ? '📘' : '?'}
-                </div>
-              </div>
 
-              {/* Tilin tiedot */}
-              <div className="account-info">
-                <div className="account-name">
-                  {account.name || account.username}
-                </div>
-                <div className="account-username">
-                  @{account.username}
-                </div>
-                <div className="account-provider">
-                  {account.provider === 'instagram' ? 'Instagram' :
-                   account.provider === 'facebook' ? 'Facebook' : 
-                   account.provider === 'linkedin' ? 'LinkedIn' : 
-                   account.provider}
-                </div>
-                <div className="account-date">
-                  {t('settings.social.addedAt', { date: account.created_at ? new Date(account.created_at).toLocaleDateString('fi-FI') : t('settings.social.unknownDate') })}
+                {/* Tilin tiedot */}
+                <div className="account-info">
+                  <div className="account-name">
+                    {account.name || account.username}
+                  </div>
+                  <div className="account-username">
+                    @{account.username}
+                  </div>
+                  <div className="account-provider">
+                    {account.provider === 'instagram' ? 'Instagram' :
+                     account.provider === 'facebook' ? 'Facebook' : 
+                     account.provider === 'linkedin' ? 'LinkedIn' : 
+                     account.provider}
+                  </div>
+                  <div className="account-date">
+                    {t('settings.social.addedAt', { date: account.created_at ? new Date(account.created_at).toLocaleDateString('fi-FI') : t('settings.social.unknownDate') })}
+                  </div>
+                  
+                  {/* Varoitus */}
+                  {warning && (
+                    <div className={`account-warning warning-${warning.level}`}>
+                      {warning.level === 'expired' && (
+                        <div className="warning-content">
+                          <span className="warning-icon">⚠️</span>
+                          <span className="warning-text">
+                            {t('settings.social.warning.expired', { 
+                              days: warning.daysSince,
+                              maxDays: warning.maxDays 
+                            })}
+                          </span>
+                        </div>
+                      )}
+                      {warning.level === 'warning' && (
+                        <div className="warning-content">
+                          <span className="warning-icon">⚠️</span>
+                          <span className="warning-text">
+                            {t('settings.social.warning.soon', { 
+                              days: warning.daysRemaining,
+                              maxDays: warning.maxDays 
+                            })}
+                          </span>
+                        </div>
+                      )}
+                      {warning.level === 'info' && (
+                        <div className="warning-content">
+                          <span className="warning-icon">ℹ️</span>
+                          <span className="warning-text">
+                            {t('settings.social.warning.reminder', { 
+                              days: warning.daysRemaining,
+                              maxDays: warning.maxDays 
+                            })}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/* "Lisää tili" -kortti */}
           <div className="add-account-card">

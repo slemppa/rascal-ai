@@ -189,6 +189,65 @@
   text-overflow: ellipsis;
 }
 
+/* Varoitukset */
+.account-warning {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.account-warning.warning-expired {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+}
+
+.account-warning.warning-warning {
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #d97706;
+}
+
+.account-warning.warning-info {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
+}
+
+.warning-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.warning-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+
+.warning-text {
+  flex: 1;
+  font-weight: 500;
+}
+
+/* Varoitustilassa olevat kortit */
+.account-card.warning-expired {
+  border-color: #fecaca;
+  border-width: 2px;
+}
+
+.account-card.warning-warning {
+  border-color: #fde68a;
+  border-width: 2px;
+}
+
+.account-card.warning-info {
+  border-color: #bfdbfe;
+}
+
 
 
 .add-account-card {
@@ -404,6 +463,16 @@
     font-size: 10px;
   }
 
+  .account-warning {
+    margin-top: 6px;
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  .warning-icon {
+    font-size: 12px;
+  }
+
   .platform-icon {
     width: 28px;
     height: 28px;
@@ -533,6 +602,16 @@
 
   .account-date {
     font-size: 9px;
+  }
+
+  .account-warning {
+    margin-top: 4px;
+    padding: 5px 6px;
+    font-size: 9px;
+  }
+
+  .warning-icon {
+    font-size: 11px;
   }
 
   .platform-icon {

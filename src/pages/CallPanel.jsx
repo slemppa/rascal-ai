@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { useSearchParams } from 'react-router-dom'
 import CallDetailModal from '../components/calls/CallDetailModal'
 import { supabase } from '../lib/supabase'
 import AddCallTypeModal from '../components/AddCallTypeModal'
@@ -19,11 +20,13 @@ import axios from 'axios'
 import PageMeta from '../components/PageMeta'
 import '../components/ModalComponents.css'
 import { useFeatures } from '../hooks/useFeatures'
+import ExportCallLogsModal from '../components/ExportCallLogsModal'
 
 export default function CallPanel() {
   const { user } = useAuth()
   const { has: hasFeature, crmConnected } = useFeatures()
   const { t } = useTranslation('common')
+  const [searchParams, setSearchParams] = useSearchParams()
   
   // Kovakoodatut tarkistukset
   const isMika = user?.email === 'mika.jarvinen@kuudesaisti.fi'
@@ -63,7 +66,10 @@ export default function CallPanel() {
   const [currentAudio, setCurrentAudio] = useState(null)
   const [audioInfo, setAudioInfo] = useState('')
   const audioElementsRef = useRef([])
-  const [activeTab, setActiveTab] = useState('calls')
+  
+  // Lue URL-parametri aktiivisen välilehden määrittämiseen
+  const tabFromUrl = searchParams.get('tab')
+  const [activeTab, setActiveTab] = useState(tabFromUrl || 'calls')
   const [editingCallType, setEditingCallType] = useState(null)
   const [newCallType, setNewCallType] = useState({ 
     callType: '', 
@@ -120,6 +126,9 @@ export default function CallPanel() {
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   
+  // Export-modaali
+  const [showExportModal, setShowExportModal] = useState(false)
+  
   // Pagination ja filtterit
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
@@ -128,6 +137,7 @@ export default function CallPanel() {
   const [statusFilter, setStatusFilter] = useState('')
   const [callTypeFilter, setCallTypeFilter] = useState('')
   const [directionFilter, setDirectionFilter] = useState('')
+  const [wantsContactFilter, setWantsContactFilter] = useState('')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   
@@ -223,6 +233,29 @@ export default function CallPanel() {
   }, [user])
 
 
+
+  // Synkronoi URL-parametri aktiivisen välilehden kanssa
+  useEffect(() => {
+    if (tabFromUrl && ['calls', 'logs', 'messages', 'textmessages', 'manage', 'mika'].includes(tabFromUrl) && tabFromUrl !== activeTab) {
+      setActiveTab(tabFromUrl)
+    }
+  }, [tabFromUrl, activeTab])
+
+  // Päivitä URL kun aktiivinen välilehti muuttuu (vain jos URL-parametri eroaa)
+  useEffect(() => {
+    if (activeTab) {
+      const currentTabParam = searchParams.get('tab') || 'calls'
+      if (currentTabParam !== activeTab) {
+        const newSearchParams = new URLSearchParams(searchParams)
+        if (activeTab === 'calls') {
+          newSearchParams.delete('tab')
+        } else {
+          newSearchParams.set('tab', activeTab)
+        }
+        setSearchParams(newSearchParams, { replace: true })
+      }
+    }
+  }, [activeTab, searchParams, setSearchParams])
 
   // Hae puheluloki ja call types kun käyttäjä muuttuu
   useEffect(() => {
@@ -1283,6 +1316,13 @@ export default function CallPanel() {
       if (directionFilter) {
         countQuery = countQuery.eq('direction', directionFilter)
       }
+      if (wantsContactFilter !== '') {
+        if (wantsContactFilter === 'true') {
+          countQuery = countQuery.eq('wants_contact', true)
+        } else if (wantsContactFilter === 'false') {
+          countQuery = countQuery.eq('wants_contact', false)
+        }
+      }
       if (dateFrom) {
           // dateFrom: alkaen 00:00:00
           countQuery = countQuery.gte('call_date', dateFrom)
@@ -1381,6 +1421,13 @@ export default function CallPanel() {
         }
         if (directionFilter) {
           query = query.eq('direction', directionFilter)
+        }
+        if (wantsContactFilter !== '') {
+          if (wantsContactFilter === 'true') {
+            query = query.eq('wants_contact', true)
+          } else if (wantsContactFilter === 'false') {
+            query = query.eq('wants_contact', false)
+          }
         }
         if (dateFrom) {
             // dateFrom: alkaen 00:00:00
@@ -1597,76 +1644,6 @@ export default function CallPanel() {
   }
 
   // Export puheluloki CSV-muodossa — käytä näkyvää, suodatettua callLogs-dataa
-  const exportCallLogs = async () => {
-    try {
-      const logs = Array.isArray(callLogs) ? callLogs : []
-      if (!logs.length) {
-        alert('Ei puheluja exportattavaksi!')
-        return
-      }
-
-      const headers = [
-        'Nimi',
-        'Puhelinnumero',
-        'Sähköposti',
-        'Puhelun tyyppi',
-        'Päivämäärä',
-        'Vastattu',
-        'Yhteydenotto',
-        'Suunta',
-        'Kesto',
-        'Tila',
-        'Yhteenveto',
-        'Transkripti',
-        'Puhelun tulos',
-        'Kampanja ID',
-        'VAPI Call ID'
-      ]
-
-      const csvContent = [
-        headers.join(','),
-        ...logs.map(log => [
-          `"${log.customer_name || ''}"`,
-          `"${log.phone_number || ''}"`,
-          `"${log.email || ''}"`,
-          `"${log.call_type || ''}"`,
-          `"${log.call_date ? new Date(log.call_date).toLocaleDateString('fi-FI') + ' ' + (log.call_time ? log.call_time : new Date(log.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' })) : ''}"`,
-          log.answered ? 'Kyllä' : 'Ei',
-          log.wants_contact === true ? 'Otetaan yhteyttä' : 
-          log.wants_contact === false ? 'Ei oteta yhteyttä' : 'Ei määritelty',
-          log.direction === 'outbound' ? 'Lähtenyt' : 'Vastaanotettu',
-          `"${log.duration ? formatDuration(log.duration) : ''}"`,
-          (log.call_date && log.call_time) ? 'Ajastettu' : 
-          (log.call_status === 'done' && log.call_outcome === 'cancelled') ? 'Peruttu' :
-          (log.call_status === 'done' && log.call_outcome === 'voice mail') ? 'Vastaaja' :
-          log.call_status === 'done' && log.answered ? 'Onnistui' : 
-          log.call_status === 'done' && !log.answered ? 'Epäonnistui' :
-          log.call_status === 'pending' ? 'Aikataulutettu' : 
-          log.call_status === 'in progress' ? 'Jonossa' : 
-          'Tuntematon',
-          `"${String(log.summary || '').replaceAll('"', '""').replace(/[\r\n]+/g, ' ') }"`,
-          `"${String(log.transcript || log.call_transcript || '').replaceAll('"', '""').replace(/[\r\n]+/g, ' ') }"`,
-          `"${log.call_outcome || ''}"`,
-          `"${log.campaign_id || ''}"`,
-          `"${log.vapi_call_id || ''}"`
-        ].join(','))
-      ].join('\n')
-
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-      const link = document.createElement('a')
-      const url = URL.createObjectURL(blob)
-      link.setAttribute('href', url)
-      link.setAttribute('download', `puheluloki_${new Date().toISOString().split('T')[0]}.csv`)
-      link.style.visibility = 'hidden'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      
-    } catch (error) {
-      console.error('Export epäonnistui:', error)
-      alert('Export epäonnistui: ' + error.message)
-    }
-  }
 
   // Järjestämisfunktio
   const handleSort = (field) => {
@@ -1696,6 +1673,7 @@ export default function CallPanel() {
     setStatusFilter('')
     setCallTypeFilter('')
     setDirectionFilter('')
+    setWantsContactFilter('')
     setDateFrom('')
     setDateTo('')
     setSortField('created_at')
@@ -2543,7 +2521,7 @@ export default function CallPanel() {
               <div style={{ display: 'flex', gap: 12 }}>
                 <Button
                   type="button"
-                  onClick={exportCallLogs}
+                  onClick={() => setShowExportModal(true)}
                   variant="secondary"
                   style={{
                     padding: '8px 16px',
@@ -2678,6 +2656,29 @@ export default function CallPanel() {
                     <option value="">Kaikki</option>
                     <option value="outbound">Lähtevät</option>
                     <option value="inbound">Saapuvat</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
+                    {t('calls.logsTab.filters.wantsContactLabel')}
+                  </label>
+                  <select
+                    value={wantsContactFilter}
+                    onChange={(e) => setWantsContactFilter(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: 6,
+                      fontSize: 14,
+                      color: '#1f2937',
+                      background: '#fff'
+                    }}
+                  >
+                    <option value="">{t('calls.logsTab.filters.all')}</option>
+                    <option value="true">{t('calls.logsTab.filters.wantsContactOptions.yes')}</option>
+                    <option value="false">{t('calls.logsTab.filters.wantsContactOptions.no')}</option>
                   </select>
                 </div>
               </div>
@@ -4371,6 +4372,22 @@ export default function CallPanel() {
           </div>,
           document.body
         )}
+
+      {/* Export Modal */}
+      <ExportCallLogsModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        callLogs={callLogs}
+        formatDuration={formatDuration}
+        onSuccess={(message) => {
+          setSuccessMessage(message)
+          setTimeout(() => setSuccessMessage(''), 3000)
+        }}
+        onError={(message) => {
+          setErrorMessage(message)
+          setTimeout(() => setErrorMessage(''), 3000)
+        }}
+      />
     </div>
       </>
   )

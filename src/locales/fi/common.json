@@ -653,7 +653,7 @@
   "calls": {
     "tabs": {
       "calls": "Puhelut",
-      "logs": "Puheluloki",
+      "logs": "Puhelulokit",
       "messages": "Viestiloki",
       "textmessages": "Tekstiviestit",
       "manage": "Hallinta",
@@ -715,6 +715,7 @@
         "searchPlaceholder": "Matti Meikäläinen, +358... tai matt@example.com",
         "statusLabel": "Tila",
         "typeLabel": "Puhelun tyyppi",
+        "wantsContactLabel": "Yhteydenotto",
         "dateFrom": "Päivämäärä alkaen",
         "dateTo": "Päivämäärä asti",
         "searchButton": "Hae",
@@ -727,6 +728,10 @@
           "voiceMail": "Vastaaja",
           "pending": "Aikataulutettu",
           "inProgress": "Jonossa"
+        },
+        "wantsContactOptions": {
+          "yes": "Kyllä",
+          "no": "Ei"
         }
       }
     },
@@ -1112,7 +1117,12 @@
       "alerts": { "refreshFailed": "Virhe päivitettäessä sometilejä. Yritä uudelleen." },
       "popupsBlocked": "Popup-ikkunat on estetty. Salli popup-ikkunat tälle sivustolle ja yritä uudelleen.",
       "timeout": "Yhdistys aikakatkaistiin. Tarkista internet-yhteys ja yritä uudelleen.",
-      "connectError": "Virhe yhdistettäessä {platform}: {message}"
+      "connectError": "Virhe yhdistettäessä {platform}: {message}",
+      "warning": {
+        "expired": "Yhdistys vanhentunut! Päivitä yhteys välittömästi, jotta julkaisut jatkuvat.",
+        "soon": "Yhdistys vanhenee {days} päivän kuluttua. Päivitä yhteys pian.",
+        "reminder": "Muistutus: Yhdistys vanhenee {days} päivän kuluttua. Päivitä yhteys ajoissa."
+      }
     },
     "timeout": {
       "title": "Sessio-asetukset",

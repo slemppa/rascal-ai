@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import axios from 'axios'
 import { getUserOrgId } from '../lib/getUserOrgId'
+import { useSearchParams } from 'react-router-dom'
 import './SettingsIntegrationsTab.css'
 
 // WordPress Logo SVG Component (WordPress "W" logo)
@@ -89,39 +90,25 @@ const AVAILABLE_INTEGRATIONS = [
   {
     id: 'google_analytics',
     name: 'Google Analytics',
-    description: 'Yhdistä Google Analytics Rascal AI:hin',
+    description: 'Yhdistä Google Analytics Rascal AI:hin OAuth 2.0 -valtuutuksella',
     icon: <GoogleAnalyticsLogo size={40} />,
     secretType: 'google_analytics_credentials',
-    secretName: 'Google Analytics Credentials',
-    fields: [
-      {
-        id: 'client_id',
-        label: 'Client ID',
-        type: 'text',
-        placeholder: 'xxxxxxxxxx.apps.googleusercontent.com',
-        required: true,
-        helpText: 'Google Cloud Console -projektisi Client ID'
-      },
-      {
-        id: 'client_secret',
-        label: 'Client Secret',
-        type: 'password',
-        placeholder: 'GOCSPX-xxxxxxxxxxxxxxxxxxxx',
-        required: true,
-        helpText: 'Google Cloud Console -projektisi Client Secret'
-      }
-    ]
+    secretName: 'Google Analytics Refresh Token',
+    useOAuth: true, // Merkitsee että tämä integraatio käyttää OAuthia
+    fields: [] // Ei kenttiä, käytetään OAuth-painiketta
   },
   // Lisää tulevaisuudessa muita integraatioita tähän
 ]
 
 export default function SettingsIntegrationsTab() {
   const { user, organization } = useAuth()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [integrations, setIntegrations] = useState([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' })
   const [expandedCard, setExpandedCard] = useState(null)
+  const [oauthConnecting, setOauthConnecting] = useState(false)
   
   // AI-mallin valinta
   const [aiModel, setAiModel] = useState('gemini')
@@ -299,6 +286,44 @@ export default function SettingsIntegrationsTab() {
       loadIntegrations()
     }
   }, [user?.id, loadIntegrations])
+
+  // Käsittele URL-parametrit (success/error OAuth-callbackista)
+  useEffect(() => {
+    const success = searchParams.get('success')
+    const error = searchParams.get('error')
+    const tab = searchParams.get('tab')
+
+    if (success) {
+      setMessage({
+        type: 'success',
+        text: decodeURIComponent(success)
+      })
+      // Poista success-parametri URL:sta
+      searchParams.delete('success')
+      setSearchParams(searchParams, { replace: true })
+      // Lataa integraatiot uudelleen
+      if (user?.id) {
+        setTimeout(() => {
+          loadIntegrations()
+        }, 1000)
+      }
+    }
+
+    if (error) {
+      setMessage({
+        type: 'error',
+        text: decodeURIComponent(error)
+      })
+      // Poista error-parametri URL:sta
+      searchParams.delete('error')
+      setSearchParams(searchParams, { replace: true })
+    }
+
+    // Avaa features-tab jos tab-parametri on asetettu
+    if (tab === 'features') {
+      // Tämä on SettingsPage:n vastuulla, mutta voimme varmistaa että kortti on auki
+    }
+  }, [searchParams, setSearchParams, user?.id, loadIntegrations])
 
   // Tallenna integraation asetukset
   const handleSave = async (integration) => {
@@ -496,6 +521,92 @@ export default function SettingsIntegrationsTab() {
     ))
   }
 
+  // Käynnistä Google Analytics OAuth -virta
+  const handleGoogleAnalyticsOAuth = async () => {
+    if (!user?.id || oauthConnecting) return
+
+    setOauthConnecting(true)
+    setMessage({ type: '', text: '' })
+
+    try {
+      const session = await supabase.auth.getSession()
+      const token = session.data.session?.access_token
+
+      if (!token) {
+        throw new Error('No access token found')
+      }
+
+      // Kutsu backend-endpointia joka luo OAuth-URL:n
+      const response = await axios.get('/api/auth/google/start', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      const { authUrl } = response.data
+
+      if (!authUrl) {
+        throw new Error('OAuth URL ei saatu')
+      }
+
+      // Avaa OAuth-ikkuna
+      const popup = window.open(
+        authUrl,
+        'google_analytics_oauth',
+        'width=600,height=700,menubar=no,toolbar=no,location=yes,status=no,scrollbars=yes,resizable=yes'
+      )
+
+      if (!popup) {
+        throw new Error('Popup estetty. Salli popup-ikkunat tälle sivustolle.')
+      }
+
+      // Seuraa popupin sulkeutumista (callback hoitaa uudelleenohjauksen)
+      const checkPopup = setInterval(() => {
+        if (popup.closed) {
+          clearInterval(checkPopup)
+          setOauthConnecting(false)
+          // Lataa integraatiot uudelleen callbackin jälkeen
+          setTimeout(() => {
+            loadIntegrations()
+          }, 2000)
+        }
+      }, 1000)
+
+      // Timeout 5 minuutin jälkeen
+      setTimeout(() => {
+        if (!popup.closed) {
+          popup.close()
+          clearInterval(checkPopup)
+          setOauthConnecting(false)
+          setMessage({
+            type: 'error',
+            text: 'OAuth-yhdistys aikakatkaistiin. Yritä uudelleen.'
+          })
+        }
+      }, 5 * 60 * 1000)
+    } catch (error) {
+      console.error('Error starting Google Analytics OAuth:', error)
+      setOauthConnecting(false)
+      const errorMessage = error.response?.data?.error || error.message || 'Virhe OAuth-virran käynnistyksessä'
+      const errorDetails = error.response?.data?.details
+      const errorHint = error.response?.data?.hint
+      
+      // Muodosta virheilmoitus
+      let fullErrorMessage = errorMessage
+      if (errorDetails) {
+        fullErrorMessage += `: ${errorDetails}`
+      }
+      if (errorHint) {
+        fullErrorMessage += `\n\nVihje: ${errorHint}`
+      }
+      
+      setMessage({
+        type: 'error',
+        text: fullErrorMessage
+      })
+    }
+  }
+
   if (loading) {
     return (
       <div className="settings-integrations-container">
@@ -658,53 +769,127 @@ export default function SettingsIntegrationsTab() {
 
             {expandedCard === integration.id && (
               <div className="integration-card-content">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault()
-                    handleSave(integration)
-                  }}
-                >
-                  {integration.fields.map(field => (
-                    <div key={field.id} className="form-field">
-                      <label htmlFor={`${integration.id}-${field.id}`}>
-                        {field.label}
-                        {field.required && <span className="required">*</span>}
-                      </label>
-                      <input
-                        id={`${integration.id}-${field.id}`}
-                        type={field.type}
-                        value={integration.formData[field.id] || ''}
-                        onChange={(e) => handleFormChange(integration.id, field.id, e.target.value)}
-                        placeholder={field.placeholder}
-                        required={field.required}
-                        disabled={saving}
-                      />
-                      {field.helpText && (
-                        <span className="form-field-help">{field.helpText}</span>
-                      )}
-                    </div>
-                  ))}
-
-                  <div className="integration-card-actions">
-                    <button
-                      type="submit"
-                      className="btn-primary"
-                      disabled={saving}
-                    >
-                      {saving ? 'Tallennetaan...' : integration.isConfigured ? 'Päivitä' : 'Tallenna'}
-                    </button>
-                    {integration.isConfigured && (
+                {integration.useOAuth ? (
+                  // OAuth-pohjainen integraatio (Google Analytics)
+                  <div>
+                    {integration.isConfigured ? (
+                      <div style={{ marginBottom: '20px' }}>
+                        <div style={{
+                          padding: '12px',
+                          backgroundColor: '#f0fdf4',
+                          border: '1px solid #bbf7d0',
+                          borderRadius: '6px',
+                          color: '#16a34a',
+                          fontSize: '14px',
+                          marginBottom: '16px'
+                        }}>
+                          ✅ Google Analytics on yhdistetty onnistuneesti!
+                        </div>
+                        <p style={{ 
+                          fontSize: '14px', 
+                          color: '#6b7280',
+                          marginBottom: '16px'
+                        }}>
+                          Yhdistä uudelleen jos haluat päivittää valtuutuksen.
+                        </p>
+                      </div>
+                    ) : (
+                      <div style={{ marginBottom: '20px' }}>
+                        <p style={{ 
+                          fontSize: '14px', 
+                          color: '#6b7280',
+                          marginBottom: '16px'
+                        }}>
+                          Yhdistä Google Analytics -tiliisi OAuth 2.0 -valtuutuksella. 
+                          Sinut ohjataan Googlen valtuutussivulle, jossa voit antaa luvan 
+                          Rascal AI:lle käyttää Analytics-tietojasi.
+                        </p>
+                      </div>
+                    )}
+                    <div className="integration-card-actions">
                       <button
                         type="button"
-                        className="btn-danger"
-                        onClick={() => handleDelete(integration)}
+                        className="btn-primary"
+                        onClick={handleGoogleAnalyticsOAuth}
+                        disabled={oauthConnecting || saving}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        {oauthConnecting ? (
+                          <>
+                            <span>Yhdistetään...</span>
+                          </>
+                        ) : integration.isConfigured ? (
+                          'Yhdistä uudelleen'
+                        ) : (
+                          'Yhdistä Google Analytics'
+                        )}
+                      </button>
+                      {integration.isConfigured && (
+                        <button
+                          type="button"
+                          className="btn-danger"
+                          onClick={() => handleDelete(integration)}
+                          disabled={saving || oauthConnecting}
+                        >
+                          Poista
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  // Lomake-pohjainen integraatio (WordPress jne.)
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault()
+                      handleSave(integration)
+                    }}
+                  >
+                    {integration.fields.map(field => (
+                      <div key={field.id} className="form-field">
+                        <label htmlFor={`${integration.id}-${field.id}`}>
+                          {field.label}
+                          {field.required && <span className="required">*</span>}
+                        </label>
+                        <input
+                          id={`${integration.id}-${field.id}`}
+                          type={field.type}
+                          value={integration.formData[field.id] || ''}
+                          onChange={(e) => handleFormChange(integration.id, field.id, e.target.value)}
+                          placeholder={field.placeholder}
+                          required={field.required}
+                          disabled={saving}
+                        />
+                        {field.helpText && (
+                          <span className="form-field-help">{field.helpText}</span>
+                        )}
+                      </div>
+                    ))}
+
+                    <div className="integration-card-actions">
+                      <button
+                        type="submit"
+                        className="btn-primary"
                         disabled={saving}
                       >
-                        Poista
+                        {saving ? 'Tallennetaan...' : integration.isConfigured ? 'Päivitä' : 'Tallenna'}
                       </button>
-                    )}
-                  </div>
-                </form>
+                      {integration.isConfigured && (
+                        <button
+                          type="button"
+                          className="btn-danger"
+                          onClick={() => handleDelete(integration)}
+                          disabled={saving}
+                        >
+                          Poista
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                )}
               </div>
             )}
           </div>

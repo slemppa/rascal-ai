@@ -291,6 +291,19 @@ export default function DashboardPage() {
   const [scatterData, setScatterData] = useState([])
   const [heatmapData, setHeatmapData] = useState([])
   
+  // Google Analytics -kävijätiedot
+  const [gaConnected, setGaConnected] = useState(false)
+  const [gaLoading, setGaLoading] = useState(true)
+  const [gaVisitorsFilter, setGaVisitorsFilter] = useState('week') // 'week' tai '30days'
+  const [gaVisitorsData, setGaVisitorsData] = useState([]) // Päiväkohtainen data
+  const [gaVisitors, setGaVisitors] = useState({
+    total: 0,
+    today: 0,
+    thisWeek: 0,
+    thisMonth: 0,
+    trend: 0
+  })
+  
   // Hae chart data Supabase:sta
   const fetchChartData = async (timeFilter) => {
     if (!user) return
@@ -723,6 +736,52 @@ export default function DashboardPage() {
     }
     fetchSocialAccounts()
   }, [user?.id, organization?.id])
+
+  // Hae Google Analytics -kävijätiedot
+  useEffect(() => {
+    const fetchGAVisitors = async () => {
+      if (!user?.id) {
+        setGaLoading(false)
+        return
+      }
+
+      setGaLoading(true)
+      try {
+        const session = await supabase.auth.getSession()
+        const token = session?.data?.session?.access_token
+        if (!token) {
+          setGaLoading(false)
+          return
+        }
+
+        // Hae data riippuen filtteristä
+        const days = gaVisitorsFilter === 'week' ? 7 : 30
+        const response = await axios.get(`/api/google-analytics-visitors?days=${days}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+
+        if (response.data.connected) {
+          setGaConnected(true)
+          if (response.data.visitors) {
+            setGaVisitors(response.data.visitors)
+          }
+          if (response.data.data) {
+            setGaVisitorsData(response.data.data)
+          }
+        } else {
+          setGaConnected(false)
+        }
+      } catch (error) {
+        console.error('Error fetching GA visitors:', error)
+        setGaConnected(false)
+      } finally {
+        setGaLoading(false)
+      }
+    }
+    fetchGAVisitors()
+  }, [user?.id, gaVisitorsFilter])
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -1208,8 +1267,8 @@ export default function DashboardPage() {
           </div>
           
           <div className={styles['metrics-grid']}>
-            {statsLoading ? (
-              Array(4).fill(0).map((_, i) => (
+            {statsLoading || (gaConnected && gaLoading) ? (
+              Array(gaConnected ? 8 : 6).fill(0).map((_, i) => (
                 <div key={i} className={styles['metric-card']}>
                   <div className={styles['metric-skeleton']}>
                     <div style={{ background: '#eee', height: 16, width: 100, borderRadius: 4 }}></div>
@@ -1219,25 +1278,70 @@ export default function DashboardPage() {
                 </div>
               ))
             ) : (
-              [...dashboardStats,
+              [
+                ...dashboardStats,
                 { label: t('dashboard.metrics.stats.successCalls'), value: successStats.success || 0, trend: successStats.successRate || 0, color: '#22c55e' },
-                { label: t('dashboard.metrics.stats.answerRate'), value: `${successStats.answerRate || 0}%`, trend: successStats.answerRate || 0, color: '#2563eb' }
+                { label: t('dashboard.metrics.stats.answerRate'), value: `${successStats.answerRate || 0}%`, trend: successStats.answerRate || 0, color: '#2563eb' },
+                // Google Analytics -kävijätiedot (näytetään vain jos yhdistetty)
+                ...(gaConnected && !gaLoading ? [
+                  {
+                    label: gaVisitorsFilter === 'week' ? t('dashboard.visitors.thisWeek') : t('dashboard.visitors.last30Days'),
+                    value: gaVisitorsFilter === 'week' 
+                      ? gaVisitors.thisWeek.toLocaleString('fi-FI')
+                      : gaVisitors.total.toLocaleString('fi-FI'),
+                    trend: gaVisitors.trend || 0,
+                    color: '#cea78d'
+                  },
+                  {
+                    label: t('dashboard.visitors.today'),
+                    value: gaVisitors.today.toLocaleString('fi-FI'),
+                    trend: 0, // Ei trendiä tänään-kortissa
+                    color: '#cea78d',
+                    noTrend: true // Merkitään että trendiä ei näytetä
+                  }
+                ] : [])
               ].map((stat, i) => (
                 <div key={i} className={styles['metric-card']}>
                   <div className={styles['metric-label']}>{stat.label}</div>
                   <div className={styles['metric-value']}>{stat.value}</div>
-                  <div className={styles['metric-trend']}>
-                    <span className={styles['trend-icon'] + ' ' + (stat.trend > 0 ? styles['trend-up'] : styles['trend-down'])}>
-                      {stat.trend > 0 ? '↗' : '↘'}
-                    </span>
-                    <span className={styles['trend-text']}>
-                      {Math.abs(stat.trend)}% {stat.trend > 0 ? t('dashboard.metrics.stats.trendUpSuffix') : t('dashboard.metrics.stats.trendDownSuffix')}
-                    </span>
-                  </div>
+                  {stat.noTrend ? (
+                    <div className={styles['metric-trend']}>
+                      <span className={styles['trend-text']} style={{ color: '#6b7280', fontSize: '12px' }}>
+                        {t('dashboard.visitors.todayDescription')}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className={styles['metric-trend']}>
+                      <span className={styles['trend-icon'] + ' ' + (stat.trend > 0 ? styles['trend-up'] : styles['trend-down'])}>
+                        {stat.trend > 0 ? '↗' : '↘'}
+                      </span>
+                      <span className={styles['trend-text']}>
+                        {Math.abs(stat.trend)}% {stat.trend > 0 ? t('dashboard.metrics.stats.trendUpSuffix') : t('dashboard.metrics.stats.trendDownSuffix')}
+                      </span>
+                    </div>
+                  )}
                 </div>
               ))
             )}
           </div>
+
+          {/* Filtterit kävijätiedoille - näytetään vain jos Google Analytics on yhdistetty */}
+          {gaConnected && (
+            <div className={styles['metrics-filters']} style={{ marginTop: 16, justifyContent: 'flex-start' }}>
+              <button 
+                className={styles['filter-btn'] + ' ' + (gaVisitorsFilter === 'week' ? styles['filter-active'] : '')}
+                onClick={() => setGaVisitorsFilter('week')}
+              >
+                {t('dashboard.visitors.filters.thisWeek')}
+              </button>
+              <button 
+                className={styles['filter-btn'] + ' ' + (gaVisitorsFilter === '30days' ? styles['filter-active'] : '')}
+                onClick={() => setGaVisitorsFilter('30days')}
+              >
+                {t('dashboard.visitors.filters.last30Days')}
+              </button>
+            </div>
+          )}
         </div>
 
         <div className={styles['dashboard-bentogrid']}>
@@ -1381,6 +1485,7 @@ export default function DashboardPage() {
               </table>
             </div>
           </div>
+
         </div>
         
         {/* Split-row: 3/5 (scatter) + 2/5 (heatmap) */}

@@ -326,6 +326,23 @@
         "count": "Lukumäärä"
       }
     },
+    "visitors": {
+      "title": "Sivuston kävijät",
+      "total": "Yhteensä",
+      "today": "Tänään",
+      "thisWeek": "Tämä viikko",
+      "thisMonth": "Tämä kuukausi",
+      "last30Days": "Kuluneet 30 päivää",
+      "todayDescription": "Tämän päivän kävijät",
+      "notConnected": "Google Analytics ei ole yhdistetty",
+      "connectButton": "Yhdistä Google Analytics",
+      "loading": "Ladataan kävijätietoja...",
+      "error": "Virhe kävijätietojen latauksessa",
+      "filters": {
+        "thisWeek": "Tämä viikko",
+        "last30Days": "Kuluneet 30 päivää"
+      }
+    },
     "status": {
       "Draft": "Luonnos",
       "In Progress": "Työn alla",

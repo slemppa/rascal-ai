@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.98.1](https://github.com/slemppa/rascal-ai/compare/v1.98.0...v1.98.1) (2025-11-27)
+
+
+### 🐛 Bug Fixes
+
+* korjattu tabien täriseminen /calls-sivulla ([4ae854d](https://github.com/slemppa/rascal-ai/commit/4ae854d21819040083ebd69296b480757637b066))
+
 ## [1.98.0](https://github.com/slemppa/rascal-ai/compare/v1.97.0...v1.98.0) (2025-11-27)
 
 

@@ -20,12 +20,13 @@ Tietovirta on suojattu JWT:llä: frontend välittää Bearer‑tokenin omille `/
 - **Call Analytics** - Puheluiden analyysi ja raportointi
 - **Social Media Analytics** - Sosiaalisen median seuranta ja analyysi
 - **Content Performance** - Sisällön suorituskyvyn seuranta
+- **Google Analytics Integration** - Sivuston kävijätiedot dashboardissa (OAuth 2.0)
 
 ### 🔧 Hallinta ja automatisointi
 - **Mass-call Management** - Suurten puhelukampanjoiden hallinta
 - **Content Management** - Sisällön hallinta ja aikataulutus
 - **User Management** - Käyttäjien ja oikeuksien hallinta
-- **Integration Hub** - Yhteydet muihin järjestelmiin
+- **Integration Hub** - Yhteydet muihin järjestelmiin (Google Analytics, WordPress, jne.)
 
 ## 🛠️ Teknologiat
 
@@ -69,6 +70,8 @@ rascal-ai/
 │   ├── mass-call.js     # Mass-call hallinta
 │   ├── validate-sheet.js # Google Sheets validointi
 │   ├── analytics.js     # Analytics API
+│   ├── google-analytics-visitors.js # Google Analytics kävijätiedot
+│   ├── auth/google/     # Google OAuth 2.0 integraatio
 │   └── ...
 ├── public/              # Julkiset tiedostot
 └── docs/                # Dokumentaatio
@@ -90,5 +93,76 @@ npm install
 ### 3. Ympäristömuuttujat
 Luo `.env.local` tiedosto projektin juureen:
 
+```bash
+# Supabase
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# Google Analytics OAuth (vapaaehtoinen)
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret
+GOOGLE_REDIRECT_URI=https://app.rascalai.fi/api/auth/google/callback
+
+# N8N Integration
+N8N_SECRET_KEY=your-n8n-secret-key
+N8N_INTEGRATION_WEBHOOK_URL=https://your-n8n-instance.com/webhook/google-analytics
+N8N_GOOGLE_ANALYTICS_VISITORS_URL=https://your-n8n-instance.com/webhook/google-analytics-visitors
+
+# User Secrets Encryption (pakollinen salattujen tietojen tallennukseen)
+USER_SECRETS_ENCRYPTION_KEY=your-encryption-key
+
+# Muut N8N webhookit (vapaaehtoisia)
+N8N_LEADMAGNET_GET=https://your-n8n-instance.com/webhook/leadmagnet-get
+# ... lisää muita webhookeja tarpeen mukaan
 ```
+
+**Huom:** Tarkemmat ohjeet integraatioiden asettamiseen löytyvät `docs/`-kansiosta:
+- `docs/GOOGLE_ANALYTICS_OAUTH_SETUP.md` - Google Analytics OAuth 2.0
+- `docs/INTEGRATION_WEBHOOKS.md` - Integraatioiden webhookit
+- `docs/USER_SECRETS_SETUP.md` - Salattujen tietojen hallinta
+
+### 4. Käynnistä kehityspalvelin
+```bash
+npm run dev
+```
+
+Sovellus on nyt saatavilla osoitteessa `http://localhost:5173`
+
+## 📚 Dokumentaatio
+
+Projektissa on laaja dokumentaatio `docs/`-kansiossa:
+
+- **GOOGLE_ANALYTICS_OAUTH_SETUP.md** - Google Analytics OAuth 2.0 -integraation asettaminen
+- **INTEGRATION_WEBHOOKS.md** - Integraatioiden webhookit ja automaatiot
+- **USER_SECRETS_SETUP.md** - Käyttäjien salattujen tietojen hallinta
+- **LEADMAGNET_SETUP.md** - Lead Magnet -toiminnallisuuden asettaminen
+- **CSS_ARCHITECTURE.md** - CSS-arkkitehtuuri ja tyylit
+- **VERSIONING.md** - Versionhallinta ja changelog
+
+## 🔗 API Endpointit
+
+### Analytics
+- `GET /api/google-analytics-visitors` - Hakee Google Analytics -kävijätiedot N8N:stä
+- `GET /api/analytics` - Yleinen analytics API
+- `GET /api/dashboard-success` - Dashboardin onnistumismetriikat
+
+### Autentikointi
+- `GET /api/auth/google/start` - Aloittaa Google OAuth 2.0 -virran
+- `GET /api/auth/google/callback` - Käsittelee Google OAuth -callbackin
+
+### Integraatiot
+- `GET /api/user-secrets` - Hakee käyttäjän integraatiot (metadata)
+- `POST /api/user-secrets` - Tallentaa uuden integraation
+- `GET /api/user-secrets-service` - Service-to-service endpoint salattujen tietojen hakemiseen
+
+Katso tarkemmat API-dokumentaatiot `docs/`-kansiosta.
+
+## 🚀 Julkaisu
+
+Projekti julkaistaan Vercelissä. Muista asettaa kaikki ympäristömuuttujat Vercel Dashboardissa ennen julkaisua.
+
+## 📝 Lisenssi
+
+Proprietary - Kaikki oikeudet pidätetään.
 ```

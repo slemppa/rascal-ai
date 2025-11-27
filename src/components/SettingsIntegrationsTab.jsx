@@ -68,14 +68,16 @@ const AVAILABLE_INTEGRATIONS = [
         label: 'Username',
         type: 'text',
         placeholder: 'Käyttäjätunnus',
-        required: true
+        required: true,
+        helpText: 'Käyttäjät -> muokkaa käyttäjää -> Käyttäjätunnus'
       },
       {
         id: 'password',
         label: 'Password',
         type: 'password',
         placeholder: 'Salasana',
-        required: true
+        required: true,
+        helpText: 'Käyttäjät -> muokkaa käyttäjää -> Sovellusten salasanat -> Lisää sovellussalasana -> koodi (näkyy vain kerran)'
       },
       {
         id: 'url',
@@ -83,7 +85,7 @@ const AVAILABLE_INTEGRATIONS = [
         type: 'url',
         placeholder: 'https://example.com',
         required: true,
-        helpText: 'WordPress-sivustosi URL-osoite'
+        helpText: 'Asetukset -> Yleinen -> WordPressin osoite'
       }
     ]
   },

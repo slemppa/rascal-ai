@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.98.0](https://github.com/slemppa/rascal-ai/compare/v1.97.0...v1.98.0) (2025-11-27)
+
+
+### ✨ Features
+
+* lisätty Sivuston kävijät -kortit dashboardiin ([258561a](https://github.com/slemppa/rascal-ai/commit/258561a59f7c5e398a5ff856d989eb7ae72ecf37))
+
 ## [1.97.0](https://github.com/slemppa/rascal-ai/compare/v1.95.1...v1.97.0) (2025-11-26)
 
 

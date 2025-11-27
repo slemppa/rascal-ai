@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.98.2](https://github.com/slemppa/rascal-ai/compare/v1.98.1...v1.98.2) (2025-11-27)
+
+
+### 📚 Documentation
+
+* päivitetty README ja lisätty WordPress-ohjeet ([2aaa240](https://github.com/slemppa/rascal-ai/commit/2aaa240d1903c6a0b7fdc33b84f1cbb95cb9b604))
+
 ### [1.98.1](https://github.com/slemppa/rascal-ai/compare/v1.98.0...v1.98.1) (2025-11-27)
 
 

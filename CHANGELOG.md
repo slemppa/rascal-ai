@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.99.1](https://github.com/slemppa/rascal-ai/compare/v1.99.0...v1.99.1) (2025-11-28)
+
+
+### 🐛 Bug Fixes
+
+* korjaa tiedostojen lisääminen ja chatti org ID:llä ([bfb22e7](https://github.com/slemppa/rascal-ai/commit/bfb22e71e17a060f9d65a5b6a212769984faa34d))
+
 ## [1.99.0](https://github.com/slemppa/rascal-ai/compare/v1.98.2...v1.99.0) (2025-11-28)
 
 

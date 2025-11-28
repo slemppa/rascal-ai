@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.99.0](https://github.com/slemppa/rascal-ai/compare/v1.98.2...v1.99.0) (2025-11-28)
+
+
+### ✨ Features
+
+* lisätty blog-publish endpoint erilliselle N8N webhookille ([d738110](https://github.com/slemppa/rascal-ai/commit/d7381101d140238e3dad9daff8ab9fdc63780775))
+
 ### [1.98.2](https://github.com/slemppa/rascal-ai/compare/v1.98.1...v1.98.2) (2025-11-27)
 
 

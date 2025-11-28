@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.99.2](https://github.com/slemppa/rascal-ai/compare/v1.99.1...v1.99.2) (2025-11-28)
+
+
+### 🐛 Bug Fixes
+
+* korjaa userData-riippuvuudet AIChatPage:ssa ([343840c](https://github.com/slemppa/rascal-ai/commit/343840c8d0452c53b4679f41a011aa67a5d33ece))
+
 ### [1.99.1](https://github.com/slemppa/rascal-ai/compare/v1.99.0...v1.99.1) (2025-11-28)
 
 

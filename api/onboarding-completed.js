@@ -33,6 +33,7 @@ export default async function handler(req, res) {
     if (userId && supabaseUrl && supabaseAnonKey) {
       const supabase = createClient(supabaseUrl, supabaseAnonKey)
       
+      // 1. Yritä hakea normaali käyttäjä users taulusta
       const { data, error } = await supabase
         .from('users')
         .select('id, email, company_name, icp_summary')
@@ -40,9 +41,33 @@ export default async function handler(req, res) {
         .single()
 
       if (error || !data) {
-        console.warn('⚠️ User haku epäonnistui, jatketaan webhookin lähetyksellä:', error?.message || 'User not found')
-        console.warn('   auth_user_id:', userId)
-        // Älä palauta virhettä, vaan jatka webhookin lähetyksellä
+        // 2. Jos ei löydy, tarkista onko kutsuttu käyttäjä (org_members)
+        console.warn('⚠️ User not found in users table, checking org_members:', error?.message || 'User not found')
+        
+        const { data: orgMember, error: orgError } = await supabase
+          .from('org_members')
+          .select('org_id')
+          .eq('auth_user_id', userId)
+          .maybeSingle()
+
+        if (!orgError && orgMember?.org_id) {
+          // Käyttäjä on kutsuttu käyttäjä, hae organisaation tiedot
+          const { data: orgData, error: orgDataError } = await supabase
+            .from('users')
+            .select('id, email, company_name, icp_summary')
+            .eq('id', orgMember.org_id)
+            .single()
+
+          if (!orgDataError && orgData) {
+            userData = orgData
+            publicUserId = orgData.id
+            console.log('✅ Invited user found, using org_id:', { publicUserId, email: userData.email })
+          } else {
+            console.error('❌ Failed to fetch org data:', orgDataError)
+          }
+        } else {
+          console.error('❌ User not found in users or org_members:', { userId, orgError })
+        }
       } else {
         userData = data
         publicUserId = data.id // public.users.id
@@ -61,9 +86,18 @@ export default async function handler(req, res) {
       })
     }
 
+    // Älä lähetä user_id:ä jos publicUserId ei löydy (ei käytetä auth.users.id fallbackina)
+    if (!publicUserId) {
+      console.error('❌ Cannot send webhook: public.users.id not found for auth_user_id:', userId)
+      return res.status(400).json({ 
+        error: 'Käyttäjää ei löytynyt',
+        details: 'User not found in users or org_members table'
+      })
+    }
+
     const webhookPayload = {
       conversation_id: conversationId,
-      user_id: publicUserId || userId, // Lähetä public.users.id, fallback auth.users.id jos ei löydy
+      user_id: publicUserId, // Vain public.users.id, ei auth.users.id
       auth_user_id: userId, // Säilytetään myös auth.users.id referenssinä
       user_email: userData?.email || null,
       company_name: userData?.company_name || null,

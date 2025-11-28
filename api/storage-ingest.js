@@ -4,12 +4,12 @@ import { withOrganization } from './middleware/with-organization.js'
 async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
   try {
-    // Tarkista että käyttäjän rooli on 'owner'
+    // Tarkista että käyttäjän rooli on 'owner' tai 'admin'
     const userRole = req.organization?.role
-    if (userRole !== 'owner') {
+    if (!['owner', 'admin'].includes(userRole)) {
       return res.status(403).json({ 
-        error: 'Vain organisaation omistaja voi lisätä tiedostoja',
-        hint: 'Tiedostojen lisääminen vaatii owner-roolin'
+        error: 'Vain organisaation omistaja tai admin voi lisätä tiedostoja',
+        hint: 'Tiedostojen lisääminen vaatii owner- tai admin-roolin'
       })
     }
 

@@ -101,9 +101,9 @@ const OnboardingModal = () => {
           return
         }
 
-        // Tarkista onko käyttäjä kutsuttu käyttäjä (ei owner)
-        // Vain owner-käyttäjät (jotka luovat oman organisaationsa) näkevät onboardingin
-        // Kutsutut käyttäjät (member/admin) ohitetaan
+        // Tarkista käyttäjän rooli org_members taulusta
+        // Vain owner- ja admin-käyttäjät näkevät onboardingin
+        // Kutsutut käyttäjät (member) ohitetaan
         const { data: orgMember, error: orgError } = await supabase
           .from('org_members')
           .select('org_id, role')
@@ -111,26 +111,43 @@ const OnboardingModal = () => {
           .maybeSingle()
 
         if (!orgError && orgMember) {
-          // Jos käyttäjä on kutsuttu käyttäjä (ei owner), ei näytetä onboardingia
-          if (orgMember.role !== 'owner') {
-            console.log('⏸️ OnboardingModal: Käyttäjä on kutsuttu käyttäjä (rooli:', orgMember.role, '), ei näytetä onboardingia')
+          // Jos käyttäjä on kutsuttu käyttäjä (member), ei näytetä onboardingia
+          if (orgMember.role === 'member') {
+            console.log('⏸️ OnboardingModal: Käyttäjä on kutsuttu käyttäjä (rooli: member), ei näytetä onboardingia')
             setLoading(false)
             setShouldShow(false)
             return
           }
-          // Owner-käyttäjät jatkavat onboarding-tarkistukseen
+          // Owner- ja admin-käyttäjät jatkavat onboarding-tarkistukseen
+        } else if (!orgError && !orgMember) {
+          // Jos käyttäjää ei ole org_members taulussa, jatketaan onboarding-tarkistukseen
+          // (voi olla uusi käyttäjä joka ei ole vielä organisaatiossa)
         }
 
-        const { data, error } = await supabase
+        // Tarkista onboarding-status users taulusta
+        // Jos käyttäjää ei ole users taulussa, oletetaan että onboarding ei ole valmis
+        const { data: userData, error: userError } = await supabase
           .from('users')
-          .select('onboarding_completed, role')
+          .select('onboarding_completed')
           .eq('auth_user_id', user.id)
-          .single()
+          .maybeSingle()
 
-        if (error) throw error
+        // Jos käyttäjää ei ole users taulussa, näytetään modal (onboarding ei ole valmis)
+        if (userError && userError.code === 'PGRST116') {
+          // Käyttäjää ei löydy - oletetaan että onboarding ei ole valmis
+          console.log('ℹ️ OnboardingModal: Käyttäjää ei löydy users taulusta, näytetään onboarding')
+          setShouldShow(true)
+          setLoading(false)
+          return
+        }
+
+        if (userError) {
+          throw userError
+        }
 
         // Näytä vain jos onboarding ei ole valmis
-        const show = data?.onboarding_completed === false
+        // Jos userData on null (käyttäjää ei löydy), oletetaan false
+        const show = !userData || userData?.onboarding_completed === false
         setShouldShow(show)
       } catch (error) {
         console.error('❌ Error checking onboarding status:', error)

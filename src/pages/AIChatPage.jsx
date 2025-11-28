@@ -59,9 +59,7 @@ export default function AIChatPage() {
   const [dragActive, setDragActive] = useState(false)
   const dropRef = useRef(null)
   const filesListRef = useRef(null)
-  const { user } = useAuth()
-  const [userData, setUserData] = useState(null)
-  const [loadingUserData, setLoadingUserData] = useState(true)
+  const { user, organization } = useAuth()
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
   const MAX_BATCH_BYTES = 4 * 1024 * 1024 // ei käytössä Blob-polussa, jätetty varalle
   const messagesEndRef = useRef(null)
@@ -101,38 +99,8 @@ export default function AIChatPage() {
     }
   }, [messages])
 
-  // Hae käyttäjän tiedot Supabase-tietokannasta
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!user?.id) {
-        setLoadingUserData(false)
-        return
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from('users')
-          .select('company_name, company_id, assistant_id, id')
-          .eq('auth_user_id', user.id)
-          .single()
-
-        if (error) {
-          console.error('Error fetching user data:', error)
-        } else {
-          setUserData(data)
-        }
-      } catch (error) {
-        console.error('Error in fetchUserData:', error)
-      } finally {
-        setLoadingUserData(false)
-      }
-    }
-
-    fetchUserData()
-  }, [user?.id])
-
-  // Hae companyName käyttäjän tiedoista
-  const companyName = userData?.company_name || 'Company'
+  // Hae companyName organisaation tiedoista
+  const companyName = organization?.data?.company_name || 'Company'
 
   // Apufunktio: Poista system prompt viestistä
   const cleanMessage = (content) => {
@@ -156,13 +124,13 @@ export default function AIChatPage() {
   // Vieritä alas aina kun viestit päivittyvät (column-reverse hoitaa, joten ei tarvita)
   // useEffect ei enää tarpeen
 
-  // Hae tiedostot heti kun käyttäjän tiedot on ladattu
+  // Hae tiedostot heti kun käyttäjä on kirjautunut
   useEffect(() => {
-    if (!loadingUserData && userData?.id) {
+    if (user?.id) {
       fetchFiles()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadingUserData, userData?.id])
+  }, [user?.id])
 
   // Seuraa ikkunan koon muutoksia responsiivisuutta varten
   useEffect(() => {
@@ -201,12 +169,6 @@ export default function AIChatPage() {
   }
 
   const fetchFiles = async () => {
-    console.log('📁 fetchFiles alkaa, loadingUserData:', loadingUserData)
-    if (loadingUserData) {
-      setFilesError(t('assistant.loadingUser'))
-      return
-    }
-    
     // Hae käyttäjän organisaation ID (toimii sekä normaaleille että kutsutuille käyttäjille)
     if (!user?.id) {
       setFilesError('Käyttäjä ei ole kirjautunut')
@@ -299,7 +261,7 @@ export default function AIChatPage() {
   // Varsinainen lähetyslogiikka (kutsutaan sekä formista että Enter-näppäimestä)
   const sendMessage = async () => {
     // Estä duplikaattilähetykset - tarkista ja aseta flag heti
-    if (sendingRef.current || !input.trim() || loading || loadingUserData) {
+    if (sendingRef.current || !input.trim() || loading) {
       return
     }
     
@@ -487,8 +449,15 @@ export default function AIChatPage() {
   const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files)
     if (files.length === 0) return
-    if (!userData?.id) {
-      setUploadError('Käyttäjän ID puuttuu')
+    
+    if (!user?.id) {
+      setUploadError('Käyttäjä ei ole kirjautunut')
+      return
+    }
+    
+    const orgId = await getUserOrgId(user.id)
+    if (!orgId) {
+      setUploadError('Organisaation ID ei löytynyt')
       return
     }
 
@@ -501,7 +470,7 @@ export default function AIChatPage() {
       const formData = new FormData()
       files.forEach(file => formData.append('files', file))
       formData.append('action', 'feed')
-      formData.append('userId', userData.id)
+      formData.append('userId', orgId)
       try { formData.append('fileNames', JSON.stringify(files.map(f => f.name))) } catch {}
 
       await axios.post('/api/dev-upload', formData, {
@@ -555,6 +524,11 @@ export default function AIChatPage() {
     }
     
     try {
+      if (!user?.id) {
+        alert('Käyttäjä ei ole kirjautunut')
+        return
+      }
+      
       // Hae käyttäjän access token
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) {
@@ -562,7 +536,12 @@ export default function AIChatPage() {
         return
       }
 
-      console.log('🗑️ Poistetaan tiedosto, IDs:', fileIds, 'userId:', userData?.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        alert('Organisaation ID ei löytynyt')
+        return
+      }
+      console.log('🗑️ Poistetaan tiedosto, IDs:', fileIds, 'orgId:', orgId)
       await axios.post('/api/dev-delete-files', {
         ids: fileIds
       }, {
@@ -986,7 +965,7 @@ export default function AIChatPage() {
 
   // Lataa threadit kun käyttäjä kirjautuu tai assistantType muuttuu
   useEffect(() => {
-    if (user && !loadingUserData) {
+    if (user) {
       // Kun assistantType muuttuu, tyhjennetään nykyinen thread ja viestit
       if (assistantType) {
         setCurrentThreadId(null)
@@ -999,7 +978,7 @@ export default function AIChatPage() {
       fetchThreads()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, loadingUserData, assistantType])
+  }, [user, assistantType])
 
   // Päivitä viestit kun käyttäjä palaa sivulle ja jatka pollingia jos se on kesken
   useEffect(() => {
@@ -1190,7 +1169,7 @@ export default function AIChatPage() {
 
   return (
     <>
-      {loadingUserData ? (
+      {!user ? (
         <div className="modern-chat-loading">
           <div className="loading-spinner"></div>
           <p>{t('assistant.loadingUser')}</p>
@@ -1312,7 +1291,8 @@ export default function AIChatPage() {
             {/* Tietokanta-tabi */}
             {sidebarTab === 'database' && (
               <>
-                {/* Upload-alue */}
+                {/* Upload-alue - näytetään vain owner ja admin rooleille */}
+                {(organization?.role === 'owner' || organization?.role === 'admin') && (
                 <div className="sidebar-upload">
               <div
                 ref={dropRef}
@@ -1354,8 +1334,9 @@ export default function AIChatPage() {
               {uploadError && <p className="error-msg">{uploadError}</p>}
               {uploadSuccess && <p className="success-msg">{uploadSuccess}</p>}
             </div>
+                )}
             
-                {/* Tiedostolista */}
+                {/* Tiedostolista - näytetään kaikille käyttäjille */}
                 <div className="sidebar-files">
                   <h3>{t('assistant.files.list.title')} ({files.length})</h3>
                   <div className="files-list" ref={filesListRef}>
@@ -1372,7 +1353,9 @@ export default function AIChatPage() {
                         <div key={file.file_name} className="file-item">
                           <span className="file-icon">•</span>
                           <span className="file-name">{file.file_name || file.filename}</span>
-                          <button onClick={() => handleFileDeletion(file.id)} className="delete-btn">✕</button>
+                          {(organization?.role === 'owner' || organization?.role === 'admin') && (
+                            <button onClick={() => handleFileDeletion(file.id)} className="delete-btn">✕</button>
+                          )}
                         </div>
                       ))
                     )}

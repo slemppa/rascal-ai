@@ -15,10 +15,10 @@ Onboarding Modal näytetään uusille käyttäjille ensimmäisen kirjautumisen y
 - `authUser.email_confirmed_at` tai `authUser.confirmed_at` on olemassa
 - Tämä varmistaa että käyttäjä on vahvistanut sähköpostinsa ennen kuin modal näytetään
 
-### 3. Käyttäjä on owner (ei kutsuttu käyttäjä)
-- Käyttäjä löytyy `org_members` taulusta JA `role === 'owner'`
-- Vain owner-käyttäjät (jotka luovat oman organisaationsa) näkevät onboardingin
-- Kutsutut käyttäjät (`role === 'member'` tai `role === 'admin'`) ohitetaan, koska heidän onboarding-prosessinsa on erilainen
+### 3. Käyttäjä on owner tai admin (ei kutsuttu member-käyttäjä)
+- Käyttäjä löytyy `org_members` taulusta JA `role === 'owner'` TAI `role === 'admin'`
+- Vain owner- ja admin-käyttäjät näkevät onboardingin
+- Kutsutut käyttäjät (`role === 'member'`) ohitetaan, koska heidän onboarding-prosessinsa on erilainen
 
 ### 4. Käyttäjän onboarding ei ole valmis
 - `users.onboarding_completed === false` Supabase tietokannassa
@@ -46,10 +46,10 @@ Onboarding Modal näytetään uusille käyttäjille ensimmäisen kirjautumisen y
 - Modal odottaa sähköpostin vahvistusta ennen näyttämistä
 - Tämä estää modaalin näkymisen salasanan asettamisen aikana
 
-### 3. Käyttäjä on kutsuttu käyttäjä (ei owner)
-- Käyttäjä löytyy `org_members` taulusta JA `role !== 'owner'` (eli `role === 'member'` tai `role === 'admin'`)
-- Kutsutut käyttäjät ohitetaan kokonaan
-- Heidän onboarding-prosessinsa on erilainen kuin itsenäisesti rekisteröityneillä käyttäjillä (owner)
+### 3. Käyttäjä on kutsuttu käyttäjä (member)
+- Käyttäjä löytyy `org_members` taulusta JA `role === 'member'`
+- Kutsutut member-käyttäjät ohitetaan kokonaan
+- Heidän onboarding-prosessinsa on erilainen kuin owner- ja admin-käyttäjillä
 
 ### 4. Käyttäjän onboarding on valmis
 - `users.onboarding_completed === true` Supabase tietokannassa
@@ -80,8 +80,8 @@ Modal tarkistaa näkyvyyden seuraavassa järjestyksessä:
    - Jos sähköposti ei ole vahvistettu → Modal EI näy
    
 4. **Organisaation rooli**
-   - Jos käyttäjä on kutsuttu käyttäjä (`role !== 'owner'` eli `member` tai `admin`) → Modal EI näy
-   - Jos käyttäjä on owner → Jatketaan onboarding-tarkistukseen
+   - Jos käyttäjä on kutsuttu käyttäjä (`role === 'member'`) → Modal EI näy
+   - Jos käyttäjä on owner tai admin → Jatketaan onboarding-tarkistukseen
    
 5. **Onboarding-status**
    - Jos `onboarding_completed === false` → Modal NÄY
@@ -188,11 +188,11 @@ Modal käyttää `useEffect` hookia joka tarkistaa näkyvyyden aina kun:
 - ❌ `onboarding_completed === true`
 - **Tulos:** Modal EI näy
 
-### Esimerkki 3: Kutsuttu käyttäjä (organisaation jäsen, ei owner)
+### Esimerkki 3: Kutsuttu käyttäjä (organisaation jäsen, member)
 - ✅ Käyttäjä kirjautuu sisään
 - ✅ Sähköposti vahvistettu
-- ❌ Löytyy `org_members` taulusta JA `role === 'member'` (tai `'admin'`)
-- **Tulos:** Modal EI näy (ohitetaan koska ei ole owner)
+- ❌ Löytyy `org_members` taulusta JA `role === 'member'`
+- **Tulos:** Modal EI näy (ohitetaan koska on member)
 
 ### Esimerkki 4: Käyttäjä salasanan resetointi -sivulla
 - ✅ Käyttäjä kirjautuu sisään
@@ -225,7 +225,7 @@ Jos modal ei näy odotetusti, tarkista konsolista seuraavat viestit:
 **Modal näytetään vain kun KAIKKI seuraavat ehdot täyttyvät:**
 1. ✅ Käyttäjä on kirjautunut sisään
 2. ✅ Sähköposti on vahvistettu
-3. ✅ Käyttäjä on owner (`role === 'owner'` org_members taulussa) TAI ei ole org_members taulussa
+3. ✅ Käyttäjä on owner (`role === 'owner'`) TAI admin (`role === 'admin'`) org_members taulussa TAI ei ole org_members taulussa
 4. ✅ `onboarding_completed === false`
 5. ✅ Käyttäjä EI ole estetyllä reitillä
 

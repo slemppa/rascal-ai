@@ -1,12 +1,27 @@
 import { createClient } from '@supabase/supabase-js'
+import { withOrganization } from './middleware/with-organization.js'
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
   try {
+    // Tarkista että käyttäjän rooli on 'owner'
+    const userRole = req.organization?.role
+    if (userRole !== 'owner') {
+      return res.status(403).json({ 
+        error: 'Vain organisaation omistaja voi lisätä tiedostoja',
+        hint: 'Tiedostojen lisääminen vaatii owner-roolin'
+      })
+    }
+
     let body = {}
     try { body = req.body && Object.keys(req.body).length ? req.body : JSON.parse(await readReqBody(req)) } catch {}
-    const { userId, files } = body || {}
+    const { files } = body || {}
     const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY || req.headers['x-api-key']
+    
+    // Käytetään organisaation ID:tä (req.organization.id) userId:nä
+    // Tämä varmistaa että tiedostot tallennetaan organisaation alle, ei yksittäisen käyttäjän alle
+    const userId = req.organization.id
+    
     if (!userId || !Array.isArray(files) || files.length === 0) return res.status(400).json({ error: 'userId ja files vaaditaan' })
 
     const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -57,4 +72,5 @@ function readReqBody(req) {
   })
 }
 
+export default withOrganization(handler)
 

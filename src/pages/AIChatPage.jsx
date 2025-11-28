@@ -6,6 +6,7 @@ import PageHeader from '../components/PageHeader'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import { getUserOrgId } from '../lib/getUserOrgId'
 import './AIChatPage.css'
 
 export default function AIChatPage() {
@@ -200,20 +201,30 @@ export default function AIChatPage() {
   }
 
   const fetchFiles = async () => {
-    console.log('📁 fetchFiles alkaa, loadingUserData:', loadingUserData, 'userId:', userData?.id)
+    console.log('📁 fetchFiles alkaa, loadingUserData:', loadingUserData)
     if (loadingUserData) {
       setFilesError(t('assistant.loadingUser'))
       return
     }
-    if (!userData?.id) {
-      setFilesError('Käyttäjän ID puuttuu')
+    
+    // Hae käyttäjän organisaation ID (toimii sekä normaaleille että kutsutuille käyttäjille)
+    if (!user?.id) {
+      setFilesError('Käyttäjä ei ole kirjautunut')
       return
     }
+    
+    const orgId = await getUserOrgId(user.id)
+    if (!orgId) {
+      setFilesError('Organisaation ID ei löytynyt')
+      return
+    }
+    
+    console.log('📁 Käytetään organisaation ID:tä:', orgId)
     setFilesLoading(true)
     setFilesError('')
     setFiles([]) // Tyhjennä vanhat tiedostot
     try {
-      const response = await axios.post('/api/dev-knowledge', { action: 'list', userId: userData.id }, {
+      const response = await axios.post('/api/dev-knowledge', { action: 'list', userId: orgId }, {
         headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
       })
       
@@ -295,9 +306,18 @@ export default function AIChatPage() {
     // Aseta lähetys käynnissä -lippu HETI, ennen muita operaatioita
     sendingRef.current = true
     
-    if (!userData?.id) {
+    // Hae organisaation ID (toimii sekä normaaleille että kutsutuille käyttäjille)
+    if (!user?.id) {
       sendingRef.current = false
-      const errorMessage = { role: 'assistant', content: 'Käyttäjän ID puuttuu. Ota yhteyttä ylläpitoon.' }
+      const errorMessage = { role: 'assistant', content: 'Käyttäjä ei ole kirjautunut. Ota yhteyttä ylläpitoon.' }
+      setMessages(prev => [...prev, errorMessage])
+      return
+    }
+    
+    const orgId = await getUserOrgId(user.id)
+    if (!orgId) {
+      sendingRef.current = false
+      const errorMessage = { role: 'assistant', content: 'Organisaation ID ei löytynyt. Ota yhteyttä ylläpitoon.' }
       setMessages(prev => [...prev, errorMessage])
       return
     }
@@ -353,7 +373,7 @@ export default function AIChatPage() {
       const payload = { 
         message: userMessageContent, 
         threadId: activeThreadId, // Zep käyttää tätä sessionId:nä
-        userId: userData?.id,
+        userId: orgId, // Organisaation ID
         assistantType: assistantType // 'marketing' tai 'sales'
       }
       const pendingId = `msg_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
@@ -1068,18 +1088,28 @@ export default function AIChatPage() {
   }
   const handleUploadPending = async () => {
     console.log('handleUploadPending klikattu, pendingFiles:', pendingFiles.length)
-    console.log('userId:', userData?.id)
     console.log('uploadLoading:', uploadLoading)
     
     if (pendingFiles.length === 0) {
       console.log('Ei pendingFiles, palautetaan')
       return
     }
-    if (!userData?.id) {
-      console.log('userId puuttuu')
-      setUploadError('Käyttäjän ID puuttuu')
+    
+    // Hae käyttäjän access token
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.access_token || !session?.user?.id) {
+      setUploadError('Kirjautuminen vaaditaan')
       return
     }
+
+    // Hae organisaation ID (toimii sekä normaaleille että kutsutuille käyttäjille)
+    const orgId = await getUserOrgId(session.user.id)
+    if (!orgId) {
+      console.log('Organisaation ID puuttuu')
+      setUploadError('Organisaation ID ei löytynyt')
+      return
+    }
+
     console.log('Asetetaan uploadLoading = true (handleUploadPending)')
     setUploadLoading(true)
     setUploadError('')
@@ -1096,10 +1126,17 @@ export default function AIChatPage() {
         const { data: pub } = supabase.storage.from(bucket).getPublicUrl(path)
         uploaded.push({ bucket, path, publicUrl: pub?.publicUrl || null, filename: file.name, size: file.size || 0, contentType: file.type || 'application/octet-stream' })
       }
-      await fetch('/api/storage-ingest', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': import.meta.env.N8N_SECRET_KEY },
-        body: JSON.stringify({ userId: userData.id, files: uploaded })
+
+      // Backend käyttää automaattisesti req.organization.id:tä, mutta lähetetään orgId varmuuden vuoksi
+      await axios.post('/api/storage-ingest', {
+        userId: orgId, // Organisaation ID
+        files: uploaded
+      }, {
+        headers: { 
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+          'x-api-key': import.meta.env.N8N_SECRET_KEY
+        }
       })
       setUploadSuccess(t('assistant.files.uploadCard.uploadSuccess', { count: pendingFiles.length }))
       setPendingFiles([])
@@ -1109,7 +1146,8 @@ export default function AIChatPage() {
       console.log('Tiedostolista päivitetty')
     } catch (error) {
       console.error('Virhe tiedostojen lataamisessa (blob):', error)
-      setUploadError(t('assistant.files.uploadCard.uploadError'))
+      const errorMessage = error.response?.data?.error || error.response?.data?.hint || error.message || t('assistant.files.uploadCard.uploadError')
+      setUploadError(errorMessage)
     } finally {
       console.log('Asetetaan uploadLoading = false (handleUploadPending)')
       setUploadLoading(false)

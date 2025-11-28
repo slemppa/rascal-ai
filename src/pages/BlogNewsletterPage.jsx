@@ -571,7 +571,8 @@ export default function BlogNewsletterPage() {
         publishData.mixpost_workspace_uuid = mixpostConfig.mixpost_workspace_uuid
       }
 
-      const response = await fetch('/api/post-actions', {
+      // Blogien julkaisu käyttää erillistä endpointia
+      const response = await fetch('/api/blog-publish', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

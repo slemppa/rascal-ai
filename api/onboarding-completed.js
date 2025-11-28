@@ -40,15 +40,14 @@ export default async function handler(req, res) {
         .single()
 
       if (error || !data) {
-        console.error('User haku epäonnistui:', error)
-        return res.status(400).json({ 
-          error: 'Käyttäjää ei löytynyt',
-          details: error?.message || 'User not found'
-        })
+        console.warn('⚠️ User haku epäonnistui, jatketaan webhookin lähetyksellä:', error?.message || 'User not found')
+        console.warn('   auth_user_id:', userId)
+        // Älä palauta virhettä, vaan jatka webhookin lähetyksellä
+      } else {
+        userData = data
+        publicUserId = data.id // public.users.id
+        console.log('✅ User found:', { publicUserId, email: userData.email })
       }
-
-      userData = data
-      publicUserId = data.id // public.users.id
     }
 
     // Lähetä webhook N8N:ään
@@ -65,24 +64,53 @@ export default async function handler(req, res) {
     const webhookPayload = {
       conversation_id: conversationId,
       user_id: publicUserId || userId, // Lähetä public.users.id, fallback auth.users.id jos ei löydy
-      user_email: userData?.email,
-      company_name: userData?.company_name,
+      auth_user_id: userId, // Säilytetään myös auth.users.id referenssinä
+      user_email: userData?.email || null,
+      company_name: userData?.company_name || null,
       icp_data: icpData || (userData?.icp_summary ? JSON.parse(userData.icp_summary) : null),
       completed_at: new Date().toISOString(),
       source: 'onboarding_modal'
     }
 
-    console.log('📤 Sending webhook to N8N:', webhookUrl)
-
-    const response = await axios.post(webhookUrl, webhookPayload, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(process.env.N8N_SECRET_KEY ? { 'x-api-key': process.env.N8N_SECRET_KEY } : {})
-      }
+    console.log('📤 Sending webhook to N8N:', {
+      url: webhookUrl,
+      user_id: webhookPayload.user_id,
+      hasIcpData: !!webhookPayload.icp_data,
+      hasApiKey: !!process.env.N8N_SECRET_KEY
     })
-    
-    const responseData = response.data || {}
-    console.log('✅ Webhook sent successfully:', responseData)
+
+    try {
+      const response = await axios.post(webhookUrl, webhookPayload, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(process.env.N8N_SECRET_KEY ? { 'x-api-key': process.env.N8N_SECRET_KEY } : {})
+        },
+        timeout: 30000 // 30 sekuntia timeout
+      })
+      
+      const responseData = response.data || {}
+      console.log('✅ Webhook sent successfully:', {
+        status: response.status,
+        response: responseData
+      })
+    } catch (webhookError) {
+      // Loggaa virhe yksityiskohtaisesti, mutta älä palauta virhettä käyttäjälle
+      if (webhookError.response) {
+        console.error('❌ Webhook failed - Server responded with error:', {
+          status: webhookError.response.status,
+          data: webhookError.response.data,
+          headers: webhookError.response.headers
+        })
+      } else if (webhookError.request) {
+        console.error('❌ Webhook failed - No response received:', {
+          message: webhookError.message,
+          code: webhookError.code
+        })
+      } else {
+        console.error('❌ Webhook failed:', webhookError.message)
+      }
+      // Jatketaan vaikka webhook epäonnistui
+    }
 
     return res.status(200).json({
       success: true,

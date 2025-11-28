@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.99.7](https://github.com/slemppa/rascal-ai/compare/v1.99.6...v1.99.7) (2025-11-28)
+
+
+### 🐛 Bug Fixes
+
+* korjattu onboarding modal logiikka org_users käyttäjille ([7e5b13c](https://github.com/slemppa/rascal-ai/commit/7e5b13cf56ac2847eed6ad1731b33a672ac324f1))
+
 ### [1.99.6](https://github.com/slemppa/rascal-ai/compare/v1.99.5...v1.99.6) (2025-11-28)
 
 

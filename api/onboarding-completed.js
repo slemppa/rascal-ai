@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import axios from 'axios'
 
 const supabaseUrl = process.env.SUPABASE_URL 
   || process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -25,8 +26,10 @@ export default async function handler(req, res) {
       hasIcpData: !!icpData
     })
 
-    // Hae käyttäjän tiedot Supabasesta
+    // Hae public.users.id käyttäen auth_user_id:tä (sama logiikka kuin muissa endpointeissa)
     let userData = null
+    let publicUserId = null
+    
     if (userId && supabaseUrl && supabaseAnonKey) {
       const supabase = createClient(supabaseUrl, supabaseAnonKey)
       
@@ -36,9 +39,16 @@ export default async function handler(req, res) {
         .eq('auth_user_id', userId)
         .single()
 
-      if (!error && data) {
-        userData = data
+      if (error || !data) {
+        console.error('User haku epäonnistui:', error)
+        return res.status(400).json({ 
+          error: 'Käyttäjää ei löytynyt',
+          details: error?.message || 'User not found'
+        })
       }
+
+      userData = data
+      publicUserId = data.id // public.users.id
     }
 
     // Lähetä webhook N8N:ään
@@ -54,7 +64,7 @@ export default async function handler(req, res) {
 
     const webhookPayload = {
       conversation_id: conversationId,
-      user_id: userId,
+      user_id: publicUserId || userId, // Lähetä public.users.id, fallback auth.users.id jos ei löydy
       user_email: userData?.email,
       company_name: userData?.company_name,
       icp_data: icpData || (userData?.icp_summary ? JSON.parse(userData.icp_summary) : null),
@@ -64,21 +74,14 @@ export default async function handler(req, res) {
 
     console.log('📤 Sending webhook to N8N:', webhookUrl)
 
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
+    const response = await axios.post(webhookUrl, webhookPayload, {
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.N8N_SECRET_KEY || ''
-      },
-      body: JSON.stringify(webhookPayload)
+        ...(process.env.N8N_SECRET_KEY ? { 'x-api-key': process.env.N8N_SECRET_KEY } : {})
+      }
     })
-
-    if (!response.ok) {
-      throw new Error(`Webhook failed: ${response.status} ${response.statusText}`)
-    }
-
-    const responseData = await response.json().catch(() => ({}))
     
+    const responseData = response.data || {}
     console.log('✅ Webhook sent successfully:', responseData)
 
     return res.status(200).json({
@@ -89,9 +92,12 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('❌ Error in onboarding-completed:', error)
-    return res.status(500).json({ 
+    const status = error.response?.status || 500
+    const data = error.response?.data || { message: error.message }
+    return res.status(status).json({ 
       error: 'Internal server error',
-      message: error.message 
+      status,
+      details: data
     })
   }
 }

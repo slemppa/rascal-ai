@@ -56,8 +56,8 @@ export default async function handler(req, res) {
     console.log('- File type detected:', fileType, 'from extension:', fileExtension)
 
     // Supabase Storage setup
-    const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
-    const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
+    const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
+    const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     
     if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
       console.error('Supabase envs missing for storage upload')

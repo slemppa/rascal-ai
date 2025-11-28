@@ -10,8 +10,8 @@ export default async function handler(req, res) {
     const list = Array.isArray(paths) && paths.length ? paths : (Array.isArray(files) ? files.map(f => f.path).filter(Boolean) : [])
     if (!list.length) return res.status(400).json({ error: 'paths vaaditaan' })
 
-    const supabaseUrl = process.env.VITE_SUPABASE_URL
-    const anonKey = process.env.VITE_SUPABASE_ANON_KEY
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
+    const anonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     if (!supabaseUrl || !anonKey) return res.status(500).json({ error: 'Supabase asetukset puuttuvat' })
     const supabase = createClient(supabaseUrl, anonKey)
 

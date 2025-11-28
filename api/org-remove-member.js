@@ -44,7 +44,7 @@ async function handler(req, res) {
     // Poista jäsen sekä org_members taulusta että Supabase Authista
     // Käytetään Service Role Keyta jos saatavilla (ohittaa RLS:n ja mahdollistaa Auth-poiston)
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
     
     let deleteClient = req.supabase
     let serviceClient = null

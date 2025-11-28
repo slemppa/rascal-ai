@@ -15,8 +15,8 @@ export default async function handler(req, res) {
   }
 
   // Lue ympäristömuuttujat handler-funktion sisällä (kuten muissa endpointeissa)
-  const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   const n8nUrl = process.env.N8N_TICKETING_URL
   const n8nSecretKey = process.env.N8N_SECRET_KEY
 

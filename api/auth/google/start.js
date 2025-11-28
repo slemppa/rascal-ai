@@ -11,7 +11,7 @@ async function handleGoogleOAuthStart(req, res) {
     // Tarkista ympäristömuuttujat
     const clientId = process.env.GOOGLE_CLIENT_ID
     const redirectUri = process.env.GOOGLE_REDIRECT_URI
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
     if (!clientId || !redirectUri) {

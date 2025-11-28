@@ -37,7 +37,7 @@ async function handler(req, res) {
     }
 
     // Tee DELETE-kutsu Mixpostiin
-    const mixpostApiUrl = process.env.VITE_MIXPOST_API_URL || 'https://mixpost.mak8r.fi'
+    const mixpostApiUrl = process.env.MIXPOST_API_URL || 'https://mixpost.mak8r.fi'
     const mixpostUrl = `${mixpostApiUrl}/mixpost/api/${configData.mixpost_workspace_uuid}/posts/${postUuid}`
     
     console.log('🗑️ Deleting Mixpost post:', mixpostUrl)

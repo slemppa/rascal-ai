@@ -54,7 +54,7 @@ export default async function handler(req, res) {
     const clientId = process.env.GOOGLE_CLIENT_ID
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET
     const redirectUri = process.env.GOOGLE_REDIRECT_URI
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     const n8nWebhookUrl = process.env.N8N_INTEGRATION_WEBHOOK_URL
 
@@ -139,8 +139,8 @@ export default async function handler(req, res) {
             headers['x-api-key'] = n8nSecretKey
           }
 
-          let apiBaseUrl = process.env.NEXT_PUBLIC_APP_URL 
-            || process.env.VITE_APP_URL
+          let apiBaseUrl = process.env.APP_URL
+            || process.env.NEXT_PUBLIC_APP_URL
             || 'https://app.rascalai.fi'
 
           await axios.post(n8nWebhookUrl, {

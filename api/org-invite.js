@@ -37,7 +37,7 @@ async function handler(req, res) {
     // Hae käyttäjä email:llä Supabase Authista
     // Käytetään Service Role Keyta jos saatavilla, muuten yritetään hakea org_members taulusta
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
     
     console.log('org-invite: Checking Service Role Key availability:', {
       hasServiceKey: !!supabaseServiceKey,
@@ -120,7 +120,7 @@ async function handler(req, res) {
 
         // Luo käyttäjä salasanalla ja lähetä sitten invite-sähköposti Supabasesta
         try {
-          const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VITE_APP_URL || 'http://localhost:5173'
+          const appUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5173'
           
           // Vakio salasana uusille käyttäjille (voi määritellä ympäristömuuttujassa)
           const defaultPassword = process.env.ORG_INVITE_DEFAULT_PASSWORD || 'RascalAI2024!'

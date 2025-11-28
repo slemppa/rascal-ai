@@ -8,8 +8,8 @@ export default async function handler(req, res) {
     const { userId, filename, contentType } = body || {}
     if (!userId || !filename) return res.status(400).json({ error: 'userId ja filename vaaditaan' })
 
-    const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
-    const anonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
+    const anonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     if (!supabaseUrl || !anonKey) return res.status(500).json({ error: 'Supabase asetukset puuttuvat (URL tai ANON_KEY)' })
 
     // Käytä käyttäjän JWT:tä, jotta createSignedUploadUrl ajetaan käyttäjän kontekstissa

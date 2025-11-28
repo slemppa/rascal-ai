@@ -1,13 +1,13 @@
 // api/analytics.js - Workspace-pohjainen Analytics Dashboard
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
+const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 // Mixpost API helper functions - käytä sisäänrakennettua Mixpost API:a
 async function getMixpostSocialAccounts(workspaceUuid, apiToken) {
   try {
-    const mixpostBaseUrl = process.env.VITE_MIXPOST_API_URL || 'https://mixpost.mak8r.fi'
+    const mixpostBaseUrl = process.env.MIXPOST_API_URL || 'https://mixpost.mak8r.fi'
     const response = await fetch(`${mixpostBaseUrl}/mixpost/api/${workspaceUuid}/accounts`, {
       headers: {
         'Authorization': `Bearer ${apiToken}`,
@@ -28,7 +28,7 @@ async function getMixpostSocialAccounts(workspaceUuid, apiToken) {
 
 async function getMixpostPosts(workspaceUuid, apiToken) {
   try {
-    const mixpostBaseUrl = process.env.VITE_MIXPOST_API_URL || 'https://mixpost.mak8r.fi'
+    const mixpostBaseUrl = process.env.MIXPOST_API_URL || 'https://mixpost.mak8r.fi'
     const response = await fetch(`${mixpostBaseUrl}/mixpost/api/${workspaceUuid}/posts`, {
       headers: {
         'Authorization': `Bearer ${apiToken}`,

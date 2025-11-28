@@ -34,7 +34,7 @@ async function handler(req, res) {
     }
 
     // Kutsu Mixpost API:a (jatkuu samalla tavalla)
-    const mixpostApiUrl = process.env.VITE_MIXPOST_API_URL || 'https://mixpost.mak8r.fi'
+    const mixpostApiUrl = process.env.MIXPOST_API_URL || 'https://mixpost.mak8r.fi'
     const apiUrl = `${mixpostApiUrl}/mixpost/api/${configData.mixpost_workspace_uuid}/posts`
     
     const response = await fetch(apiUrl, {

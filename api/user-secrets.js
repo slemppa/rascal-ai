@@ -3,7 +3,6 @@ import { withOrganization } from './middleware/with-organization.js'
 import axios from 'axios'
 
 const supabaseUrl = process.env.SUPABASE_URL 
-  || process.env.VITE_SUPABASE_URL 
   || process.env.NEXT_PUBLIC_SUPABASE_URL
 
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -186,8 +185,8 @@ async function handlePost(req, res) {
       } else {
         // Hae API URL ympäristöstä (production URL)
         // Production URL: app.rascalai.fi
-        let apiBaseUrl = process.env.NEXT_PUBLIC_APP_URL 
-          || process.env.VITE_APP_URL
+        let apiBaseUrl = process.env.APP_URL
+          || process.env.NEXT_PUBLIC_APP_URL
           || 'https://app.rascalai.fi'
         
         console.log('🔗 API Base URL:', apiBaseUrl)

@@ -40,7 +40,7 @@ async function handler(req, res) {
     }
 
     // Kutsu Mixpost API:a schedule-endpointtia
-    const mixpostApiUrl = process.env.VITE_MIXPOST_API_URL || 'https://mixpost.mak8r.fi'
+    const mixpostApiUrl = process.env.MIXPOST_API_URL || 'https://mixpost.mak8r.fi'
     const apiUrl = `${mixpostApiUrl}/mixpost/api/${configData.mixpost_workspace_uuid}/posts/schedule/${postUuid}`
     
     console.log('Sending to Mixpost Schedule API:', {

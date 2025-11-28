@@ -1,18 +1,16 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.SUPABASE_URL 
-  || process.env.NEXT_PUBLIC_SUPABASE_URL 
-  || process.env.VITE_SUPABASE_URL
+  || process.env.NEXT_PUBLIC_SUPABASE_URL
 // Käytä ensin service role -avainta; jos puuttuu, käytetään anon key:tä ja pyydetään Authorization header käyttäjältä
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY 
   || process.env.SUPABASE_SERVICE_KEY
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY 
-  || process.env.VITE_SUPABASE_ANON_KEY
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY
+  || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 if (!supabaseUrl || (!supabaseServiceKey && !supabaseAnonKey)) {
   console.error('❌ Missing Supabase envs in mass-call', {
     has_SUPABASE_URL: Boolean(process.env.SUPABASE_URL),
-    has_VITE_SUPABASE_URL: Boolean(process.env.VITE_SUPABASE_URL),
     has_NEXT_PUBLIC_SUPABASE_URL: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
     has_SERVICE_ROLE_KEY: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
     has_SERVICE_KEY: Boolean(process.env.SUPABASE_SERVICE_KEY),

@@ -9,8 +9,8 @@ export default async function handler(req, res) {
     let { workspace_uuid: workspaceUuid, mode } = req.query || {}
 
     // Luo supabase-yhteys, jotta voidaan hakea api_token tarvittaessa
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
+    const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
     const accessToken = req.headers['authorization']?.replace('Bearer ', '')
     const supabase = accessToken && supabaseAnonKey

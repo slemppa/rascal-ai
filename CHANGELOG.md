@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.99.3](https://github.com/slemppa/rascal-ai/compare/v1.99.2...v1.99.3) (2025-11-28)
+
+
+### 🐛 Bug Fixes
+
+* replace VITE_ env vars with backend vars in API ([aea2e18](https://github.com/slemppa/rascal-ai/commit/aea2e182a1a363cafa79ed860f066dc185aa56b6))
+
 ### [1.99.2](https://github.com/slemppa/rascal-ai/compare/v1.99.1...v1.99.2) (2025-11-28)
 
 

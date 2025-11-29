@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useConversation } from '@elevenlabs/react'
+import axios from 'axios'
 import VoiceOrb from './VoiceOrb'
 import './OnboardingModal.css'
 
@@ -13,6 +14,7 @@ const OnboardingModal = () => {
   const [loading, setLoading] = useState(true)
   const [conversationId, setConversationId] = useState(null)
   const conversationIdRef = useRef(null)
+  const [isMinimized, setIsMinimized] = useState(false)
   
   // ElevenLabs conversation hook
   const conversation = useConversation({
@@ -131,11 +133,22 @@ const OnboardingModal = () => {
 
           if (!orgUserError && orgUserData) {
             userData = orgUserData
+            // Varmista että onboarding_completed on eksplisiittisesti true
+            // Jos se on false, null tai undefined, näytetään modal
             onboardingCompleted = orgUserData.onboarding_completed === true
             console.log('🔍 OnboardingModal: Owner/Admin käyttäjä, organisaation onboarding:', {
               org_id: orgMember.org_id,
-              onboarding_completed: onboardingCompleted
+              onboarding_completed: orgUserData.onboarding_completed,
+              onboardingCompleted: onboardingCompleted
             })
+            
+            // Jos onboarding on valmis, EI näytetä modaalia
+            if (onboardingCompleted) {
+              console.log('✅ OnboardingModal: Organisaation onboarding on valmis, modaali EI näy')
+              setLoading(false)
+              setShouldShow(false)
+              return
+            }
           } else {
             console.warn('⚠️ OnboardingModal: Organisaatiota ei löydy users taulusta:', orgUserError)
             // Jos organisaatiota ei löydy, näytetään modal
@@ -157,11 +170,31 @@ const OnboardingModal = () => {
             throw userError
           } else if (normalUserData) {
             userData = normalUserData
+            // Varmista että onboarding_completed on eksplisiittisesti true
+            // Jos se on false, null tai undefined, näytetään modal
             onboardingCompleted = normalUserData.onboarding_completed === true
             console.log('🔍 OnboardingModal: Normaali käyttäjä, onboarding:', {
-              onboarding_completed: onboardingCompleted
+              onboarding_completed: normalUserData.onboarding_completed,
+              onboardingCompleted: onboardingCompleted
             })
+            
+            // Jos onboarding on valmis, EI näytetä modaalia
+            if (onboardingCompleted) {
+              console.log('✅ OnboardingModal: Käyttäjän onboarding on valmis, modaali EI näy')
+              setLoading(false)
+              setShouldShow(false)
+              return
+            }
           }
+        }
+
+        // Tarkista onko modal minimoitu localStorageen
+        const skipped = localStorage.getItem(`onboarding_skipped_${user.id}`)
+        if (skipped === 'true') {
+          setIsMinimized(true)
+          setShouldShow(false) // Älä näytä normaalisti jos minimoitu
+          setLoading(false)
+          return
         }
 
         // Näytä vain jos onboarding ei ole valmis
@@ -229,33 +262,141 @@ const OnboardingModal = () => {
   }
 
   const handleEndConversation = async () => {
-    // Lähetä webhook jos keskustelu keskeytetään manuaalisesti
-    if (conversationId && user?.id) {
-      try {
-        await fetch('/api/onboarding-completed', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            conversationId: conversationId,
-            userId: user.id,
-            icpData: null // Ei ICP dataa, keskustelu keskeytettiin
-          })
-        })
-      } catch (error) {
-        console.error('⚠️ Failed to send end webhook:', error)
-      }
-    }
+    // Määritellään requestBody ulommalla tasolla jotta se on näkyvissä kaikissa catch-lohkoissa
+    let requestBody = null
     
-    await conversation.endSession()
-    setConversationId(null)
-    conversationIdRef.current = null
+    try {
+      console.log('🛑 Ending conversation...', {
+        conversationId: conversationId,
+        userId: user?.id,
+        conversationStatus: conversation.status
+      })
+
+      // Lähetä webhook jos keskustelu keskeytetään manuaalisesti
+      // Käytä conversationIdRef.current jos conversationId state on null
+      const currentConversationId = conversationId || conversationIdRef.current
+      
+      if (!currentConversationId) {
+        console.warn('⚠️ Cannot send end webhook: conversationId is missing', {
+          conversationId: conversationId,
+          conversationIdRef: conversationIdRef.current,
+          conversationStatus: conversation.status
+        })
+      } else if (!user?.id) {
+        console.warn('⚠️ Cannot send end webhook: userId is missing')
+      } else {
+        requestBody = {
+          conversationId: currentConversationId,
+          userId: user.id,
+          icpData: null // Ei ICP dataa, keskustelu keskeytettiin
+        }
+        
+        try {
+          console.log('📤 Sending end conversation webhook:', {
+            conversationId: currentConversationId,
+            userId: user.id,
+            conversationIdFromState: conversationId,
+            conversationIdFromRef: conversationIdRef.current
+          })
+          
+          console.log('📤 Request body:', JSON.stringify(requestBody, null, 2))
+          
+          // Hae käyttäjän session token Supabasesta
+          const { data: { session } } = await supabase.auth.getSession()
+          const headers = {
+            'Content-Type': 'application/json'
+          }
+          
+          // Lisää Authorization header jos session token on saatavilla
+          if (session?.access_token) {
+            headers['Authorization'] = `Bearer ${session.access_token}`
+            console.log('🔑 Adding Authorization header to request')
+          } else {
+            console.warn('⚠️ No session token available, request may fail due to RLS')
+          }
+          
+          const response = await axios.post('/api/onboarding-completed', requestBody, {
+            headers: headers
+          })
+
+          console.log('✅ End conversation webhook sent:', response.data)
+        } catch (error) {
+          if (error.response) {
+            // Server responded with error status
+            console.error('❌ Failed to send end webhook:', {
+              status: error.response.status,
+              statusText: error.response.statusText,
+              error: error.response.data,
+              requestBody: requestBody
+            })
+          } else if (error.request) {
+            // Request was made but no response received
+            console.error('❌ Failed to send end webhook: No response received', {
+              message: error.message,
+              requestBody: requestBody
+            })
+          } else {
+            // Error in request setup
+            console.error('❌ Error sending end webhook:', error.message)
+          }
+        }
+      }
+      
+      // Lopeta keskustelu
+      try {
+        await conversation.endSession()
+        console.log('✅ Conversation ended')
+      } catch (error) {
+        console.error('❌ Error ending conversation:', error)
+      }
+      
+      // Tyhjennä conversation ID:t
+      setConversationId(null)
+      conversationIdRef.current = null
+      
+      // Sulje modaali
+      setShouldShow(false)
+      
+    } catch (error) {
+      console.error('❌ Error in handleEndConversation:', {
+        error: error.message,
+        stack: error.stack,
+        requestBody: requestBody
+      })
+      // Sulje modaali vaikka virhe tapahtui
+      setShouldShow(false)
+    }
   }
 
   const handleSkip = () => {
-    // Sulje modaali, mutta älä tee muutoksia tietokantaan
-    setShouldShow(false)
+    // Minimoi modaali ja tallenna localStorageen
+    if (user?.id) {
+      localStorage.setItem(`onboarding_skipped_${user.id}`, 'true')
+    }
+    setIsMinimized(true)
+  }
+  
+  const handleRestore = () => {
+    // Palauta modaali normaalikokoon
+    setIsMinimized(false)
+    setShouldShow(true) // Näytä modal normaalisti
+    if (user?.id) {
+      localStorage.removeItem(`onboarding_skipped_${user.id}`)
+    }
+  }
+
+  // Jos minimoitu, näytä vain pieni nappi (näytetään aina jos minimoitu)
+  if (isMinimized) {
+    return (
+      <div className="onboarding-modal-minimized" onClick={handleRestore}>
+        <div className="onboarding-modal-minimized-content">
+          <span>ICP-haastattelu</span>
+          <button className="btn-restore" onClick={(e) => { e.stopPropagation(); handleRestore(); }}>
+            Palauta
+          </button>
+        </div>
+      </div>
+    )
   }
 
   // Älä näytä jos lataa tai ei pitäisi näkyä
@@ -264,10 +405,10 @@ const OnboardingModal = () => {
   }
 
   return (
-    <div className="onboarding-modal-overlay">
-      <div className="onboarding-modal">
+    <div className={`onboarding-modal-overlay ${isMinimized ? 'minimized' : ''}`}>
+      <div className={`onboarding-modal ${isMinimized ? 'minimized' : ''}`}>
         <div className="onboarding-modal-header">
-          <h2>🎉 Tervetuloa!</h2>
+          <h2>Tervetuloa!</h2>
           <p>Aloitetaan luomalla yrityksellesi täydellinen ICP (Ideal Customer Profile)</p>
         </div>
 

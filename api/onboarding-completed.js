@@ -4,6 +4,10 @@ import axios from 'axios'
 const supabaseUrl = process.env.SUPABASE_URL 
   || process.env.NEXT_PUBLIC_SUPABASE_URL
 
+// Käytä ensin service role -avainta; jos puuttuu, käytetään anon key:tä ja pyydetään Authorization header käyttäjältä
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY 
+  || process.env.SUPABASE_SERVICE_KEY
+
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY
   || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
@@ -16,8 +20,47 @@ export default async function handler(req, res) {
   try {
     const { conversationId, userId, icpData } = req.body
 
-    if (!conversationId) {
-      return res.status(400).json({ error: 'conversationId is required' })
+    console.log('📥 Received request:', {
+      conversationId: conversationId || 'MISSING',
+      userId: userId || 'MISSING',
+      hasIcpData: !!icpData,
+      bodyKeys: Object.keys(req.body || {}),
+      fullBody: JSON.stringify(req.body, null, 2)
+    })
+
+    // Tarkista että conversationId on olemassa ja ei ole tyhjä
+    if (!conversationId || (typeof conversationId === 'string' && conversationId.trim() === '')) {
+      console.error('❌ conversationId is required but missing or empty', {
+        conversationId: conversationId,
+        type: typeof conversationId,
+        userId: userId
+      })
+      return res.status(400).json({ 
+        error: 'conversationId is required',
+        received: {
+          conversationId: conversationId,
+          userId: userId,
+          hasBody: !!req.body,
+          bodyType: typeof req.body
+        }
+      })
+    }
+
+    // Tarkista että userId on olemassa ja ei ole tyhjä
+    if (!userId || (typeof userId === 'string' && userId.trim() === '')) {
+      console.error('❌ userId is required but missing or empty', {
+        conversationId: conversationId,
+        userId: userId,
+        type: typeof userId
+      })
+      return res.status(400).json({ 
+        error: 'userId is required',
+        received: {
+          conversationId: conversationId,
+          userId: userId,
+          hasBody: !!req.body
+        }
+      })
     }
 
     console.log('📞 Onboarding conversation completed:', {
@@ -26,52 +69,84 @@ export default async function handler(req, res) {
       hasIcpData: !!icpData
     })
 
-    // Hae public.users.id käyttäen auth_user_id:tä (sama logiikka kuin muissa endpointeissa)
+    // Hae public.users.id käyttäen auth_user_id:tä
+    // Sama logiikka kuin analytics.js ja with-organization.js:
+    // 1. Tarkista ensin org_members taulusta (kutsutut käyttäjät)
+    // 2. Jos ei löydy, hae users taulusta auth_user_id:n perusteella
     let userData = null
     let publicUserId = null
     
-    if (userId && supabaseUrl && supabaseAnonKey) {
-      const supabase = createClient(supabaseUrl, supabaseAnonKey)
+    if (userId && supabaseUrl && (supabaseAnonKey || supabaseServiceKey)) {
+      // Hae käyttäjän token headerista
+      const access_token = req.headers['authorization']?.replace('Bearer ', '')
       
-      // 1. Yritä hakea normaali käyttäjä users taulusta
-      const { data, error } = await supabase
-        .from('users')
-        .select('id, email, company_name, icp_summary')
+      console.log('🔍 User lookup debug:', {
+        userId,
+        hasAccessToken: !!access_token,
+        accessTokenLength: access_token?.length,
+        hasAnonKey: !!supabaseAnonKey,
+        hasServiceKey: !!supabaseServiceKey,
+        usingAuth: !!(supabaseAnonKey && access_token),
+        usingServiceRole: !!(supabaseServiceKey && !access_token)
+      })
+      
+      // Luo Supabase client:
+      // 1. Ensin yritetään anon key + käyttäjän token (RLS toimii tokenin perusteella)
+      // 2. Jos token puuttuu, käytetään service role key:ta (ohittaa RLS:n)
+      const supabase = createClient(
+        supabaseUrl,
+        (supabaseAnonKey && access_token) ? supabaseAnonKey : (supabaseServiceKey || supabaseAnonKey),
+        (supabaseAnonKey && access_token) ? { global: { headers: { Authorization: `Bearer ${access_token}` } } } : undefined
+      )
+      
+      // 1. Tarkista ensin org_members taulusta (kutsutut käyttäjät)
+      console.log('🔍 Checking org_members table for auth_user_id:', userId)
+      const { data: orgMember, error: orgError } = await supabase
+        .from('org_members')
+        .select('org_id')
         .eq('auth_user_id', userId)
-        .single()
+        .maybeSingle()
 
-      if (error || !data) {
-        // 2. Jos ei löydy, tarkista onko kutsuttu käyttäjä (org_members)
-        console.warn('⚠️ User not found in users table, checking org_members:', error?.message || 'User not found')
-        
-        const { data: orgMember, error: orgError } = await supabase
-          .from('org_members')
-          .select('org_id')
+      console.log('🔍 org_members query result:', { orgMember, orgError })
+
+      if (!orgError && orgMember?.org_id) {
+        // Käyttäjä on kutsuttu käyttäjä, hae organisaation tiedot
+        console.log('🔍 Fetching org data for org_id:', orgMember.org_id)
+        const { data: orgData, error: orgDataError } = await supabase
+          .from('users')
+          .select('id, company_name, icp_summary, contact_email')
+          .eq('id', orgMember.org_id)
+          .single()
+
+        console.log('🔍 org data query result:', { orgData, orgDataError })
+
+        if (!orgDataError && orgData) {
+          userData = orgData
+          publicUserId = orgData.id
+          console.log('✅ Invited user found, using org_id:', { publicUserId, contact_email: userData.contact_email })
+        } else {
+          console.error('❌ Failed to fetch org data:', orgDataError)
+        }
+      } else {
+        // 2. Jos ei löydy org_members taulusta, hae users taulusta
+        console.log('🔍 Checking users table for auth_user_id:', userId)
+        const { data, error } = await supabase
+          .from('users')
+          .select('id, company_name, icp_summary, contact_email')
           .eq('auth_user_id', userId)
           .maybeSingle()
 
-        if (!orgError && orgMember?.org_id) {
-          // Käyttäjä on kutsuttu käyttäjä, hae organisaation tiedot
-          const { data: orgData, error: orgDataError } = await supabase
-            .from('users')
-            .select('id, email, company_name, icp_summary')
-            .eq('id', orgMember.org_id)
-            .single()
+        console.log('🔍 users query result:', { data, error })
 
-          if (!orgDataError && orgData) {
-            userData = orgData
-            publicUserId = orgData.id
-            console.log('✅ Invited user found, using org_id:', { publicUserId, email: userData.email })
-          } else {
-            console.error('❌ Failed to fetch org data:', orgDataError)
-          }
+        if (error) {
+          console.error('❌ Error fetching user from users table:', error)
+        } else if (data) {
+          userData = data
+          publicUserId = data.id // public.users.id
+          console.log('✅ User found in users table:', { publicUserId, contact_email: userData.contact_email })
         } else {
-          console.error('❌ User not found in users or org_members:', { userId, orgError })
+          console.error('❌ User not found in org_members or users table:', { userId })
         }
-      } else {
-        userData = data
-        publicUserId = data.id // public.users.id
-        console.log('✅ User found:', { publicUserId, email: userData.email })
       }
     }
 
@@ -86,70 +161,118 @@ export default async function handler(req, res) {
       })
     }
 
-    // Älä lähetä user_id:ä jos publicUserId ei löydy (ei käytetä auth.users.id fallbackina)
+    // Älä lähetä webhookia jos public.users.id ei löydy
+    // EI käytetä auth.users.id fallbackina - aina public.users.id!
     if (!publicUserId) {
       console.error('❌ Cannot send webhook: public.users.id not found for auth_user_id:', userId)
       return res.status(400).json({ 
         error: 'Käyttäjää ei löytynyt',
-        details: 'User not found in users or org_members table'
+        details: 'User not found in users or org_members table',
+        auth_user_id: userId,
+        conversation_id: conversationId
       })
     }
 
     const webhookPayload = {
       conversation_id: conversationId,
-      user_id: publicUserId, // Vain public.users.id, ei auth.users.id
+      user_id: publicUserId, // VAIN public.users.id, EI auth.users.id
       auth_user_id: userId, // Säilytetään myös auth.users.id referenssinä
-      user_email: userData?.email || null,
+      user_email: userData?.contact_email || null, // users taulussa on contact_email, ei email
       company_name: userData?.company_name || null,
-      icp_data: icpData || (userData?.icp_summary ? JSON.parse(userData.icp_summary) : null),
+      icp_data: icpData || null, // Lähetetään vain jos se tulee request body:sta, ei icp_summary:sta
       completed_at: new Date().toISOString(),
-      source: 'onboarding_modal'
+      source: 'onboarding_modal',
+      ended_manually: !icpData // Tarkista onko keskustelu keskeytetty manuaalisesti
+    }
+
+    console.log('📋 Webhook payload prepared:', {
+      conversation_id: webhookPayload.conversation_id,
+      user_id: webhookPayload.user_id,
+      auth_user_id: webhookPayload.auth_user_id,
+      hasIcpData: !!webhookPayload.icp_data,
+      ended_manually: webhookPayload.ended_manually
+    })
+
+    // Muodosta headerit
+    const headers = {
+      'Content-Type': 'application/json'
+    }
+    
+    // Lisää x-api-key header jos N8N_SECRET_KEY on asetettu
+    const n8nSecretKey = process.env.N8N_SECRET_KEY
+    if (n8nSecretKey) {
+      headers['x-api-key'] = n8nSecretKey
     }
 
     console.log('📤 Sending webhook to N8N:', {
       url: webhookUrl,
       user_id: webhookPayload.user_id,
+      auth_user_id: webhookPayload.auth_user_id,
       hasIcpData: !!webhookPayload.icp_data,
-      hasApiKey: !!process.env.N8N_SECRET_KEY
+      hasApiKey: !!n8nSecretKey,
+      apiKeyLength: n8nSecretKey ? n8nSecretKey.length : 0,
+      headers: Object.keys(headers),
+      payload: JSON.stringify(webhookPayload, null, 2)
     })
+
+    let responseData = {}
+    let webhookSuccess = false
 
     try {
       const response = await axios.post(webhookUrl, webhookPayload, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(process.env.N8N_SECRET_KEY ? { 'x-api-key': process.env.N8N_SECRET_KEY } : {})
-        },
+        headers: headers,
         timeout: 30000 // 30 sekuntia timeout
       })
       
-      const responseData = response.data || {}
+      responseData = response.data || {}
+      webhookSuccess = true
       console.log('✅ Webhook sent successfully:', {
         status: response.status,
         response: responseData
       })
     } catch (webhookError) {
-      // Loggaa virhe yksityiskohtaisesti, mutta älä palauta virhettä käyttäjälle
+      // Loggaa virhe yksityiskohtaisesti
       if (webhookError.response) {
         console.error('❌ Webhook failed - Server responded with error:', {
           status: webhookError.response.status,
+          statusText: webhookError.response.statusText,
           data: webhookError.response.data,
-          headers: webhookError.response.headers
+          headers: JSON.stringify(webhookError.response.headers)
         })
+        responseData = {
+          error: 'Webhook server error',
+          status: webhookError.response.status,
+          data: webhookError.response.data
+        }
       } else if (webhookError.request) {
         console.error('❌ Webhook failed - No response received:', {
           message: webhookError.message,
-          code: webhookError.code
+          code: webhookError.code,
+          url: webhookUrl
         })
+        responseData = {
+          error: 'No response from webhook',
+          message: webhookError.message,
+          code: webhookError.code
+        }
       } else {
-        console.error('❌ Webhook failed:', webhookError.message)
+        console.error('❌ Webhook failed:', {
+          message: webhookError.message,
+          stack: webhookError.stack
+        })
+        responseData = {
+          error: 'Webhook request error',
+          message: webhookError.message
+        }
       }
-      // Jatketaan vaikka webhook epäonnistui
+      // Jatketaan vaikka webhook epäonnistui, mutta palautetaan virhe-info
     }
 
     return res.status(200).json({
-      success: true,
-      message: 'Onboarding completed and webhook sent',
-      webhookResponse: responseData
+      success: webhookSuccess,
+      message: webhookSuccess ? 'Onboarding completed and webhook sent' : 'Onboarding completed but webhook failed',
+      webhookResponse: responseData,
+      webhookUrl: webhookUrl // Debug: palautetaan URL jotta voidaan tarkistaa
     })
 
   } catch (error) {

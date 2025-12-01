@@ -777,6 +777,9 @@ export default function SettingsIntegrationsTab() {
             key={integration.id}
             className={`integration-card ${integration.isConfigured ? 'integration-card-configured' : ''} ${expandedCard === integration.id ? 'integration-card-expanded' : ''}`}
           >
+            {(integration.id === 'wordpress' || integration.id === 'google_analytics') && (
+              <span className="beta-tag">Beta</span>
+            )}
             <div
               className="integration-card-header"
               onClick={() => setExpandedCard(expandedCard === integration.id ? null : integration.id)}

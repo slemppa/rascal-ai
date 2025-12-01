@@ -64,9 +64,10 @@
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
   transition: all 0.2s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .integration-card:hover {
@@ -292,5 +293,22 @@
   color: #6b7280;
   font-style: italic;
   font-size: 1rem;
+}
+
+/* Beta Tag */
+.beta-tag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #ff6600;
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 

@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.100.0](https://github.com/slemppa/rascal-ai/compare/v1.99.7...v1.100.0) (2025-12-01)
+
+
+### 🐛 Bug Fixes
+
+* onboarding modal improvements ([9716086](https://github.com/slemppa/rascal-ai/commit/97160861121a0161b9ee260e5cec7c2d845963e1))
+
+
+### ✨ Features
+
+* lisää tiedostomuotovalidaatio AI-chatin tietokantaan ([6e984a1](https://github.com/slemppa/rascal-ai/commit/6e984a10ddf2d2236d6f1e570a4a68bd885a2091))
+
 ### [1.99.7](https://github.com/slemppa/rascal-ai/compare/v1.99.6...v1.99.7) (2025-11-28)
 
 

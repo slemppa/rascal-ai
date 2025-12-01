@@ -115,10 +115,6 @@ export default function FeaturesTab({
     return features
   }, [features])
 
-  // Debug-logitus
-  React.useEffect(() => {
-    console.log('FeaturesTab - received features:', features, 'enabledFeatures:', enabledFeatures)
-  }, [features, enabledFeatures])
 
   return (
     <div className="features-tab-container">
@@ -250,13 +246,6 @@ export default function FeaturesTab({
                     const next = e.target.checked 
                       ? Array.from(new Set([...current, feature])) 
                       : current.filter(x => x !== feature)
-                    console.log('FeaturesTab - Feature toggle:', {
-                      feature,
-                      checked: e.target.checked,
-                      current,
-                      next,
-                      userId
-                    })
                     if (onFeatureToggle) {
                       onFeatureToggle(next)
                     } else {

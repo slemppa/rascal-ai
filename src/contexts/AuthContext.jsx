@@ -177,7 +177,6 @@ export const AuthProvider = ({ children }) => {
           filter: `id=eq.${organization.id}`
         },
         (payload) => {
-          console.log('Users table updated:', payload)
           // Päivitä features jos ne muuttuivat
           if (payload.new.features) {
             setUser(prev => prev ? {

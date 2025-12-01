@@ -528,8 +528,6 @@ export default function AccountDetailsPage() {
       console.error('handleFeatureToggle: account is null')
       return
     }
-
-    console.log('Feature toggle - account.id:', account.id, 'current:', accountFeatures, 'new:', newFeatures)
     
     setIsSaving(true)
     setSaveMessage('')
@@ -538,10 +536,8 @@ export default function AccountDetailsPage() {
       // Varmista että newFeatures on array
       const featuresToSave = Array.isArray(newFeatures) ? newFeatures : []
       
-      console.log('Saving features to database - account.id:', account.id, 'features:', featuresToSave)
-      
       // Päivitä features tietokantaan
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('users')
         .update({ features: featuresToSave })
         .eq('id', account.id)
@@ -557,23 +553,7 @@ export default function AccountDetailsPage() {
         throw error
       }
 
-      console.log('Features update response:', data)
-      
-      // Varmista että päivitys meni läpi - hae uudelleen (RLS voi estää select-kyselyn, mutta päivitys menee läpi)
-      const { data: verifyData, error: verifyError } = await supabase
-        .from('users')
-        .select('features')
-        .eq('id', account.id)
-        .single()
-      
-      if (!verifyError && verifyData) {
-        console.log('Verified features in database:', verifyData.features)
-      } else {
-        console.warn('Could not verify features update (RLS may block select):', verifyError)
-      }
-
       // Päivitä state suoraan tallennettuun arvoon (RLS voi estää select-kyselyn)
-      console.log('Features saved successfully:', featuresToSave)
       setAccountFeatures(featuresToSave)
       setSaveMessage('Ominaisuudet päivitetty!')
       setTimeout(() => setSaveMessage(''), 3000)

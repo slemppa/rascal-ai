@@ -17,8 +17,8 @@ export default function HelpPage() {
           description: 'Rascal AI on tekoälyavusteinen työkalu sosiaalisen median sisällön luomiseen ja hallintaan, puhelukampanjoihin ja lead scrapingiin. Tässä oppaassa opit käyttämään kaikkia ominaisuuksia.',
           tips: [
             'Ensimmäisellä kirjautumisella näkyy onboarding-modaali ICP-haastattelua varten',
-            'Aloita Dashboard-sivulta yleiskuvan saamiseksi',
-            'Tutustu julkaisujen hallintaan Posts-sivulla',
+            'Aloita Kojelauta-sivulta yleiskuvan saamiseksi',
+            'Tutustu julkaisujen hallintaan Some-sivulla',
             'Käytä sisältöstrategiaa sisällön suunnitteluun',
             'Luo kampanjoita puhelujen hallintaan'
           ]
@@ -35,36 +35,28 @@ export default function HelpPage() {
             'Modaali sulkeutuu kun haastattelu on valmis'
           ],
           tips: [
-            'Onboarding-modaali näkyy vain jos onboarding_completed = false',
-            'Kutsutut käyttäjät (member/admin) eivät näe onboarding-modaalia',
+            'Onboarding-modaali näkyy vain jos haastattelua ei ole suoritettu',
+            'Kutsutut käyttäjät (member) eivät näe onboarding-modaalia',
             'Voit ohittaa onboardingin klikkaamalla "Ohita toistaiseksi"',
-            'ICP-tiedot tallennetaan users.icp_summary -kenttään'
+            'ICP-tiedot tallennetaan tietokantaan haastattelun jälkeen'
           ]
         }
       ]
     },
     {
       id: 'dashboard',
-      title: 'Dashboard',
+      title: 'Kojelauta',
       icon: 'dashboard',
       content: [
         {
-          title: 'Dashboard - Yleiskuva',
-          description: 'Dashboard-sivulla näet kaikki tärkeimmät tiedot yhdellä katsauksella.',
+          title: 'Kojelauta - Yleiskuva',
+          description: 'Kojelauta-sivulla näet kaikki tärkeimmät tiedot yhdellä katsauksella.',
           features: [
             'Viimeisimmät julkaisut ja niiden tilat',
             'Tulevat julkaisut ja aikataulut',
-            'Nopeat toiminnot uusien julkaisujen luomiseen',
-            'Tilastot ja analyysit'
-          ]
-        },
-        {
-          title: 'Nopeat toiminnot',
-          description: 'Dashboardin yläosassa on nopeat toiminnot yleisimpiin tehtäviin.',
-          tips: [
-            'Vedä ja pudota kuvia julkaisuja varten',
-            'Lataa äänitiedostoja puheluihin',
-            'Muokkaa julkaisuja suoraan listasta'
+            'Puheluiden sekä viestien kustannukset',
+            'Vastattujen puheluiden prosenttimäärä',
+            'Jos Google Analytics on yhdistetty, näet kävijämäärät'
           ]
         }
       ]
@@ -76,7 +68,7 @@ export default function HelpPage() {
       content: [
         {
           title: 'Julkaisujen hallinta',
-          description: 'Posts-sivulla hallitset kaikkia sosiaalisen median julkaisujasi.',
+          description: 'Some-sivulla hallitset kaikkia sosiaalisen median julkaisujasi.',
           features: [
             'Luo ja muokkaa julkaisuja',
             'Aikatauluta julkaisut',
@@ -88,11 +80,9 @@ export default function HelpPage() {
           title: 'Julkaisun luominen',
           description: 'Uuden julkaisun luominen on yksinkertaista.',
           steps: [
-            'Klikkaa "Uusi julkaisu" -painiketta',
+            'Klikkaa "Generoi sisältö" -painiketta',
             'Kirjoita idean kuvaus',
-            'Lisää julkaisun teksti (caption)',
-            'Valitse julkaisupäivä ja -aika',
-            'Tallenna julkaisu'
+            'Valitse kanavat, joille julkaisu generoidaan'
           ]
         },
         {
@@ -116,9 +106,9 @@ export default function HelpPage() {
           description: 'Sisältöstrategia-sivulla hallitset yrityksesi perustietoja ja kuukausittaisia sisältösuunnitelmia. Sivu koostuu neljästä pääosasta: Yritysanalyysi, Kohderyhmä (ICP), Tavoitteet (KPI) ja TOV (Theory of Victory).',
           features: [
             'Yritysanalyysi: Kuvaus yrityksestäsi ja toimialastasi',
-            'Kohderyhmä (ICP): Ideal Customer Profile -profiilit, yksi per rivi',
-            'Tavoitteet (KPI): Yrityksesi tavoitteet, yksi per rivi',
-            'TOV: Theory of Victory -kuvaus',
+            'Kohderyhmä (ICP): Ideal Customer Profile -profiilit',
+            'Tavoitteet (KPI): Yrityksesi tavoitteet',
+            'TOV: Tone of voice -kuvaus',
             'Kuukausittaiset strategiat: Sisältösuunnitelmat kuukausittain'
           ]
         },
@@ -129,7 +119,7 @@ export default function HelpPage() {
             'Klikkaa kortin "Muokkaa" -nappia',
             'Muokkaa tekstiä modaalissa',
             'Tallenna muutokset',
-            'Tiedot tallennetaan automaattisesti Supabaseen'
+            'Tiedot tallennetaan automaattisesti tietokantaan'
           ],
           tips: [
             'ICP ja KPI tallennetaan rivinvaihdoilla eroteltuina listoina',
@@ -142,8 +132,7 @@ export default function HelpPage() {
           description: 'Sisältöstrategia-sivulla näet kaikki kuukausittaiset strategiasi.',
           features: [
             'Strategiat näytetään kuukausittain',
-            'Voit luoda uuden strategian AI:n avulla',
-            'Strategiat tallennetaan content_strategy-tauluun',
+            'Strategiat tallennetaan tietokantaan',
             'Jokainen strategia liittyy tiettyyn kuukauteen'
           ]
         }
@@ -171,7 +160,6 @@ export default function HelpPage() {
             'Klikkaa "Luo kampanja" -painiketta',
             'Anna kampanjalle nimi ja kuvaus',
             'Valitse puhelun tyyppi (call_type)',
-            'Aseta päivittäinen puheluraja ja yritysten määrä per kontakti',
             'Tallenna kampanja'
           ],
           tips: [
@@ -194,17 +182,17 @@ export default function HelpPage() {
     },
     {
       id: 'lead-scraping',
-      title: 'Lead Scraping',
+      title: 'Liidit',
       icon: 'posts',
       content: [
         {
-          title: 'Lead Scraping -toiminnallisuus',
-          description: 'Lead Scraping -sivulla voit hakea potentiaalisia asiakkaita LinkedInista ja muista lähteistä. Järjestelmä scrapaa liidit automaattisesti ja tallentaa ne tietokantaan.',
+          title: 'Liidit -toiminnallisuus',
+          description: 'Lead Scraping -sivulla voit hakea potentiaalisia asiakkaita LinkedInista ja muista lähteistä. Järjestelmä etsii liidit automaattisesti ja tallentaa ne tietokantaan.',
           features: [
             'Hae liidejä LinkedInista ja muista lähteistä',
-            'Filtteröi liidejä eri kriteereillä (sähköposti, työnimike, sijainti)',
-            'Tarkastele scrapattuja liidejä taulukossa',
-            'Pisteytä liidit automaattisesti (valinnaista)'
+            'Filtteröi liidejä eri kriteereillä (sähköposti, työnimike, sijainti, jne.)',
+            'Tarkastele löydettyjä liidejä taulukossa',
+            'Pisteytä liidit automaattisesti (jos ostajapersoona on määritelty)'
           ]
         },
         {
@@ -212,11 +200,10 @@ export default function HelpPage() {
           description: 'Lead scraping aloitetaan filttereiden asettamisella.',
           steps: [
             'Aseta hakufiltterit (sähköposti, työnimike, sijainti, jne.)',
-            'Aseta liidien maksimimäärä (max 50000)',
+            'Aseta liidien maksimimäärä (max 500)',
             'Klikkaa "Aloita" -painiketta',
-            'Järjestelmä lähettää pyynnön N8N:ään',
-            'N8N scrapaa liidit ja tallentaa ne Supabaseen',
-            'Liidit näkyvät taulukossa kun ne on scrapattu'
+            'Järjestelmä lähettää pyynnön',
+            'Liidit näkyvät taulukossa kun ne on löydetty'
           ],
           tips: [
             'Scrapaus tapahtuu taustalla N8N:n kautta',
@@ -238,9 +225,6 @@ export default function HelpPage() {
             'Bonus (kaikki tiedot): +10 pistettä'
           ],
           tips: [
-            'Pisteytys täytyy käynnistää erikseen',
-            'Pisteytetyt liidit merkitään status="scored"',
-            'Pisteet tallennetaan score-kenttään (0-100)'
           ]
         }
       ]
@@ -252,15 +236,13 @@ export default function HelpPage() {
       content: [
         {
           title: 'Puhelujen hallinta',
-          description: 'Puhelut-sivulla on kaksi virtaa: Massapuhelut (Google Sheets) ja Yksittäinen puhelu. Molemmat käyttävät backend-API:a ja tallentavat tapahtumat call_logs-tauluun.',
+          description: 'Puhelut-sivulla on kaksi virtaa: Massapuhelut (Google Sheets) ja Yksittäinen puhelu.',
           features: [
             'Massapuhelut: kolmivaiheinen modaali (Sheets → Tyyppi & ääni → Aloita/Ajastus)',
             'Ajastus: kellonajat aina 00 tai 30 (HH:MM/HH:MM:SS)',
             'Yksittäinen puhelu: nappi avaa modaalin (Tyyppi & ääni → Nimi & numero → Soita)',
             'Kampanjan liittäminen: Massapuheluissa voit valita kampanjan valinnaisesti',
-            'Numeron normalisointi: 40 → 040 → +35840…, 00358/358 → +358…',
-            'Kirjaus: call_logs (call_date, call_time, call_status=pending)',
-            'Frontti kutsuu vain /api/ -endpointteja (esim. /api/mass-call)'            
+            'Numeron normalisointi: 40 → 040 → +35840…, 00358/358 → +358…'           
           ]
         },
         {
@@ -273,30 +255,20 @@ export default function HelpPage() {
           ],
           tips: [
             'Jos kampanja valitaan, kaikki puhelut liitetään siihen',
-            'SMS-viestit voidaan lähettää ennen puhelua, puhelun jälkeen tai vastaamattomien jälkeen',
-            'Segmentin valinta on valinnaista'
+            'SMS-viestit voidaan lähettää ennen puhelua, puhelun jälkeen tai vastaamattomien jälkeen'
           ]
         },
         {
           title: 'Yksittäinen puhelu',
-          description: 'Kortissa on nappi "Soita yksittäinen puhelu", joka avaa kaksivaiheisen modaalin.',
+          description: 'Kortissa on nappi "Soita yksittäinen puhelu", joka avaa modaalin.',
           steps: [
             'Vaihe 1 – Asetukset: valitse puhelun tyyppi ja ääni.',
             'Vaihe 2 – Tiedot: syötä nimi ja puhelinnumero, ja käynnistä puhelu.'
           ],
           tips: [
             'Numero normalisoidaan aina +358-muotoon: 50 → 050 → +35850…',
-            'Kaksoispisteellinen aika (HH:MM tai HH:MM:SS) tallentuu call_time-kenttään.',
+            'Kaksoispisteellinen aika (HH:MM tai HH:MM:SS) tallentuu tietokantaan.',
             'Yksittäiset puhelut eivät liity kampanjoihin'
-          ]
-        },
-        {
-          title: 'N8N-integraatio',
-          description: 'Ajastetut puhelut poimitaan automaattisesti N8N:llä.',
-          tips: [
-            'Suodatus: call_date = TODAY ja call_time ≤ NOW, call_status = pending',
-            'Massapuheluissa sekä yksittäisissä kirjaukset löytyvät call_logs-taulusta',
-            'N8N soittaa puhelut automaattisesti ajastuksen mukaan'
           ]
         }
       ]
@@ -339,8 +311,9 @@ export default function HelpPage() {
           features: [
             'Muuta henkilökohtaisia tietojasi',
             'Hallitse salasanasi',
-            'Tarkastele tilauksesi tietoja',
-            'Hallitse ilmoituksia'
+            'Hallitse ilmoituksia',
+            'Hallitset sosiaalisen median kanavat',
+            'Yhdistä Rascal AI omiin paveluihin (WordPress, Google Analytics)'
           ]
         },
         {
@@ -368,12 +341,12 @@ export default function HelpPage() {
         {
           title: 'Miten voin lisätä kuvia julkaisuun?',
           description: 'Kuvien lisääminen on helppoa.',
-          answer: 'Dashboard-sivulla voit vetää ja pudottaa kuvia yläosan kuva-alueelle. Vaihtoehtoisesti voit lisätä kuvia Posts-sivulla julkaisua muokatessa.'
+          answer: 'Voit lisätä ja vaihtaa kuvia Some-sivulla julkaisua muokatessa.'
         },
         {
           title: 'Mikä on sisältöstrategia?',
           description: 'Sisältöstrategia auttaa sinua suunnittelemaan sisältösi.',
-          answer: 'Sisältöstrategia-sivulla hallitset neljää pääosaa: Yritysanalyysi (yrityksesi kuvaus), Kohderyhmä/ICP (Ideal Customer Profile -profiilit), Tavoitteet/KPI (yrityksesi tavoitteet) ja TOV (Theory of Victory). Lisäksi voit luoda kuukausittaisia sisältösuunnitelmia.'
+          answer: 'Sisältöstrategia-sivulla hallitset neljää pääosaa: Yritysanalyysi (yrityksesi kuvaus), Kohderyhmä/ICP (Ideal Customer Profile -profiilit), Tavoitteet/KPI (yrityksesi tavoitteet) ja TOV (Tone of voice). Lisäksi voit muokata kuukausittaisia sisältösuunnitelmia.'
         },
         {
           title: 'Miten kampanja liittyy puheluihin?',
@@ -381,9 +354,9 @@ export default function HelpPage() {
           answer: 'Kampanja voidaan liittää massapuheluihin valinnaisesti. Jos kampanja valitaan massapuheluissa, kaikki puhelut tallennetaan kyseiseen kampanjaan. Kampanjan tilastot (puhelut, vastausprosentti, onnistuneet) päivittyvät automaattisesti puhelujen mukaan.'
         },
         {
-          title: 'Miten lead scraping toimii?',
-          description: 'Lead scraping hakee potentiaalisia asiakkaita automaattisesti.',
-          answer: 'Lead scraping aloitetaan asettamalla hakufiltterit (sähköposti, työnimike, sijainti, jne.) ja maksimimäärä. Järjestelmä lähettää pyynnön N8N:ään, joka scrapaa liidit ja tallentaa ne Supabaseen. Liidit näkyvät taulukossa kun ne on scrapattu. Voit myös pisteyttää liidit erikseen.'
+          title: 'Miten liidit toimii?',
+          description: 'Liidit-toiminto hakee potentiaalisia asiakkaita automaattisesti.',
+          answer: 'Liidien etsintä aloitetaan asettamalla hakufiltterit (sähköposti, työnimike, sijainti, jne.) ja maksimimäärä. Järjestelmä lähettää pyynnön, joka etsii liidit ja tallentaa ne tietokantaan. Liidit näkyvät taulukossa kun ne on löydetty. Liidit myös pisteytetään automaattisesti, jos ostajapersoona on määritelty.'
         },
         {
           title: 'Miten AI Assistentti toimii?',
@@ -605,7 +578,7 @@ export default function HelpPage() {
           Kysy AI Assistentilta
         </button>
         <button
-          onClick={() => window.open('mailto:support@rascalai.com', '_blank')}
+          onClick={() => window.open('mailto:info@rascalcompany.fi', '_blank')}
           className="help-cta-button secondary"
         >
           Ota yhteyttä

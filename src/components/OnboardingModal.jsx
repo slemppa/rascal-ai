@@ -63,8 +63,35 @@ const OnboardingModal = () => {
     }
   })
 
+  // Tyhjennä localStorage kun käyttäjä kirjautuu ulos
+  useEffect(() => {
+    if (!user?.id) {
+      // Käyttäjä ei ole kirjautunut sisään - tyhjennä localStorage ja piilota modaali
+      const keysToRemove = []
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key && key.startsWith('onboarding_skipped_')) {
+          keysToRemove.push(key)
+        }
+      }
+      keysToRemove.forEach(key => localStorage.removeItem(key))
+      
+      setIsMinimized(false)
+      setShouldShow(false)
+      setLoading(false)
+    }
+  }, [user])
+
   // Tarkista pitääkö modaali näyttää
   useEffect(() => {
+    // Jos käyttäjä ei ole kirjautunut sisään, älä näytä modaalia
+    if (!user?.id) {
+      setShouldShow(false)
+      setIsMinimized(false)
+      setLoading(false)
+      return
+    }
+
     // Estä näyttö tietyillä julkisilla/kriittisillä reiteillä
     const BLOCKED_ROUTES = [
       '/signin',
@@ -86,6 +113,8 @@ const OnboardingModal = () => {
 
     const checkOnboardingStatus = async () => {
       if (!user?.id) {
+        setShouldShow(false)
+        setIsMinimized(false)
         setLoading(false)
         return
       }
@@ -385,8 +414,8 @@ const OnboardingModal = () => {
     }
   }
 
-  // Jos minimoitu, näytä vain pieni nappi (näytetään aina jos minimoitu)
-  if (isMinimized) {
+  // Jos minimoitu, näytä vain pieni nappi (vain jos käyttäjä on kirjautunut sisään)
+  if (isMinimized && user?.id) {
     return (
       <div className="onboarding-modal-minimized" onClick={handleRestore}>
         <div className="onboarding-modal-minimized-content">
@@ -399,8 +428,8 @@ const OnboardingModal = () => {
     )
   }
 
-  // Älä näytä jos lataa tai ei pitäisi näkyä
-  if (loading || !shouldShow) {
+  // Älä näytä jos lataa, ei pitäisi näkyä, tai käyttäjä ei ole kirjautunut sisään
+  if (loading || !shouldShow || !user?.id) {
     return null
   }
 

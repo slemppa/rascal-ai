@@ -1009,6 +1009,81 @@ export default function AIChatPage() {
     }
   }, [currentThreadId])
 
+  // Validoi tiedostotyyppi - tarkistaa onko tiedosto tuettua muotoa
+  const validateFileType = (file) => {
+    // Tuetut MIME-tyypit
+    const validMimeTypes = [
+      // PDF
+      'application/pdf',
+      // Tekstitiedostot
+      'text/plain', // .txt
+      'text/markdown', // .md
+      'text/x-markdown', // .md vaihtoehtoinen
+      // RTF
+      'application/rtf',
+      'text/rtf',
+      // Kuvat (kaikki)
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'image/svg+xml',
+      'image/bmp',
+      // Äänitiedostot - vain MP3
+      'audio/mpeg',
+      'audio/mp3'
+    ]
+
+    // Tarkista MIME-tyyppi
+    if (file.type) {
+      // Tarkista tarkka MIME-tyyppi
+      if (validMimeTypes.includes(file.type)) {
+        return { valid: true }
+      }
+      
+      // Tarkista onko kuva (image/*)
+      if (file.type.startsWith('image/')) {
+        return { valid: true }
+      }
+      
+      // Äänitiedostot - vain MP3
+      if (file.type === 'audio/mpeg' || file.type === 'audio/mp3') {
+        return { valid: true }
+      }
+    }
+
+    // Jos MIME-tyyppi puuttuu tai ei ole tuettu, tarkista tiedostopääte
+    const fileName = file.name.toLowerCase()
+    const validExtensions = [
+      '.pdf',
+      '.txt',
+      '.md',
+      '.rtf',
+      '.jpg',
+      '.jpeg',
+      '.png',
+      '.gif',
+      '.webp',
+      '.svg',
+      '.bmp',
+      '.mp3'
+    ]
+
+    const hasValidExtension = validExtensions.some(ext => fileName.endsWith(ext))
+    
+    if (hasValidExtension) {
+      return { valid: true }
+    }
+
+    // Tiedosto ei ole tuettu
+    const extension = fileName.substring(fileName.lastIndexOf('.')) || 'tuntematon'
+    return {
+      valid: false,
+      error: `Tiedostomuotoa ${extension} ei tueta. Sallitut muodot: PDF, tekstitiedostot (.txt, .md, .rtf), kuvat (JPG, PNG, GIF, jne.) ja äänitiedostot (MP3).`
+    }
+  }
+
   // Drag & drop event handlers
   const handleDragOver = (e) => {
     e.preventDefault()
@@ -1026,35 +1101,106 @@ export default function AIChatPage() {
     setDragActive(false)
     const files = Array.from(e.dataTransfer.files)
     if (files.length === 0) return
+    
+    // Tyhjennä edelliset virheet
+    setUploadError('')
+    
+    // Validoi tiedostotyypit
+    const validFiles = []
+    const invalidFiles = []
+    
+    files.forEach(file => {
+      const validation = validateFileType(file)
+      if (validation.valid) {
+        validFiles.push(file)
+      } else {
+        invalidFiles.push({ file, error: validation.error })
+      }
+    })
+    
+    // Näytä virheilmoitus jos on kelpaamattomia tiedostoja
+    if (invalidFiles.length > 0) {
+      const errorMessages = invalidFiles.map(({ file, error }) => {
+        return `${file.name}: ${error}`
+      })
+      setUploadError(errorMessages.join(' '))
+      
+      // Jos kaikki tiedostot ovat kelpaamattomia, älä lisää mitään
+      if (validFiles.length === 0) {
+        return
+      }
+    }
+    
     // Kokorajoitus 25 MB per tiedosto drag&dropissa
     const MAX_BYTES = 25 * 1024 * 1024
-    const tooLargeDrop = files.find(f => (f.size || 0) > MAX_BYTES)
+    const tooLargeDrop = validFiles.find(f => (f.size || 0) > MAX_BYTES)
     if (tooLargeDrop) {
-      setUploadError('Tiedosto liian suuri')
+      setUploadError(prev => prev ? `${prev} Tiedosto "${tooLargeDrop.name}" on liian suuri (maksimi 25 MB).` : `Tiedosto "${tooLargeDrop.name}" on liian suuri (maksimi 25 MB).`)
       return
     }
-    setPendingFiles(prev => {
-      const uniqueNew = files.filter(f => !prev.some(p => p.name === f.name && p.size === f.size))
-      return [...prev, ...uniqueNew]
-    })
+    
+    // Lisää vain kelvolliset tiedostot
+    if (validFiles.length > 0) {
+      setPendingFiles(prev => {
+        const uniqueNew = validFiles.filter(f => !prev.some(p => p.name === f.name && p.size === f.size))
+        return [...prev, ...uniqueNew]
+      })
+    }
   }
   const handleFileInput = (e) => {
     const files = Array.from(e.target.files)
     console.log('handleFileInput kutsuttu, tiedostoja:', files.length)
+    
+    // Tyhjennä input-kenttä, jotta sama tiedosto voidaan valita uudelleen
+    e.target.value = ''
+    
     if (files.length > 0) {
+      // Tyhjennä edelliset virheet
+      setUploadError('')
+      
+      // Validoi tiedostotyypit
+      const validFiles = []
+      const invalidFiles = []
+      
+      files.forEach(file => {
+        const validation = validateFileType(file)
+        if (validation.valid) {
+          validFiles.push(file)
+        } else {
+          invalidFiles.push({ file, error: validation.error })
+        }
+      })
+      
+      // Näytä virheilmoitus jos on kelpaamattomia tiedostoja
+      if (invalidFiles.length > 0) {
+        const errorMessages = invalidFiles.map(({ file, error }) => {
+          return `${file.name}: ${error}`
+        })
+        setUploadError(errorMessages.join(' '))
+        
+        // Jos kaikki tiedostot ovat kelpaamattomia, älä lisää mitään
+        if (validFiles.length === 0) {
+          return
+        }
+      }
+      
       // Kokorajoitus 25 MB per tiedosto inputista
       const MAX_BYTES = 25 * 1024 * 1024
-      const tooLargeInput = files.find(f => (f.size || 0) > MAX_BYTES)
+      const tooLargeInput = validFiles.find(f => (f.size || 0) > MAX_BYTES)
       if (tooLargeInput) {
-        setUploadError('Tiedosto liian suuri')
+        setUploadError(prev => prev ? `${prev} Tiedosto "${tooLargeInput.name}" on liian suuri (maksimi 25 MB).` : `Tiedosto "${tooLargeInput.name}" on liian suuri (maksimi 25 MB).`)
         return
       }
-      setPendingFiles(prev => {
-        const uniqueNew = files.filter(f => !prev.some(p => p.name === f.name && p.size === f.size))
-        const newPendingFiles = [...prev, ...uniqueNew]
-        console.log('pendingFiles päivitetty:', newPendingFiles.length)
-        return newPendingFiles
-      })
+      
+      // Lisää vain kelvolliset tiedostot
+      if (validFiles.length > 0) {
+        setPendingFiles(prev => {
+          const uniqueNew = validFiles.filter(f => !prev.some(p => p.name === f.name && p.size === f.size))
+          const newPendingFiles = [...prev, ...uniqueNew]
+          console.log('pendingFiles päivitetty:', newPendingFiles.length)
+          return newPendingFiles
+        })
+      }
     }
   }
   const handleRemovePending = (name, size) => {
@@ -1307,7 +1453,7 @@ export default function AIChatPage() {
                 <input
                   type="file"
                   multiple
-                  accept=".pdf,.doc,.docx,.txt,.md,.rtf,image/*,audio/*"
+                  accept=".pdf,.txt,.md,.rtf,image/*,.mp3"
                   style={{ display: 'none' }}
                   onChange={handleFileInput}
                 />

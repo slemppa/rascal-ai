@@ -524,9 +524,12 @@ export default function AccountDetailsPage() {
   }
 
   const handleFeatureToggle = async (newFeatures) => {
-    if (!account) return
+    if (!account) {
+      console.error('handleFeatureToggle: account is null')
+      return
+    }
 
-    console.log('Feature toggle - current:', accountFeatures, 'new:', newFeatures)
+    console.log('Feature toggle - account.id:', account.id, 'current:', accountFeatures, 'new:', newFeatures)
     
     setIsSaving(true)
     setSaveMessage('')
@@ -535,17 +538,38 @@ export default function AccountDetailsPage() {
       // Varmista että newFeatures on array
       const featuresToSave = Array.isArray(newFeatures) ? newFeatures : []
       
-      console.log('Saving features to database:', featuresToSave)
+      console.log('Saving features to database - account.id:', account.id, 'features:', featuresToSave)
       
       // Päivitä features tietokantaan
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('users')
         .update({ features: featuresToSave })
         .eq('id', account.id)
 
       if (error) {
-        console.error('Supabase error:', error)
+        console.error('Supabase error updating features:', error)
+        console.error('Error details:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint
+        })
         throw error
+      }
+
+      console.log('Features update response:', data)
+      
+      // Varmista että päivitys meni läpi - hae uudelleen (RLS voi estää select-kyselyn, mutta päivitys menee läpi)
+      const { data: verifyData, error: verifyError } = await supabase
+        .from('users')
+        .select('features')
+        .eq('id', account.id)
+        .single()
+      
+      if (!verifyError && verifyData) {
+        console.log('Verified features in database:', verifyData.features)
+      } else {
+        console.warn('Could not verify features update (RLS may block select):', verifyError)
       }
 
       // Päivitä state suoraan tallennettuun arvoon (RLS voi estää select-kyselyn)
@@ -555,8 +579,8 @@ export default function AccountDetailsPage() {
       setTimeout(() => setSaveMessage(''), 3000)
     } catch (error) {
       console.error('Error updating features:', error)
-      setSaveMessage('Virhe ominaisuuksien päivityksessä: ' + error.message)
-      setTimeout(() => setSaveMessage(''), 3000)
+      setSaveMessage('Virhe ominaisuuksien päivityksessä: ' + (error.message || 'Tuntematon virhe'))
+      setTimeout(() => setSaveMessage(''), 5000)
     } finally {
       setIsSaving(false)
     }

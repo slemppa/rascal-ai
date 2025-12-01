@@ -162,6 +162,38 @@ export const AuthProvider = ({ children }) => {
     }
   }, [fetchUserProfile, navigate])
 
+  // Realtime subscription users-taulun muutoksille (features päivitykset)
+  useEffect(() => {
+    if (!organization?.id) return
+
+    const channel = supabase
+      .channel(`users:${organization.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'users',
+          filter: `id=eq.${organization.id}`
+        },
+        (payload) => {
+          console.log('Users table updated:', payload)
+          // Päivitä features jos ne muuttuivat
+          if (payload.new.features) {
+            setUser(prev => prev ? {
+              ...prev,
+              features: Array.isArray(payload.new.features) ? payload.new.features : []
+            } : null)
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [organization?.id])
+
   const signOut = async () => {
     try {
       // Aseta logout-syy sessionStorage:en

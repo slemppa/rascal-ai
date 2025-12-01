@@ -250,8 +250,18 @@ export default function FeaturesTab({
                     const next = e.target.checked 
                       ? Array.from(new Set([...current, feature])) 
                       : current.filter(x => x !== feature)
-                    console.log('Feature toggle:', feature, 'checked:', e.target.checked, 'current:', current, 'next:', next)
-                    onFeatureToggle(next)
+                    console.log('FeaturesTab - Feature toggle:', {
+                      feature,
+                      checked: e.target.checked,
+                      current,
+                      next,
+                      userId
+                    })
+                    if (onFeatureToggle) {
+                      onFeatureToggle(next)
+                    } else {
+                      console.error('FeaturesTab - onFeatureToggle is not defined!')
+                    }
                   }}
                   disabled={isSaving}
                   aria-label={getFeatureLabel(feature)}

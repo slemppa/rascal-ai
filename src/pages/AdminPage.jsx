@@ -41,7 +41,8 @@ export default function AdminPage() {
     'Email marketing integration',
     'Dev',
     'Voicemail',
-    'Leads'
+    'Leads',
+    'UGC'
   ]
 
   const KNOWN_FEATURES = useMemo(() => {
@@ -616,7 +617,7 @@ export default function AdminPage() {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: featuresMaxHeight[user.id] || 300, overflowY: 'auto', paddingRight: 4 }}>
                                   {KNOWN_FEATURES.map(f => {
                                     const enabled = (Array.isArray(user.features) ? user.features : []).includes(f)
-                                    const featureLabel = f === 'Voicemail' ? 'Vastaaja' : f === 'Leads' ? 'Liidit' : f
+                                    const featureLabel = f === 'Voicemail' ? 'Vastaaja' : f === 'Leads' ? 'Liidit' : f === 'UGC' ? 'UGC' : f
                                     return (
                                       <div key={f} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <span style={{ fontSize: 13, color: '#374151' }}>{featureLabel}</span>

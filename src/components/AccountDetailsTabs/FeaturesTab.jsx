@@ -11,7 +11,8 @@ const ALL_FEATURES = [
   'Email marketing integration',
   'Dev',
   'Voicemail',
-  'Leads'
+  'Leads',
+  'UGC'
 ]
 
 const getFeatureLabel = (feature) => {
@@ -25,7 +26,8 @@ const getFeatureLabel = (feature) => {
     'Campaigns': 'Kampanjat',
     'Segments': 'Segmentit',
     'CRM': 'CRM',
-    'Dev': 'Kehitys'
+    'Dev': 'Kehitys',
+    'UGC': 'UGC'
   }
   return labels[feature] || feature
 }

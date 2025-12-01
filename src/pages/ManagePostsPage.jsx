@@ -15,6 +15,7 @@ import KeskenModal from '../components/KeskenModal'
 import TarkistuksessaModal from '../components/TarkistuksessaModal'
 import AikataulutettuModal from '../components/AikataulutettuModal'
 import MonthlyLimitWarning from '../components/MonthlyLimitWarning'
+import UgcTab from '../components/UgcTab'
 import '../components/ModalComponents.css'
 import '../components/MonthlyLimitWarning.css'
 import './ManagePostsPage.css'
@@ -500,7 +501,7 @@ export default function ManagePostsPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [dataSourceToggle, setDataSourceToggle] = useState('all') // 'all', 'supabase', 'reels'
-  const [activeTab, setActiveTab] = useState('kanban') // 'kanban' | 'calendar'
+  const [activeTab, setActiveTab] = useState('kanban') // 'kanban' | 'calendar' | 'ugc'
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [createModalCount, setCreateModalCount] = useState(1)
   const [showUploadModal, setShowUploadModal] = useState(false)
@@ -798,6 +799,16 @@ export default function ManagePostsPage() {
     fetchReelsPosts() // Haetaan reels data automaattisesti
     fetchSocialAccounts() // Haetaan somekanavat
   }, [user])
+
+  // Siirrä pois UGC-tabista jos feature poistetaan
+  useEffect(() => {
+    if (activeTab === 'ugc' && user) {
+      const hasUgcFeature = user.features && Array.isArray(user.features) && user.features.includes('UGC')
+      if (!hasUgcFeature) {
+        setActiveTab('kanban')
+      }
+    }
+  }, [user?.features, activeTab])
 
   // Hae somekanavat Supabasesta
   const fetchSocialAccounts = async () => {
@@ -2013,6 +2024,14 @@ export default function ManagePostsPage() {
         >
           Kalenteri
         </button>
+        {user?.features && Array.isArray(user.features) && user.features.includes('UGC') && (
+          <button 
+            className={`tab-button ${activeTab === 'ugc' ? 'active' : ''}`}
+            onClick={() => setActiveTab('ugc')}
+          >
+            UGC
+          </button>
+        )}
       </div>
 
       {/* Search and Filters */}
@@ -2272,6 +2291,9 @@ export default function ManagePostsPage() {
           />
         </div>
       )}
+
+      {/* UGC View */}
+      {activeTab === 'ugc' && <UgcTab />}
 
       {/* Create Modal */}
       {showCreateModal && createPortal(

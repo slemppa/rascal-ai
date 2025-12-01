@@ -302,6 +302,16 @@ async function handleDelete(req, res) {
       return res.status(400).json({ error: 'Käyttäjän organisaatio ei löytynyt' })
     }
 
+    // Hae secret metadata ENNEN poistoa (jotta saadaan metadata webhookiin)
+    const { data: secretData } = await req.supabase
+      .from('user_secrets')
+      .select('metadata, id')
+      .eq('user_id', orgId)
+      .eq('secret_type', secret_type)
+      .eq('secret_name', secret_name)
+      .eq('is_active', true)  // Vain aktiiviset
+      .maybeSingle()
+
     // Päivitä is_active = false (soft delete)
     const { error } = await req.supabase
       .from('user_secrets')
@@ -313,6 +323,84 @@ async function handleDelete(req, res) {
     if (error) {
       console.error('Error deleting secret:', error)
       return res.status(500).json({ error: 'Virhe salaisuuden poistossa' })
+    }
+
+    // Lähetä webhook-ilmoitus integraation poistosta (esim. Maken/N8N)
+    try {
+      const webhookUrl = process.env.MAKE_INTEGRATION_WEBHOOK_URL || process.env.N8N_INTEGRATION_WEBHOOK_URL
+      console.log('🔍 Webhook URL check for delete:', {
+        MAKE_INTEGRATION_WEBHOOK_URL: process.env.MAKE_INTEGRATION_WEBHOOK_URL ? 'SET' : 'NOT SET',
+        N8N_INTEGRATION_WEBHOOK_URL: process.env.N8N_INTEGRATION_WEBHOOK_URL ? 'SET' : 'NOT SET',
+        resolvedUrl: webhookUrl || 'NOT FOUND'
+      })
+      
+      if (!webhookUrl) {
+        console.warn('⚠️ No webhook URL configured for delete notification')
+        console.warn('   Webhook notification will be skipped')
+      } else {
+        // Hae API URL ympäristöstä (production URL)
+        let apiBaseUrl = process.env.APP_URL
+          || process.env.NEXT_PUBLIC_APP_URL
+          || 'https://app.rascalai.fi'
+        
+        console.log('🔗 API Base URL:', apiBaseUrl)
+
+        const webhookPayload = {
+          action: 'delete',
+          integration_type: secret_type,
+          integration_name: secret_name,
+          user_id: orgId,  // public.users.id - organisaation ID
+          auth_user_id: req.authUser?.id,  // auth.users.id
+          metadata: secretData?.metadata || {},
+          secret_id: secretData?.id || null,
+          timestamp: new Date().toISOString(),
+          deleted_at: new Date().toISOString()
+        }
+
+        console.log('📤 Sending delete webhook to:', webhookUrl)
+        console.log('📦 Webhook payload:', JSON.stringify(webhookPayload, null, 2))
+
+        // Muodosta headerit - N8N webhookit vaativat x-api-key headerin
+        const headers = {
+          'Content-Type': 'application/json'
+        }
+        
+        // Lisää x-api-key header jos N8N_SECRET_KEY on asetettu
+        const n8nSecretKey = process.env.N8N_SECRET_KEY
+        if (n8nSecretKey) {
+          headers['x-api-key'] = n8nSecretKey
+        }
+
+        console.log('🚀 Starting delete webhook POST request (SYNC)...')
+        console.log('   URL:', webhookUrl)
+        console.log('   Headers:', headers)
+        
+        // Lähetä webhook SYNKRONISESTI
+        try {
+          const webhookResponse = await axios.post(webhookUrl, webhookPayload, {
+            headers: headers,
+            timeout: 10000 // 10 sekuntia timeout
+          })
+          console.log('✅ Delete webhook notification sent successfully')
+          console.log('   Status:', webhookResponse.status)
+          console.log('   Response:', JSON.stringify(webhookResponse.data))
+        } catch (webhookErr) {
+          if (webhookErr.response) {
+            console.error('❌ Delete webhook notification failed:')
+            console.error('   Status:', webhookErr.response.status)
+            console.error('   Response:', JSON.stringify(webhookErr.response.data))
+          } else if (webhookErr.request) {
+            console.error('❌ Delete webhook notification failed: No response received')
+            console.error('   Error:', webhookErr.message)
+          } else {
+            console.error('❌ Delete webhook notification failed:', webhookErr.message)
+          }
+          // Ei palauteta virhettä, koska webhook on optional
+        }
+      } // end if (webhookUrl)
+    } catch (webhookError) {
+      console.error('Error sending delete webhook notification (non-critical):', webhookError)
+      // Ei palauteta virhettä, koska webhook on optional
     }
 
     return res.status(200).json({ 

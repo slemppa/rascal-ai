@@ -467,14 +467,21 @@ export default function SettingsIntegrationsTab() {
         throw new Error('No access token found')
       }
 
-      await axios.delete(
+      const response = await fetch(
         `/api/user-secrets?secret_type=${integration.secretType}&secret_name=${encodeURIComponent(integration.secretName)}`,
         {
+          method: 'DELETE',
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
           }
         }
       )
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Virhe integraation poistossa')
+      }
 
       setMessage({
         type: 'success',
@@ -501,7 +508,7 @@ export default function SettingsIntegrationsTab() {
       console.error('Error deleting integration:', error)
       setMessage({
         type: 'error',
-        text: error.response?.data?.error || 'Virhe integraation poistossa'
+        text: error.message || 'Virhe integraation poistossa'
       })
     } finally {
       setSaving(false)

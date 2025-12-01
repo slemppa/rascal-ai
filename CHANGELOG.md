@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.101.1](https://github.com/slemppa/rascal-ai/compare/v1.101.0...v1.101.1) (2025-12-01)
+
+
+### 🐛 Bug Fixes
+
+* korjaa integraation poisto ja lisää webhook-ilmoitus ([703da57](https://github.com/slemppa/rascal-ai/commit/703da5732e2aa61c7affcb6c4edd0babcc50aec6))
+
 ## [1.101.0](https://github.com/slemppa/rascal-ai/compare/v1.100.0...v1.101.0) (2025-12-01)
 
 

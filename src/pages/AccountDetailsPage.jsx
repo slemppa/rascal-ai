@@ -6,6 +6,7 @@ import StrategiesTab from '../components/AccountDetailsTabs/StrategiesTab'
 import PostsTab from '../components/AccountDetailsTabs/PostsTab'
 import CallTypesTab from '../components/AccountDetailsTabs/CallTypesTab'
 import FeaturesTab from '../components/AccountDetailsTabs/FeaturesTab'
+import SocialMediaTab from '../components/AccountDetailsTabs/SocialMediaTab'
 import './AccountDetailsPage.css'
 
 export default function AccountDetailsPage() {
@@ -102,6 +103,7 @@ export default function AccountDetailsPage() {
 
   const loadAccount = async () => {
     try {
+      console.log('[AccountDetailsPage] Haetaan account ID:llä:', id)
       const { data, error } = await supabase
         .from('users')
         .select('id, company_name, contact_person, contact_email')
@@ -109,6 +111,7 @@ export default function AccountDetailsPage() {
         .single()
 
       if (error) throw error
+      console.log('[AccountDetailsPage] Account haettu:', data)
       setAccount(data)
     } catch (error) {
       console.error('Error loading account:', error)
@@ -631,6 +634,12 @@ export default function AccountDetailsPage() {
         >
           Ominaisuudet ({accountFeatures.length})
         </button>
+        <button
+          className={`tab ${activeTab === 'socialMedia' ? 'active' : ''}`}
+          onClick={() => setActiveTab('socialMedia')}
+        >
+          Integraatiot
+        </button>
       </div>
 
       <div className="page-body">
@@ -697,6 +706,12 @@ export default function AccountDetailsPage() {
             features={accountFeatures}
             isSaving={isSaving}
             onFeatureToggle={handleFeatureToggle}
+            userId={account?.id}
+          />
+        )}
+
+        {activeTab === 'socialMedia' && (
+          <SocialMediaTab
             userId={account?.id}
           />
         )}

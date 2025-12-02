@@ -39,21 +39,41 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'name vaaditaan' })
     }
 
-    // Hae public.users.id, joka vastaa auth.users.id:tä (auth_user_id)
-    const { data: userRow, error: userRowError } = await userClient
-      .from('users')
-      .select('id')
+    // Hae organisaation ID (public.users.id) käyttäen auth_user_id:tä
+    // Tarkista ensin onko käyttäjä kutsuttu käyttäjä (org_members taulussa)
+    let publicUserId = null
+    
+    const { data: orgMember, error: orgError } = await userClient
+      .from('org_members')
+      .select('org_id')
       .eq('auth_user_id', authUserId)
-      .single()
+      .maybeSingle()
 
-    if (userRowError || !userRow?.id) {
-      return res.status(403).json({ error: 'Käyttäjäprofiilia ei löytynyt' })
+    if (!orgError && orgMember?.org_id) {
+      // Käyttäjä on kutsuttu käyttäjä, käytä organisaation ID:tä
+      publicUserId = orgMember.org_id
+    } else {
+      // Jos ei löydy org_members taulusta, tarkista onko normaali käyttäjä
+      const { data: userData, error: userError } = await userClient
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', authUserId)
+        .maybeSingle()
+
+      if (!userError && userData?.id) {
+        // Normaali käyttäjä, käytä users.id:tä
+        publicUserId = userData.id
+      }
+    }
+
+    if (!publicUserId) {
+      return res.status(403).json({ error: 'Käyttäjää ei löytynyt organisaatiosta' })
     }
 
     // Insert käyttäjän clientillä -> RLS varmistaa näkyvyyden ja oikeudet
     const { data, error } = await userClient
       .from('campaigns')
-      .insert([{ ...payload, user_id: userRow.id }])
+      .insert([{ ...payload, user_id: publicUserId }])
       .select()
       .single()
 

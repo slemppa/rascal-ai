@@ -28,22 +28,39 @@ export default async function handler(req, res) {
     const now = new Date()
     const start = new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
 
-    // Hae public.users.id tokenin perusteella
+    // Hae organisaation ID (public.users.id) käyttäen auth_user_id:tä
     const { data: authData, error: authErr } = await userClient.auth.getUser(token)
     if (authErr || !authData?.user) return res.status(401).json({ error: 'Invalid token' })
-    const authUserId = authData.user.id
-    const { data: userRow, error: userErr } = await userClient
-      .from('users')
-      .select('id')
-      .eq('auth_user_id', authUserId)
-      .single()
-    if (userErr || !userRow?.id) return res.status(403).json({ error: 'User profile not found' })
+    
+    let publicUserId = null
+    
+    const { data: orgMember, error: orgError } = await userClient
+      .from('org_members')
+      .select('org_id')
+      .eq('auth_user_id', authData.user.id)
+      .maybeSingle()
+
+    if (!orgError && orgMember?.org_id) {
+      publicUserId = orgMember.org_id
+    } else {
+      const { data: userData, error: userError } = await userClient
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', authData.user.id)
+        .maybeSingle()
+
+      if (!userError && userData?.id) {
+        publicUserId = userData.id
+      }
+    }
+
+    if (!publicUserId) return res.status(403).json({ error: 'User profile not found' })
 
     // Hae puhelulokit (kesto + onnistuminen)
     const { data: logs, error: logsErr } = await userClient
       .from('call_logs')
       .select('created_at, call_date, duration, answered, call_outcome')
-      .eq('user_id', userRow.id)
+      .eq('user_id', publicUserId)
       .gte('call_date', start.toISOString())
       .lte('call_date', now.toISOString())
     if (logsErr) return res.status(500).json({ error: 'Failed to fetch logs', details: logsErr.message })

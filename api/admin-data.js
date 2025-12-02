@@ -19,10 +19,6 @@ if (supabaseUrl && supabaseServiceKey) {
 }
 
 async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' })
-  }
-
   try {
     // req.organization.role = käyttäjän rooli ('owner', 'admin', 'member')
     // req.supabase = authenticated Supabase client
@@ -33,7 +29,38 @@ async function handler(req, res) {
       return res.status(403).json({ error: 'Admin or moderator access required' })
     }
 
-    // Käytä samaa supabase clientia, RLS-politiikat eivät rajoita adminia
+    // Käytä service role -clientia jos saatavilla, muuten fallback RLS-clienttiin
+    const db = supabaseAdmin || req.supabase
+
+    // POST-pyyntö features-päivitykselle
+    if (req.method === 'POST') {
+      const { type, user_id, features } = req.body
+
+      if (type === 'update-features') {
+        if (!user_id || !Array.isArray(features)) {
+          return res.status(400).json({ error: 'user_id and features array required' })
+        }
+
+        const { error } = await db
+          .from('users')
+          .update({ features })
+          .eq('id', user_id)
+
+        if (error) {
+          console.error('[admin-data] Error updating features:', error)
+          return res.status(500).json({ error: 'Failed to update features', details: error.message })
+        }
+
+        return res.status(200).json({ success: true, message: 'Features updated successfully' })
+      }
+
+      return res.status(400).json({ error: 'Invalid type for POST request' })
+    }
+
+    // GET-pyyntö datan hakemiseen
+    if (req.method !== 'GET') {
+      return res.status(405).json({ error: 'Method not allowed' })
+    }
 
     // Hae data type parametrista
     const { type } = req.query
@@ -42,7 +69,7 @@ async function handler(req, res) {
 
     switch (type) {
       case 'users':
-        const { data: users, error: usersError } = await req.supabase
+        const { data: users, error: usersError } = await db
           .from('users')
           .select(`
             id,
@@ -79,7 +106,7 @@ async function handler(req, res) {
         break
 
       case 'content':
-        const { data: content, error: contentError } = await req.supabase
+        const { data: content, error: contentError } = await db
           .from('content')
           .select(`
             id,
@@ -101,7 +128,7 @@ async function handler(req, res) {
         break
 
       case 'segments':
-        const { data: segments, error: segmentsError } = await req.supabase
+        const { data: segments, error: segmentsError } = await db
           .from('segments')
           .select(`
             id,
@@ -125,11 +152,11 @@ async function handler(req, res) {
       case 'stats':
         // Hae kaikki data samanaikaisesti tilastojen laskemista varten
         const [usersData, contentData, callLogsData, messageLogsData, segmentsData] = await Promise.all([
-          req.supabase.from('users').select('role, status, created_at'),
-          req.supabase.from('content').select('status, type, created_at'),
-          req.supabase.from('call_logs').select('call_status, answered, created_at'),
-          req.supabase.from('message_logs').select('status, message_type, created_at'),
-          req.supabase.from('segments').select('status, created_at')
+          db.from('users').select('role, status, created_at'),
+          db.from('content').select('status, type, created_at'),
+          db.from('call_logs').select('call_status, answered, created_at'),
+          db.from('message_logs').select('status, message_type, created_at'),
+          db.from('segments').select('status, created_at')
         ])
 
         const stats = {

@@ -26,10 +26,41 @@ export default async function handler(req, res) {
     }
     const authUserId = authResult.user.id
 
+    // Hae organisaation ID (public.users.id) käyttäen auth_user_id:tä
+    // Tarkista ensin onko käyttäjä kutsuttu käyttäjä (org_members taulussa)
+    let publicUserId = null
+    
+    const { data: orgMember, error: orgError } = await userClient
+      .from('org_members')
+      .select('org_id')
+      .eq('auth_user_id', authUserId)
+      .maybeSingle()
+
+    if (!orgError && orgMember?.org_id) {
+      // Käyttäjä on kutsuttu käyttäjä, käytä organisaation ID:tä
+      publicUserId = orgMember.org_id
+    } else {
+      // Jos ei löydy org_members taulusta, tarkista onko normaali käyttäjä
+      const { data: userData, error: userError } = await userClient
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', authUserId)
+        .maybeSingle()
+
+      if (!userError && userData?.id) {
+        // Normaali käyttäjä, käytä users.id:tä
+        publicUserId = userData.id
+      }
+    }
+
+    if (!publicUserId) {
+      return res.status(403).json({ error: 'Käyttäjää ei löytynyt organisaatiosta' })
+    }
+
     const { data: callTypes, error } = await userClient
       .from('call_types')
       .select('*')
-      .eq('user_id', authUserId)
+      .eq('user_id', publicUserId)
       .order('created_at', { ascending: false })
 
     if (error) {

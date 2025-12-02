@@ -7,13 +7,13 @@ async function handler(req, res) {
   }
 
   try {
-    const { productName, productDetails, productImageUrl, personImageUrl } = req.body
+    const { productName, productDetails, productImageUrl } = req.body
 
     // Validoi pakolliset kentät
-    if (!productName || !productDetails || !productImageUrl || !personImageUrl) {
+    if (!productName || !productDetails || !productImageUrl) {
       return res.status(400).json({ 
         error: 'Missing required fields',
-        required: ['productName', 'productDetails', 'productImageUrl', 'personImageUrl']
+        required: ['productName', 'productDetails', 'productImageUrl']
       })
     }
 
@@ -33,7 +33,6 @@ async function handler(req, res) {
       productName,
       productDetails,
       productImageUrl,
-      personImageUrl,
       timestamp: new Date().toISOString()
     }
 

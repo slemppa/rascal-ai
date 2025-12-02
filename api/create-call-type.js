@@ -38,9 +38,40 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Name on pakollinen kenttä' })
     }
 
+    // Hae organisaation ID (public.users.id) käyttäen auth_user_id:tä
+    // Tarkista ensin onko käyttäjä kutsuttu käyttäjä (org_members taulussa)
+    let publicUserId = null
+    
+    const { data: orgMember, error: orgError } = await supabase
+      .from('org_members')
+      .select('org_id')
+      .eq('auth_user_id', user_id)
+      .maybeSingle()
+
+    if (!orgError && orgMember?.org_id) {
+      // Käyttäjä on kutsuttu käyttäjä, käytä organisaation ID:tä
+      publicUserId = orgMember.org_id
+    } else {
+      // Jos ei löydy org_members taulusta, tarkista onko normaali käyttäjä
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user_id)
+        .maybeSingle()
+
+      if (!userError && userData?.id) {
+        // Normaali käyttäjä, käytä users.id:tä
+        publicUserId = userData.id
+      }
+    }
+
+    if (!publicUserId) {
+      return res.status(403).json({ error: 'Käyttäjää ei löytynyt organisaatiosta' })
+    }
+
     // Muunna fields Supabase-muotoon
     const callTypeData = {
-      user_id: user_id,
+      user_id: publicUserId,
       name: fields.Name,
       identity: fields.Identity || null,
       style: fields.Style || null,

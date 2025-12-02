@@ -14,13 +14,10 @@ export default function UgcTab() {
     productName: '', 
     productDetails: '', 
     productImage: null,
-    productImageUrl: null,
-    personImage: null,
-    personImageUrl: null
+    productImageUrl: null
   })
   const [ugcUploading, setUgcUploading] = useState(false)
   const [productDragActive, setProductDragActive] = useState(false)
-  const [personDragActive, setPersonDragActive] = useState(false)
 
   // UGC data haku
   const fetchUgcPosts = async () => {
@@ -101,8 +98,6 @@ export default function UgcTab() {
       // Päivitä form data
       if (type === 'product') {
         setUgcFormData(prev => ({ ...prev, productImageUrl: imageUrl, productImage: file }))
-      } else if (type === 'person') {
-        setUgcFormData(prev => ({ ...prev, personImageUrl: imageUrl, personImage: file }))
       }
 
       return imageUrl
@@ -122,9 +117,8 @@ export default function UgcTab() {
     // Validoi pakolliset kentät
     if (!ugcFormData.productName.trim() || 
         !ugcFormData.productDetails.trim() || 
-        !ugcFormData.productImageUrl || 
-        !ugcFormData.personImageUrl) {
-      alert('Täytä kaikki kentät ja lataa molemmat kuvat')
+        !ugcFormData.productImageUrl) {
+      alert('Täytä kaikki kentät ja lataa tuotteen kuva')
       return
     }
     
@@ -141,8 +135,7 @@ export default function UgcTab() {
       const response = await axios.post('/api/ugc-video', {
         productName: ugcFormData.productName,
         productDetails: ugcFormData.productDetails,
-        productImageUrl: ugcFormData.productImageUrl,
-        personImageUrl: ugcFormData.personImageUrl
+        productImageUrl: ugcFormData.productImageUrl
       }, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`
@@ -157,9 +150,7 @@ export default function UgcTab() {
           productName: '', 
           productDetails: '', 
           productImage: null,
-          productImageUrl: null,
-          personImage: null,
-          personImageUrl: null
+          productImageUrl: null
         })
         
         // Päivitä lista
@@ -269,67 +260,6 @@ export default function UgcTab() {
             />
           </div>
 
-          {/* Henkilö (kuva) */}
-          <div className="ugc-form-group">
-            <label htmlFor="ugc-person-image">Henkilö (kuva) *</label>
-            {ugcFormData.personImageUrl ? (
-              <div className="ugc-image-preview">
-                <img src={ugcFormData.personImageUrl} alt="Henkilö" />
-                <button
-                  type="button"
-                  onClick={() => setUgcFormData(prev => ({ ...prev, personImageUrl: null, personImage: null }))}
-                  className="ugc-remove-image"
-                  disabled={ugcUploading}
-                >
-                  ✕ Poista
-                </button>
-              </div>
-            ) : (
-              <div
-                className={`ugc-drag-drop-zone ${personDragActive ? 'drag-active' : ''}`}
-                onDragOver={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  setPersonDragActive(true)
-                }}
-                onDragLeave={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  setPersonDragActive(false)
-                }}
-                onDrop={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  setPersonDragActive(false)
-                  const file = e.dataTransfer.files?.[0]
-                  if (file && file.type.startsWith('image/')) {
-                    handleImageUpload(file, 'person')
-                  }
-                }}
-                onClick={() => document.getElementById('ugc-person-image').click()}
-              >
-                <div className="ugc-drag-drop-content">
-                  <div className="ugc-drag-drop-icon">👤</div>
-                  <p className="ugc-drag-drop-text">Raahaa kuva tähän tai klikkaa valitaksesi</p>
-                  <p className="ugc-drag-drop-hint">JPG, PNG, GIF (max 10MB)</p>
-                </div>
-                <input
-                  type="file"
-                  id="ugc-person-image"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0]
-                    if (file) {
-                      handleImageUpload(file, 'person')
-                    }
-                  }}
-                  className="ugc-file-input-hidden"
-                  disabled={ugcUploading}
-                />
-              </div>
-            )}
-          </div>
-
           <button 
             type="submit" 
             className="ugc-submit-btn" 
@@ -337,8 +267,7 @@ export default function UgcTab() {
               ugcUploading || 
               !ugcFormData.productName.trim() || 
               !ugcFormData.productDetails.trim() || 
-              !ugcFormData.productImageUrl || 
-              !ugcFormData.personImageUrl
+              !ugcFormData.productImageUrl
             }
           >
             {ugcUploading ? (

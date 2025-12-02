@@ -66,22 +66,42 @@ export default async function handler(req, res) {
     
     console.log('🔍 User ID from request:', user_id)
 
-    // Hae public.users.id käyttäen auth_user_id:tä
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('id')
+    // Hae organisaation ID (public.users.id) käyttäen auth_user_id:tä
+    // Tarkista ensin onko käyttäjä kutsuttu käyttäjä (org_members taulussa)
+    let publicUserId = null
+    
+    const { data: orgMember, error: orgError } = await supabase
+      .from('org_members')
+      .select('org_id')
       .eq('auth_user_id', user_id)
-      .single()
+      .maybeSingle()
 
-    if (userError || !userData) {
-      console.error('User haku epäonnistui:', userError)
-      return res.status(400).json({ 
-        error: 'Käyttäjää ei löytynyt',
-        details: userError?.message || 'User not found'
-      })
+    if (!orgError && orgMember?.org_id) {
+      // Käyttäjä on kutsuttu käyttäjä, käytä organisaation ID:tä
+      publicUserId = orgMember.org_id
+      console.log('✅ Found org member, using org_id:', publicUserId)
+    } else {
+      // Jos ei löydy org_members taulusta, tarkista onko normaali käyttäjä
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user_id)
+        .maybeSingle()
+
+      if (!userError && userData?.id) {
+        // Normaali käyttäjä, käytä users.id:tä
+        publicUserId = userData.id
+        console.log('✅ Found normal user, using user_id:', publicUserId)
+      }
     }
 
-    const publicUserId = userData.id
+    if (!publicUserId) {
+      console.error('User haku epäonnistui - käyttäjää ei löytynyt org_members tai users taulusta')
+      return res.status(400).json({ 
+        error: 'Käyttäjää ei löytynyt',
+        details: 'Käyttäjää ei löytynyt organisaatiosta tai käyttäjätietokannasta'
+      })
+    }
 
     // Hae call_type_id call_types taulusta käyttäen public.users.id:tä
     const { data: callTypeData, error: callTypeError } = await supabase

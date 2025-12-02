@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
 import CompanyTab from '../components/AccountDetailsTabs/CompanyTab'
 import StrategiesTab from '../components/AccountDetailsTabs/StrategiesTab'
 import PostsTab from '../components/AccountDetailsTabs/PostsTab'
@@ -12,6 +13,7 @@ import './AccountDetailsPage.css'
 export default function AccountDetailsPage() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { organization } = useAuth()
   const [account, setAccount] = useState(null)
   const [accountDetails, setAccountDetails] = useState(null)
   const [accountFeatures, setAccountFeatures] = useState([])
@@ -539,27 +541,55 @@ export default function AccountDetailsPage() {
       // Varmista että newFeatures on array
       const featuresToSave = Array.isArray(newFeatures) ? newFeatures : []
       
-      // Päivitä features tietokantaan
-      const { error } = await supabase
-        .from('users')
-        .update({ features: featuresToSave })
-        .eq('id', account.id)
+      // Tarkista onko käyttäjä admin/moderator/owner
+      const isAdmin = organization?.role === 'admin' || organization?.role === 'owner' || organization?.role === 'moderator'
+      
+      if (isAdmin) {
+        // Käytä admin-data endpointia admin-käyttäjille (ohittaa RLS:n)
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session?.access_token) {
+          throw new Error('Session expired or invalid')
+        }
 
-      if (error) {
-        console.error('Supabase error updating features:', error)
-        console.error('Error details:', {
-          code: error.code,
-          message: error.message,
-          details: error.details,
-          hint: error.hint
+        const response = await fetch('/api/admin-data', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify({
+            type: 'update-features',
+            user_id: account.id,
+            features: featuresToSave
+          })
         })
-        throw error
-      }
 
-      // Päivitä state suoraan tallennettuun arvoon (RLS voi estää select-kyselyn)
-      setAccountFeatures(featuresToSave)
-      setSaveMessage('Ominaisuudet päivitetty!')
-      setTimeout(() => setSaveMessage(''), 3000)
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to update features')
+        }
+
+        // Päivitä state suoraan tallennettuun arvoon
+        setAccountFeatures(featuresToSave)
+        setSaveMessage('Ominaisuudet päivitetty!')
+        setTimeout(() => setSaveMessage(''), 3000)
+      } else {
+        // Normaali käyttäjä: käytä suoraa Supabase-kyselyä
+        const { error } = await supabase
+          .from('users')
+          .update({ features: featuresToSave })
+          .eq('id', account.id)
+
+        if (error) {
+          console.error('Supabase error updating features:', error)
+          throw error
+        }
+
+        // Päivitä state suoraan tallennettuun arvoon
+        setAccountFeatures(featuresToSave)
+        setSaveMessage('Ominaisuudet päivitetty!')
+        setTimeout(() => setSaveMessage(''), 3000)
+      }
     } catch (error) {
       console.error('Error updating features:', error)
       setSaveMessage('Virhe ominaisuuksien päivityksessä: ' + (error.message || 'Tuntematon virhe'))

@@ -1,7 +1,7 @@
 {
   "name": "mak8d",
   "private": true,
-  "version": "1.102.1",
+  "version": "1.102.2",
   "type": "module",
   "engines": {
     "node": ">=20.0.0"

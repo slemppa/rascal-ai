@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.102.2](https://github.com/slemppa/rascal-ai/compare/v1.102.1...v1.102.2) (2025-12-04)
+
+
+### 🐛 Bug Fixes
+
+* update React 19.2.1 & deps for security (CVE-2025-55182) ([beeb31d](https://github.com/slemppa/rascal-ai/commit/beeb31daff22c571fcda621eee1a5b6dc2c75f39))
+
 ### [1.102.1](https://github.com/slemppa/rascal-ai/compare/v1.102.0...v1.102.1) (2025-12-04)
 
 

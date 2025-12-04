@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import './ContentStrategyPage.css'
 import { supabase } from '../lib/supabase'
@@ -65,6 +66,7 @@ const getStrategy = async () => {
 
 export default function ContentStrategyPage() {
   const { t, i18n } = useTranslation('common')
+  const navigate = useNavigate()
   const { user, organization } = useAuth()
   const { refreshUserStatus } = useStrategyStatus()
   const [orgId, setOrgId] = useState(null)
@@ -285,6 +287,7 @@ export default function ContentStrategyPage() {
         } else if (editingTovModal) {
           setEditingTovModal(false)
           setTovEditText(tov)
+          navigate('/strategy')
         } else if (viewingCompanySummary) {
           setViewingCompanySummary(false)
         } else if (viewingIcp) {
@@ -773,16 +776,17 @@ export default function ContentStrategyPage() {
   const handleAnalyzeTovFromSocialMedia = async (socialUrl) => {
     try {
       setAnalyzingTov(true)
-      setTovSocialUrlModal(false) // Sulje modaali kun analyysi alkaa
       
       if (!orgId) {
         alert('Organisaation ID puuttuu')
+        setAnalyzingTov(false)
         return
       }
 
       const validation = validateSocialUrl(socialUrl)
       if (!validation.valid) {
         setTovSocialUrlError(validation.error || 'Sometilin URL on pakollinen')
+        setAnalyzingTov(false)
         return
       }
 
@@ -790,6 +794,7 @@ export default function ContentStrategyPage() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) {
         alert('Käyttäjä ei ole kirjautunut')
+        setAnalyzingTov(false)
         return
       }
 
@@ -805,6 +810,13 @@ export default function ContentStrategyPage() {
       })
 
       console.log('TOV analyze response:', response.data)
+
+      // Sulje molemmat modaalit vasta kun API-kutsu onnistui
+      setTovSocialUrlModal(false)
+      setEditingTovModal(false)
+      setTovSocialUrl('')
+      setTovSocialUrlError('')
+      navigate('/strategy')
 
       if (response.data?.success) {
         if (response.data?.tov) {
@@ -825,6 +837,7 @@ export default function ContentStrategyPage() {
       console.error('Error response:', error.response?.data)
       const errorMessage = error.response?.data?.error || error.response?.data?.details?.error || error.message
       alert('TOV-analyysi epäonnistui: ' + errorMessage)
+      // Modaali pysyy auki jos virhe tapahtuu
     } finally {
       setAnalyzingTov(false)
     }
@@ -2509,6 +2522,7 @@ export default function ContentStrategyPage() {
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setEditingTovModal(false)
+              navigate('/strategy')
             }
           }}
         >
@@ -2540,7 +2554,10 @@ export default function ContentStrategyPage() {
                 🎤 Äänenlaatu & TOV
               </h3>
               <button
-                onClick={() => setEditingTovModal(false)}
+                onClick={() => {
+                  setEditingTovModal(false)
+                  navigate('/strategy')
+                }}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -2632,6 +2649,7 @@ export default function ContentStrategyPage() {
                 onClick={async () => {
                   await handleSaveTov()
                   setEditingTovModal(false)
+                  navigate('/strategy')
                 }}
               >
                 {t('strategy.buttons.save')}
@@ -2653,6 +2671,7 @@ export default function ContentStrategyPage() {
                 onClick={() => {
                   setEditingTovModal(false)
                   setTovEditText(tov)
+                  navigate('/strategy')
                 }}
               >
                 {t('strategy.buttons.cancel')}

@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.102.0](https://github.com/slemppa/rascal-ai/compare/v1.101.1...v1.102.0) (2025-12-04)
+
+
+### 🔧 Chores
+
+* remove debug logs from features update code ([7d9dce1](https://github.com/slemppa/rascal-ai/commit/7d9dce19c568ce9dab8055e740beeb65d66806b2))
+
+
+### 🐛 Bug Fixes
+
+* improve features update handling in AccountDetailsPage ([d092367](https://github.com/slemppa/rascal-ai/commit/d092367193a5791a5838415c83bf5079f94b8ce5))
+* korjattu organisaatiotuki kaikissa API-endpointeissa ([899edd6](https://github.com/slemppa/rascal-ai/commit/899edd653028e901170afa818a40c843fcde8203))
+
+
+### ✨ Features
+
+* add TOV analysis with social media URL input ([c649d27](https://github.com/slemppa/rascal-ai/commit/c649d27695104f29d5f606f4505fe0eff8e95326))
+* add UGC tab with feature flag and component refactor ([c9e1ad8](https://github.com/slemppa/rascal-ai/commit/c9e1ad8d066a4d61d993f31588587d0b781cffe2))
+* lisää Integraatiot-välilehti asiakastilien tietosivulle ([ddcd2a1](https://github.com/slemppa/rascal-ai/commit/ddcd2a1a93f7ba6221a5e87d39cd2c2621a34063))
+* päivitä call type modaalit - lisää kentät ja paranna UI ([74993c9](https://github.com/slemppa/rascal-ai/commit/74993c922d57a337dc171a54548723a825e8a55d))
+
 ### [1.101.1](https://github.com/slemppa/rascal-ai/compare/v1.101.0...v1.101.1) (2025-12-01)
 
 

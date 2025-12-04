@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.102.1](https://github.com/slemppa/rascal-ai/compare/v1.102.0...v1.102.1) (2025-12-04)
+
+
+### 🐛 Bug Fixes
+
+* close both modals when TOV analysis starts ([d977c3e](https://github.com/slemppa/rascal-ai/commit/d977c3ea19cc11055b4d527fd6e7c3f14b9d4fd5))
+
 ## [1.102.0](https://github.com/slemppa/rascal-ai/compare/v1.101.1...v1.102.0) (2025-12-04)
 
 

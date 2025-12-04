@@ -101,6 +101,10 @@ export default function ContentStrategyPage() {
   const [editingIcpModal, setEditingIcpModal] = useState(false)
   const [editingKpiModal, setEditingKpiModal] = useState(false)
   const [editingTovModal, setEditingTovModal] = useState(false)
+  const [analyzingTov, setAnalyzingTov] = useState(false)
+  const [tovSocialUrlModal, setTovSocialUrlModal] = useState(false)
+  const [tovSocialUrl, setTovSocialUrl] = useState('')
+  const [tovSocialUrlError, setTovSocialUrlError] = useState('')
 
   const [companyId, setCompanyId] = useState(null)
   const textareaRef = React.useRef(null)
@@ -715,6 +719,115 @@ export default function ContentStrategyPage() {
   const handleCancelTov = () => {
     setEditingTov(false)
     setTovEditText('')
+  }
+
+  const validateSocialUrl = (url) => {
+    if (!url || !url.trim()) {
+      return { valid: false, error: '' }
+    }
+
+    const trimmedUrl = url.trim().toLowerCase()
+    
+    // Tarkista että URL on Instagram tai LinkedIn henkilöprofiili
+    const instagramPattern = /^https?:\/\/(www\.)?(instagram\.com|instagr\.am)\/.+/
+    const linkedinPattern = /^https?:\/\/(www\.)?linkedin\.com\/in\/.+/
+
+    // Tarkista ensin onko URL ylipäätään validi URL
+    try {
+      new URL(trimmedUrl)
+    } catch {
+      return {
+        valid: false,
+        error: 'Syötä kelvollinen URL-osoite'
+      }
+    }
+
+    if (instagramPattern.test(trimmedUrl)) {
+      return { valid: true, error: '' }
+    }
+    
+    if (linkedinPattern.test(trimmedUrl)) {
+      return { valid: true, error: '' }
+    }
+
+    // Jos URL on LinkedIn mutta ei /in/ polku
+    if (trimmedUrl.includes('linkedin.com')) {
+      return {
+        valid: false,
+        error: 'LinkedIn URL:n täytyy olla henkilöprofiili (linkedin.com/in/...)'
+      }
+    }
+
+    return { 
+      valid: false, 
+      error: 'URL:n täytyy olla Instagram-profiili (instagram.com/...) tai LinkedIn henkilöprofiili (linkedin.com/in/...)' 
+    }
+  }
+
+  const handleSocialUrlChange = (url) => {
+    setTovSocialUrl(url)
+    const validation = validateSocialUrl(url)
+    setTovSocialUrlError(validation.error)
+  }
+
+  const handleAnalyzeTovFromSocialMedia = async (socialUrl) => {
+    try {
+      setAnalyzingTov(true)
+      setTovSocialUrlModal(false) // Sulje modaali kun analyysi alkaa
+      
+      if (!orgId) {
+        alert('Organisaation ID puuttuu')
+        return
+      }
+
+      const validation = validateSocialUrl(socialUrl)
+      if (!validation.valid) {
+        setTovSocialUrlError(validation.error || 'Sometilin URL on pakollinen')
+        return
+      }
+
+      // Hae käyttäjän token
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        alert('Käyttäjä ei ole kirjautunut')
+        return
+      }
+
+      // Kutsu API endpointia some-scrapingille ja TOV-analyysille
+      const response = await axios.post('/api/tov-analyze', {
+        user_id: orgId,
+        social_url: socialUrl.trim()
+      }, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      console.log('TOV analyze response:', response.data)
+
+      if (response.data?.success) {
+        if (response.data?.tov) {
+          // N8N palautti TOV:n suoraan
+          setTovEditText(response.data.tov)
+          setToast({ visible: true, message: 'TOV-analyysi valmis! Tarkista ja tallenna tulos.' })
+          setTimeout(() => setToast({ visible: false, message: '' }), 5000)
+        } else {
+          // N8N aloitti asynkronisen prosessin
+          setToast({ visible: true, message: 'TOV-analyysi aloitettu. Analyysi valmistuu hetken kuluttua.' })
+          setTimeout(() => setToast({ visible: false, message: '' }), 5000)
+        }
+      } else {
+        alert('TOV-analyysi epäonnistui. Yritä myöhemmin uudelleen.')
+      }
+    } catch (error) {
+      console.error('Error analyzing TOV from social media:', error)
+      console.error('Error response:', error.response?.data)
+      const errorMessage = error.response?.data?.error || error.response?.data?.details?.error || error.message
+      alert('TOV-analyysi epäonnistui: ' + errorMessage)
+    } finally {
+      setAnalyzingTov(false)
+    }
   }
 
   // Funktio kuukauden käännökselle ja kirjoittamiseen isolla alkukirjaimella
@@ -2444,6 +2557,38 @@ export default function ContentStrategyPage() {
               </button>
             </div>
             
+            {/* Apu-nappi some-scrapingille ja TOV-analyysille */}
+            <div style={{ marginBottom: '16px' }}>
+              <button
+                onClick={() => setTovSocialUrlModal(true)}
+                disabled={analyzingTov}
+                style={{
+                  background: analyzingTov ? '#9ca3af' : '#f59e0b',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '10px 20px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: analyzingTov ? 'not-allowed' : 'pointer',
+                  transition: 'background-color 0.2s',
+                  width: '100%'
+                }}
+                onMouseOver={(e) => {
+                  if (!analyzingTov) {
+                    e.target.style.background = '#d97706'
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!analyzingTov) {
+                    e.target.style.background = '#f59e0b'
+                  }
+                }}
+              >
+                {analyzingTov ? 'Analysoidaan somea...' : 'En ole varma, tarvitsen apua'}
+              </button>
+            </div>
+            
             <textarea
               ref={tovTextareaRef}
               value={tovEditText}
@@ -2511,6 +2656,186 @@ export default function ContentStrategyPage() {
                 }}
               >
                 {t('strategy.buttons.cancel')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sometilin URL -modaali TOV-analyysille */}
+      {tovSocialUrlModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2001,
+            padding: '20px'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setTovSocialUrlModal(false)
+              setTovSocialUrl('')
+              setTovSocialUrlError('')
+            }
+          }}
+        >
+          <div 
+            style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              padding: '24px',
+              maxWidth: '500px',
+              width: '100%',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '20px' 
+            }}>
+              <h3 style={{ 
+                margin: 0, 
+                fontSize: '20px', 
+                fontWeight: '700', 
+                color: '#374151' 
+              }}>
+                Syötä sometilin URL
+              </h3>
+              <button
+                onClick={() => {
+                  setTovSocialUrlModal(false)
+                  setTovSocialUrl('')
+                  setTovSocialUrlError('')
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                  padding: '4px',
+                  borderRadius: '4px'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#f3f4f6'}
+                onMouseOut={(e) => e.target.style.background = 'none'}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#374151'
+              }}>
+                Sometilin URL (Instagram tai LinkedIn henkilöprofiili)
+              </label>
+              <input
+                type="url"
+                value={tovSocialUrl}
+                onChange={(e) => handleSocialUrlChange(e.target.value)}
+                placeholder="https://instagram.com/example tai https://linkedin.com/in/henkilo"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: `2px solid ${tovSocialUrlError ? '#ef4444' : '#e5e7eb'}`,
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontFamily: 'inherit',
+                  boxSizing: 'border-box'
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && tovSocialUrl.trim() && !tovSocialUrlError) {
+                    const validation = validateSocialUrl(tovSocialUrl)
+                    if (validation.valid) {
+                      handleAnalyzeTovFromSocialMedia(tovSocialUrl)
+                    }
+                  }
+                }}
+                autoFocus
+              />
+              {tovSocialUrlError && (
+                <p style={{
+                  margin: '8px 0 0 0',
+                  fontSize: '14px',
+                  color: '#ef4444'
+                }}>
+                  {tovSocialUrlError}
+                </p>
+              )}
+            </div>
+            
+            <div style={{ 
+              display: 'flex', 
+              gap: '12px', 
+              justifyContent: 'flex-end' 
+            }}>
+              <button 
+                style={{
+                  background: '#6b7280',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#4b5563'}
+                onMouseOut={(e) => e.target.style.background = '#6b7280'}
+                onClick={() => {
+                  setTovSocialUrlModal(false)
+                  setTovSocialUrl('')
+                  setTovSocialUrlError('')
+                }}
+              >
+                Peruuta
+              </button>
+              <button 
+                style={{
+                  background: analyzingTov ? '#9ca3af' : '#f59e0b',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: analyzingTov ? 'not-allowed' : 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => {
+                  if (!analyzingTov) {
+                    e.target.style.background = '#d97706'
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!analyzingTov) {
+                    e.target.style.background = '#f59e0b'
+                  }
+                }}
+                disabled={analyzingTov || !tovSocialUrl.trim() || !!tovSocialUrlError}
+                onClick={() => {
+                  const validation = validateSocialUrl(tovSocialUrl)
+                  if (validation.valid) {
+                    handleAnalyzeTovFromSocialMedia(tovSocialUrl)
+                  }
+                }}
+              >
+                {analyzingTov ? 'Analysoidaan...' : 'Aloita analyysi'}
               </button>
             </div>
           </div>

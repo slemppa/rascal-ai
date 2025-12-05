@@ -92,7 +92,7 @@ export function withOrganization(handler) {
         // Tarkista onko käyttäjä admin (company_id = 1 tai role = 'admin')
         const { data: adminCheck, error: adminError } = await supabase
           .from('users')
-          .select('id, role, company_id')
+          .select('*')
           .eq('auth_user_id', user.id)
           .single()
         

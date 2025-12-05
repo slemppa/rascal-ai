@@ -88,6 +88,26 @@ export function withOrganization(handler) {
 
       if (!orgMember) {
         console.warn('withOrganization: User not found in org_members:', user.id)
+        
+        // Tarkista onko käyttäjä admin (company_id = 1 tai role = 'admin')
+        const { data: adminCheck, error: adminError } = await supabase
+          .from('users')
+          .select('id, role, company_id')
+          .eq('auth_user_id', user.id)
+          .single()
+        
+        if (!adminError && adminCheck && (adminCheck.role === 'admin' || adminCheck.company_id === 1)) {
+          // Admin-käyttäjä, käytä users.id organisaatio-ID:nä
+          req.organization = {
+            id: adminCheck.id,
+            role: 'admin',
+            data: adminCheck
+          }
+          req.authUser = user
+          req.supabase = supabase
+          return handler(req, res)
+        }
+        
         return res.status(403).json({ 
           error: 'User not member of any organization',
           hint: 'Käyttäjä ei ole jäsenenä organisaatiossa. Ota yhteyttä ylläpitoon.'

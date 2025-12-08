@@ -526,6 +526,7 @@ export default function ManagePostsPage() {
   const [mixpostPosts, setMixpostPosts] = useState([])
   const [mixpostLoading, setMixpostLoading] = useState(false)
   const [showLimitWarning, setShowLimitWarning] = useState(false)
+  const [refreshingCalendar, setRefreshingCalendar] = useState(false)
 
   // Hae Mixpost postaukset
   const fetchMixpostPosts = async () => {
@@ -920,6 +921,9 @@ export default function ManagePostsPage() {
     const matchesType = typeFilter === '' || post.type === typeFilter
     return matchesSearch && matchesStatus && matchesType
   })
+
+  // "Valmiina julkaisuun" (Tarkistuksessa) postaukset
+  const readyPosts = filteredPosts.filter(post => post.status === 'Tarkistuksessa')
 
   // Kalenterin tarvitsemat eventit (ajastetut tai julkaisuajalla varustetut)
   const calendarItems = filteredPosts
@@ -1349,35 +1353,98 @@ export default function ManagePostsPage() {
     }
   }
 
-  const handleSchedulePost = async (post) => {
+  const handleSchedulePost = async (post, scheduledDate = null, selectedAccounts = []) => {
     try {
-      // Kysytään ajastuspäivä käyttäjältä
-      const scheduledDate = prompt(t('posts.messages.schedulePrompt'), 
-        new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16))
-
+      // Jos päivämäärää ei annettu, kysytään käyttäjältä
       if (!scheduledDate) {
-        return // Käyttäjä perui
+        scheduledDate = prompt(t('posts.messages.schedulePrompt'), 
+          new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16))
+
+        if (!scheduledDate) {
+          return // Käyttäjä perui
+        }
       }
 
-      // Lähetetään data backend:iin, joka hoitaa Supabase-kyselyt
+      // Tarkista että on valittu vähintään yksi kanava
+      if (!selectedAccounts || selectedAccounts.length === 0) {
+        setErrorMessage('Valitse vähintään yksi somekanava')
+        return
+      }
+
+      // Haetaan media-data suoraan Supabase:sta (sama logiikka kuin PublishModal)
+      let mediaUrls = []
+      let segments = []
+      
+      if (post.source === 'supabase') {
+        // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+        const userId = await getUserOrgId(user.id)
+
+        if (!userId) {
+          throw new Error(t('posts.messages.userIdNotFound'))
+        }
+
+        // Haetaan content data
+        const { data: contentData, error: contentError } = await supabase
+          .from('content')
+          .select('*')
+          .eq('id', post.id)
+          .eq('user_id', userId)
+          .single()
+
+        if (contentError) {
+          console.error('Error fetching content:', contentError)
+        } else {
+          mediaUrls = contentData.media_urls || []
+          
+          // Jos Carousel, haetaan segments data
+          if (post.type === 'Carousel') {
+            const { data: segmentsData, error: segmentsError } = await supabase
+              .from('segments')
+              .select('*')
+              .eq('content_id', post.id)
+              .order('slide_no', { ascending: true })
+            
+            if (!segmentsError && segmentsData) {
+              segments = segmentsData
+              // Kerätään kaikki media_urls segments-taulusta
+              mediaUrls = segmentsData
+                .filter(segment => segment.media_urls && segment.media_urls.length > 0)
+                .flatMap(segment => segment.media_urls)
+            }
+          }
+        }
+      } else {
+        // Reels data
+        mediaUrls = post.mediaUrls || []
+      }
+
+      // Lähetetään data backend:iin, joka hoitaa Supabase-kyselyt (sama logiikka kuin PublishModal)
       const scheduleData = {
         post_id: post.id,
         user_id: user.id,
         auth_user_id: user.id,
         content: post.caption || post.title,
-        media_urls: post.mediaUrls || [],
+        media_urls: mediaUrls,
         scheduled_date: scheduledDate,
-        action: 'schedule'
+        publish_date: scheduledDate, // Käytetään scheduledDate myös publish_date:ksi
+        post_type: post.type === 'Reels' ? 'reel' : post.type === 'Carousel' ? 'carousel' : 'post',
+        action: 'schedule',
+        selected_accounts: selectedAccounts // Lisätään valitut somekanavat
+      }
+      
+      // Lisää segments-data Carousel-tyyppisillä postauksilla
+      if (post.type === 'Carousel' && segments.length > 0) {
+        scheduleData.segments = segments
       }
 
-              const response = await fetch('/api/post-actions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-          },
-          body: JSON.stringify(scheduleData)
-        })
+      const response = await fetch('/api/post-actions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        },
+        body: JSON.stringify(scheduleData)
+      })
 
       const result = await response.json()
 
@@ -2281,6 +2348,26 @@ export default function ManagePostsPage() {
         <div style={{ marginTop: 24 }}>
           <PostsCalendar 
             items={calendarItems}
+            readyPosts={readyPosts}
+            onSchedulePost={handleSchedulePost}
+            socialAccounts={socialAccounts}
+            selectedAccounts={selectedAccounts}
+            setSelectedAccounts={setSelectedAccounts}
+            loadingAccounts={loadingAccounts}
+            onFetchSocialAccounts={fetchSocialAccounts}
+            onRefresh={async () => {
+              setRefreshingCalendar(true)
+              try {
+                await fetchPosts()
+                await fetchReelsPosts()
+                await fetchMixpostPosts()
+              } catch (error) {
+                console.error('Error refreshing calendar:', error)
+              } finally {
+                setRefreshingCalendar(false)
+              }
+            }}
+            refreshing={refreshingCalendar}
             onEventClick={(ev) => {
               // Etsi vastaava postaus kaikista nykyisistä posteista
               const post = currentPosts.find(p => p.id === ev.id)

@@ -19,7 +19,7 @@ const AddCallTypeModal = ({
 }) => {
   const { t } = useTranslation('common')
   const [currentStep, setCurrentStep] = useState(1)
-  const totalSteps = 5
+  const totalSteps = 6
 
   // ESC-toiminnallisuus - pitää olla heti useState jälkeen
   useEffect(() => {
@@ -45,8 +45,9 @@ const AddCallTypeModal = ({
     { id: 1, label: 'Perustiedot' },
     { id: 2, label: 'Kohderyhmä ja tavoite' },
     { id: 3, label: 'Puheluskripti' },
-    { id: 4, label: 'SMS-viestit' },
-    { id: 5, label: t('calls.modals.addCallType.steps.aiEnhancement') }
+    { id: 4, label: 'Yhteenveto' },
+    { id: 5, label: 'SMS-viestit' },
+    { id: 6, label: t('calls.modals.addCallType.steps.aiEnhancement') }
   ]
 
   // Tyhjän tilan klikkaus
@@ -363,6 +364,49 @@ Olisiko oikea henkilö paikalla?`}
           )}
 
           {currentStep === 4 && (
+            <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20, alignItems: 'start' }}>
+                <div className="form-group">
+                  <label className="form-label">
+                    Yhteenveto (ANALYTIIKKA)
+                  </label>
+                  <textarea
+                    value={newCallType.summary || ''}
+                    onChange={e => setNewCallType({ ...newCallType, summary: e.target.value })}
+                    placeholder="Kirjoita kaupan nimi mihin soitit ja tilaus mitä kauppa tilasi
+pyysikö kauppa olemaan vielä yhteydessä"
+                    rows={5}
+                    className="form-textarea"
+                  />
+                </div>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 16, fontSize: 13, color: '#374151' }}>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>Tiivistä 2-3 lauseessa: osallistuiko [tapahtumaan], keskeiset kiinnostukset/haasteet, sovitut seuraavat askeleet (aika/tapa).</div>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20, alignItems: 'start' }}>
+                <div className="form-group">
+                  <label className="form-label">
+                    Onnistumisen arviointi (ANALYTIIKKA)
+                  </label>
+                  <textarea
+                    value={newCallType.success_assessment || ''}
+                    onChange={e => setNewCallType({ ...newCallType, success_assessment: e.target.value })}
+                    placeholder={`• Arvioi 2-3 lauseessa, täyttyivätkö Tavoitteet-osion tavoitteet.
+• Kuvaa miksi se onnistui/ei onnistunut ja mainitse puuttuvat kohdat.`}
+                    rows={5}
+                    className="form-textarea"
+                  />
+                </div>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 16, fontSize: 13, color: '#374151' }}>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
+                  <div>Arvioi, saavutettiinko: 1) tiedonkeruu, 2) kiinnostukset/haasteet, 3) seuranta, 4) yhteystapa/aika. Perustele lyhyesti.</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {currentStep === 5 && (
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20, alignItems: 'start' }}>
                 <div className="form-group">
@@ -474,7 +518,7 @@ Olisiko oikea henkilö paikalla?`}
             </div>
           )}
 
-          {currentStep === 5 && (
+          {currentStep === 6 && (
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ textAlign: 'center', marginBottom: 16 }}>
                 <h3 style={{ fontSize: 18, fontWeight: 600, color: '#1f2937', margin: '0 0 8px 0' }}>

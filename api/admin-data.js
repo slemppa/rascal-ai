@@ -32,9 +32,9 @@ async function handler(req, res) {
     // Käytä service role -clientia jos saatavilla, muuten fallback RLS-clienttiin
     const db = supabaseAdmin || req.supabase
 
-    // POST-pyyntö features-päivitykselle
+    // POST-pyyntö features- ja platforms-päivitykselle
     if (req.method === 'POST') {
-      const { type, user_id, features } = req.body
+      const { type, user_id, features, platforms } = req.body
 
       if (type === 'update-features') {
         if (!user_id || !Array.isArray(features)) {
@@ -52,6 +52,27 @@ async function handler(req, res) {
         }
 
         return res.status(200).json({ success: true, message: 'Features updated successfully' })
+      }
+
+      if (type === 'update-platforms') {
+        if (!user_id || !Array.isArray(platforms)) {
+          return res.status(400).json({ error: 'user_id and platforms array required' })
+        }
+
+        // Tallenna platforms JSON stringinä (sama muoto kuin AdminPage)
+        const platformsToSave = JSON.stringify(platforms)
+
+        const { error } = await db
+          .from('users')
+          .update({ platforms: platformsToSave })
+          .eq('id', user_id)
+
+        if (error) {
+          console.error('[admin-data] Error updating platforms:', error)
+          return res.status(500).json({ error: 'Failed to update platforms', details: error.message })
+        }
+
+        return res.status(200).json({ success: true, message: 'Platforms updated successfully' })
       }
 
       return res.status(400).json({ error: 'Invalid type for POST request' })

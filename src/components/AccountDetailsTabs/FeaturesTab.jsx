@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
+import { useAuth } from '../../contexts/AuthContext'
 
 const ALL_FEATURES = [
   'Campaigns',
@@ -47,6 +48,7 @@ export default function FeaturesTab({
   onFeatureToggle,
   userId // Käyttäjän/organisaation ID
 }) {
+  const { organization } = useAuth()
   const [userData, setUserData] = useState(null)
   const [onboardingCompleted, setOnboardingCompleted] = useState(false)
   const [onboardingLoading, setOnboardingLoading] = useState(true)
@@ -134,35 +136,73 @@ export default function FeaturesTab({
     setSaveMessage('')
 
     try {
-      // Tallenna platforms samalla tavalla kuin admin-sivulla
-      const platformsToSave = Array.isArray(newPlatforms) ? JSON.stringify(newPlatforms) : newPlatforms
-      console.log('[FeaturesTab] Saving to database:', platformsToSave)
+      // Varmista että newPlatforms on array
+      const platformsToSave = Array.isArray(newPlatforms) ? newPlatforms : []
       
-      const { error } = await supabase
-        .from('users')
-        .update({ 
-          platforms: platformsToSave,
-          updated_at: new Date().toISOString()
+      // Tarkista onko käyttäjä admin/moderator/owner
+      const isAdmin = organization?.role === 'admin' || organization?.role === 'owner' || organization?.role === 'moderator'
+      
+      if (isAdmin) {
+        // Käytä admin-data endpointia admin-käyttäjille (ohittaa RLS:n)
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session?.access_token) {
+          throw new Error('Session expired or invalid')
+        }
+
+        const response = await fetch('/api/admin-data', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify({
+            type: 'update-platforms',
+            user_id: userId,
+            platforms: platformsToSave
+          })
         })
-        .eq('id', userId)
 
-      if (error) {
-        throw error
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to update platforms')
+        }
+
+        // Päivitä state arrayina (ei stringinä)
+        setUserData(prev => ({ 
+          ...prev, 
+          platforms: platformsToSave // Pidä arrayina staten sisällä
+        }))
+        
+        setSaveMessage('Alustat päivitetty!')
+        setTimeout(() => setSaveMessage(''), 3000)
+      } else {
+        // Normaali käyttäjä: käytä suoraa Supabase-kyselyä
+        const platformsToSaveString = JSON.stringify(platformsToSave)
+        
+        const { error } = await supabase
+          .from('users')
+          .update({ 
+            platforms: platformsToSaveString,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', userId)
+
+        if (error) {
+          throw error
+        }
+
+        // Päivitä state arrayina (ei stringinä)
+        setUserData(prev => ({ 
+          ...prev, 
+          platforms: platformsToSave // Pidä arrayina staten sisällä
+        }))
+        
+        setSaveMessage('Alustat päivitetty!')
+        setTimeout(() => setSaveMessage(''), 3000)
       }
-
-      console.log('[FeaturesTab] Successfully saved to database')
-      
-      // Päivitä state arrayina (ei stringinä)
-      setUserData(prev => ({ 
-        ...prev, 
-        platforms: newPlatforms // Pidä arrayina staten sisällä
-      }))
-      
-      setSaveMessage('Alustat päivitetty!')
-      setTimeout(() => setSaveMessage(''), 3000)
     } catch (error) {
       console.error('[FeaturesTab] Error saving platforms:', error)
-      setSaveMessage('Virhe alustojen tallennuksessa')
+      setSaveMessage('Virhe alustojen tallennuksessa: ' + (error.message || 'Tuntematon virhe'))
       setTimeout(() => setSaveMessage(''), 5000)
     } finally {
       setOnboardingSaving(false)

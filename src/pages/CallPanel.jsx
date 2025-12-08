@@ -3763,6 +3763,11 @@ export default function CallPanel() {
             closeModals()
             setAddModalAiEnhancementSent(false) // Reset flag
           }}
+          onCancel={() => {
+            // Suljetaan ilman tallennusta
+            closeModals()
+            setAddModalAiEnhancementSent(false) // Reset flag
+          }}
           newCallType={newCallType}
           setNewCallType={setNewCallType}
           onAdd={handleAddCallType}
@@ -3778,6 +3783,11 @@ export default function CallPanel() {
             if (!editModalAiEnhancementSent) {
               await handleSaveCallType()
             }
+            closeModals()
+            setEditModalAiEnhancementSent(false) // Reset flag
+          }}
+          onCancel={() => {
+            // Suljetaan ilman tallennusta
             closeModals()
             setEditModalAiEnhancementSent(false) // Reset flag
           }}

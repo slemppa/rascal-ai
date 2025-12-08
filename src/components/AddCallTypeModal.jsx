@@ -7,7 +7,8 @@ import { supabase } from '../lib/supabase'
 
 const AddCallTypeModal = ({ 
   showModal, 
-  onClose, 
+  onClose,
+  onCancel,
   newCallType, 
   setNewCallType, 
   onAdd, 
@@ -18,13 +19,14 @@ const AddCallTypeModal = ({
 }) => {
   const { t } = useTranslation('common')
   const [currentStep, setCurrentStep] = useState(1)
-  const totalSteps = 7
+  const totalSteps = 5
 
   // ESC-toiminnallisuus - pitää olla heti useState jälkeen
   useEffect(() => {
     const handleEscKey = (event) => {
       if (event.key === 'Escape') {
-        onClose()
+        const cancelHandler = onCancel || onClose
+        cancelHandler()
       }
     }
 
@@ -35,24 +37,23 @@ const AddCallTypeModal = ({
     return () => {
       document.removeEventListener('keydown', handleEscKey)
     }
-  }, [showModal, onClose])
+  }, [showModal, onClose, onCancel])
 
   if (!showModal) return null
 
   const steps = [
-    { id: 1, label: 'Perusasetukset' },
-    { id: 2, label: 'Taustatiedot' },
-    { id: 3, label: 'Agentin käytös' },
-    { id: 4, label: 'Puheluskripti' },
-    { id: 5, label: t('calls.modals.addCallType.steps.summary') },
-    { id: 6, label: t('calls.modals.addCallType.steps.textMessages') },
-    { id: 7, label: t('calls.modals.addCallType.steps.aiEnhancement') }
+    { id: 1, label: 'Perustiedot' },
+    { id: 2, label: 'Kohderyhmä ja tavoite' },
+    { id: 3, label: 'Puheluskripti' },
+    { id: 4, label: 'SMS-viestit' },
+    { id: 5, label: t('calls.modals.addCallType.steps.aiEnhancement') }
   ]
 
   // Tyhjän tilan klikkaus
   const handleOverlayClick = (event) => {
     if (event.target === event.currentTarget) {
-      onClose()
+      const cancelHandler = onCancel || onClose
+      cancelHandler()
     }
   }
 
@@ -112,13 +113,16 @@ const AddCallTypeModal = ({
 
   return createPortal(
     <div className="modal-overlay modal-overlay--light" onClick={handleOverlayClick}>
-      <div className="modal-container" style={{ maxWidth: '1200px' }}>
+      <div className="modal-container" style={{ maxWidth: '900px', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
         <div className="modal-header">
           <h2 className="modal-title">
             {t('calls.modals.addCallType.title')}
           </h2>
           <button
-            onClick={onClose}
+            onClick={() => {
+              const cancelHandler = onCancel || onClose
+              cancelHandler()
+            }}
             className="modal-close-btn"
           >
             ✕
@@ -145,9 +149,9 @@ const AddCallTypeModal = ({
         </div>
 
         {/* Content */}
-        <div className="modal-content">
+        <div className="modal-content" style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
           {currentStep === 1 && (
-            <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               <div className="form-grid">
                 <div className="form-group">
                   <label className="form-label">
@@ -160,20 +164,6 @@ const AddCallTypeModal = ({
                     placeholder={t('calls.modals.addCallType.placeholders.name')}
                     className="form-input"
                   />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">
-                    {t('calls.modals.addCallType.fields.status')}
-                  </label>
-                  <select
-                    value={newCallType.status || 'Active'}
-                    onChange={e => setNewCallType({ ...newCallType, status: e.target.value })}
-                    className="form-select"
-                  >
-                    <option value="Active">{t('calls.modals.addCallType.statusOptions.active')}</option>
-                    <option value="Draft">{t('calls.modals.addCallType.statusOptions.draft')}</option>
-                    <option value="Archived">{t('calls.modals.addCallType.statusOptions.archived')}</option>
-                  </select>
                 </div>
                 <div className="form-group">
                   <label className="form-label">
@@ -217,10 +207,22 @@ const AddCallTypeModal = ({
                     <option value="pl">🇵🇱 Polski</option>
                   </select>
                 </div>
+                <div className="form-group">
+                  <label className="form-label">
+                    Agentin nimi / esittely
+                  </label>
+                  <input
+                    type="text"
+                    value={newCallType.agent_name || ''}
+                    onChange={e => setNewCallType({ ...newCallType, agent_name: e.target.value })}
+                    placeholder="Administerin tekoälyavustaja."
+                    className="form-input"
+                  />
+                </div>
               </div>
 
-              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 24 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 600, color: '#1f2937', marginBottom: 16 }}>
+              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 24, marginTop: 8 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 600, color: '#1f2937', marginBottom: 16, marginTop: 0 }}>
                   Puhelun asetukset
                 </h3>
                 <div className="form-grid">
@@ -261,117 +263,31 @@ const AddCallTypeModal = ({
           {currentStep === 2 && (
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div className="form-group">
-                <label className="form-label">Yrityksen kuvaus</label>
-                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-                  Kerro lyhyesti mitä yrityksesi tekee ja mikä on soiton tausta.
-                </p>
-                <textarea
-                  value={newCallType.identity || ''}
-                  onChange={e => setNewCallType({ ...newCallType, identity: e.target.value })}
-                  placeholder={"Administer on taloushallinnon ja lakipalveluiden asiantuntijayritys, joka auttaa pk-yrityksiä tehostamaan talouttaan ja varautumaan lainsäädännön muutoksiin."}
-                  rows={3}
-                  className="form-textarea"
-                />
-              </div>
-
-              <div className="form-group">
                 <label className="form-label">Kohdeyleisö</label>
-                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-                  Kenelle agentti puhuu? Rooli, toimiala, alue.
+                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
+                  Kuvaa yhdellä lauseella kenelle puhelu on tarkoitettu.
                 </p>
                 <input
                   type="text"
                   value={newCallType.target_audience || ''}
                   onChange={e => setNewCallType({ ...newCallType, target_audience: e.target.value })}
-                  placeholder="Kouvolan alueen pk-yritysten yrittäjät ja toimitusjohtajat."
+                  placeholder="Yritysten talouspäättäjät, Kaupan vastaavat, LVI-yritysten yrittäjät"
                   className="form-input"
                 />
               </div>
 
               <div className="form-group">
                 <label className="form-label">Puhelun päätavoite</label>
-                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-                  Mitä halutaan saada aikaan puhelussa?
+                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
+                  Mitä haluat saada aikaan tässä puhelussa?
                 </p>
                 <textarea
                   value={newCallType.goals || ''}
                   onChange={e => setNewCallType({ ...newCallType, goals: e.target.value })}
-                  placeholder="Tavoitteena kutsua asiakas yritystapahtumaan ja vahvistaa mahdollinen osallistuminen."
+                  placeholder="Kysy kiinnostusta, pyydä varmistus, kerro tapahtumasta ja varmista osallistuminen"
                   rows={3}
                   className="form-textarea"
                 />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Äänensävy ja tyyli</label>
-                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-                  Kuvaile, miten agentin tulee puhua.
-                </p>
-                <textarea
-                  value={newCallType.style || ''}
-                  onChange={e => setNewCallType({ ...newCallType, style: e.target.value })}
-                  placeholder="Ystävällinen, asiallinen ja rauhallinen. Ei smalltalkia."
-                  rows={3}
-                  className="form-textarea"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Agentin nimi / esittely</label>
-                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-                  Miten agentti esittelee itsensä.
-                </p>
-                <input
-                  type="text"
-                  value={newCallType.agent_name || ''}
-                  onChange={e => setNewCallType({ ...newCallType, agent_name: e.target.value })}
-                  placeholder="Administerin tekoälyavustaja."
-                  className="form-input"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Kieli</label>
-                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-                  Millä kielellä agentti puhuu?
-                </p>
-                <select
-                  value={newCallType.language || 'fi'}
-                  onChange={e => setNewCallType({ ...newCallType, language: e.target.value })}
-                  className="form-select"
-                >
-                  <option value="en-US">🇺🇸 English (US)</option>
-                  <option value="bg">🇧🇬 Български</option>
-                  <option value="cs">🇨🇿 Čeština</option>
-                  <option value="de-DE">🇩🇪 Deutsch</option>
-                  <option value="el">🇬🇷 Ελληνικά</option>
-                  <option value="fi">🇫🇮 Suomi</option>
-                  <option value="fr-FR">🇫🇷 Français</option>
-                  <option value="es-ES">🇪🇸 Español</option>
-                  <option value="hu">🇭🇺 Magyar</option>
-                  <option value="it">🇮🇹 Italiano</option>
-                  <option value="fr">🇫🇷 Français</option>
-                  <option value="pt-BR">🇧🇷 Português (Brasil)</option>
-                  <option value="nl-NL">🇳🇱 Nederlands</option>
-                  <option value="hi">🇮🇳 हिन्दी</option>
-                  <option value="zh-CN">🇨🇳 中文</option>
-                  <option value="no">🇳🇴 Norsk</option>
-                  <option value="sv-SE">🇸🇪 Svenska</option>
-                  <option value="da">🇩🇰 Dansk</option>
-                  <option value="da-DK">🇩🇰 Dansk (Danmark)</option>
-                  <option value="id">🇮🇩 Bahasa Indonesia</option>
-                  <option value="ja">🇯🇵 日本語</option>
-                  <option value="ko">🇰🇷 한국어</option>
-                  <option value="ms">🇲🇾 Bahasa Melayu</option>
-                  <option value="ro">🇷🇴 Română</option>
-                  <option value="ru">🇷🇺 Русский</option>
-                  <option value="sk">🇸🇰 Slovenčina</option>
-                  <option value="tr">🇹🇷 Türkçe</option>
-                  <option value="uk">🇺🇦 Українська</option>
-                  <option value="vi">🇻🇳 Tiếng Việt</option>
-                  <option value="th">🇹🇭 ไทย</option>
-                  <option value="pl">🇵🇱 Polski</option>
-                </select>
               </div>
             </div>
           )}
@@ -380,16 +296,16 @@ const AddCallTypeModal = ({
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div className="form-group">
                 <label className="form-label">
-                  Ensimmäinen puhelausuma
+                  Ensimmäinen lause
                 </label>
-                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-                  Ensimmäinen asia jonka agentti sanoo, kun asiakas on vastannut.
+                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
+                  Ensimmäinen virke, kun asiakas on vastannut puhelimeen. Pitää olla yksi lause.
                 </p>
                 <input
                   type="text"
                   value={newCallType.first_line || ''}
                   onChange={e => setNewCallType({ ...newCallType, first_line: e.target.value })}
-                  placeholder="Hei, tässä Administerin tekoälyavustaja."
+                  placeholder="Moi! Olen [agent_name], [yrityksestä]."
                   className="form-input"
                 />
               </div>
@@ -398,13 +314,13 @@ const AddCallTypeModal = ({
                 <label className="form-label">
                   Puhelun aloitus
                 </label>
-                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-                  Esittely + täsmällinen tarkoitus ilman kysymyksiä.
+                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
+                  Kerro lyhyesti puhelun tarkoitus. 1–2 virkettä.
                 </p>
                 <textarea
                   value={newCallType.intro || ''}
                   onChange={e => setNewCallType({ ...newCallType, intro: e.target.value })}
-                  placeholder="Soitan kutsuakseni teidät Administerin maksuttomaan yritystapahtumaan, joka järjestetään 11.12 Kouvolassa."
+                  placeholder="Meillä on uusia tuotteita, haluaisin nopeasti kertoa niistä."
                   rows={3}
                   className="form-textarea"
                 />
@@ -412,15 +328,17 @@ const AddCallTypeModal = ({
 
               <div className="form-group">
                 <label className="form-label">
-                  Kysymykset vaiheittain
+                  Kysymykset
                 </label>
-                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-                  Listaa kaikki kysymykset yksi kerrallaan. Jokaiselle rivi: kysymys → (Odota asiakkaan vastausta.) → ohje kyllä/ei/epäröinti.
+                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
+                  Kirjoita kysymykset yksi per rivi. Jokaisen jälkeen agentti odottaa vastausta.
                 </p>
                 <textarea
                   value={newCallType.questions || ''}
                   onChange={e => setNewCallType({ ...newCallType, questions: e.target.value })}
-                  placeholder={`1) Haluaisitteko osallistua tapahtumaan? (Odota asiakkaan vastausta.)\n– Jos kyllä: kiitä ja vahvista osallistuminen.\n– Jos ei: kiitä ja lopeta.\n– Jos epäröi: kerro hyöty lyhyesti ja kysy uudelleen.`}
+                  placeholder={`Kiinnostaisiko testata?
+Haluaisitteko tilata nyt?
+Olisiko oikea henkilö paikalla?`}
                   rows={8}
                   className="form-textarea"
                 />
@@ -430,50 +348,14 @@ const AddCallTypeModal = ({
                 <label className="form-label">
                   Puhelun lopetus
                 </label>
-                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-                  Lyhyt ja neutraali lopetusteksti.
+                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
+                  Kiitos + mitä seuraavaksi tapahtuu.
                 </p>
                 <textarea
                   value={newCallType.outro || ''}
                   onChange={e => setNewCallType({ ...newCallType, outro: e.target.value })}
-                  placeholder="Kiitos ajastanne ja mukavaa päivänjatkoa."
+                  placeholder="Kiitos ajastanne! Palataan tarvittaessa asiaan."
                   rows={3}
-                  className="form-textarea"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">
-                  Mitä tehdään, jos asiakas sanoo KYLLÄ
-                </label>
-                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-                  Järjestelmän tekninen toiminto.
-                </p>
-                <textarea
-                  value={newCallType.action || ''}
-                  onChange={e => setNewCallType({ ...newCallType, action: e.target.value })}
-                  placeholder="Merkitse ilmoittautuminen vahvistetuksi."
-                  rows={3}
-                  className="form-textarea"
-                />
-              </div>
-            </div>
-          )}
-
-          {currentStep === 3 && (
-            <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div className="form-group">
-                <label className="form-label">
-                  Toimintaohjeet agentille
-                </label>
-                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-                  Tähän kirjoitetaan kaikki agentin käyttäytymissäännöt (erittäin tärkeä Synthflow-osio!).
-                </p>
-                <textarea
-                  value={newCallType.guidelines || ''}
-                  onChange={e => setNewCallType({ ...newCallType, guidelines: e.target.value })}
-                  placeholder={`Odota, että asiakas aloittaa keskustelun. Älä käytä asiakkaan nimeä. Yksi kysymys kerrallaan. Jokaisen kysymyksen jälkeen sano: (Odota asiakkaan vastausta.) Älä kerää yhteystietoja. Jos väärä henkilö vastaa, lopeta kohteliaasti. Jos asiakas kieltäytyy, kiitä ja lopeta. Jos asiakas epäröi, kerro lyhyt hyöty ja jatka vasta sen jälkeen.`}
-                  rows={8}
                   className="form-textarea"
                 />
               </div>
@@ -482,48 +364,7 @@ const AddCallTypeModal = ({
 
           {currentStep === 4 && (
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
-                <div className="form-group">
-                  <label className="form-label">
-                    {t('calls.modals.addCallType.fields.summary')}
-                  </label>
-                  <textarea
-                    value={newCallType.summary || ''}
-                    onChange={e => setNewCallType({ ...newCallType, summary: e.target.value })}
-                    placeholder={t('calls.modals.addCallType.placeholders.summary')}
-                    rows={4}
-                    className="form-textarea"
-                  />
-                </div>
-                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
-                  <div>Tiivistä 2–3 lauseessa: osallistuiko [tapahtumaan], keskeiset kiinnostukset/haasteet, sovitut seuraavat askeleet (aika/tapa).</div>
-                </div>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
-                <div className="form-group">
-                  <label className="form-label">
-                    {t('calls.modals.addCallType.fields.successAssessment')}
-                  </label>
-                  <textarea
-                    value={newCallType.success_assessment || ''}
-                    onChange={e => setNewCallType({ ...newCallType, success_assessment: e.target.value })}
-                    placeholder={t('calls.modals.addCallType.placeholders.successAssessment')}
-                    rows={5}
-                    className="form-textarea"
-                  />
-                </div>
-                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
-                  <div>Arvioi, saavutettiinko: 1) tiedonkeruu, 2) kiinnostukset/haasteet, 3) seuranta, 4) yhteystapa/aika. Perustele lyhyesti.</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {currentStep === 5 && (
-            <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20, alignItems: 'start' }}>
                 <div className="form-group">
                   <label className="form-label">
                     {t('calls.modals.addCallType.fields.firstSms')}
@@ -553,13 +394,13 @@ const AddCallTypeModal = ({
                     )}
                   </div>
                 </div>
-                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 16, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
                   <div>Kirjoita ytimekäs ja lämmin viesti, joka esittelee puhelun ja asettaa odotukset. Tämä viesti lähetetään automaattisesti ennen puhelua.</div>
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20, alignItems: 'start' }}>
                 <div className="form-group">
                   <label className="form-label">
                     {t('calls.modals.addCallType.fields.afterCallSms')}
@@ -589,13 +430,13 @@ const AddCallTypeModal = ({
                     )}
                   </div>
                 </div>
-                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 16, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
                   <div>Kiitos puhelusta! Tämä viesti lähetetään sen jälkeen, kun asiakas vastaa puheluun ja puhelu päättyy.</div>
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20, alignItems: 'start' }}>
                 <div className="form-group">
                   <label className="form-label">
                     {t('calls.modals.addCallType.fields.missedCallSms')}
@@ -625,7 +466,7 @@ const AddCallTypeModal = ({
                     )}
                   </div>
                 </div>
-                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, fontSize: 13, color: '#374151' }}>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 16, fontSize: 13, color: '#374151' }}>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
                   <div>Yritimme tavoittaa sinut, mutta emme saaneet yhteyttä. Tämä viesti lähetetään, kun asiakas ei vastaa puheluun.</div>
                 </div>
@@ -633,7 +474,7 @@ const AddCallTypeModal = ({
             </div>
           )}
 
-          {currentStep === 7 && (
+          {currentStep === 5 && (
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ textAlign: 'center', marginBottom: 16 }}>
                 <h3 style={{ fontSize: 18, fontWeight: 600, color: '#1f2937', margin: '0 0 8px 0' }}>
@@ -679,13 +520,17 @@ const AddCallTypeModal = ({
               </Button>
             </div>
           )}
+
         </div>
         
         <div className="modal-actions">
           <div className="modal-actions-left">
             <Button
               type="button"
-              onClick={onClose}
+              onClick={() => {
+                const cancelHandler = onCancel || onClose
+                cancelHandler()
+              }}
               variant="secondary"
             >
               {t('common.cancel')}

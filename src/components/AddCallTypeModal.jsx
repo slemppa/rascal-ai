@@ -290,6 +290,20 @@ const AddCallTypeModal = ({
                   className="form-textarea"
                 />
               </div>
+
+              <div className="form-group">
+                <label className="form-label">Äänensävy ja tyyli</label>
+                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
+                  Kuvaile, miten agentin tulee puhua.
+                </p>
+                <textarea
+                  value={newCallType.style || ''}
+                  onChange={e => setNewCallType({ ...newCallType, style: e.target.value })}
+                  placeholder="Ystävällinen, asiallinen ja rauhallinen. Ei smalltalkia."
+                  rows={3}
+                  className="form-textarea"
+                />
+              </div>
             </div>
           )}
 

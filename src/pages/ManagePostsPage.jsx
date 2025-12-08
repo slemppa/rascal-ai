@@ -501,7 +501,17 @@ export default function ManagePostsPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [dataSourceToggle, setDataSourceToggle] = useState('all') // 'all', 'supabase', 'reels'
-  const [activeTab, setActiveTab] = useState('kanban') // 'kanban' | 'calendar' | 'ugc'
+  // Lataa tallennettu tab localStorageesta tai käytä oletusta
+  const [activeTab, setActiveTabState] = useState(() => {
+    const savedTab = localStorage.getItem('managePostsActiveTab')
+    return savedTab && ['kanban', 'calendar', 'ugc'].includes(savedTab) ? savedTab : 'kanban'
+  }) // 'kanban' | 'calendar' | 'ugc'
+  
+  // Wrapper-funktio joka tallentaa tabin localStorageen
+  const setActiveTab = (tab) => {
+    setActiveTabState(tab)
+    localStorage.setItem('managePostsActiveTab', tab)
+  }
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [createModalCount, setCreateModalCount] = useState(1)
   const [showUploadModal, setShowUploadModal] = useState(false)

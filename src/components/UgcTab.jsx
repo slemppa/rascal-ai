@@ -33,11 +33,12 @@ export default function UgcTab() {
         return
       }
       
-      // Haetaan kaikki postaukset content-taulusta
+      // Haetaan vain UGC-tyyppiset postaukset content-taulusta
       const { data, error } = await supabase
         .from('content')
         .select('*')
         .eq('user_id', userId)
+        .eq('type', 'UGC')
         .neq('status', 'Deleted')
         .order('created_at', { ascending: false })
       
@@ -289,24 +290,62 @@ export default function UgcTab() {
         ) : ugcPosts.length === 0 ? (
           <div className="ugc-empty">Ei postauksia vielä</div>
         ) : (
-          <div className="ugc-posts-list">
-            {ugcPosts.map((post) => (
-              <div key={post.id} className="ugc-post-item">
-                <div className="ugc-post-header">
-                  <h4>{post.idea || 'Nimetön postaus'}</h4>
-                  <span className="ugc-post-type">{post.type}</span>
+          <div className="ugc-posts-grid">
+            {ugcPosts.map((post) => {
+              const videoUrl = post.media_urls && post.media_urls.length > 0 ? post.media_urls[0] : null
+              return (
+                <div key={post.id} className="ugc-post-card">
+                  <div className="ugc-post-card-content">
+                    {/* Video thumbnail */}
+                    <div className="ugc-post-thumbnail">
+                      {videoUrl ? (
+                        <video
+                          src={videoUrl}
+                          controls
+                          className="ugc-post-video"
+                          preload="metadata"
+                        />
+                      ) : (
+                        <div className="ugc-post-placeholder">
+                          <div className="ugc-placeholder-icon">🎬</div>
+                          <div className="ugc-placeholder-text">Ei videota</div>
+                        </div>
+                      )}
+                    </div>
+                    {/* Postauksen tiedot */}
+                    <div className="ugc-post-info">
+                      <div className="ugc-post-header">
+                        <h3 className="ugc-post-title">
+                          {post.idea || 'Nimetön postaus'}
+                        </h3>
+                        <div className="ugc-post-badges">
+                          <span className="ugc-post-type">{post.type}</span>
+                          <span className={`ugc-post-status ${post.status?.toLowerCase().replace(' ', '-')}`}>
+                            {post.status || 'Unknown'}
+                          </span>
+                        </div>
+                      </div>
+                      {post.caption && (
+                        <p className="ugc-post-caption">
+                          {post.caption.length > 150 
+                            ? post.caption.substring(0, 150) + '...' 
+                            : post.caption}
+                        </p>
+                      )}
+                      <div className="ugc-post-footer">
+                        <span className="ugc-post-date">
+                          {new Date(post.created_at).toLocaleDateString('fi-FI', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="ugc-post-meta">
-                  <span className="ugc-post-status">{post.status}</span>
-                  <span className="ugc-post-date">
-                    {new Date(post.created_at).toLocaleDateString('fi-FI')}
-                  </span>
-                </div>
-                {post.caption && (
-                  <p className="ugc-post-caption">{post.caption}</p>
-                )}
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>

@@ -189,8 +189,6 @@ async function handler(req, res) {
         }
 
         let socialAccounts = []
-        // Käytä service role -clientia jos saatavilla, muuten fallback RLS-clienttiin
-        const db = supabaseAdmin || req.supabase
         
         // 1. Hae Mixpost-konfiguraatio user_mixpost_config taulusta
         const { data: mixpostConfig, error: configError } = await db

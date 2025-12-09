@@ -826,6 +826,7 @@ export default function CallPanel() {
           language: editingCallType.language || 'fi',
           summary: editingCallType.summary || '',
           success_assessment: editingCallType.success_assessment || '',
+          action: editingCallType.action || '', // Action-kenttä
           first_sms: editingCallType.first_sms || '', // Uusi kenttä
           after_call_sms: editingCallType.after_call_sms || '', // Uusi kenttä
           missed_call_sms: editingCallType.missed_call_sms || '' // Uusi kenttä
@@ -1072,6 +1073,7 @@ export default function CallPanel() {
         language: newCallType.language || 'fi',
         summary: newCallType.summary || '',
         success_assessment: newCallType.success_assessment || '',
+        action: newCallType.action || '', // Action-kenttä
         first_sms: newCallType.first_sms || '', // Uusi kenttä
         after_call_sms: newCallType.after_call_sms || '', // Uusi kenttä
         missed_call_sms: newCallType.missed_call_sms || '' // Uusi kenttä

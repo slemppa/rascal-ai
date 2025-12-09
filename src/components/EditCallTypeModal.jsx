@@ -281,7 +281,7 @@ const EditCallTypeModal = ({
               <div className="form-group">
                 <label className="form-label">Kohdeyleisö</label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Kuvaa yhdellä lauseella kenelle puhelu on tarkoitettu.
+                  Kenelle tämä puhelu on tarkoitettu? Esim. "yrityksen toimitusjohtajat", "kaupan eineshankinta", "Inbound-liidit".
                 </p>
                 <input
                   type="text"
@@ -295,7 +295,7 @@ const EditCallTypeModal = ({
               <div className="form-group">
                 <label className="form-label">Puhelun päätavoite</label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Mitä haluat saada aikaan tässä puhelussa?
+                  Mitä haluat saavuttaa puhelulla? Kirjoita 1–3 tavoitetta. Esim. "kiinnostuksen herättäminen", "ajan sopiminen", "kvalifiointi".
                 </p>
                 <textarea
                   value={editingCallType.goals || ''}
@@ -309,7 +309,7 @@ const EditCallTypeModal = ({
               <div className="form-group">
                 <label className="form-label">Äänensävy ja tyyli</label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Kuvaile, miten agentin tulee puhua.
+                  Millä sävyllä agentin tulisi puhua? Esim. "selkeä, ystävällinen, asiallinen, teitittelevä".
                 </p>
                 <textarea
                   value={editingCallType.style || ''}
@@ -329,7 +329,7 @@ const EditCallTypeModal = ({
                   Ensimmäinen lause
                 </label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Ensimmäinen virke, kun asiakas on vastannut puhelimeen. Pitää olla yksi lause.
+                  Ensimmäinen lause sen jälkeen kun asiakas puhuu. Pidä lyhyenä. Esim. "Hei, olen [Agentti], saanko kysyä yhden asian?".
                 </p>
                 <input
                   type="text"
@@ -345,7 +345,7 @@ const EditCallTypeModal = ({
                   Puhelun aloitus
                 </label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Kerro lyhyesti puhelun tarkoitus. 1–2 virkettä.
+                  Miten esittelet asian lyhyesti? Kerro tarkoitus kahdella lauseella ja kysy lupa jatkaa.
                 </p>
                 <textarea
                   value={editingCallType.intro || ''}
@@ -361,7 +361,7 @@ const EditCallTypeModal = ({
                   Kysymykset
                 </label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Kirjoita kysymykset yksi per rivi. Jokaisen jälkeen agentti odottaa vastausta.
+                  Muotoile kysymykset lyhyiksi. Kysy vain yksi asia kerrallaan. Jokaisen jälkeen agentti odottaa vastausta automaattisesti.
                 </p>
                 <textarea
                   value={editingCallType.questions || ''}
@@ -379,7 +379,7 @@ Olisiko oikea henkilö paikalla?`}
                   Puhelun lopetus
                 </label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Kiitos + mitä seuraavaksi tapahtuu.
+                  Lopeta kohteliaasti ja tarjoa seuraava askel (esim. ajan sopiminen tai lisätietojen lähettäminen).
                 </p>
                 <textarea
                   value={editingCallType.outro || ''}
@@ -387,6 +387,71 @@ Olisiko oikea henkilö paikalla?`}
                   placeholder="Kiitos ajastanne! Palataan tarvittaessa asiaan."
                   rows={3}
                   className="form-textarea"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">
+                  Onnistunut lopetus
+                </label>
+                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
+                  Milloin puhelu katsotaan onnistuneeksi? Esim. "kun asiakas ilmaisee kiinnostusta jatkaa keskustelua".
+                </p>
+                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
+                  Valitse valmis Action-pohja (valinnainen):
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
+                  {['Myyntipuhelu', 'Ajanvaraus', 'Tapahtumakutsu', 'Follow-up', 'Lead qualification', 'Universaali action'].map((preset) => {
+                    const presetTexts = {
+                      'Myyntipuhelu': 'Merkitse puhelu onnistuneeksi, kun asiakas ilmaisee kiinnostusta ostaa tuote tai palvelu. Varmista seuraavat askeleet: lähetä tarjous, varaa demo tai sovita seuraava puhelu.',
+                      'Ajanvaraus': 'Merkitse puhelu onnistuneeksi, kun asiakas suostuu varaamaan ajan. Varmista seuraavat askeleet: vahvista päivämäärä ja kellonaika, lähetä kalenterilinkki tai vahvista muulla tavalla.',
+                      'Tapahtumakutsu': 'Merkitse puhelu onnistuneeksi, kun asiakas suostuu osallistumaan tapahtumaan. Varmista seuraavat askeleet: lähetä tapahtuman tiedot, vahvista osallistuminen tai kerää lisätiedot.',
+                      'Follow-up': 'Merkitse puhelu onnistuneeksi, kun asiakas on kiinnostunut jatkamaan keskustelua. Varmista seuraavat askeleet: sovita seuraava puhelu, lähetä lisämateriaaleja tai merkitse seurantaan.',
+                      'Lead qualification': 'Merkitse puhelu onnistuneeksi, kun asiakas täyttää kvalifiointikriteerit. Varmista seuraavat askeleet: kerää tarvittavat tiedot, arvioi potentiaali ja siirrä myyntiprosessiin.',
+                      'Universaali action': 'Merkitse puhelu onnistuneeksi, kun asiakas ilmaisee kiinnostusta jatkaa keskustelua tuotteesta tai palvelusta.'
+                    }
+                    return (
+                      <button
+                        key={preset}
+                        type="button"
+                        onClick={() => {
+                          setEditingCallType({ 
+                            ...editingCallType, 
+                            action: presetTexts[preset] || '' // Tallennetaan preset-teksti action-kenttään Supabaseen
+                          })
+                        }}
+                        style={{
+                          padding: '8px 16px',
+                          fontSize: 13,
+                          fontWeight: 500,
+                          background: '#f3f4f6',
+                          border: '1px solid #d1d5db',
+                          borderRadius: 6,
+                          cursor: 'pointer',
+                          color: '#374151',
+                          transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.background = '#e5e7eb'
+                          e.target.style.borderColor = '#9ca3af'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.background = '#f3f4f6'
+                          e.target.style.borderColor = '#d1d5db'
+                        }}
+                      >
+                        {preset}
+                      </button>
+                    )
+                  })}
+                </div>
+                <textarea
+                  value={editingCallType.action || ''}
+                  readOnly
+                  placeholder="Merkitse puhelu onnistuneeksi, kun asiakas ilmaisee kiinnostusta jatkaa keskustelua tuotteesta tai palvelusta."
+                  rows={4}
+                  className="form-textarea"
+                  style={{ backgroundColor: '#f9fafb', cursor: 'not-allowed' }}
                 />
               </div>
             </div>

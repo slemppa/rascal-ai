@@ -1448,14 +1448,13 @@ export default function LeadScrapingPage() {
                   <tr>
                     <th>Nimi</th>
                     <th>Sähköposti</th>
-                    <th>Puhelin</th>
                     <th>Tehtävä</th>
                     <th>Yritys</th>
                     <th>Kaupunki</th>
                     <th>Maa</th>
                     <th>LinkedIn</th>
                     <th>Pisteet</th>
-                    <th>Tila</th>
+                    <th>Yhteenveto</th>
                     <th>Toiminnot</th>
                   </tr>
                 </thead>
@@ -1464,7 +1463,6 @@ export default function LeadScrapingPage() {
                     <tr key={lead.id}>
                       <td>{lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || '-'}</td>
                       <td>{lead.email || '-'}</td>
-                      <td>{lead.phone || '-'}</td>
                       <td>{lead.position || '-'}</td>
                       <td>{lead.orgName || '-'}</td>
                       <td>{lead.city || lead.orgCity || '-'}</td>
@@ -1477,11 +1475,7 @@ export default function LeadScrapingPage() {
                         ) : '-'}
                       </td>
                       <td>{lead.score !== null && lead.score !== undefined ? lead.score : '-'}</td>
-                      <td>
-                        <span className={`status-badge status-${lead.status || 'pending'}`}>
-                          {lead.status || 'pending'}
-                        </span>
-                      </td>
+                      <td>{lead.score_criteria || lead.scoreCriteria || '-'}</td>
                       <td>
                         <button
                           className="view-details-btn"

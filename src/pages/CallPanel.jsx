@@ -633,9 +633,27 @@ export default function CallPanel() {
       
       // Hae valitun äänen id
       const selectedVoiceObj = getVoiceOptions().find(v => v.value === selectedVoice)
-      const voiceId = selectedVoiceObj?.id
+      let voiceId = selectedVoiceObj?.id
       
-
+      // Jos voiceId ei löytynyt, käytä selectedVoice suoraan (voi olla käyttäjän oma ääni UUID)
+      if (!voiceId && selectedVoice) {
+        // Tarkista onko selectedVoice jo UUID-muodossa (oma ääni)
+        // UUID-muoto: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+        if (uuidRegex.test(selectedVoice)) {
+          voiceId = selectedVoice
+        } else {
+          // Jos ei UUID, etsi id:llä
+          const voiceById = getVoiceOptions().find(v => v.id === selectedVoice)
+          voiceId = voiceById?.id || selectedVoice
+        }
+      }
+      
+      if (!voiceId) {
+        setSingleCallError('Äänen tunniste ei löytynyt')
+        setCalling(false)
+        return
+      }
       
       const response = await axios.post('/api/single-call', {
         phoneNumber: normalizedPhoneNumber,

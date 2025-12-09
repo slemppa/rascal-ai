@@ -70,8 +70,19 @@ const AddCallTypeModal = ({
     }
   }
 
-  const handleSubmit = () => {
-    onAdd()
+  const handleSubmit = async () => {
+    if (onAdd) {
+      await onAdd()
+      // onAdd sulkee modaalin CallPanel.jsx:ssä
+      // Jos modaali ei sulkeudu, kutsu onClose() manuaalisesti
+      setTimeout(() => {
+        if (showModal && onClose) {
+          onClose()
+        }
+      }, 100)
+    } else if (onClose) {
+      onClose()
+    }
   }
 
   // Lähetä puhelun tyyppi AI-parannukseen
@@ -165,6 +176,20 @@ const AddCallTypeModal = ({
                     placeholder={t('calls.modals.addCallType.placeholders.name')}
                     className="form-input"
                   />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">
+                    {t('calls.modals.addCallType.fields.status')}
+                  </label>
+                  <select
+                    value={newCallType.status || 'Draft'}
+                    onChange={e => setNewCallType({ ...newCallType, status: e.target.value })}
+                    className="form-select"
+                  >
+                    <option value="Active">{t('calls.modals.addCallType.statusOptions.active')}</option>
+                    <option value="Draft">{t('calls.modals.addCallType.statusOptions.draft')}</option>
+                    <option value="Archived">{t('calls.modals.addCallType.statusOptions.archived')}</option>
+                  </select>
                 </div>
                 <div className="form-group">
                   <label className="form-label">

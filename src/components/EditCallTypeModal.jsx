@@ -67,8 +67,19 @@ const EditCallTypeModal = ({
     }
   }
 
-  const handleSubmit = () => {
-    onSave()
+  const handleSubmit = async () => {
+    if (onSave) {
+      await onSave()
+      // onSave sulkee modaalin CallPanel.jsx:ssä
+      // Jos modaali ei sulkeudu, kutsu onClose() manuaalisesti
+      setTimeout(() => {
+        if (showModal && onClose) {
+          onClose()
+        }
+      }, 100)
+    } else if (onClose) {
+      onClose()
+    }
   }
 
   // Lähetä puhelun tyyppi AI-parannukseen
@@ -155,6 +166,20 @@ const EditCallTypeModal = ({
                     onChange={e => setEditingCallType({ ...editingCallType, name: e.target.value })}
                     className="form-input"
                   />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">
+                    {t('calls.modals.editCallType.fields.status')}
+                  </label>
+                  <select
+                    value={editingCallType.status || 'Active'}
+                    onChange={e => setEditingCallType({ ...editingCallType, status: e.target.value })}
+                    className="form-select"
+                  >
+                    <option value="Active">{t('calls.modals.editCallType.statusOptions.active')}</option>
+                    <option value="Draft">{t('calls.modals.editCallType.statusOptions.draft')}</option>
+                    <option value="Archived">{t('calls.modals.editCallType.statusOptions.archived')}</option>
+                  </select>
                 </div>
                 <div className="form-group">
                   <label className="form-label">

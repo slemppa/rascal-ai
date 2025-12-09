@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.103.0](https://github.com/slemppa/rascal-ai/compare/v1.102.2...v1.103.0) (2025-12-09)
+
+
+### 🔧 Chores
+
+* remove Node.js engines field, use Vercel default ([f60755f](https://github.com/slemppa/rascal-ai/commit/f60755f1a5433c1f005353ae2a6ae59424e64460))
+
+
+### 📚 Documentation
+
+* add comprehensive i18n audit report ([9d5d213](https://github.com/slemppa/rascal-ai/commit/9d5d2132154edd16aad22941ea25e2e3c324a9c0))
+
+
+### 🐛 Bug Fixes
+
+* allow admin users without org_members entry ([efa0086](https://github.com/slemppa/rascal-ai/commit/efa0086adaf0d22198a1042c9de1c1e317c98c1e))
+* fetch all user fields for admin users in middleware ([3fcb6b0](https://github.com/slemppa/rascal-ai/commit/3fcb6b0d3d6857a829e1bb6f91a4e0581369b6c0))
+* korjaa Alustat-osio käyttämään admin-data endpointia ([06949bf](https://github.com/slemppa/rascal-ai/commit/06949bfb7f69e789ed56ac33f8e935f8086b6977))
+* lisää Äänensävy ja tyyli -kenttä vaiheeseen 2 call type modaaleissa ([c90bb13](https://github.com/slemppa/rascal-ai/commit/c90bb1373603f2545687235133fdc05a2459ee81))
+* lisää tila-kenttä puhelutyyppeihin ja korjaa äänen valinta ([3fc5f64](https://github.com/slemppa/rascal-ai/commit/3fc5f643be504747fcbcf7c7606833db4995a9c2))
+* palauta Yhteenveto-vaihe vaiheeseen 4 modaaleissa ([81df092](https://github.com/slemppa/rascal-ai/commit/81df092ee471eb221c0065ad9c939adbada44051))
+* paranna modaalien placeholderit, spacing ja peruuta-nappi ([6ffba41](https://github.com/slemppa/rascal-ai/commit/6ffba41f0514c7dda4b2621bc7ec1adaaf27e2b6))
+
+
+### ✨ Features
+
+* add platforms management to account manager features tab ([3337113](https://github.com/slemppa/rascal-ai/commit/333711341baa0173df16ca0acc34ed00ce3f930b))
+* lisää Action-kenttä ja ohjetekstit call type modaaleihin ([78f2476](https://github.com/slemppa/rascal-ai/commit/78f2476f9542af7c35c3ae11c176b4ac108994ae))
+* lisää kalenterinäkymään aikataulutusominaisuus ([4a900b0](https://github.com/slemppa/rascal-ai/commit/4a900b0d27c360969809a229fb3c8b757f2a62f7))
+* päivitä lead-scraping taulukko ([01fe67e](https://github.com/slemppa/rascal-ai/commit/01fe67ef76db471ee89f27d5658a2a93520f7226))
+* paranna UGC-tabin näkymä kortteina ja tallenna aktiivinen tab ([3f091f2](https://github.com/slemppa/rascal-ai/commit/3f091f21b62db460bd479db47fdabc165ab138fb))
+
 ### [1.102.2](https://github.com/slemppa/rascal-ai/compare/v1.102.1...v1.102.2) (2025-12-04)
 
 

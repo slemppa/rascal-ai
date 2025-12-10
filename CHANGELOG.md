@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.104.0](https://github.com/slemppa/rascal-ai/compare/v1.103.0...v1.104.0) (2025-12-10)
+
+
+### ✨ Features
+
+* lisää checkbox-valinta ja poisto lead-scraping taulukkoon ([4c3728c](https://github.com/slemppa/rascal-ai/commit/4c3728ccdb804f0c7f9566976c9cb04b289848b2))
+
 ## [1.103.0](https://github.com/slemppa/rascal-ai/compare/v1.102.2...v1.103.0) (2025-12-09)
 
 

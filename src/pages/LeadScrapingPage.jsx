@@ -153,10 +153,15 @@ export default function LeadScrapingPage() {
   const [filterCity, setFilterCity] = useState('')
   const [filterScoreMin, setFilterScoreMin] = useState('')
   const [filterScoreMax, setFilterScoreMax] = useState('')
+  const [filterDate, setFilterDate] = useState('') // Päivämääräsuodatin (YYYY-MM-DD)
   
   // Lead details modal
   const [selectedLead, setSelectedLead] = useState(null)
   const [showLeadModal, setShowLeadModal] = useState(false)
+  
+  // Selected leads for deletion
+  const [selectedLeadIds, setSelectedLeadIds] = useState(new Set())
+  const [deletingLeads, setDeletingLeads] = useState(false)
   
   // Export modal
   const [showExportModal, setShowExportModal] = useState(false)
@@ -503,6 +508,23 @@ export default function LeadScrapingPage() {
         return false
       }
       
+      // Päivämääräsuodatin (created_at) - näyttää kaikki valitun päivämäärän jälkeen haetut
+      if (filterDate) {
+        if (!lead.created_at) return false
+        
+        const leadDate = new Date(lead.created_at)
+        const filterDateObj = new Date(filterDate)
+        
+        // Vertaillaan vain päivämäärää (ei kellonaikaa)
+        const leadDateOnly = new Date(leadDate.getFullYear(), leadDate.getMonth(), leadDate.getDate())
+        const filterDateOnly = new Date(filterDateObj.getFullYear(), filterDateObj.getMonth(), filterDateObj.getDate())
+        
+        // Näytetään kaikki liidit jotka on haettu valitun päivämäärän jälkeen tai samana päivänä
+        if (leadDateOnly.getTime() < filterDateOnly.getTime()) {
+          return false
+        }
+      }
+      
       return true
     })
   }
@@ -560,6 +582,90 @@ export default function LeadScrapingPage() {
     }
   }
 
+  // Poista valitut liidit
+  const deleteSelectedLeads = async () => {
+    if (selectedLeadIds.size === 0) return
+
+    if (!confirm(`Haluatko varmasti poistaa ${selectedLeadIds.size} liidiä?`)) {
+      return
+    }
+
+    setDeletingLeads(true)
+    setError('')
+
+    try {
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData?.session?.access_token
+
+      if (!token) {
+        throw new Error('Kirjaudu sisään jatkaaksesi')
+      }
+
+      const response = await axios.delete('/api/leads-delete', {
+        data: {
+          leadIds: Array.from(selectedLeadIds)
+        },
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.data.success) {
+        setSuccess(`Poistettu ${response.data.deletedCount} liidiä`)
+        setTimeout(() => setSuccess(''), 5000)
+        
+        // Tyhjennä valinnat
+        setSelectedLeadIds(new Set())
+        
+        // Päivitä liidit
+        await fetchLeads()
+      } else {
+        throw new Error(response.data.error || 'Poisto epäonnistui')
+      }
+    } catch (err) {
+      console.error('Error deleting leads:', err)
+      setError('Liidien poisto epäonnistui: ' + (err.response?.data?.error || err.message))
+    } finally {
+      setDeletingLeads(false)
+    }
+  }
+
+  // Toggle yksittäisen rivin valinta
+  const toggleLeadSelection = (leadId) => {
+    setSelectedLeadIds(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(leadId)) {
+        newSet.delete(leadId)
+      } else {
+        newSet.add(leadId)
+      }
+      return newSet
+    })
+  }
+
+  // Valitse kaikki nykyisen sivun rivit
+  const toggleSelectAll = () => {
+    const allCurrentPageIds = new Set(leads.map(lead => lead.id))
+    const allSelected = leads.every(lead => selectedLeadIds.has(lead.id))
+    
+    if (allSelected) {
+      // Poista kaikki nykyisen sivun valinnat
+      setSelectedLeadIds(prev => {
+        const newSet = new Set(prev)
+        allCurrentPageIds.forEach(id => newSet.delete(id))
+        return newSet
+      })
+    } else {
+      // Lisää kaikki nykyisen sivun rivit
+      setSelectedLeadIds(prev => {
+        const newSet = new Set(prev)
+        allCurrentPageIds.forEach(id => newSet.add(id))
+        return newSet
+      })
+    }
+  }
+
   // Load buyer persona from database
   useEffect(() => {
     const loadBuyerPersona = async () => {
@@ -593,7 +699,7 @@ export default function LeadScrapingPage() {
     if (allLeads.length > 0 && currentPage !== 1) {
       setCurrentPage(1)
     }
-  }, [filterEmail, filterPosition, filterCity, filterScoreMin, filterScoreMax])
+  }, [filterEmail, filterPosition, filterCity, filterScoreMin, filterScoreMax, filterDate])
 
   // Filtteröi ja paginoi liidit kun filtterit, sivu tai resultsPerPage muuttuu
   useEffect(() => {
@@ -606,7 +712,7 @@ export default function LeadScrapingPage() {
       setLeads(paginatedLeads)
       setTotalLeads(filteredLeads.length)
     }
-  }, [allLeads, filterEmail, filterPosition, filterCity, filterScoreMin, filterScoreMax, currentPage, resultsPerPage])
+  }, [allLeads, filterEmail, filterPosition, filterCity, filterScoreMin, filterScoreMax, filterDate, currentPage, resultsPerPage])
 
   // Hae liidit kun käyttäjä muuttuu
   useEffect(() => {
@@ -1294,7 +1400,17 @@ export default function LeadScrapingPage() {
         <div className="results-header">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', width: '100%' }}>
             <h2>Kerätyt liidit</h2>
-            <div className="results-controls">
+            <div className="results-controls" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              {selectedLeadIds.size > 0 && (
+                <Button 
+                  variant="primary" 
+                  onClick={deleteSelectedLeads} 
+                  disabled={deletingLeads}
+                  style={{ backgroundColor: '#dc2626', color: '#ffffff' }}
+                >
+                  {deletingLeads ? 'Poistetaan...' : `Poista (${selectedLeadIds.size})`}
+                </Button>
+              )}
               <select 
                 value={resultsPerPage} 
                 onChange={(e) => {
@@ -1414,7 +1530,25 @@ export default function LeadScrapingPage() {
                 />
               </div>
             </div>
-            {(filterEmail || filterPosition || filterCity || filterScoreMin || filterScoreMax) && (
+            <div className="result-filter-group">
+              <label htmlFor="filter-date">Haettu päivämäärän jälkeen</label>
+              <input
+                id="filter-date"
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+                style={{
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  background: '#ffffff',
+                  color: '#374151',
+                  width: '100%'
+                }}
+              />
+            </div>
+            {(filterEmail || filterPosition || filterCity || filterScoreMin || filterScoreMax || filterDate) && (
               <div className="result-filter-group" style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button
                   variant="secondary"
@@ -1424,6 +1558,7 @@ export default function LeadScrapingPage() {
                     setFilterCity('')
                     setFilterScoreMin('')
                     setFilterScoreMax('')
+                    setFilterDate('')
                   }}
                   style={{ alignSelf: 'flex-end', marginTop: '24px' }}
                 >
@@ -1446,6 +1581,15 @@ export default function LeadScrapingPage() {
               <table className="results-table">
                 <thead>
                   <tr>
+                    <th style={{ width: '40px' }}>
+                      <input
+                        type="checkbox"
+                        checked={leads.length > 0 && leads.every(lead => selectedLeadIds.has(lead.id))}
+                        onChange={toggleSelectAll}
+                        style={{ cursor: 'pointer' }}
+                        title="Valitse kaikki"
+                      />
+                    </th>
                     <th>Nimi</th>
                     <th>Sähköposti</th>
                     <th>Tehtävä</th>
@@ -1461,6 +1605,14 @@ export default function LeadScrapingPage() {
                 <tbody>
                   {leads.map((lead) => (
                     <tr key={lead.id}>
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={selectedLeadIds.has(lead.id)}
+                          onChange={() => toggleLeadSelection(lead.id)}
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </td>
                       <td>{lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || '-'}</td>
                       <td>{lead.email || '-'}</td>
                       <td>{lead.position || '-'}</td>
@@ -2005,6 +2157,37 @@ export default function LeadScrapingPage() {
                     <label>Maa:</label>
                     <span>{selectedLead.orgCountry || '-'}</span>
                   </div>
+                </div>
+              </div>
+
+              {/* Muut tiedot */}
+              <div className="lead-details-section">
+                <h3>Muut tiedot</h3>
+                <div className="lead-details-grid">
+                  <div className="lead-detail-item">
+                    <label>Luontipäivä:</label>
+                    <span>
+                      {selectedLead.created_at 
+                        ? new Date(selectedLead.created_at).toLocaleDateString('fi-FI', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })
+                        : '-'}
+                    </span>
+                  </div>
+                  {selectedLead.score !== null && selectedLead.score !== undefined && (
+                    <div className="lead-detail-item">
+                      <label>Pisteet:</label>
+                      <span>{selectedLead.score}</span>
+                    </div>
+                  )}
+                  {(selectedLead.score_criteria || selectedLead.scoreCriteria) && (
+                    <div className="lead-detail-item lead-detail-item--full">
+                      <label>Yhteenveto:</label>
+                      <span>{selectedLead.score_criteria || selectedLead.scoreCriteria || '-'}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

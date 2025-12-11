@@ -33,37 +33,123 @@ async function handler(req, res) {
       return res.status(400).json({ error: 'Mixpost-konfiguraatio puuttuu' })
     }
 
-    // Kutsu Mixpost API:a (jatkuu samalla tavalla)
+    // Kutsu Mixpost API:a paginoiden kaikki postaukset
     const mixpostApiUrl = process.env.MIXPOST_API_URL || 'https://mixpost.mak8r.fi'
-    const apiUrl = `${mixpostApiUrl}/mixpost/api/${configData.mixpost_workspace_uuid}/posts`
+    const baseApiUrl = `${mixpostApiUrl}/mixpost/api/${configData.mixpost_workspace_uuid}/posts`
     
-    const response = await fetch(apiUrl, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${configData.mixpost_api_token}`
-      }
-    })
+    // Hae kaikki postaukset paginoimalla
+    let allPosts = []
+    let currentPage = 1
+    const perPage = 100 // Postauksia per sivu
+    let hasMorePages = true
+    let totalFetched = 0
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('Mixpost API error response:', errorText)
-      throw new Error(`Mixpost API error: ${response.status} - ${errorText}`)
-    }
+    console.log('Starting paginated fetch from Mixpost API...')
 
-    const responseData = await response.json()
-    
-    // Mixpost palauttaa datan { data: [...] } muodossa
-    const data = responseData.data || responseData
-    
-    // Tarkista että data on array
-    if (!Array.isArray(data)) {
-      console.error('Mixpost API returned non-array data:', data)
-      return res.status(500).json({ 
-        error: 'Mixpost API palautti väärän muotoisen datan', 
-        details: 'Expected array, got: ' + typeof data 
+    while (hasMorePages) {
+      const apiUrl = `${baseApiUrl}?page=${currentPage}&per_page=${perPage}`
+      
+      console.log(`Fetching Mixpost posts page ${currentPage} (${perPage} per page)...`)
+      
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${configData.mixpost_api_token}`
+        }
       })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error(`Mixpost API error response (page ${currentPage}):`, errorText)
+        throw new Error(`Mixpost API error: ${response.status} - ${errorText}`)
+      }
+
+      const responseData = await response.json()
+      
+      // Mixpost palauttaa datan joko { data: [...] } tai paginoituna { data: [...], current_page, last_page, per_page, total }
+      let pageData = responseData.data || responseData
+      const lastPage = responseData.last_page || responseData.meta?.last_page
+      const currentPageNum = responseData.current_page || responseData.meta?.current_page || currentPage
+      
+      // Tarkista että data on array
+      if (!Array.isArray(pageData)) {
+        console.error(`Mixpost API returned non-array data on page ${currentPage}:`, pageData)
+        // Jos ensimmäinen sivu palauttaa väärän muodon, yritä ilman paginointia
+        if (currentPage === 1) {
+          console.log('Retrying without pagination parameters...')
+          const fallbackResponse = await fetch(baseApiUrl, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${configData.mixpost_api_token}`
+            }
+          })
+          
+          if (!fallbackResponse.ok) {
+            const errorText = await fallbackResponse.text()
+            throw new Error(`Mixpost API error: ${fallbackResponse.status} - ${errorText}`)
+          }
+          
+          const fallbackData = await fallbackResponse.json()
+          pageData = fallbackData.data || fallbackData
+          
+          if (!Array.isArray(pageData)) {
+            return res.status(500).json({ 
+              error: 'Mixpost API palautti väärän muotoisen datan', 
+              details: 'Expected array, got: ' + typeof pageData 
+            })
+          }
+          
+          // Jos ilman paginointia toimii, käytä sitä
+          allPosts = pageData
+          hasMorePages = false
+          totalFetched = pageData.length
+          console.log(`Fetched ${totalFetched} posts without pagination`)
+          break
+        } else {
+          return res.status(500).json({ 
+            error: 'Mixpost API palautti väärän muotoisen datan', 
+            details: `Expected array on page ${currentPage}, got: ${typeof pageData}` 
+          })
+        }
+      }
+
+      // Lisää tämän sivun postaukset kokonaismäärään
+      allPosts = allPosts.concat(pageData)
+      totalFetched += pageData.length
+      
+      console.log(`Fetched ${pageData.length} posts from page ${currentPage} (total: ${totalFetched})`)
+
+      // Tarkista onko enää sivuja
+      if (lastPage !== undefined) {
+        // Mixpost palauttaa paginointi-metadataa
+        hasMorePages = currentPageNum < lastPage
+        if (!hasMorePages) {
+          console.log(`Reached last page (${lastPage}). Total posts fetched: ${totalFetched}`)
+        }
+      } else if (pageData.length < perPage) {
+        // Jos palautettu määrä on vähemmän kuin per_page, oletetaan että ollaan viimeisellä sivulla
+        hasMorePages = false
+        console.log(`Received ${pageData.length} posts (less than ${perPage}), assuming last page. Total: ${totalFetched}`)
+      } else {
+        // Jos ei paginointi-metadataa, jatketaan seuraavalle sivulle
+        currentPage++
+        // Turvallisuusrajoitus: maksimi 1000 sivua (100k postausta)
+        if (currentPage > 1000) {
+          console.warn(`Reached maximum page limit (1000). Stopping pagination. Total fetched: ${totalFetched}`)
+          hasMorePages = false
+        }
+      }
+
+      if (hasMorePages) {
+        currentPage++
+      }
     }
+
+    console.log(`✅ Finished fetching Mixpost posts. Total: ${totalFetched} posts`)
+    
+    const data = allPosts
     
     // Käsittele kaikki postaukset (scheduled, draft, failed, published)
     const scheduledPosts = data

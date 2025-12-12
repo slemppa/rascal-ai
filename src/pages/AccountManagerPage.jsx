@@ -69,7 +69,7 @@ export default function AccountManagerPage() {
 
       if (error) throw error
 
-      // Hae postausten määrät erikseen
+      // Hae postausten määrät ja organisaation viimeisin kirjautumisaika erikseen
       const accountsWithStats = await Promise.all(
         (data || []).map(async (account) => {
           const { count: totalCount } = await supabase
@@ -87,6 +87,9 @@ export default function AccountManagerPage() {
           if (publishedError) {
             console.error('Error counting published posts:', publishedError)
           }
+
+          // last_sign_in_at päivittyy automaattisesti handle_user_email_verification() triggerin kautta
+          // kun organisaation käyttäjät kirjautuvat sisään, joten voimme käyttää suoraan account.last_sign_in_at
 
           return {
             ...account,

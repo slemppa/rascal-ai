@@ -33,6 +33,42 @@
   border-color: rgba(0, 0, 0, 0.1);
 }
 
+/* Käyttäjät kortti - koko sivun levyinen */
+.users-card-full-width {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.users-card-full-width:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.users-card-header {
+  margin-bottom: 16px;
+}
+
+.users-card-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.users-card-body {
+  width: 100%;
+}
+
 /* Modaali-tyylit */
 .edit-card-modal-overlay {
   background-color: rgba(0, 0, 0, 0.5);

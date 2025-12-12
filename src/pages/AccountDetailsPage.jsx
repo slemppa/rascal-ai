@@ -683,6 +683,7 @@ export default function AccountDetailsPage() {
             onCancel={handleCancelEdit}
             onSave={handleSaveCard}
             onEditValueChange={(field, value) => setEditValues({ ...editValues, [field]: value })}
+            orgId={account?.id}
           />
         )}
 

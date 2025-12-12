@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { supabase } from '../../lib/supabase'
 import '../ModalComponents.css'
 
 export default function CompanyTab({
@@ -10,8 +11,55 @@ export default function CompanyTab({
   onEdit,
   onCancel,
   onSave,
-  onEditValueChange
+  onEditValueChange,
+  orgId,
+  onShowUsers
 }) {
+  const [users, setUsers] = useState([])
+  const [loadingUsers, setLoadingUsers] = useState(false)
+  const [usersError, setUsersError] = useState(null)
+
+  useEffect(() => {
+    if (orgId) {
+      loadUsers()
+    }
+  }, [orgId])
+
+  const loadUsers = async () => {
+    if (!orgId) return
+    
+    setLoadingUsers(true)
+    setUsersError(null)
+    
+    try {
+      // Hae käyttäjät API-endpointista
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        setUsersError('Ei kirjautumistietoja')
+        return
+      }
+
+      const response = await fetch(`/api/account-org-members?org_id=${orgId}`, {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Virhe käyttäjien haussa')
+      }
+
+      const data = await response.json()
+      setUsers(data.members || [])
+    } catch (error) {
+      console.error('Error loading users:', error)
+      setUsersError(error.message || 'Virhe käyttäjien lataamisessa')
+    } finally {
+      setLoadingUsers(false)
+    }
+  }
+
   const getCardTitle = (field) => {
     switch(field) {
       case 'company_summary':
@@ -131,6 +179,77 @@ export default function CompanyTab({
         </div>
       </div>
 
+      {/* Käyttäjät kortti - koko sivun levyinen */}
+      <div className="users-card-full-width">
+        <div className="users-card-header">
+          <h3>Käyttäjät</h3>
+        </div>
+        <div className="users-card-body">
+          {loadingUsers ? (
+            <div style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
+              Ladataan käyttäjiä...
+            </div>
+          ) : usersError ? (
+            <div style={{ color: '#ef4444', padding: '1rem' }}>
+              {usersError}
+            </div>
+          ) : users.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
+              Ei käyttäjiä
+            </div>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
+                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: 600, color: '#1f2937' }}>Sähköposti</th>
+                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: 600, color: '#1f2937' }}>Rooli</th>
+                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: 600, color: '#1f2937' }}>Viimeksi kirjautunut</th>
+                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: 600, color: '#1f2937' }}>Liittynyt</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr key={user.auth_user_id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                      <td style={{ padding: '12px', color: '#1f2937' }}>{user.email || '-'}</td>
+                      <td style={{ padding: '12px', color: '#1f2937' }}>
+                        <span style={{
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: '14px',
+                          backgroundColor: user.role === 'owner' ? '#fef3c7' : user.role === 'admin' ? '#dbeafe' : '#f3f4f6',
+                          color: user.role === 'owner' ? '#92400e' : user.role === 'admin' ? '#1e40af' : '#374151'
+                        }}>
+                          {user.role === 'owner' ? 'Omistaja' : user.role === 'admin' ? 'Admin' : 'Jäsen'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '12px', color: '#1f2937' }}>
+                        {user.last_sign_in_at 
+                          ? new Date(user.last_sign_in_at).toLocaleDateString('fi-FI', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })
+                          : 'Ei koskaan'}
+                      </td>
+                      <td style={{ padding: '12px', color: '#1f2937' }}>
+                        {new Date(user.created_at).toLocaleDateString('fi-FI', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric'
+                        })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+
       {editingCard && createPortal(
         <div 
           className="edit-card-modal-overlay modal-overlay modal-overlay--light"
@@ -182,6 +301,7 @@ export default function CompanyTab({
         </div>,
         document.body
       )}
+
     </>
   )
 }

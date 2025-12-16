@@ -14,10 +14,12 @@ export default function UgcTab() {
     productName: '', 
     productDetails: '', 
     productImage: null,
-    productImageUrl: null
+    productImageUrl: null,
+    contentType: 'Kuva' // 'Kuva' tai 'Video'
   })
   const [ugcUploading, setUgcUploading] = useState(false)
   const [productDragActive, setProductDragActive] = useState(false)
+  const [toast, setToast] = useState({ visible: false, message: '' })
 
   // UGC data haku
   const fetchUgcPosts = async () => {
@@ -104,7 +106,8 @@ export default function UgcTab() {
       return imageUrl
     } catch (err) {
       console.error('Virhe kuvan uploadissa:', err)
-      alert('Virhe kuvan uploadissa: ' + err.message)
+      setToast({ visible: true, message: 'Virhe kuvan uploadissa: ' + err.message })
+      setTimeout(() => setToast({ visible: false, message: '' }), 3000)
       return null
     } finally {
       setUgcUploading(false)
@@ -118,8 +121,10 @@ export default function UgcTab() {
     // Validoi pakolliset kentät
     if (!ugcFormData.productName.trim() || 
         !ugcFormData.productDetails.trim() || 
-        !ugcFormData.productImageUrl) {
-      alert('Täytä kaikki kentät ja lataa tuotteen kuva')
+        !ugcFormData.productImageUrl ||
+        !ugcFormData.contentType) {
+      setToast({ visible: true, message: 'Täytä kaikki kentät ja lataa tuotteen kuva' })
+      setTimeout(() => setToast({ visible: false, message: '' }), 3000)
       return
     }
     
@@ -136,7 +141,8 @@ export default function UgcTab() {
       const response = await axios.post('/api/ugc-video', {
         productName: ugcFormData.productName,
         productDetails: ugcFormData.productDetails,
-        productImageUrl: ugcFormData.productImageUrl
+        productImageUrl: ugcFormData.productImageUrl,
+        contentType: ugcFormData.contentType
       }, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`
@@ -144,22 +150,25 @@ export default function UgcTab() {
       })
 
       if (response.data.success) {
-        alert('UGC-video pyyntö lähetetty onnistuneesti!')
+        setToast({ visible: true, message: 'UGC-sisältö pyyntö lähetetty onnistuneesti!' })
+        setTimeout(() => setToast({ visible: false, message: '' }), 3000)
         
         // Tyhjennä formi
         setUgcFormData({ 
           productName: '', 
           productDetails: '', 
           productImage: null,
-          productImageUrl: null
+          productImageUrl: null,
+          contentType: 'Kuva'
         })
         
         // Päivitä lista
         await fetchUgcPosts()
       }
     } catch (err) {
-      console.error('Virhe UGC-video pyynnön lähettämisessä:', err)
-      alert('Virhe UGC-video pyynnön lähettämisessä: ' + (err.response?.data?.error || err.message))
+      console.error('Virhe UGC-sisällön pyynnön lähettämisessä:', err)
+      setToast({ visible: true, message: 'Virhe UGC-sisällön pyynnön lähettämisessä: ' + (err.response?.data?.error || err.message) })
+      setTimeout(() => setToast({ visible: false, message: '' }), 3000)
     } finally {
       setUgcUploading(false)
     }
@@ -167,10 +176,48 @@ export default function UgcTab() {
 
   return (
     <div className="ugc-container">
+      {/* Toast notifikaatio */}
+      {toast.visible && (
+        <div className="toast-notice" role="status" aria-live="polite">
+          {toast.message}
+        </div>
+      )}
+      
       {/* Formi - 1/4 leveys */}
       <div className="ugc-form-section">
         <form onSubmit={handleUgcSubmit} className="ugc-form">
           <h3>Luo uusi UGC-postaus</h3>
+          
+          {/* Sisällön tyyppi */}
+          <div className="ugc-form-group">
+            <label htmlFor="ugc-content-type">Sisällön tyyppi *</label>
+            <div className="ugc-radio-group">
+              <label className="ugc-radio-label">
+                <input
+                  type="radio"
+                  name="contentType"
+                  value="Kuva"
+                  checked={ugcFormData.contentType === 'Kuva'}
+                  onChange={(e) => setUgcFormData({ ...ugcFormData, contentType: e.target.value })}
+                  disabled={ugcUploading}
+                  className="ugc-radio-input"
+                />
+                <span className="ugc-radio-text">Kuva</span>
+              </label>
+              <label className="ugc-radio-label">
+                <input
+                  type="radio"
+                  name="contentType"
+                  value="Video"
+                  checked={ugcFormData.contentType === 'Video'}
+                  onChange={(e) => setUgcFormData({ ...ugcFormData, contentType: e.target.value })}
+                  disabled={ugcUploading}
+                  className="ugc-radio-input"
+                />
+                <span className="ugc-radio-text">Video</span>
+              </label>
+            </div>
+          </div>
           
           {/* Tuote (kuva) */}
           <div className="ugc-form-group">
@@ -268,7 +315,8 @@ export default function UgcTab() {
               ugcUploading || 
               !ugcFormData.productName.trim() || 
               !ugcFormData.productDetails.trim() || 
-              !ugcFormData.productImageUrl
+              !ugcFormData.productImageUrl ||
+              !ugcFormData.contentType
             }
           >
             {ugcUploading ? (
@@ -277,7 +325,7 @@ export default function UgcTab() {
                 Lähetetään...
               </>
             ) : (
-              'Luo UGC-video'
+              'Luo UGC-sisältö'
             )}
           </button>
         </form>
@@ -292,23 +340,41 @@ export default function UgcTab() {
         ) : (
           <div className="ugc-posts-grid">
             {ugcPosts.map((post) => {
-              const videoUrl = post.media_urls && post.media_urls.length > 0 ? post.media_urls[0] : null
+              const mediaUrl = post.media_urls && post.media_urls.length > 0 ? post.media_urls[0] : null
+              
+              // Tunnista onko media video vai kuva URL:n perusteella
+              const isVideo = mediaUrl && (
+                mediaUrl.includes('.mp4') || 
+                mediaUrl.includes('.webm') || 
+                mediaUrl.includes('.mov') || 
+                mediaUrl.includes('.avi') ||
+                mediaUrl.includes('video')
+              )
+              
               return (
                 <div key={post.id} className="ugc-post-card">
                   <div className="ugc-post-card-content">
-                    {/* Video thumbnail */}
+                    {/* Media thumbnail/preview */}
                     <div className="ugc-post-thumbnail">
-                      {videoUrl ? (
-                        <video
-                          src={videoUrl}
-                          controls
-                          className="ugc-post-video"
-                          preload="metadata"
-                        />
+                      {mediaUrl ? (
+                        isVideo ? (
+                          <video
+                            src={mediaUrl}
+                            controls
+                            className="ugc-post-video"
+                            preload="metadata"
+                          />
+                        ) : (
+                          <img
+                            src={mediaUrl}
+                            alt={post.idea || 'UGC-sisältö'}
+                            className="ugc-post-image"
+                          />
+                        )
                       ) : (
                         <div className="ugc-post-placeholder">
-                          <div className="ugc-placeholder-icon">🎬</div>
-                          <div className="ugc-placeholder-text">Ei videota</div>
+                          <div className="ugc-placeholder-icon">📷</div>
+                          <div className="ugc-placeholder-text">Ei mediaa</div>
                         </div>
                       )}
                     </div>

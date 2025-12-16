@@ -7,13 +7,21 @@ async function handler(req, res) {
   }
 
   try {
-    const { productName, productDetails, productImageUrl } = req.body
+    const { productName, productDetails, productImageUrl, contentType } = req.body
 
     // Validoi pakolliset kentät
-    if (!productName || !productDetails || !productImageUrl) {
+    if (!productName || !productDetails || !productImageUrl || !contentType) {
       return res.status(400).json({ 
         error: 'Missing required fields',
-        required: ['productName', 'productDetails', 'productImageUrl']
+        required: ['productName', 'productDetails', 'productImageUrl', 'contentType']
+      })
+    }
+
+    // Validoi että contentType on joko 'Kuva' tai 'Video'
+    if (contentType !== 'Kuva' && contentType !== 'Video') {
+      return res.status(400).json({ 
+        error: 'Invalid contentType',
+        message: 'contentType must be either "Kuva" or "Video"'
       })
     }
 
@@ -33,6 +41,7 @@ async function handler(req, res) {
       productName,
       productDetails,
       productImageUrl,
+      contentType, // 'Kuva' tai 'Video'
       timestamp: new Date().toISOString()
     }
 

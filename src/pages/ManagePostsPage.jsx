@@ -2042,43 +2042,45 @@ export default function ManagePostsPage() {
         )}
       </div>
 
-      {/* Search and Filters */}
-      <div className="search-filters">
-        <select 
-          value={typeFilter} 
-          onChange={(e) => setTypeFilter(e.target.value)}
-          className="status-filter"
-        >
-          <option value="">Kaikki tyypit</option>
-          <option value="Photo">Photo</option>
-          <option value="Carousel">Carousel</option>
-          <option value="Reels">Reels</option>
-          <option value="LinkedIn">LinkedIn</option>
-          <option value="Video">Video</option>
-        </select>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <Button 
-            variant="secondary"
-            onClick={() => setShowUploadModal(true)}
+      {/* Search and Filters - Piilotettu UGC-tabilta */}
+      {activeTab !== 'ugc' && (
+        <div className="search-filters">
+          <select 
+            value={typeFilter} 
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="status-filter"
           >
-            Tuo oma julkaisu
-          </Button>
-          <Button 
-            variant="primary"
-            onClick={() => {
-              if (monthlyLimit.canCreate) {
-                setCreateModalCount(1)
-                setShowCreateModal(true)
-              } else {
-                setErrorMessage('Kuukausiraja täynnä')
-              }
-            }}
-            disabled={!monthlyLimit.canCreate}
-          >
-            Generoi uusi julkaisu
-          </Button>
+            <option value="">Kaikki tyypit</option>
+            <option value="Photo">Photo</option>
+            <option value="Carousel">Carousel</option>
+            <option value="Reels">Reels</option>
+            <option value="LinkedIn">LinkedIn</option>
+            <option value="Video">Video</option>
+          </select>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <Button 
+              variant="secondary"
+              onClick={() => setShowUploadModal(true)}
+            >
+              Tuo oma julkaisu
+            </Button>
+            <Button 
+              variant="primary"
+              onClick={() => {
+                if (monthlyLimit.canCreate) {
+                  setCreateModalCount(1)
+                  setShowCreateModal(true)
+                } else {
+                  setErrorMessage('Kuukausiraja täynnä')
+                }
+              }}
+              disabled={!monthlyLimit.canCreate}
+            >
+              Generoi uusi julkaisu
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
 
       {/* Error State */}

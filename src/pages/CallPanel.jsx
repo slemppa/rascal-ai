@@ -655,7 +655,7 @@ export default function CallPanel() {
         return
       }
       
-      const response = await axios.post('/api/single-call', {
+      const response = await axios.post('/api/calls/single', {
         phoneNumber: normalizedPhoneNumber,
         name,
         callType,
@@ -2132,7 +2132,7 @@ export default function CallPanel() {
         campaigns: massCallCampaigns.map(c => ({ id: c.id, name: c.name }))
       })
       
-      const res = await fetch('/api/mass-call', {
+      const res = await fetch('/api/calls/mass', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
         body: JSON.stringify({
@@ -2351,7 +2351,7 @@ export default function CallPanel() {
         campaigns: massCallCampaigns.map(c => ({ id: c.id, name: c.name }))
       })
       
-      const res = await fetch('/api/mass-call', {
+      const res = await fetch('/api/calls/mass', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(token2 ? { Authorization: `Bearer ${token2}` } : {}) },
         body: JSON.stringify({

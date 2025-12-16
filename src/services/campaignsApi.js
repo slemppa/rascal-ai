@@ -18,7 +18,7 @@ export async function fetchCampaigns(userId) {
 export async function createCampaignApi(payload) {
   const { data } = await supabase.auth.getSession()
   const token = data?.session?.access_token
-  const response = await fetch('/api/campaign-create', {
+  const response = await fetch('/api/campaigns/create', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export async function createCampaignApi(payload) {
 export async function fetchCampaignById(id) {
   const { data } = await supabase.auth.getSession()
   const token = data?.session?.access_token
-  const response = await fetch(`/api/campaign-by-id?id=${encodeURIComponent(id)}`, {
+  const response = await fetch(`/api/campaigns/${encodeURIComponent(id)}`, {
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {})
     }
@@ -49,7 +49,7 @@ export async function fetchCampaignById(id) {
 }
 
 export async function fetchCampaignStats(id, days = 30) {
-  const response = await fetch(`/api/campaign-stats?id=${encodeURIComponent(id)}&days=${encodeURIComponent(days)}`)
+  const response = await fetch(`/api/campaigns/${encodeURIComponent(id)}/stats?days=${encodeURIComponent(days)}`)
   if (!response.ok) {
     const text = await response.text().catch(() => '')
     throw new Error(`Kampanjan tilastojen haku epäonnistui: ${response.status} ${text}`)
@@ -60,7 +60,7 @@ export async function fetchCampaignStats(id, days = 30) {
 export async function pauseCampaign(id) {
   const { data } = await supabase.auth.getSession()
   const token = data?.session?.access_token
-  const response = await fetch('/api/campaign-pause', {
+  const response = await fetch(`/api/campaigns/${encodeURIComponent(id)}/pause`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -78,7 +78,7 @@ export async function pauseCampaign(id) {
 export async function deleteCampaign(id) {
   const { data } = await supabase.auth.getSession()
   const token = data?.session?.access_token
-  const response = await fetch('/api/campaign-delete', {
+  const response = await fetch(`/api/campaigns/${encodeURIComponent(id)}/delete`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

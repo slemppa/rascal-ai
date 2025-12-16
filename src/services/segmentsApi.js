@@ -18,7 +18,7 @@ export async function fetchSegments(userId) {
 export async function createSegmentApi(payload) {
   const { data } = await supabase.auth.getSession()
   const token = data?.session?.access_token
-  const response = await fetch('/api/segment-create', {
+  const response = await fetch('/api/segments/create', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export async function createSegmentApi(payload) {
 export async function fetchSegmentById(id) {
   const { data } = await supabase.auth.getSession()
   const token = data?.session?.access_token
-  const response = await fetch(`/api/segment-by-id?id=${encodeURIComponent(id)}`, {
+  const response = await fetch(`/api/segments/${encodeURIComponent(id)}`, {
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {})
     }
@@ -49,7 +49,7 @@ export async function fetchSegmentById(id) {
 }
 
 export async function fetchSegmentStats(id) {
-  const response = await fetch(`/api/segment-stats?id=${encodeURIComponent(id)}`)
+  const response = await fetch(`/api/segments/${encodeURIComponent(id)}/stats`)
   if (!response.ok) {
     const text = await response.text().catch(() => '')
     throw new Error(`Segmentin tilastojen haku epäonnistui: ${response.status} ${text}`)

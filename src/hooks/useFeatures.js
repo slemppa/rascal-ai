@@ -23,7 +23,7 @@ export function useFeatures() {
           return
         }
 
-        const res = await fetch('/api/user-features', {
+        const res = await fetch('/api/users/features', {
           headers: { Authorization: `Bearer ${token}` }
         })
         if (!res.ok) {

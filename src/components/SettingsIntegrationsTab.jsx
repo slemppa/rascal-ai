@@ -222,7 +222,7 @@ export default function SettingsIntegrationsTab() {
         return
       }
 
-      const response = await axios.get('/api/user-secrets', {
+      const response = await axios.get('/api/users/secrets', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -406,7 +406,7 @@ export default function SettingsIntegrationsTab() {
 
       // Tallenna salaisuus API:sta
       await axios.post(
-        '/api/user-secrets',
+        '/api/users/secrets',
         requestData,
         {
           headers: {
@@ -468,7 +468,7 @@ export default function SettingsIntegrationsTab() {
       }
 
       const response = await fetch(
-        `/api/user-secrets?secret_type=${integration.secretType}&secret_name=${encodeURIComponent(integration.secretName)}`,
+        `/api/users/secrets?secret_type=${integration.secretType}&secret_name=${encodeURIComponent(integration.secretName)}`,
         {
           method: 'DELETE',
           headers: {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import axios from 'axios'
@@ -11,6 +12,7 @@ import './LeadScrapingPage.css'
 
 export default function LeadScrapingPage() {
   const { t } = useTranslation('common')
+  const navigate = useNavigate()
   const { user } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -793,7 +795,23 @@ export default function LeadScrapingPage() {
     <div className="lead-scraping-page">
       <div className="lead-scraping-header">
         <h1>Liidien etsintä</h1>
-        <p>Määritä hakukriteerit ja aloita liidien haku</p>
+        <p>
+          Määritä hakukriteerit ja aloita liidien haku{' '}
+          <a 
+            href="/help#lead-scraping" 
+            onClick={(e) => {
+              e.preventDefault()
+              navigate('/help#lead-scraping')
+            }}
+            style={{ 
+              color: '#3b82f6', 
+              textDecoration: 'underline',
+              cursor: 'pointer'
+            }}
+          >
+            Lue lisää
+          </a>
+        </p>
       </div>
 
       {error && (

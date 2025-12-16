@@ -1,12 +1,8 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import './HelpPage.css'
 
-export default function HelpPage() {
-  const navigate = useNavigate()
-  const [activeSection, setActiveSection] = useState('getting-started')
-
-  const helpSections = [
+const helpSections = [
     {
       id: 'getting-started',
       title: 'Aloitus',
@@ -186,45 +182,69 @@ export default function HelpPage() {
       icon: 'posts',
       content: [
         {
-          title: 'Liidit -toiminnallisuus',
-          description: 'Lead Scraping -sivulla voit hakea potentiaalisia asiakkaita LinkedInista ja muista lähteistä. Järjestelmä etsii liidit automaattisesti ja tallentaa ne tietokantaan.',
+          title: 'Mikä on liidien haku?',
+          description: 'Liidien haulla löydät potentiaalisia asiakkaitasi automaattisesti. Järjestelmä etsii yli 90 miljoonan ammattilaisen tietokannasta sopivia kontakteja ja kerää heidän yhteystietonsa.',
           features: [
-            'Hae liidejä LinkedInista ja muista lähteistä',
-            'Filtteröi liidejä eri kriteereillä (sähköposti, työnimike, sijainti, jne.)',
-            'Tarkastele löydettyjä liidejä taulukossa',
-            'Pisteytä liidit automaattisesti (jos ostajapersoona on määritelty)'
+            'Löydä liidejä LinkedIn-profiilien kautta (95%+ kattavuus)',
+            'Sähköpostit löytyvät noin 70%:sta liideistä',
+            'Puhelinnumerot löytyvät noin 10%:sta liideistä',
+            'Tietokanta päivittyy viikoittain paremmalla kattavuudella'
           ]
         },
         {
-          title: 'Lead Scraping -prosessi',
-          description: 'Lead scraping aloitetaan filttereiden asettamisella.',
+          title: 'Miten haet liidejä?',
+          description: 'Liidien haku aloitetaan hakukriteerien määrittämisellä. Voit suodattaa liidejä monilla eri kriteereillä löytääksesi juuri oikeat kontaktit.',
           steps: [
-            'Aseta hakufiltterit (sähköposti, työnimike, sijainti, jne.)',
-            'Aseta liidien maksimimäärä (max 500)',
+            'Määritä hakukriteerit: työnimike, sijainti, yritys, toimiala jne.',
+            'Valitse kuinka monta liidiä haluat hakea',
             'Klikkaa "Aloita" -painiketta',
-            'Järjestelmä lähettää pyynnön',
-            'Liidit näkyvät taulukossa kun ne on löydetty'
+            'Järjestelmä etsii liidit automaattisesti taustalla',
+            'Liidit näkyvät taulukossa kun ne on löydetty',
+            'Voit tarkastella, viedä ja hallita löydettyjä liidejä'
           ],
           tips: [
-            'Scrapaus tapahtuu taustalla N8N:n kautta',
-            'Liidit tallennetaan scraped_leads-tauluun',
-            'Voit tarkastella liidejä heti kun ne on scrapattu',
-            'Liidit voidaan pisteyttää erikseen'
+            'Aloita laajemmilla hakuehdoilla ja kavenna tarvittaessa',
+            'Valitse myös ne hakukriteerit mitä et halua löytyvän - voit sulkea pois tiettyjä työnimikkeitä, osastoja tai sijainteja',
+            'Jos et löydä tuloksia, poista tiukkoja suodattimia',
+            'Tarkista kirjoitusvirheet hakuehdoissa',
+            'Järjestelmä muistaa edellisen haun ja jatkaa automaattisesti keskeytyneistä hauista',
+            'Voit suodattaa liidejä myös tulosten mukaan (esim. vain ne joilla on sähköposti)'
           ]
         },
         {
-          title: 'Lead Scoring',
-          description: 'Lead scoring on valinnaista toimintoa, joka pisteyttää liidit automaattisesti.',
+          title: 'Mitä tietoja liideistä löytyy?',
+          description: 'Jokaisesta löydetystä liidistä saat mahdollisimman paljon hyödyllistä tietoa. Tietojen saatavuus vaihtelee, mutta järjestelmä näyttää aina mitä tietoja on saatavilla.',
           features: [
-            'Pisteytys perustuu saatavilla oleviin tietoihin',
-            'Maksimipisteet: 100',
-            'Sähköposti ja puhelin: +20 pistettä kumpikin',
-            'LinkedIn-profiili: +15 pistettä',
-            'Yritys ja työnimike: +15 ja +10 pistettä',
-            'Sijainti: +10 pistettä',
-            'Bonus (kaikki tiedot): +10 pistettä'
+            'Nimi ja työnimike',
+            'Sähköpostiosoite (noin 70% kattavuus, vahvistettu merkintä mukana)',
+            'Puhelinnumero (noin 10% kattavuus, kasvaa viikoittain)',
+            'LinkedIn-profiili (lähes kaikista löytyy)',
+            'Yrityksen tiedot: nimi, verkkosivut, toimiala, koko',
+            'Sijaintitiedot: kaupunki, osavaltio, maa',
+            'Asema yrityksessä: esim. johto, osastopäällikkö',
+            'Toimialakohtaiset tiedot'
           ],
           tips: [
+            'Puhelinnumeroiden kattavuus kasvaa jatkuvasti',
+            'Jokainen sähköposti on merkitty vahvistetuksi tai vahvistamattomaksi',
+            'LinkedIn-profiilit löytyvät lähes kaikista liideistä'
+          ]
+        },
+        {
+          title: 'Miten suodatat liidejä?',
+          description: 'Voit suodattaa liidejä monilla eri kriteereillä löytääksesi juuri oikeat kontaktit. Suodattimet auttavat sinua kohdentamaan haun oikeisiin henkilöihin ja yrityksiin.',
+          features: [
+            'Henkilökohtaiset suodattimet: työnimike, asema yrityksessä, osasto, sijainti',
+            'Yrityskohtaiset suodattimet: nimi, toimiala, koko, sijainti, verkkosivut',
+            'Laadun suodattimet: vain vahvistetut sähköpostit, vain ne joilla on puhelin',
+            'Hakusanat: etsi avainsanoilla yritysten nimistä, kuvauksista ja erikoisaloista',
+            'Maksimimäärä: valitse kuinka monta liidiä haluat hakea'
+          ],
+          tips: [
+            'Aloita laajemmilla hakuehdoilla - voit aina kaventaa myöhemmin',
+            'Jos et löydä tuloksia, poista tiukkoja suodattimia',
+            'Tarkista että hakuehdoissa ei ole kirjoitusvirheitä',
+            'Kokeile eri yhdistelmiä hakuehtoja löytääksesi optimaalisen määrän liidejä'
           ]
         }
       ]
@@ -366,6 +386,23 @@ export default function HelpPage() {
       ]
     }
   ]
+
+export default function HelpPage() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [activeSection, setActiveSection] = useState('getting-started')
+
+  // Lue URL-hash ja aseta aktiivinen osio
+  useEffect(() => {
+    if (location.hash) {
+      const sectionId = location.hash.replace('#', '')
+      // Tarkista että osio on olemassa
+      const sectionExists = helpSections.some(section => section.id === sectionId)
+      if (sectionExists) {
+        setActiveSection(sectionId)
+      }
+    }
+  }, [location.hash])
 
   const currentSection = helpSections.find(section => section.id === activeSection)
 

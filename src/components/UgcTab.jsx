@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import axios from 'axios'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -15,7 +16,9 @@ export default function UgcTab() {
     productDetails: '', 
     productImage: null,
     productImageUrl: null,
-    contentType: 'Kuva' // 'Kuva' tai 'Video'
+    contentType: 'Kuva', // 'Kuva' tai 'Video'
+    styleId: '', // Visuaalinen tyyli
+    formatId: '' // Kuvan muoto
   })
   const [ugcUploading, setUgcUploading] = useState(false)
   const [productDragActive, setProductDragActive] = useState(false)
@@ -114,6 +117,20 @@ export default function UgcTab() {
     }
   }
 
+  // Muunna formatId aspectRatio:ksi
+  const getAspectRatio = (formatId) => {
+    switch (formatId) {
+      case 'social_story':
+        return '9:16'
+      case 'feed_square':
+        return '1:1'
+      case 'web_landscape':
+        return '16:9'
+      default:
+        return ''
+    }
+  }
+
   // UGC form submit handler
   const handleUgcSubmit = async (e) => {
     e.preventDefault()
@@ -122,8 +139,10 @@ export default function UgcTab() {
     if (!ugcFormData.productName.trim() || 
         !ugcFormData.productDetails.trim() || 
         !ugcFormData.productImageUrl ||
-        !ugcFormData.contentType) {
-      setToast({ visible: true, message: 'Täytä kaikki kentät ja lataa tuotteen kuva' })
+        !ugcFormData.contentType ||
+        !ugcFormData.styleId ||
+        !ugcFormData.formatId) {
+      setToast({ visible: true, message: 'Täytä kaikki pakolliset kentät' })
       setTimeout(() => setToast({ visible: false, message: '' }), 3000)
       return
     }
@@ -137,12 +156,18 @@ export default function UgcTab() {
         throw new Error('Session expired or invalid. Please log in again.')
       }
 
+      // Laske aspectRatio formatId:n perusteella
+      const aspectRatio = getAspectRatio(ugcFormData.formatId)
+
       // Lähetä data N8N:ään
       const response = await axios.post('/api/ugc-video', {
         productName: ugcFormData.productName,
         productDetails: ugcFormData.productDetails,
         productImageUrl: ugcFormData.productImageUrl,
-        contentType: ugcFormData.contentType
+        contentType: ugcFormData.contentType,
+        styleId: ugcFormData.styleId,
+        formatId: ugcFormData.formatId,
+        aspectRatio: aspectRatio
       }, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`
@@ -159,7 +184,9 @@ export default function UgcTab() {
           productDetails: '', 
           productImage: null,
           productImageUrl: null,
-          contentType: 'Kuva'
+          contentType: 'Kuva',
+          styleId: '',
+          formatId: ''
         })
         
         // Päivitä lista
@@ -175,15 +202,17 @@ export default function UgcTab() {
   }
 
   return (
-    <div className="ugc-container">
-      {/* Toast notifikaatio */}
-      {toast.visible && (
+    <>
+      {/* Toast notifikaatio - renderöidään portalilla body-elementtiin */}
+      {toast.visible && createPortal(
         <div className="toast-notice" role="status" aria-live="polite">
           {toast.message}
-        </div>
+        </div>,
+        document.body
       )}
       
-      {/* Formi - 1/4 leveys */}
+      <div className="ugc-container">
+        {/* Formi - 1/4 leveys */}
       <div className="ugc-form-section">
         <form onSubmit={handleUgcSubmit} className="ugc-form">
           <h3>Luo uusi UGC-postaus</h3>
@@ -308,6 +337,68 @@ export default function UgcTab() {
             />
           </div>
 
+          {/* Visuaalinen tyyli */}
+          <div className="ugc-form-group">
+            <label htmlFor="ugc-style">Visuaalinen tyyli *</label>
+            <select
+              id="ugc-style"
+              value={ugcFormData.styleId}
+              onChange={(e) => setUgcFormData({ ...ugcFormData, styleId: e.target.value })}
+              className="ugc-input"
+              disabled={ugcUploading}
+            >
+              <option value="">Valitse tyyli...</option>
+              <option value="studio_clean">Studio (Puhdas & Selkeä)</option>
+              <option value="lifestyle_home">Lifestyle (Koti & Arki)</option>
+              <option value="premium_luxury">Premium (Tumma & Ylellinen)</option>
+              <option value="nature_organic">Luonto (Raikas & Orgaaninen)</option>
+              <option value="urban_street">Urbaani (Kaupunki & Moderni)</option>
+            </select>
+          </div>
+
+          {/* Kuvan muoto */}
+          <div className="ugc-form-group">
+            <label htmlFor="ugc-format">Kuvan muoto *</label>
+            <div className="ugc-radio-group">
+              <label className="ugc-radio-label">
+                <input
+                  type="radio"
+                  name="formatId"
+                  value="social_story"
+                  checked={ugcFormData.formatId === 'social_story'}
+                  onChange={(e) => setUgcFormData({ ...ugcFormData, formatId: e.target.value })}
+                  disabled={ugcUploading}
+                  className="ugc-radio-input"
+                />
+                <span className="ugc-radio-text">Story 9:16</span>
+              </label>
+              <label className="ugc-radio-label">
+                <input
+                  type="radio"
+                  name="formatId"
+                  value="feed_square"
+                  checked={ugcFormData.formatId === 'feed_square'}
+                  onChange={(e) => setUgcFormData({ ...ugcFormData, formatId: e.target.value })}
+                  disabled={ugcUploading}
+                  className="ugc-radio-input"
+                />
+                <span className="ugc-radio-text">Neliö 1:1</span>
+              </label>
+              <label className="ugc-radio-label">
+                <input
+                  type="radio"
+                  name="formatId"
+                  value="web_landscape"
+                  checked={ugcFormData.formatId === 'web_landscape'}
+                  onChange={(e) => setUgcFormData({ ...ugcFormData, formatId: e.target.value })}
+                  disabled={ugcUploading}
+                  className="ugc-radio-input"
+                />
+                <span className="ugc-radio-text">Vaaka 16:9</span>
+              </label>
+            </div>
+          </div>
+
           <button 
             type="submit" 
             className="ugc-submit-btn" 
@@ -316,7 +407,9 @@ export default function UgcTab() {
               !ugcFormData.productName.trim() || 
               !ugcFormData.productDetails.trim() || 
               !ugcFormData.productImageUrl ||
-              !ugcFormData.contentType
+              !ugcFormData.contentType ||
+              !ugcFormData.styleId ||
+              !ugcFormData.formatId
             }
           >
             {ugcUploading ? (
@@ -415,7 +508,8 @@ export default function UgcTab() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   )
 }
 

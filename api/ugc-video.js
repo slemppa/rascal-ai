@@ -7,13 +7,13 @@ async function handler(req, res) {
   }
 
   try {
-    const { productName, productDetails, productImageUrl, contentType } = req.body
+    const { productName, productDetails, productImageUrl, contentType, styleId, formatId, aspectRatio } = req.body
 
     // Validoi pakolliset kentät
-    if (!productName || !productDetails || !productImageUrl || !contentType) {
+    if (!productName || !productDetails || !productImageUrl || !contentType || !styleId || !formatId) {
       return res.status(400).json({ 
         error: 'Missing required fields',
-        required: ['productName', 'productDetails', 'productImageUrl', 'contentType']
+        required: ['productName', 'productDetails', 'productImageUrl', 'contentType', 'styleId', 'formatId']
       })
     }
 
@@ -22,6 +22,24 @@ async function handler(req, res) {
       return res.status(400).json({ 
         error: 'Invalid contentType',
         message: 'contentType must be either "Kuva" or "Video"'
+      })
+    }
+
+    // Validoi styleId
+    const validStyleIds = ['studio_clean', 'lifestyle_home', 'premium_luxury', 'nature_organic', 'urban_street']
+    if (!validStyleIds.includes(styleId)) {
+      return res.status(400).json({ 
+        error: 'Invalid styleId',
+        message: `styleId must be one of: ${validStyleIds.join(', ')}`
+      })
+    }
+
+    // Validoi formatId
+    const validFormatIds = ['social_story', 'feed_square', 'web_landscape']
+    if (!validFormatIds.includes(formatId)) {
+      return res.status(400).json({ 
+        error: 'Invalid formatId',
+        message: `formatId must be one of: ${validFormatIds.join(', ')}`
       })
     }
 
@@ -42,6 +60,9 @@ async function handler(req, res) {
       productDetails,
       productImageUrl,
       contentType, // 'Kuva' tai 'Video'
+      styleId, // Visuaalinen tyyli (esim. 'studio_clean')
+      formatId, // Kuvan muoto (esim. 'social_story')
+      aspectRatio, // Kuvasuhde (esim. '9:16', '1:1', '16:9')
       timestamp: new Date().toISOString()
     }
 

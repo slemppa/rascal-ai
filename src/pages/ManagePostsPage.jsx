@@ -549,7 +549,7 @@ export default function ManagePostsPage() {
       }
       
       // Kutsu omaa proxy-endpointtia axiosilla
-      const response = await axios.get('/api/mixpost-posts', {
+      const response = await axios.get('/api/integrations/mixpost/posts', {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -1095,7 +1095,7 @@ export default function ManagePostsPage() {
           return
         }
 
-        const response = await fetch('/api/mixpost-posts', {
+        const response = await fetch('/api/integrations/mixpost/posts', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -1693,7 +1693,7 @@ export default function ManagePostsPage() {
       console.log('🔵 Request body:', requestBody)
 
       // Kutsu API endpointia
-      const response = await fetch('/api/mixpost-delete-post', {
+      const response = await fetch('/api/integrations/mixpost/delete-post', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

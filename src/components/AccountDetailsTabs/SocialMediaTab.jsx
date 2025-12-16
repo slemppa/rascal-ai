@@ -94,7 +94,7 @@ export default function SocialMediaTab({ userId }) {
       if (isAdminOrModerator && session?.access_token) {
         // Käytä API-endpointia admin/moderator roolilla
         try {
-          const apiUrl = `/api/admin-data?type=integrations&user_id=${userId}`
+          const apiUrl = `/api/admin/data?type=integrations&user_id=${userId}`
           
           const response = await fetch(apiUrl, {
             headers: {

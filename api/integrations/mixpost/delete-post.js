@@ -1,4 +1,4 @@
-import { withOrganization } from './middleware/with-organization.js'
+import { withOrganization } from '../../middleware/with-organization.js'
 
 async function handler(req, res) {
   // CORS headers

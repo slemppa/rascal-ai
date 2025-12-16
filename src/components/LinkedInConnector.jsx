@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 export default function LinkedInConnector({ onSuccess, onError, workspaceUuid }) {
   const [connecting, setConnecting] = useState(false)
 
-  const MIXPOST_PROXY = '/api/mixpost-linkedin'
+  const MIXPOST_PROXY = '/api/integrations/mixpost/linkedin'
 
   const openPopup = (url) => {
     console.log('[LinkedInConnector] Avataan popup:', url)

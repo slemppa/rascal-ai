@@ -95,7 +95,7 @@ export const useMixpostIntegration = () => {
 
     try {
       console.log('Haetaan sometilit Mixpostista...');
-      const response = await fetch(`/api/mixpost-accounts.js?workspace_uuid=${mixpostConfig.mixpost_workspace_uuid}&api_token=${mixpostConfig.mixpost_api_token}`, {
+      const response = await fetch(`/api/integrations/mixpost/accounts?workspace_uuid=${mixpostConfig.mixpost_workspace_uuid}&api_token=${mixpostConfig.mixpost_api_token}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ export const useMixpostIntegration = () => {
 
   // Yhdistä sometili OAuth:lla (useita endpoint-kandidaatteja ja parempi virheenkäsittely)
   const connectSocialAccount = async (platform) => {
-    const MIXPOST_PROXY = '/api/mixpost-linkedin'
+    const MIXPOST_PROXY = '/api/integrations/mixpost/linkedin'
 
     const openPopup = (url) => {
       console.log('[useMixpostIntegration] Avataan popup:', url)

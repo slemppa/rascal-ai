@@ -1,5 +1,5 @@
 // api/admin-data.js - Admin endpoint kaikille admin-tarpeille
-import { withOrganization } from './middleware/with-organization.js'
+import { withOrganization } from '../middleware/with-organization.js'
 import { createClient } from '@supabase/supabase-js'
 
 // Service role -clienti, jotta RLS ei rajoita admin-kyselyitä (esim. integraatiot)

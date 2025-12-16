@@ -149,7 +149,7 @@ export default function FeaturesTab({
           throw new Error('Session expired or invalid')
         }
 
-        const response = await fetch('/api/admin-data', {
+        const response = await fetch('/api/admin/data', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

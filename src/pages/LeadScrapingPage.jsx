@@ -603,7 +603,7 @@ export default function LeadScrapingPage() {
         throw new Error('Kirjaudu sisään jatkaaksesi')
       }
 
-      const response = await axios.delete('/api/leads-delete', {
+      const response = await axios.delete('/api/leads/delete', {
         data: {
           leadIds: Array.from(selectedLeadIds)
         },

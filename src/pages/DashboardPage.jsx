@@ -449,7 +449,7 @@ export default function DashboardPage() {
         const token = session?.data?.session?.access_token
         if (!token) return
         const days = selectedFilter === 'week' ? 7 : selectedFilter === 'month' ? 30 : 30
-        const res = await fetch(`/api/dashboard-success?days=${encodeURIComponent(days)}`, { headers: { Authorization: `Bearer ${token}` } })
+        const res = await fetch(`/api/analytics/success?days=${encodeURIComponent(days)}`, { headers: { Authorization: `Bearer ${token}` } })
         const json = await res.json()
         if (res.ok) setSuccessStats(json)
       } catch (e) {
@@ -468,8 +468,8 @@ export default function DashboardPage() {
         const token = session?.data?.session?.access_token
         if (!token) return
         const [scRes, hmRes] = await Promise.all([
-          fetch(`/api/dashboard-calls-scatter?days=30`, { headers: { Authorization: `Bearer ${token}` } }),
-          fetch(`/api/dashboard-calls-heatmap?days=30`, { headers: { Authorization: `Bearer ${token}` } })
+          fetch(`/api/analytics/calls-scatter?days=30`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`/api/analytics/calls-heatmap?days=30`, { headers: { Authorization: `Bearer ${token}` } })
         ])
         const scJson = await scRes.json().catch(() => [])
         const hmJson = await hmRes.json().catch(() => [])
@@ -826,7 +826,7 @@ export default function DashboardPage() {
             console.error('No auth token available for Mixpost API')
             mixpostData = []
           } else {
-            const response = await axios.get('/api/mixpost-posts', {
+            const response = await axios.get('/api/integrations/mixpost/posts', {
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`

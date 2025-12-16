@@ -127,7 +127,7 @@ export default function AdminPage() {
         throw new Error('No access token')
       }
 
-      const response = await fetch('/api/admin-data?type=users', {
+      const response = await fetch('/api/admin/data?type=users', {
         headers: {
           'Authorization': `Bearer ${token.data.session.access_token}`
         }
@@ -335,7 +335,7 @@ export default function AdminPage() {
         throw new Error('No access token')
       }
 
-      const response = await fetch('/api/admin-call-logs', {
+      const response = await fetch('/api/admin/call-logs', {
         headers: {
           'Authorization': `Bearer ${token.data.session.access_token}`
         }
@@ -395,7 +395,7 @@ export default function AdminPage() {
         throw new Error('No access token')
       }
 
-      const response = await fetch('/api/admin-data?type=segments', {
+      const response = await fetch('/api/admin/data?type=segments', {
         headers: {
           'Authorization': `Bearer ${token.data.session.access_token}`
         }
@@ -423,7 +423,7 @@ export default function AdminPage() {
         throw new Error('No access token')
       }
 
-      const response = await fetch('/api/admin-data?type=stats', {
+      const response = await fetch('/api/admin/data?type=stats', {
         headers: {
           'Authorization': `Bearer ${token.data.session.access_token}`
         }

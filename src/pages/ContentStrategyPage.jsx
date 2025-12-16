@@ -389,7 +389,7 @@ export default function ContentStrategyPage() {
         throw new Error('Organisaation ID puuttuu')
       }
 
-      const response = await axios.post('/api/strategy-approve', {
+      const response = await axios.post('/api/strategy/approve', {
         strategy_id: item.id,
         month: item.month,
         company_id: companyId,
@@ -468,7 +468,7 @@ export default function ContentStrategyPage() {
         throw new Error('Organisaation ID puuttuu')
       }
 
-      const response = await axios.post('/api/strategy-approve', {
+      const response = await axios.post('/api/strategy/approve', {
         strategy_id: item.id,
         month: item.month,
         company_id: companyId,
@@ -799,7 +799,7 @@ export default function ContentStrategyPage() {
       }
 
       // Kutsu API endpointia some-scrapingille ja TOV-analyysille
-      const response = await axios.post('/api/tov-analyze', {
+      const response = await axios.post('/api/ai/analyze-tone', {
         user_id: orgId,
         social_url: socialUrl.trim()
       }, {

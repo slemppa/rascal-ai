@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { withOrganization } from './middleware/with-organization'
+import { withOrganization } from '../middleware/with-organization.js'
 
 // Yksinkertainen in-memory duplikaattisuojus viesteille
 // Säilytetään viimeisimmät clientMessageId:t lyhyen aikaa

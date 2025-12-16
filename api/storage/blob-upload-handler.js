@@ -1,13 +1,26 @@
 import { handleUpload } from '@vercel/blob/client'
+import { withOrganization } from '../middleware/with-organization.js'
 
-export default async function handler(req, res) {
+async function handler(req, res) {
+  const allowedOrigin = process.env.APP_URL || 'https://app.rascalai.fi'
+  
   if (req.method === 'OPTIONS' || req.method === 'HEAD') {
-    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Origin', allowedOrigin)
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS, HEAD')
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    res.setHeader('Access-Control-Allow-Credentials', 'true')
     return res.status(204).end()
   }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
+  
+  // Tarkista että käyttäjän rooli on 'owner' tai 'admin'
+  const userRole = req.organization?.role
+  if (!['owner', 'admin'].includes(userRole)) {
+    return res.status(403).json({ 
+      error: 'Vain organisaation omistaja tai admin voi ladata tiedostoja',
+      hint: 'Tiedostojen lataus vaatii owner- tai admin-roolin'
+    })
+  }
   try {
     let body = {}
     try { body = req.body && Object.keys(req.body).length ? req.body : JSON.parse(await readReqBody(req)) } catch {}
@@ -57,4 +70,4 @@ function readReqBody(req) {
   })
 }
 
-
+export default withOrganization(handler)

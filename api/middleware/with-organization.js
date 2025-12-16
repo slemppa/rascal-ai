@@ -83,14 +83,14 @@ export function withOrganization(handler) {
       if (!orgMember) {
         console.warn('withOrganization: User not found in org_members:', user.id)
         
-        // Tarkista onko käyttäjä admin (company_id = 1 tai role = 'admin')
+        // Tarkista onko käyttäjä admin-roolissa
         const { data: adminCheck, error: adminError } = await supabase
           .from('users')
           .select('*')
           .eq('auth_user_id', user.id)
           .single()
         
-        if (!adminError && adminCheck && (adminCheck.role === 'admin' || adminCheck.company_id === 1)) {
+        if (!adminError && adminCheck && adminCheck.role === 'admin') {
           // Admin-käyttäjä, käytä users.id organisaatio-ID:nä
           req.organization = {
             id: adminCheck.id,

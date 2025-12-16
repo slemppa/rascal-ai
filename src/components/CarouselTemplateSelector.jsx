@@ -90,7 +90,7 @@ export default function CarouselTemplateSelector() {
       
       console.log('Lähetetään payload:', payload);
       
-      const res = await fetch('/api/carousel-template', {
+      const res = await fetch('/api/content/carousel-template', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

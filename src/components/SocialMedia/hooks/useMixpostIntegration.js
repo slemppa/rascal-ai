@@ -266,7 +266,7 @@ export const useMixpostIntegration = () => {
     }
 
     try {
-      const response = await fetch('/api/post-actions', {
+      const response = await fetch('/api/social/posts/actions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

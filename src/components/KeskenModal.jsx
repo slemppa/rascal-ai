@@ -98,7 +98,7 @@ const KeskenModal = ({
         return
       }
 
-      const response = await fetch('/api/content-media-management', {
+      const response = await fetch('/api/content/media-management', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -157,7 +157,7 @@ const KeskenModal = ({
 
         // Poista kaikki vanhat kuvat
         for (const imageUrl of editingPost.media_urls) {
-          const deleteResponse = await fetch('/api/content-media-management', {
+          const deleteResponse = await fetch('/api/content/media-management', {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
@@ -182,7 +182,7 @@ const KeskenModal = ({
       formData.append('userId', userId)
       formData.append('replaceMode', 'true') // Flag että tämä on "vaihda kuva" -toiminto
 
-      const response = await fetch('/api/content-media-management', {
+      const response = await fetch('/api/content/media-management', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`

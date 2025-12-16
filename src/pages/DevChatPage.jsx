@@ -160,7 +160,7 @@ export default function DevChatPage() {
       if (inFlightIdsRef.current.has(clientMessageId)) return
       inFlightIdsRef.current.add(clientMessageId)
       const payload = { message: input, threadId, userId: userData.id, mode: 'dev', clientMessageId }
-      const response = await axios.post('/api/chat', payload)
+      const response = await axios.post('/api/ai/chat', payload)
       const raw = response.data
       const items = Array.isArray(raw) ? raw : [raw]
 
@@ -210,7 +210,7 @@ export default function DevChatPage() {
       if (!pendingQueueRef.current.length) return
       const queue = [...pendingQueueRef.current]
       for (const item of queue) {
-        try { await axios.post('/api/chat', item.payload); dequeuePending(item.id) } catch {}
+        try { await axios.post('/api/ai/chat', item.payload); dequeuePending(item.id) } catch {}
       }
     }
     flushWithAxios()
@@ -223,10 +223,10 @@ export default function DevChatPage() {
         let sent = false
         if (navigator.sendBeacon) {
           const blob = new Blob([body], { type: 'application/json' })
-          sent = navigator.sendBeacon('/api/chat', blob)
+          sent = navigator.sendBeacon('/api/ai/chat', blob)
         }
         if (!sent) {
-          try { fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }) } catch {}
+          try { fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }) } catch {}
         }
         dequeuePending(item.id)
       }

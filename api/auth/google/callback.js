@@ -8,6 +8,7 @@ import axios from 'axios'
 export default async function handler(req, res) {
   // Apufunktio, joka palauttaa HTML-scriptin popupin sulkemiseksi ja viestin lähettämiseksi
   const sendResponse = (status, message) => {
+    const targetOrigin = process.env.APP_URL || 'https://app.rascalai.fi'
     const html = `
       <html>
         <body>
@@ -18,7 +19,7 @@ export default async function handler(req, res) {
                 type: 'GOOGLE_AUTH_RESULT',
                 status: '${status}',
                 message: '${message.replace(/'/g, "\\'")}'
-              }, '*');
+              }, '${targetOrigin}');
             }
             // Sulje tämä popup-ikkuna
             window.close();

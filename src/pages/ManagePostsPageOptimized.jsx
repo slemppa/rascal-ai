@@ -305,7 +305,7 @@ export default function ManagePostsPageOptimized() {
           companyId: userData.company_id
         })
 
-        const response = await fetch('/api/idea-generation', {
+        const response = await fetch('/api/ai/generate-ideas', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

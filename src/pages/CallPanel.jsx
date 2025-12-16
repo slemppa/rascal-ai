@@ -338,7 +338,7 @@ export default function CallPanel() {
       // Hae user_id Supabasesta
       const user_id = user?.id
 
-      const res = await fetch('/api/validate-sheet', {
+      const res = await fetch('/api/integrations/validate-sheet', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2086,7 +2086,7 @@ export default function CallPanel() {
     try {
       const user_id = user?.id
 
-      const res = await fetch('/api/validate-sheet', {
+      const res = await fetch('/api/integrations/validate-sheet', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

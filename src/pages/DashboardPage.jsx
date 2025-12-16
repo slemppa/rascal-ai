@@ -42,7 +42,7 @@ function EditPostModal({ post, onClose, onSave }) {
         "Publish Date": publishDate,
         updateType: 'postUpdate'
       }
-      const res = await fetch('/api/update-post', {
+      const res = await fetch('/api/social/posts/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -894,7 +894,7 @@ export default function DashboardPage() {
           return
         }
 
-        const response = await fetch('/api/avatar-status.js', {
+        const response = await fetch('/api/avatars/status', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -1027,7 +1027,7 @@ export default function DashboardPage() {
           formData.append('companyId', companyId)
         }
         
-        const res = await fetch('/api/avatar-upload.js', {
+        const res = await fetch('/api/avatars/upload', {
           method: 'POST',
           body: formData,
         })
@@ -1060,7 +1060,7 @@ export default function DashboardPage() {
         formData.append('companyId', companyId)
       }
       
-      const res = await fetch('/api/avatar-upload.js', {
+      const res = await fetch('/api/avatars/upload', {
         method: 'POST',
         body: formData,
       })

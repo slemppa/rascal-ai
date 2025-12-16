@@ -311,7 +311,7 @@ export default function AIChatPage() {
         const { data: { session } } = await supabase.auth.getSession()
         if (session?.access_token) {
           try {
-            const threadResponse = await axios.post('/api/ai-chat-threads', {
+            const threadResponse = await axios.post('/api/ai/threads', {
               title: userMessageContent.substring(0, 50), // Käytä ensimmäistä viestiä otsikkona
               assistant_type: assistantType
             }, {
@@ -375,7 +375,7 @@ export default function AIChatPage() {
       }
       
       // FIRE-AND-FORGET: Lähetä taustalle, älä odota vastausta
-      axios.post('/api/chat', payload)
+      axios.post('/api/ai/chat', payload)
         .then(response => {
           dequeuePending(pendingId)
         })
@@ -415,7 +415,7 @@ export default function AIChatPage() {
       if (!pendingQueueRef.current.length) return
       const queue = [...pendingQueueRef.current]
       for (const item of queue) {
-        try { await axios.post('/api/chat', item.payload); dequeuePending(item.id) } catch {}
+        try { await axios.post('/api/ai/chat', item.payload); dequeuePending(item.id) } catch {}
       }
     }
     flushWithAxios()
@@ -428,10 +428,10 @@ export default function AIChatPage() {
         let sent = false
         if (navigator.sendBeacon) {
           const blob = new Blob([body], { type: 'application/json' })
-          sent = navigator.sendBeacon('/api/chat', blob)
+          sent = navigator.sendBeacon('/api/ai/chat', blob)
         }
         if (!sent) {
-          try { fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }) } catch {}
+          try { fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }) } catch {}
         }
         dequeuePending(item.id)
       }
@@ -573,7 +573,7 @@ export default function AIChatPage() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) return
 
-      const response = await axios.get('/api/ai-chat-threads', {
+      const response = await axios.get('/api/ai/threads', {
         headers: { 'Authorization': `Bearer ${session.access_token}` },
         params: { assistant_type: assistantType }
       })
@@ -595,7 +595,7 @@ export default function AIChatPage() {
         return
       }
 
-      const response = await axios.post('/api/ai-chat-threads', {
+      const response = await axios.post('/api/ai/threads', {
         title: 'Uusi keskustelu',
         assistant_type: assistantType
       }, {
@@ -879,7 +879,7 @@ export default function AIChatPage() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) return
 
-      await axios.delete('/api/ai-chat-threads', {
+      await axios.delete('/api/ai/threads', {
         data: { threadId: threadIdToDelete },
         headers: { 
           'Authorization': `Bearer ${session.access_token}`,
@@ -939,7 +939,7 @@ export default function AIChatPage() {
         return
       }
 
-      const response = await axios.patch('/api/ai-chat-threads', {
+      const response = await axios.patch('/api/ai/threads', {
         threadId,
         title: editingTitle.trim()
       }, {

@@ -448,7 +448,7 @@ export default function LeadScrapingPage() {
 
       const apifyJson = generateApifyJson()
 
-      const response = await axios.post('/api/lead-scraping', {
+      const response = await axios.post('/api/leads/scraping', {
         filters,
         apifyJson,
         leadLimit: Math.min(leadLimit, 50000)

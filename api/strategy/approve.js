@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { withOrganization } from './middleware/with-organization.js'
+import { withOrganization } from '../middleware/with-organization.js'
 
 const N8N_STRATEGY_APPROVAL_URL = process.env.N8N_STRATEGY_APPROVEMENT || process.env.N8N_STRATEGY_ARPPVOMENT || 'https://samikiias.app.n8n.cloud/webhook/strategy-approvment'
 const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY

@@ -104,7 +104,7 @@ export const StrategyStatusProvider = ({ children }) => {
         return
       }
 
-      const response = await fetch('/api/strategy-approve', {
+      const response = await fetch('/api/strategy/approve', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

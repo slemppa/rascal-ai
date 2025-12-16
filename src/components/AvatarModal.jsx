@@ -58,7 +58,7 @@ const AvatarModal = ({
         }
 
         // Kutsu avatar-status APIa
-        const response = await fetch('/api/avatar-status', {
+        const response = await fetch('/api/avatars/status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ companyId: userData.company_id })
@@ -353,7 +353,7 @@ const AvatarModal = ({
                         })
 
                         // Lähetä endpointiin
-                        const response = await fetch('/api/voiceover-ready', {
+                        const response = await fetch('/api/webhooks/voiceover-ready', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify(requestData)

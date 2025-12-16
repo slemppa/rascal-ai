@@ -643,7 +643,7 @@ export default function ManagePostsPage() {
         }
 
         // Kutsu avatar-status APIa
-        const res = await fetch('/api/avatar-status.js', {
+        const res = await fetch('/api/avatars/status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ companyId: userData.company_id })
@@ -886,7 +886,7 @@ export default function ManagePostsPage() {
       if (userError || !userData?.company_id) {
         return
       }
-      const response = await fetch(`/api/get-reels?companyId=${userData.company_id}`)
+      const response = await fetch(`/api/social/reels/list?companyId=${userData.company_id}`)
       if (!response.ok) {
         return
       }
@@ -1031,7 +1031,7 @@ export default function ManagePostsPage() {
 
       // Lähetetään idea-generation kutsu N8N:lle
       try {
-        const response = await fetch('/api/idea-generation', {
+        const response = await fetch('/api/ai/generate-ideas', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1232,7 +1232,7 @@ export default function ManagePostsPage() {
 
 
 
-               const response = await fetch('/api/voiceover-ready', {
+               const response = await fetch('/api/webhooks/voiceover-ready', {
                  method: 'POST',
                  headers: {
                    'Content-Type': 'application/json',
@@ -1438,7 +1438,7 @@ export default function ManagePostsPage() {
         scheduleData.segments = segments
       }
 
-      const response = await fetch('/api/post-actions', {
+      const response = await fetch('/api/social/posts/actions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1573,7 +1573,7 @@ export default function ManagePostsPage() {
       
       console.log('Sending publish data:', publishData)
       
-      const response = await fetch('/api/post-actions', {
+      const response = await fetch('/api/social/posts/actions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1734,7 +1734,7 @@ export default function ManagePostsPage() {
         throw new Error('User ID not found')
       }
 
-      const response = await fetch('/api/content-media-management', {
+      const response = await fetch('/api/content/media-management', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -1815,7 +1815,7 @@ export default function ManagePostsPage() {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 60000) // 60 sekuntia timeout
 
-      const response = await fetch('/api/content-media-management', {
+      const response = await fetch('/api/content/media-management', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${sessionData.session.access_token}`
@@ -3436,7 +3436,7 @@ export default function ManagePostsPage() {
                               return
                             }
                             // Lähetä endpointiin
-                            await fetch('/api/voiceover-ready', {
+                            await fetch('/api/webhooks/voiceover-ready', {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
                               body: JSON.stringify({

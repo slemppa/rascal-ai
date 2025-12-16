@@ -347,7 +347,7 @@ export default function BlogNewsletterPage() {
       try {
 
 
-        const response = await fetch('/api/idea-generation', {
+        const response = await fetch('/api/ai/generate-ideas', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -454,7 +454,7 @@ export default function BlogNewsletterPage() {
       formData.append('userId', orgId) // Käytetään organisaation ID:tä
       formData.append('replaceMode', 'true')
 
-      const response = await fetch('/api/content-media-management', {
+      const response = await fetch('/api/content/media-management', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`

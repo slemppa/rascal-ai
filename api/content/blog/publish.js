@@ -1,4 +1,4 @@
-import { withOrganization } from '../middleware/with-organization.js'
+import { withOrganization } from '../../middleware/with-organization.js'
 
 async function handler(req, res) {
   console.log('blog-publish API called:', req.method, req.url)

@@ -1,5 +1,5 @@
 // api/org-remove-member.js - Poista jäsen organisaatiosta
-import { withOrganization } from './middleware/with-organization.js'
+import { withOrganization } from '../middleware/with-organization.js'
 
 async function handler(req, res) {
   if (req.method !== 'DELETE') {

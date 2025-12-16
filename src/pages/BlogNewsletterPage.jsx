@@ -572,7 +572,7 @@ export default function BlogNewsletterPage() {
       }
 
       // Blogien julkaisu käyttää erillistä endpointia
-      const response = await fetch('/api/blog-publish', {
+      const response = await fetch('/api/content/blog/publish', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

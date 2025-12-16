@@ -345,7 +345,7 @@ export default function AIChatPage() {
       // Tämä auttaa havaitsemaan kun uusi vastaus tulee
       if (activeThreadId) {
         try {
-          const currentResponse = await axios.get(`/api/zep-messages?threadId=${activeThreadId}`)
+          const currentResponse = await axios.get(`/api/integrations/zep/messages?threadId=${activeThreadId}`)
           const currentMessages = currentResponse.data?.messages || []
           // Aseta viestimääräksi nykyinen määrä (käyttäjän uusi viesti lisätään pian Zepiin)
           lastMessageCountRef.current = currentMessages.length
@@ -665,7 +665,7 @@ export default function AIChatPage() {
       }
       
       try {
-        const response = await axios.get(`/api/zep-messages?threadId=${threadIdToPoll}`)
+        const response = await axios.get(`/api/integrations/zep/messages?threadId=${threadIdToPoll}`)
         const zepMessages = response.data?.messages || []
         
         console.log(`🔍 Safari polling: Tarkistetaan viestejä. Zepissä: ${zepMessages.length}, Viimeksi: ${lastMessageCountRef.current}`)
@@ -803,7 +803,7 @@ export default function AIChatPage() {
       console.log(`🔄 Haetaan viestit Zepistä threadille: ${threadIdToLoad}`)
       
       // Hae viestit Zepistä
-      const response = await axios.get(`/api/zep-messages?threadId=${threadIdToLoad}`)
+      const response = await axios.get(`/api/integrations/zep/messages?threadId=${threadIdToLoad}`)
       
       const zepMessages = response.data?.messages || []
       console.log(`✅ Ladattiin ${zepMessages.length} viestiä Zepistä`)
@@ -1253,7 +1253,7 @@ export default function AIChatPage() {
       }
 
       // Backend käyttää automaattisesti req.organization.id:tä, mutta lähetetään orgId varmuuden vuoksi
-      await axios.post('/api/storage-ingest', {
+      await axios.post('/api/storage/ingest', {
         userId: orgId, // Organisaation ID
         files: uploaded
       }, {

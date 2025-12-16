@@ -39,7 +39,7 @@ export default function CompanyTab({
         return
       }
 
-      const response = await fetch(`/api/account-org-members?org_id=${orgId}`, {
+      const response = await fetch(`/api/organization/account-members?org_id=${orgId}`, {
         headers: {
           Authorization: `Bearer ${session.access_token}`
         }

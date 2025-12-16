@@ -1,5 +1,5 @@
 // api/org-update-role.js - Päivitä jäsenen roolia organisaatiossa
-import { withOrganization } from './middleware/with-organization.js'
+import { withOrganization } from '../middleware/with-organization.js'
 
 async function handler(req, res) {
   if (req.method !== 'PUT') {

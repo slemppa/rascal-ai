@@ -1,4 +1,4 @@
-import { withOrganization } from './middleware/with-organization.js'
+import { withOrganization } from '../../middleware/with-organization.js'
 import axios from 'axios'
 
 /**

@@ -247,7 +247,7 @@ const OnboardingModal = () => {
   const handleStartConversation = async () => {
     try {
       // Hae Agent ID API:sta
-      const response = await fetch('/api/elevenlabs-config')
+      const response = await fetch('/api/integrations/elevenlabs/config')
       
       if (!response.ok) {
         throw new Error('Failed to fetch ElevenLabs configuration')

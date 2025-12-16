@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { withOrganization } from './middleware/with-organization.js'
+import { withOrganization } from '../middleware/with-organization.js'
 
 async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })

@@ -468,8 +468,8 @@ export default function DashboardPage() {
         const token = session?.data?.session?.access_token
         if (!token) return
         const [scRes, hmRes] = await Promise.all([
-          fetch(`/api/analytics/calls-scatter?days=30`, { headers: { Authorization: `Bearer ${token}` } }),
-          fetch(`/api/analytics/calls-heatmap?days=30`, { headers: { Authorization: `Bearer ${token}` } })
+          fetch(`/api/analytics/scatter?days=30`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`/api/analytics/heatmap?days=30`, { headers: { Authorization: `Bearer ${token}` } })
         ])
         const scJson = await scRes.json().catch(() => [])
         const hmJson = await hmRes.json().catch(() => [])

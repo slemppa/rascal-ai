@@ -1,21 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
+import { withOrganization } from './middleware/with-organization'
 
-const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-console.log('🔧 Environment variables check:')
-console.log('SUPABASE_URL:', process.env.SUPABASE_URL ? 'EXISTS' : 'MISSING')
-console.log('NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? 'EXISTS' : 'MISSING')
-console.log('SUPABASE_SERVICE_ROLE_KEY:', supabaseServiceKey ? 'EXISTS' : 'MISSING')
-console.log('Using supabaseUrl:', supabaseUrl ? 'FOUND' : 'MISSING')
-
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error('Missing Supabase environment variables')
-}
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
-
-export default async function handler(req, res) {
+async function handler(req, res) {
   // Vain POST-metodit sallittu
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Vain POST-metodit sallittu' })
@@ -23,6 +8,17 @@ export default async function handler(req, res) {
 
   try {
     const { contacts, callType, script, voice, voice_id } = req.body
+    const supabase = req.supabase
+    const authUser = req.authUser
+    const organization = req.organization
+
+    if (!authUser) {
+      return res.status(401).json({ error: 'Käyttäjä ei ole kirjautunut' })
+    }
+
+    if (!organization?.id) {
+      return res.status(403).json({ error: 'Organisaatiota ei löytynyt' })
+    }
 
     console.log('🔍 Mika mass-call endpoint sai dataa:', { 
       contactsCount: contacts?.length, 
@@ -54,54 +50,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Ääni on pakollinen' })
     }
 
-    // Käytä samaa logiikkaa kuin mass-call.js - ei tokenia
-    // Jos service role key on saatavilla, käytä sitä. Muuten käytä anonyymiä key:tä.
-    
-    // Hae käyttäjän tiedot request bodysta (frontend lähettää user_id:n)
-    const { user_id } = req.body
-    
-    if (!user_id) {
-      return res.status(400).json({ error: 'user_id is required' })
-    }
-    
-    console.log('🔍 User ID from request:', user_id)
-
-    // Hae organisaation ID (public.users.id) käyttäen auth_user_id:tä
-    // Tarkista ensin onko käyttäjä kutsuttu käyttäjä (org_members taulussa)
-    let publicUserId = null
-    
-    const { data: orgMember, error: orgError } = await supabase
-      .from('org_members')
-      .select('org_id')
-      .eq('auth_user_id', user_id)
-      .maybeSingle()
-
-    if (!orgError && orgMember?.org_id) {
-      // Käyttäjä on kutsuttu käyttäjä, käytä organisaation ID:tä
-      publicUserId = orgMember.org_id
-      console.log('✅ Found org member, using org_id:', publicUserId)
-    } else {
-      // Jos ei löydy org_members taulusta, tarkista onko normaali käyttäjä
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user_id)
-        .maybeSingle()
-
-      if (!userError && userData?.id) {
-        // Normaali käyttäjä, käytä users.id:tä
-        publicUserId = userData.id
-        console.log('✅ Found normal user, using user_id:', publicUserId)
-      }
-    }
-
-    if (!publicUserId) {
-      console.error('User haku epäonnistui - käyttäjää ei löytynyt org_members tai users taulusta')
-      return res.status(400).json({ 
-        error: 'Käyttäjää ei löytynyt',
-        details: 'Käyttäjää ei löytynyt organisaatiosta tai käyttäjätietokannasta'
-      })
-    }
+    // Käytetään organisaation ID:tä RLS-tietoisesti middlewaresta
+    const publicUserId = organization.id
 
     // Hae call_type_id call_types taulusta käyttäen public.users.id:tä
     const { data: callTypeData, error: callTypeError } = await supabase
@@ -230,4 +180,6 @@ export default async function handler(req, res) {
       details: error.message 
     })
   }
-} 
+}
+
+export default withOrganization(handler)

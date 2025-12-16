@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { withOrganization } from './middleware/with-organization'
 
 // Yksinkertainen in-memory duplikaattisuojus viesteille
 // Säilytetään viimeisimmät clientMessageId:t lyhyen aikaa
@@ -17,9 +18,14 @@ function isDuplicateAndMark(id) {
   return false
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  const authUser = req.authUser
+  if (!authUser) {
+    return res.status(401).json({ error: 'Käyttäjä ei ole kirjautunut' })
   }
 
   const N8N_CHAT_API_URL = process.env.N8N_CHAT_API_URL
@@ -45,4 +51,6 @@ export default async function handler(req, res) {
     // Palauta JSON-muotoinen virheviesti, jotta UI pystyy näyttämään sen
     return res.status(status).json({ error: 'Chat proxy error', status, details: data })
   }
-} 
+}
+
+export default withOrganization(handler)

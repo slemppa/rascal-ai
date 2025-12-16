@@ -1,5 +1,6 @@
 import formidable from 'formidable'
 import fs from 'fs'
+import { withOrganization } from './middleware/with-organization'
 
 export const config = {
   api: { bodyParser: false }
@@ -7,26 +8,27 @@ export const config = {
 
 const DEV_UPLOAD_WEBHOOK_URL = 'https://samikiias.app.n8n.cloud/webhook/vectorsupabase'
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
   try {
+    const authUser = req.authUser
+    if (!authUser) return res.status(401).json({ error: 'Käyttäjä ei ole kirjautunut' })
+
     const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY || req.headers['x-api-key']
     if (!N8N_SECRET_KEY) return res.status(500).json({ error: 'API-avain ei ole konfiguroitu' })
 
     const form = formidable({ maxFileSize: 100 * 1024 * 1024, maxFields: 20 })
     const [fields, files] = await form.parse(req)
     const uploadedFiles = files.files || []
-    const userId = fields.userId?.[0]
     const action = fields.action?.[0] || 'feed'
     const fileNamesField = fields.fileNames?.[0]
     const providedNames = (() => { try { return JSON.parse(fileNamesField || '[]') } catch { return [] } })()
 
-    if (!userId) return res.status(400).json({ error: 'UserId puuttuu' })
     if (uploadedFiles.length === 0) return res.status(400).json({ error: 'Ei tiedostoja annettu' })
 
     const fd = new FormData()
     fd.append('action', action)
-    fd.append('userId', userId)
+    fd.append('userId', authUser.id)
     // Välitä nimet myös eksplisiittisesti payloadissa
     try {
       fd.append('fileNames', fileNamesField || JSON.stringify(providedNames))
@@ -55,5 +57,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Virhe dev-upload endpointissa', details: e.message })
   }
 }
+
+export default withOrganization(handler)
 
 

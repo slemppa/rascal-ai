@@ -8,8 +8,3 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
-// Altista selainympäristössä, jotta token voidaan lukea joissain proxy-kutsuissa
-if (typeof window !== 'undefined') {
-  window.supabase = supabase
-}

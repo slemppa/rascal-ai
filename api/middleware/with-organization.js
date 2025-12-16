@@ -13,11 +13,8 @@ export function withOrganization(handler) {
         return res.status(401).json({ error: 'Authorization token required' })
       }
 
-      // 2. Luo Supabase client
-      // Dokumentaation mukaan Service Role Key ohittaa RLS:n kokonaan
-      // Mutta käytetään käyttäjän tokenia auth-tarkistuksessa
+      // 2. Luo Supabase client käyttäjän tokenilla (RLS käytössä)
       const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
-      const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
       const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       
       if (!supabaseUrl) {
@@ -25,10 +22,7 @@ export function withOrganization(handler) {
         return res.status(500).json({ error: 'Supabase URL missing' })
       }
       
-      // Käytetään Service Role Keyta jos saatavilla (ohittaa RLS:n)
-      // Muuten käytetään anon keyta (RLS-politiikat voimassa)
-      const supabaseKey = supabaseServiceKey || supabaseAnonKey
-      if (!supabaseKey) {
+      if (!supabaseAnonKey) {
         console.error('Supabase key missing')
         return res.status(500).json({ error: 'Supabase key missing' })
       }
@@ -36,7 +30,7 @@ export function withOrganization(handler) {
       // Luodaan Supabase client käyttäjän tokenilla
       // Dokumentaation mukaan kun käytämme anon keyta, token asetetaan Authorization headerissa
       // Tämä mahdollistaa auth.uid() funktion toimimisen RLS-politiikoissa
-      const supabase = createClient(supabaseUrl, supabaseKey, {
+      const supabase = createClient(supabaseUrl, supabaseAnonKey, {
         auth: {
           persistSession: false,
           autoRefreshToken: false,

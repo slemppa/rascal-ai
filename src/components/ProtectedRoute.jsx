@@ -40,7 +40,8 @@ const ProtectedRoute = ({ children, requiredFeatures = [], requiredRole = null }
           return
         }
 
-        const isAdmin = userData.role === 'admin' || userData.company_id === 1
+        // Käytetään roolipohjaista tarkistusta ilman kovakoodattuja ID:itä
+        const isAdmin = userData.role === 'admin' || userData.role === 'superadmin'
         const isModerator = userData.role === 'moderator' || isAdmin
 
         console.log('ProtectedRoute - User data:', userData)

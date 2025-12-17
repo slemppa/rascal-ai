@@ -151,10 +151,11 @@ Projektissa on laaja dokumentaatio `docs/`-kansiossa:
 - `GET /api/auth/google/start` - Aloittaa Google OAuth 2.0 -virran
 - `GET /api/auth/google/callback` - Käsittelee Google OAuth -callbackin
 
-### Integraatiot
-- `GET /api/user-secrets` - Hakee käyttäjän integraatiot (metadata)
-- `POST /api/user-secrets` - Tallentaa uuden integraation
-- `GET /api/user-secrets-service` - Service-to-service endpoint salattujen tietojen hakemiseen
+### Integraatiot ja salaisuudet
+- `GET /api/users/secrets` - Hakee käyttäjän integraatiot (metadata)
+- `POST /api/users/secrets` - Tallentaa uuden integraation (Node.js AES-256-GCM salaus)
+- `GET /api/users/secrets?decrypt=true` - Hakee puretun salaisuuden käyttäjälle
+- `GET /api/users/secrets-service` - Service-to-service endpoint automaatioille (N8N/Make)
 
 Katso tarkemmat API-dokumentaatiot `docs/`-kansiosta.
 

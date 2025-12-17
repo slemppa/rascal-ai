@@ -47,14 +47,15 @@ Ympäristö: Vercel (frontend + serverless API), Supabase (Auth + DB + RLS), N8N
 - **Frontend**: käyttää vain `VITE_*`-muuttujia (ei salaisuuksia).
 - **Backend**: salaisuudet `process.env.*` (esim. `N8N_SECRET_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `KV_REST_API_*`, `SUPABASE_*`).
 - **Service role**: käytössä vain palvelimella; arvoja ei logiteta.
-- **Käyttäjien salatut tiedot**: `user_secrets`-taulu, jossa arkaluontoinen tieto (API-avaimet, jne.) salataan pgcrypto-laajennuksella. Salausavain tallennetaan `USER_SECRETS_ENCRYPTION_KEY` ympäristömuuttujaan. API-endpoint: `/api/user-secrets`.
+- **Käyttäjien salatut tiedot**: `user_secrets`-taulu, jossa arkaluontoinen tieto (API-avaimet, jne.) salataan **Node.js-kerroksessa AES-256-GCM -algoritmilla**. Salausavain tallennetaan `USER_SECRETS_ENCRYPTION_KEY` ympäristömuuttujaan ja **ei koskaan kulje tietokantaan**. API-endpoint: `/api/users/secrets`.
 
 ### 11. Käyttäjien salattujen tietojen hallinta
-- **Taulu**: `public.user_secrets` - salataan pgcrypto `pgp_sym_encrypt` -funktiolla.
+- **Taulu**: `public.user_secrets` - uudet tietueet salataan Node.js-kerroksessa AES-256-GCM:llä (`secret_value TEXT`), vanhat pgcrypto-salatut tietueet tuetaan (`encrypted_value BYTEA`).
 - **RLS**: käyttäjät näkevät vain omat salaisuutensa organisaatiokohtaisesti.
-- **API**: `/api/user-secrets` - endpoint salaisuuksien tallentamiseen, hakemiseen ja purkamiseen.
-- **Salausavain**: vaaditaan `USER_SECRETS_ENCRYPTION_KEY` ympäristömuuttuja Vercelissä.
-- **Turvallisuus**: puretut arvot palautetaan vain backendin kautta, ei koskaan frontendissä.
+- **API**: `/api/users/secrets` - endpoint salaisuuksien tallentamiseen, hakemiseen ja purkamiseen.
+- **Service endpoint**: `/api/user-secrets-service` (tai `/api/users/secrets-service`) - service-to-service endpoint automaatioille (N8N/Make). Molemmat URL-muodot ovat tuettuja takautuvasti yhteensopivuuden vuoksi.
+- **Salausavain**: vaaditaan `USER_SECRETS_ENCRYPTION_KEY` ympäristömuuttuja Vercelissä. Avain **ei koskaan kulje tietokantaan**.
+- **Turvallisuus**: puretut arvot palautetaan vain backendin kautta, ei koskaan frontendissä. Salausavain pysyy vain palvelinmuistissa.
 
 ### 11. Selainturva, CORS ja CSRF
 - **Authorization-header**: tokenit kulkevat headerissa, ei evästeissä → alhaisempi CSRF-riski.

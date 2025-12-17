@@ -24,7 +24,7 @@ if (!ENCRYPTION_KEY) {
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
 /**
- * GET /api/user-secrets-service
+ * GET /api/users/secrets-service
  * Service-to-service endpoint: palauttaa puretun salaisuuden
  * Suojattu N8N_SECRET_KEY:llä tai MAKE_WEBHOOK_SECRET:llä
  * Tämä on tarkoitettu Maken/N8N automaatioille
@@ -40,8 +40,19 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 export default async function handler(req, res) {
   // Vain GET-metodit sallittu
   if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' })
+    return res.status(405).json({ 
+      error: 'Method not allowed',
+      hint: 'This endpoint only accepts GET requests'
+    })
   }
+
+  // Debug: logitaan URL ja metodit
+  logger.debug('user-secrets-service: Request received', {
+    method: req.method,
+    url: req.url,
+    path: req.url?.split('?')[0],
+    queryParams: Object.keys(req.query)
+  })
 
   // Hae ja dekoodaa query-parametrit (URL-dekoodaus automaattisesti, mutta varmistetaan)
   const secret_type = req.query.secret_type
@@ -72,10 +83,45 @@ export default async function handler(req, res) {
   const serviceKey = req.headers['x-api-key'] || req.headers['x-service-key']
   const expectedKey = process.env.N8N_SECRET_KEY || process.env.MAKE_WEBHOOK_SECRET
 
-  if (!serviceKey || serviceKey !== expectedKey) {
-    logger.warn('Unauthorized service request - missing or invalid service key')
+  // Debug: logitaan mitä headereita saatiin
+  logger.debug('user-secrets-service: Auth check', {
+    hasXApiKey: !!req.headers['x-api-key'],
+    hasXServiceKey: !!req.headers['x-service-key'],
+    hasAuthorization: !!req.headers['authorization'],
+    allHeaders: Object.keys(req.headers).filter(h => 
+      h.toLowerCase().includes('api') || 
+      h.toLowerCase().includes('auth') ||
+      h.toLowerCase().includes('key')
+    )
+  })
+
+  if (!expectedKey) {
+    logger.error('❌ N8N_SECRET_KEY or MAKE_WEBHOOK_SECRET not configured!')
+    return res.status(500).json({ 
+      error: 'Service authentication not configured',
+      hint: 'N8N_SECRET_KEY or MAKE_WEBHOOK_SECRET environment variable is required'
+    })
+  }
+
+  if (!serviceKey) {
+    logger.warn('Unauthorized service request - missing x-api-key header', {
+      receivedHeaders: Object.keys(req.headers)
+    })
     return res.status(401).json({ 
-      error: 'Unauthorized - service key required'
+      error: 'Unauthorized - service key required',
+      hint: 'Send x-api-key header with N8N_SECRET_KEY or MAKE_WEBHOOK_SECRET value',
+      required_header: 'x-api-key'
+    })
+  }
+
+  if (serviceKey !== expectedKey) {
+    logger.warn('Unauthorized service request - invalid service key', {
+      keyLength: serviceKey?.length,
+      expectedLength: expectedKey?.length
+    })
+    return res.status(401).json({ 
+      error: 'Unauthorized - invalid service key',
+      hint: 'Check that x-api-key header matches N8N_SECRET_KEY or MAKE_WEBHOOK_SECRET'
     })
   }
 

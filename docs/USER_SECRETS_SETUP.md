@@ -2,7 +2,7 @@
 
 ## Yleiskuvaus
 
-`user_secrets`-taulu mahdollistaa käyttäjien arkaluontoisen tiedon (esim. API-avaimet, salasanat) turvallisen tallentamisen Supabase-tietokantaan. Tiedot salataan pgcrypto-laajennuksen avulla ennen tallennusta.
+`user_secrets`-taulu mahdollistaa käyttäjien arkaluontoisen tiedon (esim. API-avaimet, salasanat) turvallisen tallentamisen Supabase-tietokantaan. **Uudet tietueet salataan Node.js-kerroksessa AES-256-GCM -algoritmilla ennen tallennusta tietokantaan.** Vanhat pgcrypto-salatut tietueet tuetaan taaksepäin yhteensopivuuden vuoksi.
 
 ## Salausavaimen Asettaminen
 
@@ -32,8 +32,8 @@
 ### Tallentaa salaisuus
 
 ```javascript
-// POST /api/user-secrets
-const response = await fetch('/api/user-secrets', {
+// POST /api/users/secrets
+const response = await fetch('/api/users/secrets', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -54,8 +54,8 @@ const response = await fetch('/api/user-secrets', {
 ### Hakea salaisuudet (metadata)
 
 ```javascript
-// GET /api/user-secrets
-const response = await fetch('/api/user-secrets', {
+// GET /api/users/secrets
+const response = await fetch('/api/users/secrets', {
   headers: {
     'Authorization': `Bearer ${accessToken}`
   }
@@ -67,9 +67,9 @@ const { secrets } = await response.json()
 ### Hakea purettu salaisuus
 
 ```javascript
-// GET /api/user-secrets?decrypt=true&secret_type=wordpress_api_key&secret_name=WordPress REST API Key
+// GET /api/users/secrets?decrypt=true&secret_type=wordpress_api_key&secret_name=WordPress REST API Key
 const response = await fetch(
-  '/api/user-secrets?decrypt=true&secret_type=wordpress_api_key&secret_name=WordPress REST API Key',
+  '/api/users/secrets?decrypt=true&secret_type=wordpress_api_key&secret_name=WordPress REST API Key',
   {
     headers: {
       'Authorization': `Bearer ${accessToken}`
@@ -83,9 +83,9 @@ const { value } = await response.json()
 ### Poistaa salaisuus
 
 ```javascript
-// DELETE /api/user-secrets?secret_type=wordpress_api_key&secret_name=WordPress REST API Key
+// DELETE /api/users/secrets?secret_type=wordpress_api_key&secret_name=WordPress REST API Key
 const response = await fetch(
-  '/api/user-secrets?secret_type=wordpress_api_key&secret_name=WordPress REST API Key',
+  '/api/users/secrets?secret_type=wordpress_api_key&secret_name=WordPress REST API Key',
   {
     method: 'DELETE',
     headers: {
@@ -105,7 +105,8 @@ const response = await fetch(
 | `user_id` | UUID | Linkki `users`-tauluun |
 | `secret_type` | TEXT | Salaisuuden tyyppi (esim. 'wordpress_api_key') |
 | `secret_name` | TEXT | Salaisuuden nimi (esim. 'WordPress REST API Key') |
-| `encrypted_value` | BYTEA | **Salattu arvo** (ei koskaan palauteta suoraan) |
+| `secret_value` | TEXT | **Node.js AES-256-GCM salattu arvo** (uusissa tietueissa, muoto: `IV:AUTH_TAG:DATA`) |
+| `encrypted_value` | BYTEA | **Vanha pgcrypto-salattu arvo** (vanhoissa tietueissa, taaksepäin yhteensopivuus) |
 | `metadata` | JSONB | Lisätiedot (esim. endpoint, description) |
 | `is_active` | BOOLEAN | Onko salaisuus aktiivinen |
 | `created_at` | TIMESTAMPTZ | Luontiaika |
@@ -117,9 +118,11 @@ const response = await fetch(
 ## Turvallisuus
 
 - ✅ **RLS käytössä**: Käyttäjät näkevät vain omat salaisuutensa
-- ✅ **Salaus tietokannassa**: Arvot salataan pgcrypto:lla ennen tallennusta
+- ✅ **Node.js-kerroksen salaus**: Uudet arvot salataan AES-256-GCM:llä Node.js:ssä ennen tallennusta
+- ✅ **Salausavain ei kulje tietokantaan**: `USER_SECRETS_ENCRYPTION_KEY` pysyy vain palvelinmuistissa
 - ✅ **Puretut arvot vain backendissä**: Frontend ei koskaan näe purettuja arvoja suoraan
 - ✅ **Organisaatiotuki**: Salaisuudet linkitetty organisaatioihin (`user_id` = `users.id`)
+- ✅ **Taaksepäin yhteensopivuus**: Vanhat pgcrypto-salatut tietueet tuetaan automaattisesti
 
 ## Käyttötapaukset
 

@@ -613,85 +613,35 @@ export default function DashboardPage() {
 
       setStatsLoading(true)
       try {
-        // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
-        const { getUserOrgId } = await import('../lib/getUserOrgId')
-        const userId = await getUserOrgId(user.id)
+        // Hae tilastot optimoidusti backend-endpointista
+        const session = await supabase.auth.getSession()
+        const token = session?.data?.session?.access_token
         
-        if (!userId) {
-          console.error('User ID not found')
+        if (!token) {
+          console.error('No auth token available')
           setStatsLoading(false)
           return
         }
-        
-        const now = new Date()
-        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
-        
-        // Hae kaikki tiedot rinnakkain käyttäen userId:tä (organisaation ID kutsutuille käyttäjille)
-        const [
-          { count: upcomingCount, error: upcomingError },
-          { count: monthlyCount, error: monthlyError },
-          { data: callData, error: callError },
-          { data: messageData, error: messageError },
-          { count: aiUsage, error: aiError }
-        ] = await Promise.all([
-          supabase
-            .from('content')
-            .select('*', { count: 'exact', head: true })
-            .eq('status', 'Scheduled')
-            .eq('user_id', userId),
-          supabase
-            .from('content')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', userId)
-            .gte('created_at', firstDay.toISOString()),
-          supabase
-            .from('call_logs')
-            .select('price')
-            .eq('user_id', userId)
-            .gte('call_date', firstDay.toISOString()),
-          supabase
-            .from('message_logs')
-            .select('price')
-            .eq('user_id', userId)
-            .gte('created_at', firstDay.toISOString())
-            .not('price', 'is', null),
-          supabase
-            .from('content')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', userId)
-            .eq('is_generated', true)
-            .gte('created_at', firstDay.toISOString())
-        ])
 
-        // Käsittele virheet
-        if (upcomingError) console.error('Error fetching upcoming posts:', upcomingError)
-        if (monthlyError) console.error('Error fetching monthly posts:', monthlyError)
-        if (callError) console.error('Error fetching call data:', callError)
-        if (messageError) console.error('Error fetching message data:', messageError)
-        if (aiError) console.error('Error fetching AI usage:', aiError)
+        const response = await fetch('/api/analytics/dashboard-stats', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
 
-        // Laske hinnat
-        const totalCallPrice = (callData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
-        const totalMessagePrice = (messageData || []).reduce((acc, row) => acc + (parseFloat(row.price) || 0), 0)
-        
-        // Hae käyttäjän features users taulusta
-        const { data: userData, error: userDataError } = await supabase
-          .from('users')
-          .select('features')
-          .eq('id', userId)
-          .single()
-        
-        if (userDataError) {
-          console.error('Error fetching user features:', userDataError)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
         }
+
+        const data = await response.json()
         
         setStatsData({
-          upcomingCount: upcomingCount || 0,
-          monthlyCount: monthlyCount || 0,
-          totalCallPrice: totalCallPrice || 0,
-          totalMessagePrice: totalMessagePrice || 0,
-          features: userData?.features || organization?.data?.features || [],
-          aiUsage: aiUsage || 0
+          upcomingCount: data.upcomingCount || 0,
+          monthlyCount: data.monthlyCount || 0,
+          totalCallPrice: data.totalCallPrice || 0,
+          totalMessagePrice: data.totalMessagePrice || 0,
+          features: data.features || organization?.data?.features || [],
+          aiUsage: data.aiUsage || 0
         })
       } catch (e) {
         console.error('Error fetching stats:', e)

@@ -48,7 +48,7 @@ Aseta ympäristömuuttuja Verceliin:
 ### Endpoint
 
 ```
-GET /api/user-secrets-service
+GET /api/user-secrets-service (tai /api/users/secrets-service)
 ```
 
 ### Query Parametrit
@@ -137,10 +137,12 @@ return { success: response.ok, data: await response.json() };
 
 ## Turvallisuus
 
-- ✅ **API-avain salataan** ennen tallennusta
+- ✅ **API-avain salataan Node.js-kerroksessa** AES-256-GCM:llä ennen tallennusta
+- ✅ **Salausavain ei kulje tietokantaan** - `USER_SECRETS_ENCRYPTION_KEY` pysyy vain palvelinmuistissa
 - ✅ **Webhookissa ei lähetetä purettua avainta**
 - ✅ **Service-to-service endpoint** suojattu `N8N_SECRET_KEY`:llä
 - ✅ **RLS-policyt** estävät käyttäjiä näkemästä toistensa avaimia
+- ✅ **Taaksepäin yhteensopivuus** - vanhat pgcrypto-salatut tietueet tuetaan automaattisesti
 
 ## Ympäristömuuttujat
 

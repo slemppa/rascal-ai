@@ -11,7 +11,7 @@ export default function LeadMagnetPage() {
   useEffect(() => {
     const fetchLeadMagnet = async () => {
       try {
-        const response = await fetch('/api/leadmagnet', {
+        const response = await fetch('/api/leads/magnet', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

@@ -31,7 +31,7 @@ const OnboardingModal = () => {
           }
           
           // Lähetä webhook N8N:ään (N8N hoitaa Supabase-päivityksen)
-          const webhookResponse = await fetch('/api/onboarding-completed', {
+          const webhookResponse = await fetch('/api/organization/onboarding-completed', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -247,7 +247,7 @@ const OnboardingModal = () => {
   const handleStartConversation = async () => {
     try {
       // Hae Agent ID API:sta
-      const response = await fetch('/api/elevenlabs-config')
+      const response = await fetch('/api/integrations/elevenlabs/config')
       
       if (!response.ok) {
         throw new Error('Failed to fetch ElevenLabs configuration')
@@ -344,7 +344,7 @@ const OnboardingModal = () => {
             console.warn('⚠️ No session token available, request may fail due to RLS')
           }
           
-          const response = await axios.post('/api/onboarding-completed', requestBody, {
+          const response = await axios.post('/api/organization/onboarding-completed', requestBody, {
             headers: headers
           })
 

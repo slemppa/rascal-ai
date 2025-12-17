@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { getCurrentUser } from '../utils/userApi'
 import { supabase } from '../lib/supabase'
 import { getUserOrgId } from '../lib/getUserOrgId'
 import Button from './Button'
@@ -44,12 +45,8 @@ const AvatarModal = ({
           return
         }
 
-        // Hae company_id Supabasesta
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('company_id')
-          .eq('id', userId)
-          .single()
+        // Hae käyttäjätiedot API:n kautta
+        const userData = await getCurrentUser()
 
         if (userError || !userData?.company_id) {
           setAvatarImages([])
@@ -58,7 +55,7 @@ const AvatarModal = ({
         }
 
         // Kutsu avatar-status APIa
-        const response = await fetch('/api/avatar-status', {
+        const response = await fetch('/api/avatars/status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ companyId: userData.company_id })
@@ -353,7 +350,7 @@ const AvatarModal = ({
                         })
 
                         // Lähetä endpointiin
-                        const response = await fetch('/api/voiceover-ready', {
+                        const response = await fetch('/api/webhooks/voiceover-ready', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify(requestData)

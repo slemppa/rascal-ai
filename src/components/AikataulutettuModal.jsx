@@ -372,7 +372,7 @@ const AikataulutettuModal = ({
       // Debug info removed
 
       // Kutsu backend-endpointtia
-      const response = await fetch('/api/mixpost-update-post', {
+      const response = await fetch('/api/integrations/mixpost/update-post', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -413,7 +413,7 @@ const AikataulutettuModal = ({
       if (updateData.date && updateData.time) {
         
         try {
-          const scheduleResponse = await fetch('/api/mixpost-schedule-post', {
+          const scheduleResponse = await fetch('/api/integrations/mixpost/schedule-post', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

@@ -39,7 +39,7 @@ const OrganizationMembersPage = () => {
         return
       }
 
-      const response = await axios.get('/api/org-members', {
+      const response = await axios.get('/api/organization/members', {
         headers: { Authorization: `Bearer ${token}` }
       })
 
@@ -72,7 +72,7 @@ const OrganizationMembersPage = () => {
         return
       }
 
-      await axios.post('/api/org-invite', {
+      await axios.post('/api/organization/invite', {
         email: inviteEmail,
         role: inviteRole
       }, {
@@ -111,7 +111,7 @@ const OrganizationMembersPage = () => {
         return
       }
 
-      await axios.put('/api/org-update-role', {
+      await axios.put('/api/organization/update-role', {
         auth_user_id: authUserId,
         role: newRole
       }, {
@@ -144,7 +144,7 @@ const OrganizationMembersPage = () => {
         return
       }
 
-      await axios.delete('/api/org-remove-member', {
+      await axios.delete('/api/organization/remove-member', {
         params: {
           auth_user_id: authUserId
         },

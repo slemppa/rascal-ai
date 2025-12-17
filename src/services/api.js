@@ -16,7 +16,7 @@ const api = axios.create({
 // Dashboard datan haku
 export const fetchDashboardData = async (companyId) => {
   try {
-    const url = companyId ? `/api/get-posts?companyId=${companyId}` : '/api/get-posts'
+    const url = companyId ? `/api/social/posts?companyId=${companyId}` : '/api/social/posts'
     const response = await axios.get(url)
     return response.data
   } catch (error) {

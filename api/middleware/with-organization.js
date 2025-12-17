@@ -3,6 +3,7 @@
 // ja lisää organisaatiotiedot request-objektiin
 
 import { createClient } from '@supabase/supabase-js'
+import logger from '../lib/logger.js'
 
 export function withOrganization(handler) {
   return async (req, res) => {
@@ -18,13 +19,13 @@ export function withOrganization(handler) {
       const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       
       if (!supabaseUrl) {
-        console.error('Supabase URL missing')
-        return res.status(500).json({ error: 'Supabase URL missing' })
+        logger.error('Supabase URL missing')
+        return res.status(500).json({ error: 'Internal server error' })
       }
       
       if (!supabaseAnonKey) {
-        console.error('Supabase key missing')
-        return res.status(500).json({ error: 'Supabase key missing' })
+        logger.error('Supabase key missing')
+        return res.status(500).json({ error: 'Internal server error' })
       }
       
       // Luodaan Supabase client käyttäjän tokenilla
@@ -47,8 +48,8 @@ export function withOrganization(handler) {
       // Käytetään getUser() ilman token-parametria, koska token on jo asetettu clientissa
       const { data: { user }, error: authError } = await supabase.auth.getUser()
       if (authError || !user) {
-        console.error('Auth error:', authError)
-        return res.status(401).json({ error: 'Invalid token', details: authError?.message })
+        logger.warn('Auth error in withOrganization middleware', { error: authError })
+        return res.status(401).json({ error: 'Invalid token' })
       }
 
       // 4. Hae käyttäjän organisaatio org_members taulusta
@@ -56,45 +57,54 @@ export function withOrganization(handler) {
       // Tarkistetaan että käyttäjällä on oikeat oikeudet
       // HUOM: RLS-politiikka tarkistaa automaattisesti että auth_user_id = auth.uid()
       // Joten meidän ei tarvitse tarkistaa tätä erikseen
-      console.log('withOrganization: Fetching org_members for auth_user_id:', user.id)
+      logger.debug('withOrganization: Fetching org_members for auth_user_id', { auth_user_id: user.id })
       const { data: orgMember, error: orgError } = await supabase
         .from('org_members')
         .select('org_id, role')
         .eq('auth_user_id', user.id) // Tarkista että haetaan oikean käyttäjän organisaatio
         .maybeSingle()
 
-      console.log('withOrganization: org_members query result:', { orgMember, orgError })
+      logger.debug('withOrganization: org_members query result', { hasOrgMember: !!orgMember, hasError: !!orgError })
 
       if (orgError) {
-        console.error('Error fetching org_members:', {
+        logger.error('Error fetching org_members', {
           message: orgError.message,
           code: orgError.code,
-          details: orgError.details,
-          hint: orgError.hint,
           user_id: user.id
         })
         return res.status(500).json({ 
-          error: 'Error fetching organization',
-          details: orgError.message,
-          code: orgError.code
+          error: 'Internal server error'
         })
       }
 
       if (!orgMember) {
-        console.warn('withOrganization: User not found in org_members:', user.id)
+        logger.warn('withOrganization: User not found in org_members', { auth_user_id: user.id })
         
-        // Tarkista onko käyttäjä admin (company_id = 1 tai role = 'admin')
+        // Tarkista onko käyttäjä globaali admin tai moderator users-taulussa
         const { data: adminCheck, error: adminError } = await supabase
           .from('users')
           .select('*')
           .eq('auth_user_id', user.id)
-          .single()
+          .maybeSingle()
         
-        if (!adminError && adminCheck && (adminCheck.role === 'admin' || adminCheck.company_id === 1)) {
-          // Admin-käyttäjä, käytä users.id organisaatio-ID:nä
+        logger.debug('withOrganization: Admin check result', { 
+          hasAdminCheck: !!adminCheck, 
+          hasError: !!adminError, 
+          role: adminCheck?.role,
+          isAdmin: adminCheck?.role === 'admin',
+          isModerator: adminCheck?.role === 'moderator'
+        })
+        
+        if (!adminError && adminCheck && (adminCheck.role === 'admin' || adminCheck.role === 'moderator')) {
+          // Globaali admin / moderator -käyttäjä, käytä users.id organisaatio-ID:nä
+          // ja aseta rooli suoraan users-taulun roolin mukaan
+          logger.info('withOrganization: Setting organization for global admin/moderator', {
+            id: adminCheck.id,
+            role: adminCheck.role
+          })
           req.organization = {
             id: adminCheck.id,
-            role: 'admin',
+            role: adminCheck.role, // 'admin' tai 'moderator'
             data: adminCheck
           }
           req.authUser = user
@@ -102,13 +112,18 @@ export function withOrganization(handler) {
           return handler(req, res)
         }
         
+        logger.error('withOrganization: User not found in org_members and not admin/moderator', {
+          user_id: user.id,
+          hasAdminCheck: !!adminCheck,
+          hasAdminError: !!adminError
+        })
+        
         return res.status(403).json({ 
-          error: 'User not member of any organization',
-          hint: 'Käyttäjä ei ole jäsenenä organisaatiossa. Ota yhteyttä ylläpitoon.'
+          error: 'User not member of any organization'
         })
       }
 
-      console.log('withOrganization: Found org member:', { org_id: orgMember.org_id, role: orgMember.role })
+      logger.debug('withOrganization: Found org member', { org_id: orgMember.org_id, role: orgMember.role })
 
       // 5. Hae organisaation tiedot users taulusta erikseen
       const { data: orgData, error: orgDataError } = await supabase
@@ -118,10 +133,9 @@ export function withOrganization(handler) {
         .single()
 
       if (orgDataError) {
-        console.error('Error fetching organization data:', orgDataError)
+        logger.error('Error fetching organization data', { message: orgDataError.message, code: orgDataError.code })
         return res.status(500).json({ 
-          error: 'Error fetching organization data',
-          details: orgDataError.message 
+          error: 'Internal server error'
         })
       }
 
@@ -137,7 +151,7 @@ export function withOrganization(handler) {
       // 6. Kutsu alkuperäinen handler
       return handler(req, res)
     } catch (error) {
-      console.error('withOrganization middleware error:', error)
+      logger.error('withOrganization middleware error', { message: error.message, stack: error.stack, name: error.name })
       return res.status(500).json({ error: 'Internal server error' })
     }
   }

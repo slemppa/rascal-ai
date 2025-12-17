@@ -26,7 +26,7 @@ export default function CarouselTemplateSelector() {
         const userRaw = JSON.parse(localStorage.getItem('user') || 'null');
         companyId = userRaw?.companyId || userRaw?.user?.companyId || null;
       } catch (e) {}
-      const res = await fetch('/api/carousel-template', {
+      const res = await fetch('/api/content/carousel-template', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

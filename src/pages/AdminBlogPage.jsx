@@ -116,7 +116,7 @@ export default function AdminBlogPage() {
         }
 
         // Lähetä backend API:n kautta proxy:nä
-        const response = await fetch('/api/blog-article-management', {
+        const response = await fetch('/api/content/blog/article-management', {
           method: 'POST',
           body: fd
         })
@@ -159,7 +159,7 @@ export default function AdminBlogPage() {
         }
 
         // Lähetä backend API:n kautta proxy:nä
-        const response = await fetch('/api/blog-article-management', {
+        const response = await fetch('/api/content/blog/article-management', {
           method: 'POST',
           body: fd
         })

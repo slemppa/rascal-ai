@@ -1314,7 +1314,7 @@ function AvatarSectionMulti({ companyId }) {
     if (!companyId) return;
     setLoading(true);
     setError('');
-    fetch('/api/avatar-status.js', {
+    fetch('/api/avatars/status', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ companyId })
@@ -1354,7 +1354,7 @@ function AvatarSectionMulti({ companyId }) {
       formData.append('companyId', companyId);
       
       // Lähetä kuva backendiin
-      const res = await fetch('/api/avatar-upload.js', {
+      const res = await fetch('/api/avatars/upload', {
         method: 'POST',
         body: formData
       });
@@ -1371,7 +1371,7 @@ function AvatarSectionMulti({ companyId }) {
         
         // Päivitä avatar-status hetken kuluttua
         setTimeout(() => {
-          fetch('/api/avatar-status.js', {
+          fetch('/api/avatars/status', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ companyId })
@@ -1415,7 +1415,7 @@ function AvatarSectionMulti({ companyId }) {
     setError('')
     
     try {
-      const res = await fetch('/api/avatar-delete.js', {
+      const res = await fetch('/api/avatars/delete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ companyId, avatarId })
@@ -1677,7 +1677,7 @@ function VoiceSection({ companyId }) {
     setError('');
     
     try {
-      const res = await fetch('/api/avatar-status.js', {
+      const res = await fetch('/api/avatars/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ companyId })
@@ -1716,7 +1716,7 @@ function VoiceSection({ companyId }) {
       formData.append('file', file);
       formData.append('companyId', companyId);
 
-      const res = await fetch('/api/avatar-upload.js', {
+      const res = await fetch('/api/avatars/upload', {
         method: 'POST',
         body: formData
       });

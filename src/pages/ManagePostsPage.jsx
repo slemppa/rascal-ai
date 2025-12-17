@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
+import { getCurrentUser } from '../utils/userApi'
 import { useAuth } from '../contexts/AuthContext'
 import { useMonthlyLimit } from '../hooks/useMonthlyLimit'
 import { useNextMonthQuota } from '../hooks/useNextMonthQuota'
@@ -549,7 +550,7 @@ export default function ManagePostsPage() {
       }
       
       // Kutsu omaa proxy-endpointtia axiosilla
-      const response = await axios.get('/api/mixpost-posts', {
+      const response = await axios.get('/api/integrations/mixpost/posts', {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -629,21 +630,17 @@ export default function ManagePostsPage() {
           return
         }
 
-        // Hae company_id Supabasesta
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('company_id')
-          .eq('id', userId)
-          .single()
+        // Hae käyttäjätiedot API:n kautta
+        const userData = await getCurrentUser()
 
-        if (userError || !userData?.company_id) {
+        if (!userData?.company_id) {
           setAvatarImages([])
           setAvatarError('company_id puuttuu')
           return
         }
 
         // Kutsu avatar-status APIa
-        const res = await fetch('/api/avatar-status.js', {
+        const res = await fetch('/api/avatars/status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ companyId: userData.company_id })
@@ -691,13 +688,6 @@ export default function ManagePostsPage() {
     }
   }, [showEditModal, editModalStep, editingPost])
 
-  // Hae Mixpost postaukset kun sivu avataan
-  useEffect(() => {
-    if (user) {
-      fetchMixpostPosts()
-    }
-  }, [user])
-  
   // Notification states
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
@@ -793,6 +783,7 @@ export default function ManagePostsPage() {
     }
   }
 
+  // Hae kaikki data kun sivu avataan (vain kerran)
   useEffect(() => {
     if (!user || hasInitialized.current) return
     
@@ -800,6 +791,7 @@ export default function ManagePostsPage() {
     fetchPosts()
     fetchReelsPosts() // Haetaan reels data automaattisesti
     fetchSocialAccounts() // Haetaan somekanavat
+    fetchMixpostPosts() // Haetaan Mixpost postaukset
   }, [user])
 
   // Siirrä pois UGC-tabista jos feature poistetaan
@@ -878,15 +870,12 @@ export default function ManagePostsPage() {
         return
       }
 
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', userId)
-        .single()
-      if (userError || !userData?.company_id) {
+      // Hae käyttäjätiedot API:n kautta
+      const userData = await getCurrentUser()
+      if (!userData?.company_id) {
         return
       }
-      const response = await fetch(`/api/get-reels?companyId=${userData.company_id}`)
+      const response = await fetch(`/api/social/reels/list?companyId=${userData.company_id}`)
       if (!response.ok) {
         return
       }
@@ -1031,7 +1020,7 @@ export default function ManagePostsPage() {
 
       // Lähetetään idea-generation kutsu N8N:lle
       try {
-        const response = await fetch('/api/idea-generation', {
+        const response = await fetch('/api/ai/generate-ideas', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1095,7 +1084,7 @@ export default function ManagePostsPage() {
           return
         }
 
-        const response = await fetch('/api/mixpost-posts', {
+        const response = await fetch('/api/integrations/mixpost/posts', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -1232,7 +1221,7 @@ export default function ManagePostsPage() {
 
 
 
-               const response = await fetch('/api/voiceover-ready', {
+               const response = await fetch('/api/webhooks/voiceover-ready', {
                  method: 'POST',
                  headers: {
                    'Content-Type': 'application/json',
@@ -1438,7 +1427,7 @@ export default function ManagePostsPage() {
         scheduleData.segments = segments
       }
 
-      const response = await fetch('/api/post-actions', {
+      const response = await fetch('/api/social/posts/actions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1573,7 +1562,7 @@ export default function ManagePostsPage() {
       
       console.log('Sending publish data:', publishData)
       
-      const response = await fetch('/api/post-actions', {
+      const response = await fetch('/api/social/posts/actions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1693,7 +1682,7 @@ export default function ManagePostsPage() {
       console.log('🔵 Request body:', requestBody)
 
       // Kutsu API endpointia
-      const response = await fetch('/api/mixpost-delete-post', {
+      const response = await fetch('/api/integrations/mixpost/delete-post', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -1734,7 +1723,7 @@ export default function ManagePostsPage() {
         throw new Error('User ID not found')
       }
 
-      const response = await fetch('/api/content-media-management', {
+      const response = await fetch('/api/content/media-management', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -1815,7 +1804,7 @@ export default function ManagePostsPage() {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 60000) // 60 sekuntia timeout
 
-      const response = await fetch('/api/content-media-management', {
+      const response = await fetch('/api/content/media-management', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${sessionData.session.access_token}`
@@ -3436,7 +3425,7 @@ export default function ManagePostsPage() {
                               return
                             }
                             // Lähetä endpointiin
-                            await fetch('/api/voiceover-ready', {
+                            await fetch('/api/webhooks/voiceover-ready', {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
                               body: JSON.stringify({

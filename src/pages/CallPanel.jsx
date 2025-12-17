@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useSearchParams } from 'react-router-dom'
+import { getCurrentUser } from '../utils/userApi'
 import CallDetailModal from '../components/calls/CallDetailModal'
 import { supabase } from '../lib/supabase'
 import AddCallTypeModal from '../components/AddCallTypeModal'
@@ -210,11 +211,8 @@ export default function CallPanel() {
     const fetchUserVoiceId = async () => {
       if (!user?.id) return
       try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('voice_id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae käyttäjätiedot API:n kautta
+      const data = await getCurrentUser()
         
         if (error) {
           console.error('Error fetching user voice_id:', error)
@@ -338,7 +336,7 @@ export default function CallPanel() {
       // Hae user_id Supabasesta
       const user_id = user?.id
 
-      const res = await fetch('/api/validate-sheet', {
+      const res = await fetch('/api/integrations/validate-sheet', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -422,17 +420,18 @@ export default function CallPanel() {
       if (isMikaSpecialData) {
         // Käytä Mika Special mass-call v2 API:a
         
-        const response = await fetch('/api/mika-mass-call-v2', {
+        const response = await fetch('/api/calls/mass', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            ...(session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {})
           },
           body: JSON.stringify({
+            source: 'contacts',
             contacts: validationResult.data,
             callType: callType,
             script: script,
-            voice_id: selectedVoice,
-            user_id: user?.id
+            voice_id: selectedVoice
           })
         })
         
@@ -655,7 +654,7 @@ export default function CallPanel() {
         return
       }
       
-      const response = await axios.post('/api/single-call', {
+      const response = await axios.post('/api/calls/single', {
         phoneNumber: normalizedPhoneNumber,
         name,
         callType,
@@ -693,12 +692,8 @@ export default function CallPanel() {
       const inboundVoiceObj = getVoiceOptions().find(v => v.value === inboundVoice)
       const inboundVoiceId = inboundVoiceObj?.id
       
-      // Hae käyttäjän tiedot (vapi_inbound_assistant_id)
-      const { data: userProfile, error: userError } = await supabase
-        .from('users')
-        .select('contact_email, contact_person, company_name, vapi_inbound_assistant_id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae käyttäjän tiedot API:n kautta
+      const userProfile = await getCurrentUser()
       
       if (userError || !userProfile) {
         setError('Käyttäjää ei löytynyt')
@@ -706,7 +701,7 @@ export default function CallPanel() {
       }
 
       // Käytä uutta API endpointia webhook-integraatiolla
-      const response = await fetch('/api/save-inbound-settings', {
+      const response = await fetch('/api/calls/inbound-settings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -750,12 +745,8 @@ export default function CallPanel() {
       const inboundVoiceObj = getVoiceOptions().find(v => v.value === editingInboundSettings.voice)
       const inboundVoiceId = inboundVoiceObj?.id
       
-      // Hae käyttäjän tiedot (vapi_inbound_assistant_id)
-      const { data: userProfile, error: userError } = await supabase
-        .from('users')
-        .select('contact_email, contact_person, company_name, vapi_inbound_assistant_id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae käyttäjän tiedot API:n kautta
+      const userProfile = await getCurrentUser()
       
       if (userError || !userProfile) {
         setError('Käyttäjää ei löytynyt')
@@ -763,7 +754,7 @@ export default function CallPanel() {
       }
 
       // Käytä uutta API endpointia webhook-integraatiolla
-      const response = await fetch('/api/save-inbound-settings', {
+      const response = await fetch('/api/calls/inbound-settings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -980,14 +971,18 @@ export default function CallPanel() {
         return
       }
       
-      // Hae ensin users.id käyttäen auth_user_id:tä
-      const { data: userProfile, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae käyttäjän ID API:n kautta
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        return
+      }
       
-      if (userError || !userProfile) {
+      const userResponse = await axios.get('/api/users/me', {
+        headers: { Authorization: `Bearer ${session.access_token}` }
+      })
+      const userProfile = userResponse.data
+      
+      if (!userProfile) {
         return
       }
 
@@ -1146,7 +1141,7 @@ export default function CallPanel() {
       }
 
       const { data: { session } } = await supabase.auth.getSession()
-      const response = await fetch('/api/call-type-improvement', {
+      const response = await fetch('/api/calls/type-improvement', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1157,18 +1152,25 @@ export default function CallPanel() {
         })
       })
 
-      if (response.ok) {
-        const result = await response.json()
-        alert('Inbound-asetukset lähetetty AI-parannukseen! Saat parannetun version pian.')
-        // Merkitse että AI-parannus on lähetetty
-        setAiEnhancementSent(true)
-        // Sulje modaali onnistuneen lähetyksen jälkeen
-        setShowEditInboundModal(false)
-        setEditingInboundSettings(null)
-      } else {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Lähetys epäonnistui')
+      if (!response.ok) {
+        // Tarkista onko vastaus JSON vai HTML
+        const contentType = response.headers.get('content-type')
+        if (contentType && contentType.includes('application/json')) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Lähetys epäonnistui')
+        } else {
+          // Jos vastaus on HTML (404-sivu), endpoint ei löydy
+          throw new Error(`API endpoint ei löydy (${response.status}). Tarkista että /api/calls/type-improvement on olemassa.`)
+        }
       }
+
+      const result = await response.json()
+      alert('Inbound-asetukset lähetetty AI-parannukseen! Saat parannetun version pian.')
+      // Merkitse että AI-parannus on lähetetty
+      setAiEnhancementSent(true)
+      // Sulje modaali onnistuneen lähetyksen jälkeen
+      setShowEditInboundModal(false)
+      setEditingInboundSettings(null)
     } catch (error) {
       console.error('AI-parannuksen lähetys epäonnistui:', error)
       alert('AI-parannuksen lähetys epäonnistui: ' + (error.message || error))
@@ -1882,14 +1884,8 @@ export default function CallPanel() {
     setMikaContactsError('')
     
     try {
-      const response = await fetch('/api/mika-special-contacts')
-      const result = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to fetch contacts')
-      }
-      setMikaContacts(result.data || [])
-      
+      // TODO: Mika Special contacts endpoint on vanhentunut - korvaa tarvittaessa
+      throw new Error('Mika Special contacts endpoint on vanhentunut')
     } catch (error) {
       console.error('Frontend: Error fetching Mika Special contacts:', error)
       setMikaContactsError(error.message)
@@ -1908,31 +1904,9 @@ export default function CallPanel() {
     setMikaSearchLoading(true)
     
     try {
-
-      
       // Lähetä webhook-kutsu N8N:ään hakusanoilla
-      const response = await fetch('/api/mika-special-contacts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'search_contacts',
-          name: mikaSearchName.trim(),
-          title: mikaSearchTitle.trim(),
-          organization: mikaSearchOrganization.trim(),
-          timestamp: new Date().toISOString()
-        })
-      })
-      
-      if (!response.ok) {
-        throw new Error('Search request failed')
-      }
-      
-      const result = await response.json()
-      
-      setMikaSearchResults(result.data || [])
-      
+      // TODO: Mika Special contacts endpoint on vanhentunut - korvaa tarvittaessa
+      throw new Error('Mika Special contacts endpoint on vanhentunut')
     } catch (error) {
       console.error('Frontend: Error searching Mika contacts:', error)
       setMikaSearchResults([])
@@ -2086,7 +2060,7 @@ export default function CallPanel() {
     try {
       const user_id = user?.id
 
-      const res = await fetch('/api/validate-sheet', {
+      const res = await fetch('/api/integrations/validate-sheet', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2132,7 +2106,7 @@ export default function CallPanel() {
         campaigns: massCallCampaigns.map(c => ({ id: c.id, name: c.name }))
       })
       
-      const res = await fetch('/api/mass-call', {
+      const res = await fetch('/api/calls/mass', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
         body: JSON.stringify({
@@ -2351,7 +2325,7 @@ export default function CallPanel() {
         campaigns: massCallCampaigns.map(c => ({ id: c.id, name: c.name }))
       })
       
-      const res = await fetch('/api/mass-call', {
+      const res = await fetch('/api/calls/mass', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(token2 ? { Authorization: `Bearer ${token2}` } : {}) },
         body: JSON.stringify({

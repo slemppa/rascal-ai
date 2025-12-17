@@ -193,7 +193,7 @@ export default function VastaajaPage() {
       if (updateError) throw updateError
 
       const profile = userProfileDetails || {}
-      const response = await fetch('/api/save-inbound-settings', {
+      const response = await fetch('/api/calls/inbound-settings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

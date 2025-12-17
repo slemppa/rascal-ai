@@ -186,7 +186,7 @@ export default function AIChatPage() {
     setFilesError('')
     setFiles([]) // Tyhjennä vanhat tiedostot
     try {
-      const response = await axios.post('/api/dev-knowledge', { action: 'list', userId: orgId }, {
+      const response = await axios.post('/api/storage/knowledge', { action: 'list', userId: orgId }, {
         headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
       })
       
@@ -311,7 +311,7 @@ export default function AIChatPage() {
         const { data: { session } } = await supabase.auth.getSession()
         if (session?.access_token) {
           try {
-            const threadResponse = await axios.post('/api/ai-chat-threads', {
+            const threadResponse = await axios.post('/api/ai/threads', {
               title: userMessageContent.substring(0, 50), // Käytä ensimmäistä viestiä otsikkona
               assistant_type: assistantType
             }, {
@@ -345,7 +345,7 @@ export default function AIChatPage() {
       // Tämä auttaa havaitsemaan kun uusi vastaus tulee
       if (activeThreadId) {
         try {
-          const currentResponse = await axios.get(`/api/zep-messages?threadId=${activeThreadId}`)
+          const currentResponse = await axios.get(`/api/integrations/zep/messages?threadId=${activeThreadId}`)
           const currentMessages = currentResponse.data?.messages || []
           // Aseta viestimääräksi nykyinen määrä (käyttäjän uusi viesti lisätään pian Zepiin)
           lastMessageCountRef.current = currentMessages.length
@@ -375,7 +375,7 @@ export default function AIChatPage() {
       }
       
       // FIRE-AND-FORGET: Lähetä taustalle, älä odota vastausta
-      axios.post('/api/chat', payload)
+      axios.post('/api/ai/chat', payload)
         .then(response => {
           dequeuePending(pendingId)
         })
@@ -415,7 +415,7 @@ export default function AIChatPage() {
       if (!pendingQueueRef.current.length) return
       const queue = [...pendingQueueRef.current]
       for (const item of queue) {
-        try { await axios.post('/api/chat', item.payload); dequeuePending(item.id) } catch {}
+        try { await axios.post('/api/ai/chat', item.payload); dequeuePending(item.id) } catch {}
       }
     }
     flushWithAxios()
@@ -428,10 +428,10 @@ export default function AIChatPage() {
         let sent = false
         if (navigator.sendBeacon) {
           const blob = new Blob([body], { type: 'application/json' })
-          sent = navigator.sendBeacon('/api/chat', blob)
+          sent = navigator.sendBeacon('/api/ai/chat', blob)
         }
         if (!sent) {
-          try { fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }) } catch {}
+          try { fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }) } catch {}
         }
         dequeuePending(item.id)
       }
@@ -473,7 +473,7 @@ export default function AIChatPage() {
       formData.append('userId', orgId)
       try { formData.append('fileNames', JSON.stringify(files.map(f => f.name))) } catch {}
 
-      await axios.post('/api/dev-upload', formData, {
+      await axios.post('/api/storage/knowledge/upload', formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
           'x-api-key': import.meta.env.N8N_SECRET_KEY
@@ -542,14 +542,18 @@ export default function AIChatPage() {
         return
       }
       console.log('🗑️ Poistetaan tiedosto, IDs:', fileIds, 'orgId:', orgId)
-      await axios.post('/api/dev-delete-files', {
-        ids: fileIds
-      }, {
-        headers: { 
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json'
-        }
-      })
+      // Poista jokainen tiedosto erikseen koska API vaatii userId ja fileId
+      for (const fileId of fileIds) {
+        await axios.post('/api/storage/delete-files', {
+          userId: orgId,
+          fileId: fileId
+        }, {
+          headers: { 
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+      }
       // Poista tiedosto listasta vertaamalla id-arrayja
       setFiles(prev => prev.filter(file => 
         JSON.stringify(file.id) !== JSON.stringify(fileIds)
@@ -573,7 +577,7 @@ export default function AIChatPage() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) return
 
-      const response = await axios.get('/api/ai-chat-threads', {
+      const response = await axios.get('/api/ai/threads', {
         headers: { 'Authorization': `Bearer ${session.access_token}` },
         params: { assistant_type: assistantType }
       })
@@ -595,7 +599,7 @@ export default function AIChatPage() {
         return
       }
 
-      const response = await axios.post('/api/ai-chat-threads', {
+      const response = await axios.post('/api/ai/threads', {
         title: 'Uusi keskustelu',
         assistant_type: assistantType
       }, {
@@ -665,7 +669,7 @@ export default function AIChatPage() {
       }
       
       try {
-        const response = await axios.get(`/api/zep-messages?threadId=${threadIdToPoll}`)
+        const response = await axios.get(`/api/integrations/zep/messages?threadId=${threadIdToPoll}`)
         const zepMessages = response.data?.messages || []
         
         console.log(`🔍 Safari polling: Tarkistetaan viestejä. Zepissä: ${zepMessages.length}, Viimeksi: ${lastMessageCountRef.current}`)
@@ -803,7 +807,7 @@ export default function AIChatPage() {
       console.log(`🔄 Haetaan viestit Zepistä threadille: ${threadIdToLoad}`)
       
       // Hae viestit Zepistä
-      const response = await axios.get(`/api/zep-messages?threadId=${threadIdToLoad}`)
+      const response = await axios.get(`/api/integrations/zep/messages?threadId=${threadIdToLoad}`)
       
       const zepMessages = response.data?.messages || []
       console.log(`✅ Ladattiin ${zepMessages.length} viestiä Zepistä`)
@@ -879,7 +883,7 @@ export default function AIChatPage() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) return
 
-      await axios.delete('/api/ai-chat-threads', {
+      await axios.delete('/api/ai/threads', {
         data: { threadId: threadIdToDelete },
         headers: { 
           'Authorization': `Bearer ${session.access_token}`,
@@ -939,7 +943,7 @@ export default function AIChatPage() {
         return
       }
 
-      const response = await axios.patch('/api/ai-chat-threads', {
+      const response = await axios.patch('/api/ai/threads', {
         threadId,
         title: editingTitle.trim()
       }, {
@@ -1253,7 +1257,7 @@ export default function AIChatPage() {
       }
 
       // Backend käyttää automaattisesti req.organization.id:tä, mutta lähetetään orgId varmuuden vuoksi
-      await axios.post('/api/storage-ingest', {
+      await axios.post('/api/storage/ingest', {
         userId: orgId, // Organisaation ID
         files: uploaded
       }, {
@@ -1285,7 +1289,7 @@ export default function AIChatPage() {
     Array.from(files).forEach(file => formData.append('files', file))
     formData.append('action', 'feed')
     formData.append('userId', userId)
-    return axios.post('/api/dev-upload', formData, {
+    return axios.post('/api/storage/knowledge/upload', formData, {
       headers: { 
         'Content-Type': 'multipart/form-data',
         'x-api-key': import.meta.env.N8N_SECRET_KEY
@@ -1295,7 +1299,7 @@ export default function AIChatPage() {
 
   // UUSI: Assistentin tiedoston poisto (POST + action)
   async function deleteAssistantKnowledgeFile({ fileIds, userId }) {
-    return axios.post('/api/dev-delete-files', {
+    return axios.post('/api/storage/knowledge/delete', {
       ids: fileIds  // fileIds on jo array
     }, {
       headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }

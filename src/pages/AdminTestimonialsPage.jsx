@@ -225,7 +225,7 @@ export default function AdminTestimonialsPage({ embedded = false }) {
                         if (form.avatar_url) fd.append('avatar_url', form.avatar_url)
                         const sanitizedFilename = sanitizeFilename(form.avatar_file.name)
                         fd.append('avatar', form.avatar_file, sanitizedFilename)
-                        const resp = await fetch('/api/testimonials-management', { method: 'POST', body: fd })
+                        const resp = await fetch('/api/content/testimonials/manage', { method: 'POST', body: fd })
                         if (!resp.ok) throw new Error('Update with image failed')
                       } else {
                         // Ei uutta kuvaa → suora Supabase-päivitys kentille
@@ -262,7 +262,7 @@ export default function AdminTestimonialsPage({ embedded = false }) {
                         const sanitizedFilename = sanitizeFilename(form.avatar_file.name)
                         fd.append('avatar', form.avatar_file, sanitizedFilename)
                       }
-                      const resp = await fetch('/api/testimonials-management', { method: 'POST', body: fd })
+                      const resp = await fetch('/api/content/testimonials/manage', { method: 'POST', body: fd })
                       if (!resp.ok) throw new Error('Create failed')
                       setForm({ id: null, name: '', title: '', company: '', quote: '', avatar_url: '', published: true })
                       setTempAvatarPreview('')

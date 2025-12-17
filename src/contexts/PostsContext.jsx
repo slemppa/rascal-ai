@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useCallback, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
+import { getCurrentUser } from '../utils/userApi'
 import { getUserOrgId } from '../lib/getUserOrgId'
 
 // Initial state
@@ -361,13 +362,10 @@ export const PostsProvider = ({ children }) => {
       dispatch({ type: ACTIONS.SET_REELS_LOADING, payload: true })
       dispatch({ type: ACTIONS.SET_REELS_ERROR, payload: null })
       
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', userId)
-        .single()
+      // Hae käyttäjän ID API:n kautta
+      const userData = await getCurrentUser()
       
-      if (userError || !userData?.id) {
+      if (!userData?.id) {
         throw new Error('Käyttäjän ID ei löytynyt')
       }
       

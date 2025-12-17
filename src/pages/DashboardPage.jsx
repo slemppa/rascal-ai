@@ -42,7 +42,7 @@ function EditPostModal({ post, onClose, onSave }) {
         "Publish Date": publishDate,
         updateType: 'postUpdate'
       }
-      const res = await fetch('/api/update-post', {
+      const res = await fetch('/api/social/posts/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -449,7 +449,7 @@ export default function DashboardPage() {
         const token = session?.data?.session?.access_token
         if (!token) return
         const days = selectedFilter === 'week' ? 7 : selectedFilter === 'month' ? 30 : 30
-        const res = await fetch(`/api/dashboard-success?days=${encodeURIComponent(days)}`, { headers: { Authorization: `Bearer ${token}` } })
+        const res = await fetch(`/api/analytics/success?days=${encodeURIComponent(days)}`, { headers: { Authorization: `Bearer ${token}` } })
         const json = await res.json()
         if (res.ok) setSuccessStats(json)
       } catch (e) {
@@ -468,8 +468,8 @@ export default function DashboardPage() {
         const token = session?.data?.session?.access_token
         if (!token) return
         const [scRes, hmRes] = await Promise.all([
-          fetch(`/api/dashboard-calls-scatter?days=30`, { headers: { Authorization: `Bearer ${token}` } }),
-          fetch(`/api/dashboard-calls-heatmap?days=30`, { headers: { Authorization: `Bearer ${token}` } })
+          fetch(`/api/analytics/scatter?days=30`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`/api/analytics/heatmap?days=30`, { headers: { Authorization: `Bearer ${token}` } })
         ])
         const scJson = await scRes.json().catch(() => [])
         const hmJson = await hmRes.json().catch(() => [])
@@ -756,7 +756,7 @@ export default function DashboardPage() {
 
         // Hae data riippuen filtteristä
         const days = gaVisitorsFilter === 'week' ? 7 : 30
-        const response = await axios.get(`/api/google-analytics-visitors?days=${days}`, {
+        const response = await axios.get(`/api/analytics/visitors?days=${days}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -826,7 +826,7 @@ export default function DashboardPage() {
             console.error('No auth token available for Mixpost API')
             mixpostData = []
           } else {
-            const response = await axios.get('/api/mixpost-posts', {
+            const response = await axios.get('/api/integrations/mixpost/posts', {
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -894,7 +894,7 @@ export default function DashboardPage() {
           return
         }
 
-        const response = await fetch('/api/avatar-status.js', {
+        const response = await fetch('/api/avatars/status', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -1027,7 +1027,7 @@ export default function DashboardPage() {
           formData.append('companyId', companyId)
         }
         
-        const res = await fetch('/api/avatar-upload.js', {
+        const res = await fetch('/api/avatars/upload', {
           method: 'POST',
           body: formData,
         })
@@ -1060,7 +1060,7 @@ export default function DashboardPage() {
         formData.append('companyId', companyId)
       }
       
-      const res = await fetch('/api/avatar-upload.js', {
+      const res = await fetch('/api/avatars/upload', {
         method: 'POST',
         body: formData,
       })

@@ -45,7 +45,7 @@ export default function CarouselsTab({
           verify_only: false
         }
 
-        const response = await fetch('/api/airtable-carousels', {
+        const response = await fetch('/api/integrations/airtable/carousels', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -117,7 +117,7 @@ export default function CarouselsTab({
         updates: updates
       }
 
-      const response = await fetch('/api/airtable-carousels', {
+      const response = await fetch('/api/integrations/airtable/carousels', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

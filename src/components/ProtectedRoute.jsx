@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import { getCurrentUser } from '../utils/userApi'
 import { useFeatures } from '../hooks/useFeatures'
 import './ProtectedRoute.css'
 
@@ -28,11 +29,9 @@ const ProtectedRoute = ({ children, requiredFeatures = [], requiredRole = null }
 
     const checkUserRole = async () => {
       try {
-        const { data: userData, error } = await supabase
-          .from('users')
-          .select('role, company_id')
-          .eq('auth_user_id', user.id)
-          .single()
+        // Hae käyttäjätiedot API:n kautta
+        const userData = await getCurrentUser()
+        const error = null
 
         if (error || !userData) {
           setHasAccess(false)

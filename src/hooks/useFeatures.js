@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
-// Hakee käyttäjän featuret /api/user-features endpointilta ja tarjoaa has(name)
+// Hakee käyttäjän featuret /api/users/features endpointilta ja tarjoaa has(name)
 export function useFeatures() {
   const [features, setFeatures] = useState([])
   const [crmConnected, setCrmConnected] = useState(false)
@@ -23,7 +23,7 @@ export function useFeatures() {
           return
         }
 
-        const res = await fetch('/api/user-features', {
+        const res = await fetch('/api/users/features', {
           headers: { Authorization: `Bearer ${token}` }
         })
         if (!res.ok) {

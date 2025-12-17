@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import pkg from '../../package.json'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
+import { getCurrentUser } from '../utils/userApi'
 import { useAuth } from '../contexts/AuthContext'
 import Button from '../components/Button'
 import '../components/ModalComponents.css'
@@ -77,11 +78,9 @@ export default function AdminPage() {
     if (!user) return
 
     try {
-      const { data: userData, error } = await supabase
-        .from('users')
-        .select('role, company_id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae käyttäjätiedot API:n kautta
+      const userData = await getCurrentUser()
+      const error = null
 
       if (error) {
         console.error('Error checking admin status:', error)
@@ -127,7 +126,7 @@ export default function AdminPage() {
         throw new Error('No access token')
       }
 
-      const response = await fetch('/api/admin-data?type=users', {
+      const response = await fetch('/api/admin/data?type=users', {
         headers: {
           'Authorization': `Bearer ${token.data.session.access_token}`
         }
@@ -155,7 +154,7 @@ export default function AdminPage() {
         throw new Error('No access token')
       }
 
-      const response = await fetch('/api/admin-data?type=content', {
+      const response = await fetch('/api/admin/data?type=content', {
         headers: {
           'Authorization': `Bearer ${token.data.session.access_token}`
         }
@@ -335,7 +334,7 @@ export default function AdminPage() {
         throw new Error('No access token')
       }
 
-      const response = await fetch('/api/admin-call-logs', {
+      const response = await fetch('/api/admin/call-logs', {
         headers: {
           'Authorization': `Bearer ${token.data.session.access_token}`
         }
@@ -363,7 +362,7 @@ export default function AdminPage() {
         throw new Error('No access token')
       }
 
-      const response = await fetch('/api/admin-message-logs', {
+      const response = await fetch('/api/admin/message-logs', {
         headers: {
           'Authorization': `Bearer ${token.data.session.access_token}`
         }
@@ -395,7 +394,7 @@ export default function AdminPage() {
         throw new Error('No access token')
       }
 
-      const response = await fetch('/api/admin-data?type=segments', {
+      const response = await fetch('/api/admin/data?type=segments', {
         headers: {
           'Authorization': `Bearer ${token.data.session.access_token}`
         }
@@ -423,7 +422,7 @@ export default function AdminPage() {
         throw new Error('No access token')
       }
 
-      const response = await fetch('/api/admin-data?type=stats', {
+      const response = await fetch('/api/admin/data?type=stats', {
         headers: {
           'Authorization': `Bearer ${token.data.session.access_token}`
         }

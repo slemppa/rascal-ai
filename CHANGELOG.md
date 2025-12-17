@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.105.0](https://github.com/slemppa/rascal-ai/compare/v1.104.0...v1.105.0) (2025-12-17)
+
+
+### 📚 Documentation
+
+* päivitä liidien ohjeet help-sivulle ja lisää linkki ([ee134d9](https://github.com/slemppa/rascal-ai/commit/ee134d91d27c008e9fd42eb64983597066636932))
+
+
+### 🔧 Chores
+
+* align API paths and knowledge endpoints ([8db266a](https://github.com/slemppa/rascal-ai/commit/8db266a292be65b747d1932c12e7534d6a42b87b))
+* finalize mixpost & knowledge cleanup ([d461200](https://github.com/slemppa/rascal-ai/commit/d4612004c296dca78a6cfeb04d59447c78658392))
+* harden n8n webhooks & api CORS ([f8fe494](https://github.com/slemppa/rascal-ai/commit/f8fe49455134d3905b7d8ddc36583e15d145af6b))
+* harden secrets, oauth, and mixpost proxy ([5acbe07](https://github.com/slemppa/rascal-ai/commit/5acbe07d221b51db156dda7e0f316339a6096acb))
+* poista arkistotiedosto ([68af20d](https://github.com/slemppa/rascal-ai/commit/68af20d5eaa39898f78503ffdef39731fd315326))
+
+
+### 🐛 Bug Fixes
+
+* improve secret lookup with better trimming and debug logging ([e6ec6ff](https://github.com/slemppa/rascal-ai/commit/e6ec6ff12c9c5067f521e05ef10a14e232343f72))
+* make global admin/mod see admin views ([0a882f7](https://github.com/slemppa/rascal-ai/commit/0a882f742a05ec73d1f622d19f5a758cd3f0f458))
+* replace direct Supabase user calls with secure API ([7d869c1](https://github.com/slemppa/rascal-ai/commit/7d869c1494a15421a505a5ca1e38cdf9db66e38b))
+* secure storage delete and inbound webhook ([8fe7178](https://github.com/slemppa/rascal-ai/commit/8fe71781d26b2e6c556b6e444b88b58fd2d9fcc1))
+* **security:** enforce RLS and auth checks in api ([f96b0cc](https://github.com/slemppa/rascal-ai/commit/f96b0ccc3b0976718dbc4f9b3825d848428df61e))
+
+
+### ✨ Features
+
+* lisätty käyttäjien lista account manager -sivulle ([c6b55f3](https://github.com/slemppa/rascal-ai/commit/c6b55f353c3f4907f8ce968327b2da348c2a1e5d))
+* merge security hardening and Node.js encryption refactor ([7673e29](https://github.com/slemppa/rascal-ai/commit/7673e29e0c49a66558ae0b1e9cfc5ccbedf94f34))
+* **ugc:** lisätty Kuva/Video valinta ja toast-notifikaatiot ([43f7cb4](https://github.com/slemppa/rascal-ai/commit/43f7cb44b18056e43007ddc9ed69ad643cff4af8))
+* **ugc:** lisätty visuaalinen tyyli ja kuvan muoto valinnat ([3d5a7f4](https://github.com/slemppa/rascal-ai/commit/3d5a7f4c62450001165e0bda76e1250597d17c33))
+
+
+### ♻️ Code Refactoring
+
+* **api:** migrate to RESTful resource-based architecture ([403c632](https://github.com/slemppa/rascal-ai/commit/403c632dc939b9653f25a68aefc4ee9f3c8ac96f))
+* finalize api folder structure ([a74f99e](https://github.com/slemppa/rascal-ai/commit/a74f99e4d51cff55e990d2952e9a066e8ccf32f3))
+* move dev knowledge endpoints under storage/knowledge ([8c0286f](https://github.com/slemppa/rascal-ai/commit/8c0286f70d296c9c5c3833a402e2f64b9894447c))
+* move encryption to Node.js layer, remove RPC dependency ([96e3e79](https://github.com/slemppa/rascal-ai/commit/96e3e790167accd540180fc1d7ad4f4b1765b8ff))
+* organize API structure and improve security ([fccfbb5](https://github.com/slemppa/rascal-ai/commit/fccfbb5bd552ede1629b648614dea6ec832cd10b))
+* poista kovakoodatut ID:t ja optimoi dashboard ([4e1bf6b](https://github.com/slemppa/rascal-ai/commit/4e1bf6b1268446d3b25caa79cf9ac299518c9730))
+* refaktoroitu KanbanTab komponentiksi, lisätty paginointi ([3f45226](https://github.com/slemppa/rascal-ai/commit/3f4522618f1b5df5d7c4c077b66788657128defb))
+* viimeistele API-kansiorakenne ([6c113c4](https://github.com/slemppa/rascal-ai/commit/6c113c41a82393af59e775c419039ed1af365a72))
+
 ## [1.104.0](https://github.com/slemppa/rascal-ai/compare/v1.103.0...v1.104.0) (2025-12-10)
 
 

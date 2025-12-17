@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import LinkedInConnector from './LinkedInConnector'
-import { useMixpostIntegration } from './SocialMedia/hooks/useMixpostIntegration'
+import LinkedInConnector from '../components/LinkedInConnector'
+import { useMixpostIntegration } from '../components/SocialMedia/hooks/useMixpostIntegration'
 
 export default function LinkedInTest() {
   const [message, setMessage] = useState('')
@@ -62,6 +62,5 @@ export default function LinkedInTest() {
         </ul>
       </div>
     </div>
-  )}
-
-
+  )
+}

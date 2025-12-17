@@ -126,7 +126,7 @@ const TicketModal = ({ isOpen, onClose }) => {
       })
 
       // Lähetä API endpointiin (ei suoraan N8N:ään)
-      const response = await axios.post('/api/submit-ticket', formDataToSend, {
+      const response = await axios.post('/api/support/ticket', formDataToSend, {
         headers: {
           'Authorization': `Bearer ${sessionData.session.access_token}`
         },

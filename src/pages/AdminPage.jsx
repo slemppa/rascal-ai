@@ -154,7 +154,7 @@ export default function AdminPage() {
         throw new Error('No access token')
       }
 
-      const response = await fetch('/api/admin-data?type=content', {
+      const response = await fetch('/api/admin/data?type=content', {
         headers: {
           'Authorization': `Bearer ${token.data.session.access_token}`
         }
@@ -362,7 +362,7 @@ export default function AdminPage() {
         throw new Error('No access token')
       }
 
-      const response = await fetch('/api/admin-message-logs', {
+      const response = await fetch('/api/admin/message-logs', {
         headers: {
           'Authorization': `Bearer ${token.data.session.access_token}`
         }

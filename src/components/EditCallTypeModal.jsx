@@ -86,7 +86,7 @@ const EditCallTypeModal = ({
   const handleAIEnhancement = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      const response = await fetch('/api/call-type-improvement', {
+      const response = await fetch('/api/calls/type-improvement', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -97,17 +97,25 @@ const EditCallTypeModal = ({
         })
       })
 
-      if (response.ok) {
-        alert('Puhelun tyyppi lähetetty AI-parannukseen! Saat parannetun version pian.')
-        // Merkitse että AI-parannus on lähetetty ja sulje modaali
-        if (onAIEnhancementSent) {
-          onAIEnhancementSent()
+      if (!response.ok) {
+        // Tarkista onko vastaus JSON vai HTML
+        const contentType = response.headers.get('content-type')
+        if (contentType && contentType.includes('application/json')) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Lähetys epäonnistui')
+        } else {
+          // Jos vastaus on HTML (404-sivu), endpoint ei löydy
+          throw new Error(`API endpoint ei löydy (${response.status}). Tarkista että /api/calls/type-improvement on olemassa.`)
         }
-        onClose()
-      } else {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Lähetys epäonnistui')
       }
+
+      const result = await response.json()
+      alert('Puhelun tyyppi lähetetty AI-parannukseen! Saat parannetun version pian.')
+      // Merkitse että AI-parannus on lähetetty ja sulje modaali
+      if (onAIEnhancementSent) {
+        onAIEnhancementSent()
+      }
+      onClose()
     } catch (error) {
       console.error('AI-parannuksen lähetys epäonnistui:', error)
       alert('AI-parannuksen lähetys epäonnistui: ' + (error.message || error))

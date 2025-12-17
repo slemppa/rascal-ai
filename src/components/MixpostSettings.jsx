@@ -107,7 +107,7 @@ export default function WorkspaceSettings() {
       setTestResult(null)
       setError('')
 
-      const response = await fetch('/api/mixpost/test', {
+      const response = await fetch('/api/integrations/mixpost/test', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

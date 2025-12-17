@@ -756,7 +756,7 @@ export default function DashboardPage() {
 
         // Hae data riippuen filtteristä
         const days = gaVisitorsFilter === 'week' ? 7 : 30
-        const response = await axios.get(`/api/google-analytics-visitors?days=${days}`, {
+        const response = await axios.get(`/api/analytics/visitors?days=${days}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

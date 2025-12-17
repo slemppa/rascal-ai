@@ -420,17 +420,18 @@ export default function CallPanel() {
       if (isMikaSpecialData) {
         // Käytä Mika Special mass-call v2 API:a
         
-        const response = await fetch('/api/mika-mass-call-v2', {
+        const response = await fetch('/api/calls/mass', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            ...(session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {})
           },
           body: JSON.stringify({
+            source: 'contacts',
             contacts: validationResult.data,
             callType: callType,
             script: script,
-            voice_id: selectedVoice,
-            user_id: user?.id
+            voice_id: selectedVoice
           })
         })
         
@@ -972,12 +973,16 @@ export default function CallPanel() {
       
       // Hae käyttäjän ID API:n kautta
       const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        return
+      }
+      
       const userResponse = await axios.get('/api/users/me', {
         headers: { Authorization: `Bearer ${session.access_token}` }
       })
       const userProfile = userResponse.data
       
-      if (userError || !userProfile) {
+      if (!userProfile) {
         return
       }
 
@@ -1136,7 +1141,7 @@ export default function CallPanel() {
       }
 
       const { data: { session } } = await supabase.auth.getSession()
-      const response = await fetch('/api/call-type-improvement', {
+      const response = await fetch('/api/calls/type-improvement', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1147,18 +1152,25 @@ export default function CallPanel() {
         })
       })
 
-      if (response.ok) {
-        const result = await response.json()
-        alert('Inbound-asetukset lähetetty AI-parannukseen! Saat parannetun version pian.')
-        // Merkitse että AI-parannus on lähetetty
-        setAiEnhancementSent(true)
-        // Sulje modaali onnistuneen lähetyksen jälkeen
-        setShowEditInboundModal(false)
-        setEditingInboundSettings(null)
-      } else {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Lähetys epäonnistui')
+      if (!response.ok) {
+        // Tarkista onko vastaus JSON vai HTML
+        const contentType = response.headers.get('content-type')
+        if (contentType && contentType.includes('application/json')) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Lähetys epäonnistui')
+        } else {
+          // Jos vastaus on HTML (404-sivu), endpoint ei löydy
+          throw new Error(`API endpoint ei löydy (${response.status}). Tarkista että /api/calls/type-improvement on olemassa.`)
+        }
       }
+
+      const result = await response.json()
+      alert('Inbound-asetukset lähetetty AI-parannukseen! Saat parannetun version pian.')
+      // Merkitse että AI-parannus on lähetetty
+      setAiEnhancementSent(true)
+      // Sulje modaali onnistuneen lähetyksen jälkeen
+      setShowEditInboundModal(false)
+      setEditingInboundSettings(null)
     } catch (error) {
       console.error('AI-parannuksen lähetys epäonnistui:', error)
       alert('AI-parannuksen lähetys epäonnistui: ' + (error.message || error))
@@ -1872,14 +1884,8 @@ export default function CallPanel() {
     setMikaContactsError('')
     
     try {
-      const response = await fetch('/api/mika-special-contacts')
-      const result = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to fetch contacts')
-      }
-      setMikaContacts(result.data || [])
-      
+      // TODO: Mika Special contacts endpoint on vanhentunut - korvaa tarvittaessa
+      throw new Error('Mika Special contacts endpoint on vanhentunut')
     } catch (error) {
       console.error('Frontend: Error fetching Mika Special contacts:', error)
       setMikaContactsError(error.message)
@@ -1898,31 +1904,9 @@ export default function CallPanel() {
     setMikaSearchLoading(true)
     
     try {
-
-      
       // Lähetä webhook-kutsu N8N:ään hakusanoilla
-      const response = await fetch('/api/mika-special-contacts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'search_contacts',
-          name: mikaSearchName.trim(),
-          title: mikaSearchTitle.trim(),
-          organization: mikaSearchOrganization.trim(),
-          timestamp: new Date().toISOString()
-        })
-      })
-      
-      if (!response.ok) {
-        throw new Error('Search request failed')
-      }
-      
-      const result = await response.json()
-      
-      setMikaSearchResults(result.data || [])
-      
+      // TODO: Mika Special contacts endpoint on vanhentunut - korvaa tarvittaessa
+      throw new Error('Mika Special contacts endpoint on vanhentunut')
     } catch (error) {
       console.error('Frontend: Error searching Mika contacts:', error)
       setMikaSearchResults([])

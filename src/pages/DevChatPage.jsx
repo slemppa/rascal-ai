@@ -95,8 +95,8 @@ export default function DevChatPage() {
   }
 
   // DEV: erilliset endpointit listaukselle ja uploadille
-  const DEV_LIST_ENDPOINT = '/api/dev-knowledge'
-  const DEV_UPLOAD_ENDPOINT = '/api/dev-upload'
+  const DEV_LIST_ENDPOINT = '/api/storage/upload-knowledge'
+  const DEV_UPLOAD_ENDPOINT = '/api/storage/upload-knowledge'
 
   const fetchFiles = async () => {
     if (loadingUserData) {
@@ -244,7 +244,10 @@ export default function DevChatPage() {
   const handleFileDeletion = async (fileItem) => {
     try {
       const ids = Array.isArray(fileItem?.id) ? fileItem.id : (fileItem?.ids || [])
-      await axios.post('/api/dev-delete-files', { ids })
+      // Poista jokainen tiedosto erikseen koska API vaatii userId ja fileId
+      for (const id of ids) {
+        await axios.post('/api/storage/delete-files', { userId: user?.id, fileId: id })
+      }
       setFiles(prev => prev.filter(f => f.file_name !== fileItem.file_name))
       setSelectedFiles([])
     } catch (error) {

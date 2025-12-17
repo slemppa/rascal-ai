@@ -542,14 +542,18 @@ export default function AIChatPage() {
         return
       }
       console.log('🗑️ Poistetaan tiedosto, IDs:', fileIds, 'orgId:', orgId)
-      await axios.post('/api/dev-delete-files', {
-        ids: fileIds
-      }, {
-        headers: { 
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json'
-        }
-      })
+      // Poista jokainen tiedosto erikseen koska API vaatii userId ja fileId
+      for (const fileId of fileIds) {
+        await axios.post('/api/storage/delete-files', {
+          userId: orgId,
+          fileId: fileId
+        }, {
+          headers: { 
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+      }
       // Poista tiedosto listasta vertaamalla id-arrayja
       setFiles(prev => prev.filter(file => 
         JSON.stringify(file.id) !== JSON.stringify(fileIds)

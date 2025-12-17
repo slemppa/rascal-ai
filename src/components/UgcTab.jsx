@@ -160,7 +160,7 @@ export default function UgcTab() {
       const aspectRatio = getAspectRatio(ugcFormData.formatId)
 
       // Lähetä data N8N:ään
-      const response = await axios.post('/api/ugc-video', {
+      const response = await axios.post('/api/content/ugc-video', {
         productName: ugcFormData.productName,
         productDetails: ugcFormData.productDetails,
         productImageUrl: ugcFormData.productImageUrl,

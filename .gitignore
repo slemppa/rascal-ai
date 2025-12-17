@@ -28,3 +28,9 @@ dist-ssr
 node_modules
 dist
 .env
+
+# Test/Dev files that shouldn't be in production
+src/dev/
+scripts/dev/delete-files.js
+src/components/TestAutoLogout.jsx
+src/components/LinkedInTest.jsx

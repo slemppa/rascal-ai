@@ -83,24 +83,43 @@ export function withOrganization(handler) {
       if (!orgMember) {
         console.warn('withOrganization: User not found in org_members:', user.id)
         
-        // Tarkista onko käyttäjä admin-roolissa
+        // Tarkista onko käyttäjä globaali admin tai moderator users-taulussa
         const { data: adminCheck, error: adminError } = await supabase
           .from('users')
           .select('*')
           .eq('auth_user_id', user.id)
-          .single()
+          .maybeSingle()
         
-        if (!adminError && adminCheck && adminCheck.role === 'admin') {
-          // Admin-käyttäjä, käytä users.id organisaatio-ID:nä
+        console.log('withOrganization: Admin check result:', { 
+          adminCheck, 
+          adminError, 
+          role: adminCheck?.role,
+          isAdmin: adminCheck?.role === 'admin',
+          isModerator: adminCheck?.role === 'moderator'
+        })
+        
+        if (!adminError && adminCheck && (adminCheck.role === 'admin' || adminCheck.role === 'moderator')) {
+          // Globaali admin / moderator -käyttäjä, käytä users.id organisaatio-ID:nä
+          // ja aseta rooli suoraan users-taulun roolin mukaan
+          console.log('withOrganization: Setting organization for global admin/moderator:', {
+            id: adminCheck.id,
+            role: adminCheck.role
+          })
           req.organization = {
             id: adminCheck.id,
-            role: 'admin',
+            role: adminCheck.role, // 'admin' tai 'moderator'
             data: adminCheck
           }
           req.authUser = user
           req.supabase = supabase
           return handler(req, res)
         }
+        
+        console.error('withOrganization: User not found in org_members and not admin/moderator:', {
+          user_id: user.id,
+          adminCheck,
+          adminError
+        })
         
         return res.status(403).json({ 
           error: 'User not member of any organization',

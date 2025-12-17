@@ -63,8 +63,9 @@ export const AuthProvider = ({ children }) => {
               organizationId: orgMember.org_id,
               organizationRole: orgMember.role
             } : null)
-          } else if (orgError) {
-            // Jos org_members haussa virhe, yritetään hakea suoraan users-taulusta
+          } else if (orgError || !orgMember) {
+            // Jos org_members haussa virhe tai käyttäjää ei löydy, yritetään hakea suoraan users-taulusta
+            // ja tarkistaa onko globaali admin/moderator
             supabase
               .from('users')
               .select('*')
@@ -76,10 +77,27 @@ export const AuthProvider = ({ children }) => {
                     ? userData.features 
                     : defaultFeatures
                   
-                  setUser(prev => prev ? {
-                    ...prev,
-                    features: features
-                  } : null)
+                  // Jos käyttäjä on globaali admin tai moderator, aseta organization
+                  if (userData.role === 'admin' || userData.role === 'moderator') {
+                    setOrganization({
+                      id: userData.id,
+                      role: userData.role, // 'admin' tai 'moderator'
+                      data: userData
+                    })
+                    
+                    setUser(prev => prev ? {
+                      ...prev,
+                      features: features,
+                      organizationId: userData.id,
+                      organizationRole: userData.role
+                    } : null)
+                  } else {
+                    // Ei admin/moderator, päivitä vain features
+                    setUser(prev => prev ? {
+                      ...prev,
+                      features: features
+                    } : null)
+                  }
                 }
               })
           }

@@ -1,35 +1,78 @@
-import { createClient } from '@supabase/supabase-js'
+import { withOrganization } from '../middleware/with-organization.js'
+import logger from '../lib/logger.js'
 
-export default async function handler(req, res) {
-  if (req.method === 'OPTIONS' || req.method === 'HEAD') return res.status(204).end()
-  if (req.method !== 'POST' && req.method !== 'DELETE') return res.status(405).json({ error: 'Method not allowed' })
+async function handler(req, res) {
+  if (req.method === 'OPTIONS' || req.method === 'HEAD') {
+    return res.status(204).end()
+  }
+
+  if (req.method !== 'POST' && req.method !== 'DELETE') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
+
   try {
+    // Oleta, että body on parsittu (Next/Vercel). Fallback JSON.parseen jos ei ole.
     let body = {}
-    try { body = req.body && Object.keys(req.body).length ? req.body : JSON.parse(await readReqBody(req)) } catch {}
-    const { bucket = 'temp-ingest', paths = [], files = [] } = body || {}
-    const list = Array.isArray(paths) && paths.length ? paths : (Array.isArray(files) ? files.map(f => f.path).filter(Boolean) : [])
-    if (!list.length) return res.status(400).json({ error: 'paths vaaditaan' })
+    try {
+      body =
+        req.body && Object.keys(req.body).length
+          ? req.body
+          : req.readable
+          ? JSON.parse(await readReqBody(req))
+          : {}
+    } catch (parseErr) {
+      logger.warn('storage/delete: Invalid JSON body', { message: parseErr.message })
+      return res.status(400).json({ error: 'Virheellinen pyyntödata' })
+    }
 
-    const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
-    const anonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    if (!supabaseUrl || !anonKey) return res.status(500).json({ error: 'Supabase asetukset puuttuvat' })
-    const supabase = createClient(supabaseUrl, anonKey)
+    const { bucket = 'temp-ingest', paths = [], files = [] } = body || {}
+    const list =
+      Array.isArray(paths) && paths.length
+        ? paths
+        : Array.isArray(files)
+        ? files.map((f) => f.path).filter(Boolean)
+        : []
+
+    if (!list.length) {
+      return res.status(400).json({ error: 'paths vaaditaan' })
+    }
+
+    // Käytä withOrganization-middlewarea luotua Supabase-clienttia,
+    // jossa on käyttäjän Authorization-header -> RLS suojaa bucketit.
+    const supabase = req.supabase
+    if (!supabase) {
+      logger.error('storage/delete: Supabase client missing on request')
+      return res.status(500).json({ error: 'Sisäinen palvelinvirhe' })
+    }
 
     const { error } = await supabase.storage.from(bucket).remove(list)
-    if (error) return res.status(500).json({ error: 'remove epäonnistui', details: error.message })
+    if (error) {
+      logger.error('storage/delete: remove epäonnistui', {
+        message: error.message,
+        code: error.code
+      })
+      return res.status(500).json({ error: 'Tiedostojen poistaminen epäonnistui' })
+    }
+
     return res.status(200).json({ success: true, deleted: list.length })
   } catch (e) {
-    return res.status(500).json({ error: 'Virhe storage-delete endpointissa', details: e?.message || String(e) })
+    logger.error('storage/delete: Virhe endpointissa', {
+      message: e?.message,
+      stack: e?.stack
+    })
+    return res.status(500).json({ error: 'Sisäinen palvelinvirhe' })
   }
 }
 
 function readReqBody(req) {
   return new Promise((resolve, reject) => {
     let data = ''
-    req.on('data', chunk => { data += chunk })
+    req.on('data', (chunk) => {
+      data += chunk
+    })
     req.on('end', () => resolve(data))
     req.on('error', reject)
   })
 }
 
-
+export default withOrganization(handler)

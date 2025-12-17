@@ -1,4 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
+import crypto from 'crypto'
+import logger from '../lib/logger.js'
 
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -20,11 +22,18 @@ export default async function handler(req, res) {
 
   try {
     // Tarkista API-avain (oma mekanismi, ei Supabase service key)
-    const apiKey = req.headers['x-api-key'] || req.headers['X-API-Key']
+    const apiKeyHeader = req.headers['x-api-key'] || req.headers['X-API-Key']
     const expectedKey = process.env.N8N_SECRET_KEY || process.env.WEBHOOK_SECRET_KEY
+    if (!expectedKey || !apiKeyHeader) {
+      logger.warn('Inbound-call webhook: missing API key or expected key not configured')
+      return res.status(401).json({ error: 'Unauthorized: invalid API key' })
+    }
 
-    if (!expectedKey || apiKey !== expectedKey) {
-      console.error('Invalid API key in inbound-call webhook')
+    const apiKey = Buffer.from(String(apiKeyHeader))
+    const expected = Buffer.from(String(expectedKey))
+
+    if (apiKey.length !== expected.length || !crypto.timingSafeEqual(apiKey, expected)) {
+      logger.warn('Inbound-call webhook: invalid API key')
       return res.status(401).json({ error: 'Unauthorized: invalid API key' })
     }
 
@@ -57,6 +66,7 @@ export default async function handler(req, res) {
       .single()
 
     if (userError || !userExists) {
+      logger.warn('Inbound-call webhook: user not found', { user_id })
       return res.status(404).json({ error: 'Käyttäjä ei löytynyt' })
     }
 
@@ -87,7 +97,10 @@ export default async function handler(req, res) {
       .single()
 
     if (notificationError) {
-      console.error('Error creating inbound call notification:', notificationError)
+      logger.error('Error creating inbound call notification', {
+        message: notificationError.message,
+        code: notificationError.code
+      })
       return res.status(500).json({ error: 'Virhe notifikaation luomisessa' })
     }
 
@@ -118,7 +131,10 @@ export default async function handler(req, res) {
       .single()
 
     if (callLogError) {
-      console.error('Error creating call log:', callLogError)
+      logger.error('Error creating call log', {
+        message: callLogError.message,
+        code: callLogError.code
+      })
       // Ei palauta virhettä, koska notifikaatio on jo luotu
     }
 
@@ -129,7 +145,11 @@ export default async function handler(req, res) {
     })
 
   } catch (error) {
-    console.error('Inbound call webhook error:', error)
+    logger.error('Inbound call webhook error', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    })
     return res.status(500).json({ error: 'Internal server error' })
   }
 }

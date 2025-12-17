@@ -1,6 +1,7 @@
 // api/admin-data.js - Admin endpoint kaikille admin-tarpeille
 import { withOrganization } from '../middleware/with-organization.js'
 import { createClient } from '@supabase/supabase-js'
+import logger from '../lib/logger.js'
 
 // Service role -clienti, jotta RLS ei rajoita admin-kyselyitä (esim. integraatiot)
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -15,7 +16,7 @@ if (supabaseUrl && supabaseServiceKey) {
     }
   })
 } else {
-  console.warn('[admin-data] ⚠️ Supabase service role env muuttujat puuttuvat – käytetään RLS-rajoitettua clientia')
+  logger.warn('[admin-data] ⚠️ Supabase service role env muuttujat puuttuvat – käytetään RLS-rajoitettua clientia')
 }
 
 async function handler(req, res) {
@@ -47,8 +48,8 @@ async function handler(req, res) {
           .eq('id', user_id)
 
         if (error) {
-          console.error('[admin-data] Error updating features:', error)
-          return res.status(500).json({ error: 'Failed to update features', details: error.message })
+          logger.error('[admin-data] Error updating features', { message: error.message, code: error.code })
+          return res.status(500).json({ error: 'Failed to update features' })
         }
 
         return res.status(200).json({ success: true, message: 'Features updated successfully' })
@@ -68,8 +69,8 @@ async function handler(req, res) {
           .eq('id', user_id)
 
         if (error) {
-          console.error('[admin-data] Error updating platforms:', error)
-          return res.status(500).json({ error: 'Failed to update platforms', details: error.message })
+          logger.error('[admin-data] Error updating platforms', { message: error.message, code: error.code })
+          return res.status(500).json({ error: 'Failed to update platforms' })
         }
 
         return res.status(200).json({ success: true, message: 'Platforms updated successfully' })
@@ -119,7 +120,7 @@ async function handler(req, res) {
           .order('created_at', { ascending: false })
 
         if (usersError) {
-          console.error('Error fetching users:', usersError)
+          logger.error('Error fetching users', { message: usersError.message, code: usersError.code })
           return res.status(500).json({ error: 'Failed to fetch users' })
         }
 
@@ -141,7 +142,7 @@ async function handler(req, res) {
           .order('created_at', { ascending: false })
 
         if (contentError) {
-          console.error('Error fetching content:', contentError)
+          logger.error('Error fetching content', { message: contentError.message, code: contentError.code })
           return res.status(500).json({ error: 'Failed to fetch content' })
         }
 
@@ -163,7 +164,7 @@ async function handler(req, res) {
           .order('created_at', { ascending: false })
 
         if (segmentsError) {
-          console.error('Error fetching segments:', segmentsError)
+          logger.error('Error fetching segments', { message: segmentsError.message, code: segmentsError.code })
           return res.status(500).json({ error: 'Failed to fetch segments' })
         }
 
@@ -278,7 +279,7 @@ async function handler(req, res) {
             .order('last_synced_at', { ascending: false })
           
           if (allError) {
-            console.error('[admin-data] Error fetching all social accounts:', allError)
+            logger.error('[admin-data] Error fetching all social accounts', { message: allError.message, code: allError.code })
           } else if (allAccounts && allAccounts.length > 0) {
             socialAccounts = allAccounts
           }
@@ -293,8 +294,8 @@ async function handler(req, res) {
           .order('created_at', { ascending: false })
 
         if (secretsError) {
-          console.error('[admin-data] Error fetching secrets:', secretsError)
-          return res.status(500).json({ error: 'Failed to fetch secrets', details: secretsError.message })
+          logger.error('[admin-data] Error fetching secrets:', { message: secretsError.message, code: secretsError.code })
+          return res.status(500).json({ error: 'Failed to fetch secrets' })
         }
 
         result = {
@@ -313,7 +314,7 @@ async function handler(req, res) {
     })
 
   } catch (error) {
-    console.error('Admin data error:', error)
+    logger.error('Admin data error', { message: error.message, stack: error.stack, name: error.name })
     return res.status(500).json({ error: 'Internal server error' })
   }
 }

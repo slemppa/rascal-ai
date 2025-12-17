@@ -43,14 +43,30 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { secret_type, secret_name, user_id } = req.query
+  // Hae ja dekoodaa query-parametrit (URL-dekoodaus automaattisesti, mutta varmistetaan)
+  const secret_type = req.query.secret_type
+  const secret_name = req.query.secret_name
+  const user_id = req.query.user_id
 
   // Validoi pakolliset parametrit
   if (!secret_type || !secret_name || !user_id) {
+    logger.warn('Missing required parameters', {
+      hasSecretType: !!secret_type,
+      hasSecretName: !!secret_name,
+      hasUserId: !!user_id,
+      allQueryParams: Object.keys(req.query)
+    })
     return res.status(400).json({ 
       error: 'secret_type, secret_name ja user_id vaaditaan' 
     })
   }
+
+  logger.debug('user-secrets-service: Received params', {
+    secret_type,
+    secret_name,
+    user_id,
+    secret_name_length: secret_name?.length
+  })
 
   // Tarkista service key (sallii vain service-to-service kutsut)
   const serviceKey = req.headers['x-api-key'] || req.headers['x-service-key']
@@ -86,42 +102,132 @@ export default async function handler(req, res) {
     }
 
     // Haetaan salattu arvo suoraan user_secrets-taulusta
-    const { data, error } = await supabaseAdmin
+    // Tarkista ensin secret_value (uusissa tietueissa), sitten encrypted_value (vanhat pgcrypto-tietueet)
+    // Trim ja normalisoi secret_name
+    const normalizedSecretName = secret_name?.trim() || secret_name
+
+    logger.debug('user-secrets-service: Querying database', {
+      user_id,
+      secret_type,
+      secret_name,
+      normalizedSecretName,
+      secret_name_length: secret_name?.length,
+      normalized_length: normalizedSecretName?.length
+    })
+
+    // Hae kaikki salaisuudet user_id:llä ja secret_type:llä, filtteröi JavaScriptissä
+    // Tämä varmistaa että välilyönnit ja muut merkit käsitellään oikein
+    const { data: allSecrets, error } = await supabaseAdmin
       .from('user_secrets')
-      .select('encrypted_value')
+      .select('id, secret_value, encrypted_value, is_active, secret_name')
       .eq('user_id', user_id)
       .eq('secret_type', secret_type)
-      .eq('secret_name', secret_name)
       .eq('is_active', true)
-      .maybeSingle()
 
     if (error) {
       logger.error('❌ Error fetching encrypted secret (service)', {
         message: error.message,
-        code: error.code
+        code: error.code,
+        details: error.details,
+        hint: error.hint
       })
       return res.status(500).json({ 
         error: 'Virhe salaisuuden haussa'
       })
     }
 
-    if (!data || !data.encrypted_value) {
-      logger.warn('Secret not found with params', {
+    // Etsi oikea salaisuus JavaScriptissä (tarkka match, case-sensitive)
+    const data = allSecrets?.find(secret => 
+      secret.secret_name?.trim() === normalizedSecretName
+    )
+
+    if (error) {
+      logger.error('❌ Error fetching encrypted secret (service)', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint
+      })
+      return res.status(500).json({ 
+        error: 'Virhe salaisuuden haussa'
+      })
+    }
+
+    logger.debug('user-secrets-service: Query result', {
+      found: !!data,
+      hasSecretValue: !!data?.secret_value,
+      hasEncryptedValue: !!data?.encrypted_value,
+      isActive: data?.is_active,
+      secretId: data?.id
+    })
+
+    if (!data || (!data.secret_value && !data.encrypted_value)) {
+      // Debug: Hae kaikki salaisuudet samalla user_id:llä ja secret_type:llä
+      const { data: allSecrets } = await supabaseAdmin
+        .from('user_secrets')
+        .select('id, secret_type, secret_name, is_active')
+        .eq('user_id', user_id)
+        .eq('secret_type', secret_type)
+
+      // Debug: Hae myös ilman secret_name-filtteriä
+      const { data: debugData } = await supabaseAdmin
+        .from('user_secrets')
+        .select('id, secret_type, secret_name, is_active, secret_value, encrypted_value')
+        .eq('user_id', user_id)
+        .eq('secret_type', secret_type)
+        .maybeSingle()
+
+      logger.warn('Secret not found with exact params', {
         user_id,
         secret_type,
-        secret_name
+        secret_name,
+        secret_name_trimmed: secret_name?.trim(),
+        secret_name_length: secret_name?.length,
+        debug_found: !!debugData,
+        debug_secret_name: debugData?.secret_name,
+        debug_secret_name_length: debugData?.secret_name?.length,
+        debug_is_active: debugData?.is_active,
+        name_exact_match: debugData?.secret_name === secret_name?.trim(),
+        all_secrets_for_user: allSecrets?.map(s => ({
+          name: s.secret_name,
+          is_active: s.is_active
+        }))
       })
       
       return res.status(404).json({ 
-        error: 'Salaisuus ei löytynyt'
+        error: 'Salaisuus ei löytynyt',
+        hint: 'Tarkista että secret_type, secret_name ja user_id ovat oikein. HUOM: user_id pitää olla public.users.id (organisaation ID), ei auth.users.id (auth_user_id)',
+        received_params: {
+          user_id,
+          secret_type,
+          secret_name: secret_name?.trim(),
+          secret_name_length: secret_name?.length
+        },
+        ...(process.env.NODE_ENV === 'development' && allSecrets && {
+          available_secrets: allSecrets.map(s => ({
+            secret_name: s.secret_name,
+            is_active: s.is_active
+          }))
+        })
       })
     }
 
     let decryptedValue
     try {
-      const encryptedString = Buffer.isBuffer(data.encrypted_value)
-        ? data.encrypted_value.toString('utf8')
-        : String(data.encrypted_value)
+      // Käytä secret_value jos saatavilla (uusissa Node.js-salatut), muuten encrypted_value (vanhat pgcrypto-salatut)
+      let encryptedString
+      if (data.secret_value) {
+        // secret_value on TEXT → käytetään suoraan
+        encryptedString = data.secret_value
+      } else if (data.encrypted_value) {
+        // encrypted_value on BYTEA → muunnetaan UTF-8 merkkijonoksi
+        encryptedString = Buffer.isBuffer(data.encrypted_value)
+          ? data.encrypted_value.toString('utf8')
+          : String(data.encrypted_value)
+      } else {
+        return res.status(404).json({ error: 'Salaisuus ei löytynyt' })
+      }
+
       decryptedValue = decrypt(encryptedString, ENCRYPTION_KEY)
     } catch (decErr) {
       logger.error('❌ Error decrypting secret (service)', {

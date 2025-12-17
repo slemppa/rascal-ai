@@ -688,13 +688,6 @@ export default function ManagePostsPage() {
     }
   }, [showEditModal, editModalStep, editingPost])
 
-  // Hae Mixpost postaukset kun sivu avataan
-  useEffect(() => {
-    if (user) {
-      fetchMixpostPosts()
-    }
-  }, [user])
-  
   // Notification states
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
@@ -790,6 +783,7 @@ export default function ManagePostsPage() {
     }
   }
 
+  // Hae kaikki data kun sivu avataan (vain kerran)
   useEffect(() => {
     if (!user || hasInitialized.current) return
     
@@ -797,6 +791,7 @@ export default function ManagePostsPage() {
     fetchPosts()
     fetchReelsPosts() // Haetaan reels data automaattisesti
     fetchSocialAccounts() // Haetaan somekanavat
+    fetchMixpostPosts() // Haetaan Mixpost postaukset
   }, [user])
 
   // Siirrä pois UGC-tabista jos feature poistetaan

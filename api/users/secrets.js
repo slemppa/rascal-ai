@@ -90,9 +90,10 @@ async function handleGetDecrypt(req, res) {
     }
 
     // Haetaan salattu arvo suoraan taulusta
+    // Tarkista ensin secret_value (uusissa tietueissa), sitten encrypted_value (vanhat pgcrypto-tietueet)
     const { data, error } = await supabaseAdmin
       .from('user_secrets')
-      .select('encrypted_value')
+      .select('secret_value, encrypted_value')
       .eq('user_id', orgId)
       .eq('secret_type', secret_type)
       .eq('secret_name', secret_name)
@@ -104,15 +105,25 @@ async function handleGetDecrypt(req, res) {
       return res.status(500).json({ error: 'Virhe salaisuuden haussa' })
     }
 
-    if (!data || !data.encrypted_value) {
+    if (!data || (!data.secret_value && !data.encrypted_value)) {
       return res.status(404).json({ error: 'Salaisuus ei löytynyt' })
     }
 
     try {
-      // encrypted_value on bytea → muunnetaan UTF-8 merkkijonoksi ennen decryptiä
-      const encryptedString = Buffer.isBuffer(data.encrypted_value)
-        ? data.encrypted_value.toString('utf8')
-        : String(data.encrypted_value)
+      // Käytä secret_value jos saatavilla (uusissa Node.js-salatut), muuten encrypted_value (vanhat pgcrypto-salatut)
+      let encryptedString
+      if (data.secret_value) {
+        // secret_value on TEXT → käytetään suoraan
+        encryptedString = data.secret_value
+      } else if (data.encrypted_value) {
+        // encrypted_value on BYTEA → muunnetaan UTF-8 merkkijonoksi
+        encryptedString = Buffer.isBuffer(data.encrypted_value)
+          ? data.encrypted_value.toString('utf8')
+          : String(data.encrypted_value)
+      } else {
+        return res.status(404).json({ error: 'Salaisuus ei löytynyt' })
+      }
+
       const decryptedValue = decrypt(encryptedString, ENCRYPTION_KEY)
 
       return res.status(200).json({ 
@@ -146,7 +157,8 @@ async function handlePost(req, res) {
   if (!ENCRYPTION_KEY) {
     logger.error('❌ USER_SECRETS_ENCRYPTION_KEY not set - encryption will fail')
     return res.status(500).json({ 
-      error: 'Salausavain ei ole konfiguroitu'
+      error: 'Salausavain ei ole konfiguroitu',
+      hint: 'Aseta USER_SECRETS_ENCRYPTION_KEY ympäristömuuttujaksi Verceliin'
     })
   }
 
@@ -154,45 +166,135 @@ async function handlePost(req, res) {
     // Hae käyttäjän organisaatio
     const orgId = req.organization?.id
     if (!orgId) {
+      logger.error('handlePost: Organization ID missing', { 
+        hasOrganization: !!req.organization,
+        authUserId: req.authUser?.id 
+      })
       return res.status(400).json({ error: 'Käyttäjän organisaatio ei löytynyt' })
     }
+
+    logger.debug('handlePost: Starting encryption', { 
+      secret_type, 
+      secret_name, 
+      orgId,
+      hasPlaintext: !!plaintext_value 
+    })
 
     // Salaa arvo Node.js-kerroksessa
     let encryptedValue
     try {
       encryptedValue = encrypt(plaintext_value, ENCRYPTION_KEY)
+      logger.debug('handlePost: Encryption successful', { 
+        encryptedLength: encryptedValue?.length 
+      })
     } catch (encErr) {
-      logger.error('Error encrypting secret in handlePost', { message: encErr.message })
+      logger.error('Error encrypting secret in handlePost', { 
+        message: encErr.message,
+        stack: encErr.stack,
+        plaintextLength: plaintext_value?.length 
+      })
       return res.status(500).json({ error: 'Virhe salauksen luonnissa' })
     }
 
-    // Tallennetaan suoraan user_secrets-tauluun (upsert)
-    const { data, error } = await supabaseAdmin
+    // Tarkista onko salaisuus jo olemassa (päivitys vs. uusi)
+    logger.debug('handlePost: Checking for existing secret', { orgId, secret_type, secret_name })
+    const { data: existingSecret, error: checkError } = await supabaseAdmin
       .from('user_secrets')
-      .upsert(
-        {
-          user_id: orgId,
-          secret_type,
-          secret_name,
-          // encrypted_value on bytea → tallennetaan bufferina
-          encrypted_value: Buffer.from(encryptedValue, 'utf8'),
+      .select('id, created_by')
+      .eq('user_id', orgId)
+      .eq('secret_type', secret_type)
+      .eq('secret_name', secret_name)
+      .maybeSingle()
+
+    if (checkError) {
+      logger.error('Error checking existing secret:', {
+        message: checkError.message,
+        code: checkError.code,
+        details: checkError.details,
+        hint: checkError.hint
+      })
+      return res.status(500).json({ 
+        error: 'Virhe salaisuuden tarkistuksessa'
+      })
+    }
+
+    logger.debug('handlePost: Existing secret check result', { 
+      exists: !!existingSecret,
+      existingId: existingSecret?.id 
+    })
+
+    let data, error
+
+    if (existingSecret) {
+      // Päivitä olemassa oleva tietue
+      const { data: updateData, error: updateError } = await supabaseAdmin
+        .from('user_secrets')
+        .update({
+          secret_value: encryptedValue,
           metadata: metadata || {},
           is_active: true,
           updated_at: new Date().toISOString()
-        },
-        { onConflict: 'user_id,secret_type,secret_name' }
-      )
-      .select('id')
-      .single()
+        })
+        .eq('id', existingSecret.id)
+        .select('id')
+        .single()
+
+      data = updateData
+      error = updateError
+    } else {
+      // Luo uusi tietue
+      const now = new Date().toISOString()
+      const insertPayload = {
+        user_id: orgId,
+        secret_type,
+        secret_name,
+        secret_value: encryptedValue, // TEXT-sarakkeeseen suoraan merkkijonona
+        metadata: metadata || {},
+        is_active: true,
+        created_by: req.authUser?.id || null,
+        created_at: now,
+        updated_at: now
+      }
+
+      logger.debug('handlePost: Inserting new secret', { 
+        hasSecretValue: !!insertPayload.secret_value,
+        secretValueLength: insertPayload.secret_value?.length,
+        hasCreatedBy: !!insertPayload.created_by
+      })
+
+      const { data: insertData, error: insertError } = await supabaseAdmin
+        .from('user_secrets')
+        .insert(insertPayload)
+        .select('id')
+        .single()
+
+      data = insertData
+      error = insertError
+    }
 
     if (error) {
-      logger.error('Error storing secret (direct upsert):', {
+      logger.error('Error storing secret:', {
         message: error.message,
-        code: error.code
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+        isUpdate: !!existingSecret,
+        orgId,
+        secret_type,
+        secret_name
       })
-      return res.status(500).json({ 
-        error: 'Virhe salaisuuden tallennuksessa'
-      })
+      
+      // Development-moodissa palautetaan lisätietoja debuggausta varten
+      const errorResponse = { 
+        error: 'Virhe salaisuuden tallennuksessa',
+        ...(process.env.NODE_ENV === 'development' && {
+          details: error.message,
+          code: error.code,
+          hint: error.hint
+        })
+      }
+      
+      return res.status(500).json(errorResponse)
     }
 
     // Lähetä webhook-ilmoitus uudesta integraatiosta (esim. Maken/N8N)
@@ -476,9 +578,10 @@ async function handleGetDecryptedService(req, res) {
 
   try {
     // Haetaan salattu arvo suoraan taulusta
+    // Tarkista ensin secret_value (uusissa tietueissa), sitten encrypted_value (vanhat pgcrypto-tietueet)
     const { data, error } = await supabaseAdmin
       .from('user_secrets')
-      .select('encrypted_value')
+      .select('secret_value, encrypted_value')
       .eq('user_id', user_id)
       .eq('secret_type', secret_type)
       .eq('secret_name', secret_name)
@@ -493,15 +596,26 @@ async function handleGetDecryptedService(req, res) {
       return res.status(500).json({ error: 'Virhe salaisuuden haussa' })
     }
 
-    if (!data || !data.encrypted_value) {
+    if (!data || (!data.secret_value && !data.encrypted_value)) {
       return res.status(404).json({ error: 'Salaisuus ei löytynyt' })
     }
 
     let decrypted
     try {
-      const encryptedString = Buffer.isBuffer(data.encrypted_value)
-        ? data.encrypted_value.toString('utf8')
-        : String(data.encrypted_value)
+      // Käytä secret_value jos saatavilla (uusissa Node.js-salatut), muuten encrypted_value (vanhat pgcrypto-salatut)
+      let encryptedString
+      if (data.secret_value) {
+        // secret_value on TEXT → käytetään suoraan
+        encryptedString = data.secret_value
+      } else if (data.encrypted_value) {
+        // encrypted_value on BYTEA → muunnetaan UTF-8 merkkijonoksi
+        encryptedString = Buffer.isBuffer(data.encrypted_value)
+          ? data.encrypted_value.toString('utf8')
+          : String(data.encrypted_value)
+      } else {
+        return res.status(404).json({ error: 'Salaisuus ei löytynyt' })
+      }
+
       decrypted = decrypt(encryptedString, ENCRYPTION_KEY)
     } catch (decErr) {
       logger.error('Error decrypting secret (service) in handleGetDecryptedService', {

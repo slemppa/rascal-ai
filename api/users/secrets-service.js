@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import logger from '../lib/logger.js'
 
 const supabaseUrl = process.env.SUPABASE_URL 
   || process.env.NEXT_PUBLIC_SUPABASE_URL 
@@ -7,7 +8,7 @@ const supabaseUrl = process.env.SUPABASE_URL
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  console.error('❌ Missing Supabase envs in user-secrets-service')
+  logger.error('❌ Missing Supabase envs in user-secrets-service')
   throw new Error('Missing Supabase environment variables')
 }
 
@@ -15,7 +16,7 @@ if (!supabaseUrl || !supabaseServiceKey) {
 const ENCRYPTION_KEY = process.env.USER_SECRETS_ENCRYPTION_KEY
 
 if (!ENCRYPTION_KEY) {
-  console.warn('⚠️ USER_SECRETS_ENCRYPTION_KEY not set. Decryption will fail.')
+  logger.warn('⚠️ USER_SECRETS_ENCRYPTION_KEY not set. Decryption will fail.')
 }
 
 // Service role client
@@ -55,41 +56,35 @@ export default async function handler(req, res) {
   const expectedKey = process.env.N8N_SECRET_KEY || process.env.MAKE_WEBHOOK_SECRET
 
   if (!serviceKey || serviceKey !== expectedKey) {
-    console.error('Unauthorized service request - missing or invalid service key')
+    logger.warn('Unauthorized service request - missing or invalid service key')
     return res.status(401).json({ 
-      error: 'Unauthorized - service key required',
-      hint: 'Lähetä x-api-key headerissa N8N_SECRET_KEY tai MAKE_WEBHOOK_SECRET'
+      error: 'Unauthorized - service key required'
     })
   }
 
   if (!ENCRYPTION_KEY) {
-    console.error('❌ USER_SECRETS_ENCRYPTION_KEY not set!')
+    logger.error('❌ USER_SECRETS_ENCRYPTION_KEY not set!')
     return res.status(500).json({ 
-      error: 'Salausavain ei ole konfiguroitu',
-      hint: 'Aseta USER_SECRETS_ENCRYPTION_KEY ympäristömuuttujaksi Verceliin'
+      error: 'Salausavain ei ole konfiguroitu'
     })
   }
 
   try {
-    console.log('🔍 Service request for secret:', { 
+    logger.info('🔍 Service request for secret', { 
       secret_type, 
       secret_name, 
-      user_id,
-      user_id_type: typeof user_id,
-      user_id_length: user_id?.length
+      user_id
     })
-    console.log('🔑 Encryption key status:', ENCRYPTION_KEY ? 'SET (length: ' + ENCRYPTION_KEY.length + ')' : 'NOT SET')
 
     // Validoi parametrit ennen RPC-kutsua
     if (!user_id || typeof user_id !== 'string' || user_id.length < 10) {
-      console.error('❌ Invalid user_id:', user_id)
+      logger.warn('❌ Invalid user_id in user-secrets-service', { user_id })
       return res.status(400).json({
-        error: 'Virheellinen user_id',
-        details: 'user_id pitää olla validi UUID (public.users.id)'
+        error: 'Virheellinen user_id'
       })
     }
 
-    console.log('📞 Calling Supabase RPC: get_user_secret...')
+    logger.debug('📞 Calling Supabase RPC: get_user_secret...')
     
     // Kutsutaan Supabase-funktiota, joka puraa arvon
     const { data, error } = await supabaseAdmin.rpc('get_user_secret', {
@@ -99,46 +94,32 @@ export default async function handler(req, res) {
       p_encryption_key: ENCRYPTION_KEY
     })
     
-    console.log('📞 RPC response:', { 
+    logger.debug('📞 RPC response from get_user_secret', { 
       hasData: !!data, 
       hasError: !!error,
-      errorMessage: error?.message,
       errorCode: error?.code
     })
 
     if (error) {
-      console.error('❌ Error decrypting secret (service):', {
+      logger.error('❌ Error decrypting secret (service)', {
         message: error.message,
-        code: error.code,
-        details: error.details,
-        hint: error.hint,
-        fullError: error
+        code: error.code
       })
       return res.status(500).json({ 
-        error: 'Virhe salaisuuden purussa',
-        details: error.message || 'Tuntematon virhe',
-        code: error.code,
-        hint: error.hint
+        error: 'Virhe salaisuuden purussa'
       })
     }
 
     if (!data) {
       // Lisää debug-tietoja, jos salaisuutta ei löydy
-      console.error('Secret not found with params:', {
+      logger.warn('Secret not found with params', {
         user_id,
         secret_type,
-        secret_name,
-        note: 'user_id pitää olla public.users.id (organisaation ID), ei auth.users.id'
+        secret_name
       })
       
       return res.status(404).json({ 
-        error: 'Salaisuus ei löytynyt',
-        hint: 'Tarkista että secret_type, secret_name ja user_id ovat oikein. HUOM: user_id pitää olla public.users.id (organisaation ID), ei auth.users.id (auth_user_id)',
-        received_params: {
-          user_id,
-          secret_type,
-          secret_name
-        }
+        error: 'Salaisuus ei löytynyt'
       })
     }
 
@@ -151,16 +132,13 @@ export default async function handler(req, res) {
       timestamp: new Date().toISOString()
     })
   } catch (error) {
-    console.error('❌ Error in user-secrets-service:', {
+    logger.error('❌ Error in user-secrets-service', {
       message: error.message,
       stack: error.stack,
-      name: error.name,
-      fullError: error
+      name: error.name
     })
     return res.status(500).json({ 
-      error: 'Sisäinen palvelinvirhe',
-      details: error.message || 'Tuntematon virhe',
-      ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+      error: 'Sisäinen palvelinvirhe'
     })
   }
 }

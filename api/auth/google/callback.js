@@ -1,5 +1,16 @@
 import { createClient } from '@supabase/supabase-js'
 import axios from 'axios'
+import logger from '../lib/logger.js'
+
+function escapeHtml(str) {
+  if (!str) return ''
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
 
 /**
  * GET /api/auth/google/callback
@@ -9,24 +20,36 @@ export default async function handler(req, res) {
   // Apufunktio, joka palauttaa HTML-scriptin popupin sulkemiseksi ja viestin lähettämiseksi
   const sendResponse = (status, message) => {
     const targetOrigin = process.env.APP_URL || 'https://app.rascalai.fi'
+    const payload = {
+      type: 'GOOGLE_AUTH_RESULT',
+      status,
+      message
+    }
+    // Suojaa < merkki script-kontekstissa
+    const safePayload = JSON.stringify(payload).replace(/</g, '\\u003c')
+    const safeMessageHtml = escapeHtml(message)
+
     const html = `
       <html>
         <body>
           <script>
             // Lähetä viesti avaajalle (pääikkunalle)
-            if (window.opener) {
-              window.opener.postMessage({
-                type: 'GOOGLE_AUTH_RESULT',
-                status: '${status}',
-                message: '${message.replace(/'/g, "\\'")}'
-              }, '${targetOrigin}');
-            }
-            // Sulje tämä popup-ikkuna
-            window.close();
+            (function() {
+              try {
+                var payload = ${safePayload};
+                if (window.opener) {
+                  window.opener.postMessage(payload, '${targetOrigin}');
+                }
+              } catch (e) {
+                console.error('Failed to postMessage auth result', e);
+              }
+              // Sulje tämä popup-ikkuna
+              window.close();
+            })();
           </script>
           <div style="font-family: sans-serif; text-align: center; padding: 20px;">
             <h2>${status === 'success' ? 'Yhdistetty!' : 'Virhe'}</h2>
-            <p>${message}</p>
+            <p>${safeMessageHtml}</p>
             <p>Ikkuna sulkeutuu automaattisesti...</p>
           </div>
         </body>
@@ -44,8 +67,8 @@ export default async function handler(req, res) {
     const { code, state, error: oauthError } = req.query
 
     if (oauthError) {
-      console.error('❌ OAuth error from Google:', oauthError)
-      return sendResponse('error', `OAuth-virhe: ${oauthError}`);
+      logger.error('❌ OAuth error from Google', { error: oauthError })
+      return sendResponse('error', 'OAuth-virhe Googlen kanssa');
     }
 
     if (!code || !state) {
@@ -60,7 +83,7 @@ export default async function handler(req, res) {
     const n8nWebhookUrl = process.env.N8N_INTEGRATION_WEBHOOK_URL
 
     if (!clientId || !clientSecret || !redirectUri || !supabaseUrl || !supabaseServiceKey) {
-      console.error('❌ Missing env variables')
+      logger.error('❌ Missing env variables for Google OAuth callback')
       return sendResponse('error', 'Palvelimen asetukset puuttuvat');
     }
 
@@ -76,6 +99,7 @@ export default async function handler(req, res) {
       .single()
 
     if (stateError || !stateSecrets) {
+      logger.warn('Invalid or expired OAuth state', { error: stateError, state })
       return sendResponse('error', 'Istunto vanhentunut tai virheellinen state-arvo');
     }
 
@@ -124,7 +148,10 @@ export default async function handler(req, res) {
       })
 
       if (secretError) {
-        console.error('❌ Error storing token:', secretError)
+        logger.error('❌ Error storing Google Analytics token', {
+          message: secretError.message,
+          code: secretError.code
+        })
         return sendResponse('error', 'Tietokantavirhe tokenin tallennuksessa');
       }
 
@@ -169,10 +196,10 @@ export default async function handler(req, res) {
           }, { 
             headers: headers,
             timeout: 5000 
-          }).catch(err => console.error('n8n webhook warning:', err.message));
+          }).catch(err => logger.warn('n8n webhook warning', { message: err.message }));
         } catch (e) {
           // Ignorataan n8n virheet käyttäjältä
-          console.error('n8n webhook error (non-critical):', e.message)
+          logger.warn('n8n webhook error (non-critical)', { message: e.message })
         }
       }
 
@@ -180,12 +207,19 @@ export default async function handler(req, res) {
       return sendResponse('success', 'Google Analytics yhdistetty onnistuneesti!');
 
     } catch (tokenError) {
-      console.error('❌ Token exchange error:', tokenError.response?.data || tokenError.message)
+      logger.error('❌ Token exchange error', {
+        message: tokenError.message,
+        responseData: tokenError.response?.data
+      })
       return sendResponse('error', 'Virhe Googlen yhteydessä. Tarkista Client ID ja Secret.');
     }
 
   } catch (error) {
-    console.error('❌ General error:', error)
+    logger.error('❌ General error in Google OAuth callback', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    })
     return sendResponse('error', 'Odottamaton palvelinvirhe');
   }
 }

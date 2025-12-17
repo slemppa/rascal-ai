@@ -55,13 +55,13 @@ async function handleGet(req, res) {
     const { data, error } = await query.order('created_at', { ascending: false })
 
     if (error) {
-      logger.error('Error fetching user secrets:', error)
+      logger.error('Error fetching user secrets:', { message: error.message, code: error.code })
       return res.status(500).json({ error: 'Virhe salaisuuksien haussa' })
     }
 
     return res.status(200).json({ secrets: data || [] })
   } catch (error) {
-    logger.error('Error in handleGet:', error)
+    logger.error('Error in handleGet:', { message: error.message, stack: error.stack, name: error.name })
     return res.status(500).json({ error: 'Sisäinen palvelinvirhe' })
   }
 }
@@ -97,7 +97,7 @@ async function handleGetDecrypt(req, res) {
     })
 
     if (error) {
-      logger.error('Error decrypting secret:', error)
+      logger.error('Error decrypting secret:', { message: error.message, code: error.code })
       return res.status(500).json({ error: 'Virhe salaisuuden purussa' })
     }
 
@@ -111,7 +111,7 @@ async function handleGetDecrypt(req, res) {
       value: data // Purettu arvo
     })
   } catch (error) {
-    logger.error('Error in handleGetDecrypt:', error)
+    logger.error('Error in handleGetDecrypt:', { message: error.message, stack: error.stack, name: error.name })
     return res.status(500).json({ error: 'Sisäinen palvelinvirhe' })
   }
 }
@@ -129,12 +129,10 @@ async function handlePost(req, res) {
     })
   }
 
-  if (!ENCRYPTION_KEY) {
+    if (!ENCRYPTION_KEY) {
     logger.error('❌ USER_SECRETS_ENCRYPTION_KEY not set - encryption will fail')
     return res.status(500).json({ 
-      error: 'Salausavain ei ole konfiguroitu',
-      details: 'USER_SECRETS_ENCRYPTION_KEY ympäristömuuttuja puuttuu. Ota yhteyttä ylläpitoon.',
-      hint: 'Aseta USER_SECRETS_ENCRYPTION_KEY Vercelin ympäristömuuttujaksi'
+      error: 'Salausavain ei ole konfiguroitu'
     })
   }
 
@@ -156,16 +154,14 @@ async function handlePost(req, res) {
     })
 
     if (error) {
-      logger.error('Error storing secret:', error)
-      logger.error('Error details:', {
+      logger.error('Error storing secret:', {
         message: error.message,
         code: error.code,
         details: error.details,
         hint: error.hint
       })
       return res.status(500).json({ 
-        error: 'Virhe salaisuuden tallennuksessa',
-        details: error.message || 'Tuntematon virhe'
+        error: 'Virhe salaisuuden tallennuksessa'
       })
     }
 
@@ -244,28 +240,32 @@ async function handlePost(req, res) {
           logger.log('✅ Webhook notification sent successfully')
           logger.log('   Status:', webhookResponse.status)
           logger.log('   Response:', JSON.stringify(webhookResponse.data))
-        } catch (webhookErr) {
+      } catch (webhookErr) {
           if (webhookErr.response) {
             // Palvelin vastasi, mutta virheellisellä status-koodilla
-            logger.error('❌ Webhook notification failed:')
-            logger.error('   Status:', webhookErr.response.status)
-            logger.error('   Response:', JSON.stringify(webhookErr.response.data))
-            logger.error('   Headers:', webhookErr.response.headers)
+            logger.error('❌ Webhook notification failed (response)', {
+              status: webhookErr.response.status
+            })
           } else if (webhookErr.request) {
             // Pyyntö tehtiin, mutta vastausta ei saatu
-            logger.error('❌ Webhook notification failed: No response received')
-            logger.error('   Error:', webhookErr.message)
-            logger.error('   Code:', webhookErr.code)
+            logger.error('❌ Webhook notification failed: No response received', {
+              message: webhookErr.message,
+              code: webhookErr.code
+            })
           } else {
             // Jokin muu virhe
-            logger.error('❌ Webhook notification failed:', webhookErr.message)
-            logger.error('   Error details:', webhookErr)
+            logger.error('❌ Webhook notification failed', {
+              message: webhookErr.message
+            })
           }
           // Ei palauteta virhettä, koska webhook on optional
         }
       } // end if (webhookUrl)
     } catch (webhookError) {
-      logger.error('Error sending webhook notification (non-critical):', webhookError)
+      logger.error('Error sending webhook notification (non-critical)', {
+        message: webhookError.message,
+        stack: webhookError.stack
+      })
       // Ei palauteta virhettä, koska webhook on optional
     }
 
@@ -275,12 +275,9 @@ async function handlePost(req, res) {
       message: 'Salaisuus tallennettu onnistuneesti'
     })
   } catch (error) {
-    logger.error('Error in handlePost:', error)
-    logger.error('Error stack:', error.stack)
+    logger.error('Error in handlePost:', { message: error.message, stack: error.stack, name: error.name })
     return res.status(500).json({ 
-      error: 'Sisäinen palvelinvirhe',
-      details: error.message || 'Tuntematon virhe',
-      ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+      error: 'Sisäinen palvelinvirhe'
     })
   }
 }
@@ -322,7 +319,7 @@ async function handleDelete(req, res) {
       .eq('secret_name', secret_name)
 
     if (error) {
-      console.error('Error deleting secret:', error)
+      logger.error('Error deleting secret:', { message: error.message, code: error.code })
       return res.status(500).json({ error: 'Virhe salaisuuden poistossa' })
     }
 
@@ -336,8 +333,8 @@ async function handleDelete(req, res) {
       })
       
       if (!webhookUrl) {
-        console.warn('⚠️ No webhook URL configured for delete notification')
-        console.warn('   Webhook notification will be skipped')
+        logger.warn('⚠️ No webhook URL configured for delete notification')
+        logger.warn('   Webhook notification will be skipped')
       } else {
         // Hae API URL ympäristöstä (production URL)
         let apiBaseUrl = process.env.APP_URL
@@ -387,20 +384,26 @@ async function handleDelete(req, res) {
           logger.log('   Response:', JSON.stringify(webhookResponse.data))
         } catch (webhookErr) {
           if (webhookErr.response) {
-            console.error('❌ Delete webhook notification failed:')
-            console.error('   Status:', webhookErr.response.status)
-            console.error('   Response:', JSON.stringify(webhookErr.response.data))
+            logger.error('❌ Delete webhook notification failed (response)', {
+              status: webhookErr.response.status
+            })
           } else if (webhookErr.request) {
-            logger.error('❌ Delete webhook notification failed: No response received')
-            logger.error('   Error:', webhookErr.message)
+            logger.error('❌ Delete webhook notification failed: No response received', {
+              message: webhookErr.message
+            })
           } else {
-            logger.error('❌ Delete webhook notification failed:', webhookErr.message)
+            logger.error('❌ Delete webhook notification failed', {
+              message: webhookErr.message
+            })
           }
           // Ei palauteta virhettä, koska webhook on optional
         }
       } // end if (webhookUrl)
     } catch (webhookError) {
-      console.error('Error sending delete webhook notification (non-critical):', webhookError)
+      logger.error('Error sending delete webhook notification (non-critical)', {
+        message: webhookError.message,
+        stack: webhookError.stack
+      })
       // Ei palauteta virhettä, koska webhook on optional
     }
 
@@ -409,7 +412,7 @@ async function handleDelete(req, res) {
       message: 'Salaisuus poistettu onnistuneesti'
     })
   } catch (error) {
-    logger.error('Error in handleDelete:', error)
+    logger.error('Error in handleDelete:', { message: error.message, stack: error.stack, name: error.name })
     return res.status(500).json({ error: 'Sisäinen palvelinvirhe' })
   }
 }

@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import logger from '../../lib/logger.js'
 
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -25,7 +26,8 @@ export default async function handler(req, res) {
     }
 
     // Varmista että URL on Mixpost-palvelimelta
-    if (!url.startsWith('https://mixpost.mak8r.fi')) {
+    const allowedBaseUrl = process.env.MIXPOST_BASE_URL || 'https://mixpost.mak8r.fi'
+    if (!url.startsWith(allowedBaseUrl)) {
       return res.status(400).json({ error: 'Invalid URL' })
     }
 
@@ -70,8 +72,9 @@ export default async function handler(req, res) {
             .eq('user_id', userId) // Käytetään organisaation ID:tä
             .single()
 
-        if (configData?.mixpost_api_token) {
-          mixpostApiToken = configData.mixpost_api_token
+          if (configData?.mixpost_api_token) {
+            mixpostApiToken = configData.mixpost_api_token
+          }
         }
       }
     }
@@ -85,7 +88,7 @@ export default async function handler(req, res) {
     const response = await fetch(url, { headers })
 
     if (!response.ok) {
-      console.error('Failed to fetch image from Mixpost:', response.status)
+      logger.error('Failed to fetch image from Mixpost', { status: response.status })
       return res.status(response.status).json({ 
         error: 'Failed to fetch image from Mixpost' 
       })
@@ -101,10 +104,9 @@ export default async function handler(req, res) {
     res.send(Buffer.from(imageBuffer))
 
   } catch (error) {
-    console.error('Mixpost image proxy error:', error)
+    logger.error('Mixpost image proxy error', { message: error.message, stack: error.stack, name: error.name })
     return res.status(500).json({ 
-      error: 'Failed to proxy image',
-      details: error.message 
+      error: 'Failed to proxy image'
     })
   }
 }

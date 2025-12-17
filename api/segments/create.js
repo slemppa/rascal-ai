@@ -9,14 +9,14 @@ const serviceClient = (supabaseUrl && supabaseServiceKey)
   ? createClient(supabaseUrl, supabaseServiceKey)
   : null
 
+import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  setCorsHeaders(res, ['POST', 'OPTIONS'])
   res.setHeader('Content-Type', 'application/json; charset=utf-8')
 
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end()
+  if (handlePreflight(req, res)) {
+    return
   }
 
   if (req.method !== 'POST') {

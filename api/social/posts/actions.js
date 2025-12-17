@@ -1,16 +1,15 @@
 import { withOrganization } from '../../middleware/with-organization.js'
+import { setCorsHeaders, handlePreflight } from '../../lib/cors.js'
 
 async function handler(req, res) {
   console.log('post-actions API called:', req.method, req.url)
   
   // CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  setCorsHeaders(res, ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
   
   // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end()
+  if (handlePreflight(req, res)) {
+    return
   }
 
   if (req.method !== 'POST') {

@@ -4,6 +4,7 @@ import { put } from '@vercel/blob'
 import { readFile } from 'fs/promises'
 import { createClient } from '@supabase/supabase-js'
 import fs from 'fs'
+import { setCorsHeaders, handlePreflight } from '../../lib/cors.js'
 
 export const config = {
   api: {
@@ -12,12 +13,10 @@ export const config = {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-api-key')
+  setCorsHeaders(res, ['POST', 'OPTIONS'], ['Content-Type', 'x-api-key', 'Authorization'])
 
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end()
+  if (handlePreflight(req, res)) {
+    return
   }
 
   if (req.method !== 'POST') {

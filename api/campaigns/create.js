@@ -6,14 +6,14 @@ const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
+import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  setCorsHeaders(res, ['POST', 'OPTIONS'])
   res.setHeader('Content-Type', 'application/json; charset=utf-8')
 
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end()
+  if (handlePreflight(req, res)) {
+    return
   }
 
   if (req.method !== 'POST') {

@@ -1,16 +1,15 @@
 import axios from 'axios'
 import { withOrganization } from '../middleware/with-organization.js'
+import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
 
 const N8N_STRATEGY_APPROVAL_URL = process.env.N8N_STRATEGY_APPROVEMENT || process.env.N8N_STRATEGY_ARPPVOMENT || 'https://samikiias.app.n8n.cloud/webhook/strategy-approvment'
 const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY
 
 async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  setCorsHeaders(res, ['POST', 'OPTIONS'])
   
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end()
+  if (handlePreflight(req, res)) {
+    return
   }
 
   if (req.method !== 'POST') {

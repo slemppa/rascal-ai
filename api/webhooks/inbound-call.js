@@ -3,15 +3,15 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
+import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+
 export default async function handler(req, res) {
   // CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  setCorsHeaders(res, ['POST', 'OPTIONS'])
   
   // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end()
+  if (handlePreflight(req, res)) {
+    return
   }
 
   if (req.method !== 'POST') {
@@ -19,10 +19,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Tarkista service key
-    const serviceKey = req.headers['x-service-key']
-    if (serviceKey !== supabaseServiceKey) {
-      return res.status(401).json({ error: 'Unauthorized: invalid service key' })
+    // Tarkista API-avain (oma mekanismi, ei Supabase service key)
+    const apiKey = req.headers['x-api-key'] || req.headers['X-API-Key']
+    const expectedKey = process.env.N8N_SECRET_KEY || process.env.WEBHOOK_SECRET_KEY
+
+    if (!expectedKey || apiKey !== expectedKey) {
+      console.error('Invalid API key in inbound-call webhook')
+      return res.status(401).json({ error: 'Unauthorized: invalid API key' })
     }
 
     const { 
@@ -43,7 +46,7 @@ export default async function handler(req, res) {
       })
     }
 
-    // Luo Supabase-yhteys service key:llä
+    // Luo Supabase-yhteys service key:llä (tarvitaan RLS-ohitukseen)
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
     // Tarkista että käyttäjä on olemassa

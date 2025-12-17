@@ -23,10 +23,10 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
  * Hakee sivuston kävijätiedot N8N-workflow'lta user_id:n perusteella.
  * Näytetään vain jos Google Analytics -integraatio on aktiivinen.
  */
+import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+
 async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  setCorsHeaders(res, ['GET', 'OPTIONS'])
   res.setHeader('Content-Type', 'application/json; charset=utf-8')
 
   if (req.method === 'OPTIONS') {

@@ -1,11 +1,13 @@
 import { del } from '@vercel/blob'
+import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
 
 export default async function handler(req, res) {
   // CORS
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'POST, DELETE, GET, OPTIONS, HEAD')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-api-key')
+  setCorsHeaders(res, ['POST', 'DELETE', 'GET', 'OPTIONS', 'HEAD'], ['Content-Type', 'x-api-key', 'Authorization'])
   if (req.method === 'OPTIONS' || req.method === 'HEAD') {
+    if (handlePreflight(req, res)) {
+      return
+    }
     return res.status(204).end()
   }
   if (req.method !== 'POST' && req.method !== 'DELETE' && req.method !== 'GET') {

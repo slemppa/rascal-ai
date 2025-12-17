@@ -1,14 +1,13 @@
 import { withOrganization } from '../middleware/with-organization.js'
 import logger from '../lib/logger.js'
+import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
 
 async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  setCorsHeaders(res, ['GET', 'OPTIONS'])
   res.setHeader('Content-Type', 'application/json; charset=utf-8')
 
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end()
+  if (handlePreflight(req, res)) {
+    return
   }
 
   if (req.method !== 'GET') {

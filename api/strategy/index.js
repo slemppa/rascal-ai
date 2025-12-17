@@ -1,16 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
+import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
 
 const N8N_STRATEGY_URL = process.env.N8N_GET_STRATEGY_URL
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  setCorsHeaders(res, ['GET', 'POST', 'OPTIONS'])
   
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end()
+  if (handlePreflight(req, res)) {
+    return
   }
 
   const companyId = req.query.companyId

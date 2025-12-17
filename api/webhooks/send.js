@@ -1,12 +1,12 @@
+import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+
 export default async function handler(req, res) {
   // CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  setCorsHeaders(res, ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
   
   // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end()
+  if (handlePreflight(req, res)) {
+    return
   }
 
   if (req.method !== 'POST') {
@@ -20,9 +20,20 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing webhook_url or payload' })
     }
 
+    // Tarkista että webhook URL on whitelistissä (N8N-domain)
+    const allowedN8nHost = process.env.N8N_HOST || 'https://samikiias.app.n8n.cloud'
+    if (!webhook_url.startsWith(allowedN8nHost)) {
+      console.error('Blocked webhook request to non-whitelisted URL:', webhook_url)
+      return res.status(403).json({ 
+        error: 'Forbidden: webhook URL not whitelisted',
+        message: 'Webhook URLs must be from the allowed N8N domain'
+      })
+    }
+
     console.log('Sending webhook to:', webhook_url)
     console.log('Payload:', payload)
 
+    // Vain whitelistatulle URL:lle lähetetään x-api-key
     const response = await fetch(webhook_url, {
       method: 'POST',
       headers: {

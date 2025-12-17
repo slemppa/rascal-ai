@@ -11,15 +11,62 @@ export default function UgcTab() {
   
   const [ugcPosts, setUgcPosts] = useState([])
   const [ugcLoading, setUgcLoading] = useState(false)
-  const [ugcFormData, setUgcFormData] = useState({ 
-    productName: '', 
-    productDetails: '', 
-    productImage: null,
-    productImageUrl: null,
-    contentType: 'Kuva', // 'Kuva' tai 'Video'
-    styleId: '', // Visuaalinen tyyli
-    formatId: '' // Kuvan muoto
+  
+  // Lataa tallennettu formData localStorageesta tai käytä oletusta
+  const [ugcFormData, setUgcFormDataState] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ugcFormData')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        // Palauta tallennettu data, mutta productImage on aina null (ei voi tallentaa File-objektia)
+        return {
+          ...parsed,
+          productImage: null // File-objekti ei voi olla localStorage:ssa
+        }
+      }
+    } catch (e) {
+      console.error('Error loading UGC form data from localStorage:', e)
+    }
+    return { 
+      productName: '', 
+      productDetails: '', 
+      productImage: null,
+      productImageUrl: null,
+      contentType: 'Kuva', // 'Kuva' tai 'Video'
+      styleId: '', // Visuaalinen tyyli
+      formatId: '' // Kuvan muoto
+    }
   })
+  
+  // Wrapper-funktio joka tallentaa formDatan localStorageen
+  // Tukee sekä objektia että funktionaalista päivitystä (prev => ...)
+  const setUgcFormData = (dataOrUpdater) => {
+    if (typeof dataOrUpdater === 'function') {
+      // Funktionaalinen päivitys
+      setUgcFormDataState(prev => {
+        const newData = dataOrUpdater(prev)
+        try {
+          // Tallenna localStorageen (ilman productImage File-objektia)
+          const toSave = { ...newData, productImage: null }
+          localStorage.setItem('ugcFormData', JSON.stringify(toSave))
+        } catch (e) {
+          console.error('Error saving UGC form data to localStorage:', e)
+        }
+        return newData
+      })
+    } else {
+      // Suora objekti
+      setUgcFormDataState(dataOrUpdater)
+      try {
+        // Tallenna localStorageen (ilman productImage File-objektia)
+        const toSave = { ...dataOrUpdater, productImage: null }
+        localStorage.setItem('ugcFormData', JSON.stringify(toSave))
+      } catch (e) {
+        console.error('Error saving UGC form data to localStorage:', e)
+      }
+    }
+  }
+  
   const [ugcUploading, setUgcUploading] = useState(false)
   const [productDragActive, setProductDragActive] = useState(false)
   const [toast, setToast] = useState({ visible: false, message: '' })
@@ -178,8 +225,8 @@ export default function UgcTab() {
         setToast({ visible: true, message: 'UGC-sisältö pyyntö lähetetty onnistuneesti!' })
         setTimeout(() => setToast({ visible: false, message: '' }), 3000)
         
-        // Tyhjennä formi
-        setUgcFormData({ 
+        // Tyhjennä formi ja localStorage
+        const emptyFormData = { 
           productName: '', 
           productDetails: '', 
           productImage: null,
@@ -187,7 +234,9 @@ export default function UgcTab() {
           contentType: 'Kuva',
           styleId: '',
           formatId: ''
-        })
+        }
+        setUgcFormData(emptyFormData)
+        localStorage.removeItem('ugcFormData')
         
         // Päivitä lista
         await fetchUgcPosts()

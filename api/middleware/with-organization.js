@@ -45,12 +45,13 @@ export function withOrganization(handler) {
 
       // 3. Hae auth käyttäjä - tämä varmistaa että token on voimassa
       // ja asettaa käyttäjän kontekstin RLS-politiikoille
-      // Käytetään getUser() ilman token-parametria, koska token on jo asetettu clientissa
-      const { data: { user }, error: authError } = await supabase.auth.getUser()
-      if (authError || !user) {
+      // Käytetään getUser(token) token-parametrilla, kuten muissakin API-endpointeissa
+      const { data: authResult, error: authError } = await supabase.auth.getUser(token)
+      if (authError || !authResult?.user) {
         logger.warn('Auth error in withOrganization middleware', { error: authError })
         return res.status(401).json({ error: 'Invalid token' })
       }
+      const user = authResult.user
 
       // 4. Hae käyttäjän organisaatio org_members taulusta
       // Käytetään maybeSingle() jotta ei tule virhettä jos jäsenyyttä ei löydy

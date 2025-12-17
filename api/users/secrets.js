@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import { withOrganization } from '../middleware/with-organization.js'
 import axios from 'axios'
 import logger from '../lib/logger.js'
+import { encrypt, decrypt } from '../lib/crypto.js'
 
 const supabaseUrl = process.env.SUPABASE_URL 
   || process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -13,12 +14,12 @@ if (!supabaseUrl || !supabaseServiceKey) {
   throw new Error('Missing Supabase environment variables')
 }
 
-// Salausavain ympäristömuuttujasta
+// Salausavain ympäristömuuttujasta (käytetään vain Node.js-kerroksessa)
 // HUOM: Tämä pitää asettaa Vercelin ympäristömuuttujaksi
 const ENCRYPTION_KEY = process.env.USER_SECRETS_ENCRYPTION_KEY
 
 if (!ENCRYPTION_KEY) {
-  logger.warn('⚠️ USER_SECRETS_ENCRYPTION_KEY not set. Encryption will fail.')
+  logger.warn('⚠️ USER_SECRETS_ENCRYPTION_KEY not set. Encryption/decryption will fail.')
 }
 
 // Service role client salausavaimen hallintaan
@@ -68,7 +69,7 @@ async function handleGet(req, res) {
 
 /**
  * GET /api/user-secrets/decrypt
- * Hakee ja puraa tietyn salaisuuden arvon
+ * Hakee ja puraa tietyn salaisuuden arvon Node.js-kerroksessa.
  */
 async function handleGetDecrypt(req, res) {
   const { secret_type, secret_name } = req.query
@@ -88,28 +89,41 @@ async function handleGetDecrypt(req, res) {
       return res.status(400).json({ error: 'Käyttäjän organisaatio ei löytynyt' })
     }
 
-    // Kutsutaan Supabase-funktiota, joka puraa arvon
-    const { data, error } = await supabaseAdmin.rpc('get_user_secret', {
-      p_user_id: orgId,
-      p_secret_type: secret_type,
-      p_secret_name: secret_name,
-      p_encryption_key: ENCRYPTION_KEY
-    })
+    // Haetaan salattu arvo suoraan taulusta
+    const { data, error } = await supabaseAdmin
+      .from('user_secrets')
+      .select('encrypted_value')
+      .eq('user_id', orgId)
+      .eq('secret_type', secret_type)
+      .eq('secret_name', secret_name)
+      .eq('is_active', true)
+      .maybeSingle()
 
     if (error) {
-      logger.error('Error decrypting secret:', { message: error.message, code: error.code })
-      return res.status(500).json({ error: 'Virhe salaisuuden purussa' })
+      logger.error('Error fetching encrypted secret for decrypt:', { message: error.message, code: error.code })
+      return res.status(500).json({ error: 'Virhe salaisuuden haussa' })
     }
 
-    if (!data) {
+    if (!data || !data.encrypted_value) {
       return res.status(404).json({ error: 'Salaisuus ei löytynyt' })
     }
 
-    return res.status(200).json({ 
-      secret_type,
-      secret_name,
-      value: data // Purettu arvo
-    })
+    try {
+      // encrypted_value on bytea → muunnetaan UTF-8 merkkijonoksi ennen decryptiä
+      const encryptedString = Buffer.isBuffer(data.encrypted_value)
+        ? data.encrypted_value.toString('utf8')
+        : String(data.encrypted_value)
+      const decryptedValue = decrypt(encryptedString, ENCRYPTION_KEY)
+
+      return res.status(200).json({ 
+        secret_type,
+        secret_name,
+        value: decryptedValue
+      })
+    } catch (decErr) {
+      logger.error('Error decrypting secret in handleGetDecrypt', { message: decErr.message })
+      return res.status(500).json({ error: 'Virhe salaisuuden purussa' })
+    }
   } catch (error) {
     logger.error('Error in handleGetDecrypt:', { message: error.message, stack: error.stack, name: error.name })
     return res.status(500).json({ error: 'Sisäinen palvelinvirhe' })
@@ -129,7 +143,7 @@ async function handlePost(req, res) {
     })
   }
 
-    if (!ENCRYPTION_KEY) {
+  if (!ENCRYPTION_KEY) {
     logger.error('❌ USER_SECRETS_ENCRYPTION_KEY not set - encryption will fail')
     return res.status(500).json({ 
       error: 'Salausavain ei ole konfiguroitu'
@@ -143,22 +157,38 @@ async function handlePost(req, res) {
       return res.status(400).json({ error: 'Käyttäjän organisaatio ei löytynyt' })
     }
 
-    // Kutsutaan Supabase-funktiota, joka salaava ja tallentaa
-    const { data, error } = await supabaseAdmin.rpc('store_user_secret', {
-      p_user_id: orgId,
-      p_secret_type: secret_type,
-      p_secret_name: secret_name,
-      p_plaintext_value: plaintext_value,
-      p_encryption_key: ENCRYPTION_KEY,
-      p_metadata: metadata || {}
-    })
+    // Salaa arvo Node.js-kerroksessa
+    let encryptedValue
+    try {
+      encryptedValue = encrypt(plaintext_value, ENCRYPTION_KEY)
+    } catch (encErr) {
+      logger.error('Error encrypting secret in handlePost', { message: encErr.message })
+      return res.status(500).json({ error: 'Virhe salauksen luonnissa' })
+    }
+
+    // Tallennetaan suoraan user_secrets-tauluun (upsert)
+    const { data, error } = await supabaseAdmin
+      .from('user_secrets')
+      .upsert(
+        {
+          user_id: orgId,
+          secret_type,
+          secret_name,
+          // encrypted_value on bytea → tallennetaan bufferina
+          encrypted_value: Buffer.from(encryptedValue, 'utf8'),
+          metadata: metadata || {},
+          is_active: true,
+          updated_at: new Date().toISOString()
+        },
+        { onConflict: 'user_id,secret_type,secret_name' }
+      )
+      .select('id')
+      .single()
 
     if (error) {
-      logger.error('Error storing secret:', {
+      logger.error('Error storing secret (direct upsert):', {
         message: error.message,
-        code: error.code,
-        details: error.details,
-        hint: error.hint
+        code: error.code
       })
       return res.status(500).json({ 
         error: 'Virhe salaisuuden tallennuksessa'
@@ -196,7 +226,7 @@ async function handlePost(req, res) {
           user_id: orgId,  // public.users.id - käytä tätä get_secret_params.user_id:ssä!
           auth_user_id: req.authUser?.id,  // auth.users.id - EI käytä tätä API-avaimen haussa!
           metadata: metadata || {},
-          secret_id: data,
+          secret_id: data.id,
           timestamp: new Date().toISOString(),
           // Endpoint josta voi hakea puretun API-avaimen
           get_secret_url: `${apiBaseUrl}/api/user-secrets-service`,
@@ -271,7 +301,7 @@ async function handlePost(req, res) {
 
     return res.status(200).json({ 
       success: true,
-      secret_id: data,
+      secret_id: data.id,
       message: 'Salaisuus tallennettu onnistuneesti'
     })
   } catch (error) {
@@ -445,32 +475,50 @@ async function handleGetDecryptedService(req, res) {
   }
 
   try {
-    // Kutsutaan Supabase-funktiota, joka puraa arvon
-    const { data, error } = await supabaseAdmin.rpc('get_user_secret', {
-      p_user_id: user_id,
-      p_secret_type: secret_type,
-      p_secret_name: secret_name,
-      p_encryption_key: ENCRYPTION_KEY
-    })
+    // Haetaan salattu arvo suoraan taulusta
+    const { data, error } = await supabaseAdmin
+      .from('user_secrets')
+      .select('encrypted_value')
+      .eq('user_id', user_id)
+      .eq('secret_type', secret_type)
+      .eq('secret_name', secret_name)
+      .eq('is_active', true)
+      .maybeSingle()
 
     if (error) {
-      console.error('Error decrypting secret (service):', error)
-      return res.status(500).json({ error: 'Virhe salaisuuden purussa' })
+      logger.error('Error fetching encrypted secret in handleGetDecryptedService', {
+        message: error.message,
+        code: error.code
+      })
+      return res.status(500).json({ error: 'Virhe salaisuuden haussa' })
     }
 
-    if (!data) {
+    if (!data || !data.encrypted_value) {
       return res.status(404).json({ error: 'Salaisuus ei löytynyt' })
+    }
+
+    let decrypted
+    try {
+      const encryptedString = Buffer.isBuffer(data.encrypted_value)
+        ? data.encrypted_value.toString('utf8')
+        : String(data.encrypted_value)
+      decrypted = decrypt(encryptedString, ENCRYPTION_KEY)
+    } catch (decErr) {
+      logger.error('Error decrypting secret (service) in handleGetDecryptedService', {
+        message: decErr.message
+      })
+      return res.status(500).json({ error: 'Virhe salaisuuden purussa' })
     }
 
     return res.status(200).json({ 
       secret_type,
       secret_name,
       user_id,
-      value: data, // Purettu arvo
+      value: decrypted,
       timestamp: new Date().toISOString()
     })
   } catch (error) {
-    logger.error('Error in handleGetDecryptedService:', error)
+    logger.error('Error in handleGetDecryptedService:', { message: error.message, stack: error.stack, name: error.name })
     return res.status(500).json({ error: 'Sisäinen palvelinvirhe' })
   }
 }

@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import logger from '../lib/logger.js'
+import { decrypt } from '../lib/crypto.js'
 
 const supabaseUrl = process.env.SUPABASE_URL 
   || process.env.NEXT_PUBLIC_SUPABASE_URL 
@@ -12,7 +13,7 @@ if (!supabaseUrl || !supabaseServiceKey) {
   throw new Error('Missing Supabase environment variables')
 }
 
-// Salausavain ympäristömuuttujasta
+// Salausavain ympäristömuuttujasta (käytetään vain Node.js-kerroksessa)
 const ENCRYPTION_KEY = process.env.USER_SECRETS_ENCRYPTION_KEY
 
 if (!ENCRYPTION_KEY) {
@@ -84,34 +85,27 @@ export default async function handler(req, res) {
       })
     }
 
-    logger.debug('📞 Calling Supabase RPC: get_user_secret...')
-    
-    // Kutsutaan Supabase-funktiota, joka puraa arvon
-    const { data, error } = await supabaseAdmin.rpc('get_user_secret', {
-      p_user_id: user_id,
-      p_secret_type: secret_type,
-      p_secret_name: secret_name,
-      p_encryption_key: ENCRYPTION_KEY
-    })
-    
-    logger.debug('📞 RPC response from get_user_secret', { 
-      hasData: !!data, 
-      hasError: !!error,
-      errorCode: error?.code
-    })
+    // Haetaan salattu arvo suoraan user_secrets-taulusta
+    const { data, error } = await supabaseAdmin
+      .from('user_secrets')
+      .select('encrypted_value')
+      .eq('user_id', user_id)
+      .eq('secret_type', secret_type)
+      .eq('secret_name', secret_name)
+      .eq('is_active', true)
+      .maybeSingle()
 
     if (error) {
-      logger.error('❌ Error decrypting secret (service)', {
+      logger.error('❌ Error fetching encrypted secret (service)', {
         message: error.message,
         code: error.code
       })
       return res.status(500).json({ 
-        error: 'Virhe salaisuuden purussa'
+        error: 'Virhe salaisuuden haussa'
       })
     }
 
-    if (!data) {
-      // Lisää debug-tietoja, jos salaisuutta ei löydy
+    if (!data || !data.encrypted_value) {
       logger.warn('Secret not found with params', {
         user_id,
         secret_type,
@@ -123,12 +117,27 @@ export default async function handler(req, res) {
       })
     }
 
+    let decryptedValue
+    try {
+      const encryptedString = Buffer.isBuffer(data.encrypted_value)
+        ? data.encrypted_value.toString('utf8')
+        : String(data.encrypted_value)
+      decryptedValue = decrypt(encryptedString, ENCRYPTION_KEY)
+    } catch (decErr) {
+      logger.error('❌ Error decrypting secret (service)', {
+        message: decErr.message
+      })
+      return res.status(500).json({ 
+        error: 'Virhe salaisuuden purussa'
+      })
+    }
+
     return res.status(200).json({ 
       success: true,
       secret_type,
       secret_name,
       user_id,
-      value: data, // Purettu arvo
+      value: decryptedValue,
       timestamp: new Date().toISOString()
     })
   } catch (error) {

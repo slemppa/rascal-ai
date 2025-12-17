@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+import { getCurrentUser } from '../utils/userApi';
 import Button from './Button';
 import ColorPicker from './ColorPicker';
 import { useTranslation } from 'react-i18next';
@@ -65,13 +66,10 @@ export default function CarouselTemplateSelector() {
     try {
       const selectedTemplate = templates.find(t => t.id === selected);
       
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae käyttäjätiedot turvallisen API-endpointin kautta
+      const userData = await getCurrentUser()
       
-      if (userError || !userData?.company_id) {
+      if (!userData?.company_id) {
         throw new Error(t('settings.carousel.userCompanyMissing'));
       }
       

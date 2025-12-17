@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useSearchParams } from 'react-router-dom'
+import { getCurrentUser } from '../utils/userApi'
 import CallDetailModal from '../components/calls/CallDetailModal'
 import { supabase } from '../lib/supabase'
 import AddCallTypeModal from '../components/AddCallTypeModal'
@@ -210,11 +211,8 @@ export default function CallPanel() {
     const fetchUserVoiceId = async () => {
       if (!user?.id) return
       try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('voice_id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae käyttäjätiedot API:n kautta
+      const data = await getCurrentUser()
         
         if (error) {
           console.error('Error fetching user voice_id:', error)
@@ -693,12 +691,8 @@ export default function CallPanel() {
       const inboundVoiceObj = getVoiceOptions().find(v => v.value === inboundVoice)
       const inboundVoiceId = inboundVoiceObj?.id
       
-      // Hae käyttäjän tiedot (vapi_inbound_assistant_id)
-      const { data: userProfile, error: userError } = await supabase
-        .from('users')
-        .select('contact_email, contact_person, company_name, vapi_inbound_assistant_id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae käyttäjän tiedot API:n kautta
+      const userProfile = await getCurrentUser()
       
       if (userError || !userProfile) {
         setError('Käyttäjää ei löytynyt')
@@ -750,12 +744,8 @@ export default function CallPanel() {
       const inboundVoiceObj = getVoiceOptions().find(v => v.value === editingInboundSettings.voice)
       const inboundVoiceId = inboundVoiceObj?.id
       
-      // Hae käyttäjän tiedot (vapi_inbound_assistant_id)
-      const { data: userProfile, error: userError } = await supabase
-        .from('users')
-        .select('contact_email, contact_person, company_name, vapi_inbound_assistant_id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae käyttäjän tiedot API:n kautta
+      const userProfile = await getCurrentUser()
       
       if (userError || !userProfile) {
         setError('Käyttäjää ei löytynyt')
@@ -980,12 +970,12 @@ export default function CallPanel() {
         return
       }
       
-      // Hae ensin users.id käyttäen auth_user_id:tä
-      const { data: userProfile, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae käyttäjän ID API:n kautta
+      const { data: { session } } = await supabase.auth.getSession()
+      const userResponse = await axios.get('/api/users/me', {
+        headers: { Authorization: `Bearer ${session.access_token}` }
+      })
+      const userProfile = userResponse.data
       
       if (userError || !userProfile) {
         return

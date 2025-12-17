@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useAuth } from './AuthContext'
 import { supabase } from '../lib/supabase'
+import { getCurrentUser } from '../utils/userApi'
 import { getUserOrgId } from '../lib/getUserOrgId'
 
 const StrategyStatusContext = createContext({})
@@ -60,11 +61,13 @@ export const StrategyStatusProvider = ({ children }) => {
         return
       }
 
-      const { data, error } = await supabase
-        .from('users')
-        .select('status, strategy_approved_at')
-        .eq('id', userId)
-        .single()
+      // Hae käyttäjätiedot API:n kautta
+      const userData = await getCurrentUser()
+      const data = {
+        status: userData.status,
+        strategy_approved_at: userData.strategy_approved_at
+      }
+      const error = null
 
       if (error) {
         console.error('StrategyStatus: Error fetching user status:', error)

@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
+import { getCurrentUser } from '../utils/userApi'
 import { useAuth } from '../contexts/AuthContext'
 import { useMonthlyLimit } from '../hooks/useMonthlyLimit'
 import { useNextMonthQuota } from '../hooks/useNextMonthQuota'
@@ -629,14 +630,10 @@ export default function ManagePostsPage() {
           return
         }
 
-        // Hae company_id Supabasesta
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('company_id')
-          .eq('id', userId)
-          .single()
+        // Hae käyttäjätiedot API:n kautta
+        const userData = await getCurrentUser()
 
-        if (userError || !userData?.company_id) {
+        if (!userData?.company_id) {
           setAvatarImages([])
           setAvatarError('company_id puuttuu')
           return
@@ -878,12 +875,9 @@ export default function ManagePostsPage() {
         return
       }
 
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', userId)
-        .single()
-      if (userError || !userData?.company_id) {
+      // Hae käyttäjätiedot API:n kautta
+      const userData = await getCurrentUser()
+      if (!userData?.company_id) {
         return
       }
       const response = await fetch(`/api/social/reels/list?companyId=${userData.company_id}`)

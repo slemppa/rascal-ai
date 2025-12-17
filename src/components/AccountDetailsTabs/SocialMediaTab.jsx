@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
+import { getCurrentUser } from '../../utils/userApi'
 import { useAuth } from '../../contexts/AuthContext'
 import './SocialMediaTab.css'
 
@@ -73,11 +74,8 @@ export default function SocialMediaTab({ userId }) {
           organization.id === 1
       } else if (session?.user?.id) {
         // Fallback: hae rooli users-taulusta, jos organization ei ole vielä ladattu
-        const { data: userData } = await supabase
-          .from('users')
-          .select('role, company_id')
-          .eq('auth_user_id', session.user.id)
-          .maybeSingle()
+        // Hae käyttäjätiedot API:n kautta
+        const userData = await getCurrentUser()
 
         if (userData) {
           isAdminOrModerator =

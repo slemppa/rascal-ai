@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import pkg from '../../package.json'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
+import { getCurrentUser } from '../utils/userApi'
 import { useAuth } from '../contexts/AuthContext'
 import Button from '../components/Button'
 import '../components/ModalComponents.css'
@@ -77,11 +78,9 @@ export default function AdminPage() {
     if (!user) return
 
     try {
-      const { data: userData, error } = await supabase
-        .from('users')
-        .select('role, company_id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae käyttäjätiedot API:n kautta
+      const userData = await getCurrentUser()
+      const error = null
 
       if (error) {
         console.error('Error checking admin status:', error)

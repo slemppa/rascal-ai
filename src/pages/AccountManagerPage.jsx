@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { getCurrentUser } from '../utils/userApi'
 import { useAuth } from '../contexts/AuthContext'
 import './AccountManagerPage.css'
 
@@ -29,11 +30,9 @@ export default function AccountManagerPage() {
     if (!user) return
 
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('id, role, company_id')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Hae käyttäjätiedot API:n kautta
+      const data = await getCurrentUser()
+      const error = null
 
       if (error) throw error
       setCurrentUserId(data.id)

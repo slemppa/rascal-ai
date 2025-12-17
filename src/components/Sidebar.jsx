@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import { getCurrentUser } from '../utils/userApi'
 import styles from './Sidebar.module.css'
 import { useAuth } from '../contexts/AuthContext'
 import { useFeatures } from '../hooks/useFeatures'
@@ -235,11 +236,9 @@ export default function Sidebar() {
       if (!user) return
       
       try {
-        const { data: userData, error } = await supabase
-          .from('users')
-          .select('role, company_id, logo_url')
-          .eq('auth_user_id', user.id)
-          .single()
+        // Hae käyttäjätiedot turvallisen API-endpointin kautta
+        const userData = await getCurrentUser()
+        const error = null
 
         if (!error && userData) {
           const isAdminUser = userData.role === 'admin'

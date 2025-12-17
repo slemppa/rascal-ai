@@ -94,9 +94,9 @@ export default function DevChatPage() {
     return d.toLocaleDateString('fi-FI')
   }
 
-  // DEV: erilliset endpointit listaukselle ja uploadille
-  const DEV_LIST_ENDPOINT = '/api/storage/upload-knowledge'
-  const DEV_UPLOAD_ENDPOINT = '/api/storage/upload-knowledge'
+  // REST-muotoinen knowledge-endpoint: /api/storage/knowledge
+  const KNOWLEDGE_LIST_ENDPOINT = '/api/storage/knowledge'
+  const KNOWLEDGE_UPLOAD_ENDPOINT = '/api/storage/knowledge/upload'
 
   const fetchFiles = async () => {
     if (loadingUserData) {
@@ -110,7 +110,7 @@ export default function DevChatPage() {
     setFilesLoading(true)
     setFilesError('')
     try {
-      const response = await axios.post(DEV_LIST_ENDPOINT, { action: 'list', userId: userData.id }, {
+      const response = await axios.post(KNOWLEDGE_LIST_ENDPOINT, { action: 'list', userId: userData.id }, {
         headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
       })
       let arr = []
@@ -244,10 +244,9 @@ export default function DevChatPage() {
   const handleFileDeletion = async (fileItem) => {
     try {
       const ids = Array.isArray(fileItem?.id) ? fileItem.id : (fileItem?.ids || [])
-      // Poista jokainen tiedosto erikseen koska API vaatii userId ja fileId
-      for (const id of ids) {
-        await axios.post('/api/storage/delete-files', { userId: user?.id, fileId: id })
-      }
+      await axios.post('/api/storage/knowledge/delete', { ids }, {
+        headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
+      })
       setFiles(prev => prev.filter(f => f.file_name !== fileItem.file_name))
       setSelectedFiles([])
     } catch (error) {
@@ -300,7 +299,7 @@ export default function DevChatPage() {
       formData.append('companyId', companyId)
       formData.append('assistantId', assistantId)
       formData.append('fileNames', JSON.stringify(pendingFiles.map(f => f.name)))
-      await axios.post(DEV_UPLOAD_ENDPOINT, formData, {
+      await axios.post(KNOWLEDGE_UPLOAD_ENDPOINT, formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
           'x-api-key': import.meta.env.N8N_SECRET_KEY

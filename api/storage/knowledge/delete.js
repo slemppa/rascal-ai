@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     }
 
     if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('[dev-delete-files] Supabase URL tai ANON_KEY puuttuu')
+      console.error('[knowledge-delete] Supabase URL tai ANON_KEY puuttuu')
       return res
         .status(500)
         .json({ error: 'Supabase asetukset puuttuvat' })
@@ -50,9 +50,9 @@ export default async function handler(req, res) {
     const tableName = process.env.DEV_KNOWLEDGE_TABLE || 'langchain_documents'
 
     console.log(
-      `[dev-delete-files] Poistetaan ${ids.length} dokumenttia taulusta ${tableName}`
+      `[knowledge-delete] Poistetaan ${ids.length} dokumenttia taulusta ${tableName}`
     )
-    console.log('[dev-delete-files] User:', user.id, 'IDs:', ids)
+    console.log('[knowledge-delete] User:', user.id, 'IDs:', ids)
 
     // Poista dokumentit Supabasesta (RLS tarkistaa että käyttäjä omistaa dokumentit)
     const { data, error } = await supabase
@@ -61,14 +61,14 @@ export default async function handler(req, res) {
       .in('id', ids)
 
     if (error) {
-      console.error('[dev-delete-files] Supabase delete error:', error)
+      console.error('[knowledge-delete] Supabase delete error:', error)
       return res
         .status(500)
         .json({ error: 'Poisto epäonnistui', details: error.message })
     }
 
     console.log(
-      `[dev-delete-files] ✅ Poistettu ${ids.length} dokumenttia onnistuneesti`
+      `[knowledge-delete] ✅ Poistettu ${ids.length} dokumenttia onnistuneesti`
     )
 
     return res.status(200).json({
@@ -76,7 +76,7 @@ export default async function handler(req, res) {
       deleted: ids.length,
     })
   } catch (e) {
-    console.error('[dev-delete-files] Virhe:', e)
+    console.error('[knowledge-delete] Virhe:', e)
     return res
       .status(500)
       .json({ error: 'Internal server error', details: e.message })

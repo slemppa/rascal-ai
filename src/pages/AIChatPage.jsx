@@ -186,7 +186,7 @@ export default function AIChatPage() {
     setFilesError('')
     setFiles([]) // Tyhjennä vanhat tiedostot
     try {
-      const response = await axios.post('/api/dev-knowledge', { action: 'list', userId: orgId }, {
+      const response = await axios.post('/api/storage/knowledge', { action: 'list', userId: orgId }, {
         headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
       })
       
@@ -473,7 +473,7 @@ export default function AIChatPage() {
       formData.append('userId', orgId)
       try { formData.append('fileNames', JSON.stringify(files.map(f => f.name))) } catch {}
 
-      await axios.post('/api/dev-upload', formData, {
+      await axios.post('/api/storage/knowledge/upload', formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
           'x-api-key': import.meta.env.N8N_SECRET_KEY
@@ -1289,7 +1289,7 @@ export default function AIChatPage() {
     Array.from(files).forEach(file => formData.append('files', file))
     formData.append('action', 'feed')
     formData.append('userId', userId)
-    return axios.post('/api/dev-upload', formData, {
+    return axios.post('/api/storage/knowledge/upload', formData, {
       headers: { 
         'Content-Type': 'multipart/form-data',
         'x-api-key': import.meta.env.N8N_SECRET_KEY
@@ -1299,7 +1299,7 @@ export default function AIChatPage() {
 
   // UUSI: Assistentin tiedoston poisto (POST + action)
   async function deleteAssistantKnowledgeFile({ fileIds, userId }) {
-    return axios.post('/api/dev-delete-files', {
+    return axios.post('/api/storage/knowledge/delete', {
       ids: fileIds  // fileIds on jo array
     }, {
       headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }

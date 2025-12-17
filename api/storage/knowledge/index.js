@@ -41,7 +41,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Ei tiedostoja annettu' })
 
       // Rakenna uusi multipart-keho ja välitä binäärit suoraan N8N:ään
-      console.log('[dev-knowledge] multipart upload start')
+      console.log('[knowledge] multipart upload start')
       const fd = new FormData()
       fd.append('action', action)
       fd.append('userId', userId)
@@ -70,7 +70,7 @@ export default async function handler(req, res) {
         } catch {}
       }
       console.log(
-        '[dev-knowledge] files count:',
+        '[knowledge] files count:',
         uploadedFiles.length,
         'totalBytes:',
         totalBytes
@@ -84,7 +84,7 @@ export default async function handler(req, res) {
           body: fd,
         })
       } catch (err) {
-        console.error('[dev-knowledge] multipart forward failed:', err)
+        console.error('[knowledge] multipart forward failed:', err)
       }
 
       const text = await webhookResponse.text()
@@ -97,7 +97,7 @@ export default async function handler(req, res) {
 
       if (!webhookResponse.ok) {
         console.warn(
-          '[dev-knowledge] multipart not ok, falling back to blob+JSON'
+          '[knowledge] multipart not ok, falling back to blob+JSON'
         )
         // Fallback: lataa blobit ja lähetä JSON
         const blobResults = []
@@ -190,7 +190,7 @@ export default async function handler(req, res) {
     return res.status(response.status).json(data)
   } catch (error) {
     return res.status(500).json({
-      error: 'Virhe dev-knowledge endpointissa',
+      error: 'Virhe knowledge endpointissa',
       details: error.message,
     })
   }

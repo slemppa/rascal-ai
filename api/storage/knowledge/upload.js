@@ -1,6 +1,6 @@
 import formidable from 'formidable'
 import fs from 'fs'
-import { withOrganization } from './middleware/with-organization.js'
+import { withOrganization } from '../../middleware/with-organization.js'
 
 export const config = {
   api: { bodyParser: false },
@@ -81,7 +81,7 @@ async function handler(req, res) {
     return res.status(200).json({ success: true, webhookResponse: data })
   } catch (e) {
     return res.status(500).json({
-      error: 'Virhe dev-upload endpointissa',
+      error: 'Virhe knowledge-upload endpointissa',
       details: e.message,
     })
   }

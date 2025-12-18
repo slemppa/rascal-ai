@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { withOrganization } from '../middleware/with-organization.js'
+import { sendToN8N } from '../lib/n8n-client.js'
 
 async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
@@ -16,7 +17,6 @@ async function handler(req, res) {
     let body = {}
     try { body = req.body && Object.keys(req.body).length ? req.body : JSON.parse(await readReqBody(req)) } catch {}
     const { files } = body || {}
-    const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY || req.headers['x-api-key']
     
     // Käytetään organisaation ID:tä (req.organization.id) userId:nä
     // Tämä varmistaa että tiedostot tallennetaan organisaation alle, ei yksittäisen käyttäjän alle
@@ -39,26 +39,30 @@ async function handler(req, res) {
       enriched.push({ ...f, publicUrl: pub?.publicUrl || f.publicUrl || null })
     }
 
-    // send to vectorsupabase webhook
-    const DEV_UPLOAD_WEBHOOK_URL = 'https://samikiias.app.n8n.cloud/webhook/vectorsupabase'
-    const resp = await fetch(DEV_UPLOAD_WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...(N8N_SECRET_KEY ? { 'x-api-key': N8N_SECRET_KEY } : {}) },
-      body: JSON.stringify({
+    // Lähetetään N8N:ään HMAC-allekirjoituksella käyttäen safePayload-rakennetta
+    const DEV_UPLOAD_WEBHOOK_URL = process.env.DEV_UPLOAD_WEBHOOK_URL || 'https://samikiias.app.n8n.cloud/webhook/vectorsupabase'
+    
+    const safePayload = {
+      userId: req.organization.id,  // Luotettu organisaation ID
+      data: {
         action: 'feed_supabase',
-        userId,
         urls: enriched.map(e => e.publicUrl).filter(Boolean),
         files: enriched,
         uploadedAt: new Date().toISOString()
-      })
-    })
-    const text = await resp.text()
-    let data
-    try { data = JSON.parse(text) } catch { data = { message: text } }
-    if (!resp.ok) return res.status(500).json({ error: 'N8N webhook virhe', details: data })
+      }
+    }
 
-    return res.status(200).json({ success: true, files: enriched, webhookResponse: data })
+    console.log('[ingest] Sending to N8N:', {
+      userId: safePayload.userId,
+      filesCount: enriched.length,
+      action: safePayload.data.action
+    })
+
+    const response = await sendToN8N(DEV_UPLOAD_WEBHOOK_URL, safePayload)
+    
+    return res.status(200).json({ success: true, files: enriched, webhookResponse: response })
   } catch (e) {
+    console.error('[ingest] Error:', e)
     return res.status(500).json({ error: 'Virhe storage-ingest endpointissa', details: e?.message || String(e) })
   }
 }

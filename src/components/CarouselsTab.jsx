@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import PostCard from './PostCard/PostCard'
 import './CarouselsTab.css'
 import '../components/ModalComponents.css'
 
@@ -13,8 +14,7 @@ export default function CarouselsTab({
   onDragStart, 
   onDragEnd, 
   draggedPost, 
-  t,
-  PostCard
+  t
 }) {
   // Älä näytä Supabasesta tulevia karuselleja - tämä tabi on vain Airtable-karuselleille
   const carouselPosts = []; // Ei näytetä Supabasesta tulevia karuselleja

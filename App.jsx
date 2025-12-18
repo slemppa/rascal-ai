@@ -43,6 +43,7 @@ import OrganizationMembersPage from './src/pages/OrganizationMembersPage'
 import LeadMagnetPage from './src/pages/LeadMagnetPage'
 import VastaajaPage from './src/pages/VastaajaPage'
 import LeadScrapingPage from './src/pages/LeadScrapingPage'
+import TestN8NPage from './src/pages/TestN8NPage'
 
 // ConditionalChatbotWidget komponentti - ei tarvita enää
 function ConditionalChatbotWidget() {
@@ -247,6 +248,18 @@ export default function App() {
                       <MobileNavigation />
                       <div className="main-content">
                         <HelpPage />
+                      </div>
+                    </div>
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/test-n8n" element={
+                  <ProtectedRoute>
+                    <div className="app-layout">
+                      <Sidebar />
+                      <MobileNavigation />
+                      <div className="main-content">
+                        <TestN8NPage />
                       </div>
                     </div>
                   </ProtectedRoute>

@@ -1,7 +1,13 @@
 import axios from 'axios'
 
-// N8N webhook URL - muuta tämä oikeaksi URL:ksi
-const N8N_WEBHOOK_URL = 'YOUR_N8N_WEBHOOK_URL_HERE'
+// N8N webhook URL - haetaan ympäristömuuttujasta
+const N8N_WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL
+
+// Validointi: Tarkista että N8N_WEBHOOK_URL on määritelty
+if (!N8N_WEBHOOK_URL) {
+  console.error('VITE_N8N_WEBHOOK_URL is not defined in environment variables')
+  throw new Error('VITE_N8N_WEBHOOK_URL environment variable is required')
+}
 
 // Axios instance konfiguraatiolla
 const api = axios.create({

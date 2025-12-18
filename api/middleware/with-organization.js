@@ -8,8 +8,22 @@ import logger from '../lib/logger.js'
 export function withOrganization(handler) {
   return async (req, res) => {
     try {
-      // 1. Hae token headerista
-      const token = req.headers.authorization?.replace('Bearer ', '')
+      // 1. Hae token headerista (case-insensitive)
+      const authHeader = req.headers.authorization
+      if (!authHeader) {
+        return res.status(401).json({ error: 'Authorization token required' })
+      }
+
+      // Käytä regexia joka hyväksyy Bearer, bearer, BEARER jne.
+      const match = authHeader.match(/^Bearer\s+(.+)$/i)
+      if (!match) {
+        return res.status(401).json({ 
+          error: 'Invalid authorization header format',
+          hint: 'Expected format: Bearer <token>'
+        })
+      }
+
+      const token = match[1].trim()
       if (!token) {
         return res.status(401).json({ error: 'Authorization token required' })
       }
@@ -48,8 +62,16 @@ export function withOrganization(handler) {
       // Käytetään getUser(token) token-parametrilla, kuten muissakin API-endpointeissa
       const { data: authResult, error: authError } = await supabase.auth.getUser(token)
       if (authError || !authResult?.user) {
-        logger.warn('Auth error in withOrganization middleware', { error: authError })
-        return res.status(401).json({ error: 'Invalid token' })
+        logger.warn('Auth error in withOrganization middleware', { 
+          error: authError?.message || authError,
+          code: authError?.status || authError?.code,
+          hasToken: !!token,
+          tokenLength: token?.length
+        })
+        return res.status(401).json({ 
+          error: 'Invalid token',
+          details: authError?.message || 'Token validation failed'
+        })
       }
       const user = authResult.user
 

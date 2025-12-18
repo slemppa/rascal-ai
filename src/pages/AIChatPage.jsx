@@ -262,8 +262,15 @@ export default function AIChatPage() {
   const sendMessage = async () => {
     // Estä duplikaattilähetykset - tarkista ja aseta flag heti
     if (sendingRef.current || !input.trim() || loading) {
+      console.log('[AIChatPage] sendMessage blocked:', {
+        sendingRef: sendingRef.current,
+        hasInput: !!input.trim(),
+        loading
+      })
       return
     }
+    
+    console.log('[AIChatPage] sendMessage starting')
     
     // Aseta lähetys käynnissä -lippu HETI, ennen muita operaatioita
     sendingRef.current = true
@@ -332,15 +339,14 @@ export default function AIChatPage() {
       }
 
       // Lähetä viesti N8N:ään (joka tallentaa Zepiin käyttäen threadId:tä sessionId:nä)
+      const clientMessageId = `msg_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
       const payload = { 
         message: userMessageContent, 
         threadId: activeThreadId, // Zep käyttää tätä sessionId:nä
         userId: orgId, // Organisaation ID
-        assistantType: assistantType // 'marketing' tai 'sales'
+        assistantType: assistantType, // 'marketing' tai 'sales'
+        clientMessageId // Duplikaattisuojaukseen
       }
-      const pendingId = `msg_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
-      enqueuePending({ id: pendingId, payload })
-      
       // Aseta viestimäärä ja viimeisin assistentin viesti heti kun viesti lähetetään
       // Tämä auttaa havaitsemaan kun uusi vastaus tulee
       if (activeThreadId) {
@@ -375,20 +381,44 @@ export default function AIChatPage() {
       }
       
       // FIRE-AND-FORGET: Lähetä taustalle, älä odota vastausta
-      axios.post('/api/ai/chat', payload)
-        .then(response => {
-          dequeuePending(pendingId)
+      // Hae token ennen lähetystä
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        setMessages(prev => prev.filter(m => !m.isProcessing))
+        const errorMessage = { role: 'assistant', content: 'Kirjautuminen vaaditaan. Päivitä sivu ja kirjaudu uudelleen.' }
+        setMessages(prev => [...prev, errorMessage])
+        setLoading(false)
+        sendingRef.current = false
+        return
+      }
+      
+      // Lähetä suoraan (ei pending queuea, koska se aiheuttaa duplikaatteja)
+      console.log('[AIChatPage] Sending message:', {
+        clientMessageId,
+        hasThreadId: !!activeThreadId,
+        messageLength: userMessageContent.length,
+        payload: { ...payload, message: payload.message.substring(0, 50) + '...' }
+      })
+      
+      try {
+        const response = await axios.post('/api/ai/chat', payload, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+          }
         })
-        .catch(error => {
-          console.error('Virhe viestin lähetyksessä:', error)
-          // Lopeta polling jos se on käynnissä
-          stopPolling()
-          // Poista "Käsitellään..." ja näytä virhe
-          setMessages(prev => prev.filter(m => !m.isProcessing))
-          const errorMessage = { role: 'assistant', content: t('assistant.sendError') }
-          setMessages(prev => [...prev, errorMessage])
-          dequeuePending(pendingId)
-        })
+        console.log('[AIChatPage] Message sent successfully:', response.data)
+      } catch (error) {
+        console.error('[AIChatPage] Virhe viestin lähetyksessä:', error)
+        console.error('[AIChatPage] Error response:', error.response?.data)
+        console.error('[AIChatPage] Error status:', error.response?.status)
+        // Lopeta polling jos se on käynnissä
+        stopPolling()
+        // Poista "Käsitellään..." ja näytä virhe
+        setMessages(prev => prev.filter(m => !m.isProcessing))
+        const errorMessage = { role: 'assistant', content: t('assistant.sendError') }
+        setMessages(prev => [...prev, errorMessage])
+      }
       
       // Päivitä thread-aikaleima
       if (activeThreadId) {
@@ -413,25 +443,50 @@ export default function AIChatPage() {
   useEffect(() => {
     const flushWithAxios = async () => {
       if (!pendingQueueRef.current.length) return
+      
+      // Hae token ennen flushausta
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) return
+      
       const queue = [...pendingQueueRef.current]
       for (const item of queue) {
-        try { await axios.post('/api/ai/chat', item.payload); dequeuePending(item.id) } catch {}
+        try { 
+          await axios.post('/api/ai/chat', item.payload, {
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+              'Content-Type': 'application/json'
+            }
+          })
+          dequeuePending(item.id) 
+        } catch {}
       }
     }
     flushWithAxios()
 
-    const flushWithBeacon = () => {
+    const flushWithBeacon = async () => {
       if (!pendingQueueRef.current.length) return
+      
+      // Hae token ennen flushausta
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) return
+      
       const queue = [...pendingQueueRef.current]
       for (const item of queue) {
         const body = JSON.stringify(item.payload)
         let sent = false
-        if (navigator.sendBeacon) {
-          const blob = new Blob([body], { type: 'application/json' })
-          sent = navigator.sendBeacon('/api/ai/chat', blob)
-        }
+        // sendBeacon ei tue custom headereita, joten käytetään fetch:ia
         if (!sent) {
-          try { fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }) } catch {}
+          try { 
+            await fetch('/api/ai/chat', { 
+              method: 'POST', 
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.access_token}`
+              }, 
+              body, 
+              keepalive: true 
+            }) 
+          } catch {}
         }
         dequeuePending(item.id)
       }

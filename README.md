@@ -91,20 +91,25 @@ npm install
 ```
 
 ### 3. Ympäristömuuttujat
-Luo `.env.local` tiedosto projektin juureen:
+Luo `.env.local` tiedosto projektin juureen. Voit kopioida `.env.example` tiedoston pohjaksi:
 
 ```bash
-# Supabase
+cp .env.example .env.local
+```
+
+Täydennä `.env.local` tiedosto oikeilla arvoilla:
+
+```bash
+# Supabase (pakollinen)
 VITE_SUPABASE_URL=your-supabase-url
 VITE_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# Google Analytics OAuth (vapaaehtoinen)
-GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=your-client-secret
-GOOGLE_REDIRECT_URI=https://app.rascalai.fi/api/auth/google/callback
+# API Configuration (pakollinen)
+VITE_API_KEY=your-api-key
+VITE_N8N_WEBHOOK_URL=https://your-n8n-instance.com/webhook
 
-# N8N Integration
+# N8N Integration (pakollinen)
 N8N_SECRET_KEY=your-n8n-secret-key
 N8N_INTEGRATION_WEBHOOK_URL=https://your-n8n-instance.com/webhook/google-analytics
 N8N_GOOGLE_ANALYTICS_VISITORS_URL=https://your-n8n-instance.com/webhook/google-analytics-visitors
@@ -112,10 +117,22 @@ N8N_GOOGLE_ANALYTICS_VISITORS_URL=https://your-n8n-instance.com/webhook/google-a
 # User Secrets Encryption (pakollinen salattujen tietojen tallennukseen)
 USER_SECRETS_ENCRYPTION_KEY=your-encryption-key
 
+# Google Analytics OAuth (vapaaehtoinen)
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret
+GOOGLE_REDIRECT_URI=https://app.rascalai.fi/api/auth/google/callback
+
+# Mixpost Integration (vapaaehtoinen)
+VITE_MIXPOST_RASCAL_API_URL=https://mixpost.mak8r.fi
+
 # Muut N8N webhookit (vapaaehtoisia)
 N8N_LEADMAGNET_GET=https://your-n8n-instance.com/webhook/leadmagnet-get
-# ... lisää muita webhookeja tarpeen mukaan
 ```
+
+**Huom:** 
+- Frontend käyttää `VITE_`-etuliitteellisiä muuttujia (`import.meta.env.VITE_*`)
+- Backend käyttää `process.env.*` muuttujia
+- Katso `.env.example` tiedostosta kaikki saatavilla olevat muuttujat
 
 **Huom:** Tarkemmat ohjeet integraatioiden asettamiseen löytyvät `docs/`-kansiosta:
 - `docs/GOOGLE_ANALYTICS_OAUTH_SETUP.md` - Google Analytics OAuth 2.0

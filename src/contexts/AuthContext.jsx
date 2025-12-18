@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { DEFAULT_FEATURES } from '../constants/posts'
 
 const AuthContext = createContext({})
 
@@ -16,12 +17,13 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [organization, setOrganization] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [loadingUserProfile, setLoadingUserProfile] = useState(false)
   const navigate = useNavigate()
 
   const fetchUserProfile = useCallback(async (sessionUser) => {
     // Palautetaan heti käyttäjätiedot ilman organisaatiota, jotta kirjautuminen ei jää jumiin
     // Organisaatiotiedot haetaan myöhemmin taustalla
-    const defaultFeatures = ['Social Media', 'Phone Calls', 'Email marketing integration', 'Marketing assistant']
+    const defaultFeatures = DEFAULT_FEATURES
     
     // Palautetaan heti perustiedot
     const basicUser = {
@@ -45,68 +47,65 @@ export const AuthProvider = ({ children }) => {
               .eq('id', orgMember.org_id)
               .single()
             
-            // Aseta organisaatiotiedot kun ne löytyvät
-            setOrganization({
-              id: orgMember.org_id,
-              role: orgMember.role,
-              data: orgData || null
-            })
-            
-            // Päivitä features jos löytyi
-            const features = Array.isArray(orgData?.features) 
-              ? orgData.features 
-              : defaultFeatures
-            
-            setUser(prev => prev ? {
-              ...prev,
-              features: features,
-              organizationId: orgMember.org_id,
-              organizationRole: orgMember.role
-            } : null)
-          } else if (orgError || !orgMember) {
-            // Jos org_members haussa virhe tai käyttäjää ei löydy, yritetään hakea suoraan users-taulusta
-            // ja tarkistaa onko globaali admin/moderator
-            supabase
+            if (!orgDataError && orgData) {
+              const features = Array.isArray(orgData?.features) 
+                ? orgData.features 
+                : defaultFeatures
+              
+              setOrganization({
+                id: orgMember.org_id,
+                role: orgMember.role,
+                data: orgData
+              })
+              
+              setUser(prev => prev ? {
+                ...prev,
+                features: features,
+                organizationId: orgMember.org_id,
+                organizationRole: orgMember.role
+              } : null)
+            }
+          } else {
+            // Jos ei org_members, tarkista admin/moderator
+            const { data: userData, error: userError } = await supabase
               .from('users')
               .select('*')
               .eq('auth_user_id', sessionUser.id)
               .maybeSingle()
-              .then(({ data: userData, error: userError }) => {
-                if (!userError && userData) {
-                  const features = Array.isArray(userData.features) 
-                    ? userData.features 
-                    : defaultFeatures
-                  
-                  // Jos käyttäjä on globaali admin tai moderator, aseta organization
-                  if (userData.role === 'admin' || userData.role === 'moderator') {
-                    setOrganization({
-                      id: userData.id,
-                      role: userData.role, // 'admin' tai 'moderator'
-                      data: userData
-                    })
-                    
-                    setUser(prev => prev ? {
-                      ...prev,
-                      features: features,
-                      organizationId: userData.id,
-                      organizationRole: userData.role
-                    } : null)
-                  } else {
-                    // Ei admin/moderator, päivitä vain features
-                    setUser(prev => prev ? {
-                      ...prev,
-                      features: features
-                    } : null)
-                  }
-                }
-              })
+            
+            if (!userError && userData) {
+              const features = Array.isArray(userData.features) 
+                ? userData.features 
+                : defaultFeatures
+              
+              if (userData.role === 'admin' || userData.role === 'moderator') {
+                setOrganization({
+                  id: userData.id,
+                  role: userData.role,
+                  data: userData
+                })
+                
+                setUser(prev => prev ? {
+                  ...prev,
+                  features: features,
+                  organizationId: userData.id,
+                  organizationRole: userData.role
+                } : null)
+              } else {
+                setUser(prev => prev ? {
+                  ...prev,
+                  features: features
+                } : null)
+              }
+            }
           }
         })
         .catch(err => {
-          console.error('Error fetching organization (background):', err)
+          console.error('Error fetching organization in background:', err)
         })
       
-      // Ei odoteta organisaatiotietoja - palautetaan heti
+      // Älä odota organisaatiotietoja - palauta heti käyttäjä
+      orgPromise.catch(() => {}) // Ignoroi virheet taustahaun aikana
     } catch (error) {
       console.error('Error in fetchUserProfile:', error)
     }
@@ -125,7 +124,7 @@ export const AuthProvider = ({ children }) => {
         if (sessionData?.user) {
           const userWithProfile = {
             ...sessionData.user,
-            features: ['Social Media', 'Phone Calls', 'Email marketing integration', 'Marketing assistant']
+            features: DEFAULT_FEATURES
           }
           setUser(userWithProfile)
         }
@@ -247,7 +246,8 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user: user,
     organization: organization,
-    loading: loading,
+    loading: loading || loadingUserProfile,
+    loadingUserProfile: loadingUserProfile,
     signOut: signOut,
     fetchUserProfile: fetchUserProfile
   }

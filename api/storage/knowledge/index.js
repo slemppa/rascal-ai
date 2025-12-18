@@ -1,6 +1,7 @@
 import formidable from 'formidable'
 import fs from 'fs'
 import { put } from '@vercel/blob'
+import { sendToN8N } from '../../lib/n8n-client.js'
 
 export const config = {
   api: {
@@ -155,7 +156,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true, webhookResponse: data })
     }
 
-    // JSON: list/delete tms
+    // JSON: list/delete tms (käytetään HMAC-allekirjoitusta)
     let body = {}
     try {
       body =
@@ -164,30 +165,9 @@ export default async function handler(req, res) {
           : JSON.parse(await readReqBody(req))
     } catch {}
 
-    const response = await fetch(DEV_KNOWLEDGE_WEBHOOK_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': N8N_SECRET_KEY,
-      },
-      body: JSON.stringify(body),
-    })
-
-    const text = await response.text()
-    let data
-    try {
-      data = JSON.parse(text)
-    } catch {
-      data = { message: text }
-    }
-
-    if (!response.ok) {
-      return res
-        .status(response.status)
-        .json({ error: 'Webhook-virhe', details: data })
-    }
-
-    return res.status(response.status).json(data)
+    // Lähetetään N8N:ään HMAC-allekirjoituksella
+    const data = await sendToN8N(DEV_KNOWLEDGE_WEBHOOK_URL, body)
+    return res.status(200).json(data)
   } catch (error) {
     return res.status(500).json({
       error: 'Virhe knowledge endpointissa',

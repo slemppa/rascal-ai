@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import PostCard from './PostCard/PostCard'
 import './KanbanTab.css'
 
 const columns = [
@@ -18,7 +19,6 @@ export default function KanbanTab({
   onSchedule,
   onMoveToNext,
   t,
-  PostCard,
   onDeleteMixpostPost,
   onRefreshPosts
 }) {

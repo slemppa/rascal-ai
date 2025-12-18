@@ -8,6 +8,9 @@ import { useAuth } from '../contexts/AuthContext'
 import { useMonthlyLimit } from '../hooks/useMonthlyLimit'
 import { useNextMonthQuota } from '../hooks/useNextMonthQuota'
 import { getUserOrgId } from '../lib/getUserOrgId'
+import { usePosts } from '../hooks/usePosts'
+import { useEscapeKey } from '../hooks/useEscapeKey'
+import { POST_STATUS_REVERSE_MAP } from '../constants/posts'
 import Button from '../components/Button'
 import PostsCalendar from '../components/PostsCalendar'
 import PublishModal from '../components/PublishModal'
@@ -19,6 +22,7 @@ import MonthlyLimitWarning from '../components/MonthlyLimitWarning'
 import UgcTab from '../components/UgcTab'
 import CarouselsTab from '../components/CarouselsTab'
 import KanbanTab from '../components/KanbanTab'
+import PostCard from '../components/PostCard/PostCard'
 import '../components/ModalComponents.css'
 import '../components/MonthlyLimitWarning.css'
 import './ManagePostsPage.css'
@@ -61,427 +65,8 @@ const initialPosts = [
 
 // columns ja publishedColumn määritelmät siirretty KanbanTab-komponenttiin
 
-// Data muunnos funktio Supabase datasta Kanban muotoon
-const transformSupabaseData = (supabaseData) => {
-  if (!supabaseData || !Array.isArray(supabaseData)) return []
-  
-  return supabaseData.map(item => {
-    // Muunnetaan Supabase status suomeksi
-    const statusMap = {
-      'Draft': 'Kesken',
-      'In Progress': 'Kesken', 
-      'Under Review': 'Tarkistuksessa',
-      'Scheduled': 'Aikataulutettu',
-      'Done': 'Tarkistuksessa',
-      'Published': 'Julkaistu',
-      'Deleted': 'Poistettu'
-    }
-    
-    let status = statusMap[item.status] || 'Kesken'
-    
+// Transform funktiot siirretty usePosts hookiin
 
-    
-    // Jos status on "Done" mutta publish_date on tulevaisuudessa, se on "Ajastettu"
-    const now = new Date()
-    const publishDate = item.publish_date ? new Date(item.publish_date) : null
-    
-    if (publishDate && publishDate > now && status === 'Julkaistu') {
-      status = 'Aikataulutettu'
-    }
-    
-    // Carousel-tyyppisillä posteilla käytetään segments-taulun ensimmäistä kuvaa
-    let thumbnail = null;
-    if (item.type === 'Carousel') {
-      // Jos item sisältää segments-datan, käytetään sitä
-      if (item.segments && item.segments.length > 0) {
-        const firstSegment = item.segments.find(seg => seg.slide_no === 1) || item.segments[0];
-        thumbnail = firstSegment.media_urls?.[0] || null;
-      }
-    } else {
-      // Muille tyypeille käytetään content-taulun media_urls
-      thumbnail = item.media_urls?.[0] || null;
-    }
-    
-
-    
-    const transformed = {
-      id: item.id,
-      title: item.idea || item.caption || t('posts.statuses.untitled'),
-      status: status,
-      thumbnail: thumbnail,
-      caption: item.caption || item.idea || 'Ei kuvausta',
-      type: item.type || 'Photo',
-      provider: item.provider || null, // Lisätään provider-kenttä
-      createdAt: item.created_at ? new Date(item.created_at).toISOString().split('T')[0] : null,
-      scheduledDate: item.publish_date && publishDate > now ? new Date(item.publish_date).toISOString().split('T')[0] : null,
-      publishedAt: item.publish_date && publishDate <= now ? new Date(item.publish_date).toISOString().split('T')[0] : null,
-      publishDate: item.publish_date ? new Date(item.publish_date).toISOString().slice(0, 16) : null,
-      mediaUrls: item.media_urls || [],
-      media_urls: item.media_urls || [], // Lisätään myös media_urls kenttä
-      hashtags: item.hashtags || [],
-      voiceover: item.voiceover || '',
-      voiceoverReady: item.voiceover_ready || false,
-      segments: item.segments || [], // Lisätään segments data!
-      originalData: {
-        ...item,
-        media_urls: item.media_urls || [] // Varmistetaan että media_urls on originalData:ssa
-      },
-      source: 'supabase'
-    }
-    
-    // Debug info removed
-    
-    return transformed
-  })
-}
-
-// Transform Reels data to Kanban format
-  const transformReelsData = (reelsData) => {
-    if (!reelsData || !Array.isArray(reelsData)) return []
-    
-    console.log('DEBUG: transformReelsData received:', reelsData)
-    
-    return reelsData.map(item => {
-      const status = item.status || 'Kesken' // Status is forced to 'Kesken' by the API
-      
-      // Tunnista avatar-kuvat "Type (from Variables) (from Companies)" kentän perusteella
-      const isAvatar = Array.isArray(item["Type (from Variables) (from Companies)"]) && 
-                      item["Type (from Variables) (from Companies)"].includes("Avatar")
-      
-      console.log('DEBUG: Processing reels item:', {
-        id: item.id,
-        title: item.title,
-        caption: item.caption,
-        status: item.status,
-        isAvatar: isAvatar
-      })
-      
-      return {
-        id: item.id,
-        title: item.Idea || item.caption || t('posts.statuses.untitledReels'),
-        status: status,
-        thumbnail: item.media_urls?.[0] || null,
-        caption: item.caption || 'Ei kuvausta',
-        type: isAvatar ? 'Avatar' : 'Reel',
-        createdAt: item.createdTime || item.created_at ? new Date(item.createdTime || item.created_at).toISOString().split('T')[0] : null,
-        scheduledDate: null,
-        publishedAt: null,
-        mediaUrls: item.media_urls || [],
-        hashtags: item.Hashtags || item.hashtags || [],
-        voiceover: item.Voiceover || item.voiceover || '',
-        originalData: item,
-        source: 'reels'
-      }
-    })
-  }
-
-function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext, onDragStart, onDragEnd, isDragging, hideActions = false, t }) {
-  return (
-    <div 
-      className={`post-card ${isDragging ? 'dragging' : ''}`}
-      draggable={true}
-      onDragStart={(e) => onDragStart(e, post)}
-      onDragEnd={onDragEnd}
-      onClick={hideActions ? () => onEdit(post) : undefined}
-      style={hideActions ? { cursor: 'pointer' } : undefined}
-    >
-      <div className="post-card-content">
-        <div className="post-thumbnail">
-          {(() => {
-            // Carousel: Näytä ensimmäinen slide segments-taulusta
-            if (post.type === 'Carousel' && post.segments && post.segments.length > 0) {
-              const firstSegment = post.segments.find(seg => seg.slide_no === 1) || post.segments[0];
-              const mediaUrl = firstSegment.media_urls?.[0];
-              
-              if (mediaUrl) {
-                const isVideo = mediaUrl.includes('.mp4') || mediaUrl.includes('.webm') || mediaUrl.includes('.mov') || mediaUrl.includes('.avi');
-                
-                if (isVideo) {
-                  return (
-                    <video
-                      src={mediaUrl}
-                      muted
-                      loop
-                      playsInline
-                      style={{ 
-                        width: '100%', 
-                        height: '100%', 
-                        objectFit: 'cover'
-                      }}
-                      onError={(e) => {
-                        if (e.target && e.target.style) {
-                          e.target.style.display = 'none';
-                        }
-                        if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
-                          e.target.nextSibling.style.display = 'flex';
-                        }
-                      }}
-                    />
-                  );
-                } else {
-                  return (
-                    <img
-                      src={mediaUrl}
-                      alt="carousel preview"
-                      loading="lazy"
-                      decoding="async"
-                      onLoad={(e) => {
-                        e.target.style.opacity = '1'
-                      }}
-                      onError={(e) => {
-                        if (e.target && e.target.style) {
-                          e.target.style.display = 'none';
-                        }
-                        if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
-                          e.target.nextSibling.style.display = 'flex';
-                        }
-                      }}
-                      style={{ 
-                        width: '100%', 
-                        height: '100%', 
-                        objectFit: 'cover',
-                        opacity: 0,
-                        transition: 'opacity 0.3s ease'
-                      }}
-                    />
-                  );
-                }
-              }
-            }
-            
-            // Video: Toisto
-            if (post.thumbnail && (post.thumbnail.includes('.mp4') || post.thumbnail.includes('.webm') || post.thumbnail.includes('.mov') || post.thumbnail.includes('.avi'))) {
-              return (
-                <video
-                  src={post.thumbnail}
-                  muted
-                  loop
-                  playsInline
-                  style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    objectFit: 'cover'
-                  }}
-                  onError={(e) => {
-                    if (e.target && e.target.style) {
-                      e.target.style.display = 'none';
-                    }
-                    if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
-                      e.target.nextSibling.style.display = 'flex';
-                    }
-                  }}
-                />
-              );
-            }
-            
-            // Kuva: Näytä kaikki kuvat jos useampi, muuten vain thumbnail
-            if (post.thumbnail) {
-              // Tarkista onko useampi kuva media_urls-kentässä
-              const mediaUrls = post.media_urls || post.mediaUrls || [];
-              const hasMultipleImages = mediaUrls.length > 1;
-              
-              if (hasMultipleImages) {
-                // Näytä kaikki kuvat pienenä gridinä
-                return (
-                  <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: 'repeat(2, 1fr)', 
-                    gap: '2px', 
-                    width: '100%', 
-                    height: '100%' 
-                  }}>
-                    {mediaUrls.slice(0, 4).map((url, index) => (
-                      <img
-                        key={index}
-                        src={url}
-                        alt={`media ${index + 1}`}
-                        loading="lazy"
-                        decoding="async"
-                        onLoad={(e) => {
-                          e.target.style.opacity = '1'
-                        }}
-                        onError={(e) => {
-                          if (e.target && e.target.style) {
-                            e.target.style.display = 'none';
-                          }
-                          if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
-                            e.target.nextSibling.style.display = 'flex';
-                          }
-                        }}
-                        style={{ 
-                          width: '100%', 
-                          height: '100%', 
-                          objectFit: 'cover',
-                          opacity: 0,
-                          transition: 'opacity 0.3s ease'
-                        }}
-                      />
-                    ))}
-                    {mediaUrls.length > 4 && (
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        background: 'rgba(0,0,0,0.7)',
-                        color: 'white',
-                        fontSize: '12px',
-                        fontWeight: 'bold'
-                      }}>
-                        +{mediaUrls.length - 4}
-                      </div>
-                    )}
-                  </div>
-                );
-              } else {
-                // Näytä vain yksi kuva
-                return (
-                  <img
-                    src={post.thumbnail}
-                    alt="thumbnail"
-                    loading="lazy"
-                    decoding="async"
-                    onLoad={(e) => {
-                      e.target.style.opacity = '1'
-                    }}
-                    onError={(e) => {
-                      if (e.target && e.target.style) {
-                        e.target.style.display = 'none';
-                      }
-                      if (e.target && e.target.nextSibling && e.target.nextSibling.style) {
-                        e.target.nextSibling.style.display = 'flex';
-                      }
-                    }}
-                    style={{ 
-                      width: '100%', 
-                      height: '100%', 
-                      objectFit: 'cover',
-                      opacity: 0,
-                      transition: 'opacity 0.3s ease'
-                    }}
-                  />
-                );
-              }
-            }
-            
-            // Placeholder jos ei mediaa
-            return (
-              <div className="placeholder-content">
-                <img
-                  src="/placeholder.png"
-                  alt="Ei kuvaa"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    opacity: 0.3
-                  }}
-                  onError={(e) => {
-                    // Jos placeholder-kuva ei lataa, näytä tekstin
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="placeholder-fallback" style={{ display: 'none' }}>
-                  <div className="placeholder-icon">🖼️</div>
-                  <div className="placeholder-text">Ei kuvaa</div>
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-                  <div className="post-info">
-            <div className="post-header">
-              <h3 className="post-title">
-                {post.title.includes('.') ? post.title.split('.')[0] + '.' : post.title}
-              </h3>
-              <div className="post-badges">
-                <span className="post-type">
-                  {post.source === 'mixpost' && post.provider
-                    ? (post.provider.charAt(0).toUpperCase() + post.provider.slice(1))
-                    : (post.type === 'Carousel' ? 'Carousel' :  
-                       post.type === 'Reels' ? 'Reels' :
-                       post.type === 'Blog' ? 'Blog' : 
-                       post.type === 'Newsletter' ? 'Newsletter' :  
-                       post.type)}
-                </span>
-          </div>
-          </div>
-            <p className="post-caption" style={{ contain: 'layout style' }}>
-              {post.caption}
-            </p>
-          <div className="post-footer">
-            {post.originalData?.created_at && (
-              <span className="post-created-date" style={{ 
-                fontSize: '11px', 
-                color: '#6b7280',
-                display: 'block',
-                marginTop: '2px'
-              }}>
-                Luotu: {new Date(post.originalData.created_at).toLocaleDateString('fi-FI')}
-              </span>
-            )}
-            <div className="post-actions">
-              {/* Näytä napit vain jos ei ole "Julkaistu" sarakkeessa */}
-              {!hideActions && post.status !== 'Julkaistu' && (
-                <>
-                  {post.status !== 'Tarkistuksessa' && (
-                    <Button 
-                      variant="secondary" 
-                      onClick={() => onEdit(post)}
-                      style={{ fontSize: '11px', padding: '6px 10px' }}
-                    >
-                      {post.source === 'reels' ? 'Tarkista' : t('posts.buttons.edit')}
-                    </Button>
-                  )}
-                  
-                  {/* Siirtymispainikkeet */}
-                  {post.status === 'Kesken' && post.source === 'supabase' && (
-                    <Button
-                      variant="primary"
-                      onClick={() => onMoveToNext(post, 'Tarkistuksessa')}
-                      style={{ 
-                        backgroundColor: '#3b82f6', 
-                        fontSize: '11px', 
-                        padding: '6px 10px' 
-                      }}
-                    >
-                      Valmiina julkaisuun
-                    </Button>
-                  )}
-                  
-                  {/* Julkaisu-nappi vain jos status on "Valmiina julkaisuun" (Tarkistuksessa) */}
-                  {post.status === 'Tarkistuksessa' && (
-                    <Button
-                      variant="primary"
-                      onClick={() => onPublish(post)}
-                      style={{ 
-                        backgroundColor: '#22c55e', 
-                        fontSize: '11px', 
-                        padding: '6px 10px' 
-                      }}
-                    >
-                      {t('posts.buttons.publish')}
-                    </Button>
-                  )}
-                  
-                  {post.status !== 'Aikataulutettu' && (
-                    <Button 
-                      variant="danger" 
-                      onClick={() => onDelete(post)}
-                      style={{ fontSize: '11px', padding: '6px 10px' }}
-                    >
-                      {t('posts.buttons.delete')}
-                    </Button>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export default function ManagePostsPage() {
   const { t } = useTranslation('common')
@@ -489,9 +74,30 @@ export default function ManagePostsPage() {
   const monthlyLimit = useMonthlyLimit()
   const nextMonthQuota = useNextMonthQuota()
   
-  const [posts, setPosts] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  // Use usePosts hook for data management
+  const {
+    posts,
+    reelsPosts,
+    mixpostPosts,
+    allPosts,
+    socialAccounts,
+    loading,
+    reelsLoading,
+    mixpostLoading,
+    loadingAccounts,
+    currentLoading,
+    error,
+    reelsError,
+    currentError,
+    fetchPosts,
+    fetchReelsPosts,
+    fetchMixpostPosts,
+    fetchSocialAccounts,
+    setPosts,
+    setReelsPosts,
+    setMixpostPosts
+  } = usePosts(user, t)
+  
   const [searchTerm, setSearchTerm] = useState('')
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
@@ -517,99 +123,27 @@ export default function ManagePostsPage() {
   const [editingPost, setEditingPost] = useState(null)
   const [showPublishModal, setShowPublishModal] = useState(false)
   const [publishingPost, setPublishingPost] = useState(null)
-  const [socialAccounts, setSocialAccounts] = useState([])
   const [selectedAccounts, setSelectedAccounts] = useState([])
-  const [loadingAccounts, setLoadingAccounts] = useState(false)
-  const [reelsPosts, setReelsPosts] = useState([])
-  const [reelsLoading, setReelsLoading] = useState(false)
-  const [reelsError, setReelsError] = useState(null)
   const [editModalStep, setEditModalStep] = useState(1) // 1 = voiceover, 2 = avatar
   const [selectedAvatar, setSelectedAvatar] = useState(null)
   const [avatarImages, setAvatarImages] = useState([]) // [{url, id}]
   const [avatarLoading, setAvatarLoading] = useState(false)
   const [avatarError, setAvatarError] = useState('')
   const [voiceoverReadyChecked, setVoiceoverReadyChecked] = useState(false)
-  const [mixpostPosts, setMixpostPosts] = useState([])
-  const [mixpostLoading, setMixpostLoading] = useState(false)
   const [showLimitWarning, setShowLimitWarning] = useState(false)
   const [refreshingCalendar, setRefreshingCalendar] = useState(false)
+  
+  // Refs for character counting
+  const textareaRef = useRef(null)
+  const charCountRef = useRef(null)
+  
+  // Ref for file input
+  const fileInputRef = useRef(null)
+  
+  // Ref for edit modal form
+  const editFormRef = useRef(null)
 
-  // Hae Mixpost postaukset
-  const fetchMixpostPosts = async () => {
-    try {
-      setMixpostLoading(true)
-      
-      // Hae sessio ja token
-      const session = await supabase.auth.getSession()
-      const token = session.data.session?.access_token
-      
-      if (!token) {
-        console.error('No auth token available for Mixpost API')
-        setMixpostPosts([])
-        return
-      }
-      
-      // Kutsu omaa proxy-endpointtia axiosilla
-      const response = await axios.get('/api/integrations/mixpost/posts', {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      })
-
-      const mixpostPosts = response.data
-      
-      // Käännä statusit suomeksi varmistukseksi (jos API ei ole tehnyt sitä)
-      const statusMap = {
-        'published': 'Julkaistu',
-        'scheduled': 'Aikataulutettu', 
-        'draft': 'Luonnos',
-        'failed': 'Epäonnistui'
-      }
-      
-      const translatedPosts = mixpostPosts.map(post => {
-        // Poimi media-tiedot versions[0].content[0].media -kentästä
-        let thumbnail = null
-        let mediaUrls = []
-        
-        if (post.versions && post.versions.length > 0) {
-          const firstVersion = post.versions[0]
-          if (firstVersion.content && firstVersion.content.length > 0) {
-            const firstContent = firstVersion.content[0]
-            if (firstContent.media && firstContent.media.length > 0) {
-              // Käytä thumb_url:ia jos saatavilla (videot), muuten url:ia
-              const firstMedia = firstContent.media[0]
-              thumbnail = firstMedia.thumb_url || firstMedia.url || null
-              
-              // Kerää kaikki media-URLit
-              mediaUrls = firstContent.media.map(media => media.thumb_url || media.url).filter(Boolean)
-            }
-          }
-        }
-        
-        return {
-          ...post,
-          status: statusMap[post.status] || post.status,
-          thumbnail: thumbnail,
-          mediaUrls: mediaUrls,
-          media_urls: mediaUrls,
-          // Säilytetään myös versions-data, jotta se on saatavilla PostCard-komponentissa
-          versions: post.versions || []
-        }
-      })
-      
-      // Näytä kaikki Mixpost-postaukset (sekä scheduled että published)
-      setMixpostPosts(translatedPosts)
-      
-    } catch (error) {
-      console.error('Mixpost fetch error:', error)
-      console.error('Error details:', error.response?.status, error.response?.data)
-      // Jatka normaalisti ilman Mixpost-postauksia
-      setMixpostPosts([])
-    } finally {
-      setMixpostLoading(false)
-    }
-  }
+  // fetchMixpostPosts siirretty usePosts hookiin
 
   // Hae avatar-kuvat kuten /settings sivulla (vain näyttö toistaiseksi)
   useEffect(() => {
@@ -710,78 +244,7 @@ export default function ManagePostsPage() {
     }
   }, [errorMessage])
 
-  // Data haku Supabasesta
-  const fetchPosts = async () => {
-    if (!user) return
-    
-    try {
-      setLoading(true)
-      setError(null)
-      
-      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
-      const userId = await getUserOrgId(user.id)
-      
-      if (!userId) {
-        throw new Error(t('posts.messages.userIdNotFound'))
-      }
-      
-      // Haetaan käyttäjän some-sisältö (ei Blog/Newsletter, ei poistettuja)
-      const { data, error } = await supabase
-        .from('content')
-        .select('*')
-        .eq('user_id', userId)
-        .neq('type', 'Blog')
-        .neq('type', 'Newsletter')
-        .neq('status', 'Deleted')
-        .order('created_at', { ascending: false })
-      
-      if (error) {
-        throw error
-      }
-      
-      // Haetaan kaikki segments-data yhdellä kyselyllä
-      const carouselContentIds = data.filter(item => item.type === 'Carousel').map(item => item.id)
-      
-      let segmentsData = []
-      if (carouselContentIds.length > 0) {
-        const { data: segments, error: segmentsError } = await supabase
-          .from('segments')
-          .select('*')
-          .in('content_id', carouselContentIds)
-          .order('slide_no', { ascending: true })
-        
-        if (!segmentsError && segments) {
-          segmentsData = segments
-        }
-      }
-      
-
-      
-      // Yhdistetään content ja segments data
-      const contentWithSegments = data.map(contentItem => {
-        if (contentItem.type === 'Carousel') {
-          const itemSegments = segmentsData.filter(segment => segment.content_id === contentItem.id)
-          return {
-            ...contentItem,
-            segments: itemSegments
-          }
-        }
-        return contentItem
-      })
-      
-
-      
-      const transformedData = transformSupabaseData(contentWithSegments)
-
-      setPosts(transformedData || [])
-      
-    } catch (err) {
-      console.error('Virhe datan haussa:', err)
-      setError(t('posts.messages.dataFetchError'))
-    } finally {
-      setLoading(false)
-    }
-  }
+  // fetchPosts siirretty usePosts hookiin
 
   // Hae kaikki data kun sivu avataan (vain kerran)
   useEffect(() => {
@@ -804,43 +267,7 @@ export default function ManagePostsPage() {
     }
   }, [user?.features, activeTab])
 
-  // Hae somekanavat Supabasesta
-  const fetchSocialAccounts = async () => {
-    if (!user) return
-    
-    try {
-      setLoadingAccounts(true)
-      
-      // Hae organisaation ID (public.users.id)
-      const orgId = await getUserOrgId(user.id)
-      if (!orgId) {
-        console.error('Organisaation ID ei löytynyt')
-        setSocialAccounts([])
-        return
-      }
-      
-      // Haetaan yhdistetyt sometilit käyttäen organisaation ID:tä
-      const { data: accountsData, error: accountsError } = await supabase
-        .from('user_social_accounts')
-        .select('mixpost_account_uuid, provider, account_name, profile_image_url, username')
-        .eq('user_id', orgId) // Käytetään organisaation ID:tä
-        .eq('is_authorized', true)
-        .order('last_synced_at', { ascending: false })
-
-              if (accountsError) {
-          console.error('Error fetching social accounts:', accountsError)
-          setSocialAccounts([])
-          return
-        }
-      setSocialAccounts(accountsData || [])
-      
-    } catch (error) {
-      console.error('Error fetching social accounts:', error)
-      setSocialAccounts([])
-    } finally {
-      setLoadingAccounts(false)
-    }
-  }
+  // fetchSocialAccounts siirretty usePosts hookiin
 
   // Debounced search for performance
   useEffect(() => {
@@ -851,60 +278,17 @@ export default function ManagePostsPage() {
     return () => clearTimeout(timer)
   }, [searchTerm])
 
-  // Reels data haku
-  const fetchReelsPosts = async () => {
-    if (!user) {
-      return
-    }
-    
-    // Aloitetaan tyhjällä datalla
-    setReelsPosts([])
-    
-    try {
-      setReelsLoading(true)
-      setReelsError(null)
-      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
-      const userId = await getUserOrgId(user.id)
-      
-      if (!userId) {
-        return
-      }
-
-      // Hae käyttäjätiedot API:n kautta
-      const userData = await getCurrentUser()
-      if (!userData?.company_id) {
-        return
-      }
-      const response = await fetch(`/api/social/reels/list?companyId=${userData.company_id}`)
-      if (!response.ok) {
-        return
-      }
-      const data = await response.json()
-      const transformedData = transformReelsData(data)
-      setReelsPosts(transformedData)
-    } catch (err) {
-      console.error('Virhe Reels datan haussa:', err)
-      // Pidetään dummy data näkyvissä virheen sattuessa
-    } finally {
-      setReelsLoading(false)
-    }
-  }
+  // fetchReelsPosts siirretty usePosts hookiin
 
 
 
 
 
-    // Transform Reels data to Kanban format
-  // Yhdistetään data
-  const allPosts = [...posts, ...reelsPosts, ...mixpostPosts]
+  // allPosts, currentLoading, currentError käytetään hookista
   const currentPosts = allPosts
-  const currentLoading = loading || reelsLoading
-  const currentError = error || reelsError
   
-
-
   // Filtteröidään postit
-  const filteredPosts = currentPosts.filter(post => {
+  const filteredPosts = allPosts.filter(post => {
     const matchesSearch = (post.title?.toLowerCase() || '').includes(debouncedSearchTerm.toLowerCase()) ||
                          (post.caption?.toLowerCase() || '').includes(debouncedSearchTerm.toLowerCase())
     const matchesStatus = statusFilter === '' || post.status === statusFilter
@@ -1611,15 +995,8 @@ export default function ManagePostsPage() {
         throw new Error(t('posts.messages.userIdNotFound'))
       }
 
-      // Määritellään status-mappaus
-      const statusMap = {
-        'Kesken': 'In Progress',
-        'KeskenSupabase': 'In Progress',
-        'Tarkistuksessa': 'Under Review',
-        'Aikataulutettu': 'Scheduled'
-      }
-
-      const supabaseStatus = statusMap[newStatus]
+      // Käytetään vakiota status-mappaukselle
+      const supabaseStatus = POST_STATUS_REVERSE_MAP[newStatus]
       if (!supabaseStatus) {
         throw new Error('Virheellinen status: ' + newStatus)
       }
@@ -1905,30 +1282,21 @@ export default function ManagePostsPage() {
   };
 
   // ESC-näppäimellä sulkeutuminen
-  useEffect(() => {
-    const handleEscKey = (event) => {
-      if (event.key === 'Escape') {
-        if (showEditModal) {
-          setShowEditModal(false)
-          setEditingPost(null)
-        }
-        if (showCreateModal) {
-          setShowCreateModal(false)
-        }
-      }
+  useEscapeKey(() => {
+    if (showEditModal) {
+      setShowEditModal(false)
+      setEditingPost(null)
     }
-
-    if (showEditModal || showCreateModal) {
-      document.addEventListener('keydown', handleEscKey)
-      return () => document.removeEventListener('keydown', handleEscKey)
+    if (showCreateModal) {
+      setShowCreateModal(false)
     }
-  }, [showEditModal, showCreateModal])
+  })
 
-       // Merkkien laskenta "Valmiina julkaisuun" (Tarkistuksessa) sarakkeelle ja create modaliin
+  // Merkkien laskenta "Valmiina julkaisuun" (Tarkistuksessa) sarakkeelle
   useEffect(() => {
     if (showEditModal && editingPost && editingPost.status === 'Tarkistuksessa') {
-      const textarea = document.querySelector('.form-textarea')
-      const charCount = document.querySelector('.char-count')
+      const textarea = textareaRef.current
+      const charCount = charCountRef.current
 
       if (textarea && charCount) {
         const updateCharCount = () => {
@@ -2046,7 +1414,7 @@ export default function ManagePostsPage() {
             <option value="LinkedIn">LinkedIn</option>
             <option value="Video">Video</option>
           </select>
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <div className="button-group">
             <Button 
               variant="secondary"
               onClick={() => setShowUploadModal(true)}
@@ -2073,9 +1441,9 @@ export default function ManagePostsPage() {
 
 
       {/* Error State */}
-      {(currentError || reelsError) && (
+      {currentError && (
         <div className="error-state">
-          <p>Virhe: {currentError || reelsError}</p>
+          <p>Virhe: {currentError}</p>
           <Button
             variant="secondary"
             onClick={() => {
@@ -2088,7 +1456,7 @@ export default function ManagePostsPage() {
       )}
         
       {/* Kanban Board */}
-      {!currentError && !loading && activeTab === 'kanban' && (
+      {!currentError && !currentLoading && activeTab === 'kanban' && (
         <KanbanTab
           posts={filteredPosts}
           onEdit={handleEditPost}
@@ -2097,7 +1465,6 @@ export default function ManagePostsPage() {
           onSchedule={handleSchedulePost}
           onMoveToNext={handleMoveToNext}
           t={t}
-          PostCard={PostCard}
           onDeleteMixpostPost={deleteMixpostPost}
           onRefreshPosts={async () => {
             await fetchPosts()
@@ -2117,13 +1484,12 @@ export default function ManagePostsPage() {
           onSchedule={handleSchedulePost}
           onMoveToNext={handleMoveToNext}
           t={t}
-          PostCard={PostCard}
         />
       )}
 
       {/* Calendar View */}
       {activeTab === 'calendar' && (
-        <div style={{ marginTop: 24 }}>
+        <div className="calendar-wrapper">
           <PostsCalendar 
             items={calendarItems}
             readyPosts={readyPosts}
@@ -2148,7 +1514,7 @@ export default function ManagePostsPage() {
             refreshing={refreshingCalendar}
             onEventClick={(ev) => {
               // Etsi vastaava postaus kaikista nykyisistä posteista
-              const post = currentPosts.find(p => p.id === ev.id)
+              const post = allPosts.find(p => p.id === ev.id)
               if (post) {
                 handleEditPost(post)
               }
@@ -2215,7 +1581,7 @@ export default function ManagePostsPage() {
               >
                 <div className="form-group">
                   <label className="form-label">
-                    Otsikko {createModalCount === 1 && <span style={{ color: '#ef4444' }}>*</span>}
+                    Otsikko {createModalCount === 1 && <span className="form-required">*</span>}
                   </label>
                   <input
                     name="title"
@@ -2224,18 +1590,14 @@ export default function ManagePostsPage() {
                     placeholder="Anna julkaisulle otsikko..."
                   />
                   {createModalCount > 1 && (
-                    <p style={{ 
-                      marginTop: '4px', 
-                      fontSize: '12px', 
-                      color: '#6b7280' 
-                    }}>
+                    <p className="form-hint">
                       Otsikko on valinnainen useamman julkaisun luonnissa
                     </p>
                   )}
                 </div>
                 {createModalCount === 1 && (
                   <div className="form-group">
-                    <label className="form-label">Tyyppi <span style={{ color: '#ef4444' }}>*</span></label>
+                    <label className="form-label">Tyyppi <span className="form-required">*</span></label>
                     <select
                       name="type"
                       className="form-select"
@@ -2264,13 +1626,9 @@ export default function ManagePostsPage() {
                     required
                     className="form-input"
                     placeholder="Kuinka monta postausta generoidaan?"
-                    style={{ width: '100%' }}
+                    className="form-input-full"
                   />
-                  <p style={{ 
-                    marginTop: '4px', 
-                    fontSize: '12px', 
-                    color: '#6b7280' 
-                  }}>
+                  <p className="form-hint">
                     Valitse kuinka monta postausta haluat generoida (1-10)
                   </p>
                 </div>
@@ -2441,10 +1799,11 @@ export default function ManagePostsPage() {
                       const files = e.dataTransfer.files
                       if (files && files[0]) {
                         const file = files[0]
-                        const input = document.querySelector('input[name="file"]')
-                        const dataTransfer = new DataTransfer()
-                        dataTransfer.items.add(file)
-                        input.files = dataTransfer.files
+                        if (fileInputRef.current) {
+                          const dataTransfer = new DataTransfer()
+                          dataTransfer.items.add(file)
+                          fileInputRef.current.files = dataTransfer.files
+                        }
                         
                         // Preview
                         if (file.type.startsWith('image/')) {
@@ -2456,66 +1815,55 @@ export default function ManagePostsPage() {
                         }
                       }
                     }}
-                    onClick={() => document.querySelector('input[name="file"]').click()}
+                    onClick={() => fileInputRef.current?.click()}
                   >
                     {uploadPreviewUrl ? (
                       <div className="upload-preview">
                         {uploadPreviewUrl.startsWith('blob:') ? (
-                          <video src={uploadPreviewUrl} style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px' }} controls />
+                          <video src={uploadPreviewUrl} className="upload-preview-video" controls />
                         ) : (
-                          <img src={uploadPreviewUrl} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', objectFit: 'contain' }} />
+                          <img src={uploadPreviewUrl} alt="Preview" className="upload-preview-image" />
                         )}
                         <button
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation()
                             setUploadPreviewUrl(null)
-                            document.querySelector('input[name="file"]').value = ''
+                            if (fileInputRef.current) {
+                              fileInputRef.current.value = ''
+                            }
                           }}
-                          style={{
-                            position: 'absolute',
-                            top: '8px',
-                            right: '8px',
-                            background: 'rgba(0,0,0,0.6)',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '50%',
-                            width: '28px',
-                            height: '28px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
+                          className="upload-remove-btn"
                         >
                           ✕
                         </button>
                       </div>
                     ) : (
                       <>
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: '#9ca3af', marginBottom: '12px' }}>
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="upload-icon">
                           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                           <polyline points="17 8 12 3 7 8"></polyline>
                           <line x1="12" y1="3" x2="12" y2="15"></line>
                         </svg>
-                        <p style={{ margin: '0 0 8px 0', fontSize: '15px', fontWeight: 600, color: '#374151' }}>
+                        <p className="upload-title">
                           Vedä ja pudota tiedosto tähän
                         </p>
-                        <p style={{ margin: 0, fontSize: '13px', color: '#6b7280' }}>
+                        <p className="upload-subtitle">
                           tai klikkaa valitaksesi tiedoston
                         </p>
-                        <p style={{ margin: '12px 0 0 0', fontSize: '12px', color: '#9ca3af' }}>
+                        <p className="upload-hint">
                           JPG, PNG, MP4, MOV (max 50MB)
                         </p>
                       </>
                     )}
                   </div>
                   <input
+                    ref={fileInputRef}
                     name="file"
                     type="file"
                     required
                     accept="image/*,video/*"
-                    style={{ display: 'none' }}
+                    className="file-input-hidden"
                     onChange={(e) => {
                       const file = e.target.files[0]
                       if (file) {
@@ -2721,23 +2069,13 @@ export default function ManagePostsPage() {
               </h2>
               {/* Vaihe-indikaattori */}
               {false && editingPost.status === 'Kesken' && editingPost.source === 'reels' && (
-                <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                  <div style={{ 
-                    width: '12px', 
-                    height: '12px', 
-                    borderRadius: '50%', 
-                    backgroundColor: editModalStep === 1 ? '#3b82f6' : '#e5e7eb' 
-                  }}></div>
-                  <div style={{ 
-                    width: '12px', 
-                    height: '12px', 
-                    borderRadius: '50%', 
-                    backgroundColor: editModalStep === 2 ? '#3b82f6' : '#e5e7eb' 
-                  }}></div>
+                <div className="status-indicator">
+                  <div className={`status-dot ${editModalStep === 1 ? 'active' : ''}`}></div>
+                  <div className={`status-dot ${editModalStep === 2 ? 'active' : ''}`}></div>
                 </div>
               )}
               {/* Debug: Näytä status */}
-              <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+              <div className="status-info">
                 Status: {editingPost.status} | Source: {editingPost.source}
               </div>
               <button
@@ -2758,7 +2096,7 @@ export default function ManagePostsPage() {
             <div className="modal-content">
               {/* Vaihe 1: Voiceover-tarkistus */}
               {editModalStep === 1 && (
-                <form onSubmit={(e) => {
+                <form ref={editFormRef} onSubmit={(e) => {
                   e.preventDefault()
                   const formData = new FormData(e.target)
                   
@@ -2860,7 +2198,7 @@ export default function ManagePostsPage() {
                                       >
                                         Your browser does not support the video tag.
                                       </video>
-                                      <div className="video-fallback" style={{ display: 'none' }}>
+                                      <div className="video-fallback hidden">
                                         <div className="placeholder-icon">Video</div>
                                         <div className="placeholder-text">Video ei saatavilla</div>
                                       </div>
@@ -2882,7 +2220,7 @@ export default function ManagePostsPage() {
                                           }
                                         }}
                                       />
-                                      <div className="video-fallback" style={{ display: 'none' }}>
+                                      <div className="video-fallback hidden">
                                         <div className="placeholder-icon">Kuva</div>
                                         <div className="placeholder-text">Kuva ei saatavilla</div>
                                       </div>
@@ -3034,7 +2372,7 @@ export default function ManagePostsPage() {
                                      }
                                    }}
                                  />
-                                 <div className="media-fallback" style={{ display: 'none' }}>
+                                 <div className="media-fallback hidden">
                                    <div className="placeholder-icon">Image</div>
                                    <div className="placeholder-text">Image not available</div>
                                  </div>
@@ -3133,21 +2471,14 @@ export default function ManagePostsPage() {
                  <Button 
                    type="button" 
                    variant="primary"
-                   style={{ 
-                     padding: '8px 16px', 
-                     fontSize: '14px',
-                     backgroundColor: '#3b82f6'
-                   }}
+                   className="button-primary-inline"
                  >
                                        Sisältö
                  </Button>
                  <Button 
                    type="button" 
                    variant="secondary"
-                   style={{ 
-                     padding: '8px 16px', 
-                     fontSize: '14px'
-                   }}
+                   className="button-primary-inline"
                  >
                                         Status
                  </Button>
@@ -3175,15 +2506,19 @@ export default function ManagePostsPage() {
                  {editingPost.status === 'Tarkistuksessa' && (
                    <>
                      <div className="form-group">
-                       <label className="form-label">Kuvaus</label>
+                       <label className="form-label">
+                         Kuvaus
+                         <span ref={charCountRef} className="char-count char-count-inline"></span>
+                       </label>
                        <textarea
+                         ref={textareaRef}
                          name="caption"
                          rows={6}
                          className="form-textarea"
                          defaultValue={editingPost.caption || ""}
                          placeholder="Kuvaus (vain luku)"
                          readOnly
-                         style={{ backgroundColor: '#f8f9fa', color: '#6c757d' }}
+                         className="form-textarea form-input-disabled"
                        />
                      </div>
 
@@ -3194,11 +2529,10 @@ export default function ManagePostsPage() {
                          <textarea
                            name="voiceover"
                            rows={4}
-                           className="form-textarea"
+                           className="form-textarea form-input-disabled"
                            defaultValue={editingPost.voiceover || ""}
                            placeholder="Voiceover-teksti..."
                            readOnly
-                           style={{ backgroundColor: '#f8f9fa', color: '#6c757d' }}
                          />
                        </div>
                      )}
@@ -3268,8 +2602,8 @@ export default function ManagePostsPage() {
                       variant="primary"
                       onClick={() => {
                         // Päivitä editingPost modaalissa muokatuilla tiedoilla
-                        const form = document.querySelector('.modal-content form')
-                        const formData = new FormData(form)
+                        if (!editFormRef.current) return
+                        const formData = new FormData(editFormRef.current)
                         
                         let updatedPost = { ...editingPost }
                         
@@ -3292,10 +2626,7 @@ export default function ManagePostsPage() {
                         setEditingPost(null)
                         handlePublishPost(updatedPost)
                       }}
-                      style={{ 
-                        backgroundColor: '#22c55e', 
-                        marginLeft: '8px' 
-                      }}
+                      className="button-success-inline"
                     >
                       {t('posts.buttons.publish')}
                     </Button>
@@ -3310,35 +2641,24 @@ export default function ManagePostsPage() {
               {/* Vaihe 2: Avatar-valinta */}
               {editModalStep === 2 && (
                 <div>
-                  <div style={{ marginBottom: '20px' }}>
-                    <h3 style={{ marginBottom: '16px', fontSize: '18px', fontWeight: '600' }}>
+                  <div className="avatar-section">
+                    <h3 className="avatar-section-title">
                       Valitse avatar-kuva
                     </h3>
-                    <p style={{ color: '#6b7280', marginBottom: '20px' }}>
+                    <p className="avatar-section-description">
                       Valitse avatar-kuva jota haluat käyttää tässä postauksessa.
                     </p>
                   </div>
                   
                   {/* Avatar-kuvat grid */}
-                  <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', 
-                    gap: '12px',
-                    marginBottom: '20px'
-                  }}>
+                  <div className="avatar-grid">
                     {avatarLoading ? (
-                      <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#6b7280' }}>Ladataan kuvia…</div>
+                      <div className="avatar-grid-loading">Ladataan kuvia…</div>
                     ) : avatarError ? (
-                      <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#b91c1c' }}>{avatarError}</div>
+                      <div className="avatar-grid-error">{avatarError}</div>
                     ) : avatarImages.length === 0 ? (
-                      <div style={{ 
-                        border: '2px solid #e5e7eb', 
-                        borderRadius: '8px', 
-                        padding: '8px',
-                        textAlign: 'center',
-                        backgroundColor: '#f9fafb'
-                      }}>
-                        <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                      <div className="avatar-grid-empty">
+                        <div className="avatar-grid-empty-text">
                           Ei avatar-kuvia saatavilla
                         </div>
                       </div>
@@ -3351,35 +2671,17 @@ export default function ManagePostsPage() {
                             key={img.id || idx}
                             type="button"
                             onClick={() => setSelectedAvatar(avatarId)}
-                            style={{
-                              border: isSelected ? '2px solid #3b82f6' : '2px solid #e5e7eb',
-                              borderRadius: '8px',
-                              overflow: 'hidden',
-                              position: 'relative',
-                              padding: 0,
-                              cursor: 'pointer',
-                              outline: 'none',
-                              background: 'transparent'
-                            }}
+                            className={`avatar-item ${isSelected ? 'selected' : ''}`}
                             aria-pressed={isSelected}
                           >
                             <img 
                               src={img.url}
                               alt={`Avatar ${idx + 1}`}
-                              style={{ width: '100%', height: '120px', objectFit: 'cover', display: 'block' }}
+                              className="avatar-item-image"
                             />
                             {isSelected && (
-                              <span style={{
-                                position: 'absolute',
-                                top: '8px',
-                                right: '8px',
-                                backgroundColor: '#3b82f6',
-                                color: '#fff',
-                                borderRadius: '9999px',
-                                padding: '4px 8px',
-                                fontSize: '12px'
-                              }}>
-                                Valittu
+                              <span className="avatar-item-check">
+                                ✓
                               </span>
                             )}
                           </button>

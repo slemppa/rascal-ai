@@ -869,6 +869,29 @@ export default function SettingsIntegrationsTab() {
 
       <div className="integrations-description">
         <p>Yhdistä Rascal AI muihin palveluihin. Määritä API-avaimet ja asetukset jokaiselle alustalle.</p>
+        <div style={{ marginTop: '8px' }}>
+          <a
+            href="https://rascalcompany.notion.site/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontSize: '14px',
+              color: '#3b82f6',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.textDecoration = 'underline'
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.textDecoration = 'none'
+            }}
+          >
+            Katso tarkemmat ohjeet →
+          </a>
+        </div>
       </div>
 
       {message.text && (

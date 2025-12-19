@@ -8,6 +8,7 @@ import { useMonthlyLimit } from '../hooks/useMonthlyLimit'
 import { useNextMonthQuota } from '../hooks/useNextMonthQuota'
 import Button from '../components/Button'
 import ReactMarkdown from 'react-markdown'
+import axios from 'axios'
 import '../components/ModalComponents.css'
 import './BlogNewsletterPage.css'
 
@@ -571,30 +572,62 @@ export default function BlogNewsletterPage() {
         publishData.mixpost_workspace_uuid = mixpostConfig.mixpost_workspace_uuid
       }
 
-      // Blogien julkaisu käyttää erillistä endpointia
-      const response = await fetch('/api/content/blog/publish', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        },
-        body: JSON.stringify(publishData)
-      })
-
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Julkaisu epäonnistui')
+      // Hae access token
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        throw new Error('Käyttäjä ei ole kirjautunut')
       }
 
-      // Päivitetään UI
-      await fetchContents()
-      setToast({ visible: true, message: result.message || 'Julkaistu' })
-      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+      // Blogien julkaisu käyttää erillistä endpointia
+      const response = await axios.post('/api/content/blog/publish', publishData, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.status === 200 && response.data?.success) {
+        // Päivitetään UI
+        await fetchContents()
+        setToast({ visible: true, message: response.data.message || 'Julkaistu' })
+        setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+      } else {
+        throw new Error(response.data?.error || 'Julkaisu epäonnistui')
+      }
       
     } catch (error) {
       console.error('Publish error:', error)
-      alert('Julkaisu epäonnistui: ' + error.message)
+      
+      // Käsittele axios-virheet erikseen
+      let errorMessage = 'Julkaisu epäonnistui'
+      
+      if (error.response) {
+        // Serveri vastasi virhekoodilla
+        const status = error.response.status
+        const data = error.response.data
+        
+        if (data?.error) {
+          errorMessage = data.error
+          if (data?.details) {
+            errorMessage += `: ${data.details}`
+          }
+          if (data?.hint) {
+            errorMessage += `\n\nVihje: ${data.hint}`
+          }
+        } else if (data?.message) {
+          errorMessage = data.message
+        } else {
+          errorMessage = `HTTP ${status}: ${error.response.statusText || 'Tuntematon virhe'}`
+        }
+      } else if (error.request) {
+        // Pyyntö lähetettiin mutta vastausta ei saatu
+        errorMessage = 'Ei vastausta palvelimelta. Tarkista verkkoyhteys.'
+      } else {
+        // Jokin muu virhe
+        errorMessage = error.message || 'Tuntematon virhe'
+      }
+      
+      alert(errorMessage)
     }
   }
 

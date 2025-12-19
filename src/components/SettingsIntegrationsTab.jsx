@@ -111,6 +111,7 @@ export default function SettingsIntegrationsTab() {
   const [message, setMessage] = useState({ type: '', text: '' })
   const [expandedCard, setExpandedCard] = useState(null)
   const [oauthConnecting, setOauthConnecting] = useState(false)
+  const [testingConnection, setTestingConnection] = useState(false)
   
   // AI-mallin valinta
   const [aiModel, setAiModel] = useState('gemini')
@@ -554,6 +555,104 @@ export default function SettingsIntegrationsTab() {
     return () => window.removeEventListener('message', handleMessage);
   }, [loadIntegrations]);
 
+  // Testaa WordPress-yhteyttä
+  const handleTestWordPressConnection = async (integration) => {
+    if (!user?.id || testingConnection) return
+
+    setTestingConnection(true)
+    setMessage({ type: '', text: '' })
+
+    try {
+      const session = await supabase.auth.getSession()
+      const token = session.data.session?.access_token
+
+      if (!token) {
+        throw new Error('No access token found')
+      }
+
+      // Hae organisaation ID
+      let orgUserId = null
+      if (organization?.id) {
+        orgUserId = organization.id
+      } else {
+        orgUserId = await getUserOrgId(user.id)
+      }
+
+      if (!orgUserId) {
+        throw new Error('Organisaation ID puuttuu')
+      }
+
+      // Lähetä testidata blog publish endpointiin
+      // Käytetään testi-post_id:tä ja testisisältöä
+      const testData = {
+        post_id: 'f6787bf5-d025-49df-a077-0153f4f396f8',
+        auth_user_id: user.id,
+        user_id: orgUserId,
+        content: 'Testi: WordPress-yhteyden testaus Rascal AI:sta',
+        media_urls: [],
+        segments: [],
+        post_type: 'post',
+        action: 'publish'
+      }
+
+      const response = await axios.post('/api/content/blog/publish', testData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.status === 200 && response.data?.success) {
+        setMessage({
+          type: 'success',
+          text: 'WordPress-yhteys testattu onnistuneesti! Yhteys toimii.'
+        })
+      } else {
+        // Jos vastaus ei ole success, heitä virhe
+        const errorMsg = response.data?.error || response.data?.details || 'Testaus epäonnistui'
+        throw new Error(errorMsg)
+      }
+    } catch (error) {
+      console.error('Error testing WordPress connection:', error)
+      
+      // Käsittele axios-virheet erikseen
+      let errorMessage = 'Yhteyden testaus epäonnistui'
+      
+      if (error.response) {
+        // Serveri vastasi virhekoodilla
+        const status = error.response.status
+        const data = error.response.data
+        
+        if (data?.error) {
+          errorMessage = data.error
+          if (data?.details) {
+            errorMessage += `: ${data.details}`
+          }
+          if (data?.hint) {
+            errorMessage += `\n\nVihje: ${data.hint}`
+          }
+        } else if (data?.message) {
+          errorMessage = data.message
+        } else {
+          errorMessage = `HTTP ${status}: ${error.response.statusText || 'Tuntematon virhe'}`
+        }
+      } else if (error.request) {
+        // Pyyntö lähetettiin mutta vastausta ei saatu
+        errorMessage = 'Ei vastausta palvelimelta. Tarkista verkkoyhteys.'
+      } else {
+        // Jokin muu virhe
+        errorMessage = error.message || 'Tuntematon virhe'
+      }
+      
+      setMessage({
+        type: 'error',
+        text: errorMessage
+      })
+    } finally {
+      setTestingConnection(false)
+    }
+  }
+
   // Käynnistä Google Analytics OAuth -virta
   const handleGoogleAnalyticsOAuth = async () => {
     if (!user?.id || oauthConnecting) return
@@ -924,12 +1023,27 @@ export default function SettingsIntegrationsTab() {
                       >
                         {saving ? 'Tallennetaan...' : integration.isConfigured ? 'Päivitä' : 'Tallenna'}
                       </button>
+                      {integration.isConfigured && integration.id === 'wordpress' && (
+                        <button
+                          type="button"
+                          className="btn-secondary"
+                          onClick={() => handleTestWordPressConnection(integration)}
+                          disabled={saving || testingConnection}
+                          style={{
+                            backgroundColor: '#f3f4f6',
+                            color: '#374151',
+                            border: '1px solid #d1d5db'
+                          }}
+                        >
+                          {testingConnection ? 'Testataan...' : 'Testaa yhteys'}
+                        </button>
+                      )}
                       {integration.isConfigured && (
                         <button
                           type="button"
                           className="btn-danger"
                           onClick={() => handleDelete(integration)}
-                          disabled={saving}
+                          disabled={saving || testingConnection}
                         >
                           Poista
                         </button>

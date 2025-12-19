@@ -1,5 +1,6 @@
 import { withOrganization } from '../../middleware/with-organization.js'
 import { setCorsHeaders, handlePreflight } from '../../lib/cors.js'
+import { sendToN8N } from '../../lib/n8n-client.js'
 
 async function handler(req, res) {
   console.log('blog-publish API called:', req.method, req.url)
@@ -164,59 +165,34 @@ async function handler(req, res) {
       }
     }
     
-    const webhookData = {
-      post_id,
-      user_id: orgId, // Käytetään organisaation ID:tä
-      auth_user_id: req.authUser?.id || auth_user_id, // auth.users.id
-      content,
-      media_urls,
-      segments,
-      scheduled_date,
-      publish_date, // Keep original for N8N if needed
-      date,
-      time,
-      action: 'publish', // Blog-publish käyttää aina 'publish' actionia
-      post_type, // 'post', 'reel', 'carousel'
-      workspace_uuid: mixpost_workspace_uuid || mixpostConfig.mixpost_workspace_uuid,
-      mixpost_api_token: mixpost_api_token || mixpostConfig.mixpost_api_token,
-      account_ids: accountIds, // Useita tilejä
-      selected_accounts: selected_accounts, // Valitut tilit
-      timestamp: new Date().toISOString()
+    // Luodaan turvallinen payload: userId on luotettu, data on epäluotettu
+    const safePayload = {
+      userId: req.authUser?.id || auth_user_id,  // Luotettu auth.users.id
+      data: {
+        post_id,
+        user_id: orgId, // Käytetään organisaation ID:tä
+        content,
+        media_urls,
+        segments,
+        scheduled_date,
+        publish_date, // Keep original for N8N if needed
+        date,
+        time,
+        action: 'publish', // Blog-publish käyttää aina 'publish' actionia
+        post_type, // 'post', 'reel', 'carousel'
+        workspace_uuid: mixpost_workspace_uuid || mixpostConfig.mixpost_workspace_uuid,
+        mixpost_api_token: mixpost_api_token || mixpostConfig.mixpost_api_token,
+        account_ids: accountIds, // Useita tilejä
+        selected_accounts: selected_accounts, // Valitut tilit
+        timestamp: new Date().toISOString()
+      }
     }
 
-    const headers = {
-      'Content-Type': 'application/json'
-    }
-
-    // Lisätään API key header N8N webhook:iin
-    if (process.env.N8N_SECRET_KEY) {
-      headers['x-api-key'] = process.env.N8N_SECRET_KEY
-    }
-
-    // Lähetetään POST-pyyntö webhook:iin
+    // Lähetetään N8N:ään HMAC-allekirjoituksella käyttäen sendToN8N funktiota
     let result = { success: true, message: 'Blog published successfully' }
     
     try {
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(webhookData)
-      })
-
-      if (!response.ok) {
-        console.error('Webhook response:', response.status, response.statusText)
-        console.error('Webhook URL:', webhookUrl)
-        console.error('Webhook data:', webhookData)
-        throw new Error(`Webhook failed: ${response.status} - ${response.statusText}`)
-      }
-
-      try {
-        result = await response.json()
-      } catch (error) {
-        console.error('Failed to parse webhook response:', error)
-        result = { success: true, message: 'Blog published successfully' }
-      }
-
+      result = await sendToN8N(webhookUrl, safePayload)
     } catch (error) {
       console.error('Webhook request failed:', error)
       return res.status(500).json({

@@ -402,6 +402,10 @@ export default function ContentStrategyPage() {
         }
       })
       
+      if (response.status !== 200 || !response.data?.success) {
+        throw new Error(response.data?.error || 'API-vastaus epäonnistui')
+      }
+      
       console.log('✅ Strategy approval sent successfully:', response.data)
 
       // Päivitä myös organisaation status "Approved":ksi
@@ -438,7 +442,13 @@ export default function ContentStrategyPage() {
 
     } catch (e) {
       console.error('Error in handleSaveAndApprove:', e)
-      alert('Tallennus ja hyväksyntä epäonnistui: ' + e.message)
+      const errorMessage = e.response?.data?.error || e.response?.data?.details || e.message || 'Tuntematon virhe'
+      console.error('Error details:', {
+        status: e.response?.status,
+        data: e.response?.data,
+        message: e.message
+      })
+      alert('Tallennus ja hyväksyntä epäonnistui: ' + errorMessage)
     }
   }
 
@@ -480,6 +490,10 @@ export default function ContentStrategyPage() {
           'Content-Type': 'application/json'
         }
       })
+      
+      if (response.status !== 200 || !response.data?.success) {
+        throw new Error(response.data?.error || 'API-vastaus epäonnistui')
+      }
       
       console.log('✅ Strategy approval sent successfully:', response.data)
 
@@ -531,7 +545,13 @@ export default function ContentStrategyPage() {
 
     } catch (e) {
       console.error('Error in handleApproveStrategy:', e)
-      alert('Vahvistus epäonnistui: ' + e.message)
+      const errorMessage = e.response?.data?.error || e.response?.data?.details || e.message || 'Tuntematon virhe'
+      console.error('Error details:', {
+        status: e.response?.status,
+        data: e.response?.data,
+        message: e.message
+      })
+      alert('Vahvistus epäonnistui: ' + errorMessage)
     }
   }
 

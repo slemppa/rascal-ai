@@ -23,6 +23,17 @@ async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required fields' })
     }
 
+    // Tarkista että middleware on asettanut organization ja supabase
+    if (!req.organization || !req.organization.id) {
+      console.error('❌ req.organization missing in strategy approve handler')
+      return res.status(500).json({ error: 'Organization context missing' })
+    }
+
+    if (!req.supabase) {
+      console.error('❌ req.supabase missing in strategy approve handler')
+      return res.status(500).json({ error: 'Supabase client missing' })
+    }
+
     // req.organization.id = organisaation ID (public.users.id)
     // req.supabase = authenticated Supabase client
     const publicUserId = req.organization.id
@@ -72,9 +83,16 @@ async function handler(req, res) {
 
   } catch (error) {
     console.error('❌ Error in strategy-approve API:', error)
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      response: error.response?.data,
+      status: error.response?.status
+    })
     return res.status(500).json({ 
       error: 'Failed to send strategy approval webhook',
-      details: error.message
+      details: error.message,
+      response: error.response?.data || null
     })
   }
 }

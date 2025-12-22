@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.107.0](https://github.com/slemppa/rascal-ai/compare/v1.105.0...v1.107.0) (2025-12-22)
+
+
+### 🔧 Chores
+
+* poista duplikaattitiedostot joissa välilyönti ([92f2212](https://github.com/slemppa/rascal-ai/commit/92f2212840e81634656e623034e87eab2287e297))
+
+
+### 🐛 Bug Fixes
+
+* korjaa strategian hyväksyntätoiminnallisuus ([ba19fe9](https://github.com/slemppa/rascal-ai/commit/ba19fe9dcf59f245b61e7236242537f78b9c0501))
+* security vulnerabilities - SQL injection and XSS risks ([08eca32](https://github.com/slemppa/rascal-ai/commit/08eca324ac129a6df6d27bf1151f000bda6405b0))
+* tallenna UGC-formData localStorageen ja korjaa auth-virhe ([5e1469d](https://github.com/slemppa/rascal-ai/commit/5e1469de4f62a7e69355651de771dd94d522aa48))
+
+
+### ✨ Features
+
+* add HMAC validation to priority 1 N8N endpoints ([6a2bc8e](https://github.com/slemppa/rascal-ai/commit/6a2bc8e1afb31984a65053ae142c750fe2bf4e67))
+* lisää WordPress-yhteyden testaus ja HMAC ([9a9e690](https://github.com/slemppa/rascal-ai/commit/9a9e6906ccb41803d8d6248daa7996fece4d82bf))
+* lisätty HMAC-allekirjoitus N8N-integraatioihin ([8b7df59](https://github.com/slemppa/rascal-ai/commit/8b7df59483ec42d733ed72d458cacb7bbac24ee3))
+* päivitä blog-newsletter ja lisää ohjelinkki ([be99dce](https://github.com/slemppa/rascal-ai/commit/be99dce739f73bde52ca9356d5fd5a4063b6e2ee))
+* päivitetty feed_supabase käyttämään HMAC-allekirjoitusta ([1ad03d8](https://github.com/slemppa/rascal-ai/commit/1ad03d8abf1496a70ec97426c7377f2c248ca0db))
+
 ## [1.106.0](https://github.com/slemppa/rascal-ai/compare/v1.105.0...v1.106.0) (2025-12-22)
 
 

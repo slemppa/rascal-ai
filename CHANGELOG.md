@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.107.1](https://github.com/slemppa/rascal-ai/compare/v1.107.0...v1.107.1) (2025-12-22)
+
+
+### 🔧 Chores
+
+* remove debug logging from HMAC endpoints ([1bd4fa5](https://github.com/slemppa/rascal-ai/commit/1bd4fa5535c3346a5e34aa1d47084a877cc8b1a7))
+
+
+### 📚 Documentation
+
+* päivitä N8N endpointtien HMAC-migraation analyysi ([27ff1f1](https://github.com/slemppa/rascal-ai/commit/27ff1f12fdcc5e988d2f9b619898514d8bde75a6))
+
 ## [1.107.0](https://github.com/slemppa/rascal-ai/compare/v1.105.0...v1.107.0) (2025-12-22)
 
 

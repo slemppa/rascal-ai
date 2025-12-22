@@ -253,3 +253,4 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
 }
 
 export default PostCard
+

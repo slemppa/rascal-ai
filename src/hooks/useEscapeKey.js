@@ -16,3 +16,4 @@ export function useEscapeKey(onEscape) {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [onEscape])
 }
+

@@ -53,3 +53,4 @@ export const DEFAULT_FEATURES = [
   'Email marketing integration',
   'Marketing assistant'
 ]
+

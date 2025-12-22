@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import logger from '../lib/logger.js'
+import { sendToN8N } from '../lib/n8n-client.js'
 
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -55,21 +56,15 @@ export default async function handler(req, res) {
     // Käytä userId:tä suoraan (auth_user_id)
     const publicUserId = userId
 
-    // N8N webhook URL ja API key ympäristömuuttujista
+    // N8N webhook URL ympäristömuuttujista
     const webhookUrl = process.env.N8N_SINGLE_CALL
-    const secretKey = process.env.N8N_SECRET_KEY
     
     if (!webhookUrl) {
       logger.error('N8N_SINGLE_CALL ympäristömuuttuja puuttuu')
       return res.status(500).json({ error: 'Palvelun konfiguraatio puuttuu' })
     }
 
-    if (!secretKey) {
-      logger.error('N8N_SECRET_KEY ympäristömuuttuja puuttuu')
-      return res.status(500).json({ error: 'API-avain puuttuu' })
-    }
-
-    // Lähetä data N8N:ään
+    // Lähetä data N8N:ään HMAC-allekirjoituksella
     const payload = {
       name: name.trim(),
       phoneNumber: phoneNumber.trim(),
@@ -85,25 +80,14 @@ export default async function handler(req, res) {
       source: 'rascal-ai-dashboard'
     }
 
-
-
-    const headers = {
-      'Content-Type': 'application/json',
-      'x-api-key': secretKey
-    }
-
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(payload)
-    })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('N8N webhook epäonnistui:', response.status, errorText)
+    let result
+    try {
+      result = await sendToN8N(webhookUrl, payload)
+    } catch (error) {
+      console.error('N8N webhook epäonnistui:', error)
       
       // Tarkista onko kyseessä 404 virhe (webhook ei rekisteröity)
-      if (response.status === 404) {
+      if (error.message && error.message.includes('404')) {
         return res.status(500).json({ 
           error: 'Puhelun käynnistys ei onnistu - N8N workflow ei ole aktiivinen',
           details: 'Webhook "single-call" ei ole rekisteröity N8N:ssä. Tarkista että workflow on aktiivinen.'
@@ -112,11 +96,9 @@ export default async function handler(req, res) {
       
       return res.status(500).json({ 
         error: 'Puhelun käynnistys epäonnistui',
-        details: `HTTP ${response.status}: ${errorText}`
+        details: error.message || 'N8N webhook virhe'
       })
     }
-
-    const result = await response.json()
 
     // Palauta onnistumisviesti
     res.status(200).json({

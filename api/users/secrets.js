@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { withOrganization } from '../middleware/with-organization.js'
-import axios from 'axios'
+import { sendToN8N } from '../lib/n8n-client.js'
 import logger from '../lib/logger.js'
 import { encrypt, decrypt } from '../lib/crypto.js'
 
@@ -347,31 +347,14 @@ async function handlePost(req, res) {
         logger.log('📤 Sending integration webhook to:', webhookUrl)
         logger.log('📦 Webhook payload:', JSON.stringify(webhookPayload, null, 2))
 
-        // Muodosta headerit - N8N webhookit vaativat x-api-key headerin
-        const headers = {
-          'Content-Type': 'application/json'
-        }
-        
-        // Lisää x-api-key header jos N8N_SECRET_KEY on asetettu
-        const n8nSecretKey = process.env.N8N_SECRET_KEY
-        if (n8nSecretKey) {
-          headers['x-api-key'] = n8nSecretKey
-        }
-        
         logger.log('🚀 Starting webhook POST request (SYNC)...')
         logger.log('   URL:', webhookUrl)
-        logger.log('   Headers:', headers)
         
-        // Lähetä webhook SYNKRONISESTI, jotta se ehditään lähettää ennen kuin vastaus palautetaan
-        // HUOM: N8N webhookit vaativat x-api-key headerin (N8N_SECRET_KEY)
+        // Lähetä webhook SYNKRONISESTI HMAC-allekirjoituksella
         try {
-          const webhookResponse = await axios.post(webhookUrl, webhookPayload, {
-            headers: headers,
-            timeout: 10000 // 10 sekuntia timeout
-          })
+          const webhookResponse = await sendToN8N(webhookUrl, webhookPayload)
           logger.log('✅ Webhook notification sent successfully')
-          logger.log('   Status:', webhookResponse.status)
-          logger.log('   Response:', JSON.stringify(webhookResponse.data))
+          logger.log('   Response:', JSON.stringify(webhookResponse))
       } catch (webhookErr) {
           if (webhookErr.response) {
             // Palvelin vastasi, mutta virheellisellä status-koodilla
@@ -490,30 +473,14 @@ async function handleDelete(req, res) {
         logger.log('📤 Sending delete webhook to:', webhookUrl)
         logger.log('📦 Webhook payload:', JSON.stringify(webhookPayload, null, 2))
 
-        // Muodosta headerit - N8N webhookit vaativat x-api-key headerin
-        const headers = {
-          'Content-Type': 'application/json'
-        }
-        
-        // Lisää x-api-key header jos N8N_SECRET_KEY on asetettu
-        const n8nSecretKey = process.env.N8N_SECRET_KEY
-        if (n8nSecretKey) {
-          headers['x-api-key'] = n8nSecretKey
-        }
-
         logger.log('🚀 Starting delete webhook POST request (SYNC)...')
         logger.log('   URL:', webhookUrl)
-        logger.log('   Headers:', headers)
         
-        // Lähetä webhook SYNKRONISESTI
+        // Lähetä webhook SYNKRONISESTI HMAC-allekirjoituksella
         try {
-          const webhookResponse = await axios.post(webhookUrl, webhookPayload, {
-            headers: headers,
-            timeout: 10000 // 10 sekuntia timeout
-          })
+          const webhookResponse = await sendToN8N(webhookUrl, webhookPayload)
           logger.log('✅ Delete webhook notification sent successfully')
-          logger.log('   Status:', webhookResponse.status)
-          logger.log('   Response:', JSON.stringify(webhookResponse.data))
+          logger.log('   Response:', JSON.stringify(webhookResponse))
         } catch (webhookErr) {
           if (webhookErr.response) {
             logger.error('❌ Delete webhook notification failed (response)', {

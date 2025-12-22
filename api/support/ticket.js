@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import formidable from 'formidable'
 import fs from 'fs'
-import axios from 'axios'
+import { sendToN8N } from '../lib/n8n-client.js'
 
 export const config = {
   api: {
@@ -18,11 +18,10 @@ export default async function handler(req, res) {
   const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   const n8nUrl = process.env.N8N_TICKETING_URL
-  const n8nSecretKey = process.env.N8N_SECRET_KEY
 
   // Tarkista että tarvittavat ympäristömuuttujat on asetettu
-  if (!n8nUrl || !n8nSecretKey) {
-    console.error('N8N_TICKETING_URL tai N8N_SECRET_KEY puuttuu ympäristömuuttujista')
+  if (!n8nUrl) {
+    console.error('N8N_TICKETING_URL puuttuu ympäristömuuttujista')
     return res.status(500).json({ 
       error: 'Palvelinvirhe', 
       details: 'Tiketöintisysteemi ei ole konfiguroitu oikein' 
@@ -196,26 +195,20 @@ export default async function handler(req, res) {
       ticketData: { ...ticketData, description: ticketData.description.substring(0, 100) + '...' }
     })
 
-    // Lähetä N8N webhookiin
-    const response = await axios.post(n8nUrl, ticketData, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': n8nSecretKey
-      },
-      timeout: 30000 // 30s timeout
-    })
-
-    console.log('DEBUG - N8N response:', response.status)
-
-    if (response.status === 200 || response.status === 201) {
+    // Lähetä N8N webhookiin HMAC-allekirjoituksella
+    let responseData
+    try {
+      responseData = await sendToN8N(n8nUrl, ticketData)
+      console.log('DEBUG - N8N response received')
+      
       return res.status(200).json({
         success: true,
         message: 'Tiketti lähetetty onnistuneesti',
-        ticketId: response.data?.id || 'unknown',
+        ticketId: responseData?.id || 'unknown',
         attachmentsCount: attachmentUrls.length
       })
-    } else {
-      throw new Error(`Unexpected N8N response status: ${response.status}`)
+    } catch (error) {
+      throw error
     }
 
   } catch (error) {
@@ -224,16 +217,9 @@ export default async function handler(req, res) {
     let errorMessage = 'Tiketin lähettäminen epäonnistui'
     let errorDetails = error.message
 
-    if (error.response) {
-      // N8N API error
-      errorMessage = 'N8N API virhe'
-      errorDetails = error.response.data?.message || error.response.statusText
-    } else if (error.code === 'ECONNABORTED') {
-      errorMessage = 'Aikakatkaisu'
-      errorDetails = 'N8N webhook ei vastannut 30 sekunnissa'
-    } else if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
-      errorMessage = 'Yhteysvirhe'
-      errorDetails = 'Ei yhteyttä N8N webhookiin'
+    if (error.message && error.message.includes('N8N webhook failed')) {
+      errorMessage = 'N8N webhook virhe'
+      errorDetails = error.message
     }
 
     return res.status(500).json({ 

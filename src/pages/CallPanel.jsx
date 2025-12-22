@@ -214,11 +214,6 @@ export default function CallPanel() {
       // Hae käyttäjätiedot API:n kautta
       const data = await getCurrentUser()
         
-        if (error) {
-          console.error('Error fetching user voice_id:', error)
-          return
-        }
-        
       if (data?.voice_id) {
         setUserVoiceId(data.voice_id)
         setUserVoiceLabel('Oma ääni')
@@ -695,7 +690,7 @@ export default function CallPanel() {
       // Hae käyttäjän tiedot API:n kautta
       const userProfile = await getCurrentUser()
       
-      if (userError || !userProfile) {
+      if (!userProfile) {
         setError('Käyttäjää ei löytynyt')
         return
       }
@@ -748,7 +743,7 @@ export default function CallPanel() {
       // Hae käyttäjän tiedot API:n kautta
       const userProfile = await getCurrentUser()
       
-      if (userError || !userProfile) {
+      if (!userProfile) {
         setError('Käyttäjää ei löytynyt')
         return
       }

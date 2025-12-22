@@ -1,4 +1,5 @@
 // Ei käytetä Supabase clientia - kaikki data menee webhookin kautta
+import { sendToN8N } from '../lib/n8n-client.js'
 
 export default async function handler(req, res) {
   // Vain POST-metodit sallittu
@@ -20,15 +21,8 @@ export default async function handler(req, res) {
 
     // Lähetä webhook N8N:ään
     const webhookUrl = process.env.N8N_INBOUND_SETTINGS_WEBHOOK || 'https://samikiias.app.n8n.cloud/webhook/inbound-settings'
-    const secretKey = process.env.N8N_SECRET_KEY
     
     console.log('Webhook URL:', webhookUrl)
-    console.log('Secret Key available:', !!secretKey)
-    
-    if (!secretKey) {
-      console.error('N8N_SECRET_KEY ympäristömuuttuja puuttuu')
-      return res.status(500).json({ error: 'API-avain puuttuu' })
-    }
 
     const webhookData = {
       user_id: userId,
@@ -50,22 +44,15 @@ export default async function handler(req, res) {
     console.log('Sending inbound settings to N8N:', webhookData)
     console.log('Webhook URL:', webhookUrl)
 
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': secretKey
-      },
-      body: JSON.stringify(webhookData)
-    })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('N8N webhook error:', response.status, response.statusText)
-      console.error('Response body:', errorText)
+    let result
+    try {
+      result = await sendToN8N(webhookUrl, webhookData)
+      console.log('N8N webhook response:', result)
+    } catch (error) {
+      console.error('N8N webhook error:', error)
       
       // Tarkista onko kyseessä 404 virhe (webhook ei rekisteröity)
-      if (response.status === 404) {
+      if (error.message && error.message.includes('404')) {
         return res.status(500).json({ 
           error: 'Inbound-asetusten tallennus ei onnistu - N8N workflow ei ole aktiivinen',
           details: 'Webhook "inbound-settings" ei ole rekisteröity N8N:ssä. Tarkista että workflow on aktiivinen.'
@@ -74,12 +61,9 @@ export default async function handler(req, res) {
       
       return res.status(500).json({ 
         error: 'Inbound-asetusten tallennus epäonnistui',
-        details: `HTTP ${response.status}: ${errorText}`
+        details: error.message || 'N8N webhook virhe'
       })
     }
-
-    const result = await response.json()
-    console.log('N8N webhook response:', result)
 
     return res.status(200).json({
       success: true,

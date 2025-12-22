@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.107.2](https://github.com/slemppa/rascal-ai/compare/v1.107.1...v1.107.2) (2025-12-22)
+
+
+### 🔧 Chores
+
+* lisää HTTP security headerit ja poista turhat tiedostot ([1fd2040](https://github.com/slemppa/rascal-ai/commit/1fd2040b6193c6fcee46f970b611c1bed5868e2e))
+
 ### [1.107.1](https://github.com/slemppa/rascal-ai/compare/v1.107.0...v1.107.1) (2025-12-22)
 
 

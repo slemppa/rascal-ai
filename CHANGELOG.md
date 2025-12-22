@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.107.3](https://github.com/slemppa/rascal-ai/compare/v1.107.2...v1.107.3) (2025-12-22)
+
+
+### 🔧 Chores
+
+* korjaa CORS-asetukset ja lisää rate limiting ([3d405f2](https://github.com/slemppa/rascal-ai/commit/3d405f21d42a7195b81513db2980ca4c4d0ddddc))
+
 ### [1.107.2](https://github.com/slemppa/rascal-ai/compare/v1.107.1...v1.107.2) (2025-12-22)
 
 

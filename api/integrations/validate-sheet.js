@@ -285,18 +285,20 @@ export default async function handler(req, res) {
       if (isAbort) {
         return res.status(504).json({ error: 'CSV-haku aikakatkaistiin (timeout). Yritä uudelleen.' })
       }
+      const isDevelopment = process.env.NODE_ENV === 'development'
       return res.status(500).json({ 
         error: 'Google Sheets -tiedoston lukeminen epäonnistui',
-        details: csvError && (csvError.message || String(csvError))
+        ...(isDevelopment && { details: csvError && (csvError.message || String(csvError)) })
       })
     }
 
   } catch (error) {
     console.error('Validate sheet API virhe:', error)
     console.error('Virheen stack trace:', error.stack)
+    const isDevelopment = process.env.NODE_ENV === 'development'
     res.status(500).json({ 
       error: 'Palvelinvirhe validate-sheet käynnistyksessä',
-      details: error.message 
+      ...(isDevelopment && { details: error.message })
     })
   }
 } 

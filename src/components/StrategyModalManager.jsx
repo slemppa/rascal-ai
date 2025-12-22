@@ -33,8 +33,19 @@ export default function StrategyModalManager() {
     }
   }, [])
 
+  // Tarkista onko modal minimoitu localStorageen
+  const [isMinimized, setIsMinimized] = useState(false)
+
+  useEffect(() => {
+    if (user?.id) {
+      const skipped = localStorage.getItem(`strategy_modal_skipped_${user.id}`)
+      setIsMinimized(skipped === 'true')
+    }
+  }, [user?.id])
+
   // Tarkista onko modal auki joko contextin tai force-flagin takia
-  const isOpen = context?.showStrategyModal || forceOpen
+  // Älä avaa jos modaali on minimoitu
+  const isOpen = !isMinimized && (context?.showStrategyModal || forceOpen)
 
   const handleClose = () => {
     setForceOpen(false)

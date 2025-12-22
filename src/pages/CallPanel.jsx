@@ -1451,7 +1451,9 @@ export default function CallPanel() {
 
       // Lisää suodattimet count-kyselyyn
       if (searchTerm) {
-        countQuery = countQuery.or(`customer_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`)
+        // Escapetaan erikoismerkit SQL LIKE -kyselyissä (%, _, \)
+        const escapedSearchTerm = searchTerm.replace(/[%_\\]/g, '\\$&')
+        countQuery = countQuery.or(`customer_name.ilike.%${escapedSearchTerm}%,phone_number.ilike.%${escapedSearchTerm}%,email.ilike.%${escapedSearchTerm}%`)
       }
       if (statusFilter) {
           if (statusFilter === 'success') {
@@ -1557,7 +1559,9 @@ export default function CallPanel() {
 
         // Lisää suodattimet
         if (searchTerm) {
-          query = query.or(`customer_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`)
+          // Escapetaan erikoismerkit SQL LIKE -kyselyissä (%, _, \)
+          const escapedSearchTerm = searchTerm.replace(/[%_\\]/g, '\\$&')
+          query = query.or(`customer_name.ilike.%${escapedSearchTerm}%,phone_number.ilike.%${escapedSearchTerm}%,email.ilike.%${escapedSearchTerm}%`)
         }
         if (statusFilter) {
             if (statusFilter === 'success') {

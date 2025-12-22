@@ -56,11 +56,12 @@ export default async function handler(req, res) {
     }
     
     const status = error.response?.status || 500
+    const isDevelopment = process.env.NODE_ENV === 'development'
     const data = error.response?.data || { message: error.message }
     return res.status(status).json({ 
       error: 'Zep API error', 
-      status, 
-      details: data 
+      status,
+      ...(isDevelopment && { details: data })
     })
   }
 }

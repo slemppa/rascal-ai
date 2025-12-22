@@ -92,13 +92,13 @@ async function handler(req, res) {
     // sendToN8N heittää Error-olion, ei axios responsea
     const status = error.message?.includes('status') ? 
       parseInt(error.message.match(/status (\d+)/)?.[1] || '500') : 500
-    const data = { message: error.message }
+    const isDevelopment = process.env.NODE_ENV === 'development'
     
     // Palauta JSON-muotoinen virheviesti, jotta UI pystyy näyttämään sen
     return res.status(status).json({ 
       error: 'Chat proxy error', 
       status, 
-      details: data,
+      ...(isDevelopment && { details: { message: error.message } }),
       hint: status === 403 ? 'N8N workflow ei vielä tue HMAC-allekirjoitusta. Tarkista N8N workflow konfiguraatio.' : undefined
     })
   }

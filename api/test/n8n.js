@@ -21,13 +21,16 @@ async function handler(req, res) {
     const hasWorkflowUrl = !!process.env.N8N_WORKFLOW_URL
     const hasSecretKey = !!process.env.N8N_SECRET_KEY
     
+    // Älä paljasta ympäristömuuttujien arvoja edes osittain tuotannossa
+    const isDevelopment = process.env.NODE_ENV === 'development'
     return res.status(500).json({ 
       error: 'Failed to send to N8N', 
-      message: error.message,
+      message: isDevelopment ? error.message : 'Internal server error',
       config: {
         hasWorkflowUrl,
         hasSecretKey,
-        workflowUrl: hasWorkflowUrl ? process.env.N8N_WORKFLOW_URL.substring(0, 50) + '...' : 'missing'
+        // Älä näytä workflowUrl:ia tuotannossa
+        ...(isDevelopment && hasWorkflowUrl && { workflowUrl: process.env.N8N_WORKFLOW_URL.substring(0, 50) + '...' })
       }
     })
   }

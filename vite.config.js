@@ -11,6 +11,11 @@ export default defineConfig({
   define: {
     'process.env.REACT_APP_VERSION': JSON.stringify(packageJson.version)
   },
+  build: {
+    // Poista source mapit tuotannosta turvallisuussyistä
+    // Source mapit paljastavat alkuperäisen koodin selaimen kehitystyökaluissa
+    sourcemap: false
+  },
   server: {
     // Automaattinen päivitys ja HMR
     hmr: {

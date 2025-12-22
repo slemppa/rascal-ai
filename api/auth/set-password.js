@@ -15,16 +15,60 @@ export default async function handler(req, res) {
         message: 'Sähköposti ja salasana vaaditaan' 
       })
     }
-
-    if (password.length < 8) {
+    
+    // Validoi sähköpostin muoto
+    if (typeof email !== 'string') {
       return res.status(400).json({ 
         success: false, 
-        message: 'Salasanan tulee olla vähintään 8 merkkiä pitkä' 
+        message: 'Sähköpostin pitää olla merkkijono' 
       })
     }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Sähköpostin muoto on virheellinen' 
+      })
+    }
+    
+    // Validoi salasanan
+    if (typeof password !== 'string') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Salasanan pitää olla merkkijono' 
+      })
+    }
+    
+    if (password.length < 10) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Salasanan tulee olla vähintään 10 merkkiä pitkä (Supabase vaatimus)' 
+      })
+    }
+    
+    if (password.length > 128) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Salasana on liian pitkä (maksimi 128 merkkiä)' 
+      })
+    }
+    
+    // Vapaaehtoinen: vahvempi salasanan validointi (iso kirjain, numero, erikoismerkki)
+    // Kommentoitu pois, koska se voi olla liian rajoittava joillekin käyttäjille
+    // Jos haluat aktivoida tämän, poista kommentit alla olevasta koodista:
+    /*
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Salasanan tulee sisältää vähintään yksi iso kirjain, yksi numero ja yksi erikoismerkki (@$!%*?&)' 
+      })
+    }
+    */
 
-    console.log('Lähetetään N8N:ään:', { email, password, action: 'set-password' })
-    console.log('Käytettävä x-api-key:', process.env.N8N_SECRET_KEY)
+    console.log('Lähetetään N8N:ään:', { email, action: 'set-password', hasPassword: !!password })
+    // Älä koskaan logita salasanoja selkokielisessä muodossa
     // Lähetä pyyntö N8N:ään
     const response = await fetch(N8N_SET_PASSWORD_URL, {
       method: 'POST',

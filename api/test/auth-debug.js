@@ -51,12 +51,15 @@ export default async function handler(req, res) {
     const { data: authResult, error: authError } = await supabase.auth.getUser(token)
     
     if (authError) {
+      const isDevelopment = process.env.NODE_ENV === 'development'
       return res.status(401).json({
         error: 'Token validation failed',
-        details: authError.message,
-        code: authError.status || authError.code,
-        tokenLength: token.length,
-        tokenPreview: token.substring(0, 20) + '...'
+        ...(isDevelopment && {
+          details: authError.message,
+          code: authError.status || authError.code,
+          tokenLength: token.length,
+          tokenPreview: token.substring(0, 20) + '...'
+        })
       })
     }
 
@@ -67,6 +70,7 @@ export default async function handler(req, res) {
       })
     }
 
+    const isDevelopment = process.env.NODE_ENV === 'development'
     return res.json({
       success: true,
       user: {
@@ -74,10 +78,12 @@ export default async function handler(req, res) {
         email: authResult.user.email,
         created_at: authResult.user.created_at
       },
-      tokenInfo: {
-        length: token.length,
-        preview: token.substring(0, 20) + '...'
-      }
+      ...(isDevelopment && {
+        tokenInfo: {
+          length: token.length,
+          preview: token.substring(0, 20) + '...'
+        }
+      })
     })
 
   } catch (error) {

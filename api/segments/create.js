@@ -39,8 +39,45 @@ export default async function handler(req, res) {
       if (!authError && authResult?.user) authUserId = authResult.user.id
     } catch (_) {}
     const payload = req.body || {}
+    
+    // Validoi pakolliset kentät ja niiden tyypit/pituudet
     if (!payload.name) {
       return res.status(400).json({ error: 'name vaaditaan' })
+    }
+    
+    if (typeof payload.name !== 'string') {
+      return res.status(400).json({ error: 'name pitää olla merkkijono' })
+    }
+    
+    const trimmedName = payload.name.trim()
+    if (trimmedName.length < 1) {
+      return res.status(400).json({ error: 'name ei voi olla tyhjä' })
+    }
+    
+    if (trimmedName.length > 255) {
+      return res.status(400).json({ error: 'name on liian pitkä (maksimi 255 merkkiä)' })
+    }
+    
+    // Validoi description jos se on annettu
+    if (payload.description !== undefined && payload.description !== null) {
+      if (typeof payload.description !== 'string') {
+        return res.status(400).json({ error: 'description pitää olla merkkijono' })
+      }
+      if (payload.description.length > 2000) {
+        return res.status(400).json({ error: 'description on liian pitkä (maksimi 2000 merkkiä)' })
+      }
+    }
+    
+    // Validoi color jos se on annettu (hex-värikoodi)
+    if (payload.color !== undefined && payload.color !== null) {
+      if (typeof payload.color !== 'string') {
+        return res.status(400).json({ error: 'color pitää olla merkkijono' })
+      }
+      // Validoi että color on validi hex-värikoodi (esim. #FF5733 tai #fff)
+      const colorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
+      if (!colorRegex.test(payload.color)) {
+        return res.status(400).json({ error: 'color pitää olla validi hex-värikoodi (esim. #FF5733)' })
+      }
     }
 
     // Hae organisaation ID (public.users.id) käyttäen auth_user_id:tä
@@ -74,9 +111,15 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'Käyttäjää ei löytynyt organisaatiosta' })
     }
 
+    // Normalisoi name-trimmatulla versiolla
+    const insertData = {
+      ...payload,
+      name: trimmedName,
+      user_id: publicUserId
+    }
     const { data, error } = await userClient
       .from('contact_segments')
-      .insert([{ ...payload, user_id: publicUserId }])
+      .insert([insertData])
       .select()
       .single()
 
@@ -87,7 +130,11 @@ export default async function handler(req, res) {
     res.status(200).json(data)
   } catch (error) {
     logger.error('Unhandled error /api/segment-create:', error)
-    res.status(500).json({ error: 'Internal server error', details: error.message })
+    const isDevelopment = process.env.NODE_ENV === 'development'
+    res.status(500).json({ 
+      error: 'Internal server error',
+      ...(isDevelopment && { details: error.message })
+    })
   }
 }
 

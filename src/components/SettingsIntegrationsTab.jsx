@@ -290,6 +290,25 @@ export default function SettingsIntegrationsTab() {
     }
   }, [user?.id, loadIntegrations])
 
+  // Helper-funktio URL-parametrien sanitointiin (defense in depth)
+  // React escapaa automaattisesti, mutta sanitoidaan silti turvallisuussyistä
+  const sanitizeUrlParam = (param) => {
+    if (!param) return ''
+    try {
+      const decoded = decodeURIComponent(param)
+      // Poista mahdolliset script-tagit ja haitalliset attribuutit
+      return decoded
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/javascript:/gi, '')
+        .replace(/on\w+\s*=/gi, '') // Poista onclick, onerror, jne.
+        .trim()
+        .substring(0, 500) // Rajoita pituus
+    } catch (e) {
+      // Jos dekoodaus epäonnistuu, palauta tyhjä
+      return ''
+    }
+  }
+
   // Käsittele URL-parametrit (success/error OAuth-callbackista)
   useEffect(() => {
     const success = searchParams.get('success')
@@ -299,7 +318,7 @@ export default function SettingsIntegrationsTab() {
     if (success) {
       setMessage({
         type: 'success',
-        text: decodeURIComponent(success)
+        text: sanitizeUrlParam(success)
       })
       // Poista success-parametri URL:sta
       searchParams.delete('success')
@@ -315,7 +334,7 @@ export default function SettingsIntegrationsTab() {
     if (error) {
       setMessage({
         type: 'error',
-        text: decodeURIComponent(error)
+        text: sanitizeUrlParam(error)
       })
       // Poista error-parametri URL:sta
       searchParams.delete('error')

@@ -231,6 +231,7 @@ export default async function handler(req, res) {
         response: responseData
       })
     } catch (webhookError) {
+      const isDevelopment = process.env.NODE_ENV === 'development'
       // Loggaa virhe yksityiskohtaisesti
       if (webhookError.response) {
         console.error('❌ Webhook failed - Server responded with error:', {
@@ -242,7 +243,7 @@ export default async function handler(req, res) {
         responseData = {
           error: 'Webhook server error',
           status: webhookError.response.status,
-          data: webhookError.response.data
+          ...(isDevelopment && { data: webhookError.response.data })
         }
       } else if (webhookError.request) {
         console.error('❌ Webhook failed - No response received:', {
@@ -252,8 +253,7 @@ export default async function handler(req, res) {
         })
         responseData = {
           error: 'No response from webhook',
-          message: webhookError.message,
-          code: webhookError.code
+          ...(isDevelopment && { message: webhookError.message, code: webhookError.code })
         }
       } else {
         console.error('❌ Webhook failed:', {
@@ -262,27 +262,29 @@ export default async function handler(req, res) {
         })
         responseData = {
           error: 'Webhook request error',
-          message: webhookError.message
+          ...(isDevelopment && { message: webhookError.message })
         }
       }
       // Jatketaan vaikka webhook epäonnistui, mutta palautetaan virhe-info
     }
 
+    const isDevelopment = process.env.NODE_ENV === 'development'
     return res.status(200).json({
       success: webhookSuccess,
       message: webhookSuccess ? 'Onboarding completed and webhook sent' : 'Onboarding completed but webhook failed',
       webhookResponse: responseData,
-      webhookUrl: webhookUrl // Debug: palautetaan URL jotta voidaan tarkistaa
+      ...(isDevelopment && { webhookUrl: webhookUrl }) // Debug: palautetaan URL vain developmentissa
     })
 
   } catch (error) {
     console.error('❌ Error in onboarding-completed:', error)
     const status = error.response?.status || 500
+    const isDevelopment = process.env.NODE_ENV === 'development'
     const data = error.response?.data || { message: error.message }
     return res.status(status).json({ 
       error: 'Internal server error',
       status,
-      details: data
+      ...(isDevelopment && { details: data })
     })
   }
 }

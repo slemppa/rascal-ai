@@ -290,7 +290,9 @@ export default function VastaajaPage() {
         .limit(200)
 
       if (searchTerm) {
-        query = query.or(`customer_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%`)
+        // Escapetaan erikoismerkit SQL LIKE -kyselyissä (%, _, \)
+        const escapedSearchTerm = searchTerm.replace(/[%_\\]/g, '\\$&')
+        query = query.or(`customer_name.ilike.%${escapedSearchTerm}%,phone_number.ilike.%${escapedSearchTerm}%`)
       }
 
       if (dateFrom) {

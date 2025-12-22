@@ -1221,47 +1221,6 @@ export default function ContentStrategyPage() {
           <div className="strategy-grid">
             {console.log('Rendering strategies:', strategy.length, strategy)}
             {Array.isArray(strategy) && strategy.length > 0 ? strategy
-              .sort((a, b) => {
-                // Backend järjestää created_at mukaan, mutta varmistetaan oikea järjestys
-                // kuukauden nimen mukaan (englanniksi, kuten tietokannassa)
-                const monthA = (a.month || a.Month || '').toLowerCase().trim()
-                const monthB = (b.month || b.Month || '').toLowerCase().trim()
-                
-                // Kuukausien järjestys englanniksi (uusimmasta vanhimmaksi) - indeksi 0 = uusin
-                const monthOrder = [
-                  'december', 'november', 'october', 'september', 'august', 'july',
-                  'june', 'may', 'april', 'march', 'february', 'january'
-                ]
-                
-                // Etsi indeksi kuukauden nimen perusteella
-                const findMonthIndex = (monthName) => {
-                  if (!monthName) return -1
-                  return monthOrder.findIndex(month => {
-                    const monthLower = month.toLowerCase()
-                    const nameLower = monthName.toLowerCase()
-                    // Tarkka täsmäys
-                    if (monthLower === nameLower) return true
-                    // Sisältää-vertailu (jos kuukausi on esim. "november 2024")
-                    if (nameLower.includes(monthLower) || monthLower.includes(nameLower)) return true
-                    return false
-                  })
-                }
-                
-                const indexA = findMonthIndex(monthA)
-                const indexB = findMonthIndex(monthB)
-                
-                // Jos kuukausi löytyi, käytä sitä (pienempi indeksi = uudempi kuukausi)
-                // Koska monthOrder on jo uusimmasta vanhimpaan, pienempi indeksi tarkoittaa uudempaa
-                if (indexA !== -1 && indexB !== -1) {
-                  return indexA - indexB // Pienempi indeksi ensin = uusin ensin
-                }
-                
-                // Jos toinen löytyi mutta toinen ei, löytynyt menee ensin
-                if (indexA !== -1 && indexB === -1) return -1
-                if (indexA === -1 && indexB !== -1) return 1
-                
-                return 0
-              })
               .map(item => {
                 const status = getStrategyStatus(item.month || item.Month)
                 return (

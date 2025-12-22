@@ -1,5 +1,5 @@
 import { withOrganization } from '../middleware/with-organization.js'
-import axios from 'axios'
+import { sendToN8N } from '../lib/n8n-client.js'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.SUPABASE_URL 
@@ -10,7 +10,6 @@ const ENCRYPTION_KEY = process.env.USER_SECRETS_ENCRYPTION_KEY
 
 // N8N-webhook, josta kävijätiedot haetaan user_id:n perusteella
 const N8N_GOOGLE_ANALYTICS_VISITORS_URL = process.env.N8N_GOOGLE_ANALYTICS_VISITORS_URL
-const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY || process.env.MAKE_WEBHOOK_SECRET
 
 if (!supabaseUrl || !supabaseServiceKey) {
   console.error('❌ Missing Supabase envs in google-analytics-visitors')
@@ -89,31 +88,16 @@ async function handler(req, res) {
     const days = parseInt(req.query.days || '30', 10)
 
     // Rakenna N8N-kutsu: user_id = orgId, days = aikajakso
-    const headers = {
-      'Content-Type': 'application/json'
-    }
-    if (N8N_SECRET_KEY) {
-      headers['x-api-key'] = N8N_SECRET_KEY
-    }
-
     let n8nResponseData = null
     try {
-      const n8nResponse = await axios.post(
-        N8N_GOOGLE_ANALYTICS_VISITORS_URL,
-        {
-          user_id: orgId,
-          days,
-          // Mahdollinen property_id voidaan välittää metadatasta
-          property_id: secret.metadata?.property_id || null
-        },
-        {
-          headers,
-          timeout: 15000
-        }
-      )
-      n8nResponseData = n8nResponse.data
+      const safePayload = {
+        user_id: String(orgId),
+        days: Number(days),
+        // Mahdollinen property_id voidaan välittää metadatasta
+        property_id: secret.metadata?.property_id ? String(secret.metadata.property_id) : null
+      }
+      n8nResponseData = await sendToN8N(N8N_GOOGLE_ANALYTICS_VISITORS_URL, safePayload)
     } catch (n8nError) {
-      console.error('Error calling N8N Google Analytics visitors webhook:', n8nError.response?.data || n8nError.message)
       // Ei kaadeta koko dashboardia, palautetaan tyhjät arvot
       return res.status(200).json({
         connected: true,

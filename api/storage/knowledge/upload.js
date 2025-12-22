@@ -1,6 +1,7 @@
 import formidable from 'formidable'
 import fs from 'fs'
 import { withOrganization } from '../../middleware/with-organization.js'
+import { generateHmacSignature } from '../../lib/crypto.js'
 
 export const config = {
   api: { bodyParser: false },
@@ -19,7 +20,7 @@ async function handler(req, res) {
         .status(401)
         .json({ error: 'Käyttäjä ei ole kirjautunut' })
 
-    const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY || req.headers['x-api-key']
+    const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY
     if (!N8N_SECRET_KEY)
       return res
         .status(500)
@@ -62,9 +63,23 @@ async function handler(req, res) {
       } catch {}
     }
 
+    // FormData-lähetys vaatii erityiskohtelua HMAC:in kanssa
+    // Muodostetaan HMAC-signature metadata-kentistä (ei tiedostoista)
+    const metadataString = JSON.stringify({
+      action,
+      userId: authUser.id,
+      fileNames: providedNames,
+      fileCount: uploadedFiles.length
+    })
+    const timestamp = Math.floor(Date.now() / 1000).toString()
+    const signature = generateHmacSignature(metadataString, N8N_SECRET_KEY, timestamp)
+    
     const resp = await fetch(DEV_UPLOAD_WEBHOOK_URL, {
       method: 'POST',
-      headers: { 'x-api-key': N8N_SECRET_KEY },
+      headers: {
+        'x-rascal-timestamp': timestamp,
+        'x-rascal-signature': signature
+      },
       body: fd,
     })
     const text = await resp.text()

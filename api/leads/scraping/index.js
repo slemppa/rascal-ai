@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { sendToN8N } from '../../lib/n8n-client.js'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.SUPABASE_URL 
@@ -57,17 +57,15 @@ export default async function handler(req, res) {
 
     // N8N webhook URL
     const n8nWebhookUrl = process.env.N8N_LEAD_SCRAPING_URL || 'https://samikiias.app.n8n.cloud/webhook/lead-scraping'
-    const n8nSecretKey = process.env.N8N_SECRET_KEY
 
     if (!n8nWebhookUrl) {
-      console.error('N8N_LEAD_SCRAPING_URL webhook URL not configured')
       return res.status(500).json({ error: 'Webhook configuration missing' })
     }
 
     // Valmistele payload N8N:ään
-    const webhookData = {
-      user_id: publicUserId,
-      auth_user_id: authUser.id,
+    const safePayload = {
+      user_id: String(publicUserId),
+      auth_user_id: String(authUser.id),
       filters,
       apifyJson,
       leadLimit: limit,
@@ -75,33 +73,7 @@ export default async function handler(req, res) {
       source: 'rascal-ai-lead-scraping'
     }
 
-    console.log('Sending lead scraping request to N8N:', {
-      user_id: publicUserId,
-      leadLimit: limit,
-      webhookUrl: n8nWebhookUrl,
-      hasApiKey: !!n8nSecretKey
-    })
-
-    // Lähetä N8N:ään
-    const response = await axios.post(n8nWebhookUrl, webhookData, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(n8nSecretKey ? { 'x-api-key': n8nSecretKey } : {})
-      }
-    })
-
-    if (!response.ok && response.status !== 200) {
-      const errorText = await response.text()
-      console.error('N8N webhook error:', response.status, errorText)
-      return res.status(500).json({
-        error: 'Failed to send data to workflow',
-        details: response.statusText
-      })
-    }
-
-    const result = response.data
-
-    console.log('N8N webhook response:', result)
+    const result = await sendToN8N(n8nWebhookUrl, safePayload)
 
     return res.status(200).json({
       success: true,

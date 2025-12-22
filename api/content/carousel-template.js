@@ -1,13 +1,11 @@
+import { sendToN8N } from '../lib/n8n-client.js'
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Vain POST sallittu' });
   }
 
   const { templateId, companyId, backgroundColor, textColor, color } = req.body;
-  
-  console.log('Backend vastaanotti:', { templateId, companyId, backgroundColor, textColor, color });
-  console.log('backgroundColor arvo:', backgroundColor, 'tyyppi:', typeof backgroundColor);
-  console.log('textColor arvo:', textColor, 'tyyppi:', typeof textColor);
   
   if (!templateId) {
     return res.status(400).json({ error: 'templateId vaaditaan' });
@@ -19,47 +17,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    const webhookPayload = { 
-      templateId, 
-      companyId, 
-      backgroundColor, 
-      textColor,
+    const safePayload = { 
+      templateId: String(templateId), 
+      companyId: companyId ? String(companyId) : null, 
+      backgroundColor: backgroundColor ? String(backgroundColor) : null, 
+      textColor: textColor ? String(textColor) : null,
       // Takaisin yhteensopivuus vanhan API:n kanssa
-      color: backgroundColor 
+      color: backgroundColor ? String(backgroundColor) : null
     };
     
-    console.log('Lähetetään webhook:', webhookPayload);
-    
-    const webhookRes = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.N8N_SECRET_KEY
-      },
-      body: JSON.stringify(webhookPayload)
-    });
-    
-    console.log('Webhook vastaus status:', webhookRes.status);
-    
-    if (!webhookRes.ok) {
-      const text = await webhookRes.text();
-      console.error('Webhook virhe:', text);
-      return res.status(502).json({ 
-        error: 'Webhook epäonnistui', 
-        webhookStatus: webhookRes.status, 
-        webhookBody: text 
-      });
-    }
-    
-    // Yritä lukea JSON-vastaus, mutta älä kaadu jos se epäonnistuu
-    let webhookData;
-    try {
-      const responseText = await webhookRes.text();
-      webhookData = responseText ? JSON.parse(responseText) : null;
-    } catch (parseErr) {
-      console.log('Webhook ei palauttanut JSON-vastausta, mutta status oli OK');
-      webhookData = null;
-    }
+    const webhookData = await sendToN8N(webhookUrl, safePayload)
     
     return res.status(200).json({ 
       success: true, 
@@ -68,7 +35,6 @@ export default async function handler(req, res) {
       webhookResponse: webhookData
     });
   } catch (err) {
-    console.error('Webhook-kutsu epäonnistui:', err);
     return res.status(500).json({ 
       error: 'Webhook-kutsu epäonnistui', 
       details: err.message 

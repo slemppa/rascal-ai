@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { sendToN8N } from '../lib/n8n-client.js'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.SUPABASE_URL 
@@ -111,54 +111,32 @@ export default async function handler(req, res) {
     }
 
     const webhookUrl = process.env.N8N_CALL_TYPE_ENHANCEMENT || 'https://n8n.mak8r.fi/webhook/N8N_CALL_TYPE_ENHANCEMENT'
-    const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY
-
-    console.log('Environment check:')
-    console.log('- N8N_CALL_TYPE_ENHANCEMENT:', process.env.N8N_CALL_TYPE_ENHANCEMENT ? 'SET' : 'NOT SET')
-    console.log('- N8N_SECRET_KEY:', process.env.N8N_SECRET_KEY ? 'SET' : 'NOT SET')
-    console.log('Sending improvement request to:', webhookUrl)
-    console.log('Type:', call_type_id ? 'outbound' : 'inbound')
-    console.log('ID:', call_type_id || inbound_settings_id)
-    console.log('Data:', data)
 
     // Valmistele webhook data
-    const webhookData = call_type_id ? {
+    const safePayload = call_type_id ? {
       type: 'outbound_improvement',
-      call_type_id: call_type_id,
+      call_type_id: String(call_type_id),
       call_type_data: data
     } : {
       type: 'inbound_improvement',
-      inbound_settings_id: inbound_settings_id,
+      inbound_settings_id: String(inbound_settings_id),
       inbound_data: data
     }
 
     // Lähetä data N8N:lle
-    const response = await axios.post(webhookUrl, webhookData, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(N8N_SECRET_KEY ? { 'x-api-key': N8N_SECRET_KEY } : {})
-      }
-    })
-
-    console.log('Improvement request sent successfully:', response.data)
+    const responseData = await sendToN8N(webhookUrl, safePayload)
 
     return res.status(200).json({ 
       success: true, 
       message: 'Improvement request sent successfully',
       type: call_type_id ? 'outbound' : 'inbound',
-      response: response.data 
+      response: responseData 
     })
 
   } catch (error) {
-    console.error('Call type improvement error:', error)
-    console.error('Error stack:', error.stack)
-    const status = error.response?.status || 500
-    const data = error.response?.data || { message: error.message }
-    return res.status(status).json({ 
+    return res.status(500).json({ 
       error: 'Call type improvement error', 
-      message: error.message,
-      details: data,
-      stack: error.stack
+      details: error.message
     })
   }
 }

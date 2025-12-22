@@ -1,9 +1,8 @@
 import { withOrganization } from '../../middleware/with-organization.js'
 import { setCorsHeaders, handlePreflight } from '../../lib/cors.js'
+import { sendToN8N } from '../../lib/n8n-client.js'
 
 async function handler(req, res) {
-  console.log('post-actions API called:', req.method, req.url)
-  
   // CORS headers
   setCorsHeaders(res, ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
   
@@ -17,7 +16,6 @@ async function handler(req, res) {
   }
 
   try {
-    console.log('post-actions request body:', req.body)
     const { 
       post_id,
       auth_user_id,
@@ -43,36 +41,19 @@ async function handler(req, res) {
     // req.supabase = authenticated Supabase client
     const orgId = req.organization.id
 
-    console.log('post-actions: Using orgId:', orgId)
-
     // Haetaan Mixpost konfiguraatio ja sometilit Supabase:sta
     let mixpostConfig = null
     let socialAccounts = null
 
     try {
       // Haetaan Mixpost konfiguraatio käyttäen organisaation ID:tä
-      console.log('post-actions: Fetching Mixpost config for orgId:', orgId)
       const { data: configData, error: configError } = await req.supabase
         .from('user_mixpost_config')
         .select('mixpost_workspace_uuid, mixpost_api_token')
         .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .single()
 
-      console.log('post-actions: Config query result:', { configData, configError })
-
       if (configError || !configData || !configData.mixpost_workspace_uuid || !configData.mixpost_api_token) {
-        console.error('Error fetching mixpost config:', configError)
-        console.error('Config data:', configData)
-        console.error('Org ID used:', orgId)
-        
-        // Tarkista onko konfiguraatio olemassa mutta eri user_id:llä (vanha data)
-        const { data: allConfigs } = await req.supabase
-          .from('user_mixpost_config')
-          .select('user_id, mixpost_workspace_uuid')
-          .limit(5)
-        
-        console.log('post-actions: Sample configs in database:', allConfigs)
-        
         return res.status(400).json({ 
           error: 'Mixpost konfiguraatio ei löytynyt',
           details: configError?.message || 'Konfiguraatio puuttuu tai on epätäydellinen',
@@ -91,7 +72,6 @@ async function handler(req, res) {
         .eq('is_authorized', true)
 
       if (accountsError) {
-        console.error('Error fetching social accounts:', accountsError)
         return res.status(400).json({ 
           error: 'Sometilien haku epäonnistui',
           details: accountsError.message
@@ -107,7 +87,6 @@ async function handler(req, res) {
       socialAccounts = accountsData
 
     } catch (error) {
-      console.error('Supabase error:', error)
       return res.status(500).json({ 
         error: 'Supabase virhe',
         details: error.message
@@ -125,7 +104,7 @@ async function handler(req, res) {
       accountIds = [socialAccounts[0].mixpost_account_uuid]
     }
 
-    // Lähetetään data N8N webhook:iin
+    // Lähetetään data N8N webhook:iin käyttäen sendToN8N-funktiota (HMAC)
     const webhookUrl = process.env.MIXPOST_N8N_WEBHOOK_URL || 'https://samikiias.app.n8n.cloud/webhook/mixpost'
     
     // Käsittele scheduled_date ja publish_date erillisiksi date ja time kentiksi
@@ -141,7 +120,7 @@ async function handler(req, res) {
           time = dateTime.toTimeString().split(' ')[0] // HH:MM:SS
         }
       } catch (error) {
-        console.error('Error parsing publish_date:', error)
+        // Ignore parsing errors
       }
     }
     // Fallback: käytä scheduled_date jos publish_date ei ole saatavilla
@@ -153,7 +132,7 @@ async function handler(req, res) {
           time = null // scheduled_date ei sisällä aikaa
         }
       } catch (error) {
-        console.error('Error parsing scheduled_date:', error)
+        // Ignore parsing errors
       }
     }
     
@@ -177,46 +156,12 @@ async function handler(req, res) {
       timestamp: new Date().toISOString()
     }
 
-    const headers = {
-      'Content-Type': 'application/json'
-    }
-
-    // Lisätään API key header N8N webhook:iin
-    if (process.env.N8N_SECRET_KEY) {
-      headers['x-api-key'] = process.env.N8N_SECRET_KEY
-    }
-
-
-
-    // Lähetetään POST-pyyntö webhook:iin
-    let result = { success: true, message: 'Webhook sent successfully' } // Default result
+    // Lähetetään POST-pyyntö webhook:iin käyttäen sendToN8N-funktiota (HMAC)
+    let result = { success: true, message: 'Webhook sent successfully' }
     
     try {
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(webhookData)
-      })
-
-
-
-      if (!response.ok) {
-        console.error('Webhook response:', response.status, response.statusText)
-        console.error('Webhook URL:', webhookUrl)
-        console.error('Webhook data:', webhookData)
-        throw new Error(`Webhook failed: ${response.status} - ${response.statusText}`)
-      }
-
-      try {
-        result = await response.json()
-      } catch (error) {
-        console.error('Failed to parse webhook response:', error)
-        result = { success: true, message: 'Webhook sent successfully' }
-      }
-
-
+      result = await sendToN8N(webhookUrl, webhookData)
     } catch (error) {
-      console.error('Webhook request failed:', error)
       // Älä throw error, vaan jatka default result:lla
       result = { success: false, message: 'Webhook failed but continuing', error: error.message }
     }

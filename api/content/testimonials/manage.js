@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { sendToN8N } from '../../lib/n8n-client.js'
 import formidable from 'formidable'
 import { put } from '@vercel/blob'
 import { readFile } from 'fs/promises'
@@ -137,13 +137,22 @@ export default async function handler(req, res) {
 
         // Luonti: jos N8N_URL on asetettu ja halutaan käyttää työnkulkua, käytä sitä
         if (payload.action === 'create' && N8N_URL) {
-          const response = await axios.post(N8N_URL, payload, {
-          headers: {
-            'Content-Type': 'application/json',
-            ...(N8N_SECRET_KEY ? { 'x-api-key': N8N_SECRET_KEY } : {})
+          const safePayload = {
+            action: String(payload.action),
+            id: payload.id ? String(payload.id) : null,
+            name: String(payload.name),
+            title: String(payload.title),
+            company: String(payload.company),
+            quote: String(payload.quote),
+            avatar_url: String(payload.avatar_url),
+            avatar_filename: String(payload.avatar_filename),
+            avatar_path: String(payload.avatar_path),
+            avatar_mime: String(payload.avatar_mime),
+            avatar_size: Number(payload.avatar_size) || 0,
+            published: Boolean(payload.published)
           }
-          })
-          return res.status(200).json(response.data)
+          const data = await sendToN8N(N8N_URL, safePayload)
+          return res.status(200).json(data)
         }
 
         // Luonti suoraan Supabaseen (fallback)

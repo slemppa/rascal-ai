@@ -1,3 +1,5 @@
+import { sendToN8N } from '../lib/n8n-client.js'
+
 export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end()
   const { companyId } = req.query
@@ -7,62 +9,28 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Debug: tarkistetaan ympäristömuuttujat
-    console.log('N8N_GET_REELS:', process.env.N8N_GET_REELS)
-    console.log('N8N_SECRET_KEY:', process.env.N8N_SECRET_KEY ? 'LÖYTYI' : 'PUUTTUU')
-    console.log('Kaikki env muuttujat:', Object.keys(process.env).filter(key => key.includes('N8N')))
-
     // Haetaan data N8N webhookista
     const n8nUrl = process.env.N8N_GET_REELS
     if (!n8nUrl) {
       return res.status(500).json({ error: 'N8N webhook URL ei ole määritelty' })
     }
 
-    console.log('DEBUG: Kutsutaan N8N webhookia:', n8nUrl)
-    console.log('DEBUG: Company ID:', companyId)
-    console.log('DEBUG: API Key saatavilla:', !!process.env.N8N_SECRET_KEY)
-
-    const response = await fetch(n8nUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.N8N_SECRET_KEY
-      },
-      body: JSON.stringify({
-        companyId: companyId
-      })
-    })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('N8N error response:', errorText)
-      if (response.status === 404) {
-        console.log('N8N workflow ei ole aktiivinen, palautetaan tyhjä array')
-        return res.status(200).json([])
-      }
-      throw new Error(`N8N webhook error: ${response.status} - ${errorText}`)
-    }
-
-    const responseText = await response.text()
-
-
-    if (responseText.includes('Workflow was started')) {
-      console.log('DEBUG: N8N workflow käynnistyi, palautetaan tyhjä array')
-      return res.status(200).json([])
-    }
-
-    // Jos N8N palauttaa oikeaa dataa, käsitellään se
     let data
     try {
-      data = JSON.parse(responseText)
-    } catch (parseError) {
-      console.error('JSON parse error:', parseError)
-      console.error('Response was not valid JSON:', responseText)
-      data = []
-    }
-    if (!Array.isArray(data)) {
-      console.log('Data ei ole array, muunnetaan:', data)
-      data = []
+      // Käytä sendToN8N-funktiota HMAC-allekirjoituksella
+      data = await sendToN8N(n8nUrl, { companyId })
+      
+      // Jos N8N palauttaa tyhjän tai virheen, palauta tyhjä array
+      if (!data || !Array.isArray(data)) {
+        data = []
+      }
+    } catch (error) {
+      // Jos N8N workflow ei ole aktiivinen (404) tai muu virhe, palauta tyhjä array
+      if (error.message && (error.message.includes('404') || error.message.includes('failed'))) {
+        return res.status(200).json([])
+      }
+      // Jos on jokin muu virhe (esim. N8N_SECRET_KEY puuttuu), heitä virhe eteenpäin
+      throw error
     }
     const reelsData = data
       .map(item => {
@@ -85,15 +53,6 @@ export default async function handler(req, res) {
         }
         const status = statusMap[item.Status] || 'Kesken'
         
-        console.log('DEBUG: Processing Airtable item:', {
-          'Record ID': item['Record ID'],
-          'Idea': item.Idea,
-          'Caption': item.Caption,
-          'Status': item.Status,
-          'title': title,
-          'caption': caption
-        })
-        
         return {
           id: item.id || item['Record ID'] || `reels-${Date.now()}-${Math.random()}`,
           title: title,
@@ -113,13 +72,9 @@ export default async function handler(req, res) {
       .filter(item => {
         // Filtteröidään pois itemit joilla ei ole otsikkoa eikä kuvausta
         const hasContent = item.title || item.caption || item.voiceover
-        if (!hasContent) {
-          console.log('DEBUG: Skipping empty reels item:', item.id)
-        }
         return hasContent
       })
 
-    console.log('DEBUG: Palautetaan reelsData:', reelsData)
     res.status(200).json(reelsData)
   } catch (e) {
     console.error('Virhe N8N reels haussa:', e)

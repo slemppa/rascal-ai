@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { sendToN8N } from '../../lib/n8n-client.js'
 import formidable from 'formidable'
 import { put } from '@vercel/blob'
 import { readFile } from 'fs/promises'
@@ -23,7 +23,6 @@ export default async function handler(req, res) {
 
 	const N8N_URL = process.env.N8N_CMS_URL
 	const N8N_UPDATE_URL = process.env.N8N_CMS_UPDATE
-	const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY
 	
 	if (!N8N_URL) {
 		return res.status(500).json({ error: 'N8N_CMS_URL not set' })
@@ -100,18 +99,26 @@ export default async function handler(req, res) {
 			}
 
 			try {
-				const response = await axios.post(targetUrl, payload, {
-					headers: {
-						'Content-Type': 'application/json',
-						...(N8N_SECRET_KEY ? { 'x-api-key': N8N_SECRET_KEY } : {})
-					}
-				})
-				return res.status(200).json(response.data)
+				const safePayload = {
+					action: String(payload.action),
+					id: payload.id ? String(payload.id) : null,
+					title: String(payload.title),
+					slug: String(payload.slug),
+					excerpt: String(payload.excerpt),
+					content: String(payload.content),
+					category: String(payload.category),
+					image_url: String(payload.image_url),
+					image_filename: String(payload.image_filename),
+					image_path: String(payload.image_path),
+					image_mime: String(payload.image_mime),
+					image_size: Number(payload.image_size) || 0,
+					published_at: String(payload.published_at),
+					published: Boolean(payload.published)
+				}
+				const data = await sendToN8N(targetUrl, safePayload)
+				return res.status(200).json(data)
 			} catch (error) {
-				const status = error.response?.status || 500
-				const data = error.response?.data || { message: error.message }
-				console.error('blog-article-management proxy error:', status, data)
-				return res.status(status).json({ error: 'Proxy error', status, details: data })
+				return res.status(500).json({ error: 'Proxy error', details: error.message })
 			}
 		})
 	} catch (error) {

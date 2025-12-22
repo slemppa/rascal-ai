@@ -1,13 +1,22 @@
-export default async function handler(req, res) {
+import { withOrganization } from '../middleware/with-organization.js'
+import { sendToN8N } from '../lib/n8n-client.js'
+
+async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
   try {
-    const { recordId, voiceover, voiceoverReady, companyId, selectedAvatarId, action } = req.body
+    const { recordId, voiceover, voiceoverReady, selectedAvatarId, action } = req.body
 
-    if (!recordId || !companyId) {
-      return res.status(400).json({ error: 'Missing required fields' })
+    // Validoi pakolliset kentät
+    if (!recordId) {
+      return res.status(400).json({ error: 'recordId is required' })
+    }
+
+    // Tarkista että middleware on asettanut organization
+    if (!req.organization || !req.organization.id) {
+      return res.status(500).json({ error: 'Organization context missing' })
     }
 
     // Tässä vaiheessa lähetetään data N8N webhookiin
@@ -18,51 +27,30 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Webhook configuration missing' })
     }
 
-    const webhookData = {
-      recordId,
-      voiceover,
-      voiceoverReady,
-      companyId,
-      selectedAvatarId,
+    // Muodosta safe payload: käytä luotettavia arvoja middlewaresta
+    const safePayload = {
+      recordId: String(recordId),
+      companyId: String(req.organization.id), // Luotettu middlewaresta
+      authUserId: req.authUser?.id || null,   // Luotettu middlewaresta
+      voiceover: voiceover || null,
+      voiceoverReady: voiceoverReady !== undefined ? Boolean(voiceoverReady) : false,
+      selectedAvatarId: selectedAvatarId !== undefined && selectedAvatarId !== null ? String(selectedAvatarId) : null,
       timestamp: new Date().toISOString(),
       action: action || 'voiceover_ready'
     }
 
-    console.log('Sending voiceover ready data to N8N:', webhookData)
-
-    const response = await fetch(n8nWebhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.N8N_SECRET_KEY
-      },
-      body: JSON.stringify(webhookData)
-    })
-
-    if (!response.ok) {
-      console.error('N8N webhook error:', response.status, response.statusText)
-      return res.status(500).json({ 
-        error: 'Failed to send data to workflow',
-        details: response.statusText
-      })
-    }
-
-    const result = await response.text()
-    console.log('N8N webhook response:', result)
-    console.log('N8N webhook sent data:', JSON.stringify(webhookData, null, 2))
-
-    return res.status(200).json({ 
+    await sendToN8N(n8nWebhookUrl, safePayload)
+    res.json({ 
       success: true, 
-      message: 'Voiceover status updated successfully',
-      data: webhookData,
-      n8nResponse: result
+      message: 'Voiceover status updated successfully'
     })
-
   } catch (error) {
     console.error('Voiceover ready webhook error:', error)
     return res.status(500).json({ 
-      error: 'Internal server error',
+      error: 'Failed to send data to workflow',
       details: error.message 
     })
   }
-} 
+}
+
+export default withOrganization(handler) 

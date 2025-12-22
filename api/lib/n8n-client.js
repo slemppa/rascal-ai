@@ -12,20 +12,14 @@ export async function sendToN8N(webhookUrl, payload) {
   const timestamp = Math.floor(Date.now() / 1000).toString();
   const signature = generateHmacSignature(payloadString, secret, timestamp);
   
+  // Varmista että EI lähetetä x-api-key headeria - käytetään vain HMAC-allekirjoitusta
   const headers = {
     'Content-Type': 'application/json',
     'x-rascal-timestamp': timestamp,         // HMAC timestamp
     'x-rascal-signature': signature          // HMAC signature
+    // EI x-api-key - käytetään HMAC-allekirjoitusta turvallisuuden vuoksi
   };
   
-  console.log('Sending to N8N with HMAC:', {
-    url: webhookUrl,
-    timestamp,
-    signaturePreview: signature.substring(0, 20) + '...',
-    payloadSize: payloadString.length,
-    headers: Object.keys(headers)
-  });
-
   const fetchOptions = {
     method: 'POST',
     headers,

@@ -332,11 +332,18 @@ const AvatarModal = ({
                         const voiceoverTextarea = document.querySelector('textarea[name="voiceover"]')
                         const voiceoverText = voiceoverTextarea ? voiceoverTextarea.value : (editingPost.voiceover || '')
 
+                        // Hae session token
+                        const { data: sessionData } = await supabase.auth.getSession()
+                        const token = sessionData?.session?.access_token
+                        
+                        if (!token) {
+                          throw new Error('Käyttäjä ei ole kirjautunut')
+                        }
+
                         const requestData = {
                           recordId: editingPost.originalData?.['Record ID'] || editingPost.originalData?.id || editingPost.id,
                           voiceover: voiceoverText || null,
                           voiceoverReady: !!voiceoverReadyChecked,
-                          companyId: userData.company_id,
                           selectedAvatarId: selectedAvatar,
                           action: 'avatar_selected'
                         }
@@ -352,7 +359,10 @@ const AvatarModal = ({
                         // Lähetä endpointiin
                         const response = await fetch('/api/webhooks/voiceover-ready', {
                           method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
+                          headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                          },
                           body: JSON.stringify(requestData)
                         })
 

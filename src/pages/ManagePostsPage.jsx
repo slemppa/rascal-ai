@@ -605,16 +605,24 @@ export default function ManagePostsPage() {
 
 
 
+               // Hae session token
+               const { data: sessionData } = await supabase.auth.getSession()
+               const token = sessionData?.session?.access_token
+               
+               if (!token) {
+                 throw new Error('Käyttäjä ei ole kirjautunut')
+               }
+
                const response = await fetch('/api/webhooks/voiceover-ready', {
                  method: 'POST',
                  headers: {
                    'Content-Type': 'application/json',
+                   'Authorization': `Bearer ${token}`
                  },
                  body: JSON.stringify({
                    recordId: editingPost.id,
                    voiceover: updatedData.voiceover,
-                   voiceoverReady: updatedData.voiceoverReady,
-                   companyId: userData.company_id
+                   voiceoverReady: updatedData.voiceoverReady
                  })
                })
 
@@ -1624,9 +1632,8 @@ export default function ManagePostsPage() {
                       setCreateModalCount(clampedValue)
                     }}
                     required
-                    className="form-input"
+                    className="form-input form-input-full"
                     placeholder="Kuinka monta postausta generoidaan?"
-                    className="form-input-full"
                   />
                   <p className="form-hint">
                     Valitse kuinka monta postausta haluat generoida (1-10)
@@ -2726,15 +2733,25 @@ export default function ManagePostsPage() {
                               setErrorMessage(t('posts.messages.errorCompanyId'))
                               return
                             }
+                            // Hae session token
+                            const { data: sessionData } = await supabase.auth.getSession()
+                            const token = sessionData?.session?.access_token
+                            
+                            if (!token) {
+                              throw new Error('Käyttäjä ei ole kirjautunut')
+                            }
+
                             // Lähetä endpointiin
                             await fetch('/api/webhooks/voiceover-ready', {
                               method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
+                              headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                              },
                               body: JSON.stringify({
                                 recordId: editingPost.id,
                                 voiceover: editingPost.voiceover || null,
                                 voiceoverReady: !!editingPost.voiceoverReady,
-                                companyId: userData.company_id,
                                 selectedAvatarId: selectedAvatar,
                                 action: 'avatar_selected'
                               })

@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import formidable from 'formidable'
 import fs from 'fs'
+import { sendToN8N } from '../lib/n8n-client.js'
 
 export const config = {
   api: {
@@ -25,12 +26,6 @@ export default async function handler(req, res) {
     const file = files.file?.[0]
     const companyId = fields.companyId?.[0] // Hae companyId FormDatasta
     
-    console.log('Avatar upload debug:')
-    console.log('- Fields:', Object.keys(fields))
-    console.log('- Files:', Object.keys(files))
-    console.log('- CompanyId:', companyId)
-    console.log('- File:', file ? file.originalFilename : 'No file')
-    
     if (!file) {
       return res.status(400).json({ error: 'No file provided' })
     }
@@ -52,8 +47,6 @@ export default async function handler(req, res) {
     } else if (['mp3', 'wav', 'm4a', 'aac', 'ogg'].includes(fileExtension)) {
       fileType = 'audio'
     }
-    
-    console.log('- File type detected:', fileType, 'from extension:', fileExtension)
 
     // Supabase Storage setup
     const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
@@ -95,35 +88,19 @@ export default async function handler(req, res) {
     // Poista väliaikainen tiedosto
     fs.unlinkSync(file.filepath)
 
-    // Lähetä webhook N8N:ään
+    // Lähetä webhook N8N:ään HMAC-allekirjoituksella
     const N8N_AVATAR_UPLOAD_URL = process.env.N8N_AVATAR_UPLOAD_URL || 'https://samikiias.app.n8n.cloud/webhook/avatar-upload'
-    const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY
     
     try {
-      console.log('Sending webhook to N8N:', N8N_AVATAR_UPLOAD_URL)
-      
-      const webhookResponse = await fetch(N8N_AVATAR_UPLOAD_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': N8N_SECRET_KEY
-        },
-        body: JSON.stringify({
-          type: fileType === 'audio' ? 'voice-upload' : 'avatar-upload',
-          fileType: fileType,
-          url: urlData.publicUrl,
-          path: filePath,
-          filename: uniqueFileName,
-          uploadedAt: new Date().toISOString(),
-          companyId: companyId || null,
-        }),
+      await sendToN8N(N8N_AVATAR_UPLOAD_URL, {
+        type: fileType === 'audio' ? 'voice-upload' : 'avatar-upload',
+        fileType: fileType,
+        url: urlData.publicUrl,
+        path: filePath,
+        filename: uniqueFileName,
+        uploadedAt: new Date().toISOString(),
+        companyId: companyId || null,
       })
-      
-      if (webhookResponse.ok) {
-        console.log('N8N webhook sent successfully')
-      } else {
-        console.error('N8N webhook failed:', webhookResponse.status, webhookResponse.statusText)
-      }
     } catch (webhookError) {
       console.error('Webhook processing failed:', webhookError)
       // Älä kaada koko uploadia webhook-virheen takia

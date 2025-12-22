@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { sendToN8N } from '../lib/n8n-client.js'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -13,27 +13,21 @@ export default async function handler(req, res) {
 
   // Käytä ympäristömuuttujaa jos saatavilla, muuten oletusarvoa
   const N8N_AVATAR_DELETE_ENDPOINT = process.env.N8N_AVATAR_DELETE || 'https://samikiias.app.n8n.cloud/webhook/avatar-delete'
-  const N8N_SECRET_KEY = process.env.N8N_SECRET_KEY
 
   try {
-    // Välitä kutsu N8N webhookiin
-    const response = await axios.post(N8N_AVATAR_DELETE_ENDPOINT, {
+    // Välitä kutsu N8N webhookiin HMAC-allekirjoituksella
+    const responseData = await sendToN8N(N8N_AVATAR_DELETE_ENDPOINT, {
       companyId,
       avatarId
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': N8N_SECRET_KEY
-      }
     })
     
-    return res.status(200).json({ success: true, data: response.data })
+    return res.status(200).json({ success: true, data: responseData })
   } catch (error) {
-    console.error('Avatar delete proxy error:', error.response?.data || error.message)
+    console.error('Avatar delete proxy error:', error.message)
     return res.status(500).json({ 
       success: false,
       error: 'Avatar delete proxy error', 
-      details: error.response?.data || error.message 
+      details: error.message 
     })
   }
 } 

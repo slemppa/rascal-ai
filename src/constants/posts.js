@@ -54,3 +54,4 @@ export const DEFAULT_FEATURES = [
   'Marketing assistant'
 ]
 
+

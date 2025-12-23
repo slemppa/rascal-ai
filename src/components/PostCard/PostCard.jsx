@@ -5,12 +5,11 @@ import './PostCard.css'
 function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext, onDragStart, onDragEnd, isDragging, hideActions = false, t }) {
   return (
     <div 
-      className={`post-card ${isDragging ? 'dragging' : ''}`}
+      className={`post-card ${isDragging ? 'dragging' : ''} ${hideActions ? 'clickable' : ''}`}
       draggable={true}
       onDragStart={(e) => onDragStart(e, post)}
       onDragEnd={onDragEnd}
       onClick={hideActions ? () => onEdit(post) : undefined}
-      className={hideActions ? 'clickable' : ''}
     >
       <div className="post-card-content">
         <div className="post-thumbnail">
@@ -253,4 +252,6 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
 }
 
 export default PostCard
+
+
 

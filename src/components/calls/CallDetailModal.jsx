@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState, memo } from 'react'
 import { createPortal } from 'react-dom'
 import Button from '../Button'
+import { supabase } from '../../lib/supabase'
 
 function CallDetailModal({
   selectedLog,

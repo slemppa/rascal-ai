@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.107.4](https://github.com/slemppa/rascal-ai/compare/v1.107.3...v1.107.4) (2025-12-23)
+
+
+### 🐛 Bug Fixes
+
+* korjaa CallDetailModal supabase-import ja PostCard className ([dbbcb0e](https://github.com/slemppa/rascal-ai/commit/dbbcb0e86d2420d70b7b5400463c61249261ab3a))
+
 ### [1.107.3](https://github.com/slemppa/rascal-ai/compare/v1.107.2...v1.107.3) (2025-12-22)
 
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.107.5](https://github.com/slemppa/rascal-ai/compare/v1.107.4...v1.107.5) (2025-12-29)
+
+
+### 🐛 Bug Fixes
+
+* korjaa sometilien haku posts-sivulla ([802fb9b](https://github.com/slemppa/rascal-ai/commit/802fb9b952d8e6eec3be21faa2be5d68fb7f2f2f))
+
 ### [1.107.4](https://github.com/slemppa/rascal-ai/compare/v1.107.3...v1.107.4) (2025-12-23)
 
 

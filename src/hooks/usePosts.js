@@ -312,6 +312,7 @@ export function usePosts(user, t) {
         setSocialAccounts([])
         return
       }
+      
       setSocialAccounts(accountsData || [])
       
     } catch (error) {
@@ -366,5 +367,6 @@ export function usePosts(user, t) {
     transformReelsData: useCallback((data) => transformReelsData(data, t), [t])
   }
 }
+
 
 

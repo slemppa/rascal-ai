@@ -255,7 +255,7 @@ export default function ManagePostsPage() {
     fetchReelsPosts() // Haetaan reels data automaattisesti
     fetchSocialAccounts() // Haetaan somekanavat
     fetchMixpostPosts() // Haetaan Mixpost postaukset
-  }, [user])
+  }, [user, fetchPosts, fetchReelsPosts, fetchSocialAccounts, fetchMixpostPosts])
 
   // Siirrä pois UGC-tabista jos feature poistetaan
   useEffect(() => {

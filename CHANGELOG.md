@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.108.0](https://github.com/slemppa/rascal-ai/compare/v1.107.7...v1.108.0) (2026-01-03)
+
+
+### ♻️ Code Refactoring
+
+* paranna asetukset-sivun korttien asettelua ja tyylejä ([e20c831](https://github.com/slemppa/rascal-ai/commit/e20c83108ecb944e9653a8279cec4a7ff26f8507))
+
+
+### ✨ Features
+
+* **posts:** add image bank selection to edit modal ([e03abd0](https://github.com/slemppa/rascal-ai/commit/e03abd0a8fef170459637e67ecf4eac683d55947))
+
 ### [1.107.7](https://github.com/slemppa/rascal-ai/compare/v1.107.5...v1.107.7) (2026-01-02)
 
 ### [1.107.6](https://github.com/slemppa/rascal-ai/compare/v1.107.5...v1.107.6) (2026-01-02)

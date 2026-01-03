@@ -1104,7 +1104,7 @@
   "settings": {
     "title": "Asetukset",
     "profile": { "title": "Käyttäjätiedot", "loading": "Ladataan käyttäjätietoja...", "notFoundSupport": "Käyttäjätietoja ei löytynyt. Ota yhteyttä tukeen.", "fetchError": "Virhe käyttäjätietojen haussa. Ota yhteyttä tukeen.", "updateSuccess": "Tiedot päivitetty onnistuneesti!" },
-    "fields": { "name": "Nimi", "email": "Sähköposti", "company": "Yritys", "industry": "Toimiala", "userId": "Käyttäjätunnus", "namePlaceholder": "Syötä nimesi", "emailPlaceholder": "Syötä sähköpostiosoitteesi", "companyPlaceholder": "Syötä yrityksesi nimi" },
+    "fields": { "name": "Nimi", "email": "Sähköposti", "company": "Yritys", "industry": "Toimiala", "userId": "ID", "namePlaceholder": "Syötä nimesi", "emailPlaceholder": "Syötä sähköpostiosoitteesi", "companyPlaceholder": "Syötä yrityksesi nimi" },
     "buttons": { "edit": "Muokkaa", "save": "Tallenna", "saving": "Tallennetaan...", "cancel": "Peruuta", "changePassword": "Vaihda salasana", "changeEmail": "Vaihda sähköposti" },
     "common": { "notSet": "Ei asetettu", "notAvailable": "Ei saatavilla", "error": "Virhe", "loadingImages": "Ladataan kuvia..." },
     "password": { "title": "Salasanan vaihto", "saving": "Tallennetaan...", "save": "Tallenna", "cancel": "Peruuta", "mismatch": "Uudet salasanat eivät täsmää", "tooShort": "Uusi salasana on liian lyhyt (vähintään 6 merkkiä)", "currentRequired": "Nykyinen salasana vaaditaan", "currentWrong": "Nykyinen salasana on väärä", "changed": "Salasana vaihdettu onnistuneesti!", "currentPlaceholder": "Syötä nykyinen salasanasi", "newPlaceholder": "Syötä uusi salasana", "confirmPlaceholder": "Syötä uusi salasana uudelleen", "current": "Nykyinen salasana", "new": "Uusi salasana", "confirm": "Vahvista uusi salasana" },

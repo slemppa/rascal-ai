@@ -13,6 +13,7 @@ import { useStrategyStatus } from '../contexts/StrategyStatusContext'
 import { getUserOrgId } from '../lib/getUserOrgId'
 import SettingsIntegrationsTab from '../components/SettingsIntegrationsTab'
 import VoiceSection from '../components/settings/VoiceSection'
+import AccountTypeSection from '../components/settings/AccountTypeSection'
 
 import styles from './SettingsPage.module.css'
 
@@ -48,6 +49,7 @@ export default function SettingsPage() {
   const [logoMessage, setLogoMessage] = useState('')
   const [logoDragActive, setLogoDragActive] = useState(false)
   const [activeTab, setActiveTab] = useState('profile')
+  const [showUserId, setShowUserId] = useState(false)
   
   // Mixpost-integration hook
   const { 
@@ -323,16 +325,18 @@ export default function SettingsPage() {
   const [formData, setFormData] = useState({
     contact_person: name || '',
     company_name: companyName || '',
-    contact_email: email || ''
+    contact_email: email || '',
+    industry: industry || ''
   })
 
   useEffect(() => {
     setFormData({
       contact_person: name || '',
       company_name: companyName || '',
-      contact_email: email || ''
+      contact_email: email || '',
+      industry: industry || ''
     })
-  }, [name, companyName, email])
+  }, [name, companyName, email, industry])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -540,6 +544,7 @@ export default function SettingsPage() {
           contact_person: formData.contact_person,
           company_name: formData.company_name,
           contact_email: formData.contact_email,
+          industry: formData.industry || null,
           updated_at: new Date().toISOString()
         })
         .eq('id', userProfile.id)
@@ -570,7 +575,8 @@ export default function SettingsPage() {
     setFormData({
       contact_person: name || '',
       company_name: companyName || '',
-      contact_email: email || ''
+      contact_email: email || '',
+      industry: industry || ''
     })
     setIsEditing(false)
     setMessage('')
@@ -732,469 +738,352 @@ export default function SettingsPage() {
             Profiili
           </button>
           <button
+            className={`${styles['settings-tab']} ${activeTab === 'avatar' ? styles['settings-tab-active'] : ''}`}
+            onClick={() => setActiveTab('avatar')}
+          >
+            Avatar & Ääni
+          </button>
+          <button
+            className={`${styles['settings-tab']} ${activeTab === 'carousel' ? styles['settings-tab-active'] : ''}`}
+            onClick={() => setActiveTab('carousel')}
+          >
+            Karusellit
+          </button>
+          <button
             className={`${styles['settings-tab']} ${activeTab === 'features' ? styles['settings-tab-active'] : ''}`}
             onClick={() => setActiveTab('features')}
           >
             Ominaisuudet
+          </button>
+          <button
+            className={`${styles['settings-tab']} ${activeTab === 'security' ? styles['settings-tab-active'] : ''}`}
+            onClick={() => setActiveTab('security')}
+          >
+            Turvallisuus
           </button>
         </div>
         
         {/* Profiili-tab */}
         {activeTab === 'profile' && (
           <div className={styles['settings-bentogrid']}>
-            {/* Vasen sarake: Käyttäjätiedot */}
-            <div className={styles.card}>
+            {/* Vasen sarake: Loogisesti jaettu kortteihin */}
             {profileLoading ? (
-              <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-                <div style={{ fontSize: '16px', color: '#6b7280' }}>{t('settings.profile.loading')}</div>
+              <div className={styles.card}>
+                <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+                  <div style={{ fontSize: '16px', color: '#6b7280' }}>{t('settings.profile.loading')}</div>
+                </div>
               </div>
             ) : (
               <>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                  <h2 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#1f2937' }}>
-                    {isInvitedUser ? 'Henkilökohtaiset tiedot' : t('settings.profile.title')}
-                  </h2>
-                  {!isInvitedUser && !isEditing ? (
-                    <button onClick={() => setIsEditing(true)} className={`${styles.btn} ${styles.btnSecondary}`}>
-                      {t('settings.buttons.edit')}
-                    </button>
-                  ) : !isInvitedUser && isEditing ? (
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <button onClick={handleSave} disabled={loading} className={`${styles.btn} ${styles.btnPrimary}`}>
-                        {loading ? t('settings.buttons.saving') : t('settings.buttons.save')}
-                      </button>
-                      <button onClick={handleCancel} className={`${styles.btn} ${styles.btnNeutral}`}>
-                        {t('settings.buttons.cancel')}
-                      </button>
-                    </div>
-                  ) : null}
-                </div>
-                
-                {isInvitedUser && (
-                  <div style={{ 
-                    marginBottom: 16, 
-                    padding: 12, 
-                    backgroundColor: '#f0f9ff', 
-                    border: '1px solid #bae6fd', 
-                    borderRadius: 8,
-                    fontSize: 14,
-                    color: '#0369a1'
-                  }}>
-                    <strong>Organisaatio:</strong> {organization?.data?.company_name || 'Ei nimeä'}
-                    <br />
-                    <strong>Rooli:</strong> {organization?.role === 'admin' ? 'Admin' : organization?.role === 'member' ? 'Jäsen' : 'Omistaja'}
-                  </div>
-                )}
-            
-                {message && (
-                  <div className={`${styles.message} ${message.includes(t('settings.common.error')) ? styles.messageError : styles.messageSuccess}`}>
-                    {message}
-                  </div>
-                )}
-
+                {/* 1. Yrityksen Logo -kortti (vasemmalla ylhäällä) */}
                 {!isInvitedUser && (
-                  <div className={styles['form-group']}>
-                    <label>{t('settings.fields.name')}</label>
-                    {isEditing ? (
-                      <input 
-                        type="text" 
-                        name="contact_person"
-                        value={formData.contact_person} 
-                        onChange={handleInputChange}
-                        className={styles['form-input']}
-                        placeholder={t('settings.fields.namePlaceholder')}
-                      />
-                    ) : (
-                      <input 
-                        type="text" 
-                        value={name || t('settings.common.notSet')} 
-                        readOnly 
-                        className={`${styles['form-input']} ${styles.readonly}`} 
-                      />
+                <div className={`${styles.card} ${styles.cardNoPadding}`} style={{ gridColumn: '1', gridRow: '1' }}>
+                  <div className={styles.cardHeader}>
+                    <h3>Yrityksen Logo</h3>
+                  </div>
+                  <div className={styles.cardContent} style={{ padding: '16px' }}>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'stretch' }}>
+                      {/* Logo */}
+                      {userProfile?.logo_url && !logoPreview && (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                          <label style={{ fontSize: '13px', color: '#6b7280', alignSelf: 'flex-start' }}>Nykyinen logo:</label>
+                          <img 
+                            src={userProfile.logo_url} 
+                            alt="Company Logo" 
+                            style={{ width: '60px', height: '60px', objectFit: 'contain', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                          />
+                          <button 
+                            onClick={handleLogoRemove} 
+                            disabled={logoUploading}
+                            className={`${styles.btn} ${styles.btnNeutral}`}
+                            style={{ fontSize: '13px', padding: '6px 12px' }}
+                          >
+                            {logoUploading ? 'Poistetaan...' : 'Poista logo'}
+                          </button>
+                        </div>
+                      )}
+                      
+                      {/* Drag & Drop alue */}
+                      <div 
+                        className={styles['logo-drop-zone']}
+                        onDragEnter={handleLogoDrag}
+                        onDragLeave={handleLogoDrag}
+                        onDragOver={handleLogoDrag}
+                        onDrop={handleLogoDrop}
+                        style={{
+                          border: logoDragActive ? '2px dashed #ff6600' : '2px dashed #d1d5db',
+                          background: logoDragActive ? 'rgba(255, 102, 0, 0.05)' : '#f9fafb',
+                          borderRadius: '12px',
+                          padding: '16px',
+                          textAlign: 'center',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          flex: 1,
+                          minWidth: 0,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center'
+                        }}
+                      >
+                      {logoPreview ? (
+                        <div>
+                          <img 
+                            src={logoPreview} 
+                            alt="Logo Preview" 
+                            style={{ width: '80px', height: '80px', objectFit: 'contain', borderRadius: '8px', border: '2px solid #e5e7eb', marginBottom: '12px' }}
+                          />
+                          <p style={{ fontSize: '13px', color: '#374151', fontWeight: 500, marginBottom: '8px' }}>
+                            Logo valittu!
+                          </p>
+                          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+                            <button 
+                              onClick={handleLogoUpload}
+                              disabled={logoUploading}
+                              className={`${styles.btn} ${styles.btnPrimary}`}
+                              style={{ fontSize: '13px' }}
+                            >
+                              {logoUploading ? 'Ladataan...' : '✓ Tallenna'}
+                            </button>
+                            <button 
+                              onClick={() => {
+                                setLogoFile(null)
+                                setLogoPreview(null)
+                                setLogoMessage('')
+                              }}
+                              className={`${styles.btn} ${styles.btnNeutral}`}
+                              style={{ fontSize: '13px' }}
+                            >
+                              Peruuta
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div>
+                          <div style={{ 
+                            width: '48px', 
+                            height: '48px', 
+                            margin: '0 auto 12px', 
+                            borderRadius: '8px',
+                            background: 'linear-gradient(135deg, rgba(255, 102, 0, 0.1) 0%, rgba(229, 94, 0, 0.1) 100%)',
+                            border: '2px solid rgba(255, 102, 0, 0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="#ff6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              <path d="M17 8l-5-5-5 5" stroke="#ff6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              <path d="M12 3v12" stroke="#ff6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </div>
+                          <p style={{ fontSize: '13px', color: '#374151', fontWeight: 500, marginBottom: '6px' }}>
+                            {logoDragActive ? 'Pudota logo tähän' : 'Vedä logo tähän'}
+                          </p>
+                          <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '12px' }}>
+                            tai
+                          </p>
+                          <label className={`${styles.btn} ${styles.btnSecondary}`} style={{ fontSize: '13px', cursor: 'pointer' }}>
+                            Valitse tiedosto
+                            <input 
+                              type="file"
+                              accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                              onChange={handleLogoFileChange}
+                              style={{ display: 'none' }}
+                            />
+                          </label>
+                          <p style={{ fontSize: '11px', color: '#9ca3af', marginTop: '8px' }}>
+                            PNG, JPG, WEBP, SVG (max 2MB)
+                          </p>
+                        </div>
+                      )}
+                      </div>
+                    </div>
+                    
+                    {logoMessage && (
+                      <p style={{ 
+                        marginTop: '12px', 
+                        fontSize: '12px', 
+                        color: logoMessage.includes('Virhe') || logoMessage.includes('liian') || logoMessage.includes('Sallitut') ? '#dc2626' : '#16a34a',
+                        textAlign: 'center'
+                      }}>
+                        {logoMessage}
+                      </p>
                     )}
                   </div>
-                )}
-                
-                <div className={styles['form-group']}>
-                  <label>{t('settings.fields.email')}</label>
-                  {isInvitedUser ? (
-                    <input 
-                      type="email" 
-                      value={email || t('settings.common.notAvailable')} 
-                      readOnly 
-                      className={`${styles['form-input']} ${styles.readonly}`} 
-                    />
-                  ) : isEditing ? (
-                    <input 
-                      type="email" 
-                      name="contact_email"
-                      value={formData.contact_email} 
-                      onChange={handleInputChange}
-                      className={styles['form-input']}
-                      placeholder={t('settings.fields.emailPlaceholder')}
-                    />
-                  ) : (
-                    <input 
-                      type="email" 
-                      value={email || t('settings.common.notAvailable')} 
-                      readOnly 
-                      className={`${styles['form-input']} ${styles.readonly}`} 
-                    />
-                  )}
                 </div>
+                )}
+
+                {/* 2. Käyttäjätiedot -kortti (vasemmalla logon alle) */}
+                <div className={`${styles.card} ${styles.cardNoPadding}`} style={{ gridColumn: '1', gridRow: '2' }}>
+                  <div className={styles.cardHeader}>
+                    <h3>{isInvitedUser ? 'Henkilökohtaiset tiedot' : t('settings.profile.title')}</h3>
+                    {!isInvitedUser && !isEditing ? (
+                      <button onClick={() => setIsEditing(true)} className={`${styles.btn} ${styles.btnSecondary}`}>
+                        {t('settings.buttons.edit')}
+                      </button>
+                    ) : !isInvitedUser && isEditing ? (
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button onClick={handleSave} disabled={loading} className={`${styles.btn} ${styles.btnPrimary}`}>
+                          {loading ? t('settings.buttons.saving') : t('settings.buttons.save')}
+                        </button>
+                        <button onClick={handleCancel} className={`${styles.btn} ${styles.btnNeutral}`}>
+                          {t('settings.buttons.cancel')}
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
+                  
+                  <div className={styles.cardContent}>
+                    {isInvitedUser && (
+                      <div style={{ 
+                        marginBottom: 16, 
+                        padding: 12, 
+                        backgroundColor: '#f0f9ff', 
+                        border: '1px solid #bae6fd', 
+                        borderRadius: 8,
+                        fontSize: 14,
+                        color: '#0369a1'
+                      }}>
+                        <strong>Organisaatio:</strong> {organization?.data?.company_name || 'Ei nimeä'}
+                        <br />
+                        <strong>Rooli:</strong> {organization?.role === 'admin' ? 'Admin' : organization?.role === 'member' ? 'Jäsen' : 'Omistaja'}
+                      </div>
+                    )}
                 
-                {!isInvitedUser && (
-                  <>
+                    {message && (
+                      <div className={`${styles.message} ${message.includes(t('settings.common.error')) ? styles.messageError : styles.messageSuccess}`}>
+                        {message}
+                      </div>
+                    )}
+
+                    {!isInvitedUser && (
+                      <div className={styles['form-group']}>
+                        <label>{t('settings.fields.name')}</label>
+                        {isEditing ? (
+                          <input 
+                            type="text" 
+                            name="contact_person"
+                            value={formData.contact_person} 
+                            onChange={handleInputChange}
+                            className={styles['form-input']}
+                            placeholder={t('settings.fields.namePlaceholder')}
+                          />
+                        ) : (
+                          <input 
+                            type="text" 
+                            value={name || t('settings.common.notSet')} 
+                            readOnly 
+                            className={`${styles['form-input']} ${styles.readonly}`} 
+                          />
+                        )}
+                      </div>
+                    )}
+                    
                     <div className={styles['form-group']}>
-                      <label>{t('settings.fields.company')}</label>
-                      {isEditing ? (
+                      <label>{t('settings.fields.email')}</label>
+                      {isInvitedUser ? (
                         <input 
-                          type="text" 
-                          name="company_name"
-                          value={formData.company_name} 
+                          type="email" 
+                          value={email || t('settings.common.notAvailable')} 
+                          readOnly 
+                          className={`${styles['form-input']} ${styles.readonly}`} 
+                        />
+                      ) : isEditing ? (
+                        <input 
+                          type="email" 
+                          name="contact_email"
+                          value={formData.contact_email} 
                           onChange={handleInputChange}
                           className={styles['form-input']}
-                          placeholder={t('settings.fields.companyPlaceholder')}
+                          placeholder={t('settings.fields.emailPlaceholder')}
                         />
                       ) : (
                         <input 
-                          type="text" 
-                          value={companyName || t('settings.common.notSet')} 
+                          type="email" 
+                          value={email || t('settings.common.notAvailable')} 
                           readOnly 
                           className={`${styles['form-input']} ${styles.readonly}`} 
                         />
                       )}
                     </div>
                     
-                    <div className={styles['form-group']}>
-                      <label>{t('settings.fields.industry')}</label>
-                      <input 
-                        type="text" 
-                        value={industry || t('settings.common.notSet')} 
-                        readOnly 
-                        className={`${styles['form-input']} ${styles.readonly}`} 
-                      />
-                    </div>
-                    
-                    <div className={styles['form-group']}>
-                      <label>{t('settings.fields.userId')}</label>
-                      <input 
-                        type="text" 
-                        value={userProfile?.id || user?.id || t('settings.common.notAvailable')} 
-                        readOnly 
-                        className={`${styles['form-input']} ${styles.readonly}`} 
-                        style={{fontFamily: 'monospace', fontSize: '12px'}} 
-                      />
-                    </div>
-                  </>
-                )}
-                
-                {/* Logo-lataus - vain omistajille */}
-                {!isInvitedUser && (
-                <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
-                  <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Yrityksen Logo</h3>
-                  
-                  {/* Nykyinen logo */}
-                  {userProfile?.logo_url && !logoPreview && (
-                    <div style={{ marginBottom: '16px' }}>
-                      <label style={{ fontSize: '13px', color: '#6b7280', marginBottom: '8px', display: 'block' }}>Nykyinen logo:</label>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <img 
-                          src={userProfile.logo_url} 
-                          alt="Company Logo" 
-                          style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e5e7eb' }}
-                        />
-                        <button 
-                          onClick={handleLogoRemove} 
-                          disabled={logoUploading}
-                          className={`${styles.btn} ${styles.btnNeutral}`}
-                          style={{ fontSize: '13px' }}
-                        >
-                          {logoUploading ? 'Poistetaan...' : 'Poista logo'}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Drag & Drop alue */}
-                  <div 
-                    className={styles['logo-drop-zone']}
-                    onDragEnter={handleLogoDrag}
-                    onDragLeave={handleLogoDrag}
-                    onDragOver={handleLogoDrag}
-                    onDrop={handleLogoDrop}
-                    style={{
-                      border: logoDragActive ? '2px dashed #ff6600' : '2px dashed #d1d5db',
-                      background: logoDragActive ? 'rgba(255, 102, 0, 0.05)' : '#f9fafb',
-                      borderRadius: '12px',
-                      padding: '24px',
-                      textAlign: 'center',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      marginBottom: '16px'
-                    }}
-                  >
-                    {logoPreview ? (
-                      <div>
-                        <img 
-                          src={logoPreview} 
-                          alt="Logo Preview" 
-                          style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '12px', border: '2px solid #e5e7eb', marginBottom: '16px' }}
-                        />
-                        <p style={{ fontSize: '14px', color: '#374151', fontWeight: 500, marginBottom: '8px' }}>
-                          Logo valittu!
-                        </p>
-                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center' }}>
-                          <button 
-                            onClick={handleLogoUpload}
-                            disabled={logoUploading}
-                            className={`${styles.btn} ${styles.btnPrimary}`}
-                            style={{ fontSize: '13px' }}
-                          >
-                            {logoUploading ? 'Ladataan...' : '✓ Tallenna logo'}
-                          </button>
-                          <button 
-                            onClick={() => {
-                              setLogoFile(null)
-                              setLogoPreview(null)
-                              setLogoMessage('')
-                            }}
-                            className={`${styles.btn} ${styles.btnNeutral}`}
-                            style={{ fontSize: '13px' }}
-                          >
-                            Peruuta
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div>
-                        <div style={{ 
-                          width: '64px', 
-                          height: '64px', 
-                          margin: '0 auto 16px', 
-                          borderRadius: '12px',
-                          background: 'linear-gradient(135deg, rgba(255, 102, 0, 0.1) 0%, rgba(229, 94, 0, 0.1) 100%)',
-                          border: '2px solid rgba(255, 102, 0, 0.3)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}>
-                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="#ff6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M17 8l-5-5-5 5" stroke="#ff6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M12 3v12" stroke="#ff6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </div>
-                        <p style={{ fontSize: '14px', color: '#374151', fontWeight: 500, marginBottom: '8px' }}>
-                          {logoDragActive ? 'Pudota logo tähän' : 'Vedä logo tähän'}
-                        </p>
-                        <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px' }}>
-                          tai
-                        </p>
-                        <label className={`${styles.btn} ${styles.btnSecondary}`} style={{ fontSize: '13px', cursor: 'pointer' }}>
-                          Valitse tiedosto
+                    {!isInvitedUser && (
+                      <>
+                        <div className={styles['form-group']}>
+                          <label>{t('settings.fields.company')}</label>
                           <input 
-                            type="file"
-                            accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
-                            onChange={handleLogoFileChange}
-                            style={{ display: 'none' }}
+                            type="text" 
+                            value={companyName || t('settings.common.notSet')} 
+                            readOnly 
+                            className={`${styles['form-input']} ${styles.readonly}`} 
                           />
-                        </label>
-                        <p style={{ fontSize: '12px', color: '#9ca3af', marginTop: '12px' }}>
-                          PNG, JPG, WEBP, SVG (max 2MB)
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {logoMessage && (
-                    <p style={{ 
-                      marginTop: '8px', 
-                      fontSize: '13px', 
-                      color: logoMessage.includes('Virhe') || logoMessage.includes('liian') || logoMessage.includes('Sallitut') ? '#dc2626' : '#16a34a',
-                      textAlign: 'center'
-                    }}>
-                      {logoMessage}
-                    </p>
-                  )}
-                </div>
-                )}
-                
-                {/* Salasanan vaihto */}
-                <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', margin: 0 }}>{t('settings.password.title')}</h3>
-                    {!showPasswordChange ? (
-                      <button onClick={() => setShowPasswordChange(true)} className={`${styles.btn} ${styles.btnSecondary}`}>
-                        {t('settings.buttons.changePassword')}
-                      </button>
-                    ) : (
-                      <div style={{ display: 'flex', gap: '6px' }}>
-                        <button onClick={handlePasswordSave} disabled={passwordLoading} className={`${styles.btn} ${styles.btnPrimary}`}>
-                          {passwordLoading ? t('settings.password.saving') : t('settings.password.save')}
-                        </button>
-                        <button onClick={handlePasswordCancel} className={`${styles.btn} ${styles.btnNeutral}`}>
-                          {t('settings.password.cancel')}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {passwordMessage && (
-                    <div style={{ 
-                      padding: '8px 12px', 
-                      borderRadius: '6px', 
-                      marginBottom: '12px',
-                      fontSize: '14px',
-                      background: passwordMessage.includes('Virhe') ? '#fef2f2' : '#f0fdf4',
-                      color: passwordMessage.includes('Virhe') ? '#dc2626' : '#16a34a',
-                      border: `1px solid ${passwordMessage.includes('Virhe') ? '#fecaca' : '#bbf7d0'}`
-                    }}>
-                      {passwordMessage}
-                    </div>
-                  )}
-                  
-                  {showPasswordChange && (
-                    <div>
-                      <div className={styles['form-group']}>
-                        <label>{t('settings.password.current')}</label>
-                        <input 
-                          type="password" 
-                          name="currentPassword"
-                          value={passwordData.currentPassword} 
-                          onChange={handlePasswordChange}
-                          className={styles['form-input']}
-                          placeholder={t('settings.password.currentPlaceholder')}
-                        />
-                      </div>
-                      
-                      <div className={styles['form-group']}>
-                        <label>{t('settings.password.new')}</label>
-                        <input 
-                          type="password" 
-                          name="newPassword"
-                          value={passwordData.newPassword} 
-                          onChange={handlePasswordChange}
-                          className={styles['form-input']}
-                          placeholder={t('settings.password.newPlaceholder')}
-                        />
-                      </div>
-                      
-                      <div className={styles['form-group']}>
-                        <label>{t('settings.password.confirm')}</label>
-                        <input 
-                          type="password" 
-                          name="confirmPassword"
-                          value={passwordData.confirmPassword} 
-                          onChange={handlePasswordChange}
-                          className={styles['form-input']}
-                          placeholder={t('settings.password.confirmPlaceholder')}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Sähköpostin vaihto */}
-                <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', margin: 0 }}>{t('settings.email.title')}</h3>
-                    {!showEmailChange ? (
-                      <button onClick={() => setShowEmailChange(true)} className={`${styles.btn} ${styles.btnSecondary}`}>
-                        {t('settings.buttons.changeEmail')}
-                      </button>
-                    ) : (
-                      <div style={{ display: 'flex', gap: '6px' }}>
-                        <button onClick={handleEmailSave} disabled={emailLoading} className={`${styles.btn} ${styles.btnPrimary}`}>
-                          {emailLoading ? t('settings.email.saving') : t('settings.email.save')}
-                        </button>
-                        <button onClick={handleEmailCancel} className={`${styles.btn} ${styles.btnNeutral}`}>
-                          {t('settings.email.cancel')}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {emailMessage && (
-                    <div style={{ 
-                      padding: '12px 16px', 
-                      borderRadius: '8px', 
-                      marginBottom: '12px',
-                      fontSize: '14px',
-                      lineHeight: '1.5',
-                      background: emailMessage.includes('Virhe') || emailMessage.includes('sama kuin') ? '#fef2f2' : emailMessage.includes('Vahvistuslinkki') ? '#eff6ff' : '#f0fdf4',
-                      color: emailMessage.includes('Virhe') || emailMessage.includes('sama kuin') ? '#dc2626' : emailMessage.includes('Vahvistuslinkki') ? '#1e40af' : '#16a34a',
-                      border: `1px solid ${emailMessage.includes('Virhe') || emailMessage.includes('sama kuin') ? '#fecaca' : emailMessage.includes('Vahvistuslinkki') ? '#bfdbfe' : '#bbf7d0'}`
-                    }}>
-                      {emailMessage.includes('Vahvistuslinkki') ? (
-                        <div>
-                          <div style={{ fontWeight: 600, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                            </svg>
-                            Vahvistuslinkki lähetetty
-                          </div>
-                          <div style={{ fontSize: '13px', marginTop: '8px' }}>
-                            {emailMessage.split('.')[1]?.trim()}
-                          </div>
-                          <div style={{ fontSize: '12px', marginTop: '8px', color: '#64748b', fontStyle: 'italic' }}>
-                            Tarkista myös roskapostikansio. Sähköpostiosoitteesi vaihdetaan vasta kun klikkaat vahvistuslinkkiä sähköpostissa.
+                        </div>
+                        
+                        <div className={styles['form-group']}>
+                          <label>{t('settings.fields.industry')}</label>
+                          {isEditing ? (
+                            <input 
+                              type="text" 
+                              name="industry"
+                              value={formData.industry} 
+                              onChange={handleInputChange}
+                              className={styles['form-input']}
+                              placeholder={t('settings.fields.industry')}
+                            />
+                          ) : (
+                            <input 
+                              type="text" 
+                              value={industry || t('settings.common.notSet')} 
+                              readOnly 
+                              className={`${styles['form-input']} ${styles.readonly}`} 
+                            />
+                          )}
+                        </div>
+                        
+                        <div className={styles['form-group']}>
+                          <label>{t('settings.fields.userId')}</label>
+                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <input 
+                              type={showUserId ? "text" : "password"} 
+                              value={userProfile?.id || user?.id || t('settings.common.notAvailable')} 
+                              readOnly 
+                              className={`${styles['form-input']} ${styles.readonly}`} 
+                              style={{fontFamily: 'monospace', fontSize: '12px', flex: 1}} 
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowUserId(!showUserId)}
+                              className={`${styles.btn} ${styles.btnNeutral}`}
+                              style={{ fontSize: '13px', padding: '6px 12px', whiteSpace: 'nowrap' }}
+                            >
+                              {showUserId ? 'Piilota' : 'Näytä'}
+                            </button>
                           </div>
                         </div>
-                      ) : (
-                        emailMessage
-                      )}
-                    </div>
-                  )}
+                      </>
+                    )}
+                  </div>
+                </div>
 
-                  {showEmailChange && (
-                    <div>
-                      <div className={styles['form-group']}>
-                        <label>{t('settings.email.new')}</label>
-                        <input 
-                          type="email" 
-                          name="newEmail"
-                          value={emailData.newEmail} 
-                          onChange={handleEmailChangeInput}
-                          className={styles['form-input']}
-                          placeholder={t('settings.email.newPlaceholder')}
-                        />
-                      </div>
-                      <div className={styles['form-group']}>
-                        <label>{t('settings.email.confirm')}</label>
-                        <input 
-                          type="email" 
-                          name="confirmEmail"
-                          value={emailData.confirmEmail} 
-                          onChange={handleEmailChangeInput}
-                          className={styles['form-input']}
-                          placeholder={t('settings.email.confirmPlaceholder')}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Sessio-asetukset */}
-                <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
-                  <TimeoutSettings />
-                </div>
+                {/* 3. Oikea sarake: Account-asetukset */}
+                {!isInvitedUser && (
+                  <div style={{ gridColumn: '2', gridRow: '1 / 3', alignSelf: 'start' }}>
+                    <AccountTypeSection 
+                      userProfile={userProfile}
+                      onProfileUpdate={(updatedProfile) => setUserProfile(updatedProfile)}
+                      isInvitedUser={isInvitedUser}
+                    />
+                  </div>
+                )}
               </>
             )}
           </div>
-          
-          {/* Oikea sarake: Muut asetukset */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            
-            {/* Sosiaalisen median yhdistäminen - vain owner/admin */}
-            {organization?.role !== 'member' && (
-              <div className={styles.card}>
-                <SimpleSocialConnect />
-              </div>
-            )}
-            
-            {/* Avatar ja Ääniklooni */}
-            <div className={styles.card}>
+        )}
+        
+        {/* Avatar & Ääni-tab */}
+        {activeTab === 'avatar' && (
+          <div className={styles['settings-bentogrid']}>
+            <div className={styles.card} style={{ gridColumn: '1 / -1' }}>
               <div className={styles['avatar-voice-grid']}>
                 {/* Avatar-kuvat */}
                 <div className={styles['avatar-voice-section']}>
@@ -1262,12 +1151,15 @@ export default function SettingsPage() {
                 </div>
               </div>
             </div>
-            
-            {/* Karuselli-mallit */}
-            <div className={styles.card}>
+          </div>
+        )}
+        
+        {/* Karusellit-tab */}
+        {activeTab === 'carousel' && (
+          <div className={styles['settings-bentogrid']}>
+            <div className={styles.card} style={{ gridColumn: '1 / -1' }}>
               <CarouselTemplateSelector />
             </div>
-          </div>
           </div>
         )}
         
@@ -1279,6 +1171,174 @@ export default function SettingsPage() {
                 </div>
               </div>
             )}
+
+        {/* Turvallisuus-tab */}
+        {activeTab === 'security' && (
+          <div className={styles['settings-bentogrid']}>
+            {/* Turvallisuus -kortti (Salasana ja Sähköposti) */}
+            <div className={`${styles.card} ${styles.cardNoPadding}`}>
+              <div className={styles.cardHeader}>
+                <h3>Turvallisuus</h3>
+              </div>
+              <div className={styles.cardContent}>
+                {/* Salasanan vaihto */}
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', margin: 0 }}>{t('settings.password.title')}</h4>
+                    {!showPasswordChange ? (
+                      <button onClick={() => setShowPasswordChange(true)} className={`${styles.btn} ${styles.btnSecondary}`}>
+                        {t('settings.buttons.changePassword')}
+                      </button>
+                    ) : (
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        <button onClick={handlePasswordSave} disabled={passwordLoading} className={`${styles.btn} ${styles.btnPrimary}`}>
+                          {passwordLoading ? t('settings.password.saving') : t('settings.password.save')}
+                        </button>
+                        <button onClick={handlePasswordCancel} className={`${styles.btn} ${styles.btnNeutral}`}>
+                          {t('settings.password.cancel')}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {passwordMessage && (
+                    <div className={`${styles.message} ${passwordMessage.includes('Virhe') ? styles.messageError : styles.messageSuccess}`} style={{ marginBottom: '12px' }}>
+                      {passwordMessage}
+                    </div>
+                  )}
+                  
+                  {showPasswordChange && (
+                    <div>
+                      <div className={styles['form-group']}>
+                        <label>{t('settings.password.current')}</label>
+                        <input 
+                          type="password" 
+                          name="currentPassword"
+                          value={passwordData.currentPassword} 
+                          onChange={handlePasswordChange}
+                          className={styles['form-input']}
+                          placeholder={t('settings.password.currentPlaceholder')}
+                        />
+                      </div>
+                      
+                      <div className={styles['form-group']}>
+                        <label>{t('settings.password.new')}</label>
+                        <input 
+                          type="password" 
+                          name="newPassword"
+                          value={passwordData.newPassword} 
+                          onChange={handlePasswordChange}
+                          className={styles['form-input']}
+                          placeholder={t('settings.password.newPlaceholder')}
+                        />
+                      </div>
+                      
+                      <div className={styles['form-group']}>
+                        <label>{t('settings.password.confirm')}</label>
+                        <input 
+                          type="password" 
+                          name="confirmPassword"
+                          value={passwordData.confirmPassword} 
+                          onChange={handlePasswordChange}
+                          className={styles['form-input']}
+                          placeholder={t('settings.password.confirmPlaceholder')}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className={styles.divider}></div>
+
+                {/* Sähköpostin vaihto */}
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', margin: 0 }}>{t('settings.email.title')}</h4>
+                    {!showEmailChange ? (
+                      <button onClick={() => setShowEmailChange(true)} className={`${styles.btn} ${styles.btnSecondary}`}>
+                        {t('settings.buttons.changeEmail')}
+                      </button>
+                    ) : (
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        <button onClick={handleEmailSave} disabled={emailLoading} className={`${styles.btn} ${styles.btnPrimary}`}>
+                          {emailLoading ? t('settings.email.saving') : t('settings.email.save')}
+                        </button>
+                        <button onClick={handleEmailCancel} className={`${styles.btn} ${styles.btnNeutral}`}>
+                          {t('settings.email.cancel')}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {emailMessage && (
+                    <div className={`${styles.message} ${emailMessage.includes('Virhe') || emailMessage.includes('sama kuin') ? styles.messageError : emailMessage.includes('Vahvistuslinkki') ? '' : styles.messageSuccess}`} style={{ 
+                      marginBottom: '12px',
+                      background: emailMessage.includes('Virhe') || emailMessage.includes('sama kuin') ? '#fef2f2' : emailMessage.includes('Vahvistuslinkki') ? '#eff6ff' : '#f0fdf4',
+                      color: emailMessage.includes('Virhe') || emailMessage.includes('sama kuin') ? '#dc2626' : emailMessage.includes('Vahvistuslinkki') ? '#1e40af' : '#16a34a',
+                      border: `1px solid ${emailMessage.includes('Virhe') || emailMessage.includes('sama kuin') ? '#fecaca' : emailMessage.includes('Vahvistuslinkki') ? '#bfdbfe' : '#bbf7d0'}`
+                    }}>
+                      {emailMessage.includes('Vahvistuslinkki') ? (
+                        <div>
+                          <div style={{ fontWeight: 600, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                            </svg>
+                            Vahvistuslinkki lähetetty
+                          </div>
+                          <div style={{ fontSize: '13px', marginTop: '8px' }}>
+                            {emailMessage.split('.')[1]?.trim()}
+                          </div>
+                          <div style={{ fontSize: '12px', marginTop: '8px', color: '#64748b', fontStyle: 'italic' }}>
+                            Tarkista myös roskapostikansio. Sähköpostiosoitteesi vaihdetaan vasta kun klikkaat vahvistuslinkkiä sähköpostissa.
+                          </div>
+                        </div>
+                      ) : (
+                        emailMessage
+                      )}
+                    </div>
+                  )}
+
+                  {showEmailChange && (
+                    <div>
+                      <div className={styles['form-group']}>
+                        <label>{t('settings.email.new')}</label>
+                        <input 
+                          type="email" 
+                          name="newEmail"
+                          value={emailData.newEmail} 
+                          onChange={handleEmailChangeInput}
+                          className={styles['form-input']}
+                          placeholder={t('settings.email.newPlaceholder')}
+                        />
+                      </div>
+                      <div className={styles['form-group']}>
+                        <label>{t('settings.email.confirm')}</label>
+                        <input 
+                          type="email" 
+                          name="confirmEmail"
+                          value={emailData.confirmEmail} 
+                          onChange={handleEmailChangeInput}
+                          className={styles['form-input']}
+                          placeholder={t('settings.email.confirmPlaceholder')}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Sessio-asetukset -kortti */}
+            <div className={`${styles.card} ${styles.cardNoPadding}`}>
+              <div className={styles.cardHeader}>
+                <h3>Sessio-asetukset</h3>
+              </div>
+              <div className={styles.cardContent}>
+                <TimeoutSettings />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   )

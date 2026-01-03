@@ -72,10 +72,10 @@ export const NotificationProvider = ({ children }) => {
         throw notificationsError
       }
 
-      // Hae lukemattomien määrä
+      // Hae lukemattomien määrä (käytetään id-saraketta kevyempää kyselyä varten)
       const { count: unreadCount, error: countError } = await supabase
         .from('notifications')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact', head: true })
         .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('is_read', false)
         .eq('is_deleted', false)
@@ -237,10 +237,10 @@ export const NotificationProvider = ({ children }) => {
       const orgId = await getUserOrgId(session.user.id)
       if (!orgId) return
 
-      // Hae vain lukemattomien määrä
+      // Hae vain lukemattomien määrä (käytetään id-saraketta kevyempää kyselyä varten)
       const { count: unreadCount, error: countError } = await supabase
         .from('notifications')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact', head: true })
         .eq('user_id', orgId) // Käytetään organisaation ID:tä
         .eq('is_read', false)
         .eq('is_deleted', false)

@@ -1,44 +1,54 @@
+/* Container ja Grid */
 .settings-container {
-  width: 100%;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 24px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px; /* Vasen palsta leveä, oikea kiinteä */
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .profile-grid {
+    grid-template-columns: 1fr; /* Mobiilissa allekkain */
+  }
 }
 
 .settings-header {
   margin-bottom: 24px;
 }
 
+/* Tabs */
 .settings-tabs {
   display: flex;
-  gap: 0.5rem;
+  gap: 8px;
   margin-bottom: 24px;
-  border-bottom: 2px solid #e5e7eb;
-  padding-bottom: 0;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .settings-tab {
-  padding: 12px 24px;
-  background: transparent;
-  border: none;
-  border-bottom: 3px solid transparent;
-  font-weight: 600;
-  font-size: 16px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
   color: #6b7280;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
   cursor: pointer;
-  transition: all 0.2s ease;
-  margin-bottom: -2px;
+  transition: all 0.2s;
 }
 
 .settings-tab:hover {
-  color: #1f2937;
-  background: #f9fafb;
+  color: #111827;
 }
 
 .settings-tab-active {
   color: #ff6600;
   border-bottom-color: #ff6600;
-  background: transparent;
 }
 
 /* Settings Integrations Tab Styles */
@@ -259,69 +269,256 @@
   width: 100%;
 }
 
+/* Kortit - peruskortti */
 .card {
-  background: #fff;
+  background: white;
   border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   padding: 24px;
-  min-height: 120px;
+  margin-bottom: 24px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  border: 1px solid #e5e7eb;
-  transition: all 0.2s ease;
+  gap: 16px;
 }
 
-.card:hover {
-  border-color: #ff6600;
-  box-shadow: 0 8px 28px rgba(0,0,0,0.10);
-  transform: translateY(-2px);
+/* Kortti headerin kanssa - käytä cardNoPadding luokkaa */
+.cardNoPadding {
+  padding: 0 !important;
+  gap: 0;
+}
+
+.cardHeader {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.cardHeader h2,
+.cardHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.cardContent {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Kortti footer (jos tarvitaan) */
+.cardFooter {
+  padding: 16px 24px;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  background: #fafafa;
+}
+
+/* Hero Section */
+.heroHeader {
+  display: flex;
+  align-items: center;
+  padding: 32px;
+  background: linear-gradient(to right, #f9fafb, #ffffff);
+}
+
+.heroAvatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 20px;
+  border: 4px solid white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.heroAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroAvatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: #ff6600;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.heroInfo h2 {
+  margin: 0 0 4px 0;
+  font-size: 24px;
+  color: #111827;
+}
+
+.heroInfo p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.editBtn {
+  margin-left: auto;
+}
+
+/* Lomakkeet */
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
 .form-group {
-  margin-bottom: 12px;
-}
-
-.form-group:last-child {
-  margin-bottom: 0;
+  margin-bottom: 0; /* Grid hoitaa välistyksen */
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   color: #374151;
+  margin-bottom: 6px;
+}
+
+/* Logo Upload */
+.logoSection {
+  text-align: center;
+}
+
+.logoPreviewLarge {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+}
+
+.logoPreviewLarge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.logoPlaceholder {
+  color: #9ca3af;
   font-size: 14px;
 }
 
 .logo-drop-zone {
-  position: relative;
-  user-select: none;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  transition: all 0.2s;
+  background: #f9fafb;
 }
 
-.logo-drop-zone:hover {
-  border-color: #ff6600 !important;
-  background: rgba(255, 102, 0, 0.03) !important;
+.logo-drop-zone.active {
+  border-color: #ff6600;
+  background: rgba(255, 102, 0, 0.05);
 }
+
+.logo-drop-zone p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.uploadLink {
+  color: #ff6600;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 14px;
+}
+.uploadLink:hover { text-decoration: underline; }
+
+.logoActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.fullWidth { width: 100%; }
 
 .form-input {
   width: 100%;
-  padding: 10px 14px;
+  padding: 10px 12px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   font-size: 14px;
-  box-sizing: border-box;
+  transition: all 0.2s;
+  background: #fff;
 }
 
 .form-input:focus {
   outline: none;
   border-color: #ff6600;
-  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.15);
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
 }
 
-.form-input.readonly {
-  background: #f9fafb;
+.readonly {
+  background-color: #f9fafb;
+  border-color: #e5e7eb;
   color: #6b7280;
+}
+
+/* Security Section */
+.securityRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.securityInfo label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 2px;
+}
+
+.securityInfo span {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.inlineForm {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.inlineForm .form-group {
+  margin-bottom: 12px;
+}
+
+.divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 20px 0;
 }
 
 /* Brändätyt elementit */
@@ -333,31 +530,75 @@
   letter-spacing: -0.025em;
 }
 
+/* Buttons */
 .btn {
-  border-radius: 12px;
   padding: 8px 16px;
+  border-radius: 8px;
   font-size: 14px;
-  font-weight: 700;
-  border: 1px solid transparent;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
 }
 
-.btnPrimary { background: #ff6600; color: #ffffff; border-color: #ff6600; }
-.btnPrimary:hover { background: #e55e00; box-shadow: 0 4px 12px rgba(255,102,0,0.25); transform: translateY(-1px); }
+.btnPrimary {
+  background: #ff6600;
+  color: white;
+}
+.btnPrimary:hover { background: #e65c00; }
+.btnPrimary:disabled { opacity: 0.7; cursor: not-allowed; }
 
-.btnSecondary { background: #ffffff; color: #ff6600; border-color: #ff6600; }
-.btnSecondary:hover { background: #fff5f0; color: #e55e00; border-color: #e55e00; transform: translateY(-1px); }
+.btnSecondary {
+  background: white;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+.btnSecondary:hover { background: #f9fafb; }
 
-.btnNeutral { background: #f3f4f6; color: #374151; border-color: #e5e7eb; }
-.btnNeutral:hover { background: #e5e7eb; }
+.btnNeutral {
+  background: transparent;
+  color: #6b7280;
+}
+.btnNeutral:hover { color: #374151; background: #f3f4f6; }
 
-.message { padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; font-size: 14px; border: 1px solid transparent; }
-.messageSuccess { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
-.messageError { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+.btnOutline {
+  background: white;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+}
+.btnOutline:hover { border-color: #d1d5db; }
+
+.btnTextDanger {
+  background: none;
+  color: #dc2626;
+  padding: 4px;
+  font-size: 13px;
+}
+.btnTextDanger:hover { text-decoration: underline; }
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+/* Messages */
+.message {
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+.messageSuccess { background: #f0fdf4; color: #16a34a; }
+.messageError { background: #fef2f2; color: #dc2626; }
+
+.statusMessage {
+  margin-top: 12px;
+  font-size: 13px;
+  text-align: center;
+  color: #6b7280;
+}
 
 .avatar-grid {
   display: grid;

@@ -157,13 +157,34 @@ async function handler(req, res) {
     }
 
     // Lähetetään POST-pyyntö webhook:iin käyttäen sendToN8N-funktiota (HMAC)
+    console.log('Sending to N8N webhook:', {
+      url: webhookUrl,
+      action: action,
+      post_id: post_id,
+      account_ids: accountIds
+    })
+    
     let result = { success: true, message: 'Webhook sent successfully' }
     
     try {
       result = await sendToN8N(webhookUrl, webhookData)
+      console.log('N8N webhook response:', result)
     } catch (error) {
-      // Älä throw error, vaan jatka default result:lla
-      result = { success: false, message: 'Webhook failed but continuing', error: error.message }
+      console.error('N8N webhook error:', {
+        message: error.message,
+        url: webhookUrl,
+        action: action,
+        post_id: post_id
+      })
+      // Heitä virhe eteenpäin, jotta frontend saa tietää että webhook epäonnistui
+      return res.status(500).json({
+        success: false,
+        error: 'Webhook lähetys epäonnistui: ' + error.message,
+        details: {
+          webhook_url: webhookUrl,
+          action: action
+        }
+      })
     }
 
     let message = 'Action completed successfully'

@@ -130,10 +130,32 @@ export default function PostsCalendar({
       }
       
       // Muunnetaan dateKey (YYYY-MM-DD) ja kellonaika ISO-muotoon
+      // Luodaan datetime-string Helsinki-aikavyöhykkeessä ja muunnetaan se UTC:ksi oikein
       const [year, month, day] = dateKey.split('-')
       const [hours, minutes] = selectedTime.split(':')
-      const scheduledDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hours), parseInt(minutes))
-      onSchedulePost(post, scheduledDate.toISOString().slice(0, 16), selectedAccounts)
+      
+      // Luodaan Date-objekti joka edustaa Helsinki-aikaa UTC:na
+      // Käytetään yksinkertaista tapaa: luodaan Date-objekti tulkitsemalla datetime-string
+      // Helsinki-aikavyöhykkeessä, sitten muunnetaan se UTC:ksi
+      const dateTimeString = `${year}-${month}-${day}T${hours}:${minutes}:00`
+      
+      // Luodaan Date-objekti joka edustaa Helsinki-aikaa
+      // Tämä luo Date-objektin käyttäjän paikalliseen aikaan (browserin aikavyöhyke)
+      // Mutta meidän täytyy tulkita se Helsinki-aikavyöhykkeessä
+      const localDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hours), parseInt(minutes))
+      
+      // Laske offset Helsinki-aikavyöhykkeelle tälle päivämäärälle
+      // Helsinki on UTC+2 (talviaika) tai UTC+3 (kesäaika)
+      // Käytetään Intl.DateTimeFormat:ia muuntamaan Helsinki-aika UTC:ksi
+      const helsinkiTime = new Date(localDate.toLocaleString('en-US', { timeZone: 'Europe/Helsinki' }))
+      const utcTime = new Date(localDate.toLocaleString('en-US', { timeZone: 'UTC' }))
+      const offset = helsinkiTime.getTime() - utcTime.getTime()
+      
+      // Luodaan UTC-datetime lisäämällä offset (koska Helsinki on UTC:n edellä)
+      const utcDate = new Date(localDate.getTime() - offset)
+      
+      // Lähetetään ISO-muodossa (backend odottaa ISO-muotoa)
+      onSchedulePost(post, utcDate.toISOString().slice(0, 16), selectedAccounts)
     }
     setShowTimeModal(false)
     setSelectedPost(null)

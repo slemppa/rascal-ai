@@ -20,6 +20,7 @@ import VersionNotification from './src/components/VersionNotification'
 import StrategyModalManager from './src/components/StrategyModalManager'
 import OnboardingModal from './src/components/OnboardingModal'
 import ManagePostsPage from './src/pages/ManagePostsPage'
+import KuvapankkiPage from './src/pages/KuvapankkiPage'
 import AdminPage from './src/pages/AdminPage'
 import ContentStrategyPage from './src/pages/ContentStrategyPage'
 import AIChatPage from './src/pages/AIChatPage'
@@ -164,6 +165,18 @@ export default function App() {
                       <MobileNavigation />
                       <div className="main-content">
                         <ManagePostsPage />
+                      </div>
+                    </div>
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/posts/kuvapankki" element={
+                  <ProtectedRoute>
+                    <div className="app-layout">
+                      <Sidebar />
+                      <MobileNavigation />
+                      <div className="main-content">
+                        <KuvapankkiPage />
                       </div>
                     </div>
                   </ProtectedRoute>

@@ -11,6 +11,7 @@ import { getUserOrgId } from '../lib/getUserOrgId'
 import { usePosts } from '../hooks/usePosts'
 import { useEscapeKey } from '../hooks/useEscapeKey'
 import { POST_STATUS_REVERSE_MAP } from '../constants/posts'
+import { useNavigate } from 'react-router-dom'
 import Button from '../components/Button'
 import PostsCalendar from '../components/PostsCalendar'
 import PublishModal from '../components/PublishModal'
@@ -23,6 +24,7 @@ import UgcTab from '../components/UgcTab'
 import CarouselsTab from '../components/CarouselsTab'
 import KanbanTab from '../components/KanbanTab'
 import PostCard from '../components/PostCard/PostCard'
+import KuvapankkiSelector from '../components/KuvapankkiSelector'
 import '../components/ModalComponents.css'
 import '../components/MonthlyLimitWarning.css'
 import './ManagePostsPage.css'
@@ -71,6 +73,7 @@ const initialPosts = [
 export default function ManagePostsPage() {
   const { t } = useTranslation('common')
   const { user } = useAuth()
+  const navigate = useNavigate()
   const monthlyLimit = useMonthlyLimit()
   const nextMonthQuota = useNextMonthQuota()
   
@@ -132,6 +135,8 @@ export default function ManagePostsPage() {
   const [voiceoverReadyChecked, setVoiceoverReadyChecked] = useState(false)
   const [showLimitWarning, setShowLimitWarning] = useState(false)
   const [refreshingCalendar, setRefreshingCalendar] = useState(false)
+  const [userAccountType, setUserAccountType] = useState(null)
+  const [showKuvapankkiSelector, setShowKuvapankkiSelector] = useState(false)
   
   // Refs for character counting
   const textareaRef = useRef(null)
@@ -245,6 +250,32 @@ export default function ManagePostsPage() {
   }, [errorMessage])
 
   // fetchPosts siirretty usePosts hookiin
+
+  // Hae account_type tarkistusta varten
+  useEffect(() => {
+    const fetchAccountType = async () => {
+      if (!user) return
+
+      try {
+        const userId = await getUserOrgId(user.id)
+        if (!userId) return
+
+        const { data, error } = await supabase
+          .from('users')
+          .select('account_type')
+          .eq('id', userId)
+          .single()
+
+        if (!error && data) {
+          setUserAccountType(data.account_type)
+        }
+      } catch (err) {
+        console.error('Virhe account_type haussa:', err)
+      }
+    }
+
+    fetchAccountType()
+  }, [user])
 
   // Hae kaikki data kun sivu avataan (vain kerran)
   useEffect(() => {
@@ -1162,6 +1193,78 @@ export default function ManagePostsPage() {
     }
   }
 
+  const handleAddImageFromKuvapankki = async (imageUrl, contentId) => {
+    // Lisää kuva kuvapankista postaukseen
+    try {
+      const userId = await getUserOrgId(user.id)
+      if (!userId) {
+        throw new Error('User ID not found')
+      }
+
+      // Hae session ja tarkista että se on voimassa
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError || !sessionData.session?.access_token) {
+        throw new Error('Session expired or invalid. Please log in again.')
+      }
+
+      // Lisää URL suoraan media_urls arrayhin Supabase:en
+      const { data: contentData, error: contentError } = await supabase
+        .from('content')
+        .select('media_urls')
+        .eq('id', contentId)
+        .eq('user_id', userId)
+        .single()
+
+      if (contentError) {
+        throw new Error('Content not found')
+      }
+
+      const currentMediaUrls = contentData.media_urls || []
+      const newMediaUrls = [...currentMediaUrls, imageUrl]
+
+      const { error: updateError } = await supabase
+        .from('content')
+        .update({
+          media_urls: newMediaUrls,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', contentId)
+        .eq('user_id', userId)
+
+      if (updateError) {
+        throw new Error(`Image addition failed: ${updateError.message}`)
+      }
+
+      // Update editingPost if modal is open
+      if (editingPost && editingPost.id === contentId) {
+        setEditingPost(prev => ({
+          ...prev,
+          originalData: {
+            ...prev.originalData,
+            media_urls: newMediaUrls
+          },
+          media_urls: newMediaUrls,
+          mediaUrls: newMediaUrls
+        }))
+      }
+
+      // Päivitä myös posts lista
+      setPosts(prevPosts => 
+        prevPosts.map(post => 
+          post.id === contentId 
+            ? { ...post, media_urls: newMediaUrls }
+            : post
+        )
+      )
+
+      setSuccessMessage('Kuva lisätty kuvapankista!')
+      setShowKuvapankkiSelector(false)
+    } catch (error) {
+      console.error('Error adding image from kuvapankki:', error)
+      setErrorMessage('Kuvan lisäys epäonnistui: ' + error.message)
+    }
+  }
+
   const handleAddImage = async (file, contentId) => {
     try {
       // Haetaan käyttäjän user_id users taulusta
@@ -1378,31 +1481,42 @@ export default function ManagePostsPage() {
       </div>
 
       {/* Tabs (moved below quotas, above search) */}
-      <div className="tabs">
-        <button 
-          className={`tab-button ${activeTab === 'kanban' ? 'active' : ''}`}
-          onClick={() => setActiveTab('kanban')}
-        >
-          Julkaisut
-        </button>
-        <button 
-          className={`tab-button ${activeTab === 'carousels' ? 'active' : ''}`}
-          onClick={() => setActiveTab('carousels')}
-        >
-          Karusellit
-        </button>
-        <button 
-          className={`tab-button ${activeTab === 'calendar' ? 'active' : ''}`}
-          onClick={() => setActiveTab('calendar')}
-        >
-          Kalenteri
-        </button>
-        {user?.features && Array.isArray(user.features) && user.features.includes('UGC') && (
+      <div className="tabs-container">
+        <div className="tabs">
           <button 
-            className={`tab-button ${activeTab === 'ugc' ? 'active' : ''}`}
-            onClick={() => setActiveTab('ugc')}
+            className={`tab-button ${activeTab === 'kanban' ? 'active' : ''}`}
+            onClick={() => setActiveTab('kanban')}
           >
-            UGC
+            Julkaisut
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'carousels' ? 'active' : ''}`}
+            onClick={() => setActiveTab('carousels')}
+          >
+            Karusellit
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'calendar' ? 'active' : ''}`}
+            onClick={() => setActiveTab('calendar')}
+          >
+            Kalenteri
+          </button>
+          {user?.features && Array.isArray(user.features) && user.features.includes('UGC') && (
+            <button 
+              className={`tab-button ${activeTab === 'ugc' ? 'active' : ''}`}
+              onClick={() => setActiveTab('ugc')}
+            >
+              UGC
+            </button>
+          )}
+        </div>
+        {userAccountType === 'personal_brand' && (
+          <button
+            className="tab-button"
+            onClick={() => navigate('/posts/kuvapankki')}
+            style={{ marginLeft: 'auto' }}
+          >
+            Kuvapankki
           </button>
         )}
       </div>
@@ -1934,6 +2048,7 @@ export default function ManagePostsPage() {
         show={showEditModal && editingPost && editingPost.status === 'Kesken' && editingPost.source === 'supabase'}
         editingPost={editingPost}
         user={user}
+        userAccountType={userAccountType}
         onClose={() => {
           setShowEditModal(false)
           setEditingPost(null)
@@ -2355,6 +2470,16 @@ export default function ManagePostsPage() {
                                  <label htmlFor="image-upload" className="upload-button">
                                    Browse Files
                                  </label>
+                                 {userAccountType === 'personal_brand' && (
+                                   <button
+                                     type="button"
+                                     className="upload-button"
+                                     onClick={() => setShowKuvapankkiSelector(true)}
+                                     style={{ marginTop: '8px', background: '#8b5cf6' }}
+                                   >
+                                     Valitse kuvapankista
+                                   </button>
+                                 )}
                                </div>
                              </div>
                            </div>
@@ -2397,6 +2522,16 @@ export default function ManagePostsPage() {
                                </div>
                              ))}
                            </div>
+                           {userAccountType === 'personal_brand' && (
+                             <button
+                               type="button"
+                               className="upload-button"
+                               onClick={() => setShowKuvapankkiSelector(true)}
+                               style={{ marginTop: '12px', background: '#8b5cf6', width: '100%' }}
+                             >
+                               Lisää kuvapankista
+                             </button>
+                           )}
                          </div>
                        );
                      }
@@ -2864,6 +2999,26 @@ export default function ManagePostsPage() {
             <span className="notification-message">{errorMessage}</span>
           </div>
         </div>
+      )}
+
+      {/* Kuvapankki Selector Modal */}
+      {showKuvapankkiSelector && editingPost && createPortal(
+        <div 
+          className="modal-overlay modal-overlay--light"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowKuvapankkiSelector(false)
+            }
+          }}
+        >
+          <div className="modal-container" style={{ maxWidth: '800px', maxHeight: '90vh', overflow: 'auto' }}>
+            <KuvapankkiSelector
+              onSelectImage={(imageUrl) => handleAddImageFromKuvapankki(imageUrl, editingPost.id)}
+              onClose={() => setShowKuvapankkiSelector(false)}
+            />
+          </div>
+        </div>,
+        document.body
       )}
     </div>
     </>

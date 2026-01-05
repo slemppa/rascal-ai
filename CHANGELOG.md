@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.109.1](https://github.com/slemppa/rascal-ai/compare/v1.109.0...v1.109.1) (2026-01-05)
+
+
+### 🐛 Bug Fixes
+
+* korjaa roolitarkistukset ja poista turhat API-kutsut ([309acbf](https://github.com/slemppa/rascal-ai/commit/309acbf55cbd9902b47a1009e4f1d87702a4ba6f))
+
 ## [1.109.0](https://github.com/slemppa/rascal-ai/compare/v1.108.0...v1.109.0) (2026-01-05)
 
 

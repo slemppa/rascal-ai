@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.109.0](https://github.com/slemppa/rascal-ai/compare/v1.108.0...v1.109.0) (2026-01-05)
+
+
+### ✨ Features
+
+* admin-tarkistukset ja Placid Editor integraatio ([996d62a](https://github.com/slemppa/rascal-ai/commit/996d62af3bc024863db495319cb5c5dcd7b48add))
+
+
+### 🐛 Bug Fixes
+
+* erota System Role ja Organization Role AuthContextissa ([769ff0d](https://github.com/slemppa/rascal-ai/commit/769ff0d47884f4527059780663cc7453a30f15e1))
+* korjaa kirjautumisen jumittuminen ja erottele roolit ([7ad9c04](https://github.com/slemppa/rascal-ai/commit/7ad9c04025c3ef05a74c125ffd3321b6afe82acc))
+* korjattu kirjautumisen jumittuminen ([7d6cc56](https://github.com/slemppa/rascal-ai/commit/7d6cc56dcd2e1dfc33647206b62f1959af318729))
+
 ## [1.108.0](https://github.com/slemppa/rascal-ai/compare/v1.107.7...v1.108.0) (2026-01-03)
 
 

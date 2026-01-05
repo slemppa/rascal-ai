@@ -19,8 +19,8 @@ async function handler(req, res) {
     const { data: orgData } = req.organization
 
     // Hae käyttäjän oma rivi users-taulusta, jotta saadaan globaali rooli/company_id
-    // (esim. koko sovelluksen admin tai moderator)
-    let effectiveRole = req.organization.role
+    // HUOM: Admin-oikeudet tulevat AINA users.role === 'admin', EI org_members.role === 'admin'
+    let effectiveRole = req.organization.role // org_members rooli: 'owner', 'admin', 'member' (organisaation sisäisiin oikeuksiin)
     let effectiveCompanyId = orgData.company_id
 
     try {
@@ -31,20 +31,34 @@ async function handler(req, res) {
         .maybeSingle()
 
       if (!accountError && accountRow) {
-        // Jos käyttäjä on globaali admin (role = 'admin' tai company_id = 1),
-        // yliajetaan rooli adminiksi, jotta protected reitit toimivat oikein
+        // Admin-oikeudet tulevat AINA users.role === 'admin' tai company_id === 1
+        // org_members.role === 'admin' ei anna admin-oikeuksia!
+        console.log('[api/users/me] users row:', { 
+          role: accountRow.role, 
+          company_id: accountRow.company_id,
+          org_members_role: req.organization.role 
+        })
+        
         if (accountRow.role === 'admin' || accountRow.company_id === 1) {
           effectiveRole = 'admin'
+          console.log('[api/users/me] Setting role to admin (users.role or company_id check)')
         } else if (accountRow.role === 'moderator') {
           // Globaali moderaattori
           effectiveRole = 'moderator'
+          console.log('[api/users/me] Setting role to moderator')
+        } else {
+          console.log('[api/users/me] Using org_members role:', effectiveRole, '(NOT admin, users.role:', accountRow.role, ')')
         }
+        // Muuten käytetään org_members roolia (organisaation sisäisiin oikeuksiin)
 
         // Käytä company_id:tä käyttäjän riviltä jos saatavilla
         if (accountRow.company_id != null) {
           effectiveCompanyId = accountRow.company_id
         }
+      } else {
+        console.log('[api/users/me] No users row found, using org_members role:', effectiveRole, '(NOT admin)')
       }
+      // Jos users-taulussa ei ole riviä, käytetään org_members roolia (ei admin-oikeuksia)
     } catch (e) {
       console.error('Error fetching account row in /api/users/me:', e)
       // Jatketaan silti org-tason roolilla ja company_id:llä
@@ -66,6 +80,12 @@ async function handler(req, res) {
       created_at: orgData.created_at,
       updated_at: orgData.updated_at,
     }
+
+    console.log('[api/users/me] Returning userData:', { 
+      role: userData.role, 
+      company_id: userData.company_id,
+      email: userData.email 
+    })
 
     return res.status(200).json(userData)
   } catch (error) {

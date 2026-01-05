@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
-import { getCurrentUser } from '../utils/userApi'
+import { getCurrentUser, isAdmin } from '../utils/userApi'
 import styles from './Sidebar.module.css'
 import { useAuth } from '../contexts/AuthContext'
 import { useFeatures } from '../hooks/useFeatures'
@@ -236,15 +236,14 @@ export default function Sidebar() {
       if (!user) return
       
       try {
-        // Hae käyttäjätiedot turvallisen API-endpointin kautta
+        // Admin-tarkistus: käytetään uutta is-admin endpointia
+        const adminStatus = await isAdmin()
+        setIsAdmin(adminStatus)
+        
+        // Hae käyttäjätiedot moderator-tarkistukseen ja logo-URL:lle
         const userData = await getCurrentUser()
-        const error = null
-
-        if (!error && userData) {
-          const isAdminUser = userData.role === 'admin'
-          const isModeratorUser = userData.role === 'moderator' || userData.role === 'admin'
-          
-          setIsAdmin(isAdminUser)
+        if (userData) {
+          const isModeratorUser = userData.role === 'moderator' || adminStatus
           setIsModerator(isModeratorUser)
           
           // Aseta logo URL jos löytyy

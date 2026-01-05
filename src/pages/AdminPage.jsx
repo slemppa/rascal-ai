@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import pkg from '../../package.json'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
-import { getCurrentUser } from '../utils/userApi'
+import { getCurrentUser, isAdmin } from '../utils/userApi'
 import { useAuth } from '../contexts/AuthContext'
 import Button from '../components/Button'
 import '../components/ModalComponents.css'
@@ -78,17 +78,9 @@ export default function AdminPage() {
     if (!user) return
 
     try {
-      // Hae käyttäjätiedot API:n kautta
-      const userData = await getCurrentUser()
-      const error = null
-
-      if (error) {
-        console.error('Error checking admin status:', error)
-        return
-      }
-
-      // Admin on käyttäjä, jolla on role = 'admin' tai company_id = 1 (pääadmin)
-      setIsAdmin(userData?.role === 'admin' || userData?.company_id === 1)
+      // Admin-tarkistus: käytetään uutta is-admin endpointia
+      const adminStatus = await isAdmin()
+      setIsAdmin(adminStatus)
     } catch (error) {
       console.error('Error checking admin status:', error)
     }

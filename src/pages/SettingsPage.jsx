@@ -5,6 +5,7 @@ import PageHeader from '../components/PageHeader'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 import CarouselTemplateSelector from '../components/CarouselTemplateSelector'
+import PlacidTemplatesList from '../components/PlacidTemplatesList'
 import SocialMediaConnect from '../components/SocialMediaConnect'
 import TimeoutSettings from '../components/TimeoutSettings'
 import SimpleSocialConnect from '../components/SimpleSocialConnect'
@@ -1159,6 +1160,7 @@ export default function SettingsPage() {
           <div className={styles['settings-bentogrid']}>
             <div className={styles.card} style={{ gridColumn: '1 / -1' }}>
               <CarouselTemplateSelector />
+              <PlacidTemplatesList />
             </div>
           </div>
         )}

@@ -1,0 +1,72 @@
+.container {
+    margin-top: 32px;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 32px;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #1f2937;
+}
+
+.loading {
+    padding: 20px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.cardContent {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.templateName {
+    font-weight: 500;
+    color: #111827;
+    font-size: 14px;
+}
+
+.templateId {
+    font-size: 12px;
+    color: #6b7280;
+    font-family: monospace;
+}
+
+.editButton {
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.editButton:hover {
+    background-color: #e5e7eb;
+    border-color: #9ca3af;
+}
+

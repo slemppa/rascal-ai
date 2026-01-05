@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { getCurrentUser } from '../utils/userApi'
+import { getCurrentUser, isAdmin } from '../utils/userApi'
 import { useAuth } from '../contexts/AuthContext'
 import { useFeatures } from '../hooks/useFeatures'
 import './MobileNavigation.css'
@@ -40,14 +40,14 @@ export default function MobileNavigation() {
       if (!user) return
       
       try {
-        // Hae käyttäjätiedot API:n kautta
+        // Admin-tarkistus: käytetään uutta is-admin endpointia
+        const adminStatus = await isAdmin()
+        setIsAdmin(adminStatus)
+        
+        // Hae käyttäjätiedot moderator-tarkistukseen
         const userData = await getCurrentUser()
-        const error = null
-
-        if (!error && userData) {
-          const admin = userData.role === 'admin'
-          const moderator = userData.role === 'moderator' || userData.role === 'admin'
-          setIsAdmin(admin)
+        if (userData) {
+          const moderator = userData.role === 'moderator' || adminStatus
           setIsModerator(moderator)
         }
       } catch (error) {

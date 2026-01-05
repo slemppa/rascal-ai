@@ -7,11 +7,20 @@ async function handler(req, res) {
   }
 
   try {
-    // req.organization.role = käyttäjän rooli ('owner', 'admin', 'member')
-    // req.supabase = authenticated Supabase client
+    // HUOM: Admin-oikeudet tulevat AINA users.role === 'admin', EI org_members.role === 'admin'
+    // Tarkista admin-oikeudet users-taulusta
+    const { data: userRow, error: userError } = await req.supabase
+      .from('users')
+      .select('role, company_id')
+      .eq('auth_user_id', req.authUser.id)
+      .maybeSingle()
 
-    // Tarkista admin-oikeudet: admin tai owner rooli
-    const isAdmin = req.organization.role === 'admin' || req.organization.role === 'owner'
+    if (userError || !userRow) {
+      return res.status(403).json({ error: 'User not found' })
+    }
+
+    // Admin-oikeudet: users.role === 'admin' tai company_id === 1
+    const isAdmin = userRow.role === 'admin' || userRow.company_id === 1
     if (!isAdmin) {
       return res.status(403).json({ error: 'Admin access required' })
     }

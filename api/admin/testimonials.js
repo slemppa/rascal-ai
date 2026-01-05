@@ -8,12 +8,22 @@ const serviceClient = createClient(supabaseUrl, supabaseServiceKey)
 
 async function handler(req, res) {
   try {
-    // req.organization.role = käyttäjän rooli ('owner', 'admin', 'member')
-    // req.supabase = authenticated Supabase client
+    // HUOM: Admin-oikeudet tulevat AINA users.role === 'admin', EI org_members.role === 'admin'
+    // Tarkista moderator/admin-oikeudet users-taulusta
+    const { data: userRow, error: userError } = await req.supabase
+      .from('users')
+      .select('role, company_id')
+      .eq('auth_user_id', req.authUser.id)
+      .maybeSingle()
 
-    // Tarkista moderator/admin-oikeudet
-    const isAdmin = req.organization.role === 'admin' || req.organization.role === 'owner'
-    const isModerator = req.organization.role === 'moderator' || isAdmin
+    if (userError || !userRow) {
+      return res.status(403).json({ error: 'User not found' })
+    }
+
+    // Admin-oikeudet: users.role === 'admin' tai company_id === 1
+    // Moderator-oikeudet: users.role === 'moderator'
+    const isAdmin = userRow.role === 'admin' || userRow.company_id === 1
+    const isModerator = userRow.role === 'moderator' || isAdmin
     if (!isModerator) return res.status(403).json({ error: 'Moderator access required' })
 
     if (req.method === 'GET') {

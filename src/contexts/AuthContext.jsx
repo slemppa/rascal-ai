@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [organization, setOrganization] = useState(null)
   const [loading, setLoading] = useState(true)
   const [loadingUserProfile, setLoadingUserProfile] = useState(false)
+  const [profileLoaded, setProfileLoaded] = useState(false) // Uusi: seuraa onko profiili ladattu
   const navigate = useNavigate()
 
   const fetchUserProfile = useCallback(async (sessionUser) => {
@@ -28,127 +29,129 @@ export const AuthProvider = ({ children }) => {
 
     const defaultFeatures = DEFAULT_FEATURES
     
-    // 1. Palautetaan HETI perustiedot, jotta UI ei jumiudu
-    // Oletetaan aluksi, että rooli on 'user' kunnes taustahaku valmistuu
-    const basicUser = {
-      ...sessionUser,
-      systemRole: 'user', 
-      organizationRole: null,
-      organizationId: null,
-      company_id: null,
-      features: defaultFeatures
-    }
+    try {
+      // VAIHE 1: Hae HETI systemRole (users-taulu) - TÄMÄ ON KRIITTINEN TIETO
+      // Tämä on nopea haku (yksi rivi) ja tarvitaan ProtectedRoute-tarkistuksiin
+      console.log('[AuthContext] Fetching user profile for:', sessionUser.email)
+      
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('auth_user_id', sessionUser.id)
+        .maybeSingle()
+      
+      console.log('[AuthContext] User data from DB:', {
+        found: !!userData,
+        error: userError,
+        role: userData?.role,
+        auth_user_id: sessionUser.id
+      })
+      
+      let systemRole = userData?.role || 'user'
+      let company_id = userData?.company_id || null
+      let features = Array.isArray(userData?.features) ? userData.features : defaultFeatures
+      
+      // Jos käyttäjä on system admin/moderator, aseta organisaatio
+      if (userData && (userData.role === 'admin' || userData.role === 'moderator')) {
+        setOrganization({
+          id: userData.id,
+          role: userData.role,
+          data: userData
+        })
+      }
 
-    // 2. Käynnistetään taustahaku, joka hakee tarkat roolit ja päivittää tilan
-    const loadFullProfile = async () => {
-      try {
-        let systemRole = 'user'
-        let company_id = null
-        let orgData = null
-        let orgRole = null
-        let orgId = null
-        let features = defaultFeatures
+      // Palauta käyttäjä heti systemRolella (ei jumita)
+      const userWithRole = {
+        ...sessionUser,
+        systemRole: systemRole,
+        company_id: company_id,
+        features: features,
+        organizationRole: null, // Päivitetään taustalla
+        organizationId: null // Päivitetään taustalla
+      }
+      
+      console.log('[AuthContext] Returning user with role:', {
+        email: sessionUser.email,
+        systemRole: userWithRole.systemRole,
+        hasSystemRole: 'systemRole' in userWithRole
+      })
+      
+      setProfileLoaded(true) // SystemRole ladattu - ProtectedRoute voi toimia!
 
-        // A) Hae Järjestelmärooli (users-taulu)
-        const { data: userData } = await supabase
-          .from('users')
-          .select('*')
-          .eq('auth_user_id', sessionUser.id)
-          .maybeSingle()
-        
-        if (userData) {
-          systemRole = userData.role || 'user' // 'admin', 'moderator', 'user'
-          company_id = userData.company_id || null
-          features = Array.isArray(userData.features) ? userData.features : defaultFeatures
-          
-          // Jos käyttäjä on system admin/moderator, asetetaan se myös organisaatioksi (legacy-tuki)
-          if (userData.role === 'admin' || userData.role === 'moderator') {
-            orgId = userData.id
-            orgRole = userData.role
-            orgData = userData
-          }
-        }
+      // VAIHE 2: Hae organisaatiorooli TAUSTALLA (ei blokkaa)
+      const loadOrgDetails = async () => {
+        try {
+          const { data: orgMember } = await supabase
+            .from('org_members')
+            .select('org_id, role')
+            .eq('auth_user_id', sessionUser.id)
+            .maybeSingle()
 
-        // B) Hae Organisaatiorooli (org_members-taulu)
-        const { data: orgMember } = await supabase
-          .from('org_members')
-          .select('org_id, role')
-          .eq('auth_user_id', sessionUser.id)
-          .maybeSingle()
-
-        if (orgMember) {
-          // Käyttäjä on organisaation jäsen
-          const { data: org } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', orgMember.org_id)
-            .single()
-          
-          if (org) {
-            orgId = orgMember.org_id
-            orgRole = orgMember.role // Esim. 'admin' organisaation sisällä
-            orgData = org
-            // Organisaation featuret yliajavat omat, paitsi jos olet järjestelmäadmin
-            if (systemRole !== 'admin' && systemRole !== 'moderator') {
-              features = Array.isArray(org.features) ? org.features : defaultFeatures
+          if (orgMember) {
+            const { data: org } = await supabase
+              .from('users')
+              .select('*')
+              .eq('id', orgMember.org_id)
+              .single()
+            
+            if (org) {
+              // Päivitä organisaatiotiedot
+              setOrganization({
+                id: orgMember.org_id,
+                role: orgMember.role,
+                data: org
+              })
+              
+              // Päivitä käyttäjän tiedot organisaation tiedoilla
+              setUser(prev => ({
+                ...prev,
+                organizationRole: orgMember.role,
+                organizationId: orgMember.org_id,
+                features: systemRole === 'admin' || systemRole === 'moderator' 
+                  ? prev.features 
+                  : (Array.isArray(org.features) ? org.features : defaultFeatures)
+              }))
+              
+              console.log('[AuthContext] Organization details loaded:', {
+                orgId: orgMember.org_id,
+                orgRole: orgMember.role
+              })
             }
           }
+        } catch (error) {
+          console.error('Error loading organization details:', error)
         }
-
-        // Päivitä tila lopullisilla tiedoilla
-        setOrganization(orgData ? {
-          id: orgId,
-          role: orgRole,
-          data: orgData
-        } : null)
-
-        setUser(prev => ({
-          ...sessionUser, // Varmistetaan että session-tiedot pysyvät
-          systemRole: systemRole, // Järjestelmärooli (users.role)
-          organizationRole: orgRole, // Organisaatiorooli (org_members.role)
-          organizationId: orgId,
-          company_id: company_id,
-          features: features
-        }))
-
-        console.log('[AuthContext] Full profile loaded:', {
-          email: sessionUser.email,
-          systemRole,
-          organizationRole: orgRole,
-          company_id
-        })
-
-      } catch (error) {
-        console.error('Error in background profile fetch:', error)
+      }
+      
+      // Käynnistä organisaatiohaku taustalla (ei blokkaa)
+      loadOrgDetails()
+      
+      console.log('[AuthContext] SystemRole loaded (fast):', {
+        email: sessionUser.email,
+        systemRole
+      })
+      
+      return userWithRole
+      
+    } catch (error) {
+      console.error('Error in fetchUserProfile:', error)
+      setProfileLoaded(true) // Päästä läpi virheen sattuessa
+      
+      // Palauta peruskäyttäjä virheen sattuessa
+      return {
+        ...sessionUser,
+        systemRole: 'user',
+        features: defaultFeatures,
+        organizationRole: null,
+        organizationId: null,
+        company_id: null
       }
     }
-
-    // Käynnistä taustahaku (älä odota tätä awaitilla!)
-    loadFullProfile()
-    
-    // Palauta perustiedot heti
-    return basicUser
   }, [])
 
   useEffect(() => {
-    // Tarkistetaan localStorage nähdäksemme onko session-tietoja
-    const sessionKey = Object.keys(localStorage).find(key => key.startsWith('sb-') && key.includes('auth-token'))
-    
-    if (sessionKey) {
-      try {
-        const sessionData = JSON.parse(localStorage.getItem(sessionKey))
-        
-        if (sessionData?.user) {
-          const userWithProfile = {
-            ...sessionData.user,
-            features: DEFAULT_FEATURES
-          }
-          setUser(userWithProfile)
-        }
-      } catch (error) {
-        console.error('Error parsing localStorage session:', error)
-      }
-    }
+    // POISTETTU: localStorage-logiikka joka asetti käyttäjän ilman systemRole:a
+    // onAuthStateChange hoitaa käyttäjän asettamisen oikein
     
     // onAuthStateChange listener - dokumentaation mukainen toteutus
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -164,6 +167,7 @@ export const AuthProvider = ({ children }) => {
           })
           setUser(null)
           setOrganization(null)
+          setProfileLoaded(false) // Nollaa profiili-tila
           setLoading(false)
           
           // Hae logout-syy sessionStoragesta
@@ -183,6 +187,7 @@ export const AuthProvider = ({ children }) => {
           
           try {
             setLoading(true)
+            setProfileLoaded(false) // Aloita lataus
             
             // Timeout varmuuden vuoksi (10 sekuntia)
             const timeoutPromise = new Promise((_, reject) => 
@@ -226,6 +231,7 @@ export const AuthProvider = ({ children }) => {
           // Ei sessiota
           setUser(null)
           setOrganization(null)
+          setProfileLoaded(false)
           setLoading(false)
         }
       }
@@ -305,8 +311,9 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user: user,
     organization: organization,
-    loading: loading || loadingUserProfile,
+    loading: loading || loadingUserProfile || !profileLoaded, // Odota että profiili on ladattu
     loadingUserProfile: loadingUserProfile,
+    profileLoaded: profileLoaded,
     signOut: signOut,
     fetchUserProfile: fetchUserProfile
   }

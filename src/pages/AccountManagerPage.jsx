@@ -36,8 +36,18 @@ export default function AccountManagerPage() {
 
       if (error) throw error
       setCurrentUserId(data.id)
-      // Admin on käyttäjä, jolla on role = 'admin' tai company_id = 1 (pääadmin)
-      setIsAdmin(data.role === 'admin' || data.company_id === 1)
+      
+      // KORJATTU: Käytetään user.systemRole kontekstista
+      // Admin/moderator näkee kaikki tilit, muut vain omat
+      const isAdminOrModerator = user.systemRole === 'admin' || 
+                                 user.systemRole === 'moderator' || 
+                                 user.systemRole === 'superadmin'
+      setIsAdmin(isAdminOrModerator)
+      
+      console.log('[AccountManagerPage] User role check:', {
+        systemRole: user.systemRole,
+        isAdminOrModerator
+      })
     } catch (error) {
       console.error('Error loading current user:', error)
       setError('Virhe käyttäjän tiedoissa')

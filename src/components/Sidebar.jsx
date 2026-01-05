@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
-import { getCurrentUser, isAdmin as checkIsAdmin } from '../utils/userApi'
+import { getCurrentUser } from '../utils/userApi'
 import styles from './Sidebar.module.css'
 import { useAuth } from '../contexts/AuthContext'
 import { useFeatures } from '../hooks/useFeatures'
@@ -193,8 +193,6 @@ export default function Sidebar() {
   const location = useLocation()
   const { t, i18n } = useTranslation('common')
 
-  const [isAdmin, setIsAdmin] = useState(false)
-  const [isModerator, setIsModerator] = useState(false)
   const [logoUrl, setLogoUrl] = useState(null)
   const { user, signOut, organization } = useAuth()
   const { has: hasFeature } = useFeatures()
@@ -205,6 +203,10 @@ export default function Sidebar() {
     yllapito: true,
     jarjestelma: true
   })
+  
+  // KORJATTU: Käytetään suoraan user.systemRole AuthContextista
+  const isAdmin = user?.systemRole === 'admin' || user?.systemRole === 'superadmin'
+  const isModerator = user?.systemRole === 'moderator' || isAdmin
 
   const toggleSection = (key) => {
     setOpenSections(prev => ({ ...prev, [key]: !prev[key] }))
@@ -230,33 +232,22 @@ export default function Sidebar() {
   const adminItems = menuItems.filter(i => ['/admin','/admin-blog','/account-manager','/organization-members'].includes(i.path))
   const canShowAdmin = adminItems.some(isItemVisible)
 
-  // Tarkista admin- ja moderator-oikeudet + hae logo
+  // Hae vain logo (roolit tulevat suoraan user.systemRole:sta)
   useEffect(() => {
-    const checkUserRoles = async () => {
+    const loadLogo = async () => {
       if (!user) return
       
       try {
-        // Admin-tarkistus: käytetään uutta is-admin endpointia
-        const adminStatus = await checkIsAdmin()
-        setIsAdmin(adminStatus)
-        
-        // Hae käyttäjätiedot moderator-tarkistukseen ja logo-URL:lle
         const userData = await getCurrentUser()
-        if (userData) {
-          const isModeratorUser = userData.role === 'moderator' || adminStatus
-          setIsModerator(isModeratorUser)
-          
-          // Aseta logo URL jos löytyy
-          if (userData.logo_url) {
-            setLogoUrl(userData.logo_url)
-          }
+        if (userData?.logo_url) {
+          setLogoUrl(userData.logo_url)
         }
       } catch (error) {
-        console.error('Error checking user roles:', error)
+        console.error('Error loading logo:', error)
       }
     }
 
-    checkUserRoles()
+    loadLogo()
   }, [user])
 
   const handleLogout = async () => {

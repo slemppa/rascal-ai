@@ -10,34 +10,53 @@ const ProtectedRoute = ({ children, requiredFeatures = [], requiredRole = null }
   const { has: hasFeature, loading: featuresLoading } = useFeatures()
   const location = useLocation()
 
+  console.log('[ProtectedRoute] Check:', {
+    path: location.pathname,
+    loading,
+    featuresLoading,
+    user: user ? {
+      email: user.email,
+      systemRole: user.systemRole,
+      organizationRole: user.organizationRole
+    } : null,
+    requiredRole
+  })
+
   if (loading || featuresLoading) {
+    console.log('[ProtectedRoute] Loading...')
     return <div className="protected-route-loading">Ladataan...</div>
   }
 
   if (!user) {
-    // Ohjaa login-sivulle ja tallenna minne oltiin menossa
+    console.log('[ProtectedRoute] No user, redirecting to login')
     return <Navigate to="/" state={{ from: location }} replace />
   }
 
   // ROOLITARKISTUS - Tarkistaa nimenomaan systemRole:n (järjestelmätaso)
   if (requiredRole) {
     if (requiredRole === 'admin') {
-      // Tarkista onko user.systemRole 'admin' (tai superadmin)
-      // Huom: organizationRole voi olla 'admin', mutta systemRole on 'user' => Pääsy evätään oikein
       if (user.systemRole !== 'admin' && user.systemRole !== 'superadmin') {
-        console.log('ProtectedRoute - Access denied: User systemRole is', user.systemRole, 'required: admin')
+        console.log('❌ [ProtectedRoute] Access DENIED:', {
+          required: 'admin',
+          userSystemRole: user.systemRole,
+          path: location.pathname
+        })
         return <Navigate to="/dashboard" replace />
       }
+      console.log('✅ [ProtectedRoute] Access GRANTED (admin)')
     } 
     else if (requiredRole === 'moderator') {
       const isModerator = user.systemRole === 'moderator' || user.systemRole === 'admin' || user.systemRole === 'superadmin'
       if (!isModerator) {
-        console.log('ProtectedRoute - Access denied: User systemRole is', user.systemRole, 'required: moderator')
+        console.log('❌ [ProtectedRoute] Access DENIED:', {
+          required: 'moderator',
+          userSystemRole: user.systemRole,
+          path: location.pathname
+        })
         return <Navigate to="/dashboard" replace />
       }
+      console.log('✅ [ProtectedRoute] Access GRANTED (moderator or higher)')
     }
-    // Huom: Jos haluat tarkistaa organisaatioroolin erikseen:
-    // if (requiredRole === 'org_admin' && user.organizationRole !== 'admin') { ... }
   }
 
   // Feature-tarkistus

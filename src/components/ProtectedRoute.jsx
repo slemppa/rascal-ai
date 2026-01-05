@@ -1,86 +1,46 @@
-import React, { useState, useEffect } from 'react'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import React from 'react'
+import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
-import { getCurrentUser } from '../utils/userApi'
 import { useFeatures } from '../hooks/useFeatures'
 import './ProtectedRoute.css'
-
-const featureMap = {
-  '/posts': 'Social Media',
-  '/strategy': 'Social Media',
-  '/calls': 'Phone Calls',
-  '/ai-chat': 'Marketing assistant',
-}
 
 const ProtectedRoute = ({ children, requiredFeatures = [], requiredRole = null }) => {
   const auth = useAuth()
   const { user, loading } = auth
-  const navigate = useNavigate()
   const { has: hasFeature, loading: featuresLoading } = useFeatures()
-  const [roleChecked, setRoleChecked] = useState(false)
-  const [hasAccess, setHasAccess] = useState(true)
+  const location = useLocation()
 
-  useEffect(() => {
-    if (!requiredRole || !user) {
-      setRoleChecked(true)
-      return
-    }
-
-    const checkUserRole = async () => {
-      try {
-        // Hae käyttäjätiedot API:n kautta
-        const userData = await getCurrentUser()
-        const error = null
-
-        if (error || !userData) {
-          setHasAccess(false)
-          setRoleChecked(true)
-          navigate('/')
-          return
-        }
-
-        // Käytetään roolipohjaista tarkistusta ilman kovakoodattuja ID:itä
-        const isAdmin = userData.role === 'admin' || userData.role === 'superadmin'
-        const isModerator = userData.role === 'moderator' || isAdmin
-
-        console.log('ProtectedRoute - User data:', userData)
-        console.log('ProtectedRoute - Required role:', requiredRole)
-        console.log('ProtectedRoute - isAdmin:', isAdmin, 'isModerator:', isModerator)
-
-        if (requiredRole === 'admin' && !isAdmin) {
-          console.log('ProtectedRoute - Access denied: not admin')
-          setHasAccess(false)
-          navigate('/')
-        } else if (requiredRole === 'moderator' && !isModerator) {
-          console.log('ProtectedRoute - Access denied: not moderator')
-          setHasAccess(false)
-          navigate('/')
-        } else {
-          console.log('ProtectedRoute - Access granted')
-          setHasAccess(true)
-        }
-        setRoleChecked(true)
-      } catch (error) {
-        console.error('Error checking user role:', error)
-        setHasAccess(false)
-        setRoleChecked(true)
-        navigate('/')
-      }
-    }
-
-    checkUserRole()
-  }, [requiredRole, user, navigate])
-
-  if (loading || featuresLoading || !roleChecked) {
+  if (loading || featuresLoading) {
     return <div className="protected-route-loading">Ladataan...</div>
   }
 
-  if (!user || !hasAccess) {
-    return <Navigate to="/" replace />
+  if (!user) {
+    // Ohjaa login-sivulle ja tallenna minne oltiin menossa
+    return <Navigate to="/" state={{ from: location }} replace />
   }
 
-  // Tarkista features
+  // ROOLITARKISTUS (KORJATTU)
+  if (requiredRole) {
+    // Jos vaaditaan 'admin' (järjestelmätaso), tarkistetaan systemRole
+    if (requiredRole === 'admin') {
+      const isAdmin = user.systemRole === 'admin' || user.systemRole === 'superadmin' || user.company_id === 1
+      if (!isAdmin) {
+        console.log('ProtectedRoute - Access denied: User systemRole is', user.systemRole, 'required: admin')
+        return <Navigate to="/" replace />
+      }
+    } 
+    // Jos vaaditaan 'moderator', tarkistetaan systemRole
+    else if (requiredRole === 'moderator') {
+      const isModerator = user.systemRole === 'moderator' || user.systemRole === 'admin' || user.systemRole === 'superadmin' || user.company_id === 1
+      if (!isModerator) {
+        console.log('ProtectedRoute - Access denied: User systemRole is', user.systemRole, 'required: moderator')
+        return <Navigate to="/" replace />
+      }
+    }
+    // Huom: Jos haluat tarkistaa organisaatioroolin, tekisit: if (requiredRole === 'org_admin' && user.organizationRole !== 'admin')
+  }
+
+  // Feature-tarkistus
   if (requiredFeatures.length > 0) {
     const hasRequiredFeatures = requiredFeatures.every(feature => hasFeature(feature))
     if (!hasRequiredFeatures) {

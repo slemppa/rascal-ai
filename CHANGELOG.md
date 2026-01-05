@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.110.0](https://github.com/slemppa/rascal-ai/compare/v1.109.1...v1.110.0) (2026-01-05)
+
+
+### ✨ Features
+
+* global toast system, placid improvements & logo UI ([97afe82](https://github.com/slemppa/rascal-ai/commit/97afe8254f98e351049726703b430008149a0b65))
+
 ### [1.109.1](https://github.com/slemppa/rascal-ai/compare/v1.109.0...v1.109.1) (2026-01-05)
 
 

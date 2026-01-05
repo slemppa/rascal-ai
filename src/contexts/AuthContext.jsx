@@ -21,7 +21,22 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate()
 
   const fetchUserProfile = useCallback(async (sessionUser) => {
+    if (!sessionUser) {
+      console.error('fetchUserProfile called without sessionUser')
+      return null
+    }
+
     const defaultFeatures = DEFAULT_FEATURES
+    
+    // Alusta käyttäjäobjekti perustiedoilla (varmistaa että käyttäjä on aina olemassa)
+    let currentUser = {
+      ...sessionUser,
+      systemRole: 'user', // Oletusarvo
+      company_id: null,
+      features: defaultFeatures,
+      organizationId: null,
+      organizationRole: null
+    }
     
     // 1. Hae AINA ensin käyttäjän oma profiili users-taulusta (Järjestelmärooli)
     let systemUser = null
@@ -34,19 +49,14 @@ export const AuthProvider = ({ children }) => {
       
       if (!error && data) {
         systemUser = data
+        // Päivitä käyttäjäobjekti systemUser-tiedoilla
+        currentUser.systemRole = systemUser.role || 'user'
+        currentUser.company_id = systemUser.company_id || null
+        currentUser.features = Array.isArray(systemUser.features) ? systemUser.features : defaultFeatures
       }
     } catch (err) {
       console.error('Error fetching system user:', err)
-    }
-
-    // Alusta käyttäjäobjekti systemRole:lla
-    let currentUser = {
-      ...sessionUser,
-      systemRole: systemUser?.role || 'user', // Tässä on aito "admin" jos users.role on admin
-      company_id: systemUser?.company_id || null, // company_id tarvitaan admin-tarkistukseen
-      features: systemUser?.features || defaultFeatures,
-      organizationId: null,
-      organizationRole: null
+      // Jatketaan silti oletusarvoilla
     }
 
     // Jos käyttäjä on system admin/moderator, asetetaan se myös organisaatioksi (vanha logiikka tuki tätä)
@@ -95,8 +105,10 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error fetching organization:', error)
+      // Jatketaan silti ilman organisaatiotietoja
     }
 
+    // Varmista että käyttäjä asetetaan aina, vaikka tietoja ei löytyisi
     setUser(currentUser)
     return currentUser
   }, [])
@@ -124,6 +136,8 @@ export const AuthProvider = ({ children }) => {
     // onAuthStateChange listener - dokumentaation mukainen toteutus
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('[AuthContext] Auth state change:', event, session?.user?.email)
+        
         if (event === 'SIGNED_OUT') {
           // Tyhjennetään storage dokumentaation mukaisesti
           Object.keys(localStorage).forEach((key) => {
@@ -147,14 +161,54 @@ export const AuthProvider = ({ children }) => {
             } 
           })
         } else if (session?.user) {
-          const userWithProfile = await fetchUserProfile(session.user)
-          setUser(userWithProfile)
+          // Tarkista onko tämä SIGNED_IN event (uusi kirjautuminen)
+          const isSignIn = event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED'
+          
+          try {
+            setLoading(true)
+            
+            // Timeout varmuuden vuoksi (10 sekuntia)
+            const timeoutPromise = new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('fetchUserProfile timeout')), 10000)
+            )
+            
+            const userWithProfile = await Promise.race([
+              fetchUserProfile(session.user),
+              timeoutPromise
+            ])
+            
+            // Varmista että käyttäjä asetettiin
+            if (userWithProfile) {
+              setUser(userWithProfile)
+              console.log('[AuthContext] User profile loaded:', userWithProfile.email, 'systemRole:', userWithProfile.systemRole)
+            } else {
+              console.error('fetchUserProfile returned null, setting basic user')
+              // Aseta peruskäyttäjä varmuuden vuoksi
+              setUser({
+                ...session.user,
+                systemRole: 'user',
+                features: DEFAULT_FEATURES,
+                organizationId: null,
+                organizationRole: null
+              })
+            }
+          } catch (error) {
+            console.error('Error in fetchUserProfile:', error)
+            // Aseta peruskäyttäjä virheen sattuessa
+            setUser({
+              ...session.user,
+              systemRole: 'user',
+              features: DEFAULT_FEATURES,
+              organizationId: null,
+              organizationRole: null
+            })
+          } finally {
+            setLoading(false)
+          }
         } else {
+          // Ei sessiota
           setUser(null)
           setOrganization(null)
-        }
-        
-        if (event !== 'SIGNED_OUT') {
           setLoading(false)
         }
       }

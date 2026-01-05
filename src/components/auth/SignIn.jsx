@@ -18,9 +18,25 @@ export default function SignIn({ onClose, onForgotClick }) {
 
   useEffect(() => {
     if (pendingSuccess && user && !authLoading) {
+      console.log('[SignIn] Navigating to dashboard, user:', user.email)
       navigate('/dashboard')
+      setPendingSuccess(false) // Reset after navigation
     }
   }, [pendingSuccess, user, authLoading, navigate])
+  
+  // Timeout varmuuden vuoksi - jos kirjautuminen kestää liian kauan
+  useEffect(() => {
+    if (pendingSuccess && !user && !authLoading) {
+      // Jos odotetaan mutta käyttäjää ei tule, resetoidaan
+      const timeout = setTimeout(() => {
+        console.warn('[SignIn] Timeout waiting for user, resetting')
+        setPendingSuccess(false)
+        setLoading(false)
+      }, 15000) // 15 sekuntia
+      
+      return () => clearTimeout(timeout)
+    }
+  }, [pendingSuccess, user, authLoading])
 
   const handleSignIn = async (e) => {
     e.preventDefault()

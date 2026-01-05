@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
-import { getCurrentUser, isAdmin } from '../utils/userApi'
+import { getCurrentUser, isAdmin as checkIsAdmin } from '../utils/userApi'
 import styles from './Sidebar.module.css'
 import { useAuth } from '../contexts/AuthContext'
 import { useFeatures } from '../hooks/useFeatures'
@@ -237,7 +237,7 @@ export default function Sidebar() {
       
       try {
         // Admin-tarkistus: käytetään uutta is-admin endpointia
-        const adminStatus = await isAdmin()
+        const adminStatus = await checkIsAdmin()
         setIsAdmin(adminStatus)
         
         // Hae käyttäjätiedot moderator-tarkistukseen ja logo-URL:lle

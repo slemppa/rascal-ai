@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useToast } from '../contexts/ToastContext'
 import Button from './Button'
 
 export default function PostsCalendar({ 
@@ -15,6 +16,7 @@ export default function PostsCalendar({
   onRefresh,
   refreshing = false
 }) {
+  const toast = useToast()
   const [current, setCurrent] = useState(() => {
     const now = new Date()
     return new Date(now.getFullYear(), now.getMonth(), 1)
@@ -125,7 +127,7 @@ export default function PostsCalendar({
       
       // Tarkista että on valittu vähintään yksi kanava
       if (!selectedAccounts || selectedAccounts.length === 0) {
-        alert('Valitse vähintään yksi somekanava')
+        toast.warning('Valitse vähintään yksi somekanava')
         return
       }
       

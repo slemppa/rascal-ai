@@ -9,6 +9,14 @@ export default function PlacidEditor({ placidId, onClose }) {
 
   // 1. Load Placid SDK Script
   useEffect(() => {
+    // Aseta SDK konfiguraatio ennen SDK:n lataamista
+    window.EditorSDKConfig = {
+      theme: {
+        primary_color: '#ff6600',   // Rascal AI oranssi
+        secondary_color: '#cea78d'  // Rascal AI beige/kulta
+      }
+    }
+
     const scriptId = 'placid-sdk'
     if (!document.getElementById(scriptId)) {
       const script = document.createElement('script')

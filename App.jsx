@@ -13,12 +13,14 @@ import { AutoLogoutProvider } from './src/contexts/AutoLogoutContext'
 import { PostsProvider } from './src/contexts/PostsContext'
 import { NotificationProvider } from './src/contexts/NotificationContext'
 import { StrategyStatusProvider } from './src/contexts/StrategyStatusContext'
+import { ToastProvider } from './src/contexts/ToastContext'
 import Sidebar from './src/components/Sidebar'
 import MobileNavigation from './src/components/MobileNavigation'
 import InactivityWarningModal from './src/components/InactivityWarningModal'
 import VersionNotification from './src/components/VersionNotification'
 import StrategyModalManager from './src/components/StrategyModalManager'
 import OnboardingModal from './src/components/OnboardingModal'
+import ToastContainer from './src/components/ToastContainer'
 import ManagePostsPage from './src/pages/ManagePostsPage'
 import KuvapankkiPage from './src/pages/KuvapankkiPage'
 import AdminPage from './src/pages/AdminPage'
@@ -57,10 +59,12 @@ export default function App() {
   return (
     <AuthProvider>
       <AutoLogoutProvider>
-        <OnboardingModal />
-        <PostsProvider>
-          <NotificationProvider>
-            <StrategyStatusProvider>
+        <ToastProvider>
+          <ToastContainer />
+          <OnboardingModal />
+          <PostsProvider>
+            <NotificationProvider>
+              <StrategyStatusProvider>
               <Routes>
                 {/* Kirjautumisreitit */}
                 <Route path="/" element={<SignIn />} />
@@ -393,6 +397,7 @@ export default function App() {
         <ConditionalChatbotWidget />
         <InactivityWarningModal />
         <SpeedInsights />
+        </ToastProvider>
       </AutoLogoutProvider>
     </AuthProvider>
   )

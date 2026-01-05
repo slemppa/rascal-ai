@@ -782,22 +782,21 @@ export default function SettingsPage() {
                   <div className={styles.cardHeader}>
                     <h3>Yrityksen Logo</h3>
                   </div>
-                  <div className={styles.cardContent} style={{ padding: '16px' }}>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'stretch' }}>
-                      {/* Logo */}
+                  <div className={styles.cardContent}>
+                    <div className={styles.logoContainer}>
+                      {/* Nykyinen logo */}
                       {userProfile?.logo_url && !logoPreview && (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                          <label style={{ fontSize: '13px', color: '#6b7280', alignSelf: 'flex-start' }}>Nykyinen logo:</label>
+                        <div className={styles.currentLogoSection}>
+                          <p className={styles.currentLogoLabel}>Nykyinen logo:</p>
                           <img 
                             src={userProfile.logo_url} 
                             alt="Company Logo" 
-                            style={{ width: '60px', height: '60px', objectFit: 'contain', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                            className={styles.currentLogoImage}
                           />
                           <button 
                             onClick={handleLogoRemove} 
                             disabled={logoUploading}
                             className={`${styles.btn} ${styles.btnNeutral}`}
-                            style={{ fontSize: '13px', padding: '6px 12px' }}
                           >
                             {logoUploading ? 'Poistetaan...' : 'Poista logo'}
                           </button>
@@ -806,42 +805,31 @@ export default function SettingsPage() {
                       
                       {/* Drag & Drop alue */}
                       <div 
-                        className={styles['logo-drop-zone']}
+                        className={`${styles['logo-drop-zone']} ${logoDragActive ? styles.active : ''}`}
                         onDragEnter={handleLogoDrag}
                         onDragLeave={handleLogoDrag}
                         onDragOver={handleLogoDrag}
                         onDrop={handleLogoDrop}
                         style={{
-                          border: logoDragActive ? '2px dashed #ff6600' : '2px dashed #d1d5db',
-                          background: logoDragActive ? 'rgba(255, 102, 0, 0.05)' : '#f9fafb',
-                          borderRadius: '12px',
-                          padding: '16px',
-                          textAlign: 'center',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease',
-                          flex: 1,
-                          minWidth: 0,
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'center'
+                          borderColor: logoDragActive ? '#ff6600' : '#d1d5db',
+                          background: logoDragActive ? 'rgba(255, 102, 0, 0.05)' : '#f9fafb'
                         }}
                       >
                       {logoPreview ? (
-                        <div>
+                        <div className={styles.logoPreviewSection}>
                           <img 
                             src={logoPreview} 
                             alt="Logo Preview" 
-                            style={{ width: '80px', height: '80px', objectFit: 'contain', borderRadius: '8px', border: '2px solid #e5e7eb', marginBottom: '12px' }}
+                            className={styles.logoPreviewImage}
                           />
-                          <p style={{ fontSize: '13px', color: '#374151', fontWeight: 500, marginBottom: '8px' }}>
+                          <p className={styles.logoPreviewText}>
                             Logo valittu!
                           </p>
-                          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+                          <div className={styles.logoPreviewActions}>
                             <button 
                               onClick={handleLogoUpload}
                               disabled={logoUploading}
                               className={`${styles.btn} ${styles.btnPrimary}`}
-                              style={{ fontSize: '13px' }}
                             >
                               {logoUploading ? 'Ladataan...' : '✓ Tallenna'}
                             </button>
@@ -852,38 +840,27 @@ export default function SettingsPage() {
                                 setLogoMessage('')
                               }}
                               className={`${styles.btn} ${styles.btnNeutral}`}
-                              style={{ fontSize: '13px' }}
                             >
                               Peruuta
                             </button>
                           </div>
                         </div>
                       ) : (
-                        <div>
-                          <div style={{ 
-                            width: '48px', 
-                            height: '48px', 
-                            margin: '0 auto 12px', 
-                            borderRadius: '8px',
-                            background: 'linear-gradient(135deg, rgba(255, 102, 0, 0.1) 0%, rgba(229, 94, 0, 0.1) 100%)',
-                            border: '2px solid rgba(255, 102, 0, 0.3)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <>
+                          <div className={styles.uploadIconWrapper}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="#ff6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                               <path d="M17 8l-5-5-5 5" stroke="#ff6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                               <path d="M12 3v12" stroke="#ff6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
                           </div>
-                          <p style={{ fontSize: '13px', color: '#374151', fontWeight: 500, marginBottom: '6px' }}>
+                          <p className={styles.uploadText}>
                             {logoDragActive ? 'Pudota logo tähän' : 'Vedä logo tähän'}
                           </p>
-                          <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '12px' }}>
+                          <p className={styles.uploadSubtext}>
                             tai
                           </p>
-                          <label className={`${styles.btn} ${styles.btnSecondary}`} style={{ fontSize: '13px', cursor: 'pointer' }}>
+                          <label className={`${styles.btn} ${styles.btnSecondary}`}>
                             Valitse tiedosto
                             <input 
                               type="file"
@@ -892,21 +869,17 @@ export default function SettingsPage() {
                               style={{ display: 'none' }}
                             />
                           </label>
-                          <p style={{ fontSize: '11px', color: '#9ca3af', marginTop: '8px' }}>
-                            PNG, JPG, WEBP, SVG (max 2MB)
-                          </p>
-                        </div>
+                        </>
                       )}
                       </div>
                     </div>
                     
                     {logoMessage && (
-                      <p style={{ 
-                        marginTop: '12px', 
-                        fontSize: '12px', 
-                        color: logoMessage.includes('Virhe') || logoMessage.includes('liian') || logoMessage.includes('Sallitut') ? '#dc2626' : '#16a34a',
-                        textAlign: 'center'
-                      }}>
+                      <p className={`${styles.logoMessage} ${
+                        logoMessage.includes('Virhe') || logoMessage.includes('liian') || logoMessage.includes('Sallitut') 
+                          ? styles.logoMessageError 
+                          : styles.logoMessageSuccess
+                      }`}>
                         {logoMessage}
                       </p>
                     )}

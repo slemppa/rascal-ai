@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import { getCurrentUser } from '../utils/userApi'
 import { useAuth } from '../contexts/AuthContext'
+import { useToast } from '../contexts/ToastContext'
 import { useMonthlyLimit } from '../hooks/useMonthlyLimit'
 import { useNextMonthQuota } from '../hooks/useNextMonthQuota'
 import { getUserOrgId } from '../lib/getUserOrgId'
@@ -73,6 +74,7 @@ const initialPosts = [
 export default function ManagePostsPage() {
   const { t } = useTranslation('common')
   const { user } = useAuth()
+  const toast = useToast()
   const navigate = useNavigate()
   const monthlyLimit = useMonthlyLimit()
   const nextMonthQuota = useNextMonthQuota()
@@ -1355,8 +1357,8 @@ export default function ManagePostsPage() {
       
       setErrorMessage(errorMessage)
       
-      // Näytä myös alert käyttäjälle
-      alert('🚨 KUVA-LATAUS EPÄONNISTUI 🚨\n\nVirhe: ' + errorMessage + '\n\nOle hyvä ja:\n1. Tarkista internetyhteytesi\n2. Kokeile uudelleen\n3. Jos ongelma jatkuu, ota yhteyttä tukeen')
+      // Näytä toast käyttäjälle
+      toast.error('Kuva-lataus epäonnistui: ' + errorMessage + '. Tarkista internetyhteytesi ja yritä uudelleen.')
       
       // Jos session on vanhentunut, ohjaa takaisin login-sivulle
       if (error.message.includes('Session expired')) {
@@ -1682,13 +1684,13 @@ export default function ManagePostsPage() {
                 
                 // Validoi: otsikko vaaditaan vain jos lukumäärä on 1
                 if (count === 1 && !title) {
-                  alert('Otsikko on pakollinen kun luodaan yksi julkaisu')
+                  toast.warning('Otsikko on pakollinen kun luodaan yksi julkaisu')
                   return
                 }
                 
                 // Validoi: tyyppi vaaditaan vain jos lukumäärä on 1
                 if (count === 1 && !type) {
-                  alert('Tyyppi on pakollinen kun luodaan yksi julkaisu')
+                  toast.warning('Tyyppi on pakollinen kun luodaan yksi julkaisu')
                   return
                 }
                 

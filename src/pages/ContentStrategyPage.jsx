@@ -5,6 +5,7 @@ import axios from 'axios'
 import './ContentStrategyPage.css'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useToast } from '../contexts/ToastContext'
 import { getUserOrgId } from '../lib/getUserOrgId'
 import { useStrategyStatus } from '../contexts/StrategyStatusContext'
 import Button from '../components/Button'
@@ -68,6 +69,7 @@ export default function ContentStrategyPage() {
   const { t, i18n } = useTranslation('common')
   const navigate = useNavigate()
   const { user, organization } = useAuth()
+  const toast = useToast()
   const { refreshUserStatus } = useStrategyStatus()
   const [orgId, setOrgId] = useState(null)
   const [strategy, setStrategy] = useState([])
@@ -94,7 +96,6 @@ export default function ContentStrategyPage() {
   const [companySummaryEditText, setCompanySummaryEditText] = useState('')
   const [editingTov, setEditingTov] = useState(false)
   const [tovEditText, setTovEditText] = useState('')
-  const [toast, setToast] = useState({ visible: false, message: '' })
   const [viewingCompanySummary, setViewingCompanySummary] = useState(false)
   const [viewingIcp, setViewingIcp] = useState(false)
   const [viewingKpi, setViewingKpi] = useState(false)
@@ -337,7 +338,7 @@ export default function ContentStrategyPage() {
 
       if (error) {
         console.error('Error updating strategy:', error)
-        alert('Tallennus epäonnistui: ' + error.message)
+        toast.error('Tallennus epäonnistui: ' + error.message)
         return
       }
 
@@ -352,7 +353,7 @@ export default function ContentStrategyPage() {
       setEditId(null)
     } catch (e) {
       console.error('Error in handleSave:', e)
-      alert('Tallennus epäonnistui')
+      toast.error('Tallennus epäonnistui')
     }
   }
 
@@ -372,7 +373,7 @@ export default function ContentStrategyPage() {
 
       if (error) {
         console.error('Error updating and approving strategy:', error)
-        alert('Tallennus ja hyväksyntä epäonnistui: ' + error.message)
+        toast.error('Tallennus ja hyväksyntä epäonnistui: ' + error.message)
         return
       }
 
@@ -437,8 +438,7 @@ export default function ContentStrategyPage() {
       refreshUserStatus()
 
       // Näytä toast-notifikaatio
-      setToast({ visible: true, message: 'Strategia tallennettu ja hyväksytty onnistuneesti!' })
-      setTimeout(() => setToast({ visible: false, message: '' }), 3000)
+      toast.success('Strategia tallennettu ja hyväksytty onnistuneesti!')
 
     } catch (e) {
       console.error('Error in handleSaveAndApprove:', e)
@@ -448,7 +448,7 @@ export default function ContentStrategyPage() {
         data: e.response?.data,
         message: e.message
       })
-      alert('Tallennus ja hyväksyntä epäonnistui: ' + errorMessage)
+      toast.error('Tallennus ja hyväksyntä epäonnistui: ' + errorMessage)
     }
   }
 
@@ -510,7 +510,7 @@ export default function ContentStrategyPage() {
 
       if (error) {
         console.error('Error approving strategy:', error)
-        alert('Vahvistus epäonnistui: ' + error.message)
+        toast.error('Vahvistus epäonnistui: ' + error.message)
         return
       }
 
@@ -540,8 +540,7 @@ export default function ContentStrategyPage() {
       refreshUserStatus()
 
       // Näytä toast-notifikaatio
-      setToast({ visible: true, message: 'Strategia hyväksytty onnistuneesti!' })
-      setTimeout(() => setToast({ visible: false, message: '' }), 3000)
+      toast.success('Strategia hyväksytty onnistuneesti!')
 
     } catch (e) {
       console.error('Error in handleApproveStrategy:', e)
@@ -551,7 +550,7 @@ export default function ContentStrategyPage() {
         data: e.response?.data,
         message: e.message
       })
-      alert('Vahvistus epäonnistui: ' + errorMessage)
+      toast.error('Vahvistus epäonnistui: ' + errorMessage)
     }
   }
 
@@ -577,7 +576,7 @@ export default function ContentStrategyPage() {
       const newIcpSummary = icpEditText.split('\n').filter(line => line.trim() !== '')
       
       if (!orgId) {
-        alert('Organisaation ID puuttuu')
+        toast.error('Organisaation ID puuttuu')
         return
       }
       
@@ -592,7 +591,7 @@ export default function ContentStrategyPage() {
 
       if (error) {
         console.error('Error updating ICP:', error)
-        alert('ICP:n tallennus epäonnistui: ' + error.message)
+        toast.error('ICP:n tallennus epäonnistui: ' + error.message)
         return
       }
       
@@ -601,7 +600,7 @@ export default function ContentStrategyPage() {
       setIcpEditText('')
     } catch (e) {
       console.error('Error in handleSaveIcp:', e)
-      alert('ICP:n tallennus epäonnistui')
+      toast.error('ICP:n tallennus epäonnistui')
     }
   }
 
@@ -615,7 +614,7 @@ export default function ContentStrategyPage() {
       const newKpiData = kpiEditText.split('\n').filter(line => line.trim() !== '')
       
       if (!orgId) {
-        alert('Organisaation ID puuttuu')
+        toast.error('Organisaation ID puuttuu')
         return
       }
       
@@ -630,7 +629,7 @@ export default function ContentStrategyPage() {
 
       if (error) {
         console.error('Error updating KPI:', error)
-        alert('KPI:n tallennus epäonnistui: ' + error.message)
+        toast.error('KPI:n tallennus epäonnistui: ' + error.message)
         return
       }
       
@@ -639,7 +638,7 @@ export default function ContentStrategyPage() {
       setKpiEditText('')
     } catch (e) {
       console.error('Error in handleSaveKpi:', e)
-      alert('KPI:n tallennus epäonnistui')
+      toast.error('KPI:n tallennus epäonnistui')
     }
   }
 
@@ -663,7 +662,7 @@ export default function ContentStrategyPage() {
   const handleSaveCompanySummary = async () => {
     try {
       if (!orgId) {
-        alert('Organisaation ID puuttuu')
+        toast.error('Organisaation ID puuttuu')
         return
       }
       
@@ -678,7 +677,7 @@ export default function ContentStrategyPage() {
 
       if (error) {
         console.error('Error updating company summary:', error)
-        alert('Yritysanalyysin tallennus epäonnistui: ' + error.message)
+        toast.error('Yritysanalyysin tallennus epäonnistui: ' + error.message)
         return
       }
       
@@ -687,7 +686,7 @@ export default function ContentStrategyPage() {
       setCompanySummaryEditText('')
     } catch (e) {
       console.error('Error in handleSaveCompanySummary:', e)
-      alert('Yritysanalyysin tallennus epäonnistui')
+      toast.error('Yritysanalyysin tallennus epäonnistui')
     }
   }
 
@@ -711,7 +710,7 @@ export default function ContentStrategyPage() {
   const handleSaveTov = async () => {
     try {
       if (!orgId) {
-        alert('Organisaation ID puuttuu')
+        toast.error('Organisaation ID puuttuu')
         return
       }
       
@@ -726,7 +725,7 @@ export default function ContentStrategyPage() {
 
       if (error) {
         console.error('Error updating TOV:', error)
-        alert('TOV:n tallennus epäonnistui: ' + error.message)
+        toast.error('TOV:n tallennus epäonnistui: ' + error.message)
         return
       }
       
@@ -735,7 +734,7 @@ export default function ContentStrategyPage() {
       setTovEditText('')
     } catch (e) {
       console.error('Error in handleSaveTov:', e)
-      alert('TOV:n tallennus epäonnistui')
+      toast.error('TOV:n tallennus epäonnistui')
     }
   }
 
@@ -798,7 +797,7 @@ export default function ContentStrategyPage() {
       setAnalyzingTov(true)
       
       if (!orgId) {
-        alert('Organisaation ID puuttuu')
+        toast.error('Organisaation ID puuttuu')
         setAnalyzingTov(false)
         return
       }
@@ -813,7 +812,7 @@ export default function ContentStrategyPage() {
       // Hae käyttäjän token
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) {
-        alert('Käyttäjä ei ole kirjautunut')
+        toast.error('Käyttäjä ei ole kirjautunut')
         setAnalyzingTov(false)
         return
       }
@@ -842,21 +841,19 @@ export default function ContentStrategyPage() {
         if (response.data?.tov) {
           // N8N palautti TOV:n suoraan
           setTovEditText(response.data.tov)
-          setToast({ visible: true, message: 'TOV-analyysi valmis! Tarkista ja tallenna tulos.' })
-          setTimeout(() => setToast({ visible: false, message: '' }), 5000)
+          toast.success('TOV-analyysi valmis! Tarkista ja tallenna tulos.')
         } else {
           // N8N aloitti asynkronisen prosessin
-          setToast({ visible: true, message: 'TOV-analyysi aloitettu. Analyysi valmistuu hetken kuluttua.' })
-          setTimeout(() => setToast({ visible: false, message: '' }), 5000)
+          toast.info('TOV-analyysi aloitettu. Analyysi valmistuu hetken kuluttua.')
         }
       } else {
-        alert('TOV-analyysi epäonnistui. Yritä myöhemmin uudelleen.')
+        toast.error('TOV-analyysi epäonnistui. Yritä myöhemmin uudelleen.')
       }
     } catch (error) {
       console.error('Error analyzing TOV from social media:', error)
       console.error('Error response:', error.response?.data)
       const errorMessage = error.response?.data?.error || error.response?.data?.details?.error || error.message
-      alert('TOV-analyysi epäonnistui: ' + errorMessage)
+      toast.error('TOV-analyysi epäonnistui: ' + errorMessage)
       // Modaali pysyy auki jos virhe tapahtuu
     } finally {
       setAnalyzingTov(false)
@@ -1358,29 +1355,6 @@ export default function ContentStrategyPage() {
         )}
       </div>
       
-      {/* Toast notifikaatio */}
-      {toast.visible && (
-        <div 
-          className="toast-notice" 
-          role="status" 
-          aria-live="polite"
-          style={{
-            position: 'fixed',
-            top: '16px',
-            right: '16px',
-            background: '#111827',
-            color: '#ffffff',
-            padding: '12px 16px',
-            borderRadius: '10px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
-            zIndex: 1100,
-            fontWeight: 600
-          }}
-        >
-          {toast.message}
-        </div>
-      )}
-
       {/* Editointimodaali */}
       {editId && (
         <div 

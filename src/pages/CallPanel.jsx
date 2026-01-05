@@ -16,6 +16,7 @@ import MessageLogsTab from '../components/calls/MessageLogsTab'
 import { useTranslation } from 'react-i18next'
 import Button from '../components/Button'
 import { useAuth } from '../contexts/AuthContext'
+import { useToast } from '../contexts/ToastContext'
 import { getUserOrgId } from '../lib/getUserOrgId'
 import axios from 'axios'
 import PageMeta from '../components/PageMeta'
@@ -25,6 +26,7 @@ import ExportCallLogsModal from '../components/ExportCallLogsModal'
 
 export default function CallPanel() {
   const { user } = useAuth()
+  const toast = useToast()
   const { has: hasFeature, crmConnected } = useFeatures()
   const { t } = useTranslation('common')
   const [searchParams, setSearchParams] = useSearchParams()
@@ -437,7 +439,7 @@ export default function CallPanel() {
         }
         
         setPolling(true)
-        alert(`✅ Mika Special mass-call käynnistetty onnistuneesti!\n\nAloitettu: ${result.startedCalls} puhelua\nOhitettu: ${result.failedCalls} kontakti`)
+        toast.success(`Mass-call käynnistetty! Aloitettu: ${result.startedCalls} puhelua, Ohitettu: ${result.failedCalls} kontakti`)
         
       } else {
         // Käytä normaalia mass-call API:a Google Sheets -datalle
@@ -591,7 +593,7 @@ export default function CallPanel() {
         successCount = insertedLogs.length
 
         setPolling(true)
-        alert(`✅ Mass-call käynnistetty onnistuneesti!\n\nAloitettu: ${successCount} puhelua\nOhitettu (puuttuu nimi/kelvollinen puhelinnumero): ${errorCount} riviä`)
+        toast.success(`Mass-call käynnistetty! Aloitettu: ${successCount} puhelua, Ohitettu: ${errorCount} riviä`)
       }
       
     } catch (e) {

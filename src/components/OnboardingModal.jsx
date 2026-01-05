@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useToast } from '../contexts/ToastContext'
 import { supabase } from '../lib/supabase'
 import { useConversation } from '@elevenlabs/react'
 import axios from 'axios'
@@ -9,6 +10,7 @@ import './OnboardingModal.css'
 
 const OnboardingModal = () => {
   const { user } = useAuth()
+  const toast = useToast()
   const location = useLocation()
   const [shouldShow, setShouldShow] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -257,7 +259,7 @@ const OnboardingModal = () => {
       
       if (!config.agentId) {
         console.error('❌ Agent ID not found in API response')
-        alert('Virhe: Agent ID puuttuu konfiguraatiosta')
+        toast.error('Virhe: Agent ID puuttuu konfiguraatiosta')
         return
       }
 
@@ -286,7 +288,7 @@ const OnboardingModal = () => {
       }
     } catch (error) {
       console.error('❌ Error starting conversation:', error)
-      alert('Virhe aloittaessa keskustelua: ' + error.message)
+      toast.error('Virhe aloittaessa keskustelua: ' + error.message)
     }
   }
 

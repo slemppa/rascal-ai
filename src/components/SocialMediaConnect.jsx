@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useMixpostIntegration } from './SocialMedia/hooks/useMixpostIntegration';
 import { useTranslation } from 'react-i18next';
+import { useToast } from '../contexts/ToastContext';
 import './SocialMediaConnect.css';
 
 // CSS-animaatio spin-efektille
@@ -22,6 +23,7 @@ const SocialMediaConnect = () => {
     fetchSocialAccounts
   } = useMixpostIntegration();
   const { t } = useTranslation('common');
+  const toast = useToast();
 
   const [connecting, setConnecting] = useState(false);
   const [connectionError, setConnectionError] = useState(null);
@@ -55,7 +57,7 @@ const SocialMediaConnect = () => {
         ? t('settings.social.timeout')
         : t('settings.social.connectError', { platform, message: error.message });
       
-      alert(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setConnecting(null);
     }
@@ -69,7 +71,7 @@ const SocialMediaConnect = () => {
       console.log('✅ Sometilit päivitetty!');
     } catch (error) {
       console.error('❌ Virhe päivitettäessä tilejä:', error);
-      alert(t('settings.social.alerts.refreshFailed'));
+      toast.error(t('settings.social.alerts.refreshFailed'));
     }
   };
 

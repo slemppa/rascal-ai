@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useToast } from '../contexts/ToastContext'
 import { getUserOrgId } from '../lib/getUserOrgId'
 import PlacidEditor from './PlacidEditor'
 import styles from './PlacidTemplatesList.module.css'
 
 export default function PlacidTemplatesList() {
   const { user } = useAuth()
+  const toast = useToast()
   const [templates, setTemplates] = useState([])
   const [loading, setLoading] = useState(true)
   const [editingTemplate, setEditingTemplate] = useState(null)
+  const [creating, setCreating] = useState(false)
 
   // Tarkista onko käyttäjä admin (systemRole === 'admin' tai company_id === 1)
   const isAdmin = user?.systemRole === 'admin' || user?.systemRole === 'superadmin' || user?.company_id === 1
@@ -31,7 +35,7 @@ export default function PlacidTemplatesList() {
         // Hae kaikki rivit variables-taulusta jossa on placid_id
         const { data, error } = await supabase
           .from('variables')
-          .select('id, placid_id, variable_id')
+          .select('id, placid_id, variable_id, thumbnail_url')
           .eq('user_id', orgId)
           .not('placid_id', 'is', null)
 
@@ -52,20 +56,74 @@ export default function PlacidTemplatesList() {
     fetchTemplates()
   }, [user])
 
+  const handleCreateTemplate = async () => {
+    if (!user?.id) return
+
+    try {
+      setCreating(true)
+      
+      // Hae session token
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError || !sessionData.session?.access_token) {
+        throw new Error('Sessio vanhentunut. Kirjaudu uudelleen.')
+      }
+      
+      const response = await axios.post('/api/placid/create-template', {
+        templateData: {}
+      }, {
+        headers: {
+          'Authorization': `Bearer ${sessionData.session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.data.success) {
+        toast.success('Mallin luonti aloitettu! Päivitä sivu hetken kuluttua.')
+        // Voit myös päivittää listan automaattisesti
+        // fetchTemplates()
+      }
+    } catch (error) {
+      console.error('Error creating template:', error)
+      toast.error('Mallin luonti epäonnistui: ' + (error.response?.data?.message || error.message))
+    } finally {
+      setCreating(false)
+    }
+  }
+
   if (loading) {
       return <div className={styles.loading}>Ladataan malleja...</div>
   }
 
-  if (templates.length === 0) {
-      return null
-  }
-
   return (
     <div className={styles.container}>
-      <h3 className={styles.title}>Omat mallit</h3>
+      <div className={styles.header}>
+        <h3 className={styles.title}>Omat mallit</h3>
+        <button 
+          onClick={handleCreateTemplate}
+          disabled={creating}
+          className={styles.createButton}
+        >
+          {creating ? 'Luodaan...' : 'Luo pohja'}
+        </button>
+      </div>
+      
+      {templates.length === 0 ? (
+        <div className={styles.emptyState}>
+          Ei vielä malleja. Luo ensimmäinen malli yllä olevasta napista.
+        </div>
+      ) : (
       <div className={styles.grid}>
         {templates.map((template) => (
             <div key={template.id} className={styles.card}>
+                {template.thumbnail_url && (
+                  <div className={styles.thumbnailWrapper}>
+                    <img 
+                      src={template.thumbnail_url} 
+                      alt={template.variable_id || 'Template'} 
+                      className={styles.thumbnail}
+                    />
+                  </div>
+                )}
                 <div className={styles.cardContent}>
                     <div className={styles.templateName}>{template.variable_id || 'Nimetön malli'}</div>
                     <div className={styles.templateId}>ID: {template.placid_id}</div>
@@ -79,6 +137,7 @@ export default function PlacidTemplatesList() {
             </div>
         ))}
       </div>
+      )}
 
       {editingTemplate && (
           <PlacidEditor 

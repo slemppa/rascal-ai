@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useToast } from '../contexts/ToastContext'
 import { getUserOrgId } from '../lib/getUserOrgId'
 import { useMonthlyLimit } from '../hooks/useMonthlyLimit'
 import { useNextMonthQuota } from '../hooks/useNextMonthQuota'
@@ -202,6 +203,7 @@ function ContentCard({ content, onView, onPublish, onArchive, onDownload, onEdit
 export default function BlogNewsletterPage() {
   const { t, i18n } = useTranslation('common')
   const { user } = useAuth()
+  const toast = useToast()
   const monthlyLimit = useMonthlyLimit()
   const nextMonthQuota = useNextMonthQuota()
   const [contents, setContents] = useState([])
@@ -211,8 +213,7 @@ export default function BlogNewsletterPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [activeTab, setActiveTab] = useState('main') // 'main' | 'archive'
-  const [toast, setToast] = useState({ visible: false, message: '' })
-    const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showCreateModal, setShowCreateModal] = useState(false)
   const [showViewModal, setShowViewModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [viewingContent, setViewingContent] = useState(null)
@@ -325,8 +326,7 @@ export default function BlogNewsletterPage() {
       // Estä luonti jos kuukausiraja täynnä
       if (!monthlyLimit.canCreate) {
         setShowCreateModal(false)
-        setToast({ visible: true, message: 'Kuukausiraja täynnä' })
-        setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+        toast.warning('Kuukausiraja täynnä')
         return
       }
       // Hae organisaation ID (public.users.id)
@@ -371,14 +371,12 @@ export default function BlogNewsletterPage() {
       }
 
       setShowCreateModal(false)
-      setToast({ visible: true, message: 'Idea lähetetty! Sisältö generoidaan taustalla' })
-      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+      toast.success('Idea lähetetty! Sisältö generoidaan taustalla')
       monthlyLimit.refresh()
       
     } catch (error) {
       console.error('Virhe uuden sisällön luomisessa:', error)
-      setToast({ visible: true, message: 'Virhe: Ei voitu luoda sisältöä' })
-      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+      toast.error('Virhe: Ei voitu luoda sisältöä')
     }
   }
 
@@ -428,8 +426,7 @@ export default function BlogNewsletterPage() {
       await fetchContents()
       setShowEditModal(false)
       setEditingContent(null)
-      setToast({ visible: true, message: 'Sisältö päivitetty' })
-      setTimeout(() => setToast({ visible: false, message: '' }), 2500)
+      toast.success('Sisältö päivitetty')
       
     } catch (error) {
       console.error('Update error:', error)
@@ -486,8 +483,8 @@ export default function BlogNewsletterPage() {
       setToast({ visible: true, message: errorMessage })
       setTimeout(() => setToast({ visible: false, message: '' }), 2500)
       
-      // Näytä myös alert käyttäjälle
-      alert('🚨 KUVA-LATAUS EPÄONNISTUI 🚨\n\nVirhe: ' + errorMessage + '\n\nOle hyvä ja:\n1. Tarkista internetyhteytesi\n2. Kokeile uudelleen\n3. Jos ongelma jatkuu, ota yhteyttä tukeen')
+      // Näytä toast käyttäjälle
+      toast.error('Kuva-lataus epäonnistui: ' + errorMessage + '. Tarkista internetyhteytesi ja yritä uudelleen.')
     }
   }
 
@@ -627,7 +624,7 @@ export default function BlogNewsletterPage() {
         errorMessage = error.message || 'Tuntematon virhe'
       }
       
-      alert(errorMessage)
+      toast.error(errorMessage)
     }
   }
 
@@ -748,10 +745,6 @@ export default function BlogNewsletterPage() {
 
   return (
     <div className="blog-newsletter-container">
-      {toast.visible && (
-        <div className="toast-notice" role="status" aria-live="polite">{toast.message}</div>
-      )}
-
       {/* Page Header */}
       <div className="blog-newsletter-header">
         <h2>{t('blogNewsletter.header')}</h2>

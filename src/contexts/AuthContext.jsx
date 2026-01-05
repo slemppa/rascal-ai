@@ -28,89 +28,106 @@ export const AuthProvider = ({ children }) => {
 
     const defaultFeatures = DEFAULT_FEATURES
     
-    // Alusta käyttäjäobjekti perustiedoilla (varmistaa että käyttäjä on aina olemassa)
-    let currentUser = {
+    // 1. Palautetaan HETI perustiedot, jotta UI ei jumiudu
+    // Oletetaan aluksi, että rooli on 'user' kunnes taustahaku valmistuu
+    const basicUser = {
       ...sessionUser,
-      systemRole: 'user', // Oletusarvo
-      company_id: null,
-      features: defaultFeatures,
+      systemRole: 'user', 
+      organizationRole: null,
       organizationId: null,
-      organizationRole: null
-    }
-    
-    // 1. Hae AINA ensin käyttäjän oma profiili users-taulusta (Järjestelmärooli)
-    let systemUser = null
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('auth_user_id', sessionUser.id)
-        .maybeSingle()
-      
-      if (!error && data) {
-        systemUser = data
-        // Päivitä käyttäjäobjekti systemUser-tiedoilla
-        currentUser.systemRole = systemUser.role || 'user'
-        currentUser.company_id = systemUser.company_id || null
-        currentUser.features = Array.isArray(systemUser.features) ? systemUser.features : defaultFeatures
-      }
-    } catch (err) {
-      console.error('Error fetching system user:', err)
-      // Jatketaan silti oletusarvoilla
+      company_id: null,
+      features: defaultFeatures
     }
 
-    // Jos käyttäjä on system admin/moderator, asetetaan se myös organisaatioksi (vanha logiikka tuki tätä)
-    if (systemUser && (systemUser.role === 'admin' || systemUser.role === 'moderator')) {
-      setOrganization({
-        id: systemUser.id,
-        role: systemUser.role,
-        data: systemUser
-      })
-      currentUser.organizationId = systemUser.id
-      currentUser.organizationRole = systemUser.role
-    }
+    // 2. Käynnistetään taustahaku, joka hakee tarkat roolit ja päivittää tilan
+    const loadFullProfile = async () => {
+      try {
+        let systemRole = 'user'
+        let company_id = null
+        let orgData = null
+        let orgRole = null
+        let orgId = null
+        let features = defaultFeatures
 
-    // 2. Hae organisaation jäsenyys rinnakkain (Organisaatiorooli)
-    try {
-      const { data: orgMember, error: orgError } = await supabase
-        .from('org_members')
-        .select('org_id, role')
-        .eq('auth_user_id', sessionUser.id)
-        .maybeSingle()
-
-      if (!orgError && orgMember) {
-        // Jos löytyi organisaatio, haetaan sen tiedot
-        const { data: orgData, error: orgDataError } = await supabase
+        // A) Hae Järjestelmärooli (users-taulu)
+        const { data: userData } = await supabase
           .from('users')
           .select('*')
-          .eq('id', orgMember.org_id)
-          .single()
+          .eq('auth_user_id', sessionUser.id)
+          .maybeSingle()
         
-        if (!orgDataError && orgData) {
-          // Ylikirjoita features organisaation featureilla jos ei ole system admin
-          // System admin pitää omat featurensa
-          if (currentUser.systemRole !== 'admin' && currentUser.systemRole !== 'moderator') {
-            currentUser.features = Array.isArray(orgData?.features) ? orgData.features : defaultFeatures
-          }
-
-          setOrganization({
-            id: orgMember.org_id,
-            role: orgMember.role, // Tämä on esim. "admin" organisaation sisällä
-            data: orgData
-          })
+        if (userData) {
+          systemRole = userData.role || 'user' // 'admin', 'moderator', 'user'
+          company_id = userData.company_id || null
+          features = Array.isArray(userData.features) ? userData.features : defaultFeatures
           
-          currentUser.organizationId = orgMember.org_id
-          currentUser.organizationRole = orgMember.role // Tämä on esim. "admin" organisaation sisällä
+          // Jos käyttäjä on system admin/moderator, asetetaan se myös organisaatioksi (legacy-tuki)
+          if (userData.role === 'admin' || userData.role === 'moderator') {
+            orgId = userData.id
+            orgRole = userData.role
+            orgData = userData
+          }
         }
+
+        // B) Hae Organisaatiorooli (org_members-taulu)
+        const { data: orgMember } = await supabase
+          .from('org_members')
+          .select('org_id, role')
+          .eq('auth_user_id', sessionUser.id)
+          .maybeSingle()
+
+        if (orgMember) {
+          // Käyttäjä on organisaation jäsen
+          const { data: org } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', orgMember.org_id)
+            .single()
+          
+          if (org) {
+            orgId = orgMember.org_id
+            orgRole = orgMember.role // Esim. 'admin' organisaation sisällä
+            orgData = org
+            // Organisaation featuret yliajavat omat, paitsi jos olet järjestelmäadmin
+            if (systemRole !== 'admin' && systemRole !== 'moderator') {
+              features = Array.isArray(org.features) ? org.features : defaultFeatures
+            }
+          }
+        }
+
+        // Päivitä tila lopullisilla tiedoilla
+        setOrganization(orgData ? {
+          id: orgId,
+          role: orgRole,
+          data: orgData
+        } : null)
+
+        setUser(prev => ({
+          ...sessionUser, // Varmistetaan että session-tiedot pysyvät
+          systemRole: systemRole, // Järjestelmärooli (users.role)
+          organizationRole: orgRole, // Organisaatiorooli (org_members.role)
+          organizationId: orgId,
+          company_id: company_id,
+          features: features
+        }))
+
+        console.log('[AuthContext] Full profile loaded:', {
+          email: sessionUser.email,
+          systemRole,
+          organizationRole: orgRole,
+          company_id
+        })
+
+      } catch (error) {
+        console.error('Error in background profile fetch:', error)
       }
-    } catch (error) {
-      console.error('Error fetching organization:', error)
-      // Jatketaan silti ilman organisaatiotietoja
     }
 
-    // Varmista että käyttäjä asetetaan aina, vaikka tietoja ei löytyisi
-    setUser(currentUser)
-    return currentUser
+    // Käynnistä taustahaku (älä odota tätä awaitilla!)
+    loadFullProfile()
+    
+    // Palauta perustiedot heti
+    return basicUser
   }, [])
 
   useEffect(() => {

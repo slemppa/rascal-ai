@@ -264,3 +264,4 @@ Päivitä integraatiosi käyttämään HMAC-autentikaatiota.
 - `HMAC_MIGRATION_STATUS.md` - HMAC-migraation tila
 - `CHANGELOG.md` - Kaikki versiohistoria
 
+

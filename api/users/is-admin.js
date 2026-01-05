@@ -1,5 +1,9 @@
-// api/users/is-admin.js - Tarkista onko käyttäjä admin users.role perusteella
-import { withOrganization } from '../../middleware/with-organization.js'
+// api/users/is-admin.js - HTTP endpoint admin-statuksen tarkistukseen
+// HUOM: Älä käytä tätä React-frontendissä! Käytä AuthContext.user.systemRole sijaan.
+// Tämä on tarkoitettu vain backend-integraatioihin tai erikoistapauksiin.
+
+import { withOrganization } from '../middleware/with-organization.js'
+import { checkAdminStatus } from '../lib/check-admin-status.js'
 
 async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -7,26 +11,10 @@ async function handler(req, res) {
   }
 
   try {
-    // HUOM: Admin-oikeudet tulevat AINA users.role === 'admin', EI org_members.role === 'admin'
-    // Tarkista admin-oikeudet users-taulusta
-    const { data: userRow, error: userError } = await req.supabase
-      .from('users')
-      .select('role, company_id')
-      .eq('auth_user_id', req.authUser.id)
-      .maybeSingle()
-
-    if (userError) {
-      console.error('[is-admin] Error fetching user:', userError)
-      return res.status(500).json({ error: 'Failed to check admin status' })
-    }
-
-    // Admin-oikeudet: users.role === 'admin' tai company_id === 1
-    const isAdmin = userRow?.role === 'admin' || userRow?.company_id === 1
+    const isAdmin = await checkAdminStatus(req.supabase, req.authUser.id)
 
     console.log('[is-admin] Check result:', {
       email: req.authUser.email,
-      users_role: userRow?.role,
-      company_id: userRow?.company_id,
       isAdmin
     })
 

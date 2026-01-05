@@ -19,25 +19,25 @@ const ProtectedRoute = ({ children, requiredFeatures = [], requiredRole = null }
     return <Navigate to="/" state={{ from: location }} replace />
   }
 
-  // ROOLITARKISTUS (KORJATTU)
+  // ROOLITARKISTUS - Tarkistaa nimenomaan systemRole:n (järjestelmätaso)
   if (requiredRole) {
-    // Jos vaaditaan 'admin' (järjestelmätaso), tarkistetaan systemRole
     if (requiredRole === 'admin') {
-      const isAdmin = user.systemRole === 'admin' || user.systemRole === 'superadmin' || user.company_id === 1
-      if (!isAdmin) {
+      // Tarkista onko user.systemRole 'admin' (tai superadmin)
+      // Huom: organizationRole voi olla 'admin', mutta systemRole on 'user' => Pääsy evätään oikein
+      if (user.systemRole !== 'admin' && user.systemRole !== 'superadmin') {
         console.log('ProtectedRoute - Access denied: User systemRole is', user.systemRole, 'required: admin')
-        return <Navigate to="/" replace />
+        return <Navigate to="/dashboard" replace />
       }
     } 
-    // Jos vaaditaan 'moderator', tarkistetaan systemRole
     else if (requiredRole === 'moderator') {
-      const isModerator = user.systemRole === 'moderator' || user.systemRole === 'admin' || user.systemRole === 'superadmin' || user.company_id === 1
+      const isModerator = user.systemRole === 'moderator' || user.systemRole === 'admin' || user.systemRole === 'superadmin'
       if (!isModerator) {
         console.log('ProtectedRoute - Access denied: User systemRole is', user.systemRole, 'required: moderator')
-        return <Navigate to="/" replace />
+        return <Navigate to="/dashboard" replace />
       }
     }
-    // Huom: Jos haluat tarkistaa organisaatioroolin, tekisit: if (requiredRole === 'org_admin' && user.organizationRole !== 'admin')
+    // Huom: Jos haluat tarkistaa organisaatioroolin erikseen:
+    // if (requiredRole === 'org_admin' && user.organizationRole !== 'admin') { ... }
   }
 
   // Feature-tarkistus

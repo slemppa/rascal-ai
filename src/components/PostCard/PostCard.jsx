@@ -206,7 +206,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
                       onClick={() => onEdit(post)}
                       className="post-button-small"
                     >
-                      {post.source === 'reels' ? 'Tarkista' : t('posts.buttons.edit')}
+                      {post.source === 'reels' ? 'Tarkista' : t('posts.actions.edit')}
                     </Button>
                   )}
                   
@@ -217,7 +217,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
                       onClick={() => onMoveToNext(post, 'Tarkistuksessa')}
                       className="post-button-primary"
                     >
-                      Valmiina julkaisuun
+                      {t('posts.columns.readyToPublish')}
                     </Button>
                   )}
                   
@@ -228,7 +228,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
                       onClick={() => onPublish(post)}
                       className="post-button-success"
                     >
-                      {t('posts.buttons.publish')}
+                      {t('posts.actions.publish')}
                     </Button>
                   )}
                   
@@ -238,7 +238,7 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
                       onClick={() => onDelete(post)}
                       className="post-button-small"
                     >
-                      {t('posts.buttons.delete')}
+                      {t('posts.actions.delete')}
                     </Button>
                   )}
                 </>

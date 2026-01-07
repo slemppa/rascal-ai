@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.110.6](https://github.com/slemppa/rascal-ai/compare/v1.110.5...v1.110.6) (2026-01-07)
+
+
+### 🐛 Bug Fixes
+
+* **PostCard:** update translation keys for buttons ([6ef2189](https://github.com/slemppa/rascal-ai/commit/6ef2189244064eada1673e1af68402fa181b0517))
+
 ### [1.110.5](https://github.com/slemppa/rascal-ai/compare/v1.110.4...v1.110.5) (2026-01-07)
 
 

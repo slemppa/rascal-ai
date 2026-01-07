@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.110.4](https://github.com/slemppa/rascal-ai/compare/v1.110.3...v1.110.4) (2026-01-07)
+
+
+### 🐛 Bug Fixes
+
+* apply user provided fixes for AuthContext, Sidebar and locales ([9fc67da](https://github.com/slemppa/rascal-ai/commit/9fc67dabd4f05f9f57b9d1e8e79879ba19368cac))
+
 ### [1.110.3](https://github.com/slemppa/rascal-ai/compare/v1.110.2...v1.110.3) (2026-01-07)
 
 

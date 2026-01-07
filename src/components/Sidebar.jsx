@@ -235,21 +235,10 @@ export default function Sidebar() {
 
   // Hae vain logo (roolit tulevat suoraan user.systemRole:sta)
   useEffect(() => {
-    const loadLogo = async () => {
-      if (!user) return
-      
-      try {
-        const userData = await getCurrentUser()
-        if (userData?.logo_url) {
-          setLogoUrl(userData.logo_url)
-        }
-      } catch (error) {
-        console.error('Error loading logo:', error)
-      }
+    if (organization?.data?.logo_url) {
+      setLogoUrl(organization.data.logo_url)
     }
-
-    loadLogo()
-  }, [user])
+  }, [organization])
 
   const handleLogout = async () => {
     try {

@@ -25,7 +25,7 @@ import { useFeatures } from '../hooks/useFeatures'
 import ExportCallLogsModal from '../components/ExportCallLogsModal'
 
 export default function CallPanel() {
-  const { user } = useAuth()
+  const { user, organization } = useAuth()
   const toast = useToast()
   const { has: hasFeature, crmConnected } = useFeatures()
   const { t } = useTranslation('common')
@@ -968,24 +968,14 @@ export default function CallPanel() {
         return
       }
       
-      // Hae käyttäjän ID API:n kautta
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.access_token) {
-        return
-      }
+      // Käytä organisaatiotietoja suoraan AuthContextista tai hae ID
+      let orgId = organization?.id
       
-      const userResponse = await axios.get('/api/users/me', {
-        headers: { Authorization: `Bearer ${session.access_token}` }
-      })
-      const userProfile = userResponse.data
-      
-      if (!userProfile) {
-        return
+      if (!orgId) {
+        // Fallback jos organization context ei ole valmis
+        orgId = await getUserOrgId(user.id)
       }
 
-      // Hae inbound-asetukset
-      // Hae organisaation ID (public.users.id)
-      const orgId = await getUserOrgId(user.id)
       if (!orgId) {
         setInboundCallTypes([])
         return

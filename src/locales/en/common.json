@@ -282,8 +282,10 @@
       "title": "Key metrics",
       "filters": {
         "all": "All",
-        "week": "Last week",
-        "month": "Last month",
+        "week": "This week",
+        "month": "This month",
+        "last_week": "Last week",
+        "last_month": "Last month",
         "days7": "Last 7 days",
         "days30": "Last 30 days"
       },
@@ -297,6 +299,34 @@
         "trendUpSuffix": "increase vs previous",
         "trendDownSuffix": "decrease vs previous"
       }
+    },
+    "analytics": {
+      "title": "Social Media Analytics",
+      "subtitle": "Track the performance of your social media accounts",
+      "filters": {
+        "allPlatforms": "All platforms",
+        "allAccounts": "All accounts",
+        "days7": "7 days",
+        "days30": "30 days",
+        "days90": "90 days"
+      },
+      "metrics": {
+        "likes": "Likes",
+        "comments": "Comments",
+        "followers": "Followers",
+        "reach": "Reach",
+        "posts": "Posts",
+        "engagement": "Engagement"
+      },
+      "charts": {
+        "audienceGrowth": "Audience growth",
+        "audienceSubtitle": "Follower count over time",
+        "platformBreakdown": "Platform breakdown",
+        "platformSubtitle": "Followers by platform"
+      },
+      "connectedAccounts": "Connected accounts",
+      "noAccounts": "No connected accounts. Go to settings to connect your social accounts.",
+      "liveData": "Live data - Updated just now"
     },
     "upcoming": {
       "title": "Upcoming posts",

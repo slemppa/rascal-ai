@@ -306,6 +306,34 @@
         "trendDownSuffix": "lasku edelliseen"
       }
     },
+    "analytics": {
+      "title": "Some-analytiikka",
+      "subtitle": "Seuraa sosiaalisen median tiliesi kehitystä",
+      "filters": {
+        "allPlatforms": "Kaikki alustat",
+        "allAccounts": "Kaikki tilit",
+        "days7": "7 päivää",
+        "days30": "30 päivää",
+        "days90": "90 päivää"
+      },
+      "metrics": {
+        "likes": "Tykkäykset",
+        "comments": "Kommentit",
+        "followers": "Seuraajat",
+        "reach": "Kattavuus",
+        "posts": "Julkaisut",
+        "engagement": "Sitoutuminen"
+      },
+      "charts": {
+        "audienceGrowth": "Yleisön kasvu",
+        "audienceSubtitle": "Seuraajien määrän kehitys",
+        "platformBreakdown": "Alustajakauma",
+        "platformSubtitle": "Seuraajat eri alustoilla"
+      },
+      "connectedAccounts": "Yhdistetyt tilit",
+      "noAccounts": "Ei yhdistettyjä tilejä. Käy asetuksissa yhdistämässä some-tilisi.",
+      "liveData": "Live data - Päivitetty juuri nyt"
+    },
     "upcoming": {
       "title": "Tulevat julkaisut",
       "headers": { "media": "Media", "caption": "Caption", "status": "Status", "date": "Pvm" },

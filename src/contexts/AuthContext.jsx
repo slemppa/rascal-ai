@@ -182,13 +182,14 @@ export const AuthProvider = ({ children }) => {
             } 
           })
         } else if (session?.user) {
-          // Tarkista onko tämä SIGNED_IN event (uusi kirjautuminen) vai TOKEN_REFRESHED
-          const isNewSignIn = event === 'SIGNED_IN'
-          const isTokenRefresh = event === 'TOKEN_REFRESHED'
-          
-          // TOKEN_REFRESHED tai SIGNED_IN olemassa olevalle käyttäjälle: 
-          // Älä hae profiilia uudelleen, päivitä vain session
-          if ((isTokenRefresh || (isNewSignIn && user && session.user.id === user.id)) && user) {
+          // Tunnista tapahtumat jotka ovat vain päivityksiä olemassa olevaan sessioon
+          const isSessionUpdate = 
+            event === 'TOKEN_REFRESHED' || 
+            event === 'USER_UPDATED' || 
+            (event === 'SIGNED_IN' && user && session.user.id === user.id);
+
+          // Jos kyseessä on vain päivitys ja meillä on jo käyttäjä, älä hae profiilia uudelleen
+          if (isSessionUpdate && user) {
             console.log('[AuthContext] Session update (refresh/sync), keeping existing user')
             // Päivitä vain session-tiedot, säilytä systemRole ja muut profiilit
             setUser(prev => ({

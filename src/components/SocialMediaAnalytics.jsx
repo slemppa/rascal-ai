@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 
 const SocialMediaAnalytics = () => {
+  const { t } = useTranslation('common');
   const { user } = useAuth();
   const [currentWorkspace, setCurrentWorkspace] = useState('main');
   const [selectedAccount, setSelectedAccount] = useState('all');
@@ -191,9 +193,9 @@ const SocialMediaAnalytics = () => {
       <div className="mb-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Some-analytiikka</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t('dashboard.analytics.title')}</h1>
             <p className="text-gray-600">
-              Seuraa sosiaalisen median tiliesi kehitystä
+              {t('dashboard.analytics.subtitle')}
             </p>
           </div>
           
@@ -219,7 +221,7 @@ const SocialMediaAnalytics = () => {
               onChange={(e) => setSelectedPlatform(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
             >
-              <option value="all">Kaikki alustat</option>
+              <option value="all">{t('dashboard.analytics.filters.allPlatforms')}</option>
               <option value="facebook">Facebook</option>
               <option value="instagram">Instagram</option>
               <option value="twitter">Twitter</option>
@@ -232,7 +234,7 @@ const SocialMediaAnalytics = () => {
               onChange={(e) => setSelectedAccount(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
             >
-              <option value="all">Kaikki tilit</option>
+              <option value="all">{t('dashboard.analytics.filters.allAccounts')}</option>
               {currentAccounts.map(account => (
                 <option key={account.id} value={account.id}>
                   {getPlatformIcon(account.platform)} {account.name}
@@ -246,9 +248,9 @@ const SocialMediaAnalytics = () => {
               onChange={(e) => setTimeRange(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
             >
-              <option value="7d">7 päivää</option>
-              <option value="30d">30 päivää</option>
-              <option value="90d">90 päivää</option>
+              <option value="7d">{t('dashboard.analytics.filters.days7')}</option>
+              <option value="30d">{t('dashboard.analytics.filters.days30')}</option>
+              <option value="90d">{t('dashboard.analytics.filters.days90')}</option>
             </select>
           </div>
         </div>
@@ -256,13 +258,13 @@ const SocialMediaAnalytics = () => {
 
       {/* Päämetriikat */}
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
-        <MetricCard title="Tykkäykset" value={metrics.likes} color="text-pink-600" loading={loading} />
-        <MetricCard title="Kommentit" value={metrics.comments} color="text-green-600" loading={loading} />
-        <MetricCard title="Seuraajat" value={metrics.followers} color="text-purple-600" loading={loading} />
-        <MetricCard title="Kattavuus" value={metrics.reach} color="text-blue-600" loading={loading} />
-        <MetricCard title="Julkaisut" value={metrics.posts} color="text-orange-600" loading={loading} />
+        <MetricCard title={t('dashboard.analytics.metrics.likes')} value={metrics.likes} color="text-pink-600" loading={loading} />
+        <MetricCard title={t('dashboard.analytics.metrics.comments')} value={metrics.comments} color="text-green-600" loading={loading} />
+        <MetricCard title={t('dashboard.analytics.metrics.followers')} value={metrics.followers} color="text-purple-600" loading={loading} />
+        <MetricCard title={t('dashboard.analytics.metrics.reach')} value={metrics.reach} color="text-blue-600" loading={loading} />
+        <MetricCard title={t('dashboard.analytics.metrics.posts')} value={metrics.posts} color="text-orange-600" loading={loading} />
         <MetricCard 
-          title="Sitoutuminen" 
+          title={t('dashboard.analytics.metrics.engagement')} 
           value={`${metrics.engagementRate.toFixed(1)}%`} 
           color="text-teal-600" 
           loading={loading}
@@ -273,8 +275,8 @@ const SocialMediaAnalytics = () => {
         {/* Audience chart */}
         <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
           <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Yleisön kasvu</h3>
-            <p className="text-sm text-gray-600">Seuraajien määrän kehitys</p>
+            <h3 className="text-lg font-semibold text-gray-900">{t('dashboard.analytics.charts.audienceGrowth')}</h3>
+            <p className="text-sm text-gray-600">{t('dashboard.analytics.charts.audienceSubtitle')}</p>
           </div>
           
           <div className="h-64">
@@ -307,8 +309,8 @@ const SocialMediaAnalytics = () => {
         {/* Platform breakdown */}
         <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
           <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Alustajakauma</h3>
-            <p className="text-sm text-gray-600">Seuraajat eri alustoilla</p>
+            <h3 className="text-lg font-semibold text-gray-900">{t('dashboard.analytics.charts.platformBreakdown')}</h3>
+            <p className="text-sm text-gray-600">{t('dashboard.analytics.charts.platformSubtitle')}</p>
           </div>
           
           <div className="h-64">
@@ -334,7 +336,7 @@ const SocialMediaAnalytics = () => {
 
       {/* Connected accounts */}
       <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Yhdistetyt tilit</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('dashboard.analytics.connectedAccounts')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {currentAccounts.map(account => (
             <div key={account.id} className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
@@ -356,7 +358,7 @@ const SocialMediaAnalytics = () => {
           
           {currentAccounts.length === 0 && (
             <div className="col-span-full text-center py-8 text-gray-500">
-              Ei yhdistettyjä tilejä. Käy asetuksissa yhdistämässä some-tilisi.
+              {t('dashboard.analytics.noAccounts')}
             </div>
           )}
         </div>
@@ -365,7 +367,7 @@ const SocialMediaAnalytics = () => {
       {/* Status indicator */}
       <div className="mt-6 flex items-center justify-center space-x-2 text-sm text-gray-500">
         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-        <span>Live data - Päivitetty juuri nyt</span>
+        <span>{t('dashboard.analytics.liveData')}</span>
       </div>
     </div>
   );

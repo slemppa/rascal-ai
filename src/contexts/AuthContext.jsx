@@ -157,6 +157,7 @@ export const AuthProvider = ({ children }) => {
           const isSessionUpdate = 
             event === 'TOKEN_REFRESHED' || 
             event === 'USER_UPDATED' || 
+            event === 'INITIAL_SESSION' ||
             // Varmistetaan että verrataan nykyiseen käyttäjään ref:n kautta
             (event === 'SIGNED_IN' && currentUser && session.user.id === currentUser.id);
 

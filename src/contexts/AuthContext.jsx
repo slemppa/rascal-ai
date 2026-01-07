@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { DEFAULT_FEATURES } from '../constants/posts'
@@ -19,7 +19,12 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
   const [loadingUserProfile, setLoadingUserProfile] = useState(false)
   const [profileLoaded, setProfileLoaded] = useState(false) // Uusi: seuraa onko profiili ladattu
+  const userRef = useRef(user)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    userRef.current = user
+  }, [user])
 
   const fetchUserProfile = useCallback(async (sessionUser) => {
     if (!sessionUser) {
@@ -183,13 +188,14 @@ export const AuthProvider = ({ children }) => {
           })
         } else if (session?.user) {
           // Tunnista tapahtumat jotka ovat vain päivityksiä olemassa olevaan sessioon
+          const currentUser = userRef.current
           const isSessionUpdate = 
             event === 'TOKEN_REFRESHED' || 
             event === 'USER_UPDATED' || 
-            (event === 'SIGNED_IN' && user && session.user.id === user.id);
+            (event === 'SIGNED_IN' && currentUser && session.user.id === currentUser.id);
 
           // Jos kyseessä on vain päivitys ja meillä on jo käyttäjä, älä hae profiilia uudelleen
-          if (isSessionUpdate && user) {
+          if (isSessionUpdate && currentUser) {
             console.log('[AuthContext] Session update (refresh/sync), keeping existing user')
             // Päivitä vain session-tiedot, säilytä systemRole ja muut profiilit
             setUser(prev => ({

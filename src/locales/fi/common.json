@@ -434,7 +434,9 @@
       "admin": "Ylläpito",
       "adminBlog": "Admin",
       "meetingNotes": "Palaverimuistiot",
-      "accountManager": "Salkun hallinta"
+      "accountManager": "Salkun hallinta",
+      "leads": "Liidit",
+      "organizationMembers": "Tiimi"
     },
     "settings": "Asetukset",
     "helpCenter": "Ohjekeskus",

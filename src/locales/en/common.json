@@ -411,7 +411,9 @@
       "vastaaja": "Answering Service",
       "admin": "Admin",
       "adminBlog": "Admin",
-      "meetingNotes": "Meeting Notes"
+      "meetingNotes": "Meeting Notes",
+      "leads": "Leads",
+      "organizationMembers": "Team"
     },
     "settings": "Settings",
     "helpCenter": "Help Center",

@@ -325,13 +325,18 @@
 
 /* Desktop - piilota mobiili-navigaatio */
 @media (min-width: 769px) {
-  .mobile-hamburger,
-  .mobile-nav-overlay {
+  .mobile-navigation {
     display: none;
   }
 }
 
 @media (max-width: 768px) {
+  .mobile-navigation {
+    height: 100dvh;
+    min-height: 100dvh;
+    max-height: 100dvh;
+  }
+
   .mobile-nav-overlay,
   .mobile-nav-menu {
     height: 100dvh;
@@ -345,21 +350,5 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-  }
-} 
-
-/* Mobiili-navigaatio piilotettu desktopissa */
-@media (min-width: 901px) {
-  .mobile-navigation {
-    display: none;
-  }
-}
-
-/* Mobiili-navigaatio näkyy mobiilissa */
-@media (max-width: 900px) {
-  .mobile-navigation {
-    height: 100dvh;
-    min-height: 100dvh;
-    max-height: 100dvh;
   }
 } 

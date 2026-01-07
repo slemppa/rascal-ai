@@ -92,7 +92,7 @@ export default function MobileNavigation() {
   }, [isOpen])
 
   return (
-    <>
+    <div className="mobile-navigation">
       {/* Hamburger-nappi */}
       <button 
         className={`mobile-hamburger ${isOpen ? 'active' : ''}`}
@@ -173,6 +173,6 @@ export default function MobileNavigation() {
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 } 

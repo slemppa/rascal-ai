@@ -14,7 +14,7 @@ const DEFAULT_LOGO_URL = 'https://enrploxjigoyqajoqgkj.supabase.co/storage/v1/ob
 
 const getMenuItems = (t) => [
   { 
-    label: t('general.home'), 
+    label: t('sidebar.labels.dashboard'), 
     path: '/dashboard', 
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -37,7 +37,7 @@ const getMenuItems = (t) => [
     )
   },
   { 
-    label: t('general.blogsNewsletters'), 
+    label: t('sidebar.labels.blogNewsletter'), 
     path: '/blog-newsletter', 
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -50,7 +50,7 @@ const getMenuItems = (t) => [
     )
   },
   { 
-    label: t('general.contentStrategy'), 
+    label: t('sidebar.labels.strategy'), 
     path: '/strategy', 
     icon: (
       <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor">
@@ -90,7 +90,7 @@ const getMenuItems = (t) => [
     )
   },
   { 
-    label: t('sidebar.labels.leads') || 'Liidit', 
+    label: t('sidebar.labels.leads'), 
     path: '/lead-scraping', 
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -112,7 +112,7 @@ const getMenuItems = (t) => [
     )
   },
   { 
-    label: 'Vastaaja', 
+    label: t('sidebar.labels.vastaaja'), 
     path: '/vastaaja', 
     moderatorOnly: false,
     feature: 'Voicemail',
@@ -125,9 +125,9 @@ const getMenuItems = (t) => [
     )
   },
   { 
-    label: 'Ylläpito', 
+    label: t('sidebar.labels.admin'), 
     path: '/admin', 
-    adminOnly: true, 
+    adminOnly: true,  
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -150,7 +150,7 @@ const getMenuItems = (t) => [
     )
   },
   { 
-    label: 'Palaverimuistiot', 
+    label: t('sidebar.labels.meetingNotes'), 
     path: '/meeting-notes', 
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -163,7 +163,7 @@ const getMenuItems = (t) => [
     )
   },
     {
-      label: 'Salkun hallinta', 
+      label: t('sidebar.labels.accountManager'), 
       path: '/account-manager', 
       moderatorOnly: true,
       icon: (
@@ -173,7 +173,7 @@ const getMenuItems = (t) => [
       )
     },
     {
-      label: 'Organisaation hallinta',
+      label: t('sidebar.labels.organizationMembers'),
       path: '/organization-members',
       adminOnly: false, // Tarkistetaan erikseen owner/admin roolilla
       icon: (
@@ -296,7 +296,7 @@ export default function Sidebar() {
                 onClick={() => navigate(item.path)}
               >
                 <span className={styles['nav-icon']}>{item.icon}</span>
-                {t('sidebar.labels.dashboard')}
+                {item.label}
               </button>
             </li>
           )
@@ -324,7 +324,7 @@ export default function Sidebar() {
                 onClick={() => navigate(item.path)}
               >
                 <span className={styles['nav-icon']}>{item.icon}</span>
-                {item.path === '/posts' ? t('sidebar.labels.posts') : item.path === '/blog-newsletter' ? t('sidebar.labels.blogNewsletter') : t('sidebar.labels.strategy')}
+                {item.label}
               </button>
             </li>
           )
@@ -353,11 +353,7 @@ export default function Sidebar() {
                 onClick={() => navigate(item.path)}
               >
                 <span className={styles['nav-icon']}>{item.icon}</span>
-                {item.path === '/campaigns' ? t('sidebar.labels.campaigns') : 
-                 item.path === '/segments' ? t('sidebar.labels.segments') : 
-                 item.path === '/calls' ? t('sidebar.labels.calls') :
-                 item.path === '/lead-scraping' ? 'Liidit' :
-                 item.label}
+                {item.label}
               </button>
             </li>
           )
@@ -390,10 +386,7 @@ export default function Sidebar() {
                       onClick={() => navigate(item.path)}
                     >
                       <span className={styles['nav-icon']}>{item.icon}</span>
-                      {item.path === '/ai-chat' ? t('sidebar.labels.assistentti') : 
-                       item.path === '/vastaaja' ? t('sidebar.labels.vastaaja') :
-                       item.path === '/meeting-notes' ? t('sidebar.labels.meetingNotes') :
-                       item.label}
+                      {item.label}
                     </button>
                   </li>
                 )
@@ -419,11 +412,7 @@ export default function Sidebar() {
                     onClick={() => navigate(item.path)}
                   >
                     <span className={styles['nav-icon']}>{item.icon}</span>
-                    {item.path === '/admin' ? t('sidebar.labels.admin') :
-                     item.path === '/admin-blog' ? t('sidebar.labels.adminBlog') :
-                     item.path === '/account-manager' ? t('sidebar.labels.accountManager') :
-                     item.path === '/organization-members' ? 'Organisaation hallinta' :
-                     item.label}
+                    {item.label}
                   </button>
                 </li>
               ))}

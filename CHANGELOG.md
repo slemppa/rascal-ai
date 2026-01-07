@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.110.3](https://github.com/slemppa/rascal-ai/compare/v1.110.2...v1.110.3) (2026-01-07)
+
+
+### 🐛 Bug Fixes
+
+* optimize AuthContext and fix MobileNavigation visibility ([7b167dd](https://github.com/slemppa/rascal-ai/commit/7b167ddf24d8179bd8e0dee8ba37ee1f0920f9af))
+
 ### [1.110.2](https://github.com/slemppa/rascal-ai/compare/v1.110.1...v1.110.2) (2026-01-07)
 
 

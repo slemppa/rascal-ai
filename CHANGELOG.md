@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.110.2](https://github.com/slemppa/rascal-ai/compare/v1.110.1...v1.110.2) (2026-01-07)
+
+
+### 🐛 Bug Fixes
+
+* **dashboard:** use translations in social media analytics component ([7791863](https://github.com/slemppa/rascal-ai/commit/77918638f8b97b737ab7dde5c51a722a15353a7f))
+
 ### [1.110.1](https://github.com/slemppa/rascal-ai/compare/v1.110.0...v1.110.1) (2026-01-07)
 
 

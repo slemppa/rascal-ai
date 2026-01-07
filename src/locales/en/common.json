@@ -413,7 +413,8 @@
       "adminBlog": "Admin",
       "meetingNotes": "Meeting Notes",
       "leads": "Leads",
-      "organizationMembers": "Team"
+      "organizationMembers": "Organization Management",
+      "accountManager": "Portfolio Management"
     },
     "settings": "Settings",
     "helpCenter": "Help Center",

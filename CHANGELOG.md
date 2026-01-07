@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.110.5](https://github.com/slemppa/rascal-ai/compare/v1.110.4...v1.110.5) (2026-01-07)
+
+
+### 🐛 Bug Fixes
+
+* **auth:** optimize session updates and useFeatures hook ([9046172](https://github.com/slemppa/rascal-ai/commit/90461720f1e50ea8a575d32223c322043443fea2))
+
 ### [1.110.4](https://github.com/slemppa/rascal-ai/compare/v1.110.3...v1.110.4) (2026-01-07)
 
 

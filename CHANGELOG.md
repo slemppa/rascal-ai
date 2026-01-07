@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.110.1](https://github.com/slemppa/rascal-ai/compare/v1.110.0...v1.110.1) (2026-01-07)
+
+
+### 🐛 Bug Fixes
+
+* **dashboard:** fix social analytics, add filters and rm unused metric ([1916322](https://github.com/slemppa/rascal-ai/commit/1916322957854075ad9794fe2cb19cc0b66c0f59))
+
 ## [1.110.0](https://github.com/slemppa/rascal-ai/compare/v1.109.1...v1.110.0) (2026-01-05)
 
 

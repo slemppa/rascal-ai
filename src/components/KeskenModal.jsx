@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { getUserOrgId } from '../lib/getUserOrgId'
 import Button from './Button'
@@ -11,9 +12,11 @@ const KeskenModal = ({
   user,
   onClose, 
   onSave,
-  t,
+  t: tProp,
   userAccountType 
 }) => {
+  const { t: tHook } = useTranslation('common')
+  const t = tProp || tHook
   const [formData, setFormData] = useState({
     caption: ''
   })
@@ -528,7 +531,7 @@ const KeskenModal = ({
                                     disabled={imageLoading}
                                     title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
                                   >
-                                    {imageLoading ? 'Ladataan...' : 'Lisää media'}
+                                    {imageLoading ? t('media.buttons.loading') : t('media.buttons.addMedia')}
                                   </Button>
                                   {showMediaSourceMenu && (
                                     <div 
@@ -601,7 +604,7 @@ const KeskenModal = ({
                                   disabled={imageLoading}
                                   title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
                                 >
-                                  {imageLoading ? 'Ladataan...' : 'Lisää media'}
+                                  {imageLoading ? t('media.buttons.loading') : t('media.buttons.addMedia')}
                                 </Button>
                               )}
                             </div>
@@ -625,7 +628,7 @@ const KeskenModal = ({
                         {imageLoading && (
                           <div className="image-loading-overlay">
                             <div className="loading-spinner"></div>
-                            <p>Ladataan uutta kuvaa...</p>
+                            <p>{t('media.buttons.loading')}</p>
                           </div>
                         )}
                         <img 
@@ -650,7 +653,7 @@ const KeskenModal = ({
                                   disabled={imageLoading}
                                   title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
                                 >
-                                  {imageLoading ? 'Ladataan...' : 'Vaihda media'}
+                                  {imageLoading ? t('media.buttons.loading') : t('media.buttons.changeMedia')}
                                 </Button>
                                 {showMediaSourceMenu && (
                                   <div 
@@ -724,7 +727,7 @@ const KeskenModal = ({
                                 style={{ marginRight: '8px' }}
                                 title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
                               >
-                                {imageLoading ? 'Ladataan...' : 'Vaihda media'}
+                                {imageLoading ? t('media.buttons.loading') : t('media.buttons.changeMedia')}
                               </Button>
                             )}
                             <Button
@@ -924,7 +927,7 @@ const KeskenModal = ({
                     onClose()
                   }}
                 >
-                  Peruuta
+                  {t('common.cancel')}
                 </Button>
               </div>
               <div className="modal-actions-right">
@@ -933,7 +936,7 @@ const KeskenModal = ({
                   variant="primary"
                   disabled={loading || formData.caption.length > 2000}
                 >
-                  {loading ? 'Tallennetaan...' : 'Tallenna'}
+                  {loading ? t('ui.buttons.saving') : t('common.save')}
                 </Button>
               </div>
             </div>
@@ -1078,7 +1081,7 @@ const KeskenModal = ({
                                         disabled={imageLoading}
                                         title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
                                       >
-                                        {imageLoading ? 'Ladataan...' : 'Lisää media'}
+                                        {imageLoading ? t('media.buttons.loading') : t('media.buttons.addMedia')}
                                       </Button>
                                       {showMediaSourceMenu && (
                                         <div 
@@ -1151,7 +1154,7 @@ const KeskenModal = ({
                                       disabled={imageLoading}
                                       title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
                                     >
-                                      {imageLoading ? 'Ladataan...' : 'Lisää media'}
+                                      {imageLoading ? t('media.buttons.loading') : t('media.buttons.addMedia')}
                                     </Button>
                                   )}
                                 </div>
@@ -1175,7 +1178,7 @@ const KeskenModal = ({
                             {imageLoading && (
                               <div className="image-loading-overlay">
                                 <div className="loading-spinner"></div>
-                                <p>Ladataan uutta kuvaa...</p>
+                                <p>{t('media.buttons.loading')}</p>
                               </div>
                             )}
                             <img 
@@ -1200,7 +1203,7 @@ const KeskenModal = ({
                                       disabled={imageLoading}
                                       title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
                                     >
-                                      {imageLoading ? 'Ladataan...' : 'Vaihda media'}
+                                      {imageLoading ? t('media.buttons.loading') : t('media.buttons.changeMedia')}
                                     </Button>
                                     {showMediaSourceMenu && (
                                       <div 
@@ -1274,7 +1277,7 @@ const KeskenModal = ({
                                     style={{ marginRight: '8px' }}
                                     title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
                                   >
-                                    {imageLoading ? 'Ladataan...' : 'Vaihda media'}
+                                    {imageLoading ? t('media.buttons.loading') : t('media.buttons.changeMedia')}
                                   </Button>
                                 )}
                                 <Button
@@ -1307,7 +1310,7 @@ const KeskenModal = ({
                                   disabled={imageLoading}
                                   title="Sallitut muodot: JPG, PNG, GIF, WebP, MP4, WebM, MOV (max 10MB)"
                                 >
-                                  {imageLoading ? 'Ladataan...' : 'Lisää media'}
+                                  {imageLoading ? t('media.buttons.loading') : t('media.buttons.addMedia')}
                                 </Button>
                                 {showMediaSourceMenu && (
                                   <div 
@@ -1483,7 +1486,7 @@ const KeskenModal = ({
                       variant="primary"
                       disabled={loading || formData.caption.length > 2000}
                     >
-                      {loading ? 'Tallennetaan...' : 'Tallenna'}
+                      {loading ? t('ui.buttons.saving') : t('ui.buttons.save')}
                     </Button>
                   </div>
                 </div>

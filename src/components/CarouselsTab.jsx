@@ -162,7 +162,7 @@ export default function CarouselsTab({
               disabled={saving}
               className="carousels-save-btn"
             >
-              {saving ? 'Tallennetaan...' : 'Tallenna'}
+              {saving ? t('ui.buttons.saving') : t('ui.buttons.save')}
             </button>
           )}
         </div>

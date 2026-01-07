@@ -271,6 +271,74 @@ export default function DashboardPage() {
   const [selectedPost, setSelectedPost] = useState(null)
   const [selectedFilter, setSelectedFilter] = useState('all')
   const [selectedTimeFilter, setSelectedTimeFilter] = useState('7days')
+  
+  // Mixpost Analytics State
+  const [mixpostData, setMixpostData] = useState(null)
+  const [mixpostLoading, setMixpostLoading] = useState(true)
+  const [mixpostTimeFilter, setMixpostTimeFilter] = useState('all') // 'all', 'week', 'month'
+
+  useEffect(() => {
+    const fetchMixpostAnalytics = async () => {
+      setMixpostLoading(true)
+      try {
+        // Laske aikaväli filtterista
+        const now = new Date()
+        let fromDate = null
+        let toDate = now.toISOString().split('T')[0]
+        
+        if (mixpostTimeFilter === 'week') {
+          fromDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+        } else if (mixpostTimeFilter === 'month') {
+          fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+        } else if (mixpostTimeFilter === 'last_week') {
+          // Viime viikko (7-14 päivää sitten)
+          const end = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+          const start = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000)
+          toDate = end.toISOString().split('T')[0]
+          fromDate = start.toISOString().split('T')[0]
+        } else if (mixpostTimeFilter === 'last_month') {
+          // Viime kuukausi (30-60 päivää sitten)
+          const end = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+          const start = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000)
+          toDate = end.toISOString().split('T')[0]
+          fromDate = start.toISOString().split('T')[0]
+        }
+        
+        // Kutsu omaa backend-endpointia, joka hoitaa datan haun ja laskennan
+        const params = new URLSearchParams()
+        
+        if (fromDate) {
+          params.append('from', fromDate)
+          params.append('to', toDate)
+        }
+        
+        const session = await supabase.auth.getSession()
+        const token = session?.data?.session?.access_token
+
+        if (!token) {
+          console.warn('No auth token available for Mixpost analytics')
+          setMixpostLoading(false)
+          return
+        }
+        
+        const response = await axios.get(`/api/analytics/social-stats?${params.toString()}`, {
+          headers: {
+            'Authorization': `Bearer ${token}` 
+          }
+        })
+        
+        setMixpostData(response.data)
+      } catch (error) {
+        console.error('Error fetching Mixpost analytics:', error)
+        setMixpostData(null)
+      } finally {
+        setMixpostLoading(false)
+      }
+    }
+    
+    fetchMixpostAnalytics()
+  }, [mixpostTimeFilter])
+
   // Analytics filtteröinnit käsitellään iframe:ssä
 
   // Chart data - käytetään oikeita tietoja Supabase:sta
@@ -779,7 +847,7 @@ export default function DashboardPage() {
           const statusMap = {
             'published': 'Julkaistu',
             'scheduled': 'Aikataulutettu', 
-            'draft': 'Luonnos',
+            'draft': t('status.draft'),
             'failed': 'Epäonnistui'
           }
           
@@ -1114,6 +1182,113 @@ export default function DashboardPage() {
             <div style={{ color: '#6b7280', fontSize: 13, marginTop: 8 }}>Dummy chart – korvaa oikealla myöhemmin</div>
           </div>
           */}
+          {/* Mixpost Analytics Section */}
+          <div className={styles.card} style={{ gridColumn: 'span 3', minHeight: 180 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <div style={{ fontWeight: 700, fontSize: 18, color: '#1f2937' }}>
+                {t('dashboard.mixpost.title')}
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {/* Time Filter */}
+                <div style={{ display: 'flex', gap: 4 }}>
+                  <button
+                    onClick={() => setMixpostTimeFilter('all')}
+                    className={styles['filter-btn'] + ' ' + (mixpostTimeFilter === 'all' ? styles['filter-active'] : '')}
+                  >
+                    {t('dashboard.metrics.filters.all')}
+                  </button>
+                  <button
+                    onClick={() => setMixpostTimeFilter('week')}
+                    className={styles['filter-btn'] + ' ' + (mixpostTimeFilter === 'week' ? styles['filter-active'] : '')}
+                  >
+                    {t('dashboard.metrics.filters.week')}
+                  </button>
+                  <button
+                    onClick={() => setMixpostTimeFilter('month')}
+                    className={styles['filter-btn'] + ' ' + (mixpostTimeFilter === 'month' ? styles['filter-active'] : '')}
+                  >
+                    {t('dashboard.metrics.filters.month')}
+                  </button>
+                  <button
+                    onClick={() => setMixpostTimeFilter('last_week')}
+                    className={styles['filter-btn'] + ' ' + (mixpostTimeFilter === 'last_week' ? styles['filter-active'] : '')}
+                  >
+                    {t('dashboard.metrics.filters.last_week')}
+                  </button>
+                  <button
+                    onClick={() => setMixpostTimeFilter('last_month')}
+                    className={styles['filter-btn'] + ' ' + (mixpostTimeFilter === 'last_month' ? styles['filter-active'] : '')}
+                  >
+                    {t('dashboard.metrics.filters.last_month')}
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            {/* Metrics Grid */}
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+              gap: 12 
+            }}>
+              {mixpostLoading ? (
+                Array(5).fill(0).map((_, i) => (
+                  <div key={i} style={{ 
+                    background: '#f9fafb', 
+                    borderRadius: 12, 
+                    padding: 16,
+                    border: '1px solid #e5e7eb'
+                  }}>
+                    <div style={{ background: '#e5e7eb', height: 14, width: 100, borderRadius: 4, marginBottom: 12 }}></div>
+                    <div style={{ background: '#e5e7eb', height: 28, width: 60, borderRadius: 6 }}></div>
+                  </div>
+                ))
+              ) : (() => {
+                const metrics = mixpostData
+                if (!metrics) return <div>{t('dashboard.mixpost.noData')}</div>
+                
+                return [
+                  { label: t('dashboard.mixpost.metrics.fbEngagements'), value: metrics.fbEngagements.toLocaleString('fi-FI'), color: '#1877f2' },
+                  { label: t('dashboard.mixpost.metrics.fbImpressions'), value: metrics.fbImpressions.toLocaleString('fi-FI'), color: '#1877f2' },
+                  { label: t('dashboard.mixpost.metrics.igReach'), value: metrics.igReach.toLocaleString('fi-FI'), color: '#e4405f' },
+                  { label: t('dashboard.mixpost.metrics.igFollowers'), value: metrics.igFollowers.toLocaleString('fi-FI'), color: '#e4405f' }
+                ].map((metric, i) => (
+                  <div key={i} style={{
+                    background: '#fff',
+                    borderRadius: 12,
+                    padding: 16,
+                    border: '1px solid #e5e7eb'
+                  }}>
+                    <div style={{ 
+                      fontSize: 11, 
+                      fontWeight: 600, 
+                      color: '#6b7280', 
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      marginBottom: 8
+                    }}>
+                      {metric.label}
+                    </div>
+                    <div style={{ 
+                      fontSize: 28, 
+                      fontWeight: 700, 
+                      color: '#1f2937',
+                      marginBottom: 4
+                    }}>
+                      {metric.value}
+                    </div>
+                    <div style={{ 
+                      width: 40, 
+                      height: 3, 
+                      background: metric.color, 
+                      borderRadius: 2 
+                    }}></div>
+                  </div>
+                ))
+              })()}
+            </div>
+          </div>
+
           {/* Tulevat julkaisut -kortti: mobiiliystävällinen */}
           <div className={styles.card} style={{ gridColumn: 'span 3', minHeight: 180, display: 'flex', flexDirection: 'column' }}>
             <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>{t('dashboard.upcoming.title')}</div>

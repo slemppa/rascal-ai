@@ -252,7 +252,8 @@ export const AutoLogoutProvider = ({ children }) => {
       document.addEventListener(event, handleActivity, { passive: true })
     })
 
-    // Lisää visibility change listener
+    // Lisää visibility change listener - POISTETTU KÄYTÖSTÄ RELOAD-ONGELMAN VUOKSI
+    /*
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         // Tarkista inaktiivisuus kun välilehti tulee aktiiviseksi
@@ -264,12 +265,13 @@ export const AutoLogoutProvider = ({ children }) => {
     }
 
     document.addEventListener('visibilitychange', handleVisibilityChange)
+    */
 
     return () => {
       ACTIVITY_EVENTS.forEach(event => {
         document.removeEventListener(event, handleActivity)
       })
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      // document.removeEventListener('visibilitychange', handleVisibilityChange)
       clearTimers()
     }
   }, [isActive, resetTimers, checkInactivity, clearTimers, user])

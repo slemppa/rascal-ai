@@ -1247,7 +1247,7 @@ export default function ContentStrategyPage() {
                           fontWeight: 600,
                           textTransform: 'uppercase'
                         }}>
-                          {item.approved ? (i18n.language === 'fi' ? 'Hyväksytty' : 'Approved') : (i18n.language === 'fi' ? 'Odottaa' : 'Pending')}
+                          {item.approved ? t('strategy.status.approved') : t('strategy.status.pending')}
                         </div>
                       </div>
                     </div>
@@ -1277,7 +1277,7 @@ export default function ContentStrategyPage() {
                               }}
                               onClick={() => handleApproveStrategy(item)}
                             >
-                              {i18n.language === 'fi' ? 'Hyväksy strategia' : 'Approve strategy'}
+                              {t('strategy.buttons.approveStrategy')}
                             </button>
                           )}
                           <button 
@@ -1403,7 +1403,7 @@ export default function ContentStrategyPage() {
                   fontWeight: '700', 
                   color: '#374151' 
                 }}>
-                  {i18n.language === 'fi' ? 'Muokkaa strategiaa' : 'Edit strategy'}
+                  {t('strategy.buttons.editStrategy')}
                 </h3>
                 <span style={{ fontSize: 13, color: '#6b7280' }}>
                   {generatedCountLoading 
@@ -1490,7 +1490,7 @@ export default function ContentStrategyPage() {
                   onMouseOut={(e) => e.target.style.background = '#f59e0b'}
                   onClick={() => handleSaveAndApprove(strategy.find(s => s.id === editId))}
                 >
-                  {i18n.language === 'fi' ? 'Tallenna ja hyväksy' : 'Save and approve'}
+                  {t('strategy.buttons.saveAndApprove')}
                 </button>
               )}
               <button 
@@ -2576,7 +2576,7 @@ export default function ContentStrategyPage() {
                 boxSizing: 'border-box',
                 resize: 'vertical'
               }}
-              placeholder="Kuvaile yrityksen äänenlaatu ja TOV (Tone of Voice)..."
+              placeholder={t('placeholders.describeToneOfVoice')}
             />
             
             <div style={{ 
@@ -2807,7 +2807,7 @@ export default function ContentStrategyPage() {
                   }
                 }}
               >
-                {analyzingTov ? 'Analysoidaan...' : 'Aloita analyysi'}
+                {analyzingTov ? t('strategy.buttons.analyzing') : t('strategy.buttons.startAnalysis')}
               </button>
             </div>
           </div>

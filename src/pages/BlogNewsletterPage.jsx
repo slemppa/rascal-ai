@@ -14,7 +14,7 @@ import '../components/ModalComponents.css'
 import './BlogNewsletterPage.css'
 
 // Data muunnos funktio Supabase datasta
-const transformSupabaseData = (supabaseData) => {
+const transformSupabaseData = (supabaseData, t) => {
   if (!supabaseData || !Array.isArray(supabaseData)) {
     return []
   }
@@ -23,26 +23,26 @@ const transformSupabaseData = (supabaseData) => {
   
   const transformed = supabaseData.map(item => {
 
-    // Muunnetaan Supabase status suomeksi
+    // Muunnetaan Supabase status käännöksillä
     const statusMap = {
-      'Draft': 'Luonnos',
-      'In Progress': 'Kesken', 
-      'Under Review': 'Tarkistuksessa',
-      'Scheduled': 'Aikataulutettu',
-      'Done': 'Valmis',
-      'Published': 'Julkaistu',
-      'Deleted': 'Poistettu',
-      'Archived': 'Arkistoitu'
+      'Draft': t('status.draft'),
+      'In Progress': t('status.inProgress'), 
+      'Under Review': t('status.underReview'),
+      'Scheduled': t('status.scheduled'),
+      'Done': t('status.done'),
+      'Published': t('status.published'),
+      'Deleted': t('status.deleted'),
+      'Archived': t('status.archived')
     }
     
-    let status = statusMap[item.status] || 'Luonnos'
+    let status = statusMap[item.status] || t('status.draft')
     
     // Jos status on "Done" mutta publish_date on tulevaisuudessa, se on "Aikataulutettu"
     const now = new Date()
     const publishDate = item.publish_date ? new Date(item.publish_date) : null
     
-    if (publishDate && publishDate > now && status === 'Julkaistu') {
-      status = 'Aikataulutettu'
+    if (publishDate && publishDate > now && status === t('status.published')) {
+      status = t('status.scheduled')
     }
     
     // Käytetään placeholder-kuvaa jos media_urls ei ole saatavilla tai on tyhjä
@@ -52,11 +52,11 @@ const transformSupabaseData = (supabaseData) => {
     
     const transformedItem = {
       id: item.id,
-      title: item.idea || item.caption || 'Nimetön sisältö',
+      title: item.idea || item.caption || t('general.untitledContent'),
       status: status,
       thumbnail: thumbnail,
-      caption: item.caption || item.idea || 'Ei kuvausta',
-      type: item.type || 'Blog',
+      caption: item.caption || item.idea || t('general.noDescription'),
+      type: item.type || t('general.blog'),
       idea: item.idea || '',
       blog_post: item.blog_post || '',
       meta_description: item.meta_description || '',
@@ -130,7 +130,7 @@ function ContentCard({ content, onView, onPublish, onArchive, onDownload, onEdit
             </h3>
             <div className="content-badges">
               <span className="content-type">
-                {content.type === 'Blog' ? 'Blog' : content.type === 'Newsletter' ? 'Newsletter' : content.type}
+                {content.type === 'Blog' ? t('general.blog') : content.type === 'Newsletter' ? t('general.newsletter') : content.type}
               </span>
               <span className={`content-status ${content.status.toLowerCase().replace(' ', '-')}`}>
                 {content.status}
@@ -234,7 +234,7 @@ export default function BlogNewsletterPage() {
       // Hae organisaation ID (public.users.id)
       const orgId = await getUserOrgId(user.id)
       if (!orgId) {
-        throw new Error('Organisaation ID ei löytynyt')
+        throw new Error(t('alerts.error.organizationIdNotFound'))
       }
       
       // Haetaan organisaation Blog ja Newsletter sisältö
@@ -249,7 +249,7 @@ export default function BlogNewsletterPage() {
         throw error
       }
       
-      const transformedData = transformSupabaseData(data)
+      const transformedData = transformSupabaseData(data, t)
       setContents(transformedData || [])
       
     } catch (err) {
@@ -649,7 +649,7 @@ export default function BlogNewsletterPage() {
       setTimeout(() => setToast({ visible: false, message: '' }), 2500)
     } catch (err) {
       console.error('Archive error:', err)
-      alert('Arkistointi epäonnistui: ' + err.message)
+      alert(t('alerts.error.archiveFailed', { error: err.message }))
     }
   }
 
@@ -679,7 +679,7 @@ export default function BlogNewsletterPage() {
       
     } catch (error) {
       console.error('Delete error:', error)
-      alert('Poisto epäonnistui: ' + error.message)
+      alert(t('alerts.error.deleteFailed', { error: error.message }))
     }
   }
 
@@ -1047,7 +1047,7 @@ export default function BlogNewsletterPage() {
                 
                 <div className="content-meta">
                   <span className="content-type">
-                {viewingContent.type === 'Blog' ? 'Blog' : 'Newsletter'}
+                {viewingContent.type === 'Blog' ? t('general.blog') : t('general.newsletter')}
                   </span>
                   <span className="content-date">
                     {viewingContent.createdAt ? new Date(viewingContent.createdAt).toLocaleDateString(i18n.language === 'fi' ? 'fi-FI' : 'en-US') : t('blogNewsletter.placeholders.noDate')}
@@ -1200,7 +1200,7 @@ export default function BlogNewsletterPage() {
                     required
                     className="form-input"
                     defaultValue={editingContent.title}
-                    placeholder="Sisällön otsikko"
+                    placeholder={t('placeholders.contentTitle')}
                     style={{
                       border: 'none',
                       outline: 'none',

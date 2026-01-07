@@ -29,8 +29,8 @@ const SocialMediaConnect = () => {
   const [connectionError, setConnectionError] = useState(null);
 
   const platforms = [
-    { id: 'instagram', name: 'Instagram', icon: '📷' },
-    { id: 'facebook', name: 'Facebook', icon: '📘' },
+    { id: 'instagram', name: t('social.platforms.instagram'), icon: '📷' },
+    { id: 'facebook', name: t('social.platforms.facebook'), icon: '📘' },
     { id: 'linkedin', name: 'LinkedIn', icon: '💼' }
   ];
 

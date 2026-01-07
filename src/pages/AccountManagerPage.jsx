@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { getCurrentUser } from '../utils/userApi'
 import { useAuth } from '../contexts/AuthContext'
 import './AccountManagerPage.css'
 
 export default function AccountManagerPage() {
+  const { t } = useTranslation('common')
   const { user } = useAuth()
   const navigate = useNavigate()
   const [accounts, setAccounts] = useState([])
@@ -157,7 +159,7 @@ export default function AccountManagerPage() {
         <div className="search-container">
           <input
             type="text"
-            placeholder="Etsi käyttäjän perusteella..."
+            placeholder={t('placeholders.searchByUser')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"

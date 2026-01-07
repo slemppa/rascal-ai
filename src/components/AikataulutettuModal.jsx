@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import Button from './Button'
@@ -10,8 +11,10 @@ const AikataulutettuModal = ({
   onClose, 
   onEdit,  // ManagePostsPage käyttää
   onSave,  // DashboardPage käyttää
-  t 
+  t: tProp 
 }) => {
+  const { t: tHook } = useTranslation('common')
+  const t = tProp || tHook
   const { user } = useAuth()
   
   // Funktio kanavan kentän renderöimiseen
@@ -342,7 +345,7 @@ const AikataulutettuModal = ({
         const helsinkiSelected = new Date(selectedDateTime.toLocaleString("en-US", {timeZone: "Europe/Helsinki"}))
         
         if (helsinkiSelected <= helsinkiNow) {
-          throw new Error('Valitse tulevaisuuden päivämäärä ja aika')
+          throw new Error(t('schedule.messages.selectFutureDateTime'))
         }
         
         // Mixpost API:n dokumentaation mukaan: lähetä lokaali päivä ja aika aikavyöhykkeen kanssa
@@ -518,7 +521,7 @@ const AikataulutettuModal = ({
       <div className="modal-container edit-post-modal">
         <div className="modal-header">
           <h2 className="modal-title">
-            {editingPost?.status === 'Luonnos' ? 'Luonnos postaus' : 'Aikataulutettu postaus'}
+            {editingPost?.status === 'Luonnos' ? t('schedule.messages.draftPost') : t('schedule.messages.scheduledPost')}
           </h2>
           <button
             onClick={onClose}
@@ -808,7 +811,7 @@ const AikataulutettuModal = ({
                 onClick={onClose}
                 disabled={loading}
               >
-                Peruuta
+                {t('common.cancel')}
               </Button>
             </div>
             <div className="modal-actions-right">
@@ -818,7 +821,7 @@ const AikataulutettuModal = ({
                 onClick={handleSave}
                 disabled={loading || formData.content.length > 2000 || Object.values(channelContents).some(content => content.length > 2000)}
               >
-                {loading ? 'Tallennetaan...' : 'Tallenna'}
+                {loading ? t('ui.buttons.saving') : t('common.save')}
               </Button>
             </div>
           </div>

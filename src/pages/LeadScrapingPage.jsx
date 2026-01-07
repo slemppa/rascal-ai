@@ -1400,14 +1400,14 @@ export default function LeadScrapingPage() {
               setCompanyCityExcludes('')
               setLeadLimit(10000)
             }}>
-              Reset Filters
+              {t('leadScraping.buttons.resetFilters')}
             </Button>
             <Button 
               variant="primary" 
               onClick={handleStartScraping}
               disabled={loading}
             >
-              {loading ? 'Aloitetaan...' : 'Aloita'}
+              {loading ? t('leadScraping.buttons.starting') : t('leadScraping.buttons.start')}
             </Button>
           </div>
         </div>
@@ -2014,7 +2014,7 @@ export default function LeadScrapingPage() {
                 onClick={saveBuyerPersona}
                 disabled={savingPersona}
               >
-                {savingPersona ? 'Tallennetaan...' : 'Tallenna'}
+                {savingPersona ? t('ui.buttons.saving') : t('ui.buttons.save')}
               </Button>
             </div>
           </div>

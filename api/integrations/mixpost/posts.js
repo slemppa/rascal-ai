@@ -19,6 +19,9 @@ async function handler(req, res) {
     
     // req.organization.id = organisaation ID (public.users.id)
     // req.supabase = authenticated Supabase client
+    if (!req.organization) {
+      return res.status(401).json({ error: 'Unauthorized: Organization not found' })
+    }
     const orgId = req.organization.id
 
     // Hae Mixpost-konfiguraatio käyttäen organisaation ID:tä

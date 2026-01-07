@@ -19,17 +19,17 @@ export default defineConfig({
   server: {
     // Automaattinen päivitys ja HMR
     hmr: {
-      overlay: true, // Näyttää virheet overlayllä
+      overlay: false, // Ei häiritsevää overlayta
       // HMR asetukset
       protocol: 'ws', // WebSocket protokolla
       host: 'localhost', // HMR host
+      clientPort: 5173, // Eksplisiittinen portti auttaa joskus proxy-ongelmissa
     },
     watch: {
       usePolling: false, // Ei polling:ia
       interval: 100, // Tarkista muutokset 100ms välein
+      ignored: ['**/locales/**/*.json'], // Ignoroi lokalisointitiedostojen muutokset
     },
-    // Automaattinen sivu päivitys
-    liveReload: true,
     // Salli yhteys mistä tahansa IP:stä (mobiili)
     host: '0.0.0.0',
     port: 5173,

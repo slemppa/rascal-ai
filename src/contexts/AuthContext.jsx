@@ -182,9 +182,29 @@ export const AuthProvider = ({ children }) => {
             } 
           })
         } else if (session?.user) {
-          // Tarkista onko tämä SIGNED_IN event (uusi kirjautuminen)
-          const isSignIn = event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED'
+          // Tarkista onko tämä SIGNED_IN event (uusi kirjautuminen) vai TOKEN_REFRESHED
+          const isNewSignIn = event === 'SIGNED_IN'
+          const isTokenRefresh = event === 'TOKEN_REFRESHED'
           
+          // TOKEN_REFRESHED tai SIGNED_IN olemassa olevalle käyttäjälle: 
+          // Älä hae profiilia uudelleen, päivitä vain session
+          if ((isTokenRefresh || (isNewSignIn && user && session.user.id === user.id)) && user) {
+            console.log('[AuthContext] Session update (refresh/sync), keeping existing user')
+            // Päivitä vain session-tiedot, säilytä systemRole ja muut profiilit
+            setUser(prev => ({
+              ...prev,
+              ...session.user,
+              // Säilytä olemassa olevat profiilit
+              systemRole: prev.systemRole,
+              features: prev.features,
+              organizationId: prev.organizationId,
+              organizationRole: prev.organizationRole,
+              company_id: prev.company_id
+            }))
+            return
+          }
+          
+          // SIGNED_IN tai ensimmäinen lataus: Hae profiili
           try {
             setLoading(true)
             setProfileLoaded(false) // Aloita lataus

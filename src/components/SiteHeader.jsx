@@ -20,9 +20,9 @@ export default function SiteHeader({ onOpenSignIn }) {
   return (
     <header className="header">
       <div className="logo-section">
-        <Link to="/" className="logo-link" aria-label="Siirry etusivulle">
+        <Link to="/" className="logo-link" aria-label={t('general.home')}>
           <div className="logo-icon">
-            <img src="/favicon.png" alt="Rascal AI Logo" />
+            <img src="/favicon.png" alt="Rascal AI" />
           </div>
           <h2 className="logo-text">Rascal AI</h2>
         </Link>

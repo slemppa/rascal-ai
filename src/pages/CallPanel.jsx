@@ -721,7 +721,7 @@ export default function CallPanel() {
       if (!response.ok) {
         // Tarkista onko kyseessä N8N workflow virhe
         if (result.error && result.error.includes('N8N workflow ei ole aktiivinen')) {
-          alert('⚠️ Inbound-asetukset tallennettu! N8N workflow ei ole vielä aktiivinen, mutta data on lähetetty.')
+          alert(t('alerts.success.inboundSettingsSaved'))
         } else {
           throw new Error(result.error || 'Inbound-asetusten tallennus epäonnistui')
         }
@@ -774,7 +774,7 @@ export default function CallPanel() {
       if (!response.ok) {
         // Tarkista onko kyseessä N8N workflow virhe
         if (result.error && result.error.includes('N8N workflow ei ole aktiivinen')) {
-          alert('⚠️ Inbound-asetukset tallennettu! N8N workflow ei ole vielä aktiivinen, mutta data on lähetetty.')
+          alert(t('alerts.success.inboundSettingsSaved'))
         } else {
           throw new Error(result.error || 'Inbound-asetusten tallennus epäonnistui')
         }
@@ -823,7 +823,7 @@ export default function CallPanel() {
         const { error } = await supabase.from('call_types').update(fields).eq('id', editingCallType.id)
 
         if (!error) {
-          alert('Puhelun tyyppi päivitetty!')
+          alert(t('alerts.success.callTypeUpdated'))
           fetchCallTypes() // Päivitä lista
         } else {
           throw new Error('Päivitys epäonnistui')
@@ -838,7 +838,7 @@ export default function CallPanel() {
       setShowEditModal(false)
     } catch (error) {
       console.error('Puhelun tyypin tallennus epäonnistui:', error)
-      alert('Puhelun tyypin tallennus epäonnistui: ' + (error.message || error))
+      alert(t('alerts.error.callTypeSaveFailed', { error: error.message || error }))
     }
   }
 
@@ -1133,7 +1133,7 @@ export default function CallPanel() {
   const handleInboundAIEnhancement = async () => {
     try {
       if (!inboundSettingsId) {
-        alert('Tallenna ensin inbound-asetukset ennen AI-parannusta!')
+        alert(t('calls.alerts.saveInboundFirst'))
         return
       }
 
@@ -1162,7 +1162,7 @@ export default function CallPanel() {
       }
 
       const result = await response.json()
-      alert('Inbound-asetukset lähetetty AI-parannukseen! Saat parannetun version pian.')
+      alert(t('alerts.success.aiEnhancementSent'))
       // Merkitse että AI-parannus on lähetetty
       setAiEnhancementSent(true)
       // Sulje modaali onnistuneen lähetyksen jälkeen
@@ -1170,7 +1170,7 @@ export default function CallPanel() {
       setEditingInboundSettings(null)
     } catch (error) {
       console.error('AI-parannuksen lähetys epäonnistui:', error)
-      alert('AI-parannuksen lähetys epäonnistui: ' + (error.message || error))
+      alert(t('alerts.error.aiEnhancementFailed', { error: error.message || error }))
     }
   }
 
@@ -1747,7 +1747,7 @@ export default function CallPanel() {
       if (error) throw error
       await fetchCallLogs(currentPage)
     } catch (e) {
-      alert('Puhelun tyypin vaihto epäonnistui: ' + (e.message || e))
+      alert(t('alerts.error.callTypeChangeFailed', { error: e.message || e }))
     } finally {
       setUpdatingLogIds(prev => ({ ...prev, [log.id]: false }))
     }
@@ -1767,7 +1767,7 @@ export default function CallPanel() {
       if (error) throw error
       await fetchCallLogs(currentPage)
     } catch (e) {
-      alert('Puhelun peruutus epäonnistui: ' + (e.message || e))
+      alert(t('alerts.error.callCancelFailed', { error: e.message || e }))
     } finally {
       setUpdatingLogIds(prev => ({ ...prev, [log.id]: false }))
     }
@@ -1954,11 +1954,11 @@ export default function CallPanel() {
       setActiveTab('calls')
       
       // Näytä ilmoitus
-      alert(`Kontakti "${contact.name}" lisätty mass-calls -palikkaan! Siirry "Puhelut" -välilehdelle aloittaaksesi soitot.`)
+      alert(t('alerts.success.contactAdded', { name: contact.name }))
       
     } catch (error) {
       console.error('Frontend: Error starting mass calls:', error)
-      alert('Virhe mass-calls -palikan alustamisessa')
+      alert(t('alerts.error.massCallsInitFailed'))
     }
   }
 
@@ -1974,11 +1974,11 @@ export default function CallPanel() {
       setActiveTab('calls')
       
       // Näytä ilmoitus
-      alert(`Kontakti "${contact.name}" lisätty yksittäiseen soittoon! Siirry "Puhelut" -välilehdelle aloittaaksesi soiton.`)
+      alert(t('alerts.success.contactAddedSingle', { name: contact.name }))
       
     } catch (error) {
       console.error('Frontend: Error starting single call:', error)
-      alert('Virhe yksittäisen soiton alustamisessa')
+      alert(t('alerts.error.singleCallInitFailed'))
     }
   }
 
@@ -2013,7 +2013,7 @@ export default function CallPanel() {
       setActiveTab('calls')
     } catch (error) {
       console.error('Virhe valittujen kontaktien lisäämisessä mass-calls -palikkaan:', error)
-      alert('Virhe valittujen kontaktien lisäämisessä mass-calls -palikkaan')
+      alert(t('alerts.error.contactsAddFailed'))
     }
   }
 
@@ -2128,7 +2128,7 @@ export default function CallPanel() {
         throw new Error(data?.error || 'Massapuhelujen aloitus epäonnistui')
       }
 
-      alert(`✅ Massapuhelut käynnistetty!\n\nLisätty: ${data.startedCalls ?? data.totalCalls ?? ''} puhelua`)
+      alert(t('alerts.success.massCallsStarted', { count: data.startedCalls ?? data.totalCalls ?? '' }))
       setShowMassCallModal(false)
       setMassCallStep(1)
       setMassCallSheetUrl('')
@@ -2284,7 +2284,7 @@ export default function CallPanel() {
       successCount = callLogs.length
       
       // Näytä onnistumisviesti ja sulje modaali
-      alert(`✅ Massapuhelut käynnistetty onnistuneesti!\n\nAloitettu: ${successCount} puhelua`)
+      alert(t('alerts.success.massCallsStarted', { count: successCount }))
       setShowMassCallModal(false)
       setMassCallStep(1)
       setMassCallSheetUrl('')
@@ -2349,7 +2349,7 @@ export default function CallPanel() {
         throw new Error(data?.error || 'Ajastuksen tallennus epäonnistui')
       }
 
-      alert(`✅ Puhelut ajastettu!\n\nPäivä: ${massCallScheduledDate} klo ${massCallScheduledTime}\nYhteensä: ${data.startedCalls ?? data.totalCalls ?? ''} puhelua`)
+      alert(t('alerts.success.callsScheduled', { date: massCallScheduledDate, time: massCallScheduledTime, count: data.startedCalls ?? data.totalCalls ?? '' }))
       setShowMassCallModal(false)
       setMassCallStep(1)
       setMassCallSheetUrl('')
@@ -2506,7 +2506,7 @@ export default function CallPanel() {
       successCount = scheduledCallLogs.length
       
       // Näytä onnistumisviesti ja sulje modaali
-      alert(`✅ Puhelut ajastettu onnistuneesti!\n\nAjastettu: ${massCallScheduledDate} klo ${massCallScheduledTime}\n\nYhteensä: ${successCount} puhelua`)
+      alert(t('alerts.success.callsScheduled', { date: massCallScheduledDate, time: massCallScheduledTime, count: successCount }))
       setShowMassCallModal(false)
       setMassCallStep(1)
       setMassCallSheetUrl('')
@@ -3062,7 +3062,7 @@ export default function CallPanel() {
                             transition: 'background-color 0.2s'
                           }}
                           onClick={() => handleSort('call_date')}
-                          title="Klikkaa järjestääksesi päivämäärän mukaan"
+                          title={t('accessibility.sortByDate')}
                           onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e5e7eb'}
                           onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
                         >
@@ -3086,7 +3086,7 @@ export default function CallPanel() {
                             transition: 'background-color 0.2s'
                           }}
                           onClick={() => handleSort('duration')}
-                          title="Klikkaa järjestääksesi keston mukaan"
+                          title={t('accessibility.sortByDuration')}
                           onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e5e7eb'}
                           onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
                         >
@@ -3107,7 +3107,7 @@ export default function CallPanel() {
                             transition: 'background-color 0.2s'
                           }}
                           onClick={() => handleSort('call_status')}
-                          title="Klikkaa järjestääksesi tilan mukaan"
+                          title={t('accessibility.sortByStatus')}
                           onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e5e7eb'}
                           onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
                         >
@@ -4374,7 +4374,7 @@ export default function CallPanel() {
                       type="text" 
                       value={name} 
                       onChange={e => setName(e.target.value)} 
-                      placeholder="Matti Meikäläinen" 
+                      placeholder={t('placeholders.exampleName')} 
                       className="input" 
                       style={{ marginBottom: 20 }}
                     />

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import AdminTestimonialsPage from './AdminTestimonialsPage'
 import { Link } from 'react-router-dom'
 import ProtectedRoute from '../components/ProtectedRoute'
@@ -7,6 +8,7 @@ import { supabase } from '../lib/supabase'
 import './AdminBlogPage.css'
 
 export default function AdminBlogPage() {
+  const { t } = useTranslation('common')
   const [articles, setArticles] = useState([])
   const [activeTab, setActiveTab] = useState('articles')
   const [loading, setLoading] = useState(true)
@@ -659,7 +661,7 @@ export default function AdminBlogPage() {
                           <div className="cell category-cell">{article.category || '-'}</div>
                           <div className="cell date-cell">{article.published_at ? new Date(article.published_at).toLocaleDateString('fi-FI') : 'Ei päivää'}</div>
                           <div className="cell status-cell">
-                            <span className={`status-badge ${article.published ? 'published' : 'draft'}`}>{article.published ? 'Julkaistu' : 'Luonnos'}</span>
+                            <span className={`status-badge ${article.published ? 'published' : 'draft'}`}>{article.published ? t('status.published') : t('status.draft')}</span>
                           </div>
                           <div className="cell actions-cell">
                             <button onClick={() => handleEdit(article)} className="btn btn-small btn-secondary">Muokkaa</button>

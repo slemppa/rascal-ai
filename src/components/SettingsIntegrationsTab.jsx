@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import axios from 'axios'
@@ -103,6 +104,7 @@ const AVAILABLE_INTEGRATIONS = [
 ]
 
 export default function SettingsIntegrationsTab() {
+  const { t } = useTranslation('common')
   const { user, organization } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const [integrations, setIntegrations] = useState([])
@@ -1063,7 +1065,7 @@ export default function SettingsIntegrationsTab() {
                         className="btn-primary"
                         disabled={saving}
                       >
-                        {saving ? 'Tallennetaan...' : integration.isConfigured ? 'Päivitä' : 'Tallenna'}
+                        {saving ? t('ui.buttons.saving') : integration.isConfigured ? t('ui.buttons.update') : t('ui.buttons.save')}
                       </button>
                       {integration.isConfigured && integration.id === 'wordpress' && (
                         <button

@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import Sidebar from '../components/Sidebar'
 import MobileNavigation from '../components/MobileNavigation'
 import './AdminBlogPage.css'
 import { supabase } from '../lib/supabase'
 
 export default function AdminTestimonialsPage({ embedded = false }) {
+  const { t } = useTranslation('common')
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({ id: null, name: '', title: '', company: '', quote: '', avatar_url: '', published: true })
@@ -274,7 +276,7 @@ export default function AdminTestimonialsPage({ embedded = false }) {
                   } finally {
                     setLoading(false)
                   }
-                }} disabled={loading || !form.name || !form.quote}>{form.id ? 'Tallenna' : 'Lähetä'}</button>
+                }} disabled={loading || !form.name || !form.quote}>{form.id ? t('ui.buttons.save') : t('ui.buttons.send')}</button>
                 {form.id && <button className="btn btn-secondary" onClick={() => setForm({ id: null, name: '', title: '', company: '', quote: '', avatar_url: '', published: true })}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>

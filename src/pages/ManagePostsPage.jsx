@@ -782,7 +782,7 @@ export default function ManagePostsPage() {
 
       // Tarkista että on valittu vähintään yksi kanava
       if (!selectedAccounts || selectedAccounts.length === 0) {
-        setErrorMessage('Valitse vähintään yksi somekanava')
+        setErrorMessage(t('posts.messages.selectAtLeastOneChannel'))
         return
       }
 
@@ -1489,26 +1489,26 @@ export default function ManagePostsPage() {
             className={`tab-button ${activeTab === 'kanban' ? 'active' : ''}`}
             onClick={() => setActiveTab('kanban')}
           >
-            Julkaisut
+            {t('posts.tabs.posts')}
           </button>
           <button 
             className={`tab-button ${activeTab === 'carousels' ? 'active' : ''}`}
             onClick={() => setActiveTab('carousels')}
           >
-            Karusellit
+            {t('posts.tabs.carousels')}
           </button>
           <button 
             className={`tab-button ${activeTab === 'calendar' ? 'active' : ''}`}
             onClick={() => setActiveTab('calendar')}
           >
-            Kalenteri
+            {t('posts.tabs.calendar')}
           </button>
           {user?.features && Array.isArray(user.features) && user.features.includes('UGC') && (
             <button 
               className={`tab-button ${activeTab === 'ugc' ? 'active' : ''}`}
               onClick={() => setActiveTab('ugc')}
             >
-              UGC
+              {t('posts.tabs.ugc')}
             </button>
           )}
         </div>
@@ -1518,7 +1518,7 @@ export default function ManagePostsPage() {
             onClick={() => navigate('/posts/kuvapankki')}
             style={{ marginLeft: 'auto' }}
           >
-            Kuvapankki
+            {t('posts.tabs.imageBank')}
           </button>
         )}
       </div>
@@ -1761,7 +1761,7 @@ export default function ManagePostsPage() {
                     name="caption"
                     rows={4}
                     className="form-textarea"
-                    placeholder="Lisää kuvaus tai konteksti julkaisulle..."
+                    placeholder={t('placeholders.addDescription')}
                   />
                 </div>
                 <div className="modal-actions">
@@ -2016,7 +2016,7 @@ export default function ManagePostsPage() {
                     name="caption"
                     rows={4}
                     className="form-textarea"
-                    placeholder="Kirjoita postauksen teksti..."
+                    placeholder={t('placeholders.writeContent')}
                   />
                 </div>
                 <div className="modal-actions">
@@ -2641,7 +2641,7 @@ export default function ManagePostsPage() {
                        rows={6}
                        className="form-textarea"
                        defaultValue={editingPost.caption || ""}
-                       placeholder="Kirjoita postauksen sisältö..."
+                       placeholder={t('placeholders.writeContent')}
                      />
                    </div>
                  )}
@@ -2736,7 +2736,7 @@ export default function ManagePostsPage() {
                       variant="primary"
                       disabled={editingPost.status === 'Kesken' && (editingPost.source === 'reels' || editingPost.type === 'Avatar') && editModalStep === 1 && !voiceoverReadyChecked}
                     >
-                      {editingPost.status === 'Kesken' && (editingPost.source === 'reels' || editingPost.type === 'Avatar') && editModalStep === 1 ? 'Seuraava' : t('posts.buttons.saveChanges')}
+                      {editingPost.status === 'Kesken' && (editingPost.source === 'reels' || editingPost.type === 'Avatar') && editModalStep === 1 ? t('posts.messages.next') : t('posts.buttons.saveChanges')}
                     </Button>
                   )}
                   {/* Julkaisu-nappi vain jos status on "Valmiina julkaisuun" (Tarkistuksessa) tai "Aikataulutettu" */}

@@ -342,6 +342,23 @@
       "cancel": "Cancel",
       "save": "Save",
       "saving": "Saving..."
+    },
+    "mixpost": {
+      "title": "Social Media Analytics",
+      "workspace": {
+        "mak8r": "Mak8r",
+        "yrityskorjaamo": "Yrityskorjaamo", 
+        "granholm": "Granholm AI",
+        "kuudesaisti": "Kuudes Aisti"
+      },
+      "metrics": {
+        "fbEngagements": "FB Engagements",
+        "fbImpressions": "FB Impressions",
+        "igReach": "IG Reach",
+        "igFollowers": "IG Followers",
+        "igImpressions": "IG Impressions"
+      },
+      "noData": "No data"
     }
   }
   ,
@@ -387,6 +404,19 @@
       "readyToPublish": "Ready to publish",
       "scheduled": "Scheduled",
       "published": "Published"
+    },
+    "tabs": {
+      "posts": "Posts",
+      "carousels": "Carousels",
+      "calendar": "Calendar",
+      "ugc": "UGC",
+      "imageBank": "Image Bank"
+    },
+    "messages": {
+      "selectAtLeastOneChannel": "Select at least one social channel",
+      "draft": "Draft",
+      "inProgress": "In Progress",
+      "next": "Next"
     },
     "actions": {
       "createNew": "+ Create new content",
@@ -468,6 +498,15 @@
       "moveSuccess": "Post moved to column: {status}",
       "moveFailed": "Move failed: {message}",
       "reelsOnly": "Move is only possible for Supabase posts"
+    },
+    "pageTitle": "Manage Posts",
+    "statuses": {
+      "inProgress": "In Progress",
+      "ready": "Ready",
+      "scheduled": "Scheduled", 
+      "published": "Published",
+      "untitled": "Untitled Post",
+      "untitledReels": "Untitled Reels"
     }
   }
   ,
@@ -549,7 +588,23 @@
     },
     "list": { "title": "Content strategies" },
     "strategyCard": { "placeholder": "Write the monthly strategy here..." },
-    "buttons": { "save": "Save", "cancel": "Cancel", "edit": "Edit" },
+    "status": {
+      "current": "This month",
+      "upcoming": "Upcoming",
+      "old": "Past",
+      "approved": "Approved",
+      "pending": "Pending"
+    },
+    "buttons": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "saveAndApprove": "Save and approve",
+      "approveStrategy": "Approve strategy",
+      "editStrategy": "Edit strategy",
+      "analyzing": "Analyzing...",
+      "startAnalysis": "Start analysis"
+    },
     "empty": { "title": "No strategies yet", "description": "Start by creating the first monthly strategy" }
   }
   ,
@@ -747,7 +802,7 @@
       "header": "Text messages",
       "buttons": { "refresh": "Refresh", "refreshing": "Refreshing..." },
       "sectionTitle": "First text message",
-      "showingCount": "Showing {{count}} call types",
+      "showingCount": "Showing {count} call types",
       "loadingTypes": "Loading call types...",
       "empty": "No call types found",
       "card": {
@@ -759,7 +814,7 @@
         "messageLabel": "Message",
         "placeholder": "SMS message sent to the customer before the call... (max 160 characters)",
         "counterSuffix": "characters",
-        "longHint": "Long message ({{parts}} messages)",
+        "longHint": "Long message ({parts} messages)",
         "defined": "SMS defined",
         "notDefined": "No SMS defined",
         "edit": "Edit",
@@ -786,9 +841,9 @@
           "validating": "Validating...",
           "validationOk": "Validation succeeded!",
           "found": {
-            "phones": "Found {{count}} phone numbers",
-            "emails": "Found {{count}} emails",
-            "rows": "Total {{count}} rows"
+            "phones": "Found {count} phone numbers",
+            "emails": "Found {count} emails",
+            "rows": "Total {count} rows"
           }
         },
         "step2": {
@@ -922,6 +977,9 @@
           "addCallType": "Add call type"
         }
       },
+    "alerts": {
+      "saveInboundFirst": "Save inbound settings first before AI enhancement!"
+    },
       "editCallType": {
         "title": "Edit call type",
         "steps": {
@@ -1030,6 +1088,133 @@
     }
   }
   ,
+  "ui": {
+    "tabs": {
+      "profile": "Profile",
+      "avatarVoice": "Avatar & Voice",
+      "carousels": "Carousels",
+      "features": "Features",
+      "security": "Security"
+    },
+    "buttons": {
+      "show": "Show",
+      "hide": "Hide",
+      "remove": "Remove",
+      "removing": "Removing...",
+      "removeLogo": "Remove logo",
+      "selectFile": "Select file",
+      "loading": "Loading...",
+      "creating": "Creating...",
+      "refreshing": "Refreshing...",
+      "refresh": "Refresh",
+      "saving": "Saving...",
+      "save": "Save",
+      "update": "Update",
+      "send": "Send",
+      "sending": "Sending..."
+    },
+    "labels": {
+      "or": "or",
+      "organization": "Organization",
+      "role": "Role",
+      "admin": "Admin",
+      "member": "Member",
+      "owner": "Owner",
+      "noName": "No name"
+    }
+  },
+  "status": {
+    "draft": "Draft",
+    "inProgress": "In Progress",
+    "underReview": "Under Review",
+    "scheduled": "Scheduled",
+    "done": "Done",
+    "published": "Published",
+    "deleted": "Deleted",
+    "archived": "Archived"
+  },
+  "placeholders": {
+    "contentTitle": "Content title",
+    "addDescription": "Add description or context for the post...",
+    "writeContent": "Write post content...",
+    "searchByUser": "Search by user...",
+    "searchByNameEmailCompany": "Search by name, email or company...",
+    "describeToneOfVoice": "Describe your company's tone of voice and TOV (Tone of Voice)...",
+    "exampleName": "John Doe"
+  },
+  "alerts": {
+    "success": {
+      "callTypeUpdated": "Call type updated!",
+      "aiEnhancementSent": "Inbound settings sent to AI enhancement! You'll receive an improved version soon.",
+      "contactAdded": "Contact '{name}' added to mass-calls block! Go to 'Calls' tab to start calls.",
+      "contactAddedSingle": "Contact '{name}' added to single call! Go to 'Calls' tab to start the call.",
+      "massCallsStarted": "✅ Mass calls started! Added: {count} calls",
+      "callsScheduled": "✅ Calls scheduled! Date: {date} at {time}\nTotal: {count} calls",
+      "inboundSettingsSaved": "⚠️ Inbound settings saved! N8N workflow is not yet active, but data has been sent.",
+      "socialAccountsUpdated": "Social accounts updated!",
+      "tokenCopied": "Token copied to clipboard!"
+    },
+    "error": {
+      "callTypeSaveFailed": "Call type save failed: {error}",
+      "aiEnhancementFailed": "AI enhancement send failed: {error}",
+      "singleCallInitFailed": "Error initializing single call",
+      "archiveFailed": "Archive failed: {error}",
+      "deleteFailed": "Delete failed: {error}",
+      "notLoggedIn": "User is not logged in",
+      "organizationIdNotFound": "Organization ID not found",
+      "fileDeleteFailed": "File deletion failed. Please try again.",
+      "newChatFailed": "New chat creation failed",
+      "emptyTitle": "Title cannot be empty",
+      "chatDeleteFailed": "Chat deletion failed",
+      "titleUpdateFailed": "Title update failed",
+      "audioPlaybackFailed": "Audio playback failed",
+      "loginRequired": "Login required. Please log in again.",
+      "strategyApprovalFailed": "Strategy approval failed. Please try again.",
+      "strategyError": "Error approving strategy. Please try again.",
+      "selectAtLeastOne": "Select at least one social channel",
+      "callTypeChangeFailed": "Call type change failed: {error}",
+      "callCancelFailed": "Call cancellation failed: {error}",
+      "massCallsInitFailed": "Error initializing mass-calls block",
+      "contactsAddFailed": "Error adding selected contacts to mass-calls block"
+    }
+  },
+  "general": {
+    "untitledContent": "Untitled content",
+    "untitledTemplate": "Untitled template",
+    "noDescription": "No description",
+    "post": "Post",
+    "blog": "Blog",
+    "newsletter": "Newsletter",
+    "home": "Home",
+    "blogsNewsletters": "Blogs and newsletters",
+    "contentStrategy": "Content strategy",
+    "addAccount": "Add account",
+    "createTemplate": "Create template",
+    "myTemplates": "My templates",
+    "noTemplatesYet": "No templates yet. Create the first template using the button above.",
+    "templateCreationStarted": "Template creation started! Refresh the page in a moment.",
+    "templateCreationFailed": "Template creation failed: {message}",
+    "sendTicket": "Send ticket",
+    "maxFiles": "Maximum {count} files"
+  },
+  "accessibility": {
+    "sortByDate": "Click to sort by date",
+    "sortByDuration": "Click to sort by duration",
+    "sortByStatus": "Click to sort by status",
+    "schedulePost": "Schedule post",
+    "editTechnicalId": "Edit technical IDs",
+    "deleteUser": "Delete user",
+    "editName": "Edit name",
+    "closeNotification": "Close notification"
+  },
+  "social": {
+    "platforms": {
+      "instagram": "Instagram",
+      "facebook": "Facebook"
+    },
+    "connecting": "Connecting {platform}...",
+    "refreshing": "Refreshing social accounts..."
+  },
   "assistant": {
     "loadingUser": "Loading user data...",
     "tabs": { "chat": "Chat", "files": "Knowledge base" },
@@ -1067,12 +1252,40 @@
   ,
   "settings": {
     "title": "Settings",
+    "logo": {
+      "title": "Company Logo",
+      "currentLogo": "Current logo:",
+      "dragHere": "Drag logo here",
+      "dropHere": "Drop logo here",
+      "logoSelected": "Logo selected!",
+      "validationTypes": "Allowed file types: PNG, JPG, WEBP, SVG",
+      "validationSize": "File is too large. Maximum size is 2MB.",
+      "uploadSuccess": "Logo updated successfully!",
+      "removeSuccess": "Logo removed successfully!"
+    },
+    "personalInfo": {
+      "title": "Personal information"
+    },
     "profile": { "title": "User information", "loading": "Loading user information...", "notFoundSupport": "User information not found. Please contact support.", "fetchError": "Error fetching user information. Please contact support.", "updateSuccess": "Information updated successfully!" },
     "fields": { "name": "Name", "email": "Email", "company": "Company", "industry": "Industry", "userId": "User ID", "namePlaceholder": "Enter your name", "emailPlaceholder": "Enter your email address", "companyPlaceholder": "Enter your company name" },
     "buttons": { "edit": "Edit", "save": "Save", "saving": "Saving...", "cancel": "Cancel", "changePassword": "Change password" },
     "common": { "notSet": "Not set", "notAvailable": "Not available", "error": "Error", "loadingImages": "Loading images..." },
     "password": { "title": "Change password", "saving": "Saving...", "save": "Save", "cancel": "Cancel", "mismatch": "New passwords do not match", "tooShort": "New password is too short (at least 6 characters)", "currentRequired": "Current password is required", "currentWrong": "Current password is incorrect", "changed": "Password changed successfully!", "currentPlaceholder": "Enter your current password", "newPlaceholder": "Enter new password", "confirmPlaceholder": "Re-enter new password", "current": "Current password", "new": "New password", "confirm": "Confirm new password" },
-    "avatar": { "title": "Avatar images", "loading": "Loading images...", "addNewAria": "Add new image", "add": "Add", "fetchError": "Failed to fetch images", "uploadError": "Image upload failed", "refreshError": "Failed to refresh images", "deleteError": "Deletion failed", "deleting": "Deleting...", "delete": "Delete image", "info": "{count}/4 images added. You can add up to 4 images." },
+    "avatar": {
+      "title": "Avatar images",
+      "loading": "Loading images...",
+      "addNewAria": "Add new image",
+      "add": "Add",
+      "fetchError": "Failed to fetch images",
+      "uploadError": "Image upload failed",
+      "refreshError": "Failed to refresh images",
+      "deleteError": "Deletion failed",
+      "deleting": "Deleting...",
+      "delete": "Delete image",
+      "info": "{count}/4 images added. You can add up to 4 images.",
+      "comingSoon": "Coming soon",
+      "workInProgress": "We're currently working on new avatar functionality"
+    },
     "voice": { "title": "Audio files (Voice Clone)", "loading": "Loading audio...", "addNewAria": "Add new audio file", "add": "Add", "processing": "Processing...", "added": "Audio added", "fetchError": "Failed to fetch audio files", "uploadError": "Audio upload failed", "infoNone": "{count}/1 audio file added. Add an audio file for the voice clone.", "infoSome": "{count}/1 audio file added. The audio file is permanent and cannot be deleted." },
     "social": {
       "title": "Social media connections",
@@ -1098,6 +1311,33 @@
       "popupsBlocked": "Popups are blocked. Allow popups for this site and try again.",
       "timeout": "Connection timed out. Check your internet connection and try again.",
       "connectError": "Error connecting {platform}: {message}"
+    },
+    "security": {
+      "title": "Security",
+      "sessionSettings": "Session settings"
+    },
+    "email": {
+      "title": "Change email",
+      "saving": "Saving...",
+      "save": "Save",
+      "cancel": "Cancel",
+      "mismatch": "Emails do not match",
+      "invalid": "Enter a valid email address",
+      "changed": "Verification link sent to new email!",
+      "current": "Current email",
+      "new": "New email",
+      "confirm": "Confirm new email",
+      "newPlaceholder": "Enter new email",
+      "confirmPlaceholder": "Re-enter new email",
+      "changeSuccess": "Email address changed successfully!",
+      "sameAsOld": "New email address is the same as current",
+      "verificationSent": "Verification link sent to {email}. Verify your email address by clicking the link in the email.",
+      "verificationTitle": "Verification link sent",
+      "checkSpam": "Also check spam folder. Your email address will only be changed after you click the verification link in the email."
+    },
+    "messages": {
+      "invitedUserRestriction": "Invited users cannot modify organization information",
+      "userNotFound": "User not found"
     },
     "timeout": {
       "title": "Session settings",
@@ -1130,84 +1370,6 @@
       "unknownError": "Unknown error"
     }
   },
-  "posts": {
-    "pageTitle": "Manage Posts",
-    "columns": {
-      "avatar": "Avatar",
-      "inProgress": "In Progress", 
-      "readyToPublish": "Ready to Publish",
-      "scheduled": "Scheduled"
-    },
-    "buttons": {
-      "edit": "Edit",
-      "view": "View",
-      "publish": "Publish",
-      "schedule": "Schedule",
-      "delete": "Delete",
-      "createNew": "Create New Post",
-      "saveChanges": "Save Changes",
-      "cancel": "Cancel"
-    },
-    "placeholders": {
-      "title": "Enter social media content title...",
-      "caption": "Write social media content description..."
-    },
-    "modals": {
-      "editTitle": "Edit Social Media Content",
-      "viewTitle": "View Social Media Content",
-      "captionCheck": "Caption Check",
-      "voiceoverCheck": "Voiceover Check",
-      "publishDate": "Publish Date",
-      "publishDatePlaceholder": "dd.mm.yyyy hh:mm"
-    },
-    "messages": {
-      "ideaSent": "Idea sent to AI! Social content is being generated in the background.",
-      "errorCreating": "Error: Could not create social content. Try again.",
-      "errorCompanyId": "Error: Could not fetch company information. Try again.",
-      "voiceoverError": "Error updating voiceover status. Try again.",
-      "voiceoverSuccess": "Voiceover marked as ready! Automation continues.",
-      "confirmDelete": "Are you sure you want to delete this social media content?",
-      "deleteSuccess": "Social media content marked as deleted!",
-      "deleteError": "Social content deletion failed:",
-      "schedulePrompt": "Enter schedule date (YYYY-MM-DD HH:MM):",
-      "scheduleSuccess": "Social content scheduling successful!",
-      "scheduleError": "Social content scheduling failed:",
-      "selectAccounts": "Select at least one social channel for publishing",
-      "publishSuccess": "Social content publishing successful!",
-      "publishError": "Social content publishing failed:",
-      "moveError": "Move failed:",
-      "dataFetchError": "Data fetch failed",
-      "userIdNotFound": "User ID not found",
-      "statusUpdateFailed": "Status update failed:",
-      "supabaseUpdateFailed": "Supabase update failed"
-    },
-    "statuses": {
-      "inProgress": "In Progress",
-      "ready": "Ready",
-      "scheduled": "Scheduled", 
-      "published": "Published",
-      "untitled": "Untitled Post",
-      "untitledReels": "Untitled Reels"
-    },
-    "header": "Manage Posts",
-    "searchPlaceholder": "Search posts...",
-    "filters": {
-      "allStatuses": "All Statuses"
-    },
-    "status": {
-      "Kesken": "In Progress",
-      "Tarkistuksessa": "Ready to Publish",
-      "Aikataulutettu": "Scheduled",
-      "Julkaistu": "Published"
-    },
-    "actions": {
-      "createNew": "Create New Post",
-      "retry": "Retry"
-    },
-    "placeholders": {
-      "noImage": "No image"
-    }
-  },
   "meetingNotes": {
     "title": "Meeting Notes",
     "header": "Meeting Notes",
@@ -1231,6 +1393,12 @@
     "title": "Answering Service",
     "subtitle": "Intelligent phone answering service",
     "description": "Rascal AI Answering Service answers calls when you're busy or unavailable. AI handles customer service, books appointments, and collects important information.",
+    "settings": {
+      "openPanel": "Open settings panel",
+      "closePanel": "Close settings panel",
+      "saving": "Saving...",
+      "saveSettings": "Save settings"
+    },
     "features": {
       "calls": {
         "title": "Automatic answering",
@@ -1253,6 +1421,61 @@
       "configure": "Configure answering service",
       "test": "Test answering service"
     }
+  },
+  "monthlyLimit": {
+    "title": "Monthly limit full",
+    "exceeded": "Monthly limit exceeded",
+    "description": "You have created {currentCount} generated content this month. The monthly limit is {monthlyLimit} generated content.",
+    "nextMonth": "You can create new content only next month.",
+    "thisMonth": "This month's content",
+    "limit": "Monthly limit",
+    "createAnyway": "Create anyway (not available)"
+  },
+  "leadScraping": {
+    "buttons": {
+      "resetFilters": "Reset Filters",
+      "starting": "Starting...",
+      "start": "Start"
+    }
+  },
+  "test": {
+    "buttons": {
+      "sending": "Sending...",
+      "sendPostRequest": "Send POST request"
+    }
+  },
+  "admin": {
+    "buttons": {
+      "hideIds": "Hide IDs",
+      "showIds": "Show IDs",
+      "saving": "Saving...",
+      "save": "Save"
+    }
+  },
+  "chat": {
+    "buttons": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "deleteChat": "Delete chat",
+      "newChat": "Start new chat"
+    }
+  },
+  "media": {
+    "buttons": {
+      "loading": "Loading...",
+      "addMedia": "Add media",
+      "changeMedia": "Change media"
+    }
+  },
+  "schedule": {
+    "messages": {
+      "selectFutureDateTime": "Select a future date and time",
+      "draftPost": "Draft post",
+      "scheduledPost": "Scheduled post"
+    }
+  },
+  "organizationMembers": {
+    "inviteUser": "Invite user"
   }
 }
 

@@ -250,7 +250,7 @@ export default function SettingsPage() {
   useEffect(() => {
     const emailChanged = searchParams.get('email')
     if (emailChanged === 'changed') {
-      setEmailMessage('Sähköpostiosoite vaihdettu onnistuneesti!')
+      setEmailMessage(t('settings.email.changeSuccess'))
       setShowEmailChange(false)
       setEmailData({ newEmail: '', confirmEmail: '' })
       // Poista parametri URL:sta
@@ -354,13 +354,13 @@ export default function SettingsPage() {
     // Tarkista tiedostotyyppi
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/svg+xml']
     if (!allowedTypes.includes(file.type)) {
-      setLogoMessage('Sallitut tiedostotyypit: PNG, JPG, WEBP, SVG')
+      setLogoMessage(t('settings.logo.validationTypes'))
       return false
     }
 
     // Tarkista tiedostokoko (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
-      setLogoMessage('Tiedosto on liian suuri. Maksimikoko on 2MB.')
+      setLogoMessage(t('settings.logo.validationSize'))
       return false
     }
 
@@ -437,7 +437,7 @@ export default function SettingsPage() {
       const userId = await getUserOrgId(user.id)
       
       if (!userId) {
-        throw new Error('Käyttäjää ei löytynyt')
+        throw new Error(t('settings.messages.userNotFound'))
       }
 
       // Päivitä users-tauluun
@@ -448,7 +448,7 @@ export default function SettingsPage() {
 
       if (updateError) throw updateError
 
-      setLogoMessage('Logo päivitetty onnistuneesti!')
+      setLogoMessage(t('settings.logo.uploadSuccess'))
       setLogoFile(null)
       setLogoPreview(null)
 
@@ -486,7 +486,7 @@ export default function SettingsPage() {
       const userId = await getUserOrgId(user.id)
       
       if (!userId) {
-        throw new Error('Käyttäjää ei löytynyt')
+        throw new Error(t('settings.messages.userNotFound'))
       }
 
       // Päivitä users-tauluun
@@ -497,7 +497,7 @@ export default function SettingsPage() {
 
       if (updateError) throw updateError
 
-      setLogoMessage('Logo poistettu onnistuneesti!')
+      setLogoMessage(t('settings.logo.removeSuccess'))
       setLogoFile(null)
       setLogoPreview(null)
 
@@ -528,7 +528,7 @@ export default function SettingsPage() {
     
     // Kutsutut käyttäjät eivät voi muokata organisaation tietoja
     if (isInvitedUser) {
-      setMessage('Kutsutut käyttäjät eivät voi muokata organisaation tietoja')
+      setMessage(t('settings.messages.invitedUserRestriction'))
       setIsEditing(false)
       return
     }
@@ -683,7 +683,7 @@ export default function SettingsPage() {
     
     // Tarkista ettei uusi sähköposti ole sama kuin nykyinen
     if (emailData.newEmail === user.email) {
-      setEmailMessage('Uusi sähköpostiosoite on sama kuin nykyinen')
+      setEmailMessage(t('settings.email.sameAsOld'))
       return
     }
     
@@ -704,7 +704,7 @@ export default function SettingsPage() {
         setEmailMessage(`Virhe: ${error.message}`)
       } else {
         // Onnistui - vahvistuslinkki lähetetään uuteen sähköpostiin
-        setEmailMessage(`Vahvistuslinkki lähetetty sähköpostiosoitteeseen ${emailData.newEmail}. Vahvista sähköpostiosoitteesi klikkaamalla linkkiä sähköpostissa.`)
+        setEmailMessage(t('settings.email.verificationSent', { email: emailData.newEmail }))
         // Tyhjennä lomakkeen kentät, mutta jätä lomake näkyviin jotta käyttäjä näkee viestin
         setEmailData({ newEmail: '', confirmEmail: '' })
       }
@@ -736,31 +736,31 @@ export default function SettingsPage() {
             className={`${styles['settings-tab']} ${activeTab === 'profile' ? styles['settings-tab-active'] : ''}`}
             onClick={() => setActiveTab('profile')}
           >
-            Profiili
+            {t('ui.tabs.profile')}
           </button>
           <button
             className={`${styles['settings-tab']} ${activeTab === 'avatar' ? styles['settings-tab-active'] : ''}`}
             onClick={() => setActiveTab('avatar')}
           >
-            Avatar & Ääni
+            {t('ui.tabs.avatarVoice')}
           </button>
           <button
             className={`${styles['settings-tab']} ${activeTab === 'carousel' ? styles['settings-tab-active'] : ''}`}
             onClick={() => setActiveTab('carousel')}
           >
-            Karusellit
+            {t('ui.tabs.carousels')}
           </button>
           <button
             className={`${styles['settings-tab']} ${activeTab === 'features' ? styles['settings-tab-active'] : ''}`}
             onClick={() => setActiveTab('features')}
           >
-            Ominaisuudet
+            {t('ui.tabs.features')}
           </button>
           <button
             className={`${styles['settings-tab']} ${activeTab === 'security' ? styles['settings-tab-active'] : ''}`}
             onClick={() => setActiveTab('security')}
           >
-            Turvallisuus
+            {t('ui.tabs.security')}
           </button>
         </div>
         
@@ -780,14 +780,14 @@ export default function SettingsPage() {
                 {!isInvitedUser && (
                 <div className={`${styles.card} ${styles.cardNoPadding}`} style={{ gridColumn: '1', gridRow: '1' }}>
                   <div className={styles.cardHeader}>
-                    <h3>Yrityksen Logo</h3>
+                    <h3>{t('settings.logo.title')}</h3>
                   </div>
                   <div className={styles.cardContent}>
                     <div className={styles.logoContainer}>
                       {/* Nykyinen logo */}
                       {userProfile?.logo_url && !logoPreview && (
                         <div className={styles.currentLogoSection}>
-                          <p className={styles.currentLogoLabel}>Nykyinen logo:</p>
+                          <p className={styles.currentLogoLabel}>{t('settings.logo.currentLogo')}</p>
                           <img 
                             src={userProfile.logo_url} 
                             alt="Company Logo" 
@@ -798,7 +798,7 @@ export default function SettingsPage() {
                             disabled={logoUploading}
                             className={`${styles.btn} ${styles.btnNeutral}`}
                           >
-                            {logoUploading ? 'Poistetaan...' : 'Poista logo'}
+                            {logoUploading ? t('ui.buttons.removing') : t('ui.buttons.removeLogo')}
                           </button>
                         </div>
                       )}
@@ -823,7 +823,7 @@ export default function SettingsPage() {
                             className={styles.logoPreviewImage}
                           />
                           <p className={styles.logoPreviewText}>
-                            Logo valittu!
+                            {t('settings.logo.logoSelected')}
                           </p>
                           <div className={styles.logoPreviewActions}>
                             <button 
@@ -831,7 +831,7 @@ export default function SettingsPage() {
                               disabled={logoUploading}
                               className={`${styles.btn} ${styles.btnPrimary}`}
                             >
-                              {logoUploading ? 'Ladataan...' : '✓ Tallenna'}
+                              {logoUploading ? t('ui.buttons.loading') : t('settings.buttons.save')}
                             </button>
                             <button 
                               onClick={() => {
@@ -841,7 +841,7 @@ export default function SettingsPage() {
                               }}
                               className={`${styles.btn} ${styles.btnNeutral}`}
                             >
-                              Peruuta
+                              {t('settings.buttons.cancel')}
                             </button>
                           </div>
                         </div>
@@ -855,13 +855,13 @@ export default function SettingsPage() {
                             </svg>
                           </div>
                           <p className={styles.uploadText}>
-                            {logoDragActive ? 'Pudota logo tähän' : 'Vedä logo tähän'}
+                            {logoDragActive ? t('settings.logo.dropHere') : t('settings.logo.dragHere')}
                           </p>
                           <p className={styles.uploadSubtext}>
-                            tai
+                            {t('ui.labels.or')}
                           </p>
                           <label className={`${styles.btn} ${styles.btnSecondary}`}>
-                            Valitse tiedosto
+                            {t('ui.buttons.selectFile')}
                             <input 
                               type="file"
                               accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
@@ -890,7 +890,7 @@ export default function SettingsPage() {
                 {/* 2. Käyttäjätiedot -kortti (vasemmalla logon alle) */}
                 <div className={`${styles.card} ${styles.cardNoPadding}`} style={{ gridColumn: '1', gridRow: '2' }}>
                   <div className={styles.cardHeader}>
-                    <h3>{isInvitedUser ? 'Henkilökohtaiset tiedot' : t('settings.profile.title')}</h3>
+                    <h3>{isInvitedUser ? t('settings.personalInfo.title') : t('settings.profile.title')}</h3>
                     {!isInvitedUser && !isEditing ? (
                       <button onClick={() => setIsEditing(true)} className={`${styles.btn} ${styles.btnSecondary}`}>
                         {t('settings.buttons.edit')}
@@ -918,9 +918,9 @@ export default function SettingsPage() {
                         fontSize: 14,
                         color: '#0369a1'
                       }}>
-                        <strong>Organisaatio:</strong> {organization?.data?.company_name || 'Ei nimeä'}
+                        <strong>{t('ui.labels.organization')}:</strong> {organization?.data?.company_name || t('ui.labels.noName')}
                         <br />
-                        <strong>Rooli:</strong> {organization?.role === 'admin' ? 'Admin' : organization?.role === 'member' ? 'Jäsen' : 'Omistaja'}
+                        <strong>{t('ui.labels.role')}:</strong> {organization?.role === 'admin' ? t('ui.labels.admin') : organization?.role === 'member' ? t('ui.labels.member') : t('ui.labels.owner')}
                       </div>
                     )}
                 
@@ -1030,7 +1030,7 @@ export default function SettingsPage() {
                               className={`${styles.btn} ${styles.btnNeutral}`}
                               style={{ fontSize: '13px', padding: '6px 12px', whiteSpace: 'nowrap' }}
                             >
-                              {showUserId ? 'Piilota' : 'Näytä'}
+                              {showUserId ? t('ui.buttons.hide') : t('ui.buttons.show')}
                             </button>
                           </div>
                         </div>
@@ -1061,7 +1061,7 @@ export default function SettingsPage() {
               <div className={styles['avatar-voice-grid']}>
                 {/* Avatar-kuvat */}
                 <div className={styles['avatar-voice-section']}>
-                  <h2 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#1f2937' }}>Avatar</h2>
+                  <h2 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#1f2937' }}>{t('settings.avatar.title')}</h2>
                   <div style={{ 
                     padding: '32px', 
                     textAlign: 'center', 
@@ -1106,14 +1106,14 @@ export default function SettingsPage() {
                         fontWeight: 600,
                         marginBottom: '8px'
                       }}>
-                        Tulossa uusi versio
+                        {t('settings.avatar.comingSoon')}
                       </div>
                       <div style={{ 
                         color: '#64748b',
                         fontSize: '13px',
                         lineHeight: '1.5'
                       }}>
-                        Työskentelemme parhaillaan uuden<br/>avatar-toiminnallisuuden parissa
+                        {t('settings.avatar.workInProgress')}
                       </div>
                     </div>
                   </div>
@@ -1153,7 +1153,7 @@ export default function SettingsPage() {
             {/* Turvallisuus -kortti (Salasana ja Sähköposti) */}
             <div className={`${styles.card} ${styles.cardNoPadding}`}>
               <div className={styles.cardHeader}>
-                <h3>Turvallisuus</h3>
+                <h3>{t('settings.security.title')}</h3>
               </div>
               <div className={styles.cardContent}>
                 {/* Salasanan vaihto */}
@@ -1258,13 +1258,13 @@ export default function SettingsPage() {
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                               <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                             </svg>
-                            Vahvistuslinkki lähetetty
+                            {t('settings.email.verificationTitle')}
                           </div>
                           <div style={{ fontSize: '13px', marginTop: '8px' }}>
                             {emailMessage.split('.')[1]?.trim()}
                           </div>
                           <div style={{ fontSize: '12px', marginTop: '8px', color: '#64748b', fontStyle: 'italic' }}>
-                            Tarkista myös roskapostikansio. Sähköpostiosoitteesi vaihdetaan vasta kun klikkaat vahvistuslinkkiä sähköpostissa.
+                            {t('settings.email.checkSpam')}
                           </div>
                         </div>
                       ) : (
@@ -1306,7 +1306,7 @@ export default function SettingsPage() {
             {/* Sessio-asetukset -kortti */}
             <div className={`${styles.card} ${styles.cardNoPadding}`}>
               <div className={styles.cardHeader}>
-                <h3>Sessio-asetukset</h3>
+                <h3>{t('settings.security.sessionSettings')}</h3>
               </div>
               <div className={styles.cardContent}>
                 <TimeoutSettings />

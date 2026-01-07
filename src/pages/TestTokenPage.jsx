@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 
 export default function TestTokenPage() {
+  const { t } = useTranslation('common')
   const [token, setToken] = useState(null)
   const [error, setError] = useState(null)
 
@@ -32,7 +34,7 @@ export default function TestTokenPage() {
   const copyToClipboard = () => {
     if (token) {
       navigator.clipboard.writeText(token)
-      alert('Token kopioitu leikepöydälle!')
+      alert(t('alerts.success.tokenCopied'))
     }
   }
 

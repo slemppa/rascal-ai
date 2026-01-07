@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 
 export default function TestN8NPage() {
+  const { t } = useTranslation('common')
   const [token, setToken] = useState(null)
   const [loading, setLoading] = useState(false)
   const [response, setResponse] = useState(null)
@@ -80,7 +82,7 @@ export default function TestN8NPage() {
   const copyToken = () => {
     if (token) {
       navigator.clipboard.writeText(token)
-      alert('Token kopioitu leikepöydälle!')
+      alert(t('alerts.success.tokenCopied'))
     }
   }
 
@@ -180,7 +182,7 @@ export default function TestN8NPage() {
           marginBottom: '1.5rem'
         }}
       >
-        {loading ? 'Lähetetään...' : 'Lähetä POST-kutsu'}
+        {loading ? t('test.buttons.sending') : t('test.buttons.sendPostRequest')}
       </button>
 
       {/* Response display */}

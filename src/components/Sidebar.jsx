@@ -12,9 +12,9 @@ import TicketButton from './TicketButton'
 // Default brändilogo jos käyttäjällä ei ole omaa logoa
 const DEFAULT_LOGO_URL = 'https://enrploxjigoyqajoqgkj.supabase.co/storage/v1/object/public/user-logos/1b60ac47-ac9a-4b0e-ba08-610a38380f3d/logo.png'
 
-const menuItems = [
+const getMenuItems = (t) => [
   { 
-    label: 'Etusivu', 
+    label: t('general.home'), 
     path: '/dashboard', 
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -24,7 +24,7 @@ const menuItems = [
     )
   },
   { 
-    label: 'Some', 
+    label: t('sidebar.labels.posts'), 
     path: '/posts', 
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -37,7 +37,7 @@ const menuItems = [
     )
   },
   { 
-    label: 'Blogit ja uutiskirjeet', 
+    label: t('general.blogsNewsletters'), 
     path: '/blog-newsletter', 
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -50,7 +50,7 @@ const menuItems = [
     )
   },
   { 
-    label: 'Sisältöstrategia', 
+    label: t('general.contentStrategy'), 
     path: '/strategy', 
     icon: (
       <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor">
@@ -59,7 +59,7 @@ const menuItems = [
     )
   },
   { 
-    label: 'Kampanjat', 
+    label: t('sidebar.labels.campaigns'), 
     path: '/campaigns', 
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -69,7 +69,7 @@ const menuItems = [
     )
   },
   { 
-    label: 'Segmentit', 
+    label: t('sidebar.labels.segments'), 
     path: '/segments', 
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -81,7 +81,7 @@ const menuItems = [
     )
   },
   { 
-    label: 'Puhelut', 
+    label: t('sidebar.labels.calls'), 
     path: '/calls', 
     icon: (
       <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor">
@@ -90,7 +90,7 @@ const menuItems = [
     )
   },
   { 
-    label: 'Liidit', 
+    label: t('sidebar.labels.leads') || 'Liidit', 
     path: '/lead-scraping', 
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -100,7 +100,7 @@ const menuItems = [
     )
   },
   { 
-    label: 'Assistentti', 
+    label: t('sidebar.labels.assistentti'), 
     path: '/ai-chat', 
     moderatorOnly: false,
     feature: null,
@@ -192,6 +192,7 @@ export default function Sidebar() {
   const navigate = useNavigate()
   const location = useLocation()
   const { t, i18n } = useTranslation('common')
+  const menuItems = getMenuItems(t)
 
   const [logoUrl, setLogoUrl] = useState(null)
   const { user, signOut, organization } = useAuth()

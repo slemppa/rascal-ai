@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import pkg from '../../package.json'
 import { createPortal } from 'react-dom'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { getCurrentUser, isAdmin } from '../utils/userApi'
 import { useAuth } from '../contexts/AuthContext'
@@ -9,6 +10,7 @@ import '../components/ModalComponents.css'
 import './AdminPage.css'
 
 export default function AdminPage() {
+  const { t } = useTranslation('common')
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState('users')
   const [users, setUsers] = useState([])
@@ -513,12 +515,12 @@ export default function AdminPage() {
                        className="admin-btn admin-btn-secondary"
                        onClick={() => setShowUserIds(!showUserIds)}
                      >
-                       {showUserIds ? 'Piilota ID:t' : 'Näytä ID:t'}
+                       {showUserIds ? t('admin.buttons.hideIds') : t('admin.buttons.showIds')}
                      </button>
                    <div className="admin-search">
                      <input
                        type="text"
-                       placeholder="Hae nimen, sähköpostin tai yrityksen perusteella..."
+                       placeholder={t('placeholders.searchByNameEmailCompany')}
                        value={searchTerm}
                        onChange={(e) => setSearchTerm(e.target.value)}
                        className="search-input"
@@ -638,14 +640,14 @@ export default function AdminPage() {
                                <button
                                  className="admin-btn admin-btn-secondary"
                                  onClick={() => openUserModal(user)}
-                                 title="Muokkaa teknisiä ID:tä"
+                                 title={t('accessibility.editTechnicalId')}
                                >
                                  Muokkaa
                                </button>
                                <button
                                  className="admin-btn admin-btn-danger"
                                  onClick={() => deleteUser(user.id)}
-                                 title="Poista käyttäjä"
+                                 title={t('accessibility.deleteUser')}
                                >
                                  Poista
                                </button>
@@ -859,7 +861,7 @@ export default function AdminPage() {
                                onClick={saveModalChanges}
                                disabled={isSaving || Object.keys(modalChanges).length === 0}
                              >
-                               {isSaving ? 'Tallennetaan...' : 'Tallenna'}
+                               {isSaving ? t('admin.buttons.saving') : t('admin.buttons.save')}
                              </Button>
                            </div>
                          </div>

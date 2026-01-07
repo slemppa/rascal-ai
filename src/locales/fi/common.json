@@ -288,8 +288,10 @@
       "title": "Avainluvut",
       "filters": {
         "all": "Kaikki",
-        "week": "Viime viikko",
-        "month": "Viime kuukausi",
+        "week": "Tämä viikko",
+        "month": "Tämä kuukausi",
+        "last_week": "Viime viikko",
+        "last_month": "Viime kuukausi",
         "days7": "Viime 7 päivää",
         "days30": "Viime 30 päivää"
       },
@@ -365,6 +367,23 @@
       "cancel": "Peruuta",
       "save": "Tallenna",
       "saving": "Tallennetaan..."
+    },
+    "mixpost": {
+      "title": "Sosiaalisen median analytiikka",
+      "workspace": {
+        "mak8r": "Mak8r",
+        "yrityskorjaamo": "Yrityskorjaamo", 
+        "granholm": "Granholm AI",
+        "kuudesaisti": "Kuudes Aisti"
+      },
+      "metrics": {
+        "fbEngagements": "FB Sitoutumiset",
+        "fbImpressions": "FB Näyttökerrat",
+        "igReach": "IG Tavoittavuus",
+        "igFollowers": "IG Seuraajat",
+        "igImpressions": "IG Näyttökerrat"
+      },
+      "noData": "Ei dataa"
     }
   },
   "sidebar": {
@@ -396,6 +415,19 @@
   "posts": {
     "header": "Sosiaalisen median sisältö",
     "searchPlaceholder": "Etsi sosiaalisen median sisältöä...",
+    "tabs": {
+      "posts": "Julkaisut",
+      "carousels": "Karusellit",
+      "calendar": "Kalenteri",
+      "ugc": "UGC",
+      "imageBank": "Kuvapankki"
+    },
+    "messages": {
+      "selectAtLeastOneChannel": "Valitse vähintään yksi somekanava",
+      "draft": "Luonnos",
+      "inProgress": "Kesken",
+      "next": "Seuraava"
+    },
     "filters": { "allStatuses": "Kaikki statukset" },
     "status": {
       "Kesken": "Luonnos",
@@ -492,6 +524,15 @@
       "moveSuccess": "Postaus siirretty sarakkeeseen: {status}",
       "moveFailed": "Siirtyminen epäonnistui: {message}",
       "reelsOnly": "Siirtyminen on mahdollista vain Supabase-postauksille"
+    },
+    "pageTitle": "Hallinnoi julkaisuja",
+    "statuses": {
+      "inProgress": "Kesken",
+      "ready": "Valmis",
+      "scheduled": "Aikataulutettu", 
+      "published": "Julkaistu",
+      "untitled": "Nimetön julkaisu",
+      "untitledReels": "Nimetön Reels"
     }
   },
   "blogNewsletter": {
@@ -554,7 +595,23 @@
   "strategy": {
     "header": "Kohderyhmä, tavoitteet ja sisältösuunnitelma",
     "loading": "Ladataan sisältöstrategiaa...",
-    "status": { "current": "Tässä kuussa", "upcoming": "Tulossa", "old": "Menneet" },
+    "status": {
+      "current": "Tässä kuussa",
+      "upcoming": "Tulossa",
+      "old": "Menneet",
+      "approved": "Hyväksytty",
+      "pending": "Odottaa"
+    },
+    "buttons": {
+      "save": "Tallenna",
+      "cancel": "Peruuta",
+      "edit": "Muokkaa",
+      "saveAndApprove": "Tallenna ja hyväksy",
+      "approveStrategy": "Hyväksy strategia",
+      "editStrategy": "Muokkaa strategiaa",
+      "analyzing": "Analysoidaan...",
+      "startAnalysis": "Aloita analyysi"
+    },
     "icp": {
       "title": "Kohderyhmä",
       "placeholder": "Kirjoita kohderyhmäprofiilit tähän (yksi per rivi)...",
@@ -571,7 +628,7 @@
     },
     "list": { "title": "Sisältöstrategiat" },
     "strategyCard": { "placeholder": "Kirjoita kuukauden sisältöstrategia tähän..." },
-    "buttons": { "save": "Tallenna", "cancel": "Peruuta", "edit": "Muokkaa" },
+    "buttons": { "save": "Tallenna", "cancel": "Peruuta", "edit": "Muokkaa", "saveAndApprove": "Tallenna ja hyväksy" },
     "empty": { "title": "Sinulla ei ole vielä strategiaa", "description": "Aloita luomalla ensimmäinen kuukausistrategia" }
   },
   "campaigns": {
@@ -773,7 +830,7 @@
       "header": "Tekstiviestit",
       "buttons": { "refresh": "Päivitä", "refreshing": "Päivitetään..." },
       "sectionTitle": "Ensimmäinen tekstiviesti",
-      "showingCount": "Näytetään {{count}} puhelutyyppiä",
+      "showingCount": "Näytetään {count} puhelutyyppiä",
       "loadingTypes": "Ladataan puhelutyyppejä...",
       "empty": "Ei puhelutyyppejä löytynyt",
       "card": {
@@ -785,7 +842,7 @@
         "messageLabel": "Viesti",
         "placeholder": "Asiakkaalle lähetettävä SMS ennen puhelua... (max 160 merkkiä)",
         "counterSuffix": "merkkiä",
-        "longHint": "Pitkä viesti ({{parts}} viestiä)",
+        "longHint": "Pitkä viesti ({parts} viestiä)",
         "defined": "SMS määritelty",
         "notDefined": "SMS ei määritelty",
         "edit": "Muokkaa",
@@ -805,9 +862,9 @@
           "validating": "Validoidaan...",
           "validationOk": "Validointi onnistui!",
           "found": {
-            "phones": "Löydetty {{count}} puhelinnumeroa",
-            "emails": "Löydetty {{count}} sähköpostia",
-            "rows": "Yhteensä {{count}} riviä"
+            "phones": "Löydetty {count} puhelinnumeroa",
+            "emails": "Löydetty {count} sähköpostia",
+            "rows": "Yhteensä {count} riviä"
           }
         },
         "step2": {
@@ -868,6 +925,9 @@
           "cta": "Lähetä AI-parannukseen"
         }
       },
+    "alerts": {
+      "saveInboundFirst": "Tallenna ensin inbound-asetukset ennen AI-parannusta!"
+    },
       "addCallType": {
         "title": "Lisää uusi puhelun tyyppi",
         "steps": {
@@ -1083,11 +1143,11 @@
         "dragText": "Vedä ja pudota tiedostoja tähän tai",
         "chooseFiles": "valitse tiedostot",
         "remove": "Poista",
-        "uploadBtn": "Lähetä tiedostot ({{count}})",
+        "uploadBtn": "Lähetä tiedostot ({count})",
         "uploading": "Ladataan...",
         "uploadError": "Virhe tiedostojen lataamisessa",
-        "uploadSuccess": "{{count}} tiedosto(a) ladattu onnistuneesti!",
-        "limitExceeded": "Yhteiskoko liian suuri. Max {{limitMB}} MB per lähetys.",
+        "uploadSuccess": "{count} tiedosto(a) ladattu onnistuneesti!",
+        "limitExceeded": "Yhteiskoko liian suuri. Max {limitMB} MB per lähetys.",
         "missingCompany": "Yrityksen ID puuttuu",
         "missingAssistant": "Assistentin ID puuttuu"
       },
@@ -1101,15 +1161,192 @@
       }
     }
   },
+  "ui": {
+    "tabs": {
+      "profile": "Profiili",
+      "avatarVoice": "Avatar & Ääni",
+      "carousels": "Karusellit",
+      "features": "Ominaisuudet",
+      "security": "Turvallisuus"
+    },
+    "buttons": {
+      "show": "Näytä",
+      "hide": "Piilota",
+      "remove": "Poista",
+      "removing": "Poistetaan...",
+      "removeLogo": "Poista logo",
+      "selectFile": "Valitse tiedosto",
+      "loading": "Ladataan...",
+      "creating": "Luodaan...",
+      "refreshing": "Päivitetään...",
+      "refresh": "Päivitä",
+      "saving": "Tallennetaan...",
+      "save": "Tallenna",
+      "update": "Päivitä",
+      "send": "Lähetä",
+      "sending": "Lähetetään..."
+    },
+    "labels": {
+      "or": "tai",
+      "organization": "Organisaatio",
+      "role": "Rooli",
+      "admin": "Admin",
+      "member": "Jäsen",
+      "owner": "Omistaja",
+      "noName": "Ei nimeä"
+    }
+  },
+  "status": {
+    "draft": "Luonnos",
+    "inProgress": "Kesken",
+    "underReview": "Tarkistuksessa",
+    "scheduled": "Aikataulutettu",
+    "done": "Valmis",
+    "published": "Julkaistu",
+    "deleted": "Poistettu",
+    "archived": "Arkistoitu"
+  },
+  "placeholders": {
+    "contentTitle": "Sisällön otsikko",
+    "addDescription": "Lisää kuvaus tai konteksti julkaisulle...",
+    "writeContent": "Kirjoita postauksen sisältö...",
+    "searchByUser": "Etsi käyttäjän perusteella...",
+    "searchByNameEmailCompany": "Hae nimen, sähköpostin tai yrityksen perusteella...",
+    "describeToneOfVoice": "Kuvaile yrityksen äänenlaatu ja TOV (Tone of Voice)...",
+    "exampleName": "Matti Meikäläinen"
+  },
+  "alerts": {
+    "success": {
+      "callTypeUpdated": "Puhelun tyyppi päivitetty!",
+      "aiEnhancementSent": "Inbound-asetukset lähetetty AI-parannukseen! Saat parannetun version pian.",
+      "contactAdded": "Kontakti '{name}' lisätty mass-calls -palikkaan! Siirry 'Puhelut' -välilehdelle aloittaaksesi soitot.",
+      "contactAddedSingle": "Kontakti '{name}' lisätty yksittäiseen soittoon! Siirry 'Puhelut' -välilehdelle aloittaaksesi soiton.",
+      "massCallsStarted": "✅ Massapuhelut käynnistetty! Lisätty: {count} puhelua",
+      "callsScheduled": "✅ Puhelut ajastettu! Päivä: {date} klo {time}\nYhteensä: {count} puhelua",
+      "inboundSettingsSaved": "⚠️ Inbound-asetukset tallennettu! N8N workflow ei ole vielä aktiivinen, mutta data on lähetetty.",
+      "socialAccountsUpdated": "Sometilit päivitetty!",
+      "tokenCopied": "Token kopioitu leikepöydälle!"
+    },
+    "error": {
+      "callTypeSaveFailed": "Puhelun tyypin tallennus epäonnistui: {error}",
+      "aiEnhancementFailed": "AI-parannuksen lähetys epäonnistui: {error}",
+      "singleCallInitFailed": "Virhe yksittäisen soiton alustamisessa",
+      "archiveFailed": "Arkistointi epäonnistui: {error}",
+      "deleteFailed": "Poisto epäonnistui: {error}",
+      "notLoggedIn": "Käyttäjä ei ole kirjautunut",
+      "organizationIdNotFound": "Organisaation ID ei löytynyt",
+      "fileDeleteFailed": "Tiedoston poisto epäonnistui. Yritä uudelleen.",
+      "newChatFailed": "Uuden keskustelun luonti epäonnistui",
+      "emptyTitle": "Otsikko ei voi olla tyhjä",
+      "chatDeleteFailed": "Keskustelun poisto epäonnistui",
+      "titleUpdateFailed": "Otsikon päivitys epäonnistui",
+      "audioPlaybackFailed": "Äänitiedoston toisto epäonnistui",
+      "loginRequired": "Sisäänkirjautuminen puuttuu. Kirjaudu uudelleen sisään.",
+      "strategyApprovalFailed": "Strategian vahvistaminen epäonnistui. Yritä uudelleen.",
+      "strategyError": "Virhe strategian vahvistamisessa. Yritä uudelleen.",
+      "selectAtLeastOne": "Valitse vähintään yksi somekanava",
+      "callTypeChangeFailed": "Puhelun tyypin vaihto epäonnistui: {error}",
+      "callCancelFailed": "Puhelun peruutus epäonnistui: {error}",
+      "massCallsInitFailed": "Virhe mass-calls -palikan alustamisessa",
+      "contactsAddFailed": "Virhe valittujen kontaktien lisäämisessä mass-calls -palikkaan"
+    }
+  },
+  "general": {
+    "untitledContent": "Nimetön sisältö",
+    "untitledTemplate": "Nimetön malli",
+    "noDescription": "Ei kuvausta",
+    "post": "Postaus",
+    "blog": "Blog",
+    "newsletter": "Newsletter",
+    "home": "Etusivu",
+    "blogsNewsletters": "Blogit ja uutiskirjeet",
+    "contentStrategy": "Sisältöstrategia",
+    "addAccount": "Lisää tili",
+    "createTemplate": "Luo pohja",
+    "myTemplates": "Omat mallit",
+    "noTemplatesYet": "Ei vielä malleja. Luo ensimmäinen malli yllä olevasta napista.",
+    "templateCreationStarted": "Mallin luonti aloitettu! Päivitä sivu hetken kuluttua.",
+    "templateCreationFailed": "Mallin luonti epäonnistui: {message}",
+    "sendTicket": "Lähetä tiketti",
+    "maxFiles": "Maksimi {count} tiedostoa"
+  },
+  "accessibility": {
+    "sortByDate": "Klikkaa järjestääksesi päivämäärän mukaan",
+    "sortByDuration": "Klikkaa järjestääksesi keston mukaan",
+    "sortByStatus": "Klikkaa järjestääksesi tilan mukaan",
+    "schedulePost": "Aikatauluta postaus",
+    "editTechnicalId": "Muokkaa teknisiä ID:tä",
+    "deleteUser": "Poista käyttäjä",
+    "editName": "Muokkaa nimeä",
+    "closeNotification": "Sulje ilmoitus"
+  },
+  "social": {
+    "platforms": {
+      "instagram": "Instagram",
+      "facebook": "Facebook"
+    },
+    "connecting": "Yhdistetään {platform}...",
+    "refreshing": "Päivitetään sometilejä..."
+  },
   "settings": {
     "title": "Asetukset",
+    "logo": {
+      "title": "Yrityksen Logo",
+      "currentLogo": "Nykyinen logo:",
+      "dragHere": "Vedä logo tähän",
+      "dropHere": "Pudota logo tähän",
+      "logoSelected": "Logo valittu!",
+      "validationTypes": "Sallitut tiedostotyypit: PNG, JPG, WEBP, SVG",
+      "validationSize": "Tiedosto on liian suuri. Maksimikoko on 2MB.",
+      "uploadSuccess": "Logo päivitetty onnistuneesti!",
+      "removeSuccess": "Logo poistettu onnistuneesti!"
+    },
+    "personalInfo": {
+      "title": "Henkilökohtaiset tiedot"
+    },
     "profile": { "title": "Käyttäjätiedot", "loading": "Ladataan käyttäjätietoja...", "notFoundSupport": "Käyttäjätietoja ei löytynyt. Ota yhteyttä tukeen.", "fetchError": "Virhe käyttäjätietojen haussa. Ota yhteyttä tukeen.", "updateSuccess": "Tiedot päivitetty onnistuneesti!" },
     "fields": { "name": "Nimi", "email": "Sähköposti", "company": "Yritys", "industry": "Toimiala", "userId": "ID", "namePlaceholder": "Syötä nimesi", "emailPlaceholder": "Syötä sähköpostiosoitteesi", "companyPlaceholder": "Syötä yrityksesi nimi" },
     "buttons": { "edit": "Muokkaa", "save": "Tallenna", "saving": "Tallennetaan...", "cancel": "Peruuta", "changePassword": "Vaihda salasana", "changeEmail": "Vaihda sähköposti" },
     "common": { "notSet": "Ei asetettu", "notAvailable": "Ei saatavilla", "error": "Virhe", "loadingImages": "Ladataan kuvia..." },
     "password": { "title": "Salasanan vaihto", "saving": "Tallennetaan...", "save": "Tallenna", "cancel": "Peruuta", "mismatch": "Uudet salasanat eivät täsmää", "tooShort": "Uusi salasana on liian lyhyt (vähintään 6 merkkiä)", "currentRequired": "Nykyinen salasana vaaditaan", "currentWrong": "Nykyinen salasana on väärä", "changed": "Salasana vaihdettu onnistuneesti!", "currentPlaceholder": "Syötä nykyinen salasanasi", "newPlaceholder": "Syötä uusi salasana", "confirmPlaceholder": "Syötä uusi salasana uudelleen", "current": "Nykyinen salasana", "new": "Uusi salasana", "confirm": "Vahvista uusi salasana" },
-    "email": { "title": "Sähköpostin vaihto", "saving": "Tallennetaan...", "save": "Tallenna", "cancel": "Peruuta", "mismatch": "Sähköpostit eivät täsmää", "invalid": "Anna kelvollinen sähköpostiosoite", "changed": "Vahvistuslinkki lähetetty uuteen sähköpostiin!", "current": "Nykyinen sähköposti", "new": "Uusi sähköposti", "confirm": "Vahvista uusi sähköposti", "newPlaceholder": "Syötä uusi sähköposti", "confirmPlaceholder": "Syötä uusi sähköposti uudelleen" },
-    "avatar": { "title": "Avatar-kuvat", "loading": "Ladataan kuvia...", "addNewAria": "Lisää uusi kuva", "add": "Lisää", "fetchError": "Kuvien haku epäonnistui", "uploadError": "Kuvan lähetys epäonnistui", "refreshError": "Kuvien päivitys epäonnistui", "deleteError": "Poisto epäonnistui", "deleting": "Poistetaan...", "delete": "Poista kuva", "info": "{count}/4 kuvaa lisätty. Voit lisätä max 4 kuvaa." },
+    "email": {
+      "title": "Sähköpostin vaihto",
+      "saving": "Tallennetaan...",
+      "save": "Tallenna",
+      "cancel": "Peruuta",
+      "mismatch": "Sähköpostit eivät täsmää",
+      "invalid": "Anna kelvollinen sähköpostiosoite",
+      "changed": "Vahvistuslinkki lähetetty uuteen sähköpostiin!",
+      "current": "Nykyinen sähköposti",
+      "new": "Uusi sähköposti",
+      "confirm": "Vahvista uusi sähköposti",
+      "newPlaceholder": "Syötä uusi sähköposti",
+      "confirmPlaceholder": "Syötä uusi sähköposti uudelleen",
+      "changeSuccess": "Sähköpostiosoite vaihdettu onnistuneesti!",
+      "sameAsOld": "Uusi sähköpostiosoite on sama kuin nykyinen",
+      "verificationSent": "Vahvistuslinkki lähetetty sähköpostiosoitteeseen {email}. Vahvista sähköpostiosoitteesi klikkaamalla linkkiä sähköpostissa.",
+      "verificationTitle": "Vahvistuslinkki lähetetty",
+      "checkSpam": "Tarkista myös roskapostikansio. Sähköpostiosoitteesi vaihdetaan vasta kun klikkaat vahvistuslinkkiä sähköpostissa."
+    },
+    "messages": {
+      "invitedUserRestriction": "Kutsutut käyttäjät eivät voi muokata organisaation tietoja",
+      "userNotFound": "Käyttäjää ei löytynyt"
+    },
+    "avatar": {
+      "title": "Avatar-kuvat",
+      "loading": "Ladataan kuvia...",
+      "addNewAria": "Lisää uusi kuva",
+      "add": "Lisää",
+      "fetchError": "Kuvien haku epäonnistui",
+      "uploadError": "Kuvan lähetys epäonnistui",
+      "refreshError": "Kuvien päivitys epäonnistui",
+      "deleteError": "Poisto epäonnistui",
+      "deleting": "Poistetaan...",
+      "delete": "Poista kuva",
+      "info": "{count}/4 kuvaa lisätty. Voit lisätä max 4 kuvaa.",
+      "comingSoon": "Tulossa uusi versio",
+      "workInProgress": "Työskentelemme parhaillaan uuden avatar-toiminnallisuuden parissa"
+    },
     "voice": { "title": "Äänitiedostot (Voice Clone)", "loading": "Ladataan äänitiedostoa...", "addNewAria": "Lisää uusi äänitiedosto", "add": "Lisää", "processing": "Käsitellään...", "added": "Ääni lisätty", "fetchError": "Äänitiedostojen haku epäonnistui", "uploadError": "Äänitiedoston lähetys epäonnistui", "infoNone": "{count}/1 äänitiedosto lisätty. Lisää äänitiedosto voice clone -ominaisuutta varten.", "infoSome": "{count}/1 äänitiedosto lisätty. Äänitiedosto pysyy pysyvästi ja sitä ei voi poistaa." },
     "social": {
       "title": "Sosiaalisen median yhdistäminen",
@@ -1140,6 +1377,10 @@
         "soon": "Yhdistys vanhenee {days} päivän kuluttua. Päivitä yhteys pian.",
         "reminder": "Muistutus: Yhdistys vanhenee {days} päivän kuluttua. Päivitä yhteys ajoissa."
       }
+    },
+    "security": {
+      "title": "Turvallisuus",
+      "sessionSettings": "Sessio-asetukset"
     },
     "timeout": {
       "title": "Sessio-asetukset",
@@ -1172,84 +1413,6 @@
       "unknownError": "Tuntematon virhe"
     }
   },
-  "posts": {
-    "pageTitle": "Hallinnoi julkaisuja",
-    "columns": {
-      "avatar": "Avatar",
-      "inProgress": "Kesken", 
-      "readyToPublish": "Valmiina julkaisuun",
-      "scheduled": "Aikataulutettu"
-    },
-    "buttons": {
-      "edit": "Muokkaa",
-      "view": "Näytä",
-      "publish": "Julkaise",
-      "schedule": "Aikatauluta",
-      "delete": "Poista",
-      "createNew": "Luo uusi julkaisu",
-      "saveChanges": "Tallenna muutokset",
-      "cancel": "Peruuta"
-    },
-    "placeholders": {
-      "title": "Syötä some-sisällön otsikko...",
-      "caption": "Kirjoita some-sisällön kuvaus..."
-    },
-    "modals": {
-      "editTitle": "Muokkaa some-sisältöä",
-      "viewTitle": "Näytä some-sisältöä",
-      "captionCheck": "Kuvaus-tarkistus",
-      "voiceoverCheck": "Voiceover-tarkistus",
-      "publishDate": "Julkaisupäivä",
-      "publishDatePlaceholder": "pp.kk.vvvv klo --:--"
-    },
-    "messages": {
-      "ideaSent": "Idea lähetetty AI:lle! Some-sisältö generoidaan taustalla.",
-      "errorCreating": "Virhe: Ei voitu luoda some-sisältöä. Yritä uudelleen.",
-      "errorCompanyId": "Virhe: Ei voitu hakea yritystietoja. Yritä uudelleen.",
-      "voiceoverError": "Virhe voiceover-tilan päivityksessä. Yritä uudelleen.",
-      "voiceoverSuccess": "Voiceover merkitty valmiiksi! Automaatio jatkaa eteenpäin.",
-      "confirmDelete": "Oletko varma, että haluat poistaa tämän some-sisällön?",
-      "deleteSuccess": "Some-sisältö merkitty poistetuksi!",
-      "deleteError": "Some-sisällön poisto epäonnistui:",
-      "schedulePrompt": "Syötä ajastuspäivä (YYYY-MM-DD HH:MM):",
-      "scheduleSuccess": "Some-sisällön ajastus onnistui!",
-      "scheduleError": "Some-sisällön ajastus epäonnistui:",
-      "selectAccounts": "Valitse vähintään yksi somekanava julkaisua varten",
-      "publishSuccess": "Some-sisällön julkaisu onnistui!",
-      "publishError": "Some-sisällön julkaisu epäonnistui:",
-      "moveError": "Siirtyminen epäonnistui:",
-      "dataFetchError": "Datan haku epäonnistui",
-      "userIdNotFound": "Käyttäjän ID ei löytynyt",
-      "statusUpdateFailed": "Statusin päivitys epäonnistui:",
-      "supabaseUpdateFailed": "Supabase-päivitys epäonnistui"
-    },
-    "statuses": {
-      "inProgress": "Kesken",
-      "ready": "Valmis",
-      "scheduled": "Aikataulutettu", 
-      "published": "Julkaistu",
-      "untitled": "Nimetön julkaisu",
-      "untitledReels": "Nimetön Reels"
-    },
-    "header": "Hallinnoi julkaisuja",
-    "searchPlaceholder": "Hae julkaisuja...",
-    "filters": {
-      "allStatuses": "Kaikki tilat"
-    },
-    "status": {
-      "Kesken": "Kesken",
-      "Tarkistuksessa": "Valmiina julkaisuun",
-      "Aikataulutettu": "Aikataulutettu",
-      "Julkaistu": "Julkaistu"
-    },
-    "actions": {
-      "createNew": "Luo uusi julkaisu",
-      "retry": "Yritä uudelleen"
-    },
-    "placeholders": {
-      "noImage": "Ei kuvaa"
-    }
-  },
   "meetingNotes": {
     "title": "Palaverimuistiot",
     "header": "Palaverimuistiot",
@@ -1273,6 +1436,12 @@
     "title": "Vastaaja",
     "subtitle": "Älykäs puhelinvastaaja",
     "description": "Rascal AI Vastaaja vastaa puheluihin, kun et ehdi tai halua vastata itse. Tekoäly hoitaa asiakaspalvelua, varaa aikoja ja kerää tärkeät tiedot.",
+    "settings": {
+      "openPanel": "Avaa asetuspaneeli",
+      "closePanel": "Piilota asetuspaneeli",
+      "saving": "Tallennetaan...",
+      "saveSettings": "Tallenna asetukset"
+    },
     "features": {
       "calls": {
         "title": "Automaattinen vastaus",
@@ -1295,5 +1464,60 @@
       "configure": "Määritä vastaaja",
       "test": "Testaa vastaajaa"
     }
+  },
+  "leadScraping": {
+    "buttons": {
+      "resetFilters": "Nollaa suodattimet",
+      "starting": "Aloitetaan...",
+      "start": "Aloita"
+    }
+  },
+  "test": {
+    "buttons": {
+      "sending": "Lähetetään...",
+      "sendPostRequest": "Lähetä POST-kutsu"
+    }
+  },
+  "admin": {
+    "buttons": {
+      "hideIds": "Piilota ID:t",
+      "showIds": "Näytä ID:t",
+      "saving": "Tallennetaan...",
+      "save": "Tallenna"
+    }
+  },
+  "chat": {
+    "buttons": {
+      "save": "Tallenna",
+      "cancel": "Peruuta",
+      "deleteChat": "Poista keskustelu",
+      "newChat": "Aloita uusi keskustelu"
+    }
+  },
+  "media": {
+    "buttons": {
+      "loading": "Ladataan...",
+      "addMedia": "Lisää media",
+      "changeMedia": "Vaihda media"
+    }
+  },
+  "schedule": {
+    "messages": {
+      "selectFutureDateTime": "Valitse tulevaisuuden päivämäärä ja aika",
+      "draftPost": "Luonnos postaus",
+      "scheduledPost": "Aikataulutettu postaus"
+    }
+  },
+  "organizationMembers": {
+    "inviteUser": "Kutsu käyttäjä"
+  },
+  "monthlyLimit": {
+    "title": "Kuukausiraja täynnä",
+    "exceeded": "Kuukausiraja ylitetty",
+    "description": "Olet luonut {currentCount} generoitua sisältöä tässä kuussa. Kuukausiraja on {monthlyLimit} generoitua sisältöä.",
+    "nextMonth": "Voit luoda uutta sisältöä vasta ensi kuussa.",
+    "thisMonth": "Tämän kuun sisältöä",
+    "limit": "Kuukausiraja",
+    "createAnyway": "Luo silti (ei käytettävissä)"
   }
 }

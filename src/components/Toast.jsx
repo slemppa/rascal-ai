@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styles from './Toast.module.css'
 
 const Toast = ({ id, message, type, onClose }) => {
+  const { t } = useTranslation('common')
   const [isExiting, setIsExiting] = useState(false)
 
   const handleClose = () => {
@@ -39,7 +41,7 @@ const Toast = ({ id, message, type, onClose }) => {
       <button 
         className={styles.closeButton}
         onClick={handleClose}
-        aria-label="Sulje ilmoitus"
+        aria-label={t('accessibility.closeNotification')}
       >
         ×
       </button>

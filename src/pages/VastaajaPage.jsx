@@ -256,7 +256,7 @@ export default function VastaajaPage() {
 
     audio.onerror = () => {
       setIsPlaying(false)
-      alert('Äänitiedoston toisto epäonnistui')
+      alert(t('alerts.error.audioPlaybackFailed'))
     }
   }
 
@@ -409,7 +409,7 @@ export default function VastaajaPage() {
       return log.answered ? { label: 'Onnistunut', className: 'success' } : { label: 'Epäonnistunut', className: 'failed' }
     }
     if (status === 'pending') {
-      return { label: 'Odottaa', className: 'pending' }
+      return { label: t('strategy.status.pending'), className: 'pending' }
     }
     if (status === 'in progress') {
       return { label: 'Jonossa', className: 'pending' }
@@ -431,7 +431,7 @@ export default function VastaajaPage() {
           type="button"
           className={`sidebar-collapse-handle ${sidebarCollapsed ? 'collapsed' : ''}`}
           onClick={toggleSidebarCollapse}
-          aria-label={sidebarCollapsed ? 'Avaa asetuspaneeli' : 'Piilota asetuspaneeli'}
+          aria-label={sidebarCollapsed ? t('vastaaja.settings.openPanel') : t('vastaaja.settings.closePanel')}
         >
           <span>{sidebarCollapsed ? '›' : '‹'}</span>
         </button>
@@ -528,7 +528,7 @@ export default function VastaajaPage() {
                           disabled={savingSettings || !selectedCallTypeId}
                           className="save-settings-btn"
                         >
-                          {savingSettings ? 'Tallennetaan...' : 'Tallenna asetukset'}
+                          {savingSettings ? t('vastaaja.settings.saving') : t('vastaaja.settings.saveSettings')}
                         </button>
                       </>
                   </>

@@ -6,6 +6,7 @@ import fi from '../locales/fi/common.json'
 import en from '../locales/en/common.json'
 
 // i18next initialization with cookie-based language detection
+// Force refresh 2026-01-07 v2
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)

@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useTranslation } from 'react-i18next'
 import { useToast } from '../contexts/ToastContext'
 import Button from './Button'
 
@@ -16,6 +17,7 @@ export default function PostsCalendar({
   onRefresh,
   refreshing = false
 }) {
+  const { t } = useTranslation('common')
   const toast = useToast()
   const [current, setCurrent] = useState(() => {
     const now = new Date()
@@ -127,7 +129,7 @@ export default function PostsCalendar({
       
       // Tarkista että on valittu vähintään yksi kanava
       if (!selectedAccounts || selectedAccounts.length === 0) {
-        toast.warning('Valitse vähintään yksi somekanava')
+        toast.warning(t('alerts.error.selectAtLeastOne'))
         return
       }
       
@@ -199,7 +201,7 @@ export default function PostsCalendar({
                 padding: '8px 12px'
               }}
             >
-              {refreshing ? 'Päivitetään...' : 'Päivitä'}
+              {refreshing ? t('ui.buttons.refreshing') : t('ui.buttons.refresh')}
             </Button>
           )}
           <Button variant="secondary" onClick={goPrev}>◀</Button>
@@ -233,7 +235,7 @@ export default function PostsCalendar({
                             e.stopPropagation()
                             handleDateClick(cell.key)
                           }}
-                          title="Aikatauluta postaus"
+                          title={t('accessibility.schedulePost')}
                         >
                           +
                         </button>
@@ -279,7 +281,7 @@ export default function PostsCalendar({
           <div className="modal-container modal-content--schedule" onClick={(e) => e.stopPropagation()}>
             <div className="modal-content">
               <div className="modal-header">
-                <h2>Aikatauluta postaus</h2>
+                <h2>{t('accessibility.schedulePost')}</h2>
                 <button className="modal-close" onClick={handleCloseScheduleModal}>×</button>
               </div>
               <div className="modal-body">
@@ -306,8 +308,8 @@ export default function PostsCalendar({
                           )}
                         </div>
                         <div className="schedule-post-info">
-                          <h4 className="schedule-post-title">{post.title || 'Postaus'}</h4>
-                          <p className="schedule-post-caption">{post.caption || 'Ei kuvausta'}</p>
+                          <h4 className="schedule-post-title">{post.title || t('general.post')}</h4>
+                          <p className="schedule-post-caption">{post.caption || t('general.noDescription')}</p>
                           <div className="schedule-post-meta">
                             <span className="schedule-post-type">{post.type || 'Post'}</span>
                           </div>
@@ -343,8 +345,8 @@ export default function PostsCalendar({
                       )}
                     </div>
                     <div className="schedule-post-info">
-                      <h4 className="schedule-post-title">{selectedPost.post.title || 'Postaus'}</h4>
-                      <p className="schedule-post-caption">{selectedPost.post.caption || 'Ei kuvausta'}</p>
+                      <h4 className="schedule-post-title">{selectedPost.post.title || t('general.post')}</h4>
+                      <p className="schedule-post-caption">{selectedPost.post.caption || t('general.noDescription')}</p>
                       <div className="schedule-post-meta">
                         <span className="schedule-post-type">{selectedPost.post.type || 'Post'}</span>
                       </div>

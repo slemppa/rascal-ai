@@ -170,7 +170,7 @@ export default function AccountTypeSection({ userProfile, onProfileUpdate, isInv
               className={`${styles.btn} ${styles.btnPrimary}`}
               style={{ fontSize: 13, padding: '6px 12px' }}
             >
-              {loading ? 'Tallennetaan...' : 'Tallenna'}
+              {loading ? t('ui.buttons.saving') : t('ui.buttons.save')}
             </button>
             <button 
               onClick={handleCancel} 

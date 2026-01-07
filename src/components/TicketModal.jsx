@@ -4,7 +4,7 @@ import axios from 'axios'
 import { supabase } from '../lib/supabase'
 
 const TicketModal = ({ isOpen, onClose }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation('common')
   const [formData, setFormData] = useState({
     page: '',
     description: ''
@@ -311,7 +311,7 @@ const TicketModal = ({ isOpen, onClose }) => {
                   ))}
                   {selectedFiles.length >= 5 && (
                     <p style={{ fontSize: '12px', color: '#666', margin: '8px 0 0 0' }}>
-                      Maksimi 5 tiedostoa
+                      {t('general.maxFiles', { count: 5 })}
                     </p>
                   )}
                 </div>
@@ -325,7 +325,7 @@ const TicketModal = ({ isOpen, onClose }) => {
                 className="btn btn-secondary"
                 disabled={isSubmitting}
               >
-                Peruuta
+                {t('common.cancel')}
               </button>
               <button
                 type="submit"
@@ -333,7 +333,7 @@ const TicketModal = ({ isOpen, onClose }) => {
                 disabled={isSubmitting || !formData.page || !formData.description.trim()}
                 style={{ minWidth: '120px' }}
               >
-                {isSubmitting ? 'Lähetetään...' : 'Lähetä tiketti'}
+                {isSubmitting ? t('ui.buttons.sending') : t('general.sendTicket')}
               </button>
             </div>
           </form>

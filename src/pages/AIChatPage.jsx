@@ -580,7 +580,7 @@ export default function AIChatPage() {
     
     try {
       if (!user?.id) {
-        alert('Käyttäjä ei ole kirjautunut')
+        alert(t('alerts.error.notLoggedIn'))
         return
       }
       
@@ -593,22 +593,21 @@ export default function AIChatPage() {
 
       const orgId = await getUserOrgId(user.id)
       if (!orgId) {
-        alert('Organisaation ID ei löytynyt')
+        alert(t('alerts.error.organizationIdNotFound'))
         return
       }
       console.log('🗑️ Poistetaan tiedosto, IDs:', fileIds, 'orgId:', orgId)
-      // Poista jokainen tiedosto erikseen koska API vaatii userId ja fileId
-      for (const fileId of fileIds) {
-        await axios.post('/api/storage/delete-files', {
-          userId: orgId,
-          fileId: fileId
-        }, {
-          headers: { 
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json'
-          }
-        })
-      }
+      
+      // Käytä uutta knowledge/delete endpointia joka tukee array-poistoa ja Supabase-integraatiota
+      await axios.post('/api/storage/knowledge/delete', {
+        ids: fileIds
+      }, {
+        headers: { 
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
       // Poista tiedosto listasta vertaamalla id-arrayja
       setFiles(prev => prev.filter(file => 
         JSON.stringify(file.id) !== JSON.stringify(fileIds)
@@ -616,7 +615,10 @@ export default function AIChatPage() {
       console.log('✅ Tiedosto poistettu')
     } catch (error) {
       console.error('❌ Virhe tiedoston poistamisessa:', error)
-      alert('Tiedoston poisto epäonnistui. Yritä uudelleen.')
+      if (error.response?.data) {
+        console.error('Virheen yksityiskohdat:', error.response.data)
+      }
+      alert(t('alerts.error.fileDeleteFailed'))
     }
   }
 
@@ -673,7 +675,7 @@ export default function AIChatPage() {
       console.log('✅ Uusi thread luotu:', newThread.id)
     } catch (error) {
       console.error('❌ Virhe threadin luonnissa:', error)
-      alert('Uuden keskustelun luonti epäonnistui')
+      alert(t('alerts.error.newChatFailed'))
     }
   }
 
@@ -956,7 +958,7 @@ export default function AIChatPage() {
       console.log('✅ Thread poistettu:', threadIdToDelete)
     } catch (error) {
       console.error('❌ Virhe threadin poistossa:', error)
-      alert('Keskustelun poisto epäonnistui')
+      alert(t('alerts.error.chatDeleteFailed'))
     }
   }
 
@@ -987,7 +989,7 @@ export default function AIChatPage() {
 
   const saveThreadTitle = async (threadId) => {
     if (!editingTitle.trim()) {
-      alert('Otsikko ei voi olla tyhjä')
+      alert(t('alerts.error.emptyTitle'))
       return
     }
 
@@ -1018,7 +1020,7 @@ export default function AIChatPage() {
       console.log('✅ Threadin otsikko päivitetty:', threadId)
     } catch (error) {
       console.error('❌ Virhe otsikon päivityksessä:', error)
-      alert('Otsikon päivitys epäonnistui')
+      alert(t('alerts.error.titleUpdateFailed'))
     }
   }
 
@@ -1338,28 +1340,6 @@ export default function AIChatPage() {
     }
   }
 
-  // UUSI: Assistentin tiedostojen lisäys (POST + action)
-  async function uploadAssistantKnowledgeFiles({ files, userId }) {
-    const formData = new FormData()
-    Array.from(files).forEach(file => formData.append('files', file))
-    formData.append('action', 'feed')
-    formData.append('userId', userId)
-    return axios.post('/api/storage/knowledge/upload', formData, {
-      headers: { 
-        'Content-Type': 'multipart/form-data',
-        'x-api-key': import.meta.env.N8N_SECRET_KEY
-      }
-    })
-  }
-
-  // UUSI: Assistentin tiedoston poisto (POST + action)
-  async function deleteAssistantKnowledgeFile({ fileIds, userId }) {
-    return axios.post('/api/storage/knowledge/delete', {
-      ids: fileIds  // fileIds on jo array
-    }, {
-      headers: { 'x-api-key': import.meta.env.N8N_SECRET_KEY }
-    })
-  }
 
   // Tyhjennä keskustelu
   const handleNewChat = async () => {
@@ -1455,14 +1435,14 @@ export default function AIChatPage() {
                               <button 
                                 onClick={(e) => { e.stopPropagation(); saveThreadTitle(thread.id); }} 
                                 className="save-thread-btn"
-                                title="Tallenna"
+                                title={t('chat.buttons.save')}
                               >
                                 ✓
                               </button>
                               <button 
                                 onClick={(e) => { e.stopPropagation(); cancelEditingThread(); }} 
                                 className="cancel-thread-btn"
-                                title="Peruuta"
+                                title={t('chat.buttons.cancel')}
                               >
                                 ✕
                               </button>
@@ -1472,14 +1452,14 @@ export default function AIChatPage() {
                               <button 
                                 onClick={(e) => { e.stopPropagation(); startEditingThread(thread); }} 
                                 className="edit-thread-btn"
-                                title="Muokkaa nimeä"
+                                title={t('accessibility.editName')}
                               >
                                 ✎
                               </button>
                               <button 
                                 onClick={(e) => { e.stopPropagation(); deleteThread(thread.id); }} 
                                 className="delete-thread-btn"
-                                title="Poista keskustelu"
+                                title={t('chat.buttons.deleteChat')}
                               >
                                 ✕
                               </button>
@@ -1687,7 +1667,7 @@ export default function AIChatPage() {
                   type="button"
                   onClick={handleNewChat}
                   className="new-chat-btn-input"
-                  title="Aloita uusi keskustelu"
+                  title={t('chat.buttons.newChat')}
                 >
                   +
                 </button>

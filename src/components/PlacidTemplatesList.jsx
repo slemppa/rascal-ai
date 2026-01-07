@@ -4,12 +4,14 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
 import { getUserOrgId } from '../lib/getUserOrgId'
+import { useTranslation } from 'react-i18next'
 import PlacidEditor from './PlacidEditor'
 import styles from './PlacidTemplatesList.module.css'
 
 export default function PlacidTemplatesList() {
   const { user } = useAuth()
   const toast = useToast()
+  const { t } = useTranslation('common')
   const [templates, setTemplates] = useState([])
   const [loading, setLoading] = useState(true)
   const [editingTemplate, setEditingTemplate] = useState(null)
@@ -78,38 +80,39 @@ export default function PlacidTemplatesList() {
       })
 
       if (response.data.success) {
-        toast.success('Mallin luonti aloitettu! Päivitä sivu hetken kuluttua.')
+        toast.success(t('general.templateCreationStarted'))
         // Voit myös päivittää listan automaattisesti
         // fetchTemplates()
       }
     } catch (error) {
       console.error('Error creating template:', error)
-      toast.error('Mallin luonti epäonnistui: ' + (error.response?.data?.message || error.message))
+      const errorMessage = error.response?.data?.message || error.message
+      toast.error(t('general.templateCreationFailed', { message: errorMessage }))
     } finally {
       setCreating(false)
     }
   }
 
   if (loading) {
-      return <div className={styles.loading}>Ladataan malleja...</div>
+      return <div className={styles.loading}>{t('ui.buttons.loading')}</div>
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h3 className={styles.title}>Omat mallit</h3>
+        <h3 className={styles.title}>{t('general.myTemplates')}</h3>
         <button 
           onClick={handleCreateTemplate}
           disabled={creating}
           className={styles.createButton}
         >
-          {creating ? 'Luodaan...' : 'Luo pohja'}
+          {creating ? t('ui.buttons.creating') : t('general.createTemplate')}
         </button>
       </div>
       
       {templates.length === 0 ? (
         <div className={styles.emptyState}>
-          Ei vielä malleja. Luo ensimmäinen malli yllä olevasta napista.
+          {t('general.noTemplatesYet')}
         </div>
       ) : (
       <div className={styles.grid}>
@@ -119,20 +122,20 @@ export default function PlacidTemplatesList() {
                   <div className={styles.thumbnailWrapper}>
                     <img 
                       src={template.thumbnail_url} 
-                      alt={template.variable_id || 'Template'} 
+                      alt={template.variable_id || t('general.untitledTemplate')} 
                       className={styles.thumbnail}
                     />
                   </div>
                 )}
                 <div className={styles.cardContent}>
-                    <div className={styles.templateName}>{template.variable_id || 'Nimetön malli'}</div>
+                    <div className={styles.templateName}>{template.variable_id || t('general.untitledTemplate')}</div>
                     <div className={styles.templateId}>ID: {template.placid_id}</div>
                 </div>
                 <button 
                     onClick={() => setEditingTemplate(template.placid_id)}
                     className={styles.editButton}
                 >
-                    Muokkaa
+                    {t('posts.actions.edit')}
                 </button>
             </div>
         ))}

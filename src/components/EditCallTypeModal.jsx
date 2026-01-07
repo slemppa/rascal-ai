@@ -697,7 +697,7 @@ pyysikö kauppa olemaan vielä yhteydessä"
               type="button"
               onClick={handleSubmit}
             >
-              Tallenna
+              {t('common.save')}
             </Button>
             {currentStep < totalSteps && (
               <Button

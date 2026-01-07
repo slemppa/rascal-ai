@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from './AuthContext'
 import { supabase } from '../lib/supabase'
 import { getUserOrgId } from '../lib/getUserOrgId'
@@ -15,6 +16,7 @@ export const useStrategyStatus = () => {
 }
 
 export const StrategyStatusProvider = ({ children }) => {
+  const { t } = useTranslation('common')
   const { user } = useAuth()
   const location = useLocation()
   const [showStrategyModal, setShowStrategyModal] = useState(false)
@@ -123,7 +125,7 @@ export const StrategyStatusProvider = ({ children }) => {
       
       if (!token) {
         console.error('StrategyStatus: No access token')
-        alert('Sisäänkirjautuminen puuttuu. Kirjaudu uudelleen sisään.')
+        alert(t('alerts.error.loginRequired'))
         return
       }
 
@@ -141,11 +143,11 @@ export const StrategyStatusProvider = ({ children }) => {
       } else {
         const errorData = await response.json()
         console.error('StrategyStatus: Approval failed:', errorData)
-        alert('Strategian vahvistaminen epäonnistui. Yritä uudelleen.')
+        alert(t('alerts.error.strategyApprovalFailed'))
       }
     } catch (error) {
       console.error('StrategyStatus: Approval error:', error)
-      alert('Virhe strategian vahvistamisessa. Yritä uudelleen.')
+      alert(t('alerts.error.strategyError'))
     } finally {
       setLoading(false)
     }

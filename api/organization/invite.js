@@ -255,8 +255,77 @@ async function handler(req, res) {
       })
     }
 
-    // Sähköposti lähetetään automaattisesti Supabasen inviteUserByEmail metodilla
-    // Käyttäjä voi muokata mailipohjaa Supabasen dashboardissa
+    // Lähetä ilmoitus käyttäjälle organisaatioon liittymisestä
+    // Käytetään N8N webhookia tai notifikaatiota, koska inviteUserByEmail ei toimi olemassa oleville käyttäjille
+    try {
+      const appUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5173'
+      
+      // Hae organisaation tiedot
+      const { data: orgData } = await req.supabase
+        .from('users')
+        .select('company_name, contact_person')
+        .eq('id', orgId)
+        .single()
+
+      // Luo notifikaatio sovelluksen sisälle
+      if (supabaseServiceKey && supabaseUrl) {
+        const { createClient } = await import('@supabase/supabase-js')
+        const serviceClient = createClient(supabaseUrl, supabaseServiceKey, {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false
+          }
+        })
+
+        await serviceClient
+          .from('notifications')
+          .insert({
+            user_id: authUser.id,
+            type: 'organization_invite',
+            title: 'Sinut on kutsuttu organisaatioon',
+            message: `${orgData?.contact_person || 'Organisaation järjestelmänvalvoja'} on kutsunut sinut organisaatioon ${orgData?.company_name || 'Rascal AI'} roolissa: ${role === 'admin' ? 'Admin' : role === 'owner' ? 'Omistaja' : 'Jäsen'}.`,
+            data: {
+              org_id: orgId,
+              role: role,
+              org_name: orgData?.company_name
+            }
+          })
+        
+        console.log('Notification created for organization invite')
+      }
+
+      // Lähetä sähköposti N8N:n kautta (jos webhook on konfiguroitu)
+      const n8nWebhookUrl = process.env.N8N_ORGANIZATION_INVITE_URL
+      
+      if (n8nWebhookUrl) {
+        const { sendToN8N } = await import('../lib/n8n-client.js')
+        
+        const webhookPayload = {
+          action: 'organization_invite',
+          email: authUser.email || email,
+          org_id: orgId,
+          org_name: orgData?.company_name || 'Rascal AI',
+          role: role,
+          role_name: role === 'admin' ? 'Admin' : role === 'owner' ? 'Omistaja' : 'Jäsen',
+          invited_by: orgData?.contact_person || 'Organisaation järjestelmänvalvoja',
+          app_url: appUrl,
+          timestamp: new Date().toISOString()
+        }
+
+        try {
+          await sendToN8N(n8nWebhookUrl, webhookPayload)
+          console.log('Organization invite email sent via N8N webhook')
+        } catch (webhookError) {
+          console.error('Error sending N8N webhook:', webhookError)
+          // Jatketaan silti, notifikaatio on jo luotu
+        }
+      } else {
+        console.log('N8N_ORGANIZATION_INVITE_URL not configured, skipping email notification')
+      }
+    } catch (notificationError) {
+      console.error('Error sending notification/email:', notificationError)
+      // Jatketaan silti, käyttäjä on jo lisätty org_members-tauluun
+    }
 
     return res.status(201).json({
       success: true,

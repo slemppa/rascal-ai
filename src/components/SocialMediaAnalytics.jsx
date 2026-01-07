@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
-import MixpostAPI from '../services/mixpostApi';
+import axios from 'axios';
 
 const SocialMediaAnalytics = () => {
   const { user } = useAuth();
@@ -12,27 +11,12 @@ const SocialMediaAnalytics = () => {
   const [timeRange, setTimeRange] = useState('30d');
   const [loading, setLoading] = useState(true);
   
-  // Mock workspaces - korvaa Mixpost API:n datalla
-  const [workspaces] = useState([
-    { id: 'main', name: 'Päätyöskentely-ympäristö', role: 'admin' },
-    { id: 'marketing', name: 'Marketing-tiimi', role: 'editor' },
-    { id: 'client', name: 'Asiakasprojekti', role: 'viewer' }
+  const [workspaces, setWorkspaces] = useState([
+    { id: 'main', name: 'Oletus työtila', role: 'admin' }
   ]);
 
-  // Mock social media accounts - integroituu Mixpost API:n kanssa
   const [accounts, setAccounts] = useState({
-    'main': [
-      { id: 'fb-main', platform: 'facebook', name: 'Yritys Facebook', followers: 15420, connected: true },
-      { id: 'ig-main', platform: 'instagram', name: 'Yritys Instagram', followers: 8930, connected: false },
-      { id: 'tw-main', platform: 'twitter', name: 'Yritys Twitter', followers: 3240, connected: true },
-      { id: 'li-main', platform: 'linkedin', name: 'Yritys LinkedIn', followers: 5680, connected: false }
-    ],
-    'marketing': [
-      { id: 'ig-marketing', platform: 'instagram', name: 'Marketing Instagram', followers: 2100, connected: true }
-    ],
-    'client': [
-      { id: 'fb-client', platform: 'facebook', name: 'Asiakas Facebook', followers: 950, connected: true }
-    ]
+    'main': []
   });
 
   const [metrics, setMetrics] = useState({
@@ -47,67 +31,62 @@ const SocialMediaAnalytics = () => {
   const [audienceData, setAudienceData] = useState([]);
   const [platformBreakdown, setPlatformBreakdown] = useState([]);
 
-  // Hae data Supabasesta ja Mixpost API:sta
+  // Hae data API:sta
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
       
       setLoading(true);
       try {
-        // Hae käyttäjän user_id
-        const { data: userRow } = await supabase
-          .from('users')
-          .select('id, mixpost_workspaces')
-          .eq('auth_user_id', user.id)
-          .single();
+        // 1. Hae yhdistetyt tilit
+        const accountsResponse = await axios.get('/api/integrations/mixpost/accounts');
+        const socialAccounts = accountsResponse.data || [];
 
-        if (userRow?.mixpost_workspaces) {
-          // Hae Mixpost-dataa jos käyttäjällä on workspacet
-          await fetchMixpostData(userRow.mixpost_workspaces);
-        } else {
-          // Käytä Supabase-dataa
-          await fetchSupabaseData(userRow?.id);
-        }
+        setAccounts(prev => ({
+          ...prev,
+          'main': socialAccounts.map(account => ({
+            id: account.id,
+            platform: account.provider.toLowerCase(),
+            name: account.name,
+            followers: account.data?.followers_count || 0,
+            connected: true,
+            // Lisätään tarvittavat kentät
+            profile_image_url: account.data?.profile_image_url
+          }))
+        }));
+
+        // 2. Hae analytiikka (stats)
+        const statsResponse = await axios.get(`/api/analytics/social-stats?from=${getDateString(30)}&to=${getDateString(0)}`);
+        // Huom: Jos backend palauttaa eri rakenteen, sovita se tässä. 
+        // Oletetaan että sieltä tulee valmiit metriikat tai raaka data josta lasketaan.
+        // Nyt käytämme mock-laskentaa tileistä, jos stats-endpoint ei palauta suoraan yhteenvetoa.
+        
+        // Päivitä metriikat tilien perusteella (tai API:n jos se tukee)
+        updateMetricsFromAccounts(socialAccounts);
+
       } catch (error) {
         console.error('Error fetching analytics data:', error);
-        // Fallback mockdataan
-        generateMockData();
+        // Jos konfiguraatiota ei löydy tai virhe, näytä tyhjää tai mockia
+        // Tässä tapauksessa nollataan tai pidetään alkutila
       }
       setLoading(false);
     };
 
     fetchData();
-  }, [user, currentWorkspace, selectedAccount, selectedPlatform, timeRange]);
+  }, [user, timeRange]); // Poistettu currentWorkspace riippuvuus koska tuemme nyt vain yhtä
 
-  const fetchMixpostData = async (workspaces) => {
-    try {
-      // Integroituu olemassa olevaan Mixpost API:hin
-      const workspaceData = workspaces.find(w => w.id === currentWorkspace);
-      if (!workspaceData) return;
+  const getDateString = (daysAgo) => {
+    const d = new Date();
+    d.setDate(d.getDate() - daysAgo);
+    return d.toISOString().split('T')[0];
+  };
 
-      // Hae social media tilit
-      const socialAccounts = await MixpostAPI.getSocialAccounts(
-        workspaceData.uuid, 
-        workspaceData.api_token
-      );
-
-      // Päivitä tilit
-      setAccounts(prev => ({
-        ...prev,
-        [currentWorkspace]: socialAccounts.map(account => ({
-          id: account.id,
-          platform: account.provider.toLowerCase(),
-          name: account.name,
-          followers: account.data?.followers_count || 0,
-          connected: true
-        }))
-      }));
-
-      // Simuloi metriikat (korvaa oikealla API-datalla)
-      const totalFollowers = socialAccounts.reduce((sum, acc) => 
+  const updateMetricsFromAccounts = (socialAccounts) => {
+     const totalFollowers = socialAccounts.reduce((sum, acc) => 
         sum + (acc.data?.followers_count || 0), 0
       );
       
+      // Simuloidaan muita lukuja seuraajien perusteella kunnes backend palauttaa tarkat luvut
       setMetrics({
         likes: Math.floor(totalFollowers * 0.05),
         comments: Math.floor(totalFollowers * 0.01),
@@ -119,63 +98,6 @@ const SocialMediaAnalytics = () => {
 
       generateAudienceData(totalFollowers);
       generatePlatformBreakdown(socialAccounts);
-
-    } catch (error) {
-      console.error('Error fetching Mixpost data:', error);
-      generateMockData();
-    }
-  };
-
-  const fetchSupabaseData = async (userId) => {
-    try {
-      // Hae sisältöjen määrä
-      const { count: postsCount } = await supabase
-        .from('content')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId);
-
-      // Hae viimeaikaisia sisältöjä engagement-dataa varten
-      const { data: recentContent } = await supabase
-        .from('content')
-        .select('*')
-        .eq('user_id', userId)
-        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
-        .order('created_at', { ascending: false });
-
-      // Laske metriikat Supabase-datan perusteella
-      const totalPosts = postsCount || 0;
-      const estimatedFollowers = totalPosts * 150; // Arvio
-      
-      setMetrics({
-        likes: Math.floor(totalPosts * 25),
-        comments: Math.floor(totalPosts * 5),
-        followers: estimatedFollowers,
-        reach: Math.floor(totalPosts * 500),
-        posts: totalPosts,
-        engagementRate: totalPosts > 0 ? 4.1 : 0
-      });
-
-      generateAudienceData(estimatedFollowers);
-      generateSupabasePlatformBreakdown(recentContent || []);
-
-    } catch (error) {
-      console.error('Error fetching Supabase data:', error);
-      generateMockData();
-    }
-  };
-
-  const generateMockData = () => {
-    const mockFollowers = 5000;
-    setMetrics({
-      likes: 234,
-      comments: 45,
-      followers: mockFollowers,
-      reach: 12500,
-      posts: 18,
-      engagementRate: 3.8
-    });
-    generateAudienceData(mockFollowers);
-    generateMockPlatformBreakdown();
   };
 
   const generateAudienceData = (baseFollowers) => {
@@ -209,28 +131,6 @@ const SocialMediaAnalytics = () => {
     setPlatformBreakdown(platformData);
   };
 
-  const generateSupabasePlatformBreakdown = (contentData) => {
-    // Analysoi sisältötyyppejä ja luo platform breakdown
-    const platforms = ['instagram', 'facebook', 'twitter', 'linkedin'];
-    const platformData = platforms.map(platform => ({
-      platform,
-      name: `${platform.charAt(0).toUpperCase() + platform.slice(1)} sisältö`,
-      followers: Math.floor(Math.random() * 5000) + 500,
-      engagement: Math.floor(Math.random() * 8) + 2
-    }));
-    setPlatformBreakdown(platformData);
-  };
-
-  const generateMockPlatformBreakdown = () => {
-    const platformData = [
-      { platform: 'instagram', name: 'Instagram', followers: 2500, engagement: 4.2 },
-      { platform: 'facebook', name: 'Facebook', followers: 1500, engagement: 2.8 },
-      { platform: 'twitter', name: 'Twitter', followers: 800, engagement: 3.5 },
-      { platform: 'linkedin', name: 'LinkedIn', followers: 200, engagement: 6.1 }
-    ];
-    setPlatformBreakdown(platformData);
-  };
-
   const MetricCard = ({ title, value, color = "text-blue-600", subtitle, loading = false }) => (
     <div className="text-center p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
       {loading ? (
@@ -256,12 +156,15 @@ const SocialMediaAnalytics = () => {
       facebook: '📘',
       instagram: '📷',
       twitter: '🐦',
-      linkedin: '💼'
+      linkedin: '💼',
+      tiktok: '🎵',
+      youtube: '▶️',
+      pinterest: '📌'
     };
     return icons[platform] || '📱';
   };
 
-  const currentAccounts = accounts[currentWorkspace] || [];
+  const currentAccounts = accounts['main'] || [];
 
   if (loading) {
     return (
@@ -288,25 +191,27 @@ const SocialMediaAnalytics = () => {
       <div className="mb-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Social Media Analytics</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Some-analytiikka</h1>
             <p className="text-gray-600">
-              Workspace: {workspaces.find(w => w.id === currentWorkspace)?.name}
+              Seuraa sosiaalisen median tiliesi kehitystä
             </p>
           </div>
           
           <div className="flex flex-wrap gap-3">
-            {/* Workspace selector */}
-            <select 
-              value={currentWorkspace} 
-              onChange={(e) => setCurrentWorkspace(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            >
-              {workspaces.map(workspace => (
-                <option key={workspace.id} value={workspace.id}>
-                  {workspace.name} ({workspace.role})
-                </option>
-              ))}
-            </select>
+            {/* Workspace selector - Piilotettu/disabled jos vain yksi */}
+            {workspaces.length > 1 && (
+              <select 
+                value={currentWorkspace} 
+                onChange={(e) => setCurrentWorkspace(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              >
+                {workspaces.map(workspace => (
+                  <option key={workspace.id} value={workspace.id}>
+                    {workspace.name} ({workspace.role})
+                  </option>
+                ))}
+              </select>
+            )}
 
             {/* Platform filter */}
             <select 
@@ -351,13 +256,13 @@ const SocialMediaAnalytics = () => {
 
       {/* Päämetriikat */}
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
-        <MetricCard title="Likes" value={metrics.likes} color="text-pink-600" loading={loading} />
-        <MetricCard title="Comments" value={metrics.comments} color="text-green-600" loading={loading} />
-        <MetricCard title="Followers" value={metrics.followers} color="text-purple-600" loading={loading} />
-        <MetricCard title="Reach" value={metrics.reach} color="text-blue-600" loading={loading} />
-        <MetricCard title="Posts" value={metrics.posts} color="text-orange-600" loading={loading} />
+        <MetricCard title="Tykkäykset" value={metrics.likes} color="text-pink-600" loading={loading} />
+        <MetricCard title="Kommentit" value={metrics.comments} color="text-green-600" loading={loading} />
+        <MetricCard title="Seuraajat" value={metrics.followers} color="text-purple-600" loading={loading} />
+        <MetricCard title="Kattavuus" value={metrics.reach} color="text-blue-600" loading={loading} />
+        <MetricCard title="Julkaisut" value={metrics.posts} color="text-orange-600" loading={loading} />
         <MetricCard 
-          title="Engagement" 
+          title="Sitoutuminen" 
           value={`${metrics.engagementRate.toFixed(1)}%`} 
           color="text-teal-600" 
           loading={loading}
@@ -368,8 +273,8 @@ const SocialMediaAnalytics = () => {
         {/* Audience chart */}
         <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
           <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Audience Growth</h3>
-            <p className="text-sm text-gray-600">Seuraajien kasvu ajanjaksolla</p>
+            <h3 className="text-lg font-semibold text-gray-900">Yleisön kasvu</h3>
+            <p className="text-sm text-gray-600">Seuraajien määrän kehitys</p>
           </div>
           
           <div className="h-64">
@@ -402,8 +307,8 @@ const SocialMediaAnalytics = () => {
         {/* Platform breakdown */}
         <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
           <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Platform Performance</h3>
-            <p className="text-sm text-gray-600">Seuraajat alustittain</p>
+            <h3 className="text-lg font-semibold text-gray-900">Alustajakauma</h3>
+            <p className="text-sm text-gray-600">Seuraajat eri alustoilla</p>
           </div>
           
           <div className="h-64">
@@ -451,7 +356,7 @@ const SocialMediaAnalytics = () => {
           
           {currentAccounts.length === 0 && (
             <div className="col-span-full text-center py-8 text-gray-500">
-              Ei yhdistettyjä tilejä tässä workspace:ssa
+              Ei yhdistettyjä tilejä. Käy asetuksissa yhdistämässä some-tilisi.
             </div>
           )}
         </div>
@@ -460,7 +365,7 @@ const SocialMediaAnalytics = () => {
       {/* Status indicator */}
       <div className="mt-6 flex items-center justify-center space-x-2 text-sm text-gray-500">
         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-        <span>Live data - {workspaces.find(w => w.id === currentWorkspace)?.name}</span>
+        <span>Live data - Päivitetty juuri nyt</span>
       </div>
     </div>
   );

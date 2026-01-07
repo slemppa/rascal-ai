@@ -1,31 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { getCurrentUser, isAdmin as checkIsAdmin } from '../utils/userApi'
 import { useAuth } from '../contexts/AuthContext'
 import { useFeatures } from '../hooks/useFeatures'
 import './MobileNavigation.css'
 
-const menuItems = [
-  { label: 'Etusivu', path: '/dashboard', feature: null },
-  { label: 'Kampanjat', path: '/campaigns', feature: 'Campaigns' },
-  { label: 'Segmentit', path: '/segments', feature: 'Segments' },
-  { label: 'Some', path: '/posts', feature: 'Social Media' },
-  { label: 'Blog & Newsletter', path: '/blog-newsletter', feature: 'Social Media' },
-  { label: 'Sisältöstrategia', path: '/strategy', feature: 'Social Media' },
-  { label: 'Puhelut', path: '/calls', feature: 'Phone Calls' },
-  { label: 'Assistentti', path: '/ai-chat', feature: 'Marketing assistant' },
-  { label: 'Dev', path: '/dev', feature: null, adminOnly: true },
-  { label: 'Ylläpito', path: '/admin', feature: null, adminOnly: true },
-  { label: 'Admin', path: '/admin-blog', feature: null, moderatorOnly: true },
-]
-
-const bottomItems = [
-  { label: 'Asetukset', path: '/settings' },
-  { label: 'Help Center', path: '/help' },
-]
-
 export default function MobileNavigation() {
+  const { t } = useTranslation('common')
   const navigate = useNavigate()
   const location = useLocation()
   const [isOpen, setIsOpen] = useState(false)
@@ -33,6 +16,25 @@ export default function MobileNavigation() {
   const [isModerator, setIsModerator] = useState(false)
   const { user, signOut } = useAuth()
   const { has: hasFeature } = useFeatures()
+
+  const menuItems = [
+    { label: t('sidebar.labels.dashboard'), path: '/dashboard', feature: null },
+    { label: t('sidebar.labels.campaigns'), path: '/campaigns', feature: 'Campaigns' },
+    { label: t('sidebar.labels.segments'), path: '/segments', feature: 'Segments' },
+    { label: t('sidebar.labels.posts'), path: '/posts', feature: 'Social Media' },
+    { label: t('sidebar.labels.blogNewsletter'), path: '/blog-newsletter', feature: 'Social Media' },
+    { label: t('sidebar.labels.strategy'), path: '/strategy', feature: 'Social Media' },
+    { label: t('sidebar.labels.calls'), path: '/calls', feature: 'Phone Calls' },
+    { label: t('sidebar.labels.assistentti'), path: '/ai-chat', feature: 'Marketing assistant' },
+    { label: 'Dev', path: '/dev', feature: null, adminOnly: true },
+    { label: t('sidebar.labels.admin'), path: '/admin', feature: null, adminOnly: true },
+    { label: t('sidebar.labels.adminBlog'), path: '/admin-blog', feature: null, moderatorOnly: true },
+  ]
+
+  const bottomItems = [
+    { label: t('sidebar.settings'), path: '/settings' },
+    { label: t('sidebar.helpCenter'), path: '/help' },
+  ]
 
   // Tarkista admin-oikeudet
   useEffect(() => {
@@ -95,7 +97,7 @@ export default function MobileNavigation() {
       <button 
         className={`mobile-hamburger ${isOpen ? 'active' : ''}`}
         onClick={toggleMenu}
-        aria-label="Avaa valikko"
+        aria-label={t('a11y.toggleMobileMenu')}
       >
         <span></span>
         <span></span>
@@ -110,7 +112,7 @@ export default function MobileNavigation() {
             <button 
               className="mobile-nav-close"
               onClick={() => setIsOpen(false)}
-              aria-label="Sulje valikko"
+              aria-label={t('common.close')}
             >
               ×
             </button>
@@ -165,7 +167,7 @@ export default function MobileNavigation() {
                 className="mobile-logout-btn"
                 onClick={handleLogout}
               >
-                Kirjaudu ulos
+                {t('sidebar.logout')}
               </button>
             </div>
           </div>

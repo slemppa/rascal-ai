@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import axios from 'axios'
 import ReactMarkdown from 'react-markdown'
 import { useAuth } from '../contexts/AuthContext'
@@ -6,6 +7,7 @@ import { supabase } from '../lib/supabase'
 import './AIChatPage.css'
 
 export default function DevChatPage() {
+  const { t } = useTranslation('common')
   // DEV: käytä erillisiä localStorage-avaimia jotta ei jaeta tilaa AI-chatin kanssa
   const PENDING_KEY = 'rascalai_dev_pending_msgs'
   const loadPendingQueue = () => {
@@ -418,7 +420,7 @@ export default function DevChatPage() {
                   <button
                     type="button"
                     onClick={handleNewChat}
-                    title="Aloita uusi keskustelu"
+                    title={t('chat.buttons.newChat')}
                     className="ai-chat-newchat-button"
                   >
                     <span role="img" aria-label="Uusi keskustelu">➕</span>

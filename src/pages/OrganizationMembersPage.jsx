@@ -1,5 +1,6 @@
 // src/pages/OrganizationMembersPage.jsx
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import axios from 'axios'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -7,6 +8,7 @@ import Button from '../components/Button'
 import styles from './OrganizationMembersPage.module.css'
 
 const OrganizationMembersPage = () => {
+  const { t } = useTranslation('common')
   const { user, organization } = useAuth()
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
@@ -161,6 +163,34 @@ const OrganizationMembersPage = () => {
     }
   }
 
+  const handleResendInvite = async (authUserId) => {
+    try {
+      setError(null)
+
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData?.session?.access_token
+      if (!token) {
+        setError('Ei kirjautumistietoja')
+        return
+      }
+
+      await axios.post('/api/organization/resend-invite', {
+        auth_user_id: authUserId
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      })
+
+      // Näytä onnistumisviesti
+      alert('Kutsu lähetetty uudelleen!')
+    } catch (e) {
+      console.error('Error resending invite:', e)
+      setError(e.response?.data?.error || e.message || 'Virhe kutsun lähettämisessä')
+    }
+  }
+
   // Tarkista oikeudet
   if (!organization || (organization.role !== 'owner' && organization.role !== 'admin')) {
     return (
@@ -203,7 +233,7 @@ const OrganizationMembersPage = () => {
             onClick={() => setShowInviteForm(!showInviteForm)}
             variant={showInviteForm ? 'secondary' : 'primary'}
           >
-            {showInviteForm ? 'Peruuta' : 'Kutsu käyttäjä'}
+            {showInviteForm ? t('ui.buttons.cancel') : t('organizationMembers.inviteUser')}
           </Button>
         )}
       </div>
@@ -339,16 +369,28 @@ const OrganizationMembersPage = () => {
                           </td>
                           <td>{new Date(member.created_at).toLocaleDateString('fi-FI')}</td>
                           <td>
-                            {/* Owner-roolia ei voi poistaa */}
-                            {canRemove && !isCurrentUser && !isOwner && (
-                              <Button
-                                variant="danger"
-                                onClick={() => handleRemoveMember(member.auth_user_id)}
-                              >
-                                Poista
-                              </Button>
-                            )}
-                            {isCurrentUser && <span className={styles.currentUserBadge}>Sinä</span>}
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                              {/* Lähetä kutsu uudelleen -nappi */}
+                              {canInvite && !isCurrentUser && (
+                                <Button
+                                  variant="secondary"
+                                  onClick={() => handleResendInvite(member.auth_user_id)}
+                                  style={{ fontSize: '13px', padding: '6px 12px' }}
+                                >
+                                  📧 Lähetä kutsu
+                                </Button>
+                              )}
+                              {/* Owner-roolia ei voi poistaa */}
+                              {canRemove && !isCurrentUser && !isOwner && (
+                                <Button
+                                  variant="danger"
+                                  onClick={() => handleRemoveMember(member.auth_user_id)}
+                                >
+                                  Poista
+                                </Button>
+                              )}
+                              {isCurrentUser && <span className={styles.currentUserBadge}>Sinä</span>}
+                            </div>
                           </td>
                         </tr>
                       )

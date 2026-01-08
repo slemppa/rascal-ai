@@ -430,7 +430,7 @@ export default function ManagePostsPageOptimized() {
             type="text"
             value={filters.searchTerm}
             onChange={handleSearchChange}
-            placeholder="Hae julkaisuja..."
+            placeholder={t('managePostsOptimized.searchPlaceholder')}
             className="search-input"
           />
           
@@ -572,10 +572,10 @@ export default function ManagePostsPageOptimized() {
             <form onSubmit={handleSubmitCreatePost} className="modal-form">
               <div className="form-group">
                 <label>Otsikko</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   name="title"
-                  placeholder="Kirjoita otsikko..." 
+                  placeholder={t('managePostsOptimized.titlePlaceholder')}
                   required
                 />
               </div>
@@ -590,9 +590,9 @@ export default function ManagePostsPageOptimized() {
               </div>
               <div className="form-group">
                 <label>Kuvaus</label>
-                <textarea 
+                <textarea
                   name="caption"
-                  placeholder="Kirjoita kuvaus..." 
+                  placeholder={t('managePostsOptimized.captionPlaceholder')}
                   rows={4}
                 ></textarea>
               </div>

@@ -41,15 +41,15 @@ export default function SiteHeader({ onOpenSignIn }) {
           }}>{t('nav.bookDemo')}</button>
           <button className="btn btn-secondary" onClick={onOpenSignIn}>{t('nav.signin')}</button>
         </div>
-        <div className="lang-switch" aria-label="Language switcher">
+        <div className="lang-switch" aria-label={t('newLabels.languageSwitcher')}>
           <button className="nav-link" onClick={() => setLanguage('fi')}>{t('lang.shortFi')}</button>
           <span style={{padding: '0 4px'}}> / </span>
           <button className="nav-link" onClick={() => setLanguage('en')}>{t('lang.shortEn')}</button>
         </div>
-        <button 
+        <button
           className="mobile-menu-button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle mobile menu"
+          aria-label={t('newLabels.toggleMobileMenu')}
         >
           {isMobileMenuOpen ? (
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

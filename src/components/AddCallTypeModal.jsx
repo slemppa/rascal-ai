@@ -42,11 +42,11 @@ const AddCallTypeModal = ({
   if (!showModal) return null
 
   const steps = [
-    { id: 1, label: 'Perustiedot' },
-    { id: 2, label: 'Kohderyhmä ja tavoite' },
-    { id: 3, label: 'Puheluskripti' },
-    { id: 4, label: 'Yhteenveto' },
-    { id: 5, label: 'SMS-viestit' },
+    { id: 1, label: t('addCallType.stepBasicInfo') },
+    { id: 2, label: t('addCallType.stepAudienceGoals') },
+    { id: 3, label: t('addCallType.stepScript') },
+    { id: 4, label: t('addCallType.stepSummary') },
+    { id: 5, label: t('addCallType.stepSMS') },
     { id: 6, label: t('calls.modals.addCallType.steps.aiEnhancement') }
   ]
 
@@ -89,7 +89,7 @@ const AddCallTypeModal = ({
   const handleAIEnhancement = async () => {
     // Tarkista että call type on tallennettu tietokantaan
     if (!newCallType.id) {
-      alert('Tallenna ensin puhelun tyyppi ennen AI-parannusta!')
+      alert(t('addCallType.saveBeforeAI'))
       return
     }
 
@@ -111,15 +111,15 @@ const AddCallTypeModal = ({
         const contentType = response.headers.get('content-type')
         if (contentType && contentType.includes('application/json')) {
           const errorData = await response.json()
-          throw new Error(errorData.error || 'Lähetys epäonnistui')
+          throw new Error(errorData.error || t('addCallType.sendFailed'))
         } else {
           // Jos vastaus on HTML (404-sivu), endpoint ei löydy
-          throw new Error(`API endpoint ei löydy (${response.status}). Tarkista että /api/calls/type-improvement on olemassa.`)
+          throw new Error(t('addCallType.apiNotFound', { status: response.status }))
         }
       }
 
       const result = await response.json()
-      alert('Puhelun tyyppi lähetetty AI-parannukseen! Saat parannetun version pian.')
+      alert(t('addCallType.aiSentSuccess'))
       // Merkitse että AI-parannus on lähetetty ja sulje modaali
       if (onAIEnhancementSent) {
         onAIEnhancementSent()
@@ -127,7 +127,7 @@ const AddCallTypeModal = ({
       onClose()
     } catch (error) {
       console.error('AI-parannuksen lähetys epäonnistui:', error)
-      alert('AI-parannuksen lähetys epäonnistui: ' + (error.message || error))
+      alert(t('addCallType.aiSentError', { error: error.message || error }))
     }
   }
 
@@ -175,7 +175,7 @@ const AddCallTypeModal = ({
               <div className="form-grid">
                 <div className="form-group">
                   <label className="form-label">
-                    Puhelun nimi *
+                    {t('addCallType.callName')}
                   </label>
                   <input
                     type="text"
@@ -201,7 +201,7 @@ const AddCallTypeModal = ({
                 </div>
                 <div className="form-group">
                   <label className="form-label">
-                    Kieli
+                    {t('addCallType.language')}
                   </label>
                   <select
                     value={newCallType.language || 'fi'}
@@ -243,13 +243,13 @@ const AddCallTypeModal = ({
                 </div>
                 <div className="form-group">
                   <label className="form-label">
-                    Agentin nimi / esittely
+                    {t('addCallType.agentName')}
                   </label>
                   <input
                     type="text"
                     value={newCallType.agent_name || ''}
                     onChange={e => setNewCallType({ ...newCallType, agent_name: e.target.value })}
-                    placeholder="Administerin tekoälyavustaja."
+                    placeholder={t('addCallType.agentNamePlaceholder')}
                     className="form-input"
                   />
                 </div>
@@ -257,36 +257,36 @@ const AddCallTypeModal = ({
 
               <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 24, marginTop: 8 }}>
                 <h3 style={{ fontSize: 16, fontWeight: 600, color: '#1f2937', marginBottom: 16, marginTop: 0 }}>
-                  Puhelun asetukset
+                  {t('addCallType.callSettings')}
                 </h3>
                 <div className="form-grid">
                   <div className="form-group">
                     <label className="form-label">
-                      Vastausnopeus
+                      {t('addCallType.responseSpeed')}
                     </label>
                     <select
                       value={newCallType.response_speed || '3'}
                       onChange={e => setNewCallType({ ...newCallType, response_speed: e.target.value })}
                       className="form-select"
                     >
-                      <option value="1">1sec</option>
-                      <option value="3">3sec</option>
-                      <option value="5">5sec</option>
+                      <option value="1">{t('addCallType.oneSec')}</option>
+                      <option value="3">{t('addCallType.threeSec')}</option>
+                      <option value="5">{t('addCallType.fiveSec')}</option>
                     </select>
                   </div>
                   <div className="form-group">
                     <label className="form-label">
-                      Tauko puhelun alussa
+                      {t('addCallType.initialPause')}
                     </label>
                     <select
                       value={newCallType.initial_pause || '2'}
                       onChange={e => setNewCallType({ ...newCallType, initial_pause: e.target.value })}
                       className="form-select"
                     >
-                      <option value="1">1sec</option>
-                      <option value="2">2sec</option>
-                      <option value="3">3sec</option>
-                      <option value="5">5sec</option>
+                      <option value="1">{t('addCallType.oneSec')}</option>
+                      <option value="2">{t('addCallType.twoSec')}</option>
+                      <option value="3">{t('addCallType.threeSec')}</option>
+                      <option value="5">{t('addCallType.fiveSec')}</option>
                     </select>
                   </div>
                 </div>
@@ -297,42 +297,42 @@ const AddCallTypeModal = ({
           {currentStep === 2 && (
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div className="form-group">
-                <label className="form-label">Kohdeyleisö</label>
+                <label className="form-label">{t('addCallType.targetAudience')}</label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Kuvaa yhdellä lauseella kenelle puhelu on tarkoitettu.
+                  {t('addCallType.targetAudienceHint')}
                 </p>
                 <input
                   type="text"
                   value={newCallType.target_audience || ''}
                   onChange={e => setNewCallType({ ...newCallType, target_audience: e.target.value })}
-                  placeholder="Yritysten talouspäättäjät, Kaupan vastaavat, LVI-yritysten yrittäjät"
+                  placeholder={t('addCallType.targetAudiencePlaceholder')}
                   className="form-input"
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Puhelun päätavoite</label>
+                <label className="form-label">{t('addCallType.mainGoal')}</label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Mitä haluat saavuttaa puhelulla? Kirjoita 1–3 tavoitetta. Esim. "kiinnostuksen herättäminen", "ajan sopiminen", "kvalifiointi".
+                  {t('addCallType.mainGoalHint')}
                 </p>
                 <textarea
                   value={newCallType.goals || ''}
                   onChange={e => setNewCallType({ ...newCallType, goals: e.target.value })}
-                  placeholder="Kysy kiinnostusta, pyydä varmistus, kerro tapahtumasta ja varmista osallistuminen"
+                  placeholder={t('addCallType.mainGoalPlaceholder')}
                   rows={3}
                   className="form-textarea"
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Äänensävy ja tyyli</label>
+                <label className="form-label">{t('addCallType.toneStyle')}</label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Kuvaile, miten agentin tulee puhua.
+                  {t('addCallType.toneStyleHint')}
                 </p>
                 <textarea
                   value={newCallType.style || ''}
                   onChange={e => setNewCallType({ ...newCallType, style: e.target.value })}
-                  placeholder="Ystävällinen, asiallinen ja rauhallinen. Ei smalltalkia."
+                  placeholder={t('addCallType.toneStylePlaceholder')}
                   rows={3}
                   className="form-textarea"
                 />

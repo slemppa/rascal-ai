@@ -65,7 +65,7 @@ const TicketModal = ({ isOpen, onClose }) => {
       ]
       
       if (!validTypes.includes(file.type)) {
-        errors.push(`Tiedostotyyppi "${file.type}" ei ole tuettu tiedostossa "${file.name}"`)
+        errors.push(t('ticket.fileTypeNotSupported', { type: file.type, name: file.name }))
         return
       }
       
@@ -87,7 +87,7 @@ const TicketModal = ({ isOpen, onClose }) => {
     e.preventDefault()
     
     if (!formData.page || !formData.description.trim()) {
-      alert('Täytä kaikki pakolliset kentät')
+      alert(t('ticket.fillAllRequired'))
       return
     }
 
@@ -102,7 +102,7 @@ const TicketModal = ({ isOpen, onClose }) => {
       // Hae session token
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
       if (sessionError || !sessionData.session?.access_token) {
-        throw new Error('Session expired or invalid. Please log in again.')
+        throw new Error(t('ticket.sessionExpired'))
       }
 
       // Luo FormData
@@ -144,7 +144,7 @@ const TicketModal = ({ isOpen, onClose }) => {
           setSubmitStatus(null)
         }, 3000)
       } else {
-        throw new Error('Unexpected response status')
+        throw new Error(t('ticket.unexpectedResponse'))
       }
 
     } catch (error) {
@@ -154,7 +154,7 @@ const TicketModal = ({ isOpen, onClose }) => {
       
       // Näytä tarkempi virheviesti käyttäjälle
       if (error.response?.data?.details) {
-        alert('Virhe: ' + error.response.data.details)
+        alert(t('ticket.errorDetails', { details: error.response.data.details }))
       }
       
       setSubmitStatus('error')
@@ -169,27 +169,27 @@ const TicketModal = ({ isOpen, onClose }) => {
     <div className="modal-overlay modal-overlay--light" onClick={onClose}>
       <div className="modal-container" style={{ maxWidth: '600px' }} onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2 className="modal-title">Raportoi ongelma</h2>
+          <h2 className="modal-title">{t('ticket.title')}</h2>
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
 
         <div className="modal-content">
           {submitStatus === 'success' && (
             <div className="alert alert-success" style={{ marginBottom: '20px' }}>
-              Tiketti lähetetty onnistuneesti! Vastaamme sinulle pian.
+              {t('ticket.successMessage')}
             </div>
           )}
 
           {submitStatus === 'error' && (
             <div className="alert alert-error" style={{ marginBottom: '20px' }}>
-              Virhe tiketin lähettämisessä. Yritä uudelleen tai ota yhteyttä suoraan tukeen.
+              {t('ticket.errorMessage')}
             </div>
           )}
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label className="form-label" htmlFor="page">
-                Sivu * <span style={{ fontSize: '12px', color: '#666' }}>(Missä ongelma tapahtui?)</span>
+                {t('ticket.pageLabel')} <span style={{ fontSize: '12px', color: '#666' }}>({t('ticket.pageHint')})</span>
               </label>
               <input
                 type="text"
@@ -198,14 +198,14 @@ const TicketModal = ({ isOpen, onClose }) => {
                 value={formData.page}
                 onChange={handleInputChange}
                 className="form-input"
-                placeholder="Esimerkki: Posts-sivu, Dashboard, AI Chat..."
+                placeholder={t('ticket.pagePlaceholder')}
                 required
               />
             </div>
 
             <div className="form-group">
               <label className="form-label" htmlFor="description">
-                Kuvaile ongelmaa * <span style={{ fontSize: '12px', color: '#666' }}>(Kerro mahdollisimman yksityiskohtaisesti)</span>
+                {t('ticket.descriptionLabel')} <span style={{ fontSize: '12px', color: '#666' }}>({t('ticket.descriptionHint')})</span>
               </label>
               <textarea
                 id="description"
@@ -214,14 +214,14 @@ const TicketModal = ({ isOpen, onClose }) => {
                 onChange={handleInputChange}
                 className="form-textarea"
                 rows="4"
-                placeholder="Esimerkki: Kun yritän lisätä kuvia posts-sivulla, sain virheen 'Kuvan lataus epäonnistui'. Tapahtuu joka kerta kun..."
+                placeholder={t('ticket.descriptionPlaceholder')}
                 required
               />
             </div>
 
             <div className="form-group">
               <label className="form-label">
-                Liitteet <span style={{ fontSize: '12px', color: '#666' }}>(Kuvat, videot tai äänitiedostot)</span>
+                {t('ticket.attachmentsLabel')} <span style={{ fontSize: '12px', color: '#666' }}>({t('ticket.attachmentsHint')})</span>
               </label>
               
               <div
@@ -241,10 +241,10 @@ const TicketModal = ({ isOpen, onClose }) => {
                 }}
               >
                 <p style={{ margin: '0 0 10px 0', fontWeight: '500' }}>
-                  Vedä ja pudota tiedostoja tähän tai klikkaa valitaksesi
+                  {t('ticket.dragDropText')}
                 </p>
                 <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>
-                  Tuetut: Kuvat (JPG, PNG, GIF), Videot (MP4, WebM), Ääni (MP3, WAV)
+                  {t('ticket.supportedFiles')}
                 </p>
               </div>
 
@@ -276,7 +276,7 @@ const TicketModal = ({ isOpen, onClose }) => {
 
               {selectedFiles.length > 0 && (
                 <div style={{ marginTop: '15px' }}>
-                  <h4 style={{ margin: '0 0 10px 0', fontSize: '14px' }}>Valitut tiedostot:</h4>
+                  <h4 style={{ margin: '0 0 10px 0', fontSize: '14px' }}>{t('ticket.selectedFiles')}</h4>
                   {selectedFiles.map((file, index) => (
                     <div key={index} style={{
                       display: 'flex',

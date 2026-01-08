@@ -1356,9 +1356,9 @@ export default function ManagePostsPage() {
       }
       
       setErrorMessage(errorMessage)
-      
+
       // Näytä toast käyttäjälle
-      toast.error('Kuva-lataus epäonnistui: ' + errorMessage + '. Tarkista internetyhteytesi ja yritä uudelleen.')
+      toast.error(t('errors.imageUploadError', { error: errorMessage }))
       
       // Jos session on vanhentunut, ohjaa takaisin login-sivulle
       if (error.message.includes('Session expired')) {
@@ -1684,13 +1684,13 @@ export default function ManagePostsPage() {
                 
                 // Validoi: otsikko vaaditaan vain jos lukumäärä on 1
                 if (count === 1 && !title) {
-                  toast.warning('Otsikko on pakollinen kun luodaan yksi julkaisu')
+                  toast.warning(t('errors.titleRequired'))
                   return
                 }
                 
                 // Validoi: tyyppi vaaditaan vain jos lukumäärä on 1
                 if (count === 1 && !type) {
-                  toast.warning('Tyyppi on pakollinen kun luodaan yksi julkaisu')
+                  toast.warning(t('errors.typeRequired'))
                   return
                 }
                 

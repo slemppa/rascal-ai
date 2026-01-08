@@ -338,7 +338,7 @@ export default function ContentStrategyPage() {
 
       if (error) {
         console.error('Error updating strategy:', error)
-        toast.error('Tallennus epäonnistui: ' + error.message)
+        toast.error(t('errors.saveError', { error: error.message }))
         return
       }
 
@@ -353,7 +353,7 @@ export default function ContentStrategyPage() {
       setEditId(null)
     } catch (e) {
       console.error('Error in handleSave:', e)
-      toast.error('Tallennus epäonnistui')
+      toast.error(t('errors.saveFailed'))
     }
   }
 
@@ -373,7 +373,7 @@ export default function ContentStrategyPage() {
 
       if (error) {
         console.error('Error updating and approving strategy:', error)
-        toast.error('Tallennus ja hyväksyntä epäonnistui: ' + error.message)
+        toast.error(t('errors.saveAndApproveFailed', { error: error.message }))
         return
       }
 
@@ -438,7 +438,7 @@ export default function ContentStrategyPage() {
       refreshUserStatus()
 
       // Näytä toast-notifikaatio
-      toast.success('Strategia tallennettu ja hyväksytty onnistuneesti!')
+      toast.success(t('errors.approvalSuccess'))
 
     } catch (e) {
       console.error('Error in handleSaveAndApprove:', e)
@@ -448,7 +448,7 @@ export default function ContentStrategyPage() {
         data: e.response?.data,
         message: e.message
       })
-      toast.error('Tallennus ja hyväksyntä epäonnistui: ' + errorMessage)
+      toast.error(t('errors.approvalFailed', { error: errorMessage }))
     }
   }
 
@@ -510,7 +510,7 @@ export default function ContentStrategyPage() {
 
       if (error) {
         console.error('Error approving strategy:', error)
-        toast.error('Vahvistus epäonnistui: ' + error.message)
+        toast.error(t('errors.confirmationFailed', { error: error.message }))
         return
       }
 
@@ -540,7 +540,7 @@ export default function ContentStrategyPage() {
       refreshUserStatus()
 
       // Näytä toast-notifikaatio
-      toast.success('Strategia hyväksytty onnistuneesti!')
+      toast.success(t('errors.confirmationSuccess'))
 
     } catch (e) {
       console.error('Error in handleApproveStrategy:', e)
@@ -550,7 +550,7 @@ export default function ContentStrategyPage() {
         data: e.response?.data,
         message: e.message
       })
-      toast.error('Vahvistus epäonnistui: ' + errorMessage)
+      toast.error(t('errors.confirmationError', { error: errorMessage }))
     }
   }
 
@@ -591,7 +591,7 @@ export default function ContentStrategyPage() {
 
       if (error) {
         console.error('Error updating ICP:', error)
-        toast.error('ICP:n tallennus epäonnistui: ' + error.message)
+        toast.error(t('errors.icpSaveFailed', { error: error.message }))
         return
       }
       
@@ -600,7 +600,7 @@ export default function ContentStrategyPage() {
       setIcpEditText('')
     } catch (e) {
       console.error('Error in handleSaveIcp:', e)
-      toast.error('ICP:n tallennus epäonnistui')
+      toast.error(t('errors.icpSaveError'))
     }
   }
 
@@ -629,7 +629,7 @@ export default function ContentStrategyPage() {
 
       if (error) {
         console.error('Error updating KPI:', error)
-        toast.error('KPI:n tallennus epäonnistui: ' + error.message)
+        toast.error(t('errors.kpiSaveFailed', { error: error.message }))
         return
       }
       
@@ -638,7 +638,7 @@ export default function ContentStrategyPage() {
       setKpiEditText('')
     } catch (e) {
       console.error('Error in handleSaveKpi:', e)
-      toast.error('KPI:n tallennus epäonnistui')
+      toast.error(t('errors.kpiSaveError'))
     }
   }
 
@@ -812,7 +812,7 @@ export default function ContentStrategyPage() {
       // Hae käyttäjän token
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) {
-        toast.error('Käyttäjä ei ole kirjautunut')
+        toast.error(t('errors.userNotLoggedIn'))
         setAnalyzingTov(false)
         return
       }
@@ -841,19 +841,19 @@ export default function ContentStrategyPage() {
         if (response.data?.tov) {
           // N8N palautti TOV:n suoraan
           setTovEditText(response.data.tov)
-          toast.success('TOV-analyysi valmis! Tarkista ja tallenna tulos.')
+          toast.success(t('errors.tovAnalysisReady'))
         } else {
           // N8N aloitti asynkronisen prosessin
-          toast.info('TOV-analyysi aloitettu. Analyysi valmistuu hetken kuluttua.')
+          toast.info(t('errors.tovAnalysisStarted'))
         }
       } else {
-        toast.error('TOV-analyysi epäonnistui. Yritä myöhemmin uudelleen.')
+        toast.error(t('errors.tovAnalysisFailed'))
       }
     } catch (error) {
       console.error('Error analyzing TOV from social media:', error)
       console.error('Error response:', error.response?.data)
       const errorMessage = error.response?.data?.error || error.response?.data?.details?.error || error.message
-      toast.error('TOV-analyysi epäonnistui: ' + errorMessage)
+      toast.error(t('errors.tovAnalysisError', { error: errorMessage }))
       // Modaali pysyy auki jos virhe tapahtuu
     } finally {
       setAnalyzingTov(false)

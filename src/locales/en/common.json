@@ -1509,6 +1509,142 @@
   },
   "organizationMembers": {
     "inviteUser": "Invite user"
+  },
+  "errors": {
+    "imageUploadFailed": "Image upload failed",
+    "imageUploadError": "Image upload failed: {error}. Please check your internet connection and try again.",
+    "titleRequired": "Title is required when creating a single post",
+    "typeRequired": "Type is required when creating a single post",
+    "monthlyLimitReached": "Monthly limit reached",
+    "contentCreationFailed": "Error: Could not create content",
+    "saveFailed": "Save failed",
+    "saveError": "Save failed: {error}",
+    "saveAndApproveFailed": "Save and approval failed: {error}",
+    "approvalSuccess": "Strategy saved and approved successfully!",
+    "approvalFailed": "Save and approval failed: {error}",
+    "confirmationFailed": "Confirmation failed: {error}",
+    "confirmationSuccess": "Strategy approved successfully!",
+    "confirmationError": "Confirmation failed: {error}",
+    "orgIdMissing": "Organization ID is missing",
+    "icpSaveFailed": "ICP save failed: {error}",
+    "icpSaveError": "ICP save failed",
+    "kpiSaveFailed": "KPI save failed: {error}",
+    "kpiSaveError": "KPI save failed",
+    "companyAnalysisSaveFailed": "Company analysis save failed: {error}",
+    "companyAnalysisSaveError": "Company analysis save failed",
+    "tovSaveFailed": "TOV save failed: {error}",
+    "tovSaveError": "TOV save failed",
+    "userNotLoggedIn": "User is not logged in",
+    "tovAnalysisReady": "TOV analysis ready! Check and save the result.",
+    "tovAnalysisStarted": "TOV analysis started. Analysis will be ready shortly.",
+    "tovAnalysisFailed": "TOV analysis failed. Please try again later.",
+    "tovAnalysisError": "TOV analysis failed: {error}",
+    "agentIdMissing": "Error: Agent ID is missing from configuration",
+    "chatStartFailed": "Error starting chat: {error}",
+    "generic": "Something went wrong"
+  },
+  "validation": {
+    "fileTypeNotSupported": "File type {type} is not supported. Allowed formats: JPG, PNG, GIF, MP4, M4V"
+  },
+  "ticket": {
+    "title": "Report problem",
+    "success": "Ticket sent successfully! We will respond to you soon.",
+    "error": "Error sending ticket. Please try again or contact support directly.",
+    "errorDetails": "Error: {details}",
+    "pageLabel": "Page *",
+    "pageHint": "(Where did the problem occur?)",
+    "pagePlaceholder": "Example: Posts page, Dashboard, AI Chat...",
+    "descriptionLabel": "Describe the problem *",
+    "descriptionHint": "(Please provide as much detail as possible)",
+    "descriptionPlaceholder": "Example: When I try to add images on the posts page, I get an error 'Image upload failed'. This happens every time I..."
+  },
+  "orgMembers": {
+    "emailLabel": "Email",
+    "emailPlaceholder": "user@example.com",
+    "roleLabel": "Role",
+    "roleMember": "Member",
+    "roleAdmin": "Admin",
+    "roleOwner": "Owner",
+    "inviting": "Inviting...",
+    "invite": "Invite",
+    "cancel": "Cancel",
+    "membersTitle": "Members"
+  },
+  "multiSelect": {
+    "searchPlaceholder": "Search...",
+    "noOptions": "No options found"
+  },
+  "leadScrapingFields": {
+    "employeeRangeLabel": "Employee range — Includes",
+    "employeeRangePlaceholder": "Select employee ranges to include...",
+    "industryIncludesLabel": "Industry — Includes",
+    "industryIncludesPlaceholder": "Select industries to include...",
+    "industryExcludesLabel": "Industry — Excludes",
+    "industryExcludesPlaceholder": "Select industries to exclude...",
+    "foundedFromLabel": "Founded From",
+    "foundedFromPlaceholder": "e.g. 2020",
+    "foundedToLabel": "Founded To",
+    "foundedToPlaceholder": "e.g. 2024",
+    "companyDomainsPlaceholder": "Enter company domains (comma-separated)",
+    "countriesIncludePlaceholder": "Select countries to include...",
+    "countriesExcludePlaceholder": "Select countries to exclude...",
+    "statesIncludePlaceholder": "Select states/regions to include...",
+    "statesExcludePlaceholder": "Select states/regions to exclude...",
+    "citiesIncludePlaceholder": "Enter cities to include...",
+    "citiesExcludePlaceholder": "Enter cities to exclude...",
+    "jobTitlesIncludePlaceholder": "Select job titles to include...",
+    "jobTitlesExcludePlaceholder": "Select job titles to exclude...",
+    "seniorityPlaceholder": "e.g. Country Head",
+    "managementIncludePlaceholder": "Select management levels to include...",
+    "managementExcludePlaceholder": "Select management levels to exclude...",
+    "departmentsIncludePlaceholder": "Select departments to include...",
+    "departmentsExcludePlaceholder": "Select departments to exclude...",
+    "firstNamesIncludePlaceholder": "Enter first names to include...",
+    "firstNamesExcludePlaceholder": "Enter first names to exclude...",
+    "lastNamesIncludePlaceholder": "Enter last names to include...",
+    "lastNamesExcludePlaceholder": "Enter last names to exclude...",
+    "maxContactsPlaceholder": "10000",
+    "searchTaskPlaceholder": "Search task..."
+  },
+  "addCallType": {
+    "agentNamePlaceholder": "Admin's AI assistant.",
+    "targetAudiencePlaceholder": "Business decision makers, Store managers, HVAC company owners",
+    "callGoalsPlaceholder": "Ask interest, request confirmation, inform about event...",
+    "toneStylePlaceholder": "Friendly, professional and calm. No small talk.",
+    "greetingPlaceholder": "Hi! I'm [agent_name], from [company].",
+    "purposeIntroPlaceholder": "We have new products, I'd like to briefly tell you about them.",
+    "closingPlaceholder": "Thank you for your time! We'll get back to you if needed.",
+    "successAssessmentPlaceholder": "Mark call successful when customer expresses interest...",
+    "agentNotesPlaceholder": "Write the store name you called and the order the store placed",
+    "callSettings": "Call settings",
+    "responseSpeed": "Response speed",
+    "initialPause": "Initial pause",
+    "option1sec": "1sec",
+    "option2sec": "2sec",
+    "option3sec": "3sec",
+    "option5sec": "5sec"
+  },
+  "managePostsOptimized": {
+    "searchPlaceholder": "Search posts...",
+    "titlePlaceholder": "Enter title...",
+    "descriptionPlaceholder": "Enter description...",
+    "createContentError": "Error: Could not create social content. Please try again.",
+    "errorMessage": "Error: {error}"
+  },
+  "accountDetailsTabs": {
+    "strategiesPlaceholder": "Strategy...",
+    "carouselsPlaceholder": "Segment text..."
+  },
+  "devChat": {
+    "messagePlaceholder": "Write your message...",
+    "newConversation": "New conversation",
+    "errorMessage": "Error: {error}",
+    "errorNoUser": "Error: No user logged in"
+  },
+  "newLabels": {
+    "languageSwitcher": "Language switcher",
+    "toggleMobileMenu": "Toggle mobile menu",
+    "crmConnected": "CRM connected"
   }
 }
 

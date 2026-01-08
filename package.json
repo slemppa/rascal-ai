@@ -1,7 +1,7 @@
 {
   "name": "mak8d",
   "private": true,
-  "version": "1.110.6",
+  "version": "1.110.7",
   "type": "module",
   "scripts": {
     "dev": "NODE_OPTIONS='--no-deprecation' vite",

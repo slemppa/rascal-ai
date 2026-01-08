@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.110.7](https://github.com/slemppa/rascal-ai/compare/v1.110.6...v1.110.7) (2026-01-08)
+
+
+### 🐛 Bug Fixes
+
+* **KeskenModal:** korjaa kuvan valinta ja valikon näkyvyys ([74a13c9](https://github.com/slemppa/rascal-ai/commit/74a13c996b3e94e2b7d44be211efed4c4ba59248))
+
 ### [1.110.6](https://github.com/slemppa/rascal-ai/compare/v1.110.5...v1.110.6) (2026-01-07)
 
 

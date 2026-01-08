@@ -26,7 +26,7 @@
   display: block;
   width: 20px;
   height: 2px;
-  background: #1a4a3a;
+  background: #24170f;
   transition: all 0.3s ease;
   transform-origin: center;
 }
@@ -60,7 +60,7 @@
 
 /* Mobiili-valikko */
 .mobile-nav-menu {
-  background: #1a4a3a;
+  background: #24170f;
   width: 280px;
   height: 100vh;
   max-height: 100vh;
@@ -72,6 +72,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
+  border-left: 1px solid #6b462e;
 }
 
 /* Sulje-nappi */
@@ -138,7 +139,7 @@
 .mobile-nav-item {
   background: transparent;
   border: none;
-  color: #cbd5e1;
+  color: #cea78d;
   font-size: 16px;
   font-weight: 500;
   padding: 16px 20px;
@@ -152,13 +153,13 @@
 }
 
 .mobile-nav-item:hover:not(.disabled) {
-  background: rgba(34, 197, 94, 0.1);
-  color: #fff;
+  background: #362317;
+  color: #ffffff;
 }
 
 .mobile-nav-item.active {
-  background: #22c55e;
-  color: #fff;
+  background: #ff6600;
+  color: #ffffff;
   font-weight: 700;
 }
 
@@ -178,21 +179,22 @@
 }
 
 .mobile-logout-btn {
-  background: #fff;
-  color: #1a4a3a;
-  font-weight: 700;
+  background: transparent;
+  color: #cea78d;
+  font-weight: 500;
   border: none;
   border-radius: 12px;
   padding: 16px 20px;
   font-size: 16px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
   margin-top: 16px;
   min-height: 48px;
 }
 
 .mobile-logout-btn:hover {
-  background: #f1f5f9;
+  background: #362317;
+  color: #ffffff;
 }
 
 /* Animaatiot */

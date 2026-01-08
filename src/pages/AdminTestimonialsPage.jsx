@@ -328,19 +328,15 @@ export default function AdminTestimonialsPage({ embedded = false }) {
   if (embedded) return content
 
   return (
-    <div className="app-layout">
-      <Sidebar />
-      <MobileNavigation />
-      <div className="admin-blog-page">
-        <div className="layout-container">
-          <header className="admin-header">
-            <div className="header-content">
-              <h1 className="page-title">Hallinta</h1>
-              <p className="page-description">Testimonials</p>
-            </div>
-          </header>
-          {content}
-        </div>
+    <div className="admin-blog-page">
+      <div className="layout-container">
+        <header className="admin-header">
+          <div className="header-content">
+            <h1 className="page-title">Hallinta</h1>
+            <p className="page-description">Testimonials</p>
+          </div>
+        </header>
+        {content}
       </div>
     </div>
   )

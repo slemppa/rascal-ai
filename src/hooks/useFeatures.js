@@ -1,19 +1,24 @@
 import { useAuth } from '../contexts/AuthContext'
+import { useMemo, useCallback } from 'react'
 
 export function useFeatures() {
   const { user } = useAuth()
   
-  // Käytä suoraan käyttäjän tietoja contextista
-  const features = Array.isArray(user?.features) ? user.features : []
+  const features = useMemo(() => {
+    if (!user || !user.features) return []
+    return Array.isArray(user.features) ? user.features : []
+  }, [user])
   
-  // Set-tietorakenne nopeaa hakua varten
-  const featureSet = new Set(features)
-  const has = (name) => featureSet.has(name)
+  const featureSet = useMemo(() => new Set(features), [features])
+  
+  const has = useCallback((name) => {
+    return featureSet.has(name)
+  }, [featureSet])
 
   return { 
     features, 
     has, 
-    crmConnected: false, // Tämän voi myös lisätä user-objektiin backendissä jos tarpeen
+    crmConnected: false, 
     loading: false, 
     error: null 
   }

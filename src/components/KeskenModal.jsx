@@ -204,9 +204,20 @@ const KeskenModal = ({
         thumbnail: result.publicUrl
       }
       
+      // Päivitä paikallinen state ensin, sitten kutsu onSave
+      setFormData(prev => ({
+        ...prev,
+        // Lisää timestamp kuvan URL:een cache-busting:ia varten
+        imageUpdated: Date.now()
+      }))
+      
       setShowKuvapankkiSelector(false)
-      setShowMediaSourceMenu(false)
-      onSave(updatedPost)
+      // Älä sulje showMediaSourceMenu -valikkoa, jotta käyttäjä voi helposti valita uuden kuvan
+      
+      // Kutsu onSave pienen viiveen jälkeen, jotta state ehtii päivittyä
+      setTimeout(() => {
+        onSave(updatedPost)
+      }, 100)
     } catch (err) {
       console.error('Error adding image from kuvapankki:', err)
       setError('Kuvan lisäys kuvapankista epäonnistui: ' + err.message)
@@ -1511,7 +1522,9 @@ const KeskenModal = ({
               onSelectImage={(imageUrl) => handleAddImageFromKuvapankki(imageUrl)}
               onClose={() => {
                 setShowKuvapankkiSelector(false)
-                setShowMediaSourceMenu(false)
+                // Palauta media source menu näkyviin kun kuvapankki sulkeutuu
+                // Näin käyttäjä voi helposti valita uuden kuvan
+                setShowMediaSourceMenu(true)
               }}
             />
           </div>

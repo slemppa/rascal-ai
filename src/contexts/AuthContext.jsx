@@ -48,7 +48,10 @@ export const AuthProvider = ({ children }) => {
       
       let systemRole = userData?.role || 'user'
       let company_id = userData?.company_id || null
-      let features = Array.isArray(userData?.features) ? userData.features : defaultFeatures
+      // Käytä oletusominaisuuksia jos tietokannassa on tyhjä lista tai ei listaa
+      let features = Array.isArray(userData?.features) && userData.features.length > 0 
+        ? userData.features 
+        : defaultFeatures
       
       if (userData && (userData.role === 'admin' || userData.role === 'moderator')) {
         setOrganization({
@@ -97,7 +100,7 @@ export const AuthProvider = ({ children }) => {
                 organizationId: orgMember.org_id,
                 features: systemRole === 'admin' || systemRole === 'moderator' 
                   ? prev.features 
-                  : (Array.isArray(org.features) ? org.features : defaultFeatures)
+                  : (Array.isArray(org.features) && org.features.length > 0 ? org.features : defaultFeatures)
               }))
             }
           }

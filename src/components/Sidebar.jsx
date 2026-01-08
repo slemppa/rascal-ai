@@ -459,24 +459,11 @@ export default function Sidebar() {
   )
 
   const [isCollapsed, setIsCollapsed] = useState(true)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // Update CSS variable when sidebar collapses/expands
   useEffect(() => {
     document.documentElement.style.setProperty('--sidebar-width', isCollapsed ? '70px' : '250px')
   }, [isCollapsed])
-
-  // Prevent body scroll when mobile menu is open
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isMobileMenuOpen])
 
   return (
     <>
@@ -488,31 +475,6 @@ export default function Sidebar() {
       >
         {menu}
       </div>
-
-      {/* Mobile menu button */}
-      <button
-        className="mobile-menu-btn"
-        onClick={() => setIsMobileMenuOpen(true)}
-        aria-label="Open menu"
-      >
-        ☰
-      </button>
-
-      {/* Mobile menu overlay */}
-      {isMobileMenuOpen && (
-        <div className="mobile-menu-overlay" onClick={() => setIsMobileMenuOpen(false)}>
-          <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="mobile-menu-close"
-              onClick={() => setIsMobileMenuOpen(false)}
-              aria-label="Close menu"
-            >
-              ×
-            </button>
-            {menu}
-          </div>
-        </div>
-      )}
 
       <TicketButton />
     </>

@@ -1,16 +1,27 @@
 /* Mobiili-navigaation tyylit - vain mobiililaitteille */
 
+/* Wrapper ei vie tilaa */
+.mobile-navigation {
+  position: static;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
 /* Hamburger-nappi */
 .mobile-hamburger {
-  display: none; /* Piilotettu desktopilla */
+  display: none; /* Piilotettu desktopilla, näytetään media queryissä */
   position: fixed;
   top: 16px;
   right: 16px;
-  z-index: 1201;
-  background: #fff;
-  border: none;
+  z-index: 9999; /* Korkea z-index jotta menee kaikkien elementtien päälle */
+  background: #24170f; /* Sama tumma väri kuin mobiilivalikko */
+  border: 1px solid #6b462e; /* Sama reuna kuin mobiilivalikossa */
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
   padding: 12px;
   cursor: pointer;
   width: 48px;
@@ -20,15 +31,27 @@
   align-items: center;
   gap: 4px;
   transition: all 0.3s ease;
+  pointer-events: auto; /* Nappi saa pointer-events */
+  visibility: visible;
+  opacity: 1;
+}
+
+.mobile-hamburger:hover {
+  background: #362317; /* Sama hover-väri kuin mobiilivalikossa */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 .mobile-hamburger span {
   display: block;
   width: 20px;
   height: 2px;
-  background: #24170f;
+  background: #cea78d; /* Sama vaalea väri kuin mobiilivalikon tekstit */
   transition: all 0.3s ease;
   transform-origin: center;
+}
+
+.mobile-hamburger.active span {
+  background: #fff; /* Valkoinen kun aktiivinen */
 }
 
 .mobile-hamburger.active span:nth-child(1) {
@@ -56,6 +79,10 @@
   align-items: flex-start;
   justify-content: flex-end;
   animation: fadeIn 0.3s ease;
+  pointer-events: auto; /* Overlay saa pointer-events kun se on näkyvissä */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 /* Mobiili-valikko */
@@ -210,13 +237,25 @@
 
 /* Mobiili-breakpointit */
 @media (max-width: 768px) {
+  /* Varmista että wrapper on näkyvissä mobiilissa */
+  .mobile-navigation {
+    display: block !important;
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    pointer-events: none;
+  }
+  
   .mobile-hamburger {
-    display: flex;
+    display: flex !important;
     top: 12px;
     right: 12px;
     width: 44px;
     height: 44px;
     padding: 10px;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   .mobile-hamburger span {
@@ -268,11 +307,14 @@
 
 @media (max-width: 480px) {
   .mobile-hamburger {
+    display: flex !important; /* Varmista että nappi näkyy */
     top: 8px;
     right: 8px;
     width: 40px;
     height: 40px;
     padding: 8px;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   .mobile-hamburger span {
@@ -332,13 +374,14 @@
   }
 }
 
+/* Mobiili - varmista että overlay ja menu toimivat oikein */
 @media (max-width: 768px) {
-  .mobile-navigation {
-    height: 100dvh;
-    min-height: 100dvh;
-    max-height: 100dvh;
+  /* Hamburger-nappi on fixed, joten se ei vie tilaa dokumentin flowsta */
+  .mobile-hamburger {
+    pointer-events: auto;
   }
 
+  /* Overlay ja menu ovat fixed, joten ne eivät vie tilaa dokumentin flowsta */
   .mobile-nav-overlay,
   .mobile-nav-menu {
     height: 100dvh;
@@ -352,5 +395,10 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
+  }
+  
+  /* Overlay saa pointer-events kun se on näkyvissä */
+  .mobile-nav-overlay {
+    pointer-events: auto;
   }
 } 

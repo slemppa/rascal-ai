@@ -406,6 +406,14 @@
 /* Mobiilioptimointi */
 @media (max-width: 900px) {
   .sidebar {
-    display: none;
+    display: none !important;
+    width: 0 !important;
+    max-width: 0 !important;
+    min-width: 0 !important;
+    position: fixed !important;
+    left: -9999px !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 } 

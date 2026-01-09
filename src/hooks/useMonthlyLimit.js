@@ -9,6 +9,7 @@ export const useMonthlyLimit = () => {
     monthlyLimit: 30,
     remaining: 30,
     canCreate: true,
+    isUnlimited: false,
     loading: false,
     error: null
   })
@@ -39,27 +40,6 @@ export const useMonthlyLimit = () => {
         throw new Error('Käyttäjän tietoja ei löytynyt')
       }
 
-      // Määritä nykyinen kuukausi (englanniksi kuten tietokannassa)
-      const now = new Date()
-      const englishMonthNames = [
-        'january','february','march','april','may','june','july','august','september','october','november','december'
-      ]
-      const targetMonthName = englishMonthNames[now.getMonth()]
-
-      // Hae käyttäjän strategia tälle kuulle
-      const { data: strategyRow, error: strategyErr } = await supabase
-        .from('content_strategy')
-        .select('id, month')
-        .eq('user_id', userId)
-        .ilike('month', `%${targetMonthName}%`)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-      if (strategyErr) {
-        console.error('Error fetching current month strategy:', strategyErr)
-      }
-
       // Määritä kuukausiraja tilauksen perusteella
       const subscriptionStatus = String(userData.subscription_status || 'free').toLowerCase()
       let monthlyLimit = 30
@@ -74,31 +54,36 @@ export const useMonthlyLimit = () => {
           monthlyLimit = 30
       }
 
-      // Laske tälle kuulle generoidut sisällöt (strategian perusteella, jos löytyy)
-      let currentCount = 0
-      if (strategyRow?.id) {
-        const { count, error: cntErr } = await supabase
-          .from('content')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', userId)
-          .eq('strategy_id', strategyRow.id)
-          .eq('is_generated', true)
+      // Laske tälle kuulle generoidut sisällöt päivämäärän perusteella
+      const now = new Date()
+      const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+      const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
 
-        if (cntErr) {
-          console.error('Error counting current month generated content:', cntErr)
-        } else {
-          currentCount = count || 0
-        }
+      const { count, error: cntErr } = await supabase
+        .from('content')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('is_generated', true)
+        .gte('created_at', firstDayOfMonth.toISOString())
+        .lte('created_at', lastDayOfMonth.toISOString())
+
+      let currentCount = 0
+      if (cntErr) {
+        console.error('Error counting current month generated content:', cntErr)
+      } else {
+        currentCount = count || 0
       }
 
-      const remaining = Math.max(0, monthlyLimit - currentCount)
+      const isUnlimited = monthlyLimit >= 999999
+      const remaining = isUnlimited ? Infinity : Math.max(0, monthlyLimit - currentCount)
 
       setLimitData(prev => ({
         ...prev,
         currentCount,
         monthlyLimit,
         remaining,
-        canCreate: currentCount < monthlyLimit,
+        canCreate: isUnlimited || currentCount < monthlyLimit,
+        isUnlimited,
         loading: false,
         error: null
       }))

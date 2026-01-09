@@ -1450,14 +1450,14 @@ export default function ManagePostsPage() {
               Ladataan kuukausirajaa...
             </div>
           ) : (
-            <div className={`monthly-limit-indicator ${monthlyLimit.remaining <= 5 ? 'warning' : 'normal'}`}>
+            <div className={`monthly-limit-indicator ${!monthlyLimit.isUnlimited && monthlyLimit.remaining <= 5 ? 'warning' : 'normal'}`}>
               <span className="limit-text">
-                {monthlyLimit.currentCount}/{monthlyLimit.monthlyLimit} generoitua sisältöä tässä kuussa
+                {monthlyLimit.currentCount}/{monthlyLimit.isUnlimited ? '∞' : monthlyLimit.monthlyLimit} generoitua sisältöä tässä kuussa
               </span>
-              {monthlyLimit.remaining <= 5 && monthlyLimit.remaining > 0 && (
+              {!monthlyLimit.isUnlimited && monthlyLimit.remaining <= 5 && monthlyLimit.remaining > 0 && (
                 <span className="warning-text">Vain {monthlyLimit.remaining} jäljellä</span>
               )}
-              {monthlyLimit.remaining === 0 && (
+              {!monthlyLimit.isUnlimited && monthlyLimit.remaining === 0 && (
                 <span className="limit-reached">Kuukausiraja täynnä</span>
               )}
             </div>
@@ -1468,14 +1468,14 @@ export default function ManagePostsPage() {
               Ladataan seuraavan kuun kiintiötä...
             </div>
           ) : (
-            <div className={`monthly-limit-indicator ${nextMonthQuota.nextMonthRemaining <= 5 ? 'warning' : 'normal'}`}>
+            <div className={`monthly-limit-indicator ${!nextMonthQuota.isUnlimited && nextMonthQuota.nextMonthRemaining <= 5 ? 'warning' : 'normal'}`}>
               <span className="limit-text">
-                {nextMonthQuota.nextMonthCount}/{nextMonthQuota.nextMonthLimit} generoitua sisältöä seuraavassa kuussa
+                {nextMonthQuota.nextMonthCount}/{nextMonthQuota.isUnlimited ? '∞' : nextMonthQuota.nextMonthLimit} generoitua sisältöä seuraavassa kuussa
               </span>
-              {nextMonthQuota.nextMonthRemaining <= 5 && nextMonthQuota.nextMonthRemaining > 0 && (
+              {!nextMonthQuota.isUnlimited && nextMonthQuota.nextMonthRemaining <= 5 && nextMonthQuota.nextMonthRemaining > 0 && (
                 <span className="warning-text">Vain {nextMonthQuota.nextMonthRemaining} jäljellä</span>
               )}
-              {nextMonthQuota.nextMonthRemaining === 0 && (
+              {!nextMonthQuota.isUnlimited && nextMonthQuota.nextMonthRemaining === 0 && (
                 <span className="limit-reached">Seuraavan kuun kiintiö täynnä</span>
               )}
             </div>

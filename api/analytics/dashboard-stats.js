@@ -37,12 +37,14 @@ async function handler(req, res) {
         .select('*', { count: 'exact', head: true })
         .eq('status', 'Scheduled')
         .eq('user_id', orgId),
-      // Kuukauden postaukset
+      // Kuukauden aikana julkaistut postaukset (Published tai Scheduled jonka aika on mennyt)
       req.supabase
         .from('content')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', orgId)
-        .gte('created_at', firstDay.toISOString()),
+        .in('status', ['Published', 'Scheduled'])
+        .gte('scheduled_at', firstDay.toISOString())
+        .lte('scheduled_at', now.toISOString()),
       // Puheluiden hinnat (kuukauden)
       req.supabase
         .from('call_logs')

@@ -9,6 +9,7 @@ export const useNextMonthQuota = () => {
     nextMonthLimit: 30,
     nextMonthRemaining: 30,
     subscriptionStatus: 'free',
+    isUnlimited: false,
     loading: false,
     error: null
   })
@@ -39,28 +40,6 @@ export const useNextMonthQuota = () => {
         throw new Error('Käyttäjän tietoja ei löytynyt')
       }
 
-      // Selvitä seuraavan kuun strategia ja laske generoidut sisällöt strategy_id:n perusteella
-      const now = new Date()
-      const nextMonthDate = new Date(now.getFullYear(), now.getMonth() + 1, 1)
-      const englishMonthNames = [
-        'january','february','march','april','may','june','july','august','september','october','november','december'
-      ]
-      const targetMonthName = englishMonthNames[nextMonthDate.getMonth()]
-
-      // Hae käyttäjän strategia, jonka month vastaa seuraavaa kuukautta (DB:ssä kuukaudet englanniksi)
-      const { data: strategyRow, error: strategyErr } = await supabase
-        .from('content_strategy')
-        .select('id, month')
-        .eq('user_id', userId)
-        .ilike('month', `%${targetMonthName}%`)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-      if (strategyErr) {
-        console.error('Error fetching next month strategy:', strategyErr)
-      }
-
       // Määritä kuukausiraja tilauksen perusteella
       const subscriptionStatus = String(userData.subscription_status || 'free').toLowerCase()
       let monthlyLimit = 30
@@ -75,30 +54,35 @@ export const useNextMonthQuota = () => {
           monthlyLimit = 30
       }
 
-      let nextMonthCount = 0
-      if (strategyRow?.id) {
-        // Laske content-riveistä tälle strategialle generoidut sisällöt
-        const { count, error: cntErr } = await supabase
-          .from('content')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', userId)
-          .eq('strategy_id', strategyRow.id)
-          .eq('is_generated', true)
+      // Laske seuraavan kuukauden generoidut sisällöt päivämäärän perusteella
+      const now = new Date()
+      const firstDayOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+      const lastDayOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0, 23, 59, 59, 999)
 
-        if (cntErr) {
-          console.error('Error counting next month generated content:', cntErr)
-        } else {
-          nextMonthCount = count || 0
-        }
+      const { count, error: cntErr } = await supabase
+        .from('content')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('is_generated', true)
+        .gte('created_at', firstDayOfNextMonth.toISOString())
+        .lte('created_at', lastDayOfNextMonth.toISOString())
+
+      let nextMonthCount = 0
+      if (cntErr) {
+        console.error('Error counting next month generated content:', cntErr)
+      } else {
+        nextMonthCount = count || 0
       }
 
-      const nextMonthRemaining = Math.max(0, monthlyLimit - nextMonthCount)
+      const isUnlimited = monthlyLimit >= 999999
+      const nextMonthRemaining = isUnlimited ? Infinity : Math.max(0, monthlyLimit - nextMonthCount)
 
       setQuotaData({
         nextMonthCount,
         nextMonthLimit: monthlyLimit,
         nextMonthRemaining,
         subscriptionStatus,
+        isUnlimited,
         loading: false,
         error: null
       })

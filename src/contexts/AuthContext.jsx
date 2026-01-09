@@ -39,8 +39,10 @@ export const AuthProvider = ({ children }) => {
 
     try {
       console.log('[AuthContext] Fetching user profile for:', sessionUser.email)
+      console.time('[AuthContext] Total fetchUserProfile')
 
       // OPTIMOINTI: Hae käyttäjäprofiili ja organisaatiojäsenyys RINNAKKAIN
+      console.time('[AuthContext] Promise.all (users + org_members)')
       const [userResult, orgMemberResult] = await Promise.all([
         supabase
           .from('users')
@@ -53,6 +55,7 @@ export const AuthProvider = ({ children }) => {
           .eq('auth_user_id', sessionUser.id)
           .maybeSingle()
       ])
+      console.timeEnd('[AuthContext] Promise.all (users + org_members)')
 
       const userData = userResult.data
       const orgMember = orgMemberResult.data
@@ -78,11 +81,13 @@ export const AuthProvider = ({ children }) => {
 
       // Jos käyttäjällä on organisaatiojäsenyys, hae organisaation tiedot
       if (orgMember) {
+        console.time('[AuthContext] Fetch org data')
         const { data: org } = await supabase
           .from('users')
           .select('*')
           .eq('id', orgMember.org_id)
           .single()
+        console.timeEnd('[AuthContext] Fetch org data')
 
         if (org) {
           organizationRole = orgMember.role
@@ -108,6 +113,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       setProfileLoaded(true)
+      console.timeEnd('[AuthContext] Total fetchUserProfile')
 
       // Palauta täydellinen käyttäjäobjekti KERRAN (ei kaksoispäivitystä)
       return {
@@ -121,6 +127,7 @@ export const AuthProvider = ({ children }) => {
 
     } catch (error) {
       console.error('Error in fetchUserProfile:', error)
+      console.timeEnd('[AuthContext] Total fetchUserProfile')
       setProfileLoaded(true)
 
       return {
@@ -189,7 +196,7 @@ export const AuthProvider = ({ children }) => {
             setProfileLoaded(false)
             
             const timeoutPromise = new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('fetchUserProfile timeout')), 5000)
+              setTimeout(() => reject(new Error('fetchUserProfile timeout')), 8000)
             )
             
             const userWithProfile = await Promise.race([

@@ -265,7 +265,7 @@ export default function DashboardPage() {
   const [schedule, setSchedule] = useState([])
   const [scheduleLoading, setScheduleLoading] = useState(true)
   const [socialAccounts, setSocialAccounts] = useState([]) // Supabase social accounts
-  const { user, organization } = useAuth()
+  const { user, organization, loading: authLoading } = useAuth()
   const [imageModalUrl, setImageModalUrl] = useState(null)
   const [showScheduledModal, setShowScheduledModal] = useState(false)
   const [selectedPost, setSelectedPost] = useState(null)
@@ -501,7 +501,7 @@ export default function DashboardPage() {
   // Hae onnistumisanalytiikka backendistä
   useEffect(() => {
     const fetchSuccess = async () => {
-      if (!user) return
+      if (authLoading || !user) return
       try {
         const session = await supabase.auth.getSession()
         const token = session?.data?.session?.access_token
@@ -515,12 +515,12 @@ export default function DashboardPage() {
       }
     }
     fetchSuccess()
-  }, [user, selectedFilter])
+  }, [authLoading, user, selectedFilter])
 
   // Hae scatter- ja heatmap-data backendistä
   useEffect(() => {
     const fetchAdvanced = async () => {
-      if (!user) return
+      if (authLoading || !user) return
       try {
         const session = await supabase.auth.getSession()
         const token = session?.data?.session?.access_token
@@ -536,12 +536,12 @@ export default function DashboardPage() {
       } catch (_) {}
     }
     fetchAdvanced()
-  }, [user])
+  }, [authLoading, user])
 
   // Hae kampanjametriikat backendista (nimi, puhelut, onnistumis%)
   useEffect(() => {
     const fetchCampaigns = async () => {
-      if (!user) return
+      if (authLoading || !user) return
       try {
         // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
         const { getUserOrgId } = await import('../lib/getUserOrgId')
@@ -576,7 +576,7 @@ export default function DashboardPage() {
       }
     }
     fetchCampaigns()
-  }, [user, organization])
+  }, [authLoading, user, organization])
 
   // Platform värit
   const getPlatformColor = (platform) => {
@@ -604,9 +604,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchPosts = async () => {
+      if (authLoading) return
       setLoading(true)
       setError(null)
-      
+
       // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
       let userId = null
       if (user) {
@@ -631,10 +632,11 @@ export default function DashboardPage() {
       setLoading(false)
     }
     fetchPosts()
-  }, [user])
+  }, [authLoading, user])
 
   useEffect(() => {
     const fetchCallPrice = async () => {
+      if (authLoading || !user) return
       // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
       let userId = null
       if (user) {
@@ -660,11 +662,11 @@ export default function DashboardPage() {
       }
     }
     fetchCallPrice()
-  }, [user])
+  }, [authLoading, user])
 
   useEffect(() => {
     const fetchStats = async () => {
-      if (!user) {
+      if (authLoading || !user) {
         setStatsLoading(false)
         return
       }
@@ -709,12 +711,12 @@ export default function DashboardPage() {
       }
     }
     fetchStats()
-  }, [user, organization])
+  }, [authLoading, user, organization])
 
   // Hae käyttäjän social accounts Supabasesta
   useEffect(() => {
     const fetchSocialAccounts = async () => {
-      if (!user?.id) return
+      if (authLoading || !user?.id) return
       
       try {
         // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
@@ -743,12 +745,12 @@ export default function DashboardPage() {
       }
     }
     fetchSocialAccounts()
-  }, [user?.id, organization?.id])
+  }, [authLoading, user?.id, organization?.id])
 
   // Hae Google Analytics -kävijätiedot
   useEffect(() => {
     const fetchGAVisitors = async () => {
-      if (!user?.id) {
+      if (authLoading || !user?.id) {
         setGaLoading(false)
         return
       }
@@ -789,11 +791,11 @@ export default function DashboardPage() {
       }
     }
     fetchGAVisitors()
-  }, [user?.id, gaVisitorsFilter])
+  }, [authLoading, user?.id, gaVisitorsFilter])
 
   useEffect(() => {
     const fetchSchedule = async () => {
-      if (!user) {
+      if (authLoading || !user) {
         setSchedule([])
         setScheduleLoading(false)
         return
@@ -886,7 +888,7 @@ export default function DashboardPage() {
       }
     }
     fetchSchedule()
-  }, [user])
+  }, [authLoading, user])
 
 
 

@@ -26,6 +26,7 @@ import CarouselsTab from '../components/CarouselsTab'
 import KanbanTab from '../components/KanbanTab'
 import PostCard from '../components/PostCard/PostCard'
 import KuvapankkiSelector from '../components/KuvapankkiSelector'
+import CarouselSegmentsEditor from '../components/CarouselSegmentsEditor'
 import '../components/ModalComponents.css'
 import '../components/MonthlyLimitWarning.css'
 import './ManagePostsPage.css'
@@ -2217,8 +2218,8 @@ export default function ManagePostsPage() {
                 </div>
               )}
               {/* Debug: Näytä status */}
-              <div className="status-info">
-                Status: {editingPost.status} | Source: {editingPost.source}
+              <div className="status-info" style={{ fontSize: '12px', color: '#6b7280', marginBottom: '8px' }}>
+                Status: {editingPost.status} | Source: {editingPost.source} | Type: {editingPost.type} | Segments: {editingPost.segments?.length || 0}
               </div>
               <button
                 onClick={() => {
@@ -2665,23 +2666,22 @@ export default function ManagePostsPage() {
                  )}
 
                  {/* "Valmiina julkaisuun" sarakkeessa: Read-only näkymä + voiceover (vain luku) */}
-                 {editingPost.status === 'Tarkistuksessa' && (
+                 {(editingPost.status === 'Tarkistuksessa' || editingPost.status === 'Under Review' || editingPost.originalData?.status === 'Under Review') && (
                    <>
                      <div className="form-group">
                        <label className="form-label">
                          Kuvaus
                          <span ref={charCountRef} className="char-count char-count-inline"></span>
                        </label>
-                       <textarea
-                         ref={textareaRef}
-                         name="caption"
-                         rows={6}
-                         className="form-textarea"
-                         defaultValue={editingPost.caption || ""}
-                         placeholder="Kuvaus (vain luku)"
-                         readOnly
-                         className="form-textarea form-input-disabled"
-                       />
+                      <textarea
+                        ref={textareaRef}
+                        name="caption"
+                        rows={6}
+                        className="form-textarea form-input-disabled"
+                        defaultValue={editingPost.caption || ""}
+                        placeholder="Kuvaus (vain luku)"
+                        readOnly
+                      />
                      </div>
 
                      {/* Voiceover näkyy vain jos kyseessä on Reels tai Avatar */}
@@ -2702,7 +2702,10 @@ export default function ManagePostsPage() {
                  )}
 
                  {/* Muissa sarakkeissa: Perusmuokkaus */}
-                 {editingPost.status !== 'Kesken' && editingPost.status !== 'Tarkistuksessa' && (
+                 {editingPost.status !== 'Kesken' && 
+                  editingPost.status !== 'Tarkistuksessa' && 
+                  editingPost.status !== 'Under Review' && 
+                  editingPost.originalData?.status !== 'Under Review' && (
                    <div className="form-group">
                      <label className="form-label">Kuvaus</label>
                      <textarea
@@ -2730,6 +2733,51 @@ export default function ManagePostsPage() {
                      />
                    </div>
                  )}
+
+                 {/* Karusellin segmenttien muokkaus ja hyväksyntä - näytetään aina kun on Carousel-tyyppinen postaus ja segmenttejä on */}
+                 {(() => {
+                   const shouldShow = editingPost.type === 'Carousel' && 
+                                     editingPost.source === 'supabase' &&
+                                     editingPost.segments && 
+                                     editingPost.segments.length > 0
+                   
+                   if (shouldShow) {
+                     console.log('CarouselSegmentsEditor should render:', {
+                       type: editingPost.type,
+                       source: editingPost.source,
+                       segmentsCount: editingPost.segments?.length
+                     })
+                   }
+                   
+                   return shouldShow ? (
+                     <div style={{ marginTop: '24px', borderTop: '2px solid #e5e7eb', paddingTop: '24px' }}>
+                       <CarouselSegmentsEditor
+                         segments={editingPost.segments}
+                         contentId={editingPost.id}
+                         onSave={async () => {
+                           // Päivitä segments data
+                           const userId = await getUserOrgId(user?.id)
+                           if (userId) {
+                             const { data: segmentsData } = await supabase
+                               .from('segments')
+                               .select('*')
+                               .eq('content_id', editingPost.id)
+                               .order('slide_no', { ascending: true })
+                             
+                             if (segmentsData) {
+                               setEditingPost(prev => ({
+                                 ...prev,
+                                 segments: segmentsData
+                               }))
+                             }
+                           }
+                           await fetchPosts() // Päivitä lista
+                         }}
+                         t={t}
+                       />
+                     </div>
+                   ) : null
+                 })()}
                </div>
              <div className="modal-actions">
                 <div className="modal-actions-left">

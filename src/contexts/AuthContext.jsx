@@ -36,87 +36,93 @@ export const AuthProvider = ({ children }) => {
     }
 
     const defaultFeatures = DEFAULT_FEATURES
-    
+
     try {
       console.log('[AuthContext] Fetching user profile for:', sessionUser.email)
-      
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('auth_user_id', sessionUser.id)
-        .maybeSingle()
-      
+
+      // OPTIMOINTI: Hae käyttäjäprofiili ja organisaatiojäsenyys RINNAKKAIN
+      const [userResult, orgMemberResult] = await Promise.all([
+        supabase
+          .from('users')
+          .select('*')
+          .eq('auth_user_id', sessionUser.id)
+          .maybeSingle(),
+        supabase
+          .from('org_members')
+          .select('org_id, role')
+          .eq('auth_user_id', sessionUser.id)
+          .maybeSingle()
+      ])
+
+      const userData = userResult.data
+      const orgMember = orgMemberResult.data
+
       let systemRole = userData?.role || 'user'
       let company_id = userData?.company_id || null
-      // Käytä oletusominaisuuksia jos tietokannassa on tyhjä lista tai ei listaa
-      let features = Array.isArray(userData?.features) && userData.features.length > 0 
-        ? userData.features 
+      let features = Array.isArray(userData?.features) && userData.features.length > 0
+        ? userData.features
         : defaultFeatures
-      
+
+      let organizationRole = null
+      let organizationId = null
+      let organizationData = null
+
+      // Jos käyttäjä on admin/moderator, käytä omia tietoja organisaationa
       if (userData && (userData.role === 'admin' || userData.role === 'moderator')) {
-        setOrganization({
+        organizationData = {
           id: userData.id,
           role: userData.role,
           data: userData
-        })
+        }
       }
 
-      const userWithRole = {
+      // Jos käyttäjällä on organisaatiojäsenyys, hae organisaation tiedot
+      if (orgMember) {
+        const { data: org } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', orgMember.org_id)
+          .single()
+
+        if (org) {
+          organizationRole = orgMember.role
+          organizationId = orgMember.org_id
+          organizationData = {
+            id: orgMember.org_id,
+            role: orgMember.role,
+            data: org
+          }
+
+          // Käytä organisaation featureja jos ei admin/moderator
+          if (systemRole !== 'admin' && systemRole !== 'moderator') {
+            features = Array.isArray(org.features) && org.features.length > 0
+              ? org.features
+              : defaultFeatures
+          }
+        }
+      }
+
+      // Aseta organisaatio KERRAN (ei kaksoispäivitystä)
+      if (organizationData) {
+        setOrganization(organizationData)
+      }
+
+      setProfileLoaded(true)
+
+      // Palauta täydellinen käyttäjäobjekti KERRAN (ei kaksoispäivitystä)
+      return {
         ...sessionUser,
         systemRole: systemRole,
         company_id: company_id,
         features: features,
-        organizationRole: null,
-        organizationId: null
+        organizationRole: organizationRole,
+        organizationId: organizationId
       }
-      
-      setProfileLoaded(true)
 
-      const loadOrgDetails = async () => {
-        try {
-          const { data: orgMember } = await supabase
-            .from('org_members')
-            .select('org_id, role')
-            .eq('auth_user_id', sessionUser.id)
-            .maybeSingle()
-
-          if (orgMember) {
-            const { data: org } = await supabase
-              .from('users')
-              .select('*')
-              .eq('id', orgMember.org_id)
-              .single()
-            
-            if (org) {
-              setOrganization({
-                id: orgMember.org_id,
-                role: orgMember.role,
-                data: org
-              })
-              
-              setUser(prev => ({
-                ...prev,
-                organizationRole: orgMember.role,
-                organizationId: orgMember.org_id,
-                features: systemRole === 'admin' || systemRole === 'moderator' 
-                  ? prev.features 
-                  : (Array.isArray(org.features) && org.features.length > 0 ? org.features : defaultFeatures)
-              }))
-            }
-          }
-        } catch (error) {
-          console.error('Error loading organization details:', error)
-        }
-      }
-      
-      loadOrgDetails()
-      
-      return userWithRole
-      
     } catch (error) {
       console.error('Error in fetchUserProfile:', error)
       setProfileLoaded(true)
-      
+
       return {
         ...sessionUser,
         systemRole: 'user',
@@ -182,8 +188,8 @@ export const AuthProvider = ({ children }) => {
             setLoading(true)
             setProfileLoaded(false)
             
-            const timeoutPromise = new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('fetchUserProfile timeout')), 10000)
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('fetchUserProfile timeout')), 5000)
             )
             
             const userWithProfile = await Promise.race([

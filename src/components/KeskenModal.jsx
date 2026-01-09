@@ -3,8 +3,12 @@ import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { getUserOrgId } from '../lib/getUserOrgId'
-import Button from './Button'
 import KuvapankkiSelector from './KuvapankkiSelector'
+import CarouselSegmentsEditor from './CarouselSegmentsEditor'
+import ErrorDisplay from './KeskenModal/ErrorDisplay'
+import ModalActions from './KeskenModal/ModalActions'
+import CaptionEditor from './KeskenModal/CaptionEditor'
+import MediaPreview from './KeskenModal/MediaPreview'
 import './KeskenModal.css'
 
 const KeskenModal = ({ 
@@ -472,486 +476,133 @@ const KeskenModal = ({
           </div>
 
             {/* Kaksi saraketta: media vasemmalle, kentät oikealle */}
-            <div className="edit-modal-grid">
-              {/* Vasen sarake: Media */}
-              <div className="edit-modal-media">
-                <div className="media-container">
-                  {(() => {
-                    const isCarousel = editingPost.type === 'Carousel'
-                    const isPhotoType = editingPost.type === 'Photo' || editingPost.type === 'LinkedIn'
-                    
-                    // Carousel-tyyppisillä postauksilla näytetään kaikki slaidit
-                    if (isCarousel && editingPost.segments && editingPost.segments.length > 0) {
-                      return (
-                        <div className="carousel-slides">
-                          <h4 style={{ marginBottom: '12px', fontSize: '14px', fontWeight: '600', color: '#374151' }}>
-                            Slaidit ({editingPost.segments.length})
-                          </h4>
-                          <div className="slides-grid">
-                            {editingPost.segments.map((segment, index) => (
-                              <div key={segment.id || index} className="slide-item">
-                                <div className="slide-number">
-                                  {segment.slide_no || index + 1}
-                                </div>
-                                {segment.media_urls && segment.media_urls.length > 0 ? (
-                                  <img 
-                                    src={segment.media_urls[0]} 
-                                    alt={`Slaidi ${segment.slide_no || index + 1}`}
-                                    className="slide-image"
-                                    onError={(e) => {
-                                      e.target.style.display = 'none'
-                                      e.target.nextSibling.style.display = 'flex'
-                                    }}
-                                  />
-                                ) : (
-                                  <div className="slide-placeholder">
-                                    <img src="/placeholder.png" alt="Ei mediaa" />
-                                  </div>
-                                )}
-                                {/* Fallback placeholder - näkyy vain jos kuva ei lataa */}
-                                <div className="slide-placeholder" style={{ display: 'none' }}>
-                                  <img src="/placeholder.png" alt="Ei mediaa" />
-                                </div>
-                                {segment.caption && (
-                                  <div className="slide-caption">
-                                    {segment.caption}
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )
-                    }
-                    
-                    // Muille tyypeille näytetään yksi kuva
-                    const mediaUrl = editingPost.thumbnail || (editingPost.media_urls && editingPost.media_urls[0])
-                    
-                    if (!mediaUrl) {
-                      return (
-                        <div className="media-placeholder">
-                          <img src="/placeholder.png" alt="Ei mediaa" />
-                          {isPhotoType && (
-                            <div className="media-controls">
-                              {userAccountType === 'personal_brand' ? (
-                                <div style={{ position: 'relative' }}>
-                                  <Button
-                                    type="button"
-                                    variant="primary"
-                                    size="small"
-                                    onClick={() => setShowMediaSourceMenu(!showMediaSourceMenu)}
-                                    disabled={imageLoading}
-                                    title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
-                                  >
-                                    {imageLoading ? t('media.buttons.loading') : t('media.buttons.addMedia')}
-                                  </Button>
-                                  {showMediaSourceMenu && (
-                                    <div 
-                                      className="media-source-menu"
-                                      style={{
-                                        position: 'absolute',
-                                        bottom: '100%',
-                                        left: 0,
-                                        marginBottom: '4px',
-                                        background: '#fff',
-                                        border: '1px solid #e5e7eb',
-                                        borderRadius: '6px',
-                                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                                        zIndex: 1000,
-                                        minWidth: '180px'
-                                      }}
-                                    >
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          setShowMediaSourceMenu(false)
-                                          setShowKuvapankkiSelector(true)
-                                        }}
-                                        style={{
-                                          width: '100%',
-                                          padding: '10px 16px',
-                                          textAlign: 'left',
-                                          border: 'none',
-                                          background: 'none',
-                                          cursor: 'pointer',
-                                          fontSize: '14px',
-                                          color: '#374151'
-                                        }}
-                                        onMouseEnter={(e) => e.target.style.background = '#f3f4f6'}
-                                        onMouseLeave={(e) => e.target.style.background = 'none'}
-                                      >
-                                        Valitse kuvapankista
-                                      </button>
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          setShowMediaSourceMenu(false)
-                                          fileInputRef.current?.click()
-                                        }}
-                                        style={{
-                                          width: '100%',
-                                          padding: '10px 16px',
-                                          textAlign: 'left',
-                                          border: 'none',
-                                          background: 'none',
-                                          cursor: 'pointer',
-                                          fontSize: '14px',
-                                          color: '#374151',
-                                          borderTop: '1px solid #e5e7eb'
-                                        }}
-                                        onMouseEnter={(e) => e.target.style.background = '#f3f4f6'}
-                                        onMouseLeave={(e) => e.target.style.background = 'none'}
-                                      >
-                                        Valitse koneelta
-                                      </button>
-                                    </div>
-                                  )}
-                                </div>
-                              ) : (
-                                <Button
-                                  type="button"
-                                  variant="primary"
-                                  size="small"
-                                  onClick={() => fileInputRef.current?.click()}
-                                  disabled={imageLoading}
-                                  title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
-                                >
-                                  {imageLoading ? t('media.buttons.loading') : t('media.buttons.addMedia')}
-                                </Button>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      )
-                    }
-                    
-                    if (mediaUrl.includes('.mp4') || mediaUrl.includes('video')) {
-                      return (
-                        <video 
-                          src={mediaUrl} 
-                          className="media-preview"
-                          controls
-                        />
-                      )
-                    }
-                    
-                    return (
-                      <div className="media-wrapper">
-                        {imageLoading && (
-                          <div className="image-loading-overlay">
-                            <div className="loading-spinner"></div>
-                            <p>{t('media.buttons.loading')}</p>
-                          </div>
-                        )}
-                        <img 
-                          src={`${mediaUrl}${formData.imageUpdated ? `?t=${formData.imageUpdated}` : ''}`}
-                          alt="Postauksen media"
-                          className="media-preview"
-                          onError={(e) => {
-                            e.target.style.display = 'none'
-                            e.target.nextSibling.style.display = 'flex'
+            {/* Jos segmenttien muokkaus näkyy, vaihdetaan layout: vasen = Postaus, oikea = Slaidit + muokkaus */}
+            {(() => {
+              const isCarousel = editingPost.type === 'Carousel'
+              // Näytetään segmenttien muokkaus vain jos vähintään yhdellä segmentillä on status "In Progress"
+              const hasInProgressSegment = editingPost.segments && editingPost.segments.some(segment => segment.status === 'In Progress')
+              const showSegmentsEditor = isCarousel && editingPost.segments && editingPost.segments.length > 0 && hasInProgressSegment
+              
+              // Jos segmenttien muokkaus näkyy, vaihdetaan layout
+              if (showSegmentsEditor) {
+                return (
+                  <>
+                    <div className="edit-modal-grid">
+                    {/* Vasen sarake: Postaus */}
+                    <div className="edit-modal-fields">
+                      <CaptionEditor
+                        caption={formData.caption}
+                        onChange={handleCaptionChange}
+                      />
+                    </div>
+
+                    {/* Oikea sarake: Segmenttien muokkaus */}
+                    <div className="edit-modal-media">
+                      {/* Segmenttien muokkaus */}
+                      <div>
+                        <CarouselSegmentsEditor
+                          segments={editingPost.segments}
+                          contentId={editingPost.id}
+                          onSave={async () => {
+                            // Päivitä segments data
+                            const userId = await getUserOrgId(user?.id)
+                            if (userId) {
+                              const { data: segmentsData } = await supabase
+                                .from('segments')
+                                .select('*')
+                                .eq('content_id', editingPost.id)
+                                .order('slide_no', { ascending: true })
+                              
+                              if (segmentsData) {
+                                // Päivitä editingPost state uudella segments-datalla
+                                const updatedPost = {
+                                  ...editingPost,
+                                  segments: segmentsData
+                                }
+                                // Kutsu onSave callbackia päivittääksesi postauksen
+                                if (onSave) {
+                                  onSave(updatedPost)
+                                }
+                              }
+                            }
                           }}
+                          t={t}
                         />
-                        {/* Kuvan hallintanapit - vain Photo-tyyppisille */}
-                        {isPhotoType && (
-                          <div className="media-controls">
-                            {userAccountType === 'personal_brand' ? (
-                              <div style={{ position: 'relative', marginRight: '8px' }}>
-                                <Button
-                                  type="button"
-                                  variant="secondary"
-                                  size="small"
-                                  onClick={() => setShowMediaSourceMenu(!showMediaSourceMenu)}
-                                  disabled={imageLoading}
-                                  title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
-                                >
-                                  {imageLoading ? t('media.buttons.loading') : t('media.buttons.changeMedia')}
-                                </Button>
-                                {showMediaSourceMenu && (
-                                  <div
-                                    className="media-source-menu"
-                                    style={{
-                                      position: 'absolute',
-                                      bottom: '100%',
-                                      left: 0,
-                                      marginBottom: '4px',
-                                      background: '#fff',
-                                      border: '1px solid #e5e7eb',
-                                      borderRadius: '6px',
-                                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                                      zIndex: 1000,
-                                      minWidth: '180px'
-                                    }}
-                                  >
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        setShowMediaSourceMenu(false)
-                                        setShowKuvapankkiSelector(true)
-                                      }}
-                                      style={{
-                                        width: '100%',
-                                        padding: '10px 16px',
-                                        textAlign: 'left',
-                                        border: 'none',
-                                        background: 'none',
-                                        cursor: 'pointer',
-                                        fontSize: '14px',
-                                        color: '#374151'
-                                      }}
-                                      onMouseEnter={(e) => e.target.style.background = '#f3f4f6'}
-                                      onMouseLeave={(e) => e.target.style.background = 'none'}
-                                    >
-                                      Valitse kuvapankista
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        setShowMediaSourceMenu(false)
-                                        fileInputRef.current?.click()
-                                      }}
-                                      style={{
-                                        width: '100%',
-                                        padding: '10px 16px',
-                                        textAlign: 'left',
-                                        border: 'none',
-                                        background: 'none',
-                                        cursor: 'pointer',
-                                        fontSize: '14px',
-                                        color: '#374151',
-                                        borderTop: '1px solid #e5e7eb'
-                                      }}
-                                      onMouseEnter={(e) => e.target.style.background = '#f3f4f6'}
-                                      onMouseLeave={(e) => e.target.style.background = 'none'}
-                                    >
-                                      Valitse koneelta
-                                    </button>
-                                  </div>
-                                )}
-                              </div>
-                            ) : (
-                              <Button
-                                type="button"
-                                variant="secondary"
-                                size="small"
-                                onClick={() => fileInputRef.current?.click()}
-                                disabled={imageLoading}
-                                style={{ marginRight: '8px' }}
-                                title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
-                              >
-                                {imageLoading ? t('media.buttons.loading') : t('media.buttons.changeMedia')}
-                              </Button>
-                            )}
-                            <Button
-                              type="button"
-                              variant="danger"
-                              size="small"
-                              onClick={() => handleDeleteImage(mediaUrl)}
-                              disabled={imageLoading}
-                            >
-                              Poista kuva
-                            </Button>
-                          </div>
-                        )}
                       </div>
-                    )
-                  })()}
-                  
-                  {/* Fallback placeholder - näkyy vain jos kuva ei lataa */}
-                  <div className="media-placeholder" style={{ display: 'none' }}>
-                    <img src="/placeholder.png" alt="Ei mediaa" />
-                    {(editingPost.type === 'Photo' || editingPost.type === 'LinkedIn') && (
-                      <div className="media-controls">
-                        {userAccountType === 'personal_brand' ? (
-                          <div style={{ position: 'relative' }}>
-                            <Button
-                              type="button"
-                              variant="primary"
-                              size="small"
-                              onClick={() => setShowMediaSourceMenu(!showMediaSourceMenu)}
-                              disabled={imageLoading}
-                              title="Sallitut muodot: JPG, PNG, GIF, WebP, MP4, WebM, MOV (max 10MB)"
-                            >
-                              {imageLoading ? 'Ladataan...' : 'Lisää media'}
-                            </Button>
-                            {showMediaSourceMenu && (
-                              <div
-                                className="media-source-menu"
-                                style={{
-                                  position: 'absolute',
-                                  bottom: '100%',
-                                  left: 0,
-                                  marginBottom: '4px',
-                                  background: '#fff',
-                                  border: '1px solid #e5e7eb',
-                                  borderRadius: '6px',
-                                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                                  zIndex: 1000,
-                                  minWidth: '180px'
-                                }}
-                              >
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setShowMediaSourceMenu(false)
-                                    setShowKuvapankkiSelector(true)
-                                  }}
-                                  style={{
-                                    width: '100%',
-                                    padding: '10px 16px',
-                                    textAlign: 'left',
-                                    border: 'none',
-                                    background: 'none',
-                                    cursor: 'pointer',
-                                    fontSize: '14px',
-                                    color: '#374151'
-                                  }}
-                                  onMouseEnter={(e) => e.target.style.background = '#f3f4f6'}
-                                  onMouseLeave={(e) => e.target.style.background = 'none'}
-                                >
-                                  Valitse kuvapankista
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setShowMediaSourceMenu(false)
-                                    fileInputRef.current?.click()
-                                  }}
-                                  style={{
-                                    width: '100%',
-                                    padding: '10px 16px',
-                                    textAlign: 'left',
-                                    border: 'none',
-                                    background: 'none',
-                                    cursor: 'pointer',
-                                    fontSize: '14px',
-                                    color: '#374151',
-                                    borderTop: '1px solid #e5e7eb'
-                                  }}
-                                  onMouseEnter={(e) => e.target.style.background = '#f3f4f6'}
-                                  onMouseLeave={(e) => e.target.style.background = 'none'}
-                                >
-                                  Valitse koneelta
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <Button
-                            type="button"
-                            variant="primary"
-                            size="small"
-                            onClick={() => fileInputRef.current?.click()}
-                            disabled={imageLoading}
-                            title="Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
-                          >
-                            {imageLoading ? t('media.buttons.loading') : t('media.buttons.addMedia')}
-                          </Button>
-                        )}
-                      </div>
-                    )}
+                    </div>
                   </div>
-                </div>
-                
-                {/* Piilotettu file input */}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/gif,video/mp4,video/x-m4v"
-                  onChange={handleImageUpload}
-                  style={{ display: 'none' }}
-                />
-              </div>
+
+                  <ErrorDisplay error={error} />
+
+                  <ModalActions
+                    onClose={onClose}
+                    onSave={handleSubmit}
+                    loading={loading}
+                    disabled={formData.caption.length > 2000}
+                    fileInputRef={fileInputRef}
+                    t={t}
+                  />
+                  </>
+                )
+              }
+              
+              // Normaali layout: vasen = Media/Slaidit, oikea = Postaus
+              return (
+                <>
+                <div className="edit-modal-grid">
+                  {/* Vasen sarake: Media */}
+                  <div className="edit-modal-media">
+                    <div className="media-container">
+                      <MediaPreview
+                        editingPost={editingPost}
+                        userAccountType={userAccountType}
+                        imageLoading={imageLoading}
+                        showMediaSourceMenu={showMediaSourceMenu}
+                        onToggleMediaSourceMenu={() => setShowMediaSourceMenu(!showMediaSourceMenu)}
+                        onSelectKuvapankki={() => {
+                          setShowMediaSourceMenu(false)
+                          setShowKuvapankkiSelector(true)
+                        }}
+                        onSelectKoneelta={() => fileInputRef.current?.click()}
+                        onDeleteImage={handleDeleteImage}
+                        fileInputRef={fileInputRef}
+                        formData={formData}
+                        t={t}
+                      />
+                    </div>
+                    
+                    {/* Piilotettu file input */}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/gif,video/mp4,video/x-m4v"
+                      onChange={handleImageUpload}
+                      style={{ display: 'none' }}
+                    />
+                  </div>
 
               {/* Oikea sarake: Postaus */}
               <div className="edit-modal-fields">
-                <div className="form-group">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <label className="form-label" style={{ marginBottom: 0 }}>Postaus</label>
-                    <span style={{ 
-                      fontSize: '12px', 
-                      color: formData.caption.length > 2000 ? '#ef4444' : '#6b7280',
-                      fontWeight: formData.caption.length > 2000 ? '600' : '400'
-                    }}>
-                      {formData.caption.length} / 2000
-                    </span>
-                  </div>
-                  <div className="post-content-box" style={{ height: '500px' }}>
-                    <textarea
-                      name="caption"
-                      value={formData.caption}
-                      onChange={handleCaptionChange}
-                      className="form-textarea"
-                      placeholder="Kirjoita postauksen kuvaus..."
-                      style={{ 
-                        border: formData.caption.length > 2000 ? '1px solid #ef4444' : '1px solid #e5e7eb', 
-                        borderRadius: '8px', 
-                        padding: '12px',
-                        resize: 'none',
-                        height: '100%',
-                        width: '100%'
-                      }}
-                    />
-                  </div>
-                  {formData.caption.length > 2000 && (
-                    <p style={{ 
-                      color: '#ef4444', 
-                      fontSize: '12px', 
-                      marginTop: '4px',
-                      fontWeight: '500'
-                    }}>
-                      Postauksen pituus ylittää maksimin 2000 merkkiä
-                    </p>
-                  )}
-                </div>
-
+                <CaptionEditor
+                  caption={formData.caption}
+                  onChange={handleCaptionChange}
+                />
               </div>
             </div>
 
-            {error && (
-              <div className="error-message" style={{ 
-                color: '#ef4444', 
-                marginBottom: '16px',
-                padding: '12px 16px',
-                backgroundColor: '#fef2f2',
-                border: '1px solid #fecaca',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '16px' }}>⚠️</span>
-                  <span>{error}</span>
-                </div>
-              </div>
-            )}
+            <ErrorDisplay error={error} />
 
-            <div className="modal-actions">
-              <div className="modal-actions-left">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => {
-                    // Tyhjennä file input kun modaali suljetaan
-                    if (fileInputRef.current) {
-                      fileInputRef.current.value = ''
-                    }
-                    onClose()
-                  }}
-                >
-                  {t('common.cancel')}
-                </Button>
-              </div>
-              <div className="modal-actions-right">
-                <Button
-                  type="submit"
-                  variant="primary"
-                  disabled={loading || formData.caption.length > 2000}
-                >
-                  {loading ? t('ui.buttons.saving') : t('common.save')}
-                </Button>
-              </div>
-            </div>
+            <ModalActions
+              onClose={onClose}
+              onSave={handleSubmit}
+              loading={loading}
+              disabled={formData.caption.length > 2000}
+              fileInputRef={fileInputRef}
+              t={t}
+            />
+                </>
+          )
+        })()}
           </form>
         </div>
       </div>

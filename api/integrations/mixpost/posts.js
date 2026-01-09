@@ -161,9 +161,11 @@ async function handler(req, res) {
         const firstVersion = Array.isArray(post.versions) ? post.versions[0] : null
         const firstContent = firstVersion && Array.isArray(firstVersion.content) ? firstVersion.content[0] : null
         const body = firstContent?.body || ''
-        const firstMedia = firstContent && Array.isArray(firstContent.media) ? firstContent.media[0] : null
+        const mediaArray = firstContent && Array.isArray(firstContent.media) ? firstContent.media : []
+        const firstMedia = mediaArray[0] || null
         const thumbUrl = firstMedia?.thumb_url || null
         const isVideo = Boolean(firstMedia?.is_video)
+        const mediaCount = mediaArray.length
 
         // Käytä published_at jos julkaistu, muuten scheduled_at
         const dateToUse = post.status === 'published' 
@@ -233,7 +235,25 @@ async function handler(req, res) {
           scheduledDate: scheduledDateFi,
           publishDate: publishDateISO, // ISO timestamp kalenteria varten
           thumbnail: proxiedThumbnail, // Käytä proxyttyä URL:ia
-          type: isVideo ? 'Video' : 'Photo',
+          type: (() => {
+            // Määritä tyyppi media-tietojen perusteella
+            if (mediaCount > 1) {
+              return 'Carousel'
+            }
+            if (isVideo) {
+              // Jos video ja Instagram, se on Reels
+              if (provider === 'instagram') {
+                return 'Reels'
+              }
+              return 'Video'
+            }
+            // Jos LinkedIn, se on LinkedIn-tyyppi
+            if (provider === 'linkedin') {
+              return 'LinkedIn'
+            }
+            // Oletuksena Photo
+            return 'Photo'
+          })(),
           channelNames: channelNames
         }
       })

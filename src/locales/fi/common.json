@@ -1214,7 +1214,8 @@
       "save": "Tallenna",
       "update": "Päivitä",
       "send": "Lähetä",
-      "sending": "Lähetetään..."
+      "sending": "Lähetetään...",
+      "today": "Tänään"
     },
     "labels": {
       "or": "tai",
@@ -1685,5 +1686,11 @@
     "languageSwitcher": "Language switcher",
     "toggleMobileMenu": "Toggle mobile menu",
     "crmConnected": "CRM yhdistetty"
+  },
+  "calendar": {
+    "view": {
+      "month": "Kuukausi",
+      "week": "Viikko"
+    }
   }
 }

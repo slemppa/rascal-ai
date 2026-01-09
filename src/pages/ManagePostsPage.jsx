@@ -1679,7 +1679,9 @@ export default function ManagePostsPage() {
                 e.preventDefault()
                 const formData = new FormData(e.target)
                 const title = formData.get('title')?.trim() || ''
-                const count = createModalCount || 1
+                // Varmista että count on validi numero
+                const countValue = typeof createModalCount === 'number' ? createModalCount : parseInt(createModalCount, 10)
+                const count = (countValue && !isNaN(countValue)) ? Math.min(Math.max(countValue, 1), 10) : 1
                 const type = formData.get('type') || ''
                 
                 // Validoi: otsikko vaaditaan vain jos lukumäärä on 1
@@ -1743,9 +1745,25 @@ export default function ManagePostsPage() {
                     max="10"
                     value={createModalCount}
                     onChange={(e) => {
-                      const newValue = parseInt(e.target.value) || 1
-                      const clampedValue = Math.min(Math.max(newValue, 1), 10)
-                      setCreateModalCount(clampedValue)
+                      const inputValue = e.target.value
+                      // Salli tyhjä arvo kirjoittamisen aikana
+                      if (inputValue === '') {
+                        setCreateModalCount('')
+                        return
+                      }
+                      const newValue = parseInt(inputValue, 10)
+                      // Jos arvo on validi numero, rajoita se 1-10 välille
+                      if (!isNaN(newValue)) {
+                        const clampedValue = Math.min(Math.max(newValue, 1), 10)
+                        setCreateModalCount(clampedValue)
+                      }
+                    }}
+                    onBlur={(e) => {
+                      // Kun käyttäjä poistuu kentästä, varmista että arvo on validi
+                      const inputValue = e.target.value
+                      if (inputValue === '' || isNaN(parseInt(inputValue, 10))) {
+                        setCreateModalCount(1)
+                      }
                     }}
                     required
                     className="form-input form-input-full"

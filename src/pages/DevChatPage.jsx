@@ -406,7 +406,7 @@ export default function DevChatPage() {
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Kirjoita viestisi..."
+                    placeholder={t('devChat.messagePlaceholder')}
                     disabled={loading}
                     className="ai-chat-input"
                   />
@@ -423,7 +423,7 @@ export default function DevChatPage() {
                     title={t('chat.buttons.newChat')}
                     className="ai-chat-newchat-button"
                   >
-                    <span role="img" aria-label="Uusi keskustelu">➕</span>
+                    <span role="img" aria-label={t('devChat.newConversation')}>➕</span>
                   </button>
                 </form>
               </div>

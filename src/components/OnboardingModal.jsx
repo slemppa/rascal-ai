@@ -259,7 +259,7 @@ const OnboardingModal = () => {
       
       if (!config.agentId) {
         console.error('❌ Agent ID not found in API response')
-        toast.error('Virhe: Agent ID puuttuu konfiguraatiosta')
+        toast.error(t('errors.agentIdMissing'))
         return
       }
 
@@ -288,7 +288,7 @@ const OnboardingModal = () => {
       }
     } catch (error) {
       console.error('❌ Error starting conversation:', error)
-      toast.error('Virhe aloittaessa keskustelua: ' + error.message)
+      toast.error(t('errors.chatStartFailed', { error: error.message }))
     }
   }
 

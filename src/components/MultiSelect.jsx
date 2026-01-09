@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import './MultiSelect.css'
 
-export default function MultiSelect({ 
-  options = [], 
-  value = [], 
-  onChange, 
+export default function MultiSelect({
+  options = [],
+  value = [],
+  onChange,
   placeholder = 'Select...',
   label,
   searchable = false
 }) {
+  const { t } = useTranslation('common')
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const dropdownRef = useRef(null)
@@ -77,7 +79,7 @@ export default function MultiSelect({
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Search..."
+                placeholder={t('multiSelect.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onClick={(e) => e.stopPropagation()}
@@ -86,7 +88,7 @@ export default function MultiSelect({
             </div>
           )}
           {filteredOptions.length === 0 ? (
-            <div className="multiselect-option">No options found</div>
+            <div className="multiselect-option">{t('multiSelect.noOptions')}</div>
           ) : (
             filteredOptions.map(option => (
               <label key={option.value} className="multiselect-option">

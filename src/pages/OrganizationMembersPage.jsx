@@ -37,7 +37,7 @@ const OrganizationMembersPage = () => {
       const { data: sessionData } = await supabase.auth.getSession()
       const token = sessionData?.session?.access_token
       if (!token) {
-        setError('Ei kirjautumistietoja')
+        setError(t('orgMembers.noAuthError'))
         return
       }
 
@@ -53,7 +53,7 @@ const OrganizationMembersPage = () => {
       setMembers(response.data.members || [])
     } catch (e) {
       console.error('Error fetching members:', e)
-      setError(e.response?.data?.error || 'Virhe jäsenten haussa')
+      setError(e.response?.data?.error || t('orgMembers.fetchError'))
     } finally {
       setLoading(false)
     }
@@ -70,7 +70,7 @@ const OrganizationMembersPage = () => {
       const { data: sessionData } = await supabase.auth.getSession()
       const token = sessionData?.session?.access_token
       if (!token) {
-        setError('Ei kirjautumistietoja')
+        setError(t('orgMembers.noAuthError'))
         return
       }
 
@@ -93,7 +93,7 @@ const OrganizationMembersPage = () => {
       console.error('Error inviting member:', e)
       // Näytä myös hint ja details jos saatavilla
       const errorData = e.response?.data || {}
-      const errorMessage = errorData.error || 'Virhe käyttäjän kutsussa'
+      const errorMessage = errorData.error || t('orgMembers.inviteError')
       const hint = errorData.hint ? `\n${errorData.hint}` : ''
       const details = errorData.details ? `\n${errorData.details}` : ''
       setError(`${errorMessage}${hint}${details}`)
@@ -109,7 +109,7 @@ const OrganizationMembersPage = () => {
       const { data: sessionData } = await supabase.auth.getSession()
       const token = sessionData?.session?.access_token
       if (!token) {
-        setError('Ei kirjautumistietoja')
+        setError(t('orgMembers.noAuthError'))
         return
       }
 
@@ -127,12 +127,12 @@ const OrganizationMembersPage = () => {
       await fetchMembers()
     } catch (e) {
       console.error('Error updating role:', e)
-      setError(e.response?.data?.error || e.message || 'Virhe roolin päivityksessä')
+      setError(e.response?.data?.error || e.message || t('orgMembers.updateRoleError'))
     }
   }
 
   const handleRemoveMember = async (authUserId) => {
-    if (!window.confirm('Haluatko varmasti poistaa tämän jäsenen organisaatiosta?')) {
+    if (!window.confirm(t('orgMembers.confirmRemove'))) {
       return
     }
 
@@ -142,7 +142,7 @@ const OrganizationMembersPage = () => {
       const { data: sessionData } = await supabase.auth.getSession()
       const token = sessionData?.session?.access_token
       if (!token) {
-        setError('Ei kirjautumistietoja')
+        setError(t('orgMembers.noAuthError'))
         return
       }
 
@@ -159,7 +159,7 @@ const OrganizationMembersPage = () => {
       await fetchMembers()
     } catch (e) {
       console.error('Error removing member:', e)
-      setError(e.response?.data?.error || e.message || 'Virhe jäsenen poistamisessa')
+      setError(e.response?.data?.error || e.message || t('orgMembers.removeError'))
     }
   }
 
@@ -170,7 +170,7 @@ const OrganizationMembersPage = () => {
       const { data: sessionData } = await supabase.auth.getSession()
       const token = sessionData?.session?.access_token
       if (!token) {
-        setError('Ei kirjautumistietoja')
+        setError(t('orgMembers.noAuthError'))
         return
       }
 
@@ -184,10 +184,10 @@ const OrganizationMembersPage = () => {
       })
 
       // Näytä onnistumisviesti
-      alert('Kutsu lähetetty uudelleen!')
+      alert(t('orgMembers.resendSuccess'))
     } catch (e) {
       console.error('Error resending invite:', e)
-      setError(e.response?.data?.error || e.message || 'Virhe kutsun lähettämisessä')
+      setError(e.response?.data?.error || e.message || t('orgMembers.resendError'))
     }
   }
 
@@ -196,12 +196,12 @@ const OrganizationMembersPage = () => {
     return (
       <div className={styles.container}>
         <div className={styles.pageHeader}>
-          <h1>Organisaation hallinta</h1>
+          <h1>{t('orgMembers.pageTitle')}</h1>
         </div>
         <div className={styles.card}>
           <div className={styles.errorMessage}>
-            <h2>Ei oikeuksia</h2>
-            <p>Sinulla ei ole oikeuksia tarkastella organisaation jäseniä.</p>
+            <h2>{t('orgMembers.noPermissionsTitle')}</h2>
+            <p>{t('orgMembers.noPermissionsMessage')}</p>
           </div>
         </div>
       </div>
@@ -227,7 +227,7 @@ const OrganizationMembersPage = () => {
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
-        <h1>Organisaation hallinta</h1>
+        <h1>{t('orgMembers.pageTitle')}</h1>
         {canInvite && (
           <Button
             onClick={() => setShowInviteForm(!showInviteForm)}
@@ -246,38 +246,38 @@ const OrganizationMembersPage = () => {
 
       {showInviteForm && canInvite && (
         <div className={styles.card}>
-          <h2 className={styles.cardTitle}>Kutsu uusi käyttäjä</h2>
+          <h2 className={styles.cardTitle}>{t('orgMembers.inviteNewUser')}</h2>
           <form onSubmit={handleInvite} className={styles.form}>
             <div className={styles.formGroup}>
-              <label htmlFor="email">Sähköposti</label>
+              <label htmlFor="email">{t('orgMembers.emailLabel')}</label>
               <input
                 type="email"
                 id="email"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
                 required
-                placeholder="kayttaja@example.com"
+                placeholder={t('orgMembers.emailPlaceholder')}
                 className={styles.input}
               />
             </div>
             <div className={styles.formGroup}>
-              <label htmlFor="role">Rooli</label>
+              <label htmlFor="role">{t('orgMembers.roleLabel')}</label>
               <select
                 id="role"
                 value={inviteRole}
                 onChange={(e) => setInviteRole(e.target.value)}
                 className={styles.select}
               >
-                <option value="member">Jäsen</option>
-                <option value="admin">Admin</option>
+                <option value="member">{t('orgMembers.roleMember')}</option>
+                <option value="admin">{t('orgMembers.roleAdmin')}</option>
                 {organization.role === 'owner' && (
-                  <option value="owner">Omistaja</option>
+                  <option value="owner">{t('orgMembers.roleOwner')}</option>
                 )}
               </select>
             </div>
             <div className={styles.formActions}>
               <Button type="submit" variant="primary" disabled={inviting}>
-                {inviting ? 'Kutsutaan...' : 'Kutsu'}
+                {inviting ? t('orgMembers.inviting') : t('orgMembers.invite')}
               </Button>
               <Button
                 type="button"
@@ -288,7 +288,7 @@ const OrganizationMembersPage = () => {
                   setInviteRole('member')
                 }}
               >
-                Peruuta
+                {t('common.cancel')}
               </Button>
             </div>
           </form>
@@ -296,22 +296,22 @@ const OrganizationMembersPage = () => {
       )}
 
       <div className={styles.card}>
-        <h2 className={styles.cardTitle}>Jäsenet</h2>
+        <h2 className={styles.cardTitle}>{t('orgMembers.membersTitle')}</h2>
         {loading ? (
-          <div className={styles.loading}>Ladataan...</div>
+          <div className={styles.loading}>{t('common.loading')}</div>
         ) : (
           <div className={styles.membersList}>
             {members.length === 0 ? (
-              <p className={styles.emptyState}>Ei jäseniä</p>
+              <p className={styles.emptyState}>{t('orgMembers.noMembers')}</p>
             ) : (
               <div className={styles.tableWrapper}>
                 <table className={styles.membersTable}>
                   <thead>
                     <tr>
-                      <th>Sähköposti</th>
-                      <th>Rooli</th>
-                      <th>Liittynyt</th>
-                      <th>Toiminnot</th>
+                      <th>{t('orgMembers.emailColumn')}</th>
+                      <th>{t('orgMembers.roleColumn')}</th>
+                      <th>{t('orgMembers.joinedColumn')}</th>
+                      <th>{t('orgMembers.actionsColumn')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -348,7 +348,7 @@ const OrganizationMembersPage = () => {
                       
                       return (
                         <tr key={member.auth_user_id}>
-                          <td>{authUser?.email || 'Ei sähköpostia'}</td>
+                          <td>{authUser?.email || t('orgMembers.noEmail')}</td>
                           <td>
                             {canChangeThisRole ? (
                               <select
@@ -356,14 +356,14 @@ const OrganizationMembersPage = () => {
                                 onChange={(e) => handleUpdateRole(member.auth_user_id, e.target.value)}
                                 className={styles.roleSelect}
                               >
-                                <option value="member">Jäsen</option>
-                                <option value="admin">Admin</option>
+                                <option value="member">{t('orgMembers.roleMember')}</option>
+                                <option value="admin">{t('orgMembers.roleAdmin')}</option>
                                 {/* Owner-roolia ei voi valita select-kentästä */}
                               </select>
                             ) : (
                               <span className={`${styles.roleBadge} ${styles[`role${memberRole.charAt(0).toUpperCase() + memberRole.slice(1)}`]}`}>
-                                {memberRole === 'owner' ? 'Omistaja' : 
-                                 memberRole === 'admin' ? 'Admin' : 'Jäsen'}
+                                {memberRole === 'owner' ? t('orgMembers.roleOwner') :
+                                 memberRole === 'admin' ? t('orgMembers.roleAdmin') : t('orgMembers.roleMember')}
                               </span>
                             )}
                           </td>
@@ -377,7 +377,7 @@ const OrganizationMembersPage = () => {
                                   onClick={() => handleResendInvite(member.auth_user_id)}
                                   style={{ fontSize: '13px', padding: '6px 12px' }}
                                 >
-                                  📧 Lähetä kutsu
+                                  {t('orgMembers.resendInvite')}
                                 </Button>
                               )}
                               {/* Owner-roolia ei voi poistaa */}
@@ -386,10 +386,10 @@ const OrganizationMembersPage = () => {
                                   variant="danger"
                                   onClick={() => handleRemoveMember(member.auth_user_id)}
                                 >
-                                  Poista
+                                  {t('orgMembers.remove')}
                                 </Button>
                               )}
-                              {isCurrentUser && <span className={styles.currentUserBadge}>Sinä</span>}
+                              {isCurrentUser && <span className={styles.currentUserBadge}>{t('orgMembers.you')}</span>}
                             </div>
                           </td>
                         </tr>

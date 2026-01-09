@@ -914,7 +914,7 @@ export default function LeadScrapingPage() {
                   options={employeeRangeOptions}
                   value={employeeRange}
                   onChange={setEmployeeRange}
-                  placeholder="Select employee ranges to include..."
+                  placeholder={t('leadScraping.employeeRangePlaceholder')}
                 />
               </div>
               <div className="form-field">
@@ -923,7 +923,7 @@ export default function LeadScrapingPage() {
                   options={industryOptions}
                   value={industriesIncludes}
                   onChange={setIndustriesIncludes}
-                  placeholder="Select industries to include..."
+                  placeholder={t('leadScraping.industriesIncludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -933,7 +933,7 @@ export default function LeadScrapingPage() {
                   options={industryOptions}
                   value={industriesExcludes}
                   onChange={setIndustriesExcludes}
-                  placeholder="Select industries to exclude..."
+                  placeholder={t('leadScraping.industriesExcludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -944,7 +944,7 @@ export default function LeadScrapingPage() {
                     type="number"
                     value={foundedYearFrom}
                     onChange={(e) => setFoundedYearFrom(e.target.value)}
-                    placeholder="e.g. 2020"
+                    placeholder={t('leadScraping.foundedYearFromPlaceholder')}
                   />
                 </div>
                 <div className="form-field">
@@ -953,7 +953,7 @@ export default function LeadScrapingPage() {
                     type="number"
                     value={foundedYearTo}
                     onChange={(e) => setFoundedYearTo(e.target.value)}
-                    placeholder="e.g. 2024"
+                    placeholder={t('leadScraping.foundedYearToPlaceholder')}
                   />
                 </div>
               </div>
@@ -963,7 +963,7 @@ export default function LeadScrapingPage() {
                   type="text"
                   value={companyDomains}
                   onChange={(e) => setCompanyDomains(e.target.value)}
-                  placeholder="Enter company domains (comma-separated)"
+                  placeholder={t('leadScraping.companyDomainsPlaceholder')}
                 />
               </div>
             </div>
@@ -993,7 +993,7 @@ export default function LeadScrapingPage() {
                   options={countryOptions}
                   value={peopleCountryIncludes}
                   onChange={setPeopleCountryIncludes}
-                  placeholder="Select countries to include..."
+                  placeholder={t('leadScrapingFields.countriesIncludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -1003,7 +1003,7 @@ export default function LeadScrapingPage() {
                   options={countryOptions}
                   value={peopleCountryExcludes}
                   onChange={setPeopleCountryExcludes}
-                  placeholder="Select countries to exclude..."
+                  placeholder={t('leadScrapingFields.countriesExcludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -1013,7 +1013,7 @@ export default function LeadScrapingPage() {
                   options={stateRegionOptions}
                   value={peopleStateIncludes}
                   onChange={setPeopleStateIncludes}
-                  placeholder="Select states/regions to include..."
+                  placeholder={t('leadScrapingFields.statesIncludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -1023,7 +1023,7 @@ export default function LeadScrapingPage() {
                   options={stateRegionOptions}
                   value={peopleStateExcludes}
                   onChange={setPeopleStateExcludes}
-                  placeholder="Select states/regions to exclude..."
+                  placeholder={t('leadScrapingFields.statesExcludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -1033,7 +1033,7 @@ export default function LeadScrapingPage() {
                   type="text"
                   value={peopleCityIncludes}
                   onChange={(e) => setPeopleCityIncludes(e.target.value)}
-                  placeholder="Enter cities to include..."
+                  placeholder={t('leadScrapingFields.citiesIncludePlaceholder')}
                 />
               </div>
               <div className="form-field">
@@ -1042,7 +1042,7 @@ export default function LeadScrapingPage() {
                   type="text"
                   value={peopleCityExcludes}
                   onChange={(e) => setPeopleCityExcludes(e.target.value)}
-                  placeholder="Enter cities to exclude..."
+                  placeholder={t('leadScrapingFields.citiesExcludePlaceholder')}
                 />
               </div>
             </div>
@@ -1072,7 +1072,7 @@ export default function LeadScrapingPage() {
                   options={countryOptions}
                   value={companyCountryIncludes}
                   onChange={setCompanyCountryIncludes}
-                  placeholder="Select countries to include..."
+                  placeholder={t('leadScrapingFields.countriesIncludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -1082,7 +1082,7 @@ export default function LeadScrapingPage() {
                   options={countryOptions}
                   value={companyCountryExcludes}
                   onChange={setCompanyCountryExcludes}
-                  placeholder="Select countries to exclude..."
+                  placeholder={t('leadScrapingFields.countriesExcludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -1092,7 +1092,7 @@ export default function LeadScrapingPage() {
                   options={stateRegionOptions}
                   value={companyStateIncludes}
                   onChange={setCompanyStateIncludes}
-                  placeholder="Select states/regions to include..."
+                  placeholder={t('leadScrapingFields.statesIncludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -1102,7 +1102,7 @@ export default function LeadScrapingPage() {
                   options={stateRegionOptions}
                   value={companyStateExcludes}
                   onChange={setCompanyStateExcludes}
-                  placeholder="Select states/regions to exclude..."
+                  placeholder={t('leadScrapingFields.statesExcludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -1112,7 +1112,7 @@ export default function LeadScrapingPage() {
                   type="text"
                   value={companyCityIncludes}
                   onChange={(e) => setCompanyCityIncludes(e.target.value)}
-                  placeholder="Enter cities to include..."
+                  placeholder={t('leadScrapingFields.citiesIncludePlaceholder')}
                 />
               </div>
               <div className="form-field">
@@ -1121,7 +1121,7 @@ export default function LeadScrapingPage() {
                   type="text"
                   value={companyCityExcludes}
                   onChange={(e) => setCompanyCityExcludes(e.target.value)}
-                  placeholder="Enter cities to exclude..."
+                  placeholder={t('leadScrapingFields.citiesExcludePlaceholder')}
                 />
               </div>
             </div>
@@ -1151,7 +1151,7 @@ export default function LeadScrapingPage() {
                   options={jobTitleOptions}
                   value={jobTitlesIncludes}
                   onChange={setJobTitlesIncludes}
-                  placeholder="Select job titles to include..."
+                  placeholder={t('leadScrapingFields.jobTitlesIncludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -1171,7 +1171,7 @@ export default function LeadScrapingPage() {
                   options={jobTitleOptions}
                   value={jobTitlesExcludes}
                   onChange={setJobTitlesExcludes}
-                  placeholder="Select job titles to exclude..."
+                  placeholder={t('leadScrapingFields.jobTitlesExcludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -1181,7 +1181,7 @@ export default function LeadScrapingPage() {
                   type="text"
                   value={additionalTitles}
                   onChange={(e) => setAdditionalTitles(e.target.value)}
-                  placeholder="e.g. Country Head"
+                  placeholder={t('leadScrapingFields.additionalTitlesPlaceholder')}
                 />
               </div>
             </div>
@@ -1211,7 +1211,7 @@ export default function LeadScrapingPage() {
                   options={managementLevelOptions}
                   value={managementLevelIncludes}
                   onChange={setManagementLevelIncludes}
-                  placeholder="Select management levels to include..."
+                  placeholder={t('leadScrapingFields.managementLevelIncludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -1221,7 +1221,7 @@ export default function LeadScrapingPage() {
                   options={managementLevelOptions}
                   value={managementLevelExcludes}
                   onChange={setManagementLevelExcludes}
-                  placeholder="Select management levels to exclude..."
+                  placeholder={t('leadScrapingFields.managementLevelExcludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -1252,7 +1252,7 @@ export default function LeadScrapingPage() {
                   options={departmentOptions}
                   value={departmentsIncludes}
                   onChange={setDepartmentsIncludes}
-                  placeholder="Select departments to include..."
+                  placeholder={t('leadScrapingFields.departmentsIncludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -1262,7 +1262,7 @@ export default function LeadScrapingPage() {
                   options={departmentOptions}
                   value={departmentsExcludes}
                   onChange={setDepartmentsExcludes}
-                  placeholder="Select departments to exclude..."
+                  placeholder={t('leadScrapingFields.departmentsExcludePlaceholder')}
                   searchable={true}
                 />
               </div>
@@ -1293,7 +1293,7 @@ export default function LeadScrapingPage() {
                   type="text"
                   value={firstNameIncludes}
                   onChange={(e) => setFirstNameIncludes(e.target.value)}
-                  placeholder="Enter first names to include..."
+                  placeholder={t('leadScrapingFields.firstNamesIncludePlaceholder')}
                 />
               </div>
               <div className="form-field">
@@ -1302,7 +1302,7 @@ export default function LeadScrapingPage() {
                   type="text"
                   value={firstNameExcludes}
                   onChange={(e) => setFirstNameExcludes(e.target.value)}
-                  placeholder="Enter first names to exclude..."
+                  placeholder={t('leadScrapingFields.firstNamesExcludePlaceholder')}
                 />
               </div>
               <div className="form-field">
@@ -1311,7 +1311,7 @@ export default function LeadScrapingPage() {
                   type="text"
                   value={lastNameIncludes}
                   onChange={(e) => setLastNameIncludes(e.target.value)}
-                  placeholder="Enter last names to include..."
+                  placeholder={t('leadScrapingFields.lastNamesIncludePlaceholder')}
                 />
               </div>
               <div className="form-field">
@@ -1320,7 +1320,7 @@ export default function LeadScrapingPage() {
                   type="text"
                   value={lastNameExcludes}
                   onChange={(e) => setLastNameExcludes(e.target.value)}
-                  placeholder="Enter last names to exclude..."
+                  placeholder={t('leadScrapingFields.lastNamesExcludePlaceholder')}
                 />
               </div>
             </div>
@@ -1353,7 +1353,7 @@ export default function LeadScrapingPage() {
                     const value = parseInt(e.target.value) || 0
                     setLeadLimit(Math.min(Math.max(value, 1), 50000))
                   }}
-                  placeholder="10000"
+                  placeholder={t('leadScrapingFields.leadLimitPlaceholder')}
                 />
               </div>
             </div>
@@ -1479,7 +1479,7 @@ export default function LeadScrapingPage() {
                 type="text"
                 value={filterPosition}
                 onChange={(e) => setFilterPosition(e.target.value)}
-                placeholder="Etsi tehtävää..."
+                placeholder={t('leadScrapingFields.searchPositionPlaceholder')}
                 style={{
                   padding: '8px 12px',
                   border: '1px solid #d1d5db',
@@ -1498,7 +1498,7 @@ export default function LeadScrapingPage() {
                 type="text"
                 value={filterCity}
                 onChange={(e) => setFilterCity(e.target.value)}
-                placeholder="Etsi kaupunkia..."
+                placeholder={t('leadScrapingFields.searchCityPlaceholder')}
                 style={{
                   padding: '8px 12px',
                   border: '1px solid #d1d5db',
@@ -1518,7 +1518,7 @@ export default function LeadScrapingPage() {
                   type="number"
                   value={filterScoreMin}
                   onChange={(e) => setFilterScoreMin(e.target.value)}
-                  placeholder="Min"
+                  placeholder={t('leadScrapingFields.minPlaceholder')}
                   style={{
                     padding: '8px 12px',
                     border: '1px solid #d1d5db',
@@ -1535,7 +1535,7 @@ export default function LeadScrapingPage() {
                   type="number"
                   value={filterScoreMax}
                   onChange={(e) => setFilterScoreMax(e.target.value)}
-                  placeholder="Max"
+                  placeholder={t('leadScrapingFields.maxPlaceholder')}
                   style={{
                     padding: '8px 12px',
                     border: '1px solid #d1d5db',
@@ -1961,7 +1961,7 @@ export default function LeadScrapingPage() {
                   id="buyer-persona-textarea"
                   value={buyerPersona}
                   onChange={(e) => setBuyerPersona(e.target.value)}
-                  placeholder="Esimerkki: CEO tai CMO, 50-200 työntekijää, IT-alalla, Suomessa, kasvava yritys, kiinnostunut markkinointiautomaatiosta..."
+                  placeholder={t('leadScrapingFields.buyerPersonaPlaceholder')}
                   rows={8}
                   style={{
                     padding: '12px 16px',

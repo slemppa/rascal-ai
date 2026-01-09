@@ -47,7 +47,7 @@ const KeskenModal = ({
     const validTypes = [...validImageTypes, ...validVideoTypes]
     
     if (!validTypes.includes(file.type)) {
-      return `Tiedostotyyppi ${file.type} ei ole tuettu. Sallitut muodot: JPG, PNG, GIF, MP4, M4V`
+      return t('validation.fileTypeNotSupported', { type: file.type })
     }
 
     return null // Ei virheitä

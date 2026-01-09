@@ -326,7 +326,7 @@ export default function BlogNewsletterPage() {
       // Estä luonti jos kuukausiraja täynnä
       if (!monthlyLimit.canCreate) {
         setShowCreateModal(false)
-        toast.warning('Kuukausiraja täynnä')
+        toast.warning(t('errors.monthlyLimitReached'))
         return
       }
       // Hae organisaation ID (public.users.id)
@@ -371,12 +371,12 @@ export default function BlogNewsletterPage() {
       }
 
       setShowCreateModal(false)
-      toast.success('Idea lähetetty! Sisältö generoidaan taustalla')
+      toast.success(t('blogNewsletter.alerts.ideaSent'))
       monthlyLimit.refresh()
       
     } catch (error) {
       console.error('Virhe uuden sisällön luomisessa:', error)
-      toast.error('Virhe: Ei voitu luoda sisältöä')
+      toast.error(t('errors.contentCreationFailed'))
     }
   }
 
@@ -426,7 +426,7 @@ export default function BlogNewsletterPage() {
       await fetchContents()
       setShowEditModal(false)
       setEditingContent(null)
-      toast.success('Sisältö päivitetty')
+      toast.success(t('dashboard.edit.saveSuccess'))
       
     } catch (error) {
       console.error('Update error:', error)
@@ -484,7 +484,7 @@ export default function BlogNewsletterPage() {
       setTimeout(() => setToast({ visible: false, message: '' }), 2500)
       
       // Näytä toast käyttäjälle
-      toast.error('Kuva-lataus epäonnistui: ' + errorMessage + '. Tarkista internetyhteytesi ja yritä uudelleen.')
+      toast.error(t('errors.imageUploadError', { error: errorMessage }))
     }
   }
 

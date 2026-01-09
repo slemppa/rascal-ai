@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.111.4](https://github.com/slemppa/rascal-ai/compare/v1.111.3...v1.111.4) (2026-01-09)
+
+
+### ✨ Features
+
+* Improve carousel editing and optimize login performance ([dac3631](https://github.com/slemppa/rascal-ai/commit/dac36319975d06fcd9d146b8130a7345df09d378))
+
 ### [1.111.3](https://github.com/slemppa/rascal-ai/compare/v1.111.2...v1.111.3) (2026-01-09)
 
 

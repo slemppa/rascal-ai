@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.111.0](https://github.com/slemppa/rascal-ai/compare/v1.110.7...v1.111.0) (2026-01-09)
+
+
+### 📚 Documentation
+
+* **root:** add comprehensive CLAUDE.md documentation for AI assistants ([81f6053](https://github.com/slemppa/rascal-ai/commit/81f6053ced12f37e2f2bdfe32f251401033984be))
+
+
+### 🐛 Bug Fixes
+
+* **KeskenModal:** korjaa kuvan valinta dropdown-valikon näkyvyys ([5273fa1](https://github.com/slemppa/rascal-ai/commit/5273fa195729231836ca12d60d6d59e6ee326517))
+* **mobile:** korjaa mobiilivalikko ja hamburger-nappi ([919b6f9](https://github.com/slemppa/rascal-ai/commit/919b6f99b4a93b3ca83f001de55af0b0b2523bbc)), closes [#24170](https://github.com/slemppa/rascal-ai/issues/24170) [#cea78](https://github.com/slemppa/rascal-ai/issues/cea78)
+* **mobile:** korjaa mobiilivalikko ja responsiivisuus ([4b08649](https://github.com/slemppa/rascal-ai/commit/4b08649334516c0b3ccabf0f840e9fec38a3361d)), closes [#24170](https://github.com/slemppa/rascal-ai/issues/24170) [#cea78](https://github.com/slemppa/rascal-ai/issues/cea78) [#362317](https://github.com/slemppa/rascal-ai/issues/362317) [#ff6600](https://github.com/slemppa/rascal-ai/issues/ff6600)
+* **mobile:** korjaa mobiilivalikon värit ja poista konfliktit ([4eef3cd](https://github.com/slemppa/rascal-ai/commit/4eef3cd9428cf6abd17ec4c9f921aea2fc8f28b8)), closes [#24170](https://github.com/slemppa/rascal-ai/issues/24170) [#22c55](https://github.com/slemppa/rascal-ai/issues/22c55) [#ff6600](https://github.com/slemppa/rascal-ai/issues/ff6600) [#362317](https://github.com/slemppa/rascal-ai/issues/362317)
+
+
+### ✨ Features
+
+* **i18n:** korjaa kaikki jäljellä olevat kovakoodatut tekstit käyttämään käännöksiä ([988b03a](https://github.com/slemppa/rascal-ai/commit/988b03ab01d6389386466800cc7498d7d0104f7c))
+* **i18n:** lisää puuttuvat käännösavaimet ja korjaa kovakoodatut tekstit ([a1c6d8f](https://github.com/slemppa/rascal-ai/commit/a1c6d8f2196d77b7c7f800628910753237261a39))
+
 ### [1.110.7](https://github.com/slemppa/rascal-ai/compare/v1.110.6...v1.110.7) (2026-01-08)
 
 

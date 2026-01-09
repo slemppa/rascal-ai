@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.111.3](https://github.com/slemppa/rascal-ai/compare/v1.111.2...v1.111.3) (2026-01-09)
+
+
+### 🐛 Bug Fixes
+
+* Mixpost API endpoint and remove debug logs ([9455b4a](https://github.com/slemppa/rascal-ai/commit/9455b4a9151983b0d3e9beb97bb2b2d0e2391efe))
+
+
+### ✨ Features
+
+* Add calendar view selector and fix post types ([875044d](https://github.com/slemppa/rascal-ai/commit/875044d4c5259242280a21f75924a82568f21bd7))
+
 ### [1.111.2](https://github.com/slemppa/rascal-ai/compare/v1.111.0...v1.111.2) (2026-01-09)
 
 

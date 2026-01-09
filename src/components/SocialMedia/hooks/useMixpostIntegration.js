@@ -59,7 +59,9 @@ export const useMixpostIntegration = () => {
   // Hae tallennetut sometilit Supabasesta
   // Näytetään sekä public että private tilit (private vain omalle käyttäjälle)
   const fetchSavedSocialAccounts = async () => {
-    if (!orgId) return [];
+    if (!orgId) {
+      return [];
+    }
     
     try {
       // Hae kaikki organisaation sometilit (public + private)
@@ -89,39 +91,67 @@ export const useMixpostIntegration = () => {
   // Hae sometilit Mixpostista
   const fetchSocialAccounts = async () => {
     if (!mixpostConfig?.mixpost_workspace_uuid || !mixpostConfig?.mixpost_api_token) {
-      console.log('Mixpost config puuttuu, käytetään tallennettuja tilejä');
       return [];
     }
 
     try {
-      console.log('Haetaan sometilit Mixpostista...');
-      const response = await fetch(`/api/integrations/mixpost/accounts?workspace_uuid=${mixpostConfig.mixpost_workspace_uuid}&api_token=${mixpostConfig.mixpost_api_token}`, {
+      // Hae session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        setError('Kirjautuminen vaaditaan');
+        return [];
+      }
+
+      const response = await fetch(`/api/integrations/mixpost/accounts`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
         },
       });
 
       if (!response.ok) {
+        // Jos 404, käytetään tallennettuja tilejä
+        if (response.status === 404) {
+          setSocialAccounts([]);
+          return [];
+        }
+        
         const errorData = await response.json().catch(() => ({}));
-        console.error('Mixpost API error:', errorData);
+        
+        // Jos konfiguraatiota ei löydy, käytetään tallennettuja tilejä
+        if (errorData.error === 'Mixpost configuration not found') {
+          setSocialAccounts([]);
+          return [];
+        }
+        
         throw new Error(`Mixpost API virhe: ${response.status} - ${errorData.error || 'Tuntematon virhe'}`);
       }
 
       const result = await response.json();
-      console.log('Mixpost API vastaus:', result);
 
-      if (result.data && Array.isArray(result.data)) {
+      // Backend palauttaa suoraan array:n, ei data-wrapperia
+      if (Array.isArray(result)) {
+        setSocialAccounts(result);
+        return result;
+      } else if (result.data && Array.isArray(result.data)) {
         setSocialAccounts(result.data);
         return result.data;
       } else {
-        console.log('Mixpost API palautti tyhjän tai virheellisen datan');
         setSocialAccounts([]);
         return [];
       }
     } catch (error) {
-      console.error('Error fetching social accounts from Mixpost:', error);
-      setError(`Virhe sometilien haussa: ${error.message}`);
+      // Jos verkkovirhe, käytetään tallennettuja tilejä
+      if (error.message.includes('404') || error.message.includes('Failed to fetch')) {
+        setSocialAccounts([]);
+        return [];
+      }
+      
+      // Älä aseta virhettä jos se on vain endpointin puuttuminen
+      if (!error.message.includes('404') && !error.message.includes('Failed to fetch')) {
+        setError(`Virhe sometilien haussa: ${error.message}`);
+      }
       setSocialAccounts([]);
       return [];
     }
@@ -137,7 +167,6 @@ export const useMixpostIntegration = () => {
     const MIXPOST_PROXY = '/api/integrations/mixpost/linkedin'
 
     const openPopup = (url) => {
-      console.log('[useMixpostIntegration] Avataan popup:', url)
       const features = 'width=600,height=700,menubar=no,toolbar=no,location=yes,status=no,scrollbars=yes,resizable=yes'
       return window.open(url, 'oauth', features)
     }
@@ -152,13 +181,10 @@ export const useMixpostIntegration = () => {
             if (popup.closed) {
               clearInterval(timer)
               try {
-                console.log('[useMixpostIntegration] Popup suljettu, päivitetään tilejä...')
                 await refreshSocialAccounts()
                 await saveSocialAccountToSupabase(platform)
-                console.log('[useMixpostIntegration] OAuth-prosessi valmis')
                 return resolve()
               } catch (afterError) {
-                console.error('[useMixpostIntegration] Virhe OAuth-prosessin jälkeen:', afterError)
                 return reject(afterError)
               }
             }
@@ -202,8 +228,6 @@ export const useMixpostIntegration = () => {
   // Tallenna sometili Supabaseen
   const saveSocialAccountToSupabase = async (platform) => {
     try {
-      console.log('Tallennetaan sometili Supabaseen...');
-      
       // Etsi tili kyseiseltä platformilta: ensisijaisesti sellainen jota ei ole vielä tallennettu
       const existingIds = new Set((savedSocialAccounts || []).map(a => a.mixpost_account_uuid))
       let latestAccount = socialAccounts.find(account => account.provider === platform && !existingIds.has(account.id))
@@ -213,14 +237,10 @@ export const useMixpostIntegration = () => {
       }
 
       if (!latestAccount) {
-        console.log('Tiliä ei löytynyt tallennettavaksi. Varmista, että yhdistäminen onnistui Mixpostissa.');
         return;
       }
 
-      console.log('Tallennetaan tili:', latestAccount);
-
       if (!orgId) {
-        console.error('Organisaation ID puuttuu, ei voida tallentaa sometiliä');
         return;
       }
 
@@ -247,14 +267,11 @@ export const useMixpostIntegration = () => {
         });
 
       if (error) {
-        console.error('Virhe sometilin tallennuksessa:', error);
         throw error;
       }
       
-      console.log('Sometili tallennettu onnistuneesti');
       await fetchSavedSocialAccounts(); // Päivitä tallennetut tilit
     } catch (error) {
-      console.error('Virhe sometilin tallennuksessa:', error);
       // Älä heitä virhettä, koska tili voi olla jo tallennettu
     }
   };

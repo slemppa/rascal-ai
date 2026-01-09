@@ -18,10 +18,8 @@ export default function SimpleSocialConnect() {
   // Käytä Mixpostista haettuja tilejä oletuksena, mutta näytä myös tallennetut tilit
   const connectedAccounts = socialAccounts.length > 0 ? socialAccounts : savedSocialAccounts
 
-  // Päivitä tilit kun komponentti latautuu
-  useEffect(() => {
-    fetchSavedSocialAccounts()
-  }, [])
+  // Hook hakee tilit automaattisesti kun orgId on saatavilla
+  // Ei tarvitse kutsua fetchSavedSocialAccounts erikseen
 
   // Apufunktio profiilikuvan URL:n luomiseen
   const getProfileImageUrl = (account) => {

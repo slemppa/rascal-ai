@@ -3,6 +3,7 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar } fro
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import { supabase } from '../lib/supabase';
 
 const SocialMediaAnalytics = () => {
   const { t } = useTranslation('common');
@@ -40,8 +41,22 @@ const SocialMediaAnalytics = () => {
       
       setLoading(true);
       try {
+        // Hae session token
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.access_token) {
+          console.error('No auth token available');
+          setLoading(false);
+          return;
+        }
+
+        const headers = {
+          'Authorization': `Bearer ${session.access_token}`
+        };
+
         // 1. Hae yhdistetyt tilit
-        const accountsResponse = await axios.get('/api/integrations/mixpost/accounts');
+        const accountsResponse = await axios.get('/api/integrations/mixpost/accounts', {
+          headers
+        });
         const socialAccounts = accountsResponse.data || [];
 
         setAccounts(prev => ({
@@ -58,7 +73,9 @@ const SocialMediaAnalytics = () => {
         }));
 
         // 2. Hae analytiikka (stats)
-        const statsResponse = await axios.get(`/api/analytics/social-stats?from=${getDateString(30)}&to=${getDateString(0)}`);
+        const statsResponse = await axios.get(`/api/analytics/social-stats?from=${getDateString(30)}&to=${getDateString(0)}`, {
+          headers
+        });
         // Huom: Jos backend palauttaa eri rakenteen, sovita se tässä. 
         // Oletetaan että sieltä tulee valmiit metriikat tai raaka data josta lasketaan.
         // Nyt käytämme mock-laskentaa tileistä, jos stats-endpoint ei palauta suoraan yhteenvetoa.

@@ -35,8 +35,8 @@ async function handler(req, res) {
     
     const baseUrl = mixpostApiUrl.endsWith('/') ? mixpostApiUrl.slice(0, -1) : mixpostApiUrl;
     
-    // Poistettu automaattinen /mixpost lisäys, oletetaan että base URL on oikein
-    const url = `${baseUrl}/api/${mixpost_workspace_uuid}/accounts`;
+    // URL muoto: https://mixpost.mak8r.fi/mixpost/api/{workspace_uuid}/accounts
+    const url = `${baseUrl}/mixpost/api/${mixpost_workspace_uuid}/accounts`;
 
     const response = await axios.get(url, {
       headers: {

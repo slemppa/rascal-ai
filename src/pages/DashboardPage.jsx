@@ -1183,7 +1183,7 @@ export default function DashboardPage() {
           </div>
           */}
           {/* Mixpost Analytics Section */}
-          <div className={styles.card} style={{ gridColumn: 'span 3', minHeight: 180 }}>
+          <div className={styles.card} style={{ gridColumn: 'span 3', minHeight: 180, maxWidth: '100%', overflow: 'hidden' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div style={{ fontWeight: 700, fontSize: 18, color: '#1f2937' }}>
                 {t('dashboard.mixpost.title')}
@@ -1229,7 +1229,9 @@ export default function DashboardPage() {
             <div style={{ 
               display: 'grid', 
               gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
-              gap: 12 
+              gap: 12,
+              maxWidth: '100%',
+              overflow: 'hidden'
             }}>
               {mixpostLoading ? (
                 Array(5).fill(0).map((_, i) => (
@@ -1290,10 +1292,10 @@ export default function DashboardPage() {
           </div>
 
           {/* Tulevat julkaisut -kortti: mobiiliystävällinen */}
-          <div className={styles.card} style={{ gridColumn: 'span 3', minHeight: 180, display: 'flex', flexDirection: 'column' }}>
+          <div className={styles.card} style={{ gridColumn: 'span 3', minHeight: 180, display: 'flex', flexDirection: 'column', maxWidth: '100%', overflow: 'hidden' }}>
             <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>{t('dashboard.upcoming.title')}</div>
-            <div className="table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'clamp(13px, 3vw, 15px)', minWidth: 600 }}>
+            <div className="table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', maxWidth: '100%', width: '100%' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'clamp(13px, 3vw, 15px)', minWidth: 'min(600px, 100%)' }}>
                 <thead>
                   <tr style={{ color: '#1f2937', fontWeight: 600, background: '#f7f8fc' }}>
                     <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.upcoming.headers.media')}</th>
@@ -1389,10 +1391,10 @@ export default function DashboardPage() {
           </div>
 
           {/* Kampanjat – onnistumiset */}
-          <div className={styles.card} style={{ gridColumn: 'span 3', minHeight: 180, display: 'flex', flexDirection: 'column' }}>
+          <div className={styles.card} style={{ gridColumn: 'span 3', minHeight: 180, display: 'flex', flexDirection: 'column', maxWidth: '100%', overflow: 'hidden' }}>
             <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>{t('dashboard.campaigns.title')}</div>
-            <div className="table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'clamp(13px, 3vw, 15px)', minWidth: 520 }}>
+            <div className="table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', maxWidth: '100%', width: '100%' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'clamp(13px, 3vw, 15px)', minWidth: 'min(520px, 100%)' }}>
                 <thead>
                   <tr style={{ color: '#1f2937', fontWeight: 600, background: '#f7f8fc' }}>
                     <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.campaigns.headers.campaign')}</th>
@@ -1420,9 +1422,9 @@ export default function DashboardPage() {
         </div>
         
         {/* Split-row: 3/5 (scatter) + 2/5 (heatmap) */}
-        <div style={{ gridColumn: '1 / -1', paddingTop: 16, paddingBottom: 8 }}>
+        <div style={{ gridColumn: '1 / -1', paddingTop: 16, paddingBottom: 8, maxWidth: '100%', overflow: 'hidden' }}>
           <div className={styles['split-row']}>
-            <div className={styles.card} style={{ minHeight: 220, display: 'flex', flexDirection: 'column' }}>
+            <div className={styles.card} style={{ minHeight: 220, display: 'flex', flexDirection: 'column', maxWidth: '100%', overflow: 'hidden' }}>
               <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>{t('dashboard.charts.scatter')}</div>
               <div style={{ width: '100%', height: 220 }}>
                 <ResponsiveContainer width="100%" height={220}>
@@ -1438,10 +1440,10 @@ export default function DashboardPage() {
                 </ResponsiveContainer>
               </div>
             </div>
-            <div className={styles.card} style={{ minHeight: 260, display: 'flex', flexDirection: 'column' }}>
+            <div className={styles.card} style={{ minHeight: 260, display: 'flex', flexDirection: 'column', maxWidth: '100%', overflow: 'hidden' }}>
               <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>{t('dashboard.charts.heatmap')}</div>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: 720, borderCollapse: 'collapse' }}>
+              <div style={{ overflowX: 'auto', maxWidth: '100%', width: '100%' }}>
+                <table style={{ width: '100%', maxWidth: '720px', borderCollapse: 'collapse', minWidth: 'min(720px, 100%)' }}>
                   <thead>
                     <tr style={{ color: '#1f2937', fontWeight: 600, background: '#f7f8fc' }}>
                       <th style={{ padding: 6, textAlign: 'left' }}>{t('dashboard.charts.day')}</th>

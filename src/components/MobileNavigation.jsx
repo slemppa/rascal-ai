@@ -108,15 +108,6 @@ export default function MobileNavigation() {
       {isOpen && (
         <div className="mobile-nav-overlay" onClick={() => setIsOpen(false)}>
           <div className="mobile-nav-menu" onClick={(e) => e.stopPropagation()}>
-            {/* Sulje-nappi */}
-            <button 
-              className="mobile-nav-close"
-              onClick={() => setIsOpen(false)}
-              aria-label={t('common.close')}
-            >
-              ×
-            </button>
-
             {/* Profiili-osio */}
             <div className="mobile-profile-section">
               <img 

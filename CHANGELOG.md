@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.111.1](https://github.com/slemppa/rascal-ai/compare/v1.111.0...v1.111.1) (2026-01-09)
+
 ## [1.111.0](https://github.com/slemppa/rascal-ai/compare/v1.110.7...v1.111.0) (2026-01-09)
 
 

@@ -31,9 +31,9 @@
   align-items: center;
   gap: 4px;
   transition: all 0.3s ease;
-  pointer-events: auto; /* Nappi saa pointer-events */
-  visibility: visible;
-  opacity: 1;
+  pointer-events: auto !important; /* Nappi saa pointer-events */
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .mobile-hamburger:hover {
@@ -249,13 +249,16 @@
   
   .mobile-hamburger {
     display: flex !important;
-    top: 12px;
-    right: 12px;
-    width: 44px;
-    height: 44px;
-    padding: 10px;
+    position: fixed !important;
+    top: 12px !important;
+    right: 12px !important;
+    width: 44px !important;
+    height: 44px !important;
+    padding: 10px !important;
     visibility: visible !important;
     opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 9999 !important;
   }
 
   .mobile-hamburger span {
@@ -308,13 +311,16 @@
 @media (max-width: 480px) {
   .mobile-hamburger {
     display: flex !important; /* Varmista että nappi näkyy */
-    top: 8px;
-    right: 8px;
-    width: 40px;
-    height: 40px;
-    padding: 8px;
+    position: fixed !important;
+    top: 8px !important;
+    right: 8px !important;
+    width: 40px !important;
+    height: 40px !important;
+    padding: 8px !important;
     visibility: visible !important;
     opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 9999 !important;
   }
 
   .mobile-hamburger span {
@@ -378,7 +384,11 @@
 @media (max-width: 768px) {
   /* Hamburger-nappi on fixed, joten se ei vie tilaa dokumentin flowsta */
   .mobile-hamburger {
-    pointer-events: auto;
+    pointer-events: auto !important;
+    display: flex !important;
+    position: fixed !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   /* Overlay ja menu ovat fixed, joten ne eivät vie tilaa dokumentin flowsta */

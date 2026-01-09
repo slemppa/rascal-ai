@@ -54,24 +54,58 @@ export const useMonthlyLimit = () => {
           monthlyLimit = 30
       }
 
-      // Laske tälle kuulle generoidut sisällöt päivämäärän perusteella
+      // Hae nykyisen kuukauden strategia
       const now = new Date()
-      const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-      const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
+      const currentMonth = now.getMonth()
+      const currentYear = now.getFullYear()
 
-      const { count, error: cntErr } = await supabase
-        .from('content')
-        .select('id', { count: 'exact', head: true })
+      const englishMonthNames = [
+        'january', 'february', 'march', 'april', 'may', 'june',
+        'july', 'august', 'september', 'october', 'november', 'december'
+      ]
+      const finnishMonthNames = [
+        'tammikuu', 'helmikuu', 'maaliskuu', 'huhtikuu', 'toukokuu', 'kesäkuu',
+        'heinäkuu', 'elokuu', 'syyskuu', 'lokakuu', 'marraskuu', 'joulukuu'
+      ]
+
+      // Hae kaikki käyttäjän strategiat
+      const { data: strategies, error: strategyErr } = await supabase
+        .from('content_strategy')
+        .select('id, month')
         .eq('user_id', userId)
-        .eq('is_generated', true)
-        .gte('created_at', firstDayOfMonth.toISOString())
-        .lte('created_at', lastDayOfMonth.toISOString())
 
+      if (strategyErr) {
+        console.error('Error fetching strategies:', strategyErr)
+      }
+
+      // Etsi strategia joka vastaa nykyistä kuukautta ja vuotta
+      let currentStrategy = null
+      if (strategies) {
+        currentStrategy = strategies.find(s => {
+          if (!s.month) return false
+          const monthLower = s.month.toLowerCase()
+          const hasCurrentMonth = monthLower.includes(englishMonthNames[currentMonth]) ||
+                                  monthLower.includes(finnishMonthNames[currentMonth])
+          const hasCurrentYear = monthLower.includes(String(currentYear))
+          return hasCurrentMonth && hasCurrentYear
+        })
+      }
+
+      // Laske generoidut sisällöt strategian perusteella
       let currentCount = 0
-      if (cntErr) {
-        console.error('Error counting current month generated content:', cntErr)
-      } else {
-        currentCount = count || 0
+      if (currentStrategy?.id) {
+        const { count, error: cntErr } = await supabase
+          .from('content')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .eq('strategy_id', currentStrategy.id)
+          .eq('is_generated', true)
+
+        if (cntErr) {
+          console.error('Error counting current month generated content:', cntErr)
+        } else {
+          currentCount = count || 0
+        }
       }
 
       const isUnlimited = monthlyLimit >= 999999

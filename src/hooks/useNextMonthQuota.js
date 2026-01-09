@@ -54,24 +54,59 @@ export const useNextMonthQuota = () => {
           monthlyLimit = 30
       }
 
-      // Laske seuraavan kuukauden generoidut sisällöt päivämäärän perusteella
+      // Hae seuraavan kuukauden strategia
       const now = new Date()
-      const firstDayOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
-      const lastDayOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0, 23, 59, 59, 999)
+      const nextMonthDate = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+      const nextMonth = nextMonthDate.getMonth()
+      const nextYear = nextMonthDate.getFullYear()
 
-      const { count, error: cntErr } = await supabase
-        .from('content')
-        .select('id', { count: 'exact', head: true })
+      const englishMonthNames = [
+        'january', 'february', 'march', 'april', 'may', 'june',
+        'july', 'august', 'september', 'october', 'november', 'december'
+      ]
+      const finnishMonthNames = [
+        'tammikuu', 'helmikuu', 'maaliskuu', 'huhtikuu', 'toukokuu', 'kesäkuu',
+        'heinäkuu', 'elokuu', 'syyskuu', 'lokakuu', 'marraskuu', 'joulukuu'
+      ]
+
+      // Hae kaikki käyttäjän strategiat
+      const { data: strategies, error: strategyErr } = await supabase
+        .from('content_strategy')
+        .select('id, month')
         .eq('user_id', userId)
-        .eq('is_generated', true)
-        .gte('created_at', firstDayOfNextMonth.toISOString())
-        .lte('created_at', lastDayOfNextMonth.toISOString())
 
+      if (strategyErr) {
+        console.error('Error fetching strategies:', strategyErr)
+      }
+
+      // Etsi strategia joka vastaa seuraavaa kuukautta ja vuotta
+      let nextMonthStrategy = null
+      if (strategies) {
+        nextMonthStrategy = strategies.find(s => {
+          if (!s.month) return false
+          const monthLower = s.month.toLowerCase()
+          const hasNextMonth = monthLower.includes(englishMonthNames[nextMonth]) ||
+                               monthLower.includes(finnishMonthNames[nextMonth])
+          const hasNextYear = monthLower.includes(String(nextYear))
+          return hasNextMonth && hasNextYear
+        })
+      }
+
+      // Laske generoidut sisällöt strategian perusteella
       let nextMonthCount = 0
-      if (cntErr) {
-        console.error('Error counting next month generated content:', cntErr)
-      } else {
-        nextMonthCount = count || 0
+      if (nextMonthStrategy?.id) {
+        const { count, error: cntErr } = await supabase
+          .from('content')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .eq('strategy_id', nextMonthStrategy.id)
+          .eq('is_generated', true)
+
+        if (cntErr) {
+          console.error('Error counting next month generated content:', cntErr)
+        } else {
+          nextMonthCount = count || 0
+        }
       }
 
       const isUnlimited = monthlyLimit >= 999999

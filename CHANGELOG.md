@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.111.5](https://github.com/slemppa/rascal-ai/compare/v1.111.4...v1.111.5) (2026-01-09)
+
+
+### 🐛 Bug Fixes
+
+* Correct dashboard published content count and monthly quota display ([70df42c](https://github.com/slemppa/rascal-ai/commit/70df42c894afdb531bb3b5342911b5d8a8193dc3))
+* korjaa strategian etsintä käyttämään target_month-kenttää ([041c582](https://github.com/slemppa/rascal-ai/commit/041c58238096942d6ac3fd98a3a4b9fac7adba62))
+* Resolve race condition in DashboardPage API calls ([ab744ff](https://github.com/slemppa/rascal-ai/commit/ab744ff1e186e89ab88432b62eea942507094a07))
+* Use strategy_id based counting with year validation ([b971eaa](https://github.com/slemppa/rascal-ai/commit/b971eaace9955de7dad3fb0ae241b4d6a0d627b0))
+
 ### [1.111.4](https://github.com/slemppa/rascal-ai/compare/v1.111.3...v1.111.4) (2026-01-09)
 
 

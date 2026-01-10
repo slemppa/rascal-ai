@@ -1,5 +1,10 @@
 {
-  "lang": { "fi": "Suomeksi", "en": "In English", "shortFi": "FI", "shortEn": "EN" },
+  "lang": {
+    "fi": "Suomeksi",
+    "en": "In English",
+    "shortFi": "FI",
+    "shortEn": "EN"
+  },
   "common": {
     "close": "Sulje",
     "cancel": "Peruuta",
@@ -210,7 +215,7 @@
     "passwordTooShort": "Salasanan tulee olla vähintään 6 merkkiä pitkä",
     "passwordUpdated": "Salasana päivitetty onnistuneesti!"
   },
-  
+
   "aiDD": {
     "meta": {
       "title": "Tekoäly Due Diligence – RascalAI",
@@ -336,13 +341,22 @@
     },
     "upcoming": {
       "title": "Tulevat julkaisut",
-      "headers": { "media": "Media", "caption": "Caption", "status": "Status", "date": "Pvm" },
+      "headers": {
+        "media": "Media",
+        "caption": "Caption",
+        "status": "Status",
+        "date": "Pvm"
+      },
       "empty": "Ei tulevia julkaisuja",
       "today": "Tänään"
     },
     "campaigns": {
       "title": "Kampanjoiden onnistumiset",
-      "headers": { "campaign": "Kampanja", "calls": "Puhelut", "successRate": "Onnistumis%" },
+      "headers": {
+        "campaign": "Kampanja",
+        "calls": "Puhelut",
+        "successRate": "Onnistumis%"
+      },
       "empty": "Ei kampanjoita"
     },
     "charts": {
@@ -400,7 +414,7 @@
       "title": "Sosiaalisen median analytiikka",
       "workspace": {
         "mak8r": "Mak8r",
-        "yrityskorjaamo": "Yrityskorjaamo", 
+        "yrityskorjaamo": "Yrityskorjaamo",
         "granholm": "Granholm AI",
         "kuudesaisti": "Kuudes Aisti"
       },
@@ -559,7 +573,7 @@
     "statuses": {
       "inProgress": "Kesken",
       "ready": "Valmis",
-      "scheduled": "Aikataulutettu", 
+      "scheduled": "Aikataulutettu",
       "published": "Julkaistu",
       "untitled": "Nimetön julkaisu",
       "untitledReels": "Nimetön Reels"
@@ -568,7 +582,10 @@
   "blogNewsletter": {
     "header": "Blogit ja uutiskirjeet",
     "searchPlaceholder": "Etsi blogeja ja newslettereja...",
-    "filters": { "allStatuses": "Kaikki statukset", "allTypes": "Kaikki sisältötyypit" },
+    "filters": {
+      "allStatuses": "Kaikki statukset",
+      "allTypes": "Kaikki sisältötyypit"
+    },
     "types": { "blog": "Blog-artikkelit", "newsletter": "Newsletterit" },
     "status": {
       "Luonnos": "Luonnos",
@@ -603,7 +620,10 @@
     "createModal": {
       "title": "Luo sisältö",
       "fields": { "title": "Otsikko", "type": "Tyyppi", "content": "Sisältö" },
-      "placeholders": { "title": "Syötä sisällön otsikko...", "content": "Kirjoita sisältö..." },
+      "placeholders": {
+        "title": "Syötä sisällön otsikko...",
+        "content": "Kirjoita sisältö..."
+      },
       "cancel": "Peruuta",
       "create": "Luo sisältö"
     },
@@ -657,13 +677,30 @@
       "create": "Luo tavoitteet"
     },
     "list": { "title": "Sisältöstrategiat" },
-    "strategyCard": { "placeholder": "Kirjoita kuukauden sisältöstrategia tähän..." },
-    "buttons": { "save": "Tallenna", "cancel": "Peruuta", "edit": "Muokkaa", "saveAndApprove": "Tallenna ja hyväksy" },
-    "empty": { "title": "Sinulla ei ole vielä strategiaa", "description": "Aloita luomalla ensimmäinen kuukausistrategia" }
+    "strategyCard": {
+      "placeholder": "Kirjoita kuukauden sisältöstrategia tähän..."
+    },
+    "buttons": {
+      "save": "Tallenna",
+      "cancel": "Peruuta",
+      "edit": "Muokkaa",
+      "saveAndApprove": "Tallenna ja hyväksy"
+    },
+    "empty": {
+      "title": "Sinulla ei ole vielä strategiaa",
+      "description": "Aloita luomalla ensimmäinen kuukausistrategia"
+    }
   },
   "campaigns": {
-    "header": { "title": "Kampanjat", "description": "Hallitse puhelukampanjoitasi ja seuraa niiden suorituskykyä" },
-    "actions": { "create": "Luo kampanja", "creating": "Luodaan...", "cancel": "Peruuta" },
+    "header": {
+      "title": "Kampanjat",
+      "description": "Hallitse puhelukampanjoitasi ja seuraa niiden suorituskykyä"
+    },
+    "actions": {
+      "create": "Luo kampanja",
+      "creating": "Luodaan...",
+      "cancel": "Peruuta"
+    },
     "loading": "Ladataan kampanjoita...",
     "error": "Virhe ladattaessa kampanjoita",
     "empty": "Ei kampanjoita vielä",
@@ -715,8 +752,15 @@
     }
   },
   "segments": {
-    "header": { "title": "Segmentit", "description": "Organisoi kontaktisi ja seuraa segmenttien suorituskykyä" },
-    "actions": { "create": "Luo segmentti", "creating": "Luodaan...", "cancel": "Peruuta" },
+    "header": {
+      "title": "Segmentit",
+      "description": "Organisoi kontaktisi ja seuraa segmenttien suorituskykyä"
+    },
+    "actions": {
+      "create": "Luo segmentti",
+      "creating": "Luodaan...",
+      "cancel": "Peruuta"
+    },
     "loading": "Ladataan segmenttejä...",
     "error": "Virhe ladattaessa segmenttejä",
     "empty": "Ei segmenttejä vielä",
@@ -744,7 +788,11 @@
       "title": "Segmentin tiedot",
       "loading": "Ladataan...",
       "error": "Virhe",
-      "metrics": { "calls": "Puhelut", "answerRateShort": "Vastaus%", "successful": "Onnistuneet" }
+      "metrics": {
+        "calls": "Puhelut",
+        "answerRateShort": "Vastaus%",
+        "successful": "Onnistuneet"
+      }
     },
     "statsBoard": {
       "calls": "Puhelut",
@@ -843,7 +891,10 @@
       "buttons": { "refresh": "Päivitä", "refreshing": "Päivitetään..." },
       "loading": "Ladataan viestilokia...",
       "empty": "Ei viestejä löytynyt",
-      "history": { "title": "Viestihistoria", "showingCount": "Näytetään {count} viestiä" },
+      "history": {
+        "title": "Viestihistoria",
+        "showingCount": "Näytetään {count} viestiä"
+      },
       "table": {
         "phone": "Puhelinnumero",
         "type": "Tyyppi",
@@ -854,7 +905,13 @@
         "date": "Päivämäärä"
       },
       "direction": { "outbound": "Lähtevät", "inbound": "Saapuvat" },
-      "status": { "sent": "Lähetetty", "delivered": "Toimitettu", "read": "Luettu", "failed": "Epäonnistui", "pending": "Odottaa" }
+      "status": {
+        "sent": "Lähetetty",
+        "delivered": "Toimitettu",
+        "read": "Luettu",
+        "failed": "Epäonnistui",
+        "pending": "Odottaa"
+      }
     },
     "textMessagesTab": {
       "header": "Tekstiviestit",
@@ -901,21 +958,34 @@
           "title": "Vaihe 2: Puhelun asetukset",
           "desc": "Valitse kampanja (valinnainen segmentti), puhelun tyyppi ja ääni.",
           "campaign": { "label": "Kampanja *", "select": "Valitse kampanja" },
-          "segment": { "label": "Segmentti (valinnainen)", "none": "Ei segmenttiä" },
+          "segment": {
+            "label": "Segmentti (valinnainen)",
+            "none": "Ei segmenttiä"
+          },
           "type": { "label": "Puhelun tyyppi" },
           "voice": { "label": "Ääni" },
-          "smsFirst": { "label": "Tekstari ensin", "readonly": "Ensimmäinen SMS (vain luku)", "missing": "Lisää ensin SMS-teksti puhelutyypille" },
+          "smsFirst": {
+            "label": "Tekstari ensin",
+            "readonly": "Ensimmäinen SMS (vain luku)",
+            "missing": "Lisää ensin SMS-teksti puhelutyypille"
+          },
           "back": "← Takaisin",
           "next": "Jatka →"
         },
         "step3": {
           "title": "Vaihe 3: Aloita tai ajasta puhelut",
           "desc": "Valitse aloitatko heti vai ajastatko myöhemmäksi.",
-          "startNow": { "label": "🚀 Aloita heti", "starting": "Käynnistetään..." },
+          "startNow": {
+            "label": "🚀 Aloita heti",
+            "starting": "Käynnistetään..."
+          },
           "orSchedule": "📅 Tai ajasta puhelut",
           "date": "Päivämäärä",
           "time": "Kellonaika",
-          "schedule": { "label": "📅 Ajasta puhelut", "scheduling": "Ajastetaan..." },
+          "schedule": {
+            "label": "📅 Ajasta puhelut",
+            "scheduling": "Ajastetaan..."
+          },
           "back": "← Takaisin"
         }
       },
@@ -924,7 +994,10 @@
         "close": "Sulje",
         "step1": {
           "title": "Vaihe 1: Puhelun asetukset",
-          "type": { "label": "Puhelun tyyppi", "placeholder": "Valitse puhelun tyyppi..." },
+          "type": {
+            "label": "Puhelun tyyppi",
+            "placeholder": "Valitse puhelun tyyppi..."
+          },
           "voice": { "label": "Ääni" },
           "cancel": "Peruuta",
           "next": "Jatka →"
@@ -932,9 +1005,19 @@
         "step2": {
           "title": "Vaihe 2: Asiakkaan tiedot",
           "name": { "label": "Nimi", "placeholder": "Matti Meikäläinen" },
-          "phone": { "label": "Puhelinnumero", "placeholder": "040 123 4567 tai +358401234567" },
-          "script": { "label": "Skripti:", "placeholder": "Valitse puhelun tyyppi niin skripti tulee näkyviin." },
-          "smsFirst": { "label": "Tekstari ensin", "readonly": "Ensimmäinen SMS (vain luku)", "missing": "Lisää ensin SMS teksti puhelutyypille" },
+          "phone": {
+            "label": "Puhelinnumero",
+            "placeholder": "040 123 4567 tai +358401234567"
+          },
+          "script": {
+            "label": "Skripti:",
+            "placeholder": "Valitse puhelun tyyppi niin skripti tulee näkyviin."
+          },
+          "smsFirst": {
+            "label": "Tekstari ensin",
+            "readonly": "Ensimmäinen SMS (vain luku)",
+            "missing": "Lisää ensin SMS teksti puhelutyypille"
+          },
           "back": "← Takaisin",
           "call": { "label": "Soita", "calling": "Soittaa…" }
         }
@@ -955,9 +1038,9 @@
           "cta": "Lähetä AI-parannukseen"
         }
       },
-    "alerts": {
-      "saveInboundFirst": "Tallenna ensin inbound-asetukset ennen AI-parannusta!"
-    },
+      "alerts": {
+        "saveInboundFirst": "Tallenna ensin inbound-asetukset ennen AI-parannusta!"
+      },
       "addCallType": {
         "title": "Lisää uusi puhelun tyyppi",
         "steps": {
@@ -1335,11 +1418,56 @@
     "personalInfo": {
       "title": "Henkilökohtaiset tiedot"
     },
-    "profile": { "title": "Käyttäjätiedot", "loading": "Ladataan käyttäjätietoja...", "notFoundSupport": "Käyttäjätietoja ei löytynyt. Ota yhteyttä tukeen.", "fetchError": "Virhe käyttäjätietojen haussa. Ota yhteyttä tukeen.", "updateSuccess": "Tiedot päivitetty onnistuneesti!" },
-    "fields": { "name": "Nimi", "email": "Sähköposti", "company": "Yritys", "industry": "Toimiala", "userId": "ID", "namePlaceholder": "Syötä nimesi", "emailPlaceholder": "Syötä sähköpostiosoitteesi", "companyPlaceholder": "Syötä yrityksesi nimi" },
-    "buttons": { "edit": "Muokkaa", "save": "Tallenna", "saving": "Tallennetaan...", "cancel": "Peruuta", "changePassword": "Vaihda salasana", "changeEmail": "Vaihda sähköposti" },
-    "common": { "notSet": "Ei asetettu", "notAvailable": "Ei saatavilla", "error": "Virhe", "loadingImages": "Ladataan kuvia..." },
-    "password": { "title": "Salasanan vaihto", "saving": "Tallennetaan...", "save": "Tallenna", "cancel": "Peruuta", "mismatch": "Uudet salasanat eivät täsmää", "tooShort": "Uusi salasana on liian lyhyt (vähintään 6 merkkiä)", "currentRequired": "Nykyinen salasana vaaditaan", "currentWrong": "Nykyinen salasana on väärä", "changed": "Salasana vaihdettu onnistuneesti!", "currentPlaceholder": "Syötä nykyinen salasanasi", "newPlaceholder": "Syötä uusi salasana", "confirmPlaceholder": "Syötä uusi salasana uudelleen", "current": "Nykyinen salasana", "new": "Uusi salasana", "confirm": "Vahvista uusi salasana" },
+    "profile": {
+      "title": "Käyttäjätiedot",
+      "loading": "Ladataan käyttäjätietoja...",
+      "notFoundSupport": "Käyttäjätietoja ei löytynyt. Ota yhteyttä tukeen.",
+      "fetchError": "Virhe käyttäjätietojen haussa. Ota yhteyttä tukeen.",
+      "updateSuccess": "Tiedot päivitetty onnistuneesti!"
+    },
+    "fields": {
+      "name": "Nimi",
+      "email": "Sähköposti",
+      "company": "Yritys",
+      "industry": "Toimiala",
+      "userId": "ID",
+      "namePlaceholder": "Syötä nimesi",
+      "emailPlaceholder": "Syötä sähköpostiosoitteesi",
+      "companyPlaceholder": "Syötä yrityksesi nimi",
+      "contentLanguage": "Sisällön kieli",
+      "contentLanguagePlaceholder": "esim. Suomi, English, Svenska"
+    },
+    "buttons": {
+      "edit": "Muokkaa",
+      "save": "Tallenna",
+      "saving": "Tallennetaan...",
+      "cancel": "Peruuta",
+      "changePassword": "Vaihda salasana",
+      "changeEmail": "Vaihda sähköposti"
+    },
+    "common": {
+      "notSet": "Ei asetettu",
+      "notAvailable": "Ei saatavilla",
+      "error": "Virhe",
+      "loadingImages": "Ladataan kuvia..."
+    },
+    "password": {
+      "title": "Salasanan vaihto",
+      "saving": "Tallennetaan...",
+      "save": "Tallenna",
+      "cancel": "Peruuta",
+      "mismatch": "Uudet salasanat eivät täsmää",
+      "tooShort": "Uusi salasana on liian lyhyt (vähintään 6 merkkiä)",
+      "currentRequired": "Nykyinen salasana vaaditaan",
+      "currentWrong": "Nykyinen salasana on väärä",
+      "changed": "Salasana vaihdettu onnistuneesti!",
+      "currentPlaceholder": "Syötä nykyinen salasanasi",
+      "newPlaceholder": "Syötä uusi salasana",
+      "confirmPlaceholder": "Syötä uusi salasana uudelleen",
+      "current": "Nykyinen salasana",
+      "new": "Uusi salasana",
+      "confirm": "Vahvista uusi salasana"
+    },
     "email": {
       "title": "Sähköpostin vaihto",
       "saving": "Tallennetaan...",
@@ -1378,7 +1506,18 @@
       "comingSoon": "Tulossa uusi versio",
       "workInProgress": "Työskentelemme parhaillaan uuden avatar-toiminnallisuuden parissa"
     },
-    "voice": { "title": "Äänitiedostot (Voice Clone)", "loading": "Ladataan äänitiedostoa...", "addNewAria": "Lisää uusi äänitiedosto", "add": "Lisää", "processing": "Käsitellään...", "added": "Ääni lisätty", "fetchError": "Äänitiedostojen haku epäonnistui", "uploadError": "Äänitiedoston lähetys epäonnistui", "infoNone": "{count}/1 äänitiedosto lisätty. Lisää äänitiedosto voice clone -ominaisuutta varten.", "infoSome": "{count}/1 äänitiedosto lisätty. Äänitiedosto pysyy pysyvästi ja sitä ei voi poistaa." },
+    "voice": {
+      "title": "Äänitiedostot (Voice Clone)",
+      "loading": "Ladataan äänitiedostoa...",
+      "addNewAria": "Lisää uusi äänitiedosto",
+      "add": "Lisää",
+      "processing": "Käsitellään...",
+      "added": "Ääni lisätty",
+      "fetchError": "Äänitiedostojen haku epäonnistui",
+      "uploadError": "Äänitiedoston lähetys epäonnistui",
+      "infoNone": "{count}/1 äänitiedosto lisätty. Lisää äänitiedosto voice clone -ominaisuutta varten.",
+      "infoSome": "{count}/1 äänitiedosto lisätty. Äänitiedosto pysyy pysyvästi ja sitä ei voi poistaa."
+    },
     "social": {
       "title": "Sosiaalisen median yhdistäminen",
       "errorTitle": "Virhe:",
@@ -1390,7 +1529,11 @@
       "unknownDate": "tuntematon",
       "addAccount": "Lisää tili",
       "connectTitle": "Yhdistä uusi tili",
-      "status": { "connected": "Yhdistetty", "connecting": "Yhdistetään...", "cta": "Klikkaa yhdistääksesi" },
+      "status": {
+        "connected": "Yhdistetty",
+        "connecting": "Yhdistetään...",
+        "cta": "Klikkaa yhdistääksesi"
+      },
       "connectionErrorTitle": "Yhdistysvirhe:",
       "helpTitle": "Ohjeet:",
       "help": [
@@ -1399,7 +1542,9 @@
         "Anna tarvittavat oikeudet Rascal AI:lle",
         "Ikkuna sulkeutuu automaattisesti yhdistyksen jälkeen"
       ],
-      "alerts": { "refreshFailed": "Virhe päivitettäessä sometilejä. Yritä uudelleen." },
+      "alerts": {
+        "refreshFailed": "Virhe päivitettäessä sometilejä. Yritä uudelleen."
+      },
       "popupsBlocked": "Popup-ikkunat on estetty. Salli popup-ikkunat tälle sivustolle ja yritä uudelleen.",
       "timeout": "Yhdistys aikakatkaistiin. Tarkista internet-yhteys ja yritä uudelleen.",
       "connectError": "Virhe yhdistettäessä {platform}: {message}",

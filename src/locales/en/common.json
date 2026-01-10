@@ -1,5 +1,10 @@
 {
-  "lang": { "fi": "In Finnish", "en": "In English", "shortFi": "FI", "shortEn": "EN" },
+  "lang": {
+    "fi": "In Finnish",
+    "en": "In English",
+    "shortFi": "FI",
+    "shortEn": "EN"
+  },
   "meta": {
     "title": "RascalAI – Your best sales assistant",
     "description": "Rascal AI frees sales from routines and preparation so you can focus on winning customer interactions."
@@ -166,8 +171,7 @@
   },
   "a11y": {
     "toggleMobileMenu": "Toggle mobile menu"
-  }
-  ,
+  },
   "auth": {
     "close": "Close",
     "signIn": "Sign in",
@@ -203,7 +207,7 @@
     "passwordTooShort": "Password must be at least 6 characters long",
     "passwordUpdated": "Password updated successfully!"
   },
-  
+
   "aiDD": {
     "meta": {
       "title": "AI Due Diligence – RascalAI",
@@ -267,8 +271,7 @@
       "body": "Let's make AI a new team member that accelerates growth and streamlines everyday work.",
       "button": "Book assessment"
     }
-  }
-  ,
+  },
   "dashboard": {
     "meta": {
       "title": "Dashboard - Rascal AI",
@@ -330,13 +333,22 @@
     },
     "upcoming": {
       "title": "Upcoming posts",
-      "headers": { "media": "Media", "caption": "Caption", "status": "Status", "date": "Date" },
+      "headers": {
+        "media": "Media",
+        "caption": "Caption",
+        "status": "Status",
+        "date": "Date"
+      },
       "empty": "No upcoming posts",
       "today": "Today"
     },
     "campaigns": {
       "title": "Campaign performance",
-      "headers": { "campaign": "Campaign", "calls": "Calls", "successRate": "Success %" },
+      "headers": {
+        "campaign": "Campaign",
+        "calls": "Calls",
+        "successRate": "Success %"
+      },
       "empty": "No campaigns"
     },
     "charts": {
@@ -377,7 +389,7 @@
       "title": "Social Media Analytics",
       "workspace": {
         "mak8r": "Mak8r",
-        "yrityskorjaamo": "Yrityskorjaamo", 
+        "yrityskorjaamo": "Yrityskorjaamo",
         "granholm": "Granholm AI",
         "kuudesaisti": "Kuudes Aisti"
       },
@@ -390,8 +402,7 @@
       },
       "noData": "No data"
     }
-  }
-  ,
+  },
   "sidebar": {
     "sections": {
       "marketing": "Marketing",
@@ -419,8 +430,7 @@
     "settings": "Settings",
     "helpCenter": "Help Center",
     "logout": "Sign out"
-  }
-  ,
+  },
   "posts": {
     "header": "Social media content",
     "searchPlaceholder": "Search social media content...",
@@ -536,17 +546,19 @@
     "statuses": {
       "inProgress": "In Progress",
       "ready": "Ready",
-      "scheduled": "Scheduled", 
+      "scheduled": "Scheduled",
       "published": "Published",
       "untitled": "Untitled Post",
       "untitledReels": "Untitled Reels"
     }
-  }
-  ,
+  },
   "blogNewsletter": {
     "header": "Blogs and newsletters",
     "searchPlaceholder": "Search blogs and newsletters...",
-    "filters": { "allStatuses": "All statuses", "allTypes": "All content types" },
+    "filters": {
+      "allStatuses": "All statuses",
+      "allTypes": "All content types"
+    },
     "types": { "blog": "📝 Blog articles", "newsletter": "📧 Newsletters" },
     "status": {
       "Luonnos": "Draft",
@@ -581,7 +593,10 @@
     "createModal": {
       "title": "Create content",
       "fields": { "title": "Title", "type": "Type", "content": "Content" },
-      "placeholders": { "title": "Enter the title...", "content": "Write the content..." },
+      "placeholders": {
+        "title": "Enter the title...",
+        "content": "Write the content..."
+      },
       "cancel": "Cancel",
       "create": "Create content"
     },
@@ -599,8 +614,7 @@
       "deleted": "Content deleted successfully!",
       "deleteFailed": "Deletion failed: {message}"
     }
-  }
-  ,
+  },
   "strategy": {
     "header": "Target audience, goals and content plan",
     "loading": "Loading content strategy...",
@@ -638,12 +652,21 @@
       "analyzing": "Analyzing...",
       "startAnalysis": "Start analysis"
     },
-    "empty": { "title": "No strategies yet", "description": "Start by creating the first monthly strategy" }
-  }
-  ,
+    "empty": {
+      "title": "No strategies yet",
+      "description": "Start by creating the first monthly strategy"
+    }
+  },
   "campaigns": {
-    "header": { "title": "Campaigns", "description": "Manage your call campaigns and track their performance" },
-    "actions": { "create": "Create campaign", "creating": "Creating...", "cancel": "Cancel" },
+    "header": {
+      "title": "Campaigns",
+      "description": "Manage your call campaigns and track their performance"
+    },
+    "actions": {
+      "create": "Create campaign",
+      "creating": "Creating...",
+      "cancel": "Cancel"
+    },
     "loading": "Loading campaigns...",
     "error": "Error loading campaigns",
     "empty": "No campaigns yet",
@@ -691,11 +714,17 @@
       "seriesAnswered": "Answered",
       "tooltipAnswer": "Answer %"
     }
-  }
-  ,
+  },
   "segments": {
-    "header": { "title": "Segments", "description": "Organize your contacts and track segment performance" },
-    "actions": { "create": "Create segment", "creating": "Creating...", "cancel": "Cancel" },
+    "header": {
+      "title": "Segments",
+      "description": "Organize your contacts and track segment performance"
+    },
+    "actions": {
+      "create": "Create segment",
+      "creating": "Creating...",
+      "cancel": "Cancel"
+    },
     "loading": "Loading segments...",
     "error": "Error loading segments",
     "empty": "No segments yet",
@@ -723,7 +752,11 @@
       "title": "Segment details",
       "loading": "Loading...",
       "error": "Error",
-      "metrics": { "calls": "Calls", "answerRateShort": "Answer %", "successful": "Successful" }
+      "metrics": {
+        "calls": "Calls",
+        "answerRateShort": "Answer %",
+        "successful": "Successful"
+      }
     },
     "statsBoard": {
       "calls": "Calls",
@@ -732,8 +765,7 @@
       "answerRateShort": "Answer %",
       "loading": "Loading stats..."
     }
-  }
-  ,
+  },
   "calls": {
     "tabs": {
       "calls": "Calls",
@@ -818,7 +850,10 @@
       "buttons": { "refresh": "Refresh", "refreshing": "Refreshing..." },
       "loading": "Loading messages...",
       "empty": "No messages found",
-      "history": { "title": "Message history", "showingCount": "Showing {count} messages" },
+      "history": {
+        "title": "Message history",
+        "showingCount": "Showing {count} messages"
+      },
       "table": {
         "phone": "Phone number",
         "type": "Type",
@@ -829,7 +864,13 @@
         "date": "Date"
       },
       "direction": { "outbound": "Sent", "inbound": "Received" },
-      "status": { "sent": "Sent", "delivered": "Delivered", "read": "Read", "failed": "Failed", "pending": "Pending" }
+      "status": {
+        "sent": "Sent",
+        "delivered": "Delivered",
+        "read": "Read",
+        "failed": "Failed",
+        "pending": "Pending"
+      }
     },
     "textMessagesTab": {
       "header": "Text messages",
@@ -886,7 +927,11 @@
           "segment": { "label": "Segment (optional)", "none": "No segment" },
           "type": { "label": "Call type" },
           "voice": { "label": "Voice" },
-          "smsFirst": { "label": "Text first", "readonly": "First SMS (read only)", "missing": "Add SMS text to the call type first" },
+          "smsFirst": {
+            "label": "Text first",
+            "readonly": "First SMS (read only)",
+            "missing": "Add SMS text to the call type first"
+          },
           "back": "← Back",
           "next": "Continue →"
         },
@@ -897,7 +942,10 @@
           "orSchedule": "📅 Or schedule calls",
           "date": "Date",
           "time": "Time",
-          "schedule": { "label": "📅 Schedule calls", "scheduling": "Scheduling..." },
+          "schedule": {
+            "label": "📅 Schedule calls",
+            "scheduling": "Scheduling..."
+          },
           "back": "← Back"
         }
       },
@@ -906,7 +954,10 @@
         "close": "Close",
         "step1": {
           "title": "Step 1: Call settings",
-          "type": { "label": "Call type", "placeholder": "Select call type..." },
+          "type": {
+            "label": "Call type",
+            "placeholder": "Select call type..."
+          },
           "voice": { "label": "Voice" },
           "cancel": "Cancel",
           "next": "Continue →"
@@ -914,9 +965,19 @@
         "step2": {
           "title": "Step 2: Customer info",
           "name": { "label": "Name", "placeholder": "John Doe" },
-          "phone": { "label": "Phone number", "placeholder": "040 123 4567 or +358401234567" },
-          "script": { "label": "Script:", "placeholder": "Select call type to see the script." },
-          "smsFirst": { "label": "Text first", "readonly": "First SMS (read only)", "missing": "Add SMS text to the call type first" },
+          "phone": {
+            "label": "Phone number",
+            "placeholder": "040 123 4567 or +358401234567"
+          },
+          "script": {
+            "label": "Script:",
+            "placeholder": "Select call type to see the script."
+          },
+          "smsFirst": {
+            "label": "Text first",
+            "readonly": "First SMS (read only)",
+            "missing": "Add SMS text to the call type first"
+          },
           "back": "← Back",
           "call": { "label": "Call", "calling": "Calling…" }
         }
@@ -1010,9 +1071,9 @@
           "addCallType": "Add call type"
         }
       },
-    "alerts": {
-      "saveInboundFirst": "Save inbound settings first before AI enhancement!"
-    },
+      "alerts": {
+        "saveInboundFirst": "Save inbound settings first before AI enhancement!"
+      },
       "editCallType": {
         "title": "Edit call type",
         "steps": {
@@ -1098,8 +1159,7 @@
           "saveChanges": "Save changes"
         }
       }
-    }
-    ,
+    },
     "manageTab": {
       "header": { "title": "Manage call types" },
       "cta": { "addNew": "➕ Add new type" },
@@ -1119,8 +1179,7 @@
         "edit": "Edit"
       }
     }
-  }
-  ,
+  },
   "ui": {
     "tabs": {
       "profile": "Profile",
@@ -1281,8 +1340,7 @@
         "delete": "Delete"
       }
     }
-  }
-  ,
+  },
   "settings": {
     "title": "Settings",
     "logo": {
@@ -1299,11 +1357,55 @@
     "personalInfo": {
       "title": "Personal information"
     },
-    "profile": { "title": "User information", "loading": "Loading user information...", "notFoundSupport": "User information not found. Please contact support.", "fetchError": "Error fetching user information. Please contact support.", "updateSuccess": "Information updated successfully!" },
-    "fields": { "name": "Name", "email": "Email", "company": "Company", "industry": "Industry", "userId": "User ID", "namePlaceholder": "Enter your name", "emailPlaceholder": "Enter your email address", "companyPlaceholder": "Enter your company name" },
-    "buttons": { "edit": "Edit", "save": "Save", "saving": "Saving...", "cancel": "Cancel", "changePassword": "Change password" },
-    "common": { "notSet": "Not set", "notAvailable": "Not available", "error": "Error", "loadingImages": "Loading images..." },
-    "password": { "title": "Change password", "saving": "Saving...", "save": "Save", "cancel": "Cancel", "mismatch": "New passwords do not match", "tooShort": "New password is too short (at least 6 characters)", "currentRequired": "Current password is required", "currentWrong": "Current password is incorrect", "changed": "Password changed successfully!", "currentPlaceholder": "Enter your current password", "newPlaceholder": "Enter new password", "confirmPlaceholder": "Re-enter new password", "current": "Current password", "new": "New password", "confirm": "Confirm new password" },
+    "profile": {
+      "title": "User information",
+      "loading": "Loading user information...",
+      "notFoundSupport": "User information not found. Please contact support.",
+      "fetchError": "Error fetching user information. Please contact support.",
+      "updateSuccess": "Information updated successfully!"
+    },
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "company": "Company",
+      "industry": "Industry",
+      "userId": "User ID",
+      "namePlaceholder": "Enter your name",
+      "emailPlaceholder": "Enter your email address",
+      "companyPlaceholder": "Enter your company name",
+      "contentLanguage": "Content language",
+      "contentLanguagePlaceholder": "e.g. Finnish, English, Swedish"
+    },
+    "buttons": {
+      "edit": "Edit",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "changePassword": "Change password"
+    },
+    "common": {
+      "notSet": "Not set",
+      "notAvailable": "Not available",
+      "error": "Error",
+      "loadingImages": "Loading images..."
+    },
+    "password": {
+      "title": "Change password",
+      "saving": "Saving...",
+      "save": "Save",
+      "cancel": "Cancel",
+      "mismatch": "New passwords do not match",
+      "tooShort": "New password is too short (at least 6 characters)",
+      "currentRequired": "Current password is required",
+      "currentWrong": "Current password is incorrect",
+      "changed": "Password changed successfully!",
+      "currentPlaceholder": "Enter your current password",
+      "newPlaceholder": "Enter new password",
+      "confirmPlaceholder": "Re-enter new password",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm new password"
+    },
     "avatar": {
       "title": "Avatar images",
       "loading": "Loading images...",
@@ -1319,7 +1421,18 @@
       "comingSoon": "Coming soon",
       "workInProgress": "We're currently working on new avatar functionality"
     },
-    "voice": { "title": "Audio files (Voice Clone)", "loading": "Loading audio...", "addNewAria": "Add new audio file", "add": "Add", "processing": "Processing...", "added": "Audio added", "fetchError": "Failed to fetch audio files", "uploadError": "Audio upload failed", "infoNone": "{count}/1 audio file added. Add an audio file for the voice clone.", "infoSome": "{count}/1 audio file added. The audio file is permanent and cannot be deleted." },
+    "voice": {
+      "title": "Audio files (Voice Clone)",
+      "loading": "Loading audio...",
+      "addNewAria": "Add new audio file",
+      "add": "Add",
+      "processing": "Processing...",
+      "added": "Audio added",
+      "fetchError": "Failed to fetch audio files",
+      "uploadError": "Audio upload failed",
+      "infoNone": "{count}/1 audio file added. Add an audio file for the voice clone.",
+      "infoSome": "{count}/1 audio file added. The audio file is permanent and cannot be deleted."
+    },
     "social": {
       "title": "Social media connections",
       "errorTitle": "Error:",
@@ -1331,7 +1444,11 @@
       "unknownDate": "unknown",
       "addAccount": "Add account",
       "connectTitle": "Connect a new account",
-      "status": { "connected": "Connected", "connecting": "Connecting...", "cta": "Click to connect" },
+      "status": {
+        "connected": "Connected",
+        "connecting": "Connecting...",
+        "cta": "Click to connect"
+      },
       "connectionErrorTitle": "Connection error:",
       "helpTitle": "Instructions:",
       "help": [
@@ -1340,7 +1457,9 @@
         "Grant the necessary permissions to Rascal AI",
         "The window will close automatically after connecting"
       ],
-      "alerts": { "refreshFailed": "Error refreshing social accounts. Please try again." },
+      "alerts": {
+        "refreshFailed": "Error refreshing social accounts. Please try again."
+      },
       "popupsBlocked": "Popups are blocked. Allow popups for this site and try again.",
       "timeout": "Connection timed out. Check your internet connection and try again.",
       "connectError": "Error connecting {platform}: {message}"
@@ -1647,5 +1766,3 @@
     "crmConnected": "CRM connected"
   }
 }
-
-

@@ -102,23 +102,16 @@
 
 .carousel-segment-text-input {
   width: 100%;
-  padding: 12px;
+  padding: 8px 10px;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 14px;
   font-family: inherit;
   resize: none;
-  min-height: 180px;
+  min-height: 60px;
   box-sizing: border-box;
   line-height: 1.5;
-  overflow: auto; /* Tarvitaan scrollHeight-laskentaan */
-  scrollbar-width: none; /* Firefox - piilota scrollbar */
-  -ms-overflow-style: none; /* IE/Edge - piilota scrollbar */
-}
-
-/* Chrome/Safari - piilota scrollbar */
-.carousel-segment-text-input::-webkit-scrollbar {
-  display: none;
+  overflow: hidden;
 }
 
 .carousel-segment-text-input:focus {

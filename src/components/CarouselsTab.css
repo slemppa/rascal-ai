@@ -245,25 +245,18 @@
 .carousel-segment-text-input {
   width: 100%;
   margin: 0;
-  padding: 12px;
+  padding: 8px 10px;
   font-size: 14px;
   line-height: 1.5;
   color: #374151;
   background: #fff;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border-radius: 6px;
   font-family: inherit;
   resize: none;
-  min-height: 180px;
-  /* max-height poistettu - sallii automaattinen kasvu */
-  overflow: auto;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  min-height: 60px;
+  overflow: hidden;
   transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.carousel-segment-text-input::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
 }
 
 .carousel-segment-text-input:focus {

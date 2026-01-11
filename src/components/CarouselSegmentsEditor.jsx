@@ -1,108 +1,139 @@
-import React, { useState } from 'react'
-import { supabase } from '../lib/supabase'
-import { getUserOrgId } from '../lib/getUserOrgId'
-import { useAuth } from '../contexts/AuthContext'
-import Button from './Button'
-import './CarouselSegmentsEditor.css'
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { supabase } from "../lib/supabase";
+import { getUserOrgId } from "../lib/getUserOrgId";
+import { useAuth } from "../contexts/AuthContext";
+import Button from "./Button";
+import "./CarouselSegmentsEditor.css";
 
 export default function CarouselSegmentsEditor({
   segments = [],
   contentId,
   onSave,
-  t
+  t,
 }) {
-  const { user } = useAuth()
-  const [segmentEdits, setSegmentEdits] = useState({})
-  const [saving, setSaving] = useState(false)
-  const [saveMessage, setSaveMessage] = useState(null)
+  const { user } = useAuth();
+  const [segmentEdits, setSegmentEdits] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState(null);
+  const textareaRefs = useRef({});
+
+  // Automaattinen korkeuden säätö textarea-elementille
+  const adjustTextareaHeight = (textarea) => {
+    if (!textarea) return;
+    // Nollaa korkeus ennen scrollHeight-laskentaa
+    textarea.style.height = "auto";
+    // Laske uusi korkeus scrollHeight:n perusteella (sisältää kaiken tekstin)
+    // Varmista että korkeus on vähintään 180px (min-height)
+    const newHeight = Math.max(180, textarea.scrollHeight);
+    textarea.style.height = newHeight + "px";
+  };
 
   // Järjestä segmentit slide_no:n mukaan
   const sortedSegments = [...segments].sort((a, b) => {
-    const aNum = parseInt(a.slide_no) || 999
-    const bNum = parseInt(b.slide_no) || 999
-    return aNum - bNum
-  })
+    const aNum = parseInt(a.slide_no) || 999;
+    const bNum = parseInt(b.slide_no) || 999;
+    return aNum - bNum;
+  });
+
+  // Säätää kaikkien textarea-kenttien korkeutta kun data muuttuu
+  // useLayoutEffect suoritetaan synkronisesti DOM-päivityksen jälkeen, ennen renderöintiä
+  useLayoutEffect(() => {
+    Object.values(textareaRefs.current).forEach(adjustTextareaHeight);
+  }, [segments, segmentEdits]);
 
   const handleSave = async () => {
     if (!contentId) {
-      setSaveMessage({ type: 'error', text: 'Content ID puuttuu' })
-      return
+      setSaveMessage({ type: "error", text: "Content ID puuttuu" });
+      return;
     }
 
     try {
-      setSaving(true)
-      setSaveMessage(null)
+      setSaving(true);
+      setSaveMessage(null);
 
       // Validoi käyttäjä
-      const userId = await getUserOrgId(user?.id)
+      const userId = await getUserOrgId(user?.id);
       if (!userId) {
-        throw new Error('Käyttäjätietojen haku epäonnistui')
+        throw new Error("Käyttäjätietojen haku epäonnistui");
       }
 
       // Hae auth token API-kutsua varten
-      const { data: { session } } = await supabase.auth.getSession()
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session?.access_token) {
-        throw new Error('Autentikointi puuttuu')
+        throw new Error("Autentikointi puuttuu");
       }
 
       // Kerää kaikki muutokset API-endpointin odottamassa muodossa
-      const updates = []
+      const updates = [];
 
       sortedSegments.forEach((segment) => {
-        const segmentId = segment.id
-        const edit = segmentEdits[segmentId]
+        const segmentId = segment.id;
+        const edit = segmentEdits[segmentId];
 
         if (edit) {
           updates.push({
             recordId: segmentId,
             carouselRecordId: contentId,
-            text: edit.text !== undefined ? edit.text : (segment.text || segment.caption || ''),
-            approved: edit.approved !== undefined ? edit.approved : (segment.approved || false)
-          })
+            text:
+              edit.text !== undefined
+                ? edit.text
+                : segment.text || segment.caption || "",
+            approved:
+              edit.approved !== undefined
+                ? edit.approved
+                : segment.approved || false,
+          });
         }
-      })
+      });
 
       if (updates.length === 0) {
-        setSaveMessage({ type: 'info', text: 'Ei muutoksia tallennettavaksi' })
-        return
+        setSaveMessage({ type: "info", text: "Ei muutoksia tallennettavaksi" });
+        return;
       }
 
       // Lähetä API-endpointiin
-      const response = await fetch('/api/integrations/airtable/carousels', {
-        method: 'POST',
+      const response = await fetch("/api/integrations/airtable/carousels", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
-          action: 'approve',
-          updates: updates
-        })
-      })
+          action: "approve",
+          updates: updates,
+        }),
+      });
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Tallennus epäonnistui')
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Tallennus epäonnistui");
       }
 
-      setSaveMessage({ type: 'success', text: `Tallennettu ${updates.length} muutosta` })
-      
+      setSaveMessage({
+        type: "success",
+        text: `Tallennettu ${updates.length} muutosta`,
+      });
+
       // Tyhjennä muutokset onnistuneen tallennuksen jälkeen
       setTimeout(() => {
-        setSegmentEdits({})
-        setSaveMessage(null)
+        setSegmentEdits({});
+        setSaveMessage(null);
         if (onSave) {
-          onSave()
+          onSave();
         }
-      }, 2000)
-
+      }, 2000);
     } catch (error) {
-      console.error('Error saving segment changes:', error)
-      setSaveMessage({ type: 'error', text: error.message || 'Tallennus epäonnistui' })
+      console.error("Error saving segment changes:", error);
+      setSaveMessage({
+        type: "error",
+        text: error.message || "Tallennus epäonnistui",
+      });
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   return (
     <div className="carousel-segments-editor">
@@ -115,7 +146,9 @@ export default function CarouselSegmentsEditor({
             onClick={handleSave}
             disabled={saving}
           >
-            {saving ? (t?.('ui.buttons.saving') || 'Tallennetaan...') : (t?.('ui.buttons.save') || 'Tallenna')}
+            {saving
+              ? t?.("ui.buttons.saving") || "Tallennetaan..."
+              : t?.("ui.buttons.save") || "Tallenna"}
           </Button>
         )}
       </div>
@@ -133,14 +166,16 @@ export default function CarouselSegmentsEditor({
           </div>
         ) : (
           sortedSegments.map((segment, index) => {
-            const segmentId = segment.id
-            const currentText = segmentEdits[segmentId]?.text !== undefined 
-              ? segmentEdits[segmentId].text 
-              : (segment.text || segment.caption || '')
-            const currentApproved = segmentEdits[segmentId]?.approved !== undefined
-              ? segmentEdits[segmentId].approved
-              : (segment.approved || false)
-            
+            const segmentId = segment.id;
+            const currentText =
+              segmentEdits[segmentId]?.text !== undefined
+                ? segmentEdits[segmentId].text
+                : segment.text || segment.caption || "";
+            const currentApproved =
+              segmentEdits[segmentId]?.approved !== undefined
+                ? segmentEdits[segmentId].approved
+                : segment.approved || false;
+
             return (
               <div key={segmentId} className="carousel-segment-editor-item">
                 <div className="carousel-segment-editor-header">
@@ -154,68 +189,65 @@ export default function CarouselSegmentsEditor({
                           type="checkbox"
                           checked={currentApproved}
                           onChange={(e) => {
-                            setSegmentEdits(prev => ({
+                            setSegmentEdits((prev) => ({
                               ...prev,
                               [segmentId]: {
                                 ...prev[segmentId],
-                                approved: e.target.checked
-                              }
-                            }))
+                                approved: e.target.checked,
+                              },
+                            }));
                           }}
                         />
                         <span className="slider"></span>
                       </label>
-                      <span className="carousel-segment-approved-label">Hyväksytty</span>
+                      <span className="carousel-segment-approved-label">
+                        Hyväksytty
+                      </span>
                     </div>
                   </div>
                 </div>
-                
+
                 {segment.media_urls && segment.media_urls.length > 0 && (
                   <div className="carousel-segment-media-preview">
-                    <img 
-                      src={segment.media_urls[0]} 
+                    <img
+                      src={segment.media_urls[0]}
                       alt={`Slaidi ${segment.slide_no || index + 1}`}
                       className="carousel-segment-thumbnail"
                     />
                   </div>
                 )}
-                
+
                 <textarea
                   className="carousel-segment-text-input"
                   value={currentText}
                   onChange={(e) => {
-                    // Auto-resize textarea
-                    e.target.style.height = 'auto'
-                    e.target.style.height = e.target.scrollHeight + 'px'
-
-                    setSegmentEdits(prev => ({
+                    setSegmentEdits((prev) => ({
                       ...prev,
                       [segmentId]: {
                         ...prev[segmentId],
-                        text: e.target.value
-                      }
-                    }))
+                        text: e.target.value,
+                      },
+                    }));
+                    adjustTextareaHeight(e.target);
                   }}
                   onInput={(e) => {
-                    // Auto-resize on input
-                    e.target.style.height = 'auto'
-                    e.target.style.height = e.target.scrollHeight + 'px'
+                    // Säätää korkeutta myös onInput:issa (Safari-yhteensopivuus)
+                    adjustTextareaHeight(e.target);
                   }}
                   ref={(el) => {
-                    // Auto-resize on mount
                     if (el) {
-                      el.style.height = 'auto'
-                      el.style.height = el.scrollHeight + 'px'
+                      textareaRefs.current[segmentId] = el;
+                    } else {
+                      delete textareaRefs.current[segmentId];
                     }
                   }}
                   placeholder="Slaidin teksti..."
                 />
               </div>
-            )
+            );
           })
         )}
       </div>
     </div>
-  )
+  );
 }
-

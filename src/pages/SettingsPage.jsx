@@ -348,7 +348,6 @@ export default function SettingsPage() {
     company_name: companyName || "",
     contact_email: email || "",
     industry: industry || "",
-    content_language: userProfile?.content_language || "Suomi",
   });
 
   useEffect(() => {
@@ -357,9 +356,8 @@ export default function SettingsPage() {
       company_name: companyName || "",
       contact_email: email || "",
       industry: industry || "",
-      content_language: userProfile?.content_language || "Suomi",
     });
-  }, [name, companyName, email, industry, userProfile?.content_language]);
+  }, [name, companyName, email, industry]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -572,7 +570,6 @@ export default function SettingsPage() {
           company_name: formData.company_name,
           contact_email: formData.contact_email,
           industry: formData.industry || null,
-          content_language: formData.content_language || "Suomi",
           updated_at: new Date().toISOString(),
         })
         .eq("id", userProfile.id);
@@ -1111,29 +1108,6 @@ export default function SettingsPage() {
                             <input
                               type="text"
                               value={industry || t("settings.common.notSet")}
-                              readOnly
-                              className={`${styles["form-input"]} ${styles.readonly}`}
-                            />
-                          )}
-                        </div>
-
-                        <div className={styles["form-group"]}>
-                          <label>{t("settings.fields.contentLanguage")}</label>
-                          {isEditing ? (
-                            <input
-                              type="text"
-                              name="content_language"
-                              value={formData.content_language}
-                              onChange={handleInputChange}
-                              className={styles["form-input"]}
-                              placeholder={t(
-                                "settings.fields.contentLanguagePlaceholder",
-                              )}
-                            />
-                          ) : (
-                            <input
-                              type="text"
-                              value={userProfile?.content_language || "Suomi"}
                               readOnly
                               className={`${styles["form-input"]} ${styles.readonly}`}
                             />

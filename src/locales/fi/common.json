@@ -1558,6 +1558,16 @@
       "title": "Turvallisuus",
       "sessionSettings": "Sessio-asetukset"
     },
+    "accountSettings": {
+      "title": "Tilin asetukset",
+      "contentLanguage": "Sisällön kieli",
+      "contentLanguageDescription": "Millä kielellä tekoälyn luoma sisältö tuotetaan",
+      "contentLanguagePlaceholder": "esim. Suomi, English, Svenska",
+      "save": "Tallenna",
+      "saving": "Tallennetaan...",
+      "saved": "Kielivalinta tallennettu!",
+      "error": "Virhe tallennuksessa. Yritä uudelleen."
+    },
     "timeout": {
       "title": "Sessio-asetukset",
       "description": "Määritä kuinka kauan sessio pysyy aktiivisena inaktiivisuuden jälkeen.",

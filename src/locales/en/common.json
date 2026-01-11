@@ -1468,6 +1468,16 @@
       "title": "Security",
       "sessionSettings": "Session settings"
     },
+    "accountSettings": {
+      "title": "Account settings",
+      "contentLanguage": "Content language",
+      "contentLanguageDescription": "Language for AI-generated content",
+      "contentLanguagePlaceholder": "e.g. Finnish, English, Swedish",
+      "save": "Save",
+      "saving": "Saving...",
+      "saved": "Language setting saved!",
+      "error": "Error saving. Please try again."
+    },
     "email": {
       "title": "Change email",
       "saving": "Saving...",

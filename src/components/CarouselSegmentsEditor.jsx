@@ -20,9 +20,9 @@ export default function CarouselSegmentsEditor({
   // Automaattinen korkeuden säätö textarea-elementille
   const adjustTextareaHeight = (textarea) => {
     if (!textarea) return;
-    // Aseta korkeus minimiarvoon ensin, jotta scrollHeight laskee oikean sisällön korkeuden
-    textarea.style.height = "180px";
-    // Jos sisältö tarvitsee enemmän tilaa, scrollHeight on suurempi kuin 180
+    // Nollaa korkeus automaattiseen, jotta scrollHeight laskee sisällön korkeuden
+    textarea.style.height = "auto";
+    // Aseta korkeus scrollHeight:n mukaan (vähintään 180px)
     const newHeight = Math.max(180, textarea.scrollHeight);
     textarea.style.height = newHeight + "px";
   };

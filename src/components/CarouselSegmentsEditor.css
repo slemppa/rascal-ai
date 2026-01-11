@@ -111,17 +111,14 @@
   min-height: 180px;
   box-sizing: border-box;
   line-height: 1.5;
-  overflow-y: hidden;
+  overflow: auto; /* Tarvitaan scrollHeight-laskentaan */
+  scrollbar-width: none; /* Firefox - piilota scrollbar */
+  -ms-overflow-style: none; /* IE/Edge - piilota scrollbar */
 }
 
-/* Piilota scrollbar mutta salli scrollHeight-laskenta */
+/* Chrome/Safari - piilota scrollbar */
 .carousel-segment-text-input::-webkit-scrollbar {
   display: none;
-}
-
-.carousel-segment-text-input {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
 }
 
 .carousel-segment-text-input:focus {

@@ -108,10 +108,20 @@
   font-size: 14px;
   font-family: inherit;
   resize: none;
-  min-height: 60px;
+  min-height: 180px;
   box-sizing: border-box;
   line-height: 1.5;
-  overflow: hidden;
+  overflow-y: hidden;
+}
+
+/* Piilota scrollbar mutta salli scrollHeight-laskenta */
+.carousel-segment-text-input::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-segment-text-input {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
 .carousel-segment-text-input:focus {
@@ -186,4 +196,6 @@ input:checked + .slider:before {
     max-width: 100%;
   }
 }
+
+
 

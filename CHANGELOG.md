@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.112.0](https://github.com/slemppa/rascal-ai/compare/v1.111.5...v1.112.0) (2026-01-11)
+
+
+### ♻️ Code Refactoring
+
+* move content language to Account Settings section ([7f78058](https://github.com/slemppa/rascal-ai/commit/7f780583337a634b09d992fbbff9106bd7e07c85))
+
+
+### 🐛 Bug Fixes
+
+* improve textarea auto-resize reliability ([0b1c42f](https://github.com/slemppa/rascal-ai/commit/0b1c42f5a1323c5def4c96decd091fb8d1a773bf))
+* reduce textarea min-height to 60px for proper auto-grow ([34d454f](https://github.com/slemppa/rascal-ai/commit/34d454f8a7b2e01f0ff6af52b78eae48f0cf6c32))
+* remove duplicate CSS selector and use overflow:auto ([2337f0e](https://github.com/slemppa/rascal-ai/commit/2337f0e48e7699ad647c3411667156ae8ef07db1))
+* remove max-height:32px that locked textarea to one row ([1a721d0](https://github.com/slemppa/rascal-ai/commit/1a721d0df43a72cbf63ce5724da7ae15db0f59f1))
+* set textarea height to 0 before measuring scrollHeight ([44fbf9c](https://github.com/slemppa/rascal-ai/commit/44fbf9c6ec517c8663993fbb890dbd67f9954669))
+* use useLayoutEffect for reliable textarea auto-resize ([f7a4692](https://github.com/slemppa/rascal-ai/commit/f7a46921ca678fd21fb4dd430e836d979a8092df))
+
+
+### ✨ Features
+
+* add content language setting for generated posts ([9d409b2](https://github.com/slemppa/rascal-ai/commit/9d409b2137726e685c87e19983b5b9fda5c37c31))
+* add test infrastructure and refactor hooks ([9f76c33](https://github.com/slemppa/rascal-ai/commit/9f76c33fba5dbd4906119fbcc0a1b8d40fd2948f))
+
 ### [1.111.5](https://github.com/slemppa/rascal-ai/compare/v1.111.4...v1.111.5) (2026-01-09)
 
 

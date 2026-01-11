@@ -508,8 +508,18 @@ export default function DashboardPage() {
         if (!token) return
         const days = selectedFilter === 'week' ? 7 : selectedFilter === 'month' ? 30 : 30
         const res = await fetch(`/api/analytics/success?days=${encodeURIComponent(days)}`, { headers: { Authorization: `Bearer ${token}` } })
+        
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`)
+        }
+        
+        const contentType = res.headers.get('content-type')
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Response is not JSON')
+        }
+        
         const json = await res.json()
-        if (res.ok) setSuccessStats(json)
+        setSuccessStats(json)
       } catch (e) {
         console.error('Dashboard: Error fetching success stats:', e)
       }
@@ -693,6 +703,11 @@ export default function DashboardPage() {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
 
+        const contentType = response.headers.get('content-type')
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Response is not JSON')
+        }
+
         const data = await response.json()
         
         setStatsData({
@@ -844,34 +859,39 @@ export default function DashboardPage() {
             })
             
             const mixpostPosts = response.data
-          
-          // Käännä statusit suomeksi
-          const statusMap = {
-            'published': 'Julkaistu',
-            'scheduled': 'Aikataulutettu', 
-            'draft': t('status.draft'),
-            'failed': 'Epäonnistui'
-          }
-          
-          // Muunna kaikki Mixpost-postaukset samaan muotoon kuin Supabase-data
-          // HUOM: API palauttaa publishDate (camelCase), muunnetaan publish_date:ksi
-          mixpostData = mixpostPosts
-            .filter(post => post.publishDate) // Vain postaukset joilla on julkaisupäivä
-            .map(post => ({
-              id: post.id,
-              type: 'Mixpost',
-              idea: post.title || post.caption?.slice(0, 80) || 'Postaus',
-              status: statusMap[post.status] || post.status,
-              publish_date: post.publishDate, // API:sta tuleva publishDate -> publish_date
-              publishDate: post.publishDate, // Säilytetään myös alkuperäinen
-              created_at: post.createdAt,
-              media_urls: post.thumbnail ? [post.thumbnail] : [],
-              caption: post.caption,
-              source: 'mixpost',
-              accounts: post.accounts || [],
-              channelNames: post.channelNames || []
-            }))
-          
+            
+            // Käännä statusit suomeksi
+            const statusMap = {
+              'published': 'Julkaistu',
+              'scheduled': 'Aikataulutettu', 
+              'draft': t('status.draft'),
+              'failed': 'Epäonnistui'
+            }
+            
+            // Tarkista että mixpostPosts on array
+            if (!Array.isArray(mixpostPosts)) {
+              console.warn('Mixpost API returned non-array data:', mixpostPosts)
+              mixpostData = []
+            } else {
+              // Muunna kaikki Mixpost-postaukset samaan muotoon kuin Supabase-data
+              // HUOM: API palauttaa publishDate (camelCase), muunnetaan publish_date:ksi
+              mixpostData = mixpostPosts
+                .filter(post => post && post.publishDate) // Vain postaukset joilla on julkaisupäivä
+                .map(post => ({
+                  id: post.id,
+                  type: 'Mixpost',
+                  idea: post.title || post.caption?.slice(0, 80) || 'Postaus',
+                  status: statusMap[post.status] || post.status,
+                  publish_date: post.publishDate, // API:sta tuleva publishDate -> publish_date
+                  publishDate: post.publishDate, // Säilytetään myös alkuperäinen
+                  created_at: post.createdAt,
+                  media_urls: post.thumbnail ? [post.thumbnail] : [],
+                  caption: post.caption,
+                  source: 'mixpost',
+                  accounts: post.accounts || [],
+                  channelNames: post.channelNames || []
+                }))
+            }
           }
         } catch (mixpostError) {
           console.error('Error fetching Mixpost posts:', mixpostError)
@@ -1252,10 +1272,10 @@ export default function DashboardPage() {
                 if (!metrics) return <div>{t('dashboard.mixpost.noData')}</div>
                 
                 return [
-                  { label: t('dashboard.mixpost.metrics.fbEngagements'), value: metrics.fbEngagements.toLocaleString('fi-FI'), color: '#1877f2' },
-                  { label: t('dashboard.mixpost.metrics.fbImpressions'), value: metrics.fbImpressions.toLocaleString('fi-FI'), color: '#1877f2' },
-                  { label: t('dashboard.mixpost.metrics.igReach'), value: metrics.igReach.toLocaleString('fi-FI'), color: '#e4405f' },
-                  { label: t('dashboard.mixpost.metrics.igFollowers'), value: metrics.igFollowers.toLocaleString('fi-FI'), color: '#e4405f' }
+                  { label: t('dashboard.mixpost.metrics.fbEngagements'), value: (metrics.fbEngagements ?? 0).toLocaleString('fi-FI'), color: '#1877f2' },
+                  { label: t('dashboard.mixpost.metrics.fbImpressions'), value: (metrics.fbImpressions ?? 0).toLocaleString('fi-FI'), color: '#1877f2' },
+                  { label: t('dashboard.mixpost.metrics.igReach'), value: (metrics.igReach ?? 0).toLocaleString('fi-FI'), color: '#e4405f' },
+                  { label: t('dashboard.mixpost.metrics.igFollowers'), value: (metrics.igFollowers ?? 0).toLocaleString('fi-FI'), color: '#e4405f' }
                 ].map((metric, i) => (
                   <div key={i} style={{
                     background: '#fff',

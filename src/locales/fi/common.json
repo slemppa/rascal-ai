@@ -11,7 +11,8 @@
     "next": "Seuraava",
     "back": "← Takaisin",
     "continue": "Jatka →",
-    "save": "Tallenna"
+    "save": "Tallenna",
+    "loading": "Ladataan..."
   },
   "meta": {
     "title": "RascalAI.fi – Myyjän paras työpari",
@@ -1755,6 +1756,8 @@
     "descriptionPlaceholder": "Esimerkki: Kun yritän lisätä kuvia posts-sivulla, sain virheen 'Kuvan lataus epäonnistui'. Tapahtuu joka kerta kun..."
   },
   "orgMembers": {
+    "pageTitle": "Organisaation jäsenet",
+    "membersTitle": "Jäsenet",
     "emailLabel": "Sähköposti",
     "emailPlaceholder": "kayttaja@example.com",
     "roleLabel": "Rooli",
@@ -1764,7 +1767,26 @@
     "inviting": "Kutsutaan...",
     "invite": "Kutsu",
     "cancel": "Peruuta",
-    "membersTitle": "Jäsenet"
+    "inviteNewUser": "Kutsu uusi käyttäjä",
+    "emailColumn": "Sähköposti",
+    "roleColumn": "Rooli",
+    "joinedColumn": "Liittynyt",
+    "actionsColumn": "Toiminnot",
+    "noMembers": "Ei jäseniä",
+    "noEmail": "Ei sähköpostia",
+    "remove": "Poista",
+    "resendInvite": "Lähetä kutsu uudelleen",
+    "you": "(Sinä)",
+    "noAuthError": "Kirjautuminen vaaditaan. Kirjaudu sisään uudelleen.",
+    "fetchError": "Jäsenten haku epäonnistui",
+    "inviteError": "Käyttäjän kutsuminen epäonnistui",
+    "updateRoleError": "Roolin päivitys epäonnistui",
+    "confirmRemove": "Haluatko varmasti poistaa tämän jäsenen organisaatiosta?",
+    "removeError": "Jäsenen poistaminen epäonnistui",
+    "resendSuccess": "Kutsu lähetetty uudelleen",
+    "resendError": "Kutsun uudelleenlähetys epäonnistui",
+    "noPermissionsTitle": "Pääsy estetty",
+    "noPermissionsMessage": "Sinulla ei ole oikeuksia tarkastella organisaation jäseniä. Vain ylläpitäjät ja omistajat voivat käyttää tätä sivua."
   },
   "multiSelect": {
     "searchPlaceholder": "Search...",

@@ -5,6 +5,15 @@
     "shortFi": "FI",
     "shortEn": "EN"
   },
+  "common": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "next": "Next",
+    "back": "← Back",
+    "continue": "Continue →",
+    "save": "Save",
+    "loading": "Loading..."
+  },
   "meta": {
     "title": "RascalAI – Your best sales assistant",
     "description": "Rascal AI frees sales from routines and preparation so you can focus on winning customer interactions."
@@ -1688,6 +1697,8 @@
     "descriptionPlaceholder": "Example: When I try to add images on the posts page, I get an error 'Image upload failed'. This happens every time I..."
   },
   "orgMembers": {
+    "pageTitle": "Organization Members",
+    "membersTitle": "Members",
     "emailLabel": "Email",
     "emailPlaceholder": "user@example.com",
     "roleLabel": "Role",
@@ -1697,7 +1708,26 @@
     "inviting": "Inviting...",
     "invite": "Invite",
     "cancel": "Cancel",
-    "membersTitle": "Members"
+    "inviteNewUser": "Invite New User",
+    "emailColumn": "Email",
+    "roleColumn": "Role",
+    "joinedColumn": "Joined",
+    "actionsColumn": "Actions",
+    "noMembers": "No members found",
+    "noEmail": "No email",
+    "remove": "Remove",
+    "resendInvite": "Resend Invite",
+    "you": "(You)",
+    "noAuthError": "Authentication required. Please log in again.",
+    "fetchError": "Failed to fetch members",
+    "inviteError": "Failed to invite user",
+    "updateRoleError": "Failed to update role",
+    "confirmRemove": "Are you sure you want to remove this member from the organization?",
+    "removeError": "Failed to remove member",
+    "resendSuccess": "Invitation resent successfully",
+    "resendError": "Failed to resend invitation",
+    "noPermissionsTitle": "Access Denied",
+    "noPermissionsMessage": "You don't have permission to view organization members. Only admins and owners can access this page."
   },
   "multiSelect": {
     "searchPlaceholder": "Search...",

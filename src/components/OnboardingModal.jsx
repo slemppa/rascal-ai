@@ -40,14 +40,25 @@ const OnboardingModal = () => {
             completed_at: new Date().toISOString(),
           };
 
+          // Hae käyttäjän session token Supabasesta
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
+          const headers = {
+            "Content-Type": "application/json",
+          };
+
+          // Lisää Authorization header jos session token on saatavilla
+          if (session?.access_token) {
+            headers["Authorization"] = `Bearer ${session.access_token}`;
+          }
+
           // Lähetä webhook N8N:ään (N8N hoitaa Supabase-päivityksen)
           const webhookResponse = await fetch(
             "/api/organization/onboarding-completed",
             {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
+              headers: headers,
               body: JSON.stringify({
                 conversationId: conversationIdRef.current,
                 userId: user.id,

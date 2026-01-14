@@ -239,7 +239,6 @@ const EditCallTypeModal = ({
                     type="text"
                     value={editingCallType.agent_name || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, agent_name: e.target.value })}
-                    placeholder="Administerin tekoälyavustaja."
                     className="form-input"
                   />
                 </div>

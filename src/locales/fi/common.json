@@ -1090,8 +1090,10 @@
         "placeholders": {
           "name": "esim. myynti, asiakaspalvelu",
           "version": "v1.0",
-          "agentName": "Sarah myynnistä",
-          "targetAudience": "B2B päätöksentekijät, CFOt keskikokoisissa yrityksissä",
+          "agentName": "",
+          "targetAudience": "Yritysten talouspäättäjät, Kaupan vastaavat, LVI-yritysten yrittäjät",
+          "callGoals": "Kysy kiinnostusta, pyydä varmistus, kerro tapahtumasta ja varmista osallistuminen",
+          "toneStyle": "Ystävällinen, asiallinen ja rauhallinen. Ei smalltalkia.",
           "agentPersona": "Olet Sarah, ystävällinen myyntikonsultti TechCorpissa. Autat yritysjohtajia virtaviivaistamaan toimintaansa ohjelmistoratkaisuillamme.",
           "toneStyle": "Ammattimainen mutta lämminsydämminen. Käytä selkeää, ammattislangitonta kieltä. Pidä lauseet lyhyinä ja pausoi luonnollisesti vastauksia varten.",
           "callGoals": "1. Kvalifioi budjetti ja aikataulu\n2. Tunnista keskeiset kipukohdat\n3. Määritä päätöksentekoprosessi\n4. Varaa demo kvalifioiduille liideille",
@@ -1136,7 +1138,12 @@
           "previous": "Edellinen",
           "next": "Seuraava",
           "addCallType": "Lisää puhelun tyyppi"
-        }
+        },
+        "saveBeforeAI": "Tallenna puhelun tyyppi ensin ennen AI-parannusta",
+        "sendFailed": "Lähetys epäonnistui",
+        "apiNotFound": "API endpoint ei löydy ({status}). Tarkista että /api/calls/type-improvement on olemassa.",
+        "aiSentSuccess": "Puhelun tyyppi lähetetty AI-parannukseen! Saat parannetun version pian.",
+        "aiSentError": "AI-parannuksen lähetys epäonnistui: {error}"
       },
       "editCallType": {
         "title": "Muokkaa puhelun tyyppiä",
@@ -1843,7 +1850,7 @@
     "searchTaskPlaceholder": "Etsi tehtävää..."
   },
   "addCallType": {
-    "agentNamePlaceholder": "Administerin tekoälyavustaja.",
+    "agentNamePlaceholder": "",
     "targetAudiencePlaceholder": "Yritysten talouspäättäjät, Kaupan vastaavat, LVI-yritysten yrittäjät",
     "callGoalsPlaceholder": "Kysy kiinnostusta, pyydä varmistus, kerro tapahtumasta...",
     "toneStylePlaceholder": "Ystävällinen, asiallinen ja rauhallinen. Ei smalltalkia.",

@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.112.1](https://github.com/slemppa/rascal-ai/compare/v1.112.0...v1.112.1) (2026-01-14)
+
+
+### 🐛 Bug Fixes
+
+* **auth:** prevent duplicate fetchUserProfile calls ([3fecdb6](https://github.com/slemppa/rascal-ai/commit/3fecdb6c682e16973a4f2a33e5e927a7c23b35ed))
+* **auth:** set profileLoaded when fetchUserProfile times out ([f905fba](https://github.com/slemppa/rascal-ai/commit/f905fba40ca96981e75f3bb0bfd6456dc154278c))
+* **i18n:** add missing translations for OrganizationMembersPage ([e6c1a45](https://github.com/slemppa/rascal-ai/commit/e6c1a45d5e5f439bf8bd041d60b2e2968d6ed345))
+* korjaa admin-roolin some tilejä ja paranna timeout-käsittely ([17fb79f](https://github.com/slemppa/rascal-ai/commit/17fb79f049bae5ade445a9ad11d2ae6a5bfc4ed2))
+* **onboarding:** use onConnect callback to capture conversationId ([a1d957a](https://github.com/slemppa/rascal-ai/commit/a1d957a2fdec4dd48bc663684988899edf49054d))
+
 ## [1.112.0](https://github.com/slemppa/rascal-ai/compare/v1.111.5...v1.112.0) (2026-01-11)
 
 

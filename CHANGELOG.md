@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.113.0](https://github.com/slemppa/rascal-ai/compare/v1.112.2...v1.113.0) (2026-01-14)
+
+
+### ✨ Features
+
+* poista roolitarkistukset ja korjaa käännösavaimet ([6900d4c](https://github.com/slemppa/rascal-ai/commit/6900d4ccee74095aaac46be186a633b170569c2b))
+
 ### [1.112.2](https://github.com/slemppa/rascal-ai/compare/v1.112.1...v1.112.2) (2026-01-14)
 
 

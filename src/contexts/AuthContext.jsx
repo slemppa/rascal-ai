@@ -222,8 +222,10 @@ export const AuthProvider = ({ children }) => {
               systemRole: 'user',
               features: DEFAULT_FEATURES,
               organizationId: null,
-              organizationRole: null
+              organizationRole: null,
+              company_id: null
             })
+            setProfileLoaded(true)
           } finally {
             setLoading(false)
           }

@@ -24,6 +24,9 @@ export const AuthProvider = ({ children }) => {
   // KORJAUS 1: Luodaan ref, joka pitää aina sisällään tuoreimman user-objektin
   const userRef = useRef(user)
 
+  // KORJAUS 4: Estetään päällekkäiset fetchUserProfile-kutsut
+  const fetchInProgressRef = useRef(false)
+
   // KORJAUS 2: Päivitetään ref aina kun user-tila muuttuu
   useEffect(() => {
     userRef.current = user
@@ -191,14 +194,21 @@ export const AuthProvider = ({ children }) => {
             return
           }
           
+          // KORJAUS 4: Estä päällekkäiset kutsut
+          if (fetchInProgressRef.current) {
+            console.log('[AuthContext] fetchUserProfile already in progress, skipping')
+            return
+          }
+
           try {
+            fetchInProgressRef.current = true
             setLoading(true)
             setProfileLoaded(false)
-            
+
             const timeoutPromise = new Promise((_, reject) =>
               setTimeout(() => reject(new Error('fetchUserProfile timeout')), 8000)
             )
-            
+
             const userWithProfile = await Promise.race([
               fetchUserProfile(session.user),
               timeoutPromise
@@ -227,6 +237,7 @@ export const AuthProvider = ({ children }) => {
             })
             setProfileLoaded(true)
           } finally {
+            fetchInProgressRef.current = false
             setLoading(false)
           }
         } else {

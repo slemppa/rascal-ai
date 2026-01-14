@@ -1766,22 +1766,66 @@ export default function CallPanel() {
   // Kopioi puhelun tyyppi
   const handleCopyCallType = async (type) => {
     try {
-      if (!type?.id) return
-      
-      // Luo kopio alkuperäisestä tyypistä
-      const copyData = {
-        ...type,
-        id: undefined, // Poista ID jotta luodaan uusi
-        label: `${type.label} (Kopio)`,
-        value: `${type.value}_copy_${Date.now()}`, // Uniikki tunniste
-        status: 'Draft', // Aloita luonnoksena
-        created_at: undefined,
-        updated_at: undefined
+      if (!type?.id) {
+        setErrorMessage('Puhelun tyyppiä ei voi kopioida')
+        return
+      }
+
+      if (!user?.id) {
+        setErrorMessage('Käyttäjän tunniste puuttuu!')
+        return
       }
       
-      setNewCallType(copyData)
-      setShowAddModal(true)
-      setSuccessMessage('Puhelun tyyppi kopioitu! Muokkaa tarvittaessa ja tallenna.')
+      // Hae organisaation ID (public.users.id)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) {
+        setErrorMessage('Organisaation ID ei löytynyt!')
+        return
+      }
+
+      // Luo kopio alkuperäisestä tyypistä
+      const insertData = {
+        user_id: orgId, // Käytetään organisaation ID:tä
+        name: `${type.name || type.label || 'Kopio'} (Kopio)`,
+        agent_name: type.agent_name || '',
+        target_audience: type.target_audience || '',
+        identity: type.identity || '',
+        style: type.style || '',
+        guidelines: type.guidelines || '',
+        goals: type.goals || '',
+        first_line: type.first_line || '',
+        intro: type.intro || '',
+        questions: type.questions || '',
+        outro: type.outro || '',
+        notes: type.notes || '',
+        version: type.version || 'v1.0',
+        status: type.status === 'Draft' ? 'Draft' : 'Draft', // Kopio aloitetaan luonnoksena
+        language: type.language || 'fi',
+        summary: type.summary || '',
+        success_assessment: type.success_assessment || '',
+        action: type.action || '',
+        first_sms: type.first_sms || '',
+        after_call_sms: type.after_call_sms || '',
+        missed_call_sms: type.missed_call_sms || ''
+      }
+
+      const { data: newCallTypeData, error } = await supabase
+        .from('call_types')
+        .insert([insertData])
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Error copying call type:', error)
+        setErrorMessage('Puhelun tyypin kopiointi epäonnistui: ' + (error.message || error))
+        return
+      }
+
+      setSuccessMessage('Puhelun tyyppi kopioitu onnistuneesti!')
+      fetchCallTypes() // Päivitä lista
+      
+      // Poista success-viesti 3 sekunnin kuluttua
+      setTimeout(() => setSuccessMessage(''), 3000)
     } catch (e) {
       console.error('Puhelun tyypin kopiointi epäonnistui:', e)
       setErrorMessage('Puhelun tyypin kopiointi epäonnistui: ' + (e.message || e))
@@ -3476,9 +3520,9 @@ export default function CallPanel() {
                                 t('calls.manageTab.item.delete')
                               )}
                             </Button>
+                          </div>
                       <div style={{ color: '#6b7280', fontSize: 14 }}>
                         {t('calls.manageTab.item.edit')}
-                            </div>
                       </div>
                     </div>
                   ))}

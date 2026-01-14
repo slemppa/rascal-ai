@@ -409,16 +409,17 @@ export default function ContentStrategyPage() {
       
       console.log('✅ Strategy approval sent successfully:', response.data)
 
-      // Päivitä myös organisaation status "Approved":ksi
-      const { error: userError } = await supabase
-        .from('users')
-        .update({ 
-          status: 'Approved',
-          strategy_approved_at: new Date().toISOString()
+      // Päivitä myös organisaation status "Approved":ksi API-endpointin kautta (käyttää middlewarea)
+      try {
+        await axios.post('/api/strategy/status', {
+          status: 'Approved'
+        }, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+          }
         })
-        .eq('id', orgId) // Käytetään organisaation ID:tä
-
-      if (userError) {
+      } catch (userError) {
         console.error('Error updating user status:', userError)
         // Ei keskeytetä prosessia tämän takia
       }
@@ -514,16 +515,17 @@ export default function ContentStrategyPage() {
         return
       }
 
-      // Päivitä myös organisaation status "Approved":ksi
-      const { error: userError } = await supabase
-        .from('users')
-        .update({ 
-          status: 'Approved',
-          strategy_approved_at: new Date().toISOString()
+      // Päivitä myös organisaation status "Approved":ksi API-endpointin kautta (käyttää middlewarea)
+      try {
+        await axios.post('/api/strategy/status', {
+          status: 'Approved'
+        }, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+          }
         })
-        .eq('id', orgId) // Käytetään organisaation ID:tä
-
-      if (userError) {
+      } catch (userError) {
         console.error('Error updating user status:', userError)
         // Ei keskeytetä prosessia tämän takia
       }

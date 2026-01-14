@@ -1,7 +1,7 @@
-import { createClient } from '@supabase/supabase-js'
 import formidable from 'formidable'
 import fs from 'fs'
 import { sendToN8N } from '../lib/n8n-client.js'
+import { withOrganization } from '../middleware/with-organization.js'
 
 export const config = {
   api: {
@@ -9,14 +9,22 @@ export const config = {
   },
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  // Lue ympäristömuuttujat handler-funktion sisällä (kuten muissa endpointeissa)
-  const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  // req.organization.id = organisaation ID (public.users.id)
+  // req.organization.role = käyttäjän rooli ('owner', 'admin', 'member')
+  // req.organization.data = organisaation tiedot (public.users rivi)
+  // req.authUser = auth käyttäjä (auth.users)
+  // req.supabase = authenticated Supabase client
+
+  const orgId = req.organization.id
+  const orgData = req.organization.data
+  const authUser = req.authUser
+  const supabase = req.supabase
+
   const n8nUrl = process.env.N8N_TICKETING_URL
 
   // Tarkista että tarvittavat ympäristömuuttujat on asetettu
@@ -28,25 +36,7 @@ export default async function handler(req, res) {
     })
   }
 
-  if (!supabaseAnonKey) {
-    console.error('SUPABASE_ANON_KEY puuttuu ympäristömuuttujista')
-    return res.status(500).json({ 
-      error: 'Palvelinvirhe', 
-      details: 'Supabase konfiguraatio puuttuu' 
-    })
-  }
-
   try {
-    const access_token = req.headers['authorization']?.replace('Bearer ', '')
-    if (!access_token) {
-      return res.status(401).json({ error: 'Unauthorized: access token puuttuu' })
-    }
-
-    // Luo Supabase-yhteys käyttäjän tokenilla
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: `Bearer ${access_token}` } }
-    })
-
     // Parse form data
     const form = formidable({
       maxFileSize: 50 * 1024 * 1024, // 50MB per file
@@ -64,7 +54,6 @@ export default async function handler(req, res) {
     const page = fields.page?.[0]
     const description = fields.description?.[0]
     const userEmail = fields.userEmail?.[0]
-    const companyId = fields.companyId?.[0]
     const timestamp = fields.timestamp?.[0]
     const userAgent = fields.userAgent?.[0]
 
@@ -72,7 +61,7 @@ export default async function handler(req, res) {
       page, 
       description: description?.substring(0, 100) + '...', 
       userEmail, 
-      companyId,
+      orgId,
       hasFiles: Object.keys(files).length > 0
     })
 
@@ -82,32 +71,11 @@ export default async function handler(req, res) {
       })
     }
 
-    // Hae käyttäjän tiedot
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user?.id) {
-      return res.status(401).json({ 
-        error: 'User authentication failed', 
-        details: userError?.message 
-      })
-    }
-
-    // Hae käyttäjän tiedot public.users taulusta
-    const { data: userData, error: userDataError } = await supabase
-      .from('users')
-      .select('id, company_name, contact_email, role, auth_user_id')
-      .eq('auth_user_id', user.id)
-      .single()
-
-    if (userDataError) {
-      console.error('Error fetching user data:', userDataError)
-      // Jatka silti, mutta käytä auth.users tietoja
-    }
-
     console.log('DEBUG - User data:', { 
-      authUserId: user.id, 
-      userEmail: user.email,
-      publicUserId: userData?.id,
-      companyName: userData?.company_name
+      authUserId: authUser.id, 
+      userEmail: authUser.email || userEmail,
+      orgId: orgId,
+      companyName: orgData?.company_name
     })
 
     // Käsittele liitteet
@@ -132,7 +100,7 @@ export default async function handler(req, res) {
           const timestamp = Date.now()
           const randomSuffix = Math.random().toString(36).substr(2, 6)
           const fileName = `${timestamp}_${randomSuffix}.${fileExtension}`
-          const filePath = `${user.id}/tickets/${fileName}`
+          const filePath = `${authUser.id}/tickets/${fileName}`
 
           console.log('DEBUG - Uploading file to temp-ingest:', filePath)
 
@@ -174,15 +142,16 @@ export default async function handler(req, res) {
     }
 
     // Valmistele N8N webhook data
+    // Käytetään req.organization.id (organisaation ID) oikeana organisaation ID:nä
     const ticketData = {
       page,
       description,
-      userEmail: userEmail || 'Unknown',
-      companyId: companyId || 'Unknown',
-      userId: userData?.id || user?.id || 'Unknown', // public.users.id tai auth.users.id
-      authUserId: user?.id || 'Unknown', // auth.users.id
-      companyName: userData?.company_name || 'Unknown',
-      userRole: userData?.role || 'user',
+      userEmail: authUser.email || userEmail || 'Unknown',
+      companyId: orgId, // req.organization.id = organisaation ID (public.users.id)
+      userId: orgId, // Organisaation ID (public.users.id)
+      authUserId: authUser.id, // auth.users.id
+      companyName: orgData?.company_name || 'Unknown',
+      userRole: req.organization.role || 'member', // 'owner', 'admin', 'member'
       timestamp: timestamp || new Date().toISOString(),
       userAgent: userAgent || 'Unknown',
       attachments: attachmentUrls,
@@ -228,3 +197,5 @@ export default async function handler(req, res) {
     })
   }
 }
+
+export default withOrganization(handler)

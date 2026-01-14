@@ -257,12 +257,12 @@ const AddCallTypeModal = ({
 
               <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 24, marginTop: 8 }}>
                 <h3 style={{ fontSize: 16, fontWeight: 600, color: '#1f2937', marginBottom: 16, marginTop: 0 }}>
-                  {t('addCallType.callSettings')}
+                  {t('calls.modals.addCallType.fields.callSettings')}
                 </h3>
                 <div className="form-grid">
                   <div className="form-group">
                     <label className="form-label">
-                      {t('addCallType.responseSpeed')}
+                      {t('calls.modals.addCallType.fields.responseSpeed')}
                     </label>
                     <select
                       value={newCallType.response_speed || '3'}
@@ -276,7 +276,7 @@ const AddCallTypeModal = ({
                   </div>
                   <div className="form-group">
                     <label className="form-label">
-                      {t('addCallType.initialPause')}
+                      {t('calls.modals.addCallType.fields.initialPause')}
                     </label>
                     <select
                       value={newCallType.initial_pause || '2'}
@@ -344,7 +344,7 @@ const AddCallTypeModal = ({
             <div className="form-column" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div className="form-group">
                 <label className="form-label">
-                  Ensimmäinen lause
+                  {t('calls.modals.addCallType.fields.firstSentence')}
                 </label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
                   Ensimmäinen lause sen jälkeen kun asiakas puhuu. Pidä lyhyenä. Esim. "Hei, olen [Agentti], saanko kysyä yhden asian?".
@@ -360,7 +360,7 @@ const AddCallTypeModal = ({
 
               <div className="form-group">
                 <label className="form-label">
-                  Puhelun aloitus
+                  {t('calls.modals.addCallType.fields.callStart')}
                 </label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
                   Miten esittelet asian lyhyesti? Kerro tarkoitus kahdella lauseella ja kysy lupa jatkaa.
@@ -376,7 +376,7 @@ const AddCallTypeModal = ({
 
               <div className="form-group">
                 <label className="form-label">
-                  Kysymykset
+                  {t('calls.modals.addCallType.fields.questions')}
                 </label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
                   Muotoile kysymykset lyhyiksi. Kysy vain yksi asia kerrallaan. Jokaisen jälkeen agentti odottaa vastausta automaattisesti.
@@ -394,7 +394,7 @@ Olisiko oikea henkilö paikalla?`}
 
               <div className="form-group">
                 <label className="form-label">
-                  Puhelun lopetus
+                  {t('calls.modals.addCallType.fields.callEnd')}
                 </label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
                   Lopeta kohteliaasti ja tarjoa seuraava askel (esim. ajan sopiminen tai lisätietojen lähettäminen).
@@ -410,7 +410,7 @@ Olisiko oikea henkilö paikalla?`}
 
               <div className="form-group">
                 <label className="form-label">
-                  Onnistunut lopetus
+                  {t('calls.modals.addCallType.fields.successfulEnd')}
                 </label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
                   Milloin puhelu katsotaan onnistuneeksi? Esim. "kun asiakas ilmaisee kiinnostusta jatkaa keskustelua".
@@ -480,7 +480,7 @@ Olisiko oikea henkilö paikalla?`}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20, alignItems: 'start' }}>
                 <div className="form-group">
                   <label className="form-label">
-                    Yhteenveto (ANALYTIIKKA)
+                    {t('calls.modals.addCallType.fields.summary')}
                   </label>
                   <textarea
                     value={newCallType.summary || ''}
@@ -499,7 +499,7 @@ pyysikö kauppa olemaan vielä yhteydessä"
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20, alignItems: 'start' }}>
                 <div className="form-group">
                   <label className="form-label">
-                    Onnistumisen arviointi (ANALYTIIKKA)
+                    {t('calls.modals.addCallType.fields.successAssessment')}
                   </label>
                   <textarea
                     value={newCallType.success_assessment || ''}

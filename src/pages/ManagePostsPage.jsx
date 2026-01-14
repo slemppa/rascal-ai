@@ -125,6 +125,7 @@ export default function ManagePostsPage() {
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [uploadDragActive, setUploadDragActive] = useState(false)
   const [uploadPreviewUrl, setUploadPreviewUrl] = useState(null)
+  const [uploadLoading, setUploadLoading] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [editingPost, setEditingPost] = useState(null)
   const [showPublishModal, setShowPublishModal] = useState(false)
@@ -1843,67 +1844,62 @@ export default function ManagePostsPage() {
                   const caption = formData.get('caption')
 
                   try {
-                    setLoading(true)
+                    setUploadLoading(true)
                     
-                    // 1. Hae user_id users-taulusta
-                    // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
-                    const userId = await getUserOrgId(user.id)
-                    
-                    if (!userId) {
-                      throw new Error('Käyttäjän ID ei löytynyt')
+                    // Hae session token
+                    const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+                    if (sessionError || !sessionData?.session?.access_token) {
+                      throw new Error('Kirjaudu sisään jatkaaksesi')
                     }
 
-                    // 2. Lataa tiedosto Supabase Storageen
-                    const bucket = 'content-media'
-                    const fileExt = file.name.split('.').pop()
-                    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-                    const filePath = `${userId}/${fileName}`
-
-                    const { error: uploadError } = await supabase.storage
-                      .from(bucket)
-                      .upload(filePath, file, {
-                        cacheControl: '3600',
-                        upsert: false
+                    // Valmistele FormData API-kutsuun
+                    const uploadFormData = new FormData()
+                    // Lähetä tiedosto vain jos se on olemassa (media on valinnainen)
+                    if (file) {
+                      console.log('Upload: File details', {
+                        name: file.name,
+                        type: file.type,
+                        size: file.size
                       })
-
-                    if (uploadError) {
-                      throw new Error(`Upload epäonnistui: ${uploadError.message}`)
+                      // Käytä File-objektin oikeaa nimeä ja type-ominaisuutta
+                      uploadFormData.append('file', file, file.name)
+                      // Lähetä myös MIME-tyyppi erikseen, jotta backend voi käyttää sitä
+                      if (file.type) {
+                        uploadFormData.append('fileType', file.type)
+                        console.log('Upload: Added fileType to FormData:', file.type)
+                      } else {
+                        console.warn('Upload: File.type is missing!', file)
+                      }
                     }
+                    uploadFormData.append('type', type)
+                    if (title) uploadFormData.append('title', title)
+                    if (caption) uploadFormData.append('caption', caption)
 
-                    // 3. Hae julkinen URL
-                    const { data: urlData } = supabase.storage
-                      .from(bucket)
-                      .getPublicUrl(filePath)
+                    // Lähetä backend API:in kautta
+                    const response = await axios.post('/api/content/import-post', uploadFormData, {
+                      headers: {
+                        'Authorization': `Bearer ${sessionData.session.access_token}`,
+                        'Content-Type': 'multipart/form-data'
+                      },
+                      timeout: 60000 // 60s timeout
+                    })
 
-                    const mediaUrl = urlData.publicUrl
-
-                    // 4. Tallenna content-tauluun
-                    const { error: insertError } = await supabase
-                      .from('content')
-                      .insert({
-                        user_id: userId,
-                        type: type,
-                        idea: title || 'Tuotu julkaisu',
-                        caption: caption || '',
-                        media_urls: [mediaUrl],
-                        status: 'In Progress',
-                        is_generated: false,
-                        created_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString()
-                      })
-
-                    if (insertError) {
-                      throw new Error(`Tallennus epäonnistui: ${insertError.message}`)
+                    if (response.data.success) {
+                      setShowUploadModal(false)
+                      setUploadPreviewUrl(null) // Tyhjennä preview
+                      toast.success('Julkaisu tuotu onnistuneesti!')
+                      await fetchPosts() // Päivitä lista
+                    } else {
+                      throw new Error(response.data.error || 'Julkaisun tuonti epäonnistui')
                     }
-
-                    setShowUploadModal(false)
-                    setSuccessMessage('Julkaisu tuotu onnistuneesti!')
-                    await fetchPosts() // Päivitä lista
                   } catch (error) {
                     console.error('Upload error:', error)
-                    setErrorMessage(error.message || 'Julkaisun tuonti epäonnistui')
+                    console.error('Error response:', error.response?.data)
+                    const errorMessage = error.response?.data?.error || error.response?.data?.details || error.message || 'Julkaisun tuonti epäonnistui'
+                    toast.error(errorMessage)
+                    setErrorMessage(errorMessage)
                   } finally {
-                    setLoading(false)
+                    setUploadLoading(false)
                   }
                 }}
               >
@@ -2003,7 +1999,6 @@ export default function ManagePostsPage() {
                     ref={fileInputRef}
                     name="file"
                     type="file"
-                    required
                     accept="image/*,video/*"
                     className="file-input-hidden"
                     onChange={(e) => {
@@ -2052,8 +2047,9 @@ export default function ManagePostsPage() {
                     <Button
                       type="submit"
                       variant="primary"
+                      disabled={uploadLoading}
                     >
-                      Tuo julkaisu
+                      {uploadLoading ? 'Tuodaan...' : 'Tuo julkaisu'}
                     </Button>
                   </div>
                 </div>

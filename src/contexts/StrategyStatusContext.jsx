@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from './AuthContext'
 import { supabase } from '../lib/supabase'
-import { getUserOrgId } from '../lib/getUserOrgId'
+import axios from 'axios'
 
 const StrategyStatusContext = createContext({})
 
@@ -47,68 +47,66 @@ export const StrategyStatusProvider = ({ children }) => {
     })
   }
 
-  // Hae käyttäjän status
+  // Hae käyttäjän status API-endpointin kautta (käyttää middlewarea)
   const fetchUserStatus = async () => {
     if (!user?.id) {
       return
     }
 
     try {
-      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
-      const userId = await getUserOrgId(user.id)
-      
-      if (!userId) {
-        console.error('StrategyStatus: User ID not found')
+      // Hae access token
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        console.error('StrategyStatus: No access token')
         return
       }
 
-      // Hae status suoraan Supabasesta organisaation ID:llä
-      const { data: userRecord, error: userError } = await supabase
-        .from('users')
-        .select('status, strategy_approved_at')
-        .eq('id', userId)
-        .single()
-
-      if (userError) {
-        console.error('StrategyStatus: Error fetching user status:', userError)
-        return
-      }
-
-      const status = userRecord?.status
-      setUserStatus(status)
-      
-      console.log('🔍 StrategyStatus: Status check', {
-        status: status,
-        isBlockedPage: isOnBlockedPage(),
-        pathname: location.pathname,
-        shouldShowModal: status === 'Pending' && !isOnBlockedPage()
+      // Käytä API-endpointtia joka käyttää withOrganization middlewarea
+      const response = await axios.get('/api/strategy/status', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
       })
-      
-      // Tarkista onko modaali minimoitu localStorageen (käytä auth_user_id:ta)
-      const skipped = localStorage.getItem(`strategy_modal_skipped_${user.id}`)
-      if (skipped === 'true') {
-        console.log('⏸️ StrategyStatus: Modal on minimoitu, ei avata')
-        // Älä avaa modaalia jos se on minimoitu
-        return
-      }
-      
-      // Näytä modal jos status on Pending JA emme ole blacklist-sivulla
-      if (status === 'Pending' && !isOnBlockedPage()) {
-        console.log('✅ StrategyStatus: Opening modal')
-        setShowStrategyModal(true)
-        // FORCE: Dispatch custom event DOM:iin
-        setTimeout(() => {
-          const event = new CustomEvent('strategy-modal-should-open', { detail: { reason: 'status-pending' } })
-          window.dispatchEvent(event)
-        }, 100)
-      } else {
-        console.log('❌ StrategyStatus: NOT opening modal', {
+
+      if (response.status === 200 && response.data) {
+        const status = response.data.status
+        setUserStatus(status)
+        
+        console.log('🔍 StrategyStatus: Status check', {
           status: status,
-          isBlocked: isOnBlockedPage()
+          isBlockedPage: isOnBlockedPage(),
+          pathname: location.pathname,
+          shouldShowModal: status === 'Pending' && !isOnBlockedPage()
         })
+        
+        // Tarkista onko modaali minimoitu localStorageen (käytä auth_user_id:ta)
+        const skipped = localStorage.getItem(`strategy_modal_skipped_${user.id}`)
+        if (skipped === 'true') {
+          console.log('⏸️ StrategyStatus: Modal on minimoitu, ei avata')
+          // Älä avaa modaalia jos se on minimoitu
+          return
+        }
+        
+        // Näytä modal jos status on Pending JA emme ole blacklist-sivulla
+        if (status === 'Pending' && !isOnBlockedPage()) {
+          console.log('✅ StrategyStatus: Opening modal')
+          setShowStrategyModal(true)
+          // FORCE: Dispatch custom event DOM:iin
+          setTimeout(() => {
+            const event = new CustomEvent('strategy-modal-should-open', { detail: { reason: 'status-pending' } })
+            window.dispatchEvent(event)
+          }, 100)
+        } else {
+          console.log('❌ StrategyStatus: NOT opening modal', {
+            status: status,
+            isBlocked: isOnBlockedPage()
+          })
+        }
       }
     } catch (error) {
       console.error('StrategyStatus: Error fetching user status:', error)
+      // Älä näytä virhettä käyttäjälle, koska tämä on taustaprosessi
     }
   }
 
@@ -174,41 +172,68 @@ export const StrategyStatusProvider = ({ children }) => {
   }, [user?.id, location.pathname])
 
   // Kuuntele realtime-päivityksiä user statukseen
+  // HUOM: Realtime vaatii edelleen userId:n, mutta käytetään API-endpointtia
+  // saamaan oikea ID middlewarea käyttäen
   useEffect(() => {
     if (!user?.id) return
 
     let channel = null
 
-    // Hae organisaation ID asynkronisesti ja luo subscription
+    // Hae organisaation ID API-endpointin kautta (käyttää middlewarea)
     const setupRealtime = async () => {
-      const userId = await getUserOrgId(user.id)
-      if (!userId) return
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session?.access_token) return
 
-      // Luo Supabase realtime channel
-      channel = supabase
-        .channel('user-status-changes')
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'users',
-            filter: `id=eq.${userId}`
-          },
-          (payload) => {
-            const newStatus = payload.new?.status
-            
-            if (newStatus) {
-              setUserStatus(newStatus)
-              
-              // Näytä modal jos status muuttui Pending:ksi JA emme ole blacklist-sivulla
-              if (newStatus === 'Pending' && !isOnBlockedPage()) {
-                setShowStrategyModal(true)
-              }
-            }
+        // Hae status API:sta saadaksemme oikean userId:n middlewarea käyttäen
+        const response = await axios.get('/api/strategy/status', {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
           }
-        )
-        .subscribe()
+        })
+
+        if (response.status === 200 && response.data) {
+          // Hae userId käyttäen API/users/me endpointtia joka palauttaa oikean ID:n
+          const meResponse = await axios.get('/api/users/me', {
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+              'Content-Type': 'application/json'
+            }
+          })
+
+          const userId = meResponse.data?.id
+          if (!userId) return
+
+          // Luo Supabase realtime channel
+          channel = supabase
+            .channel('user-status-changes')
+            .on(
+              'postgres_changes',
+              {
+                event: 'UPDATE',
+                schema: 'public',
+                table: 'users',
+                filter: `id=eq.${userId}`
+              },
+              (payload) => {
+                const newStatus = payload.new?.status
+                
+                if (newStatus) {
+                  setUserStatus(newStatus)
+                  
+                  // Näytä modal jos status muuttui Pending:ksi JA emme ole blacklist-sivulla
+                  if (newStatus === 'Pending' && !isOnBlockedPage()) {
+                    setShowStrategyModal(true)
+                  }
+                }
+              }
+            )
+            .subscribe()
+        }
+      } catch (error) {
+        console.error('StrategyStatus: Error setting up realtime:', error)
+      }
     }
 
     setupRealtime()

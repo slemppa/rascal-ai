@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.113.1](https://github.com/slemppa/rascal-ai/compare/v1.113.0...v1.113.1) (2026-01-14)
+
+
+### 🐛 Bug Fixes
+
+* korjaa käännösavaimet ja poista placeholder ([2258ddd](https://github.com/slemppa/rascal-ai/commit/2258dddc6c93dd9f3db46437d272a7d53190d09a))
+
 ## [1.113.0](https://github.com/slemppa/rascal-ai/compare/v1.112.2...v1.113.0) (2026-01-14)
 
 

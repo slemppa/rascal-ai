@@ -328,9 +328,10 @@ export default function SettingsPage() {
   }, [searchParams, setSearchParams, user?.id]);
 
   // Käyttäjätiedot public.users taulusta
-  // Kutsutut käyttäjät näkevät vain henkilökohtaiset tiedot (sähköposti)
+  // Kutsutut käyttäjät (member-rooli) näkevät vain henkilökohtaiset tiedot (sähköposti)
   // Organisaation tiedot näytetään erikseen
-  const isInvitedUser = organization && organization.role !== "owner";
+  // Owner ja admin näkevät kaikki tiedot ja voivat muokata tilejä
+  const isInvitedUser = organization && organization.role === "member";
   const email = isInvitedUser
     ? user?.email || null
     : userProfile?.contact_email || user?.email || null;

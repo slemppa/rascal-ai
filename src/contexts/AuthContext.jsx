@@ -46,6 +46,7 @@ export const AuthProvider = ({ children }) => {
 
       // OPTIMOINTI: Hae käyttäjäprofiili ja organisaatiojäsenyys RINNAKKAIN
       console.time('[AuthContext] Promise.all (users + org_members)')
+      const queryStartTime = Date.now()
       const [userResult, orgMemberResult] = await Promise.all([
         supabase
           .from('users')
@@ -58,7 +59,21 @@ export const AuthProvider = ({ children }) => {
           .eq('auth_user_id', sessionUser.id)
           .maybeSingle()
       ])
+      const queryDuration = Date.now() - queryStartTime
       console.timeEnd('[AuthContext] Promise.all (users + org_members)')
+      
+      // Varoitus jos kysely kestää yli 3 sekuntia
+      if (queryDuration > 3000) {
+        console.warn(`[AuthContext] Users/org_members query took ${queryDuration}ms (slow query)`)
+      }
+      
+      // Tarkista virheet
+      if (userResult.error) {
+        console.error('[AuthContext] Error fetching user data:', userResult.error)
+      }
+      if (orgMemberResult.error && orgMemberResult.error.code !== 'PGRST116') {
+        console.error('[AuthContext] Error fetching org_members:', orgMemberResult.error)
+      }
 
       const userData = userResult.data
       const orgMember = orgMemberResult.data
@@ -85,12 +100,23 @@ export const AuthProvider = ({ children }) => {
       // Jos käyttäjällä on organisaatiojäsenyys, hae organisaation tiedot
       if (orgMember) {
         console.time('[AuthContext] Fetch org data')
-        const { data: org } = await supabase
+        const orgQueryStartTime = Date.now()
+        const { data: org, error: orgError } = await supabase
           .from('users')
           .select('*')
           .eq('id', orgMember.org_id)
           .single()
+        const orgQueryDuration = Date.now() - orgQueryStartTime
         console.timeEnd('[AuthContext] Fetch org data')
+        
+        // Varoitus jos kysely kestää yli 2 sekuntia
+        if (orgQueryDuration > 2000) {
+          console.warn(`[AuthContext] Org data query took ${orgQueryDuration}ms (slow query)`)
+        }
+        
+        if (orgError) {
+          console.error('[AuthContext] Error fetching org data:', orgError)
+        }
 
         if (org) {
           organizationRole = orgMember.role
@@ -205,28 +231,47 @@ export const AuthProvider = ({ children }) => {
             setLoading(true)
             setProfileLoaded(false)
 
-            const timeoutPromise = new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('fetchUserProfile timeout')), 8000)
-            )
+            // Kasvatettu timeout 15 sekuntiin (aikaisemmin 8s) - antaa enemmän aikaa hitaalle yhteyselle
+            const TIMEOUT_MS = 15000
+            let timeoutId = null
+            const timeoutPromise = new Promise((_, reject) => {
+              timeoutId = setTimeout(() => {
+                reject(new Error(`fetchUserProfile timeout after ${TIMEOUT_MS}ms`))
+              }, TIMEOUT_MS)
+            })
 
-            const userWithProfile = await Promise.race([
-              fetchUserProfile(session.user),
-              timeoutPromise
-            ])
-            
-            if (userWithProfile) {
-              setUser(userWithProfile)
-            } else {
-              setUser({
-                ...session.user,
-                systemRole: 'user',
-                features: DEFAULT_FEATURES,
-                organizationId: null,
-                organizationRole: null
-              })
+            try {
+              const userWithProfile = await Promise.race([
+                fetchUserProfile(session.user),
+                timeoutPromise
+              ])
+              
+              // Peruuta timeout jos kysely onnistui ajoissa
+              if (timeoutId) clearTimeout(timeoutId)
+              
+              if (userWithProfile) {
+                setUser(userWithProfile)
+              } else {
+                setUser({
+                  ...session.user,
+                  systemRole: 'user',
+                  features: DEFAULT_FEATURES,
+                  organizationId: null,
+                  organizationRole: null
+                })
+              }
+            } catch (raceError) {
+              // Peruuta timeout jos virhe tapahtui
+              if (timeoutId) clearTimeout(timeoutId)
+              throw raceError
             }
           } catch (error) {
-            console.error('Error in fetchUserProfile:', error)
+            // Timeout-virheet loggataan varoituksena, muut virheet normaalisti
+            if (error.message && error.message.includes('timeout')) {
+              console.warn('[AuthContext] fetchUserProfile timeout - käytetään oletusarvoja')
+            } else {
+              console.error('[AuthContext] Error in fetchUserProfile:', error)
+            }
             setUser({
               ...session.user,
               systemRole: 'user',

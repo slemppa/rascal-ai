@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.112.2](https://github.com/slemppa/rascal-ai/compare/v1.112.1...v1.112.2) (2026-01-14)
+
+
+### 🐛 Bug Fixes
+
+* lisää Authorization header onboarding webhook-kutsuun ([3494022](https://github.com/slemppa/rascal-ai/commit/349402251c02137e5b9b0be616a3c68a15c427a8))
+
 ### [1.112.1](https://github.com/slemppa/rascal-ai/compare/v1.112.0...v1.112.1) (2026-01-14)
 
 

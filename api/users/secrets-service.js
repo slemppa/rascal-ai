@@ -2,17 +2,6 @@ import { createClient } from '@supabase/supabase-js'
 import logger from '../_lib/logger.js'
 import { decrypt } from '../_lib/crypto.js'
 
-const supabaseUrl = process.env.SUPABASE_URL 
-  || process.env.NEXT_PUBLIC_SUPABASE_URL 
-  || process.env.NEXT_PUBLIC_SUPABASE_URL
-
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-if (!supabaseUrl || !supabaseServiceKey) {
-  logger.error('❌ Missing Supabase envs in user-secrets-service')
-  throw new Error('Missing Supabase environment variables')
-}
-
 // Salausavain ympäristömuuttujasta (käytetään vain Node.js-kerroksessa)
 const ENCRYPTION_KEY = process.env.USER_SECRETS_ENCRYPTION_KEY
 
@@ -20,8 +9,22 @@ if (!ENCRYPTION_KEY) {
   logger.warn('⚠️ USER_SECRETS_ENCRYPTION_KEY not set. Decryption will fail.')
 }
 
-// Service role client
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+function getSupabaseAdmin(res) {
+  const supabaseUrl =
+    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    logger.error('❌ Missing Supabase envs in user-secrets-service')
+    res.status(500).json({
+      error: 'Supabase asetukset puuttuvat',
+      hint: 'Tarkista SUPABASE_URL ja SUPABASE_SERVICE_ROLE_KEY Vercelistä'
+    })
+    return null
+  }
+
+  return createClient(supabaseUrl, supabaseServiceKey)
+}
 
 /**
  * GET /api/users/secrets-service
@@ -133,6 +136,9 @@ export default async function handler(req, res) {
   }
 
   try {
+    const supabaseAdmin = getSupabaseAdmin(res)
+    if (!supabaseAdmin) return
+
     logger.info('🔍 Service request for secret', { 
       secret_type, 
       secret_name, 

@@ -4,16 +4,6 @@ import { sendToN8N } from '../_lib/n8n-client.js'
 import logger from '../_lib/logger.js'
 import { encrypt, decrypt } from '../_lib/crypto.js'
 
-const supabaseUrl = process.env.SUPABASE_URL 
-  || process.env.NEXT_PUBLIC_SUPABASE_URL
-
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-if (!supabaseUrl || !supabaseServiceKey) {
-  logger.error('❌ Missing Supabase envs in user-secrets')
-  throw new Error('Missing Supabase environment variables')
-}
-
 // Salausavain ympäristömuuttujasta (käytetään vain Node.js-kerroksessa)
 // HUOM: Tämä pitää asettaa Vercelin ympäristömuuttujaksi
 const ENCRYPTION_KEY = process.env.USER_SECRETS_ENCRYPTION_KEY
@@ -22,8 +12,21 @@ if (!ENCRYPTION_KEY) {
   logger.warn('⚠️ USER_SECRETS_ENCRYPTION_KEY not set. Encryption/decryption will fail.')
 }
 
-// Service role client salausavaimen hallintaan
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+function getSupabaseAdmin(res) {
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    logger.error('❌ Missing Supabase envs in user-secrets')
+    res.status(500).json({
+      error: 'Supabase asetukset puuttuvat',
+      hint: 'Tarkista SUPABASE_URL ja SUPABASE_SERVICE_ROLE_KEY Vercelistä'
+    })
+    return null
+  }
+
+  return createClient(supabaseUrl, supabaseServiceKey)
+}
 
 /**
  * GET /api/user-secrets
@@ -83,6 +86,9 @@ async function handleGetDecrypt(req, res) {
   }
 
   try {
+    const supabaseAdmin = getSupabaseAdmin(res)
+    if (!supabaseAdmin) return
+
     // Hae käyttäjän organisaatio
     const orgId = req.organization?.id
     if (!orgId) {
@@ -163,6 +169,9 @@ async function handlePost(req, res) {
   }
 
   try {
+    const supabaseAdmin = getSupabaseAdmin(res)
+    if (!supabaseAdmin) return
+
     // Hae käyttäjän organisaatio
     const orgId = req.organization?.id
     if (!orgId) {
@@ -544,6 +553,9 @@ async function handleGetDecryptedService(req, res) {
   }
 
   try {
+    const supabaseAdmin = getSupabaseAdmin(res)
+    if (!supabaseAdmin) return
+
     // Haetaan salattu arvo suoraan taulusta
     // Tarkista ensin secret_value (uusissa tietueissa), sitten encrypted_value (vanhat pgcrypto-tietueet)
     const { data, error } = await supabaseAdmin

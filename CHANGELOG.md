@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.113.2](https://github.com/slemppa/rascal-ai/compare/v1.113.1...v1.113.2) (2026-01-15)
+
+
+### 🐛 Bug Fixes
+
+* siivoa kovakoodatut UI-tekstit i18n-avaimiksi ([94eb70a](https://github.com/slemppa/rascal-ai/commit/94eb70acad3973e969745f5344daf956d7b54d58))
+
+
+### ✨ Features
+
+* **calls:** lisää tietokanta-modaali ja knowledge base -endpointit ([ea9006f](https://github.com/slemppa/rascal-ai/commit/ea9006f2b2d93cd2e24a92b3768524ef08a526c2))
+
 ### [1.113.1](https://github.com/slemppa/rascal-ai/compare/v1.113.0...v1.113.1) (2026-01-14)
 
 

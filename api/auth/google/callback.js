@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import axios from 'axios'
-import logger from '../lib/logger.js'
+import logger from '../_lib/logger.js'
 
 function escapeHtml(str) {
   if (!str) return ''

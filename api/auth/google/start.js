@@ -1,4 +1,4 @@
-import { withOrganization } from '../../middleware/with-organization.js'
+import { withOrganization } from '../../_middleware/with-organization.js'
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
 

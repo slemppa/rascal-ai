@@ -1,4 +1,4 @@
-import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+import { setCorsHeaders, handlePreflight } from '../_lib/cors.js'
 
 export default async function handler(req, res) {
   // CORS headers

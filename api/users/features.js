@@ -1,7 +1,7 @@
 // GET /api/user-features
 // Palauttaa { features: string[] } kirjautuneelle käyttäjälle
-import { withOrganization } from '../middleware/with-organization.js'
-import logger from '../lib/logger.js'
+import { withOrganization } from '../_middleware/with-organization.js'
+import logger from '../_lib/logger.js'
 
 async function handler(req, res) {
   if (req.method !== 'GET') {

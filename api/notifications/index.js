@@ -1,5 +1,5 @@
-import { withOrganization } from '../middleware/with-organization.js'
-import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+import { withOrganization } from '../_middleware/with-organization.js'
+import { setCorsHeaders, handlePreflight } from '../_lib/cors.js'
 
 async function handler(req, res) {
   // CORS headers

@@ -1,6 +1,6 @@
-import { withOrganization } from '../middleware/with-organization.js'
-import { sendToN8N } from '../lib/n8n-client.js'
-import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+import { withOrganization } from '../_middleware/with-organization.js'
+import { sendToN8N } from '../_lib/n8n-client.js'
+import { setCorsHeaders, handlePreflight } from '../_lib/cors.js'
 
 /**
  * POST /api/personal-images/upload

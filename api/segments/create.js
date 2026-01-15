@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import logger from '../lib/logger.js'
+import logger from '../_lib/logger.js'
 
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -9,7 +9,7 @@ const serviceClient = (supabaseUrl && supabaseServiceKey)
   ? createClient(supabaseUrl, supabaseServiceKey)
   : null
 
-import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+import { setCorsHeaders, handlePreflight } from '../_lib/cors.js'
 
 export default async function handler(req, res) {
   setCorsHeaders(res, ['POST', 'OPTIONS'])

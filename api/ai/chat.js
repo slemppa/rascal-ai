@@ -1,5 +1,5 @@
-import { withOrganization } from '../middleware/with-organization.js'
-import { sendToN8N } from '../lib/n8n-client.js'
+import { withOrganization } from '../_middleware/with-organization.js'
+import { sendToN8N } from '../_lib/n8n-client.js'
 
 // Yksinkertainen in-memory duplikaattisuojus viesteille
 // Säilytetään viimeisimmät clientMessageId:t lyhyen aikaa

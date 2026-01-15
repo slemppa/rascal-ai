@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
-import logger from '../lib/logger.js'
-import { sendToN8N } from '../lib/n8n-client.js'
+import logger from '../_lib/logger.js'
+import { sendToN8N } from '../_lib/n8n-client.js'
 
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY

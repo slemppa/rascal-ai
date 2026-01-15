@@ -35,48 +35,11 @@ export default function TestN8NPage() {
   }, [])
 
   const handleTest = async () => {
-    if (!token) {
-      setError('Token puuttuu. Kirjaudu uudelleen sisään.')
-      return
-    }
-
-    setLoading(true)
-    setError(null)
     setResponse(null)
-
-    try {
-      let parsedData
-      try {
-        parsedData = JSON.parse(testData)
-      } catch (e) {
-        setError('Virheellinen JSON: ' + e.message)
-        setLoading(false)
-        return
-      }
-
-      const response = await fetch('/api/test/n8n', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          data: parsedData
-        })
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        setError(`HTTP ${response.status}: ${JSON.stringify(data, null, 2)}`)
-      } else {
-        setResponse(data)
-      }
-    } catch (err) {
-      setError('Virhe: ' + err.message)
-    } finally {
-      setLoading(false)
-    }
+    setError(
+      'Test-endpointit on piilotettu (api/_test) eikä niitä julkaista Verceliin. ' +
+      'Käytä varsinaisia /api -endpointeja tai aja testit omassa dev-ympäristössä.'
+    )
   }
 
   const copyToken = () => {
@@ -169,20 +132,20 @@ export default function TestN8NPage() {
       {/* Send button */}
       <button 
         onClick={handleTest}
-        disabled={!token || loading}
+        disabled={true}
         style={{
           padding: '0.75rem 1.5rem',
           fontSize: '16px',
-          background: token && !loading ? '#007bff' : '#6c757d',
+          background: '#6c757d',
           color: 'white',
           border: 'none',
           borderRadius: '4px',
-          cursor: token && !loading ? 'pointer' : 'not-allowed',
+          cursor: 'not-allowed',
           fontWeight: 'bold',
           marginBottom: '1.5rem'
         }}
       >
-        {loading ? t('test.buttons.sending') : t('test.buttons.sendPostRequest')}
+        Test-endpoint poistettu käytöstä
       </button>
 
       {/* Response display */}
@@ -219,7 +182,11 @@ export default function TestN8NPage() {
           fontSize: '12px',
           margin: 0
         }}>
-{`curl -X POST http://localhost:3000/api/test/n8n \\
+{`# HUOM: /api/test/* on poistettu käytöstä (api/_test ei reitity Vercelissä)
+# Käytä oikeaa endpointia tai aja dev/testit paikallisesti.
+#
+# Esimerkki (korvaa oikealla endpointilla):
+# curl -X POST http://localhost:3000/api/<endpoint> \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer ${token ? token.substring(0, 50) + '...' : 'YOUR_TOKEN_HERE'}" \\
   -d '{

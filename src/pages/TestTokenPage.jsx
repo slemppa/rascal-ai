@@ -91,7 +91,11 @@ export default function TestTokenPage() {
               borderRadius: '4px',
               overflow: 'auto'
             }}>
-{`curl -X POST http://localhost:3000/api/test/n8n \\
+{`# HUOM: /api/test/* on poistettu käytöstä (api/_test ei reitity Vercelissä)
+# Käytä oikeaa endpointia tai aja dev/testit paikallisesti.
+#
+# Esimerkki (korvaa oikealla endpointilla):
+# curl -X POST http://localhost:3000/api/<endpoint> \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer ${token.substring(0, 50)}..." \\
   -d '{

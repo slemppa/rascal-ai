@@ -1,7 +1,7 @@
 import formidable from 'formidable'
 import fs from 'fs'
-import { withOrganization } from '../../middleware/with-organization.js'
-import { generateHmacSignature } from '../../lib/crypto.js'
+import { withOrganization } from '../../_middleware/with-organization.js'
+import { generateHmacSignature } from '../../_lib/crypto.js'
 
 export const config = {
   api: { bodyParser: false },

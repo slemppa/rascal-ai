@@ -1,8 +1,8 @@
-import { sendToN8N } from '../../lib/n8n-client.js'
+import { sendToN8N } from '../../_lib/n8n-client.js'
 import formidable from 'formidable'
 import { put } from '@vercel/blob'
 import { readFile } from 'fs/promises'
-import { setCorsHeaders, handlePreflight } from '../../lib/cors.js'
+import { setCorsHeaders, handlePreflight } from '../../_lib/cors.js'
 
 export const config = {
 	api: {

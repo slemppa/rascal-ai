@@ -1,7 +1,7 @@
 import formidable from 'formidable'
 import fs from 'fs'
-import { sendToN8N } from '../lib/n8n-client.js'
-import { withOrganization } from '../middleware/with-organization.js'
+import { sendToN8N } from '../_lib/n8n-client.js'
+import { withOrganization } from '../_middleware/with-organization.js'
 
 export const config = {
   api: {

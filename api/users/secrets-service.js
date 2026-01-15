@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
-import logger from '../lib/logger.js'
-import { decrypt } from '../lib/crypto.js'
+import logger from '../_lib/logger.js'
+import { decrypt } from '../_lib/crypto.js'
 
 const supabaseUrl = process.env.SUPABASE_URL 
   || process.env.NEXT_PUBLIC_SUPABASE_URL 

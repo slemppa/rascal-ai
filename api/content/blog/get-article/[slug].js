@@ -11,7 +11,7 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 const supabase = createClient(supabaseUrl, supabaseKey)
 
-import { setCorsHeaders, handlePreflight } from '../../../lib/cors.js'
+import { setCorsHeaders, handlePreflight } from '../../../_lib/cors.js'
 
 export default async function handler(req, res) {
 	setCorsHeaders(res, ['GET', 'OPTIONS'], ['Content-Type', 'Authorization'])

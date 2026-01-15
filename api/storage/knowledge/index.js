@@ -1,7 +1,7 @@
 import formidable from 'formidable'
 import fs from 'fs'
 import { put } from '@vercel/blob'
-import { sendToN8N } from '../../lib/n8n-client.js'
+import { sendToN8N } from '../../_lib/n8n-client.js'
 
 export const config = {
   api: {

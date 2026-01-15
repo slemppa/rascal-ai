@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+import { setCorsHeaders, handlePreflight } from '../_lib/cors.js'
 
 // GET /api/dashboard-calls-heatmap?days=30
 // Palauttaa 7x24 lämpökartan: { day (0-6, Ma=1...), hour (0-23), total, success }

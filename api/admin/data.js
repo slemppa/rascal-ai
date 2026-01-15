@@ -1,7 +1,7 @@
 // api/admin-data.js - Admin endpoint kaikille admin-tarpeille
-import { withOrganization } from '../middleware/with-organization.js'
+import { withOrganization } from '../_middleware/with-organization.js'
 import { createClient } from '@supabase/supabase-js'
-import logger from '../lib/logger.js'
+import logger from '../_lib/logger.js'
 
 // Service role -clienti, jotta RLS ei rajoita admin-kyselyitä (esim. integraatiot)
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL

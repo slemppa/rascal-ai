@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+import { setCorsHeaders, handlePreflight } from '../_lib/cors.js'
 
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY

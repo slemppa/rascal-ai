@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+import { setCorsHeaders, handlePreflight } from '../_lib/cors.js'
 
 // GET /api/dashboard-calls-scatter?days=30
 // Palauttaa pisteitä: { label, avgDurationSec, successRate, count }

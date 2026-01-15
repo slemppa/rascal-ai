@@ -3,7 +3,7 @@
 // ja lisää organisaatiotiedot request-objektiin
 
 import { createClient } from '@supabase/supabase-js'
-import logger from '../lib/logger.js'
+import logger from '../_lib/logger.js'
 
 export function withOrganization(handler) {
   return async (req, res) => {
@@ -29,8 +29,14 @@ export function withOrganization(handler) {
       }
 
       // 2. Luo Supabase client käyttäjän tokenilla (RLS käytössä)
-      const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
-      const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      const supabaseUrl =
+        process.env.SUPABASE_URL ||
+        process.env.NEXT_PUBLIC_SUPABASE_URL ||
+        process.env.VITE_SUPABASE_URL
+      const supabaseAnonKey =
+        process.env.SUPABASE_ANON_KEY ||
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_ANON_KEY
       
       if (!supabaseUrl) {
         logger.error('Supabase URL missing')

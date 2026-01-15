@@ -1,6 +1,6 @@
 // api/campaigns-call-stats.js - Call logs tilastot campaigns-sivua varten
 import { createClient } from '@supabase/supabase-js'
-import logger from '../lib/logger.js'
+import logger from '../_lib/logger.js'
 
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY

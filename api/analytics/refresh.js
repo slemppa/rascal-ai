@@ -1,4 +1,4 @@
-import cacheManager from '../lib/cache.js'
+import cacheManager from '../_lib/cache.js'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {

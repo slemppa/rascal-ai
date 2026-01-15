@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import { supabase } from '../lib/supabase'
 import { DEFAULT_FEATURES } from '../constants/posts'
 
@@ -32,113 +33,41 @@ export const AuthProvider = ({ children }) => {
     userRef.current = user
   }, [user])
 
-  const fetchUserProfile = useCallback(async (sessionUser) => {
-    if (!sessionUser) {
-      console.error('fetchUserProfile called without sessionUser')
+  const fetchUserProfile = useCallback(async (session) => {
+    if (!session?.access_token || !session?.user) {
+      console.error('fetchUserProfile called without session')
       return null
     }
 
     const defaultFeatures = DEFAULT_FEATURES
 
     try {
-      console.log('[AuthContext] Fetching user profile for:', sessionUser.email)
+      console.log('[AuthContext] Fetching user profile for:', session.user.email)
       console.time('[AuthContext] Total fetchUserProfile')
 
-      // OPTIMOINTI: Hae käyttäjäprofiili ja organisaatiojäsenyys RINNAKKAIN
-      console.time('[AuthContext] Promise.all (users + org_members)')
-      const queryStartTime = Date.now()
-      const [userResult, orgMemberResult] = await Promise.all([
-        supabase
-          .from('users')
-          .select('*')
-          .eq('auth_user_id', sessionUser.id)
-          .maybeSingle(),
-        supabase
-          .from('org_members')
-          .select('org_id, role')
-          .eq('auth_user_id', sessionUser.id)
-          .maybeSingle()
-      ])
-      const queryDuration = Date.now() - queryStartTime
-      console.timeEnd('[AuthContext] Promise.all (users + org_members)')
-      
-      // Varoitus jos kysely kestää yli 3 sekuntia
-      if (queryDuration > 3000) {
-        console.warn(`[AuthContext] Users/org_members query took ${queryDuration}ms (slow query)`)
-      }
-      
-      // Tarkista virheet
-      if (userResult.error) {
-        console.error('[AuthContext] Error fetching user data:', userResult.error)
-      }
-      if (orgMemberResult.error && orgMemberResult.error.code !== 'PGRST116') {
-        console.error('[AuthContext] Error fetching org_members:', orgMemberResult.error)
-      }
+      const response = await axios.get('/api/users/me', {
+        headers: { Authorization: `Bearer ${session.access_token}` }
+      })
 
-      const userData = userResult.data
-      const orgMember = orgMemberResult.data
+      const apiUser = response.data || {}
 
-      let systemRole = userData?.role || 'user'
-      let company_id = userData?.company_id || null
-      let features = Array.isArray(userData?.features) && userData.features.length > 0
-        ? userData.features
+      const systemRole = apiUser.role || 'user'
+      const company_id = apiUser.company_id ?? null
+      const features = Array.isArray(apiUser.features) && apiUser.features.length > 0
+        ? apiUser.features
         : defaultFeatures
 
-      let organizationRole = null
-      let organizationId = null
-      let organizationData = null
+      const organizationRole = apiUser.organization_role ?? null
+      const organizationId = apiUser.organization_id ?? null
 
-      // Jos käyttäjä on admin/moderator, käytä omia tietoja organisaationa
-      if (userData && (userData.role === 'admin' || userData.role === 'moderator')) {
-        organizationData = {
-          id: userData.id,
-          role: userData.role,
-          data: userData
-        }
-      }
-
-      // Jos käyttäjällä on organisaatiojäsenyys, hae organisaation tiedot
-      if (orgMember) {
-        console.time('[AuthContext] Fetch org data')
-        const orgQueryStartTime = Date.now()
-        const { data: org, error: orgError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', orgMember.org_id)
-          .single()
-        const orgQueryDuration = Date.now() - orgQueryStartTime
-        console.timeEnd('[AuthContext] Fetch org data')
-        
-        // Varoitus jos kysely kestää yli 2 sekuntia
-        if (orgQueryDuration > 2000) {
-          console.warn(`[AuthContext] Org data query took ${orgQueryDuration}ms (slow query)`)
-        }
-        
-        if (orgError) {
-          console.error('[AuthContext] Error fetching org data:', orgError)
-        }
-
-        if (org) {
-          organizationRole = orgMember.role
-          organizationId = orgMember.org_id
-          organizationData = {
-            id: orgMember.org_id,
-            role: orgMember.role,
-            data: org
-          }
-
-          // Käytä organisaation featureja jos ei admin/moderator
-          if (systemRole !== 'admin' && systemRole !== 'moderator') {
-            features = Array.isArray(org.features) && org.features.length > 0
-              ? org.features
-              : defaultFeatures
-          }
-        }
-      }
-
-      // Aseta organisaatio KERRAN (ei kaksoispäivitystä)
-      if (organizationData) {
-        setOrganization(organizationData)
+      if (apiUser.organization) {
+        setOrganization(apiUser.organization)
+      } else if (organizationId) {
+        setOrganization({
+          id: organizationId,
+          role: organizationRole,
+          data: apiUser
+        })
       }
 
       setProfileLoaded(true)
@@ -146,7 +75,7 @@ export const AuthProvider = ({ children }) => {
 
       // Palauta täydellinen käyttäjäobjekti KERRAN (ei kaksoispäivitystä)
       return {
-        ...sessionUser,
+        ...session.user,
         systemRole: systemRole,
         company_id: company_id,
         features: features,
@@ -160,7 +89,7 @@ export const AuthProvider = ({ children }) => {
       setProfileLoaded(true)
 
       return {
-        ...sessionUser,
+        ...session.user,
         systemRole: 'user',
         features: defaultFeatures,
         organizationRole: null,
@@ -242,7 +171,7 @@ export const AuthProvider = ({ children }) => {
 
             try {
               const userWithProfile = await Promise.race([
-                fetchUserProfile(session.user),
+                fetchUserProfile(session),
                 timeoutPromise
               ])
               

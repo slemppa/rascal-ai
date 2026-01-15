@@ -5,7 +5,7 @@
  * estääkseen väsytyshyökkäykset ja kontrolloidakseen API-kustannuksia.
  * 
  * Käyttö:
- * import { rateLimit } from '../lib/rate-limit.js'
+ * import { rateLimit } from '../_lib/rate-limit.js'
  * 
  * export default async function handler(req, res) {
  *   const identifier = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown'

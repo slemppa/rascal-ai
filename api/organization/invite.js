@@ -1,5 +1,5 @@
 // api/org-invite.js - Kutsu käyttäjä organisaatioon
-import { withOrganization } from '../middleware/with-organization.js'
+import { withOrganization } from '../_middleware/with-organization.js'
 
 async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -298,7 +298,7 @@ async function handler(req, res) {
       const n8nWebhookUrl = process.env.N8N_ORGANIZATION_INVITE_URL
       
       if (n8nWebhookUrl) {
-        const { sendToN8N } = await import('../lib/n8n-client.js')
+        const { sendToN8N } = await import('../_lib/n8n-client.js')
         
         const webhookPayload = {
           action: 'organization_invite',

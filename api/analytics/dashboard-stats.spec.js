@@ -35,12 +35,12 @@ const mockCors = {
 }
 
 // Mock modules
-vi.mock('../lib/cors.js', () => ({
+vi.mock('../_lib/cors.js', () => ({
   setCorsHeaders: mockCors.setCorsHeaders,
   handlePreflight: mockCors.handlePreflight
 }))
 
-vi.mock('../middleware/with-organization.js', () => ({
+vi.mock('../_middleware/with-organization.js', () => ({
   withOrganization: (handler) => handler
 }))
 

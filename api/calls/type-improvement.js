@@ -1,4 +1,4 @@
-import { sendToN8N } from '../lib/n8n-client.js'
+import { sendToN8N } from '../_lib/n8n-client.js'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.SUPABASE_URL 
@@ -20,7 +20,7 @@ if (!supabaseUrl || (!serviceRoleKey && !anonKey)) {
   throw new Error('Missing Supabase environment variables')
 }
 
-import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+import { setCorsHeaders, handlePreflight } from '../_lib/cors.js'
 
 export default async function handler(req, res) {
   // CORS headers

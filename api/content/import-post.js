@@ -1,5 +1,5 @@
-import { withOrganization } from '../middleware/with-organization.js'
-import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+import { withOrganization } from '../_middleware/with-organization.js'
+import { setCorsHeaders, handlePreflight } from '../_lib/cors.js'
 import formidable from 'formidable'
 import fs from 'fs'
 

@@ -1,6 +1,6 @@
-import { withOrganization } from '../../middleware/with-organization.js'
-import { setCorsHeaders, handlePreflight } from '../../lib/cors.js'
-import { sendToN8N } from '../../lib/n8n-client.js'
+import { withOrganization } from '../../_middleware/with-organization.js'
+import { setCorsHeaders, handlePreflight } from '../../_lib/cors.js'
+import { sendToN8N } from '../../_lib/n8n-client.js'
 
 async function handler(req, res) {
   console.log('blog-publish API called:', req.method, req.url)

@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
-import logger from '../lib/logger.js'
+import logger from '../_lib/logger.js'
 
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+import { setCorsHeaders, handlePreflight } from '../_lib/cors.js'
 
 export default async function handler(req, res) {
   // CORS headers

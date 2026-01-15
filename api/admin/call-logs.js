@@ -1,5 +1,5 @@
 // api/admin-call-logs.js - Admin endpoint puhelulokeille
-import { withOrganization } from '../middleware/with-organization.js'
+import { withOrganization } from '../_middleware/with-organization.js'
 
 async function handler(req, res) {
   if (req.method !== 'GET') {

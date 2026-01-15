@@ -1,7 +1,7 @@
-import { withOrganization } from '../middleware/with-organization.js'
-import logger from '../lib/logger.js'
+import { withOrganization } from '../_middleware/with-organization.js'
+import logger from '../_lib/logger.js'
 
-import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+import { setCorsHeaders, handlePreflight } from '../_lib/cors.js'
 
 async function handler(req, res) {
   setCorsHeaders(res, ['GET', 'OPTIONS'])

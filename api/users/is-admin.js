@@ -2,8 +2,8 @@
 // HUOM: Älä käytä tätä React-frontendissä! Käytä AuthContext.user.systemRole sijaan.
 // Tämä on tarkoitettu vain backend-integraatioihin tai erikoistapauksiin.
 
-import { withOrganization } from '../middleware/with-organization.js'
-import { checkAdminStatus } from '../lib/check-admin-status.js'
+import { withOrganization } from '../_middleware/with-organization.js'
+import { checkAdminStatus } from '../_lib/check-admin-status.js'
 
 async function handler(req, res) {
   if (req.method !== 'GET') {

@@ -1,5 +1,5 @@
 // Ei käytetä Supabase clientia - kaikki data menee webhookin kautta
-import { sendToN8N } from '../lib/n8n-client.js'
+import { sendToN8N } from '../_lib/n8n-client.js'
 
 export default async function handler(req, res) {
   // Vain POST-metodit sallittu

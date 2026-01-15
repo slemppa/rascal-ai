@@ -4,6 +4,7 @@ import { upload as vercelBlobUpload } from '@vercel/blob/client'
 import ReactMarkdown from 'react-markdown'
 import PageHeader from '../components/PageHeader'
 import { useTranslation } from 'react-i18next'
+import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { getUserOrgId } from '../lib/getUserOrgId'
@@ -11,6 +12,7 @@ import './AIChatPage.css'
 
 export default function AIChatPage() {
   const { t } = useTranslation('common')
+  const [searchParams] = useSearchParams()
   // Luotettava lähetystapa sivulta poistuttaessa
   const PENDING_KEY = 'rascalai_pending_msgs'
   const loadPendingQueue = () => {
@@ -69,6 +71,15 @@ export default function AIChatPage() {
   const lastMessageCountRef = useRef(0) // Viimeisin viestimäärä, jotta voidaan havaita uusia viestejä
   const lastAssistantMessageRef = useRef(null) // Viimeisin assistentin viesti, jotta voidaan havaita uusi vastaus
   const [, forceUpdate] = useState(0) // Safari-optimointi: Pakota re-render
+
+  // Mahdollista avata suoraan Tietokanta URL-parametrilla: /ai-chat?tab=database
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+    if (tab === 'database') {
+      setSidebarTab('database')
+      setSidebarOpen(true)
+    }
+  }, [searchParams])
 
   // Scrollaa viestit automaattisesti alas
   const scrollToBottom = () => {

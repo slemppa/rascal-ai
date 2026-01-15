@@ -1,4 +1,4 @@
-import { sendToN8N } from '../../lib/n8n-client.js'
+import { sendToN8N } from '../../_lib/n8n-client.js'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.SUPABASE_URL 

@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+import { setCorsHeaders, handlePreflight } from '../_lib/cors.js'
 
 // GET /api/dashboard-campaign-compare?days=30
 // Palauttaa kampanjakohtaiset: { id, name, total, answered, success, successRate }

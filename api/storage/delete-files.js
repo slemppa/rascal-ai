@@ -1,4 +1,4 @@
-import { sendToN8N } from '../lib/n8n-client.js'
+import { sendToN8N } from '../_lib/n8n-client.js'
 
 const N8N_DELETE_FILES_URL = process.env.N8N_DELETE_FILES_URL || 'https://samikiias.app.n8n.cloud/webhook/unfeed-assistant'
 

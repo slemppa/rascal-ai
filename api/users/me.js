@@ -1,4 +1,4 @@
-import { withOrganization } from '../middleware/with-organization.js'
+import { withOrganization } from '../_middleware/with-organization.js'
 
 /**
  * GET /api/users/me
@@ -64,6 +64,14 @@ async function handler(req, res) {
       // Jatketaan silti org-tason roolilla ja company_id:llä
     }
 
+    const organization = {
+      id: req.organization.id,
+      role: req.organization.role,
+      data: orgData
+    }
+
+    const features = Array.isArray(orgData.features) ? orgData.features : null
+
     // Palautetaan turvallisesti vain tarvittavat kentät
     const userData = {
       id: orgData.id,
@@ -71,12 +79,17 @@ async function handler(req, res) {
       email: req.authUser.email,
       company_id: effectiveCompanyId,
       company_name: orgData.company_name,
+      vector_store_id: orgData.vector_store_id,
       role: effectiveRole,
       logo_url: orgData.logo_url,
       voice_id: orgData.voice_id,
       contact_email: orgData.contact_email,
       contact_person: orgData.contact_person,
       vapi_inbound_assistant_id: orgData.vapi_inbound_assistant_id,
+      organization_id: req.organization.id,
+      organization_role: req.organization.role,
+      organization: organization,
+      features: features,
       created_at: orgData.created_at,
       updated_at: orgData.updated_at,
     }

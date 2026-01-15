@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { sendToN8N } from '../lib/n8n-client.js'
+import { sendToN8N } from '../_lib/n8n-client.js'
 
 const supabaseUrl = process.env.SUPABASE_URL 
   || process.env.NEXT_PUBLIC_SUPABASE_URL

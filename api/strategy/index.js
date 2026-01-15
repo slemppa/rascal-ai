@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { setCorsHeaders, handlePreflight } from '../lib/cors.js'
+import { setCorsHeaders, handlePreflight } from '../_lib/cors.js'
 
 const N8N_STRATEGY_URL = process.env.N8N_GET_STRATEGY_URL
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://enrploxjigoyqajoqgkj.supabase.co'

@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
-import { withOrganization } from '../middleware/with-organization.js'
-import { sendToN8N } from '../lib/n8n-client.js'
-import logger from '../lib/logger.js'
-import { encrypt, decrypt } from '../lib/crypto.js'
+import { withOrganization } from '../_middleware/with-organization.js'
+import { sendToN8N } from '../_lib/n8n-client.js'
+import logger from '../_lib/logger.js'
+import { encrypt, decrypt } from '../_lib/crypto.js'
 
 const supabaseUrl = process.env.SUPABASE_URL 
   || process.env.NEXT_PUBLIC_SUPABASE_URL

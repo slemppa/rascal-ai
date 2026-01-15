@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { getCurrentUser } from '../utils/userApi'
 import CallDetailModal from '../components/calls/CallDetailModal'
 import { supabase } from '../lib/supabase'
@@ -13,6 +13,7 @@ import CallStats from './CallStats'
 import CallsTab from '../components/calls/CallsTab'
 import CallLogsTab from '../components/calls/CallLogsTab'
 import MessageLogsTab from '../components/calls/MessageLogsTab'
+import CallsKnowledgeBaseModal from '../components/calls/CallsKnowledgeBaseModal'
 import { useTranslation } from 'react-i18next'
 import Button from '../components/Button'
 import { useAuth } from '../contexts/AuthContext'
@@ -30,6 +31,7 @@ export default function CallPanel() {
   const { has: hasFeature, crmConnected } = useFeatures()
   const { t } = useTranslation('common')
   const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
   
   // Kovakoodatut tarkistukset
   const isMika = user?.email === 'mika.jarvinen@kuudesaisti.fi'
@@ -133,6 +135,9 @@ export default function CallPanel() {
   
   // Export-modaali
   const [showExportModal, setShowExportModal] = useState(false)
+
+  // Puheluiden tietokanta -modaali
+  const [showCallsKnowledgeModal, setShowCallsKnowledgeModal] = useState(false)
   
   // Pagination ja filtterit
   const [currentPage, setCurrentPage] = useState(1)
@@ -1913,6 +1918,33 @@ export default function CallPanel() {
     return options
   }
 
+  const openCallsKnowledgeModal = () => setShowCallsKnowledgeModal(true)
+
+  const handleCreateCallsKnowledgeBase = async () => {
+    setCallsKnowledgeError('')
+    setCallsKnowledgeLoading(true)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) throw new Error('Ei aktiivista sessiota')
+
+      const resp = await axios.post(
+        '/api/calls/knowledge-base',
+        { action: 'create' },
+        { headers: { Authorization: `Bearer ${session.access_token}` } }
+      )
+
+      const newId = resp?.data?.vector_store_id
+      if (!newId) throw new Error('Tietokannan luonti epäonnistui (ID puuttuu)')
+
+      setCallsKnowledgeId(newId)
+      toast.success('Tietokanta luotu')
+    } catch (e) {
+      setCallsKnowledgeError(e?.response?.data?.error || e?.message || 'Tietokannan luonti epäonnistui')
+    } finally {
+      setCallsKnowledgeLoading(false)
+    }
+  }
+
   // Mika Special - lomakehakufunktiot
   const fetchMikaContacts = async () => {
     setLoadingMikaContacts(true)
@@ -2664,6 +2696,7 @@ export default function CallPanel() {
             setInboundScript={setInboundScript}
             handleSaveInboundSettings={handleSaveInboundSettings}
             openEditInboundModal={openEditInboundModal}
+            openCallsKnowledgeModal={openCallsKnowledgeModal}
           />
         )}
           
@@ -3843,6 +3876,11 @@ export default function CallPanel() {
           getVoiceOptions={getVoiceOptions}
           playVoiceSample={playVoiceSample}
           onAIEnhancement={handleInboundAIEnhancement}
+        />
+
+        <CallsKnowledgeBaseModal
+          open={showCallsKnowledgeModal}
+          onClose={() => setShowCallsKnowledgeModal(false)}
         />
         
         {/* Inbound-asetukset modaali */}

@@ -39,11 +39,11 @@ const EditCallTypeModal = ({
   if (!showModal || !editingCallType) return null
 
   const steps = [
-    { id: 1, label: 'Perustiedot' },
-    { id: 2, label: 'Kohderyhmä ja tavoite' },
-    { id: 3, label: 'Puheluskripti' },
-    { id: 4, label: 'Yhteenveto' },
-    { id: 5, label: 'SMS-viestit' },
+    { id: 1, label: t('calls.modals.editCallType.steps.basics') },
+    { id: 2, label: t('calls.modals.editCallType.steps.content') },
+    { id: 3, label: t('calls.modals.editCallType.steps.advanced') },
+    { id: 4, label: t('calls.modals.editCallType.steps.summary') },
+    { id: 5, label: t('calls.modals.editCallType.steps.textMessages') },
     { id: 6, label: t('calls.modals.editCallType.steps.aiEnhancement') }
   ]
 
@@ -198,37 +198,37 @@ const EditCallTypeModal = ({
                     onChange={e => setEditingCallType({ ...editingCallType, language: e.target.value })}
                     className="form-select"
                   >
-                    <option value="en-US">🇺🇸 English (US)</option>
-                    <option value="bg">🇧🇬 Български</option>
-                    <option value="cs">🇨🇿 Čeština</option>
-                    <option value="de-DE">🇩🇪 Deutsch</option>
-                    <option value="el">🇬🇷 Ελληνικά</option>
-                    <option value="fi">🇫🇮 Suomi</option>
-                    <option value="fr-FR">🇫🇷 Français</option>
-                    <option value="es-ES">🇪🇸 Español</option>
-                    <option value="hu">🇭🇺 Magyar</option>
-                    <option value="it">🇮🇹 Italiano</option>
-                    <option value="fr">🇫🇷 Français</option>
-                    <option value="pt-BR">🇧🇷 Português (Brasil)</option>
-                    <option value="nl-NL">🇳🇱 Nederlands</option>
-                    <option value="hi">🇮🇳 हिन्दी</option>
-                    <option value="zh-CN">🇨🇳 中文</option>
-                    <option value="no">🇳🇴 Norsk</option>
-                    <option value="sv-SE">🇸🇪 Svenska</option>
-                    <option value="da">🇩🇰 Dansk</option>
-                    <option value="da-DK">🇩🇰 Dansk (Danmark)</option>
-                    <option value="id">🇮🇩 Bahasa Indonesia</option>
-                    <option value="ja">🇯🇵 日本語</option>
-                    <option value="ko">🇰🇷 한국어</option>
-                    <option value="ms">🇲🇾 Bahasa Melayu</option>
-                    <option value="ro">🇷🇴 Română</option>
-                    <option value="ru">🇷🇺 Русский</option>
-                    <option value="sk">🇸🇰 Slovenčina</option>
-                    <option value="tr">🇹🇷 Türkçe</option>
-                    <option value="uk">🇺🇦 Українська</option>
-                    <option value="vi">🇻🇳 Tiếng Việt</option>
-                    <option value="th">🇹🇭 ไทย</option>
-                    <option value="pl">🇵🇱 Polski</option>
+                    <option value="en-US">{t('calls.modals.callTypeLanguages.enUS')}</option>
+                    <option value="bg">{t('calls.modals.callTypeLanguages.bg')}</option>
+                    <option value="cs">{t('calls.modals.callTypeLanguages.cs')}</option>
+                    <option value="de-DE">{t('calls.modals.callTypeLanguages.deDE')}</option>
+                    <option value="el">{t('calls.modals.callTypeLanguages.el')}</option>
+                    <option value="fi">{t('calls.modals.callTypeLanguages.fi')}</option>
+                    <option value="fr-FR">{t('calls.modals.callTypeLanguages.frFR')}</option>
+                    <option value="es-ES">{t('calls.modals.callTypeLanguages.esES')}</option>
+                    <option value="hu">{t('calls.modals.callTypeLanguages.hu')}</option>
+                    <option value="it">{t('calls.modals.callTypeLanguages.it')}</option>
+                    <option value="fr">{t('calls.modals.callTypeLanguages.fr')}</option>
+                    <option value="pt-BR">{t('calls.modals.callTypeLanguages.ptBR')}</option>
+                    <option value="nl-NL">{t('calls.modals.callTypeLanguages.nlNL')}</option>
+                    <option value="hi">{t('calls.modals.callTypeLanguages.hi')}</option>
+                    <option value="zh-CN">{t('calls.modals.callTypeLanguages.zhCN')}</option>
+                    <option value="no">{t('calls.modals.callTypeLanguages.no')}</option>
+                    <option value="sv-SE">{t('calls.modals.callTypeLanguages.svSE')}</option>
+                    <option value="da">{t('calls.modals.callTypeLanguages.da')}</option>
+                    <option value="da-DK">{t('calls.modals.callTypeLanguages.daDK')}</option>
+                    <option value="id">{t('calls.modals.callTypeLanguages.id')}</option>
+                    <option value="ja">{t('calls.modals.callTypeLanguages.ja')}</option>
+                    <option value="ko">{t('calls.modals.callTypeLanguages.ko')}</option>
+                    <option value="ms">{t('calls.modals.callTypeLanguages.ms')}</option>
+                    <option value="ro">{t('calls.modals.callTypeLanguages.ro')}</option>
+                    <option value="ru">{t('calls.modals.callTypeLanguages.ru')}</option>
+                    <option value="sk">{t('calls.modals.callTypeLanguages.sk')}</option>
+                    <option value="tr">{t('calls.modals.callTypeLanguages.tr')}</option>
+                    <option value="uk">{t('calls.modals.callTypeLanguages.uk')}</option>
+                    <option value="vi">{t('calls.modals.callTypeLanguages.vi')}</option>
+                    <option value="th">{t('calls.modals.callTypeLanguages.th')}</option>
+                    <option value="pl">{t('calls.modals.callTypeLanguages.pl')}</option>
                   </select>
                 </div>
                 <div className="form-group">
@@ -258,9 +258,9 @@ const EditCallTypeModal = ({
                       onChange={e => setEditingCallType({ ...editingCallType, response_speed: e.target.value })}
                       className="form-select"
                     >
-                      <option value="1">1sec</option>
-                      <option value="3">3sec</option>
-                      <option value="5">5sec</option>
+                      <option value="1">{t('addCallType.option1sec')}</option>
+                      <option value="3">{t('addCallType.option3sec')}</option>
+                      <option value="5">{t('addCallType.option5sec')}</option>
                     </select>
                   </div>
                   <div className="form-group">
@@ -272,10 +272,10 @@ const EditCallTypeModal = ({
                       onChange={e => setEditingCallType({ ...editingCallType, initial_pause: e.target.value })}
                       className="form-select"
                     >
-                      <option value="1">1sec</option>
-                      <option value="2">2sec</option>
-                      <option value="3">3sec</option>
-                      <option value="5">5sec</option>
+                      <option value="1">{t('addCallType.option1sec')}</option>
+                      <option value="2">{t('addCallType.option2sec')}</option>
+                      <option value="3">{t('addCallType.option3sec')}</option>
+                      <option value="5">{t('addCallType.option5sec')}</option>
                     </select>
                   </div>
                 </div>
@@ -481,8 +481,8 @@ pyysikö kauppa olemaan vielä yhteydessä"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 16, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
-                  <div>Tiivistä 2-3 lauseessa: osallistuiko [tapahtumaan], keskeiset kiinnostukset/haasteet, sovitut seuraavat askeleet (aika/tapa).</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>{t('calls.modals.callTypeMiniExamples.title')}</div>
+                  <div>{t('calls.modals.callTypeMiniExamples.summary')}</div>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20, alignItems: 'start' }}>
@@ -500,8 +500,8 @@ pyysikö kauppa olemaan vielä yhteydessä"
                   />
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 16, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
-                  <div>Arvioi, saavutettiinko: 1) tiedonkeruu, 2) kiinnostukset/haasteet, 3) seuranta, 4) yhteystapa/aika. Perustele lyhyesti.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>{t('calls.modals.callTypeMiniExamples.title')}</div>
+                  <div>{t('calls.modals.callTypeMiniExamples.successAssessment')}</div>
                 </div>
               </div>
             </div>
@@ -530,18 +530,18 @@ pyysikö kauppa olemaan vielä yhteydessä"
                   />
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4, fontSize: 12 }}>
                     <span style={{ color: '#6b7280' }}>
-                      {editingCallType.first_sms ? `${editingCallType.first_sms.length}/160 characters` : '0/160 characters'}
+                      {t('calls.modals.sms.counter', { count: editingCallType.first_sms?.length || 0 })}
                     </span>
                     {editingCallType.first_sms && editingCallType.first_sms.length > 140 && (
                       <span style={{ color: '#f59e0b' }}>
-                        ⚠️ Long message ({editingCallType.first_sms.length > 150 ? '2 messages' : '1 message'})
+                        ⚠️ {t('calls.modals.sms.longMessage', { parts: editingCallType.first_sms.length > 150 ? 2 : 1 })}
                       </span>
                     )}
                   </div>
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 16, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini-esimerkki</div>
-                  <div>Kirjoita ytimekäs ja lämmin viesti, joka esittelee puhelun ja asettaa odotukset. Tämä viesti lähetetään automaattisesti ennen puhelua.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>{t('calls.modals.callTypeMiniExamples.title')}</div>
+                  <div>{t('calls.modals.callTypeMiniExamples.firstSms')}</div>
                 </div>
               </div>
 
@@ -566,18 +566,18 @@ pyysikö kauppa olemaan vielä yhteydessä"
                   />
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4, fontSize: 12 }}>
                     <span style={{ color: '#6b7280' }}>
-                      {editingCallType.after_call_sms ? `${editingCallType.after_call_sms.length}/160 characters` : '0/160 characters'}
+                      {t('calls.modals.sms.counter', { count: editingCallType.after_call_sms?.length || 0 })}
                     </span>
                     {editingCallType.after_call_sms && editingCallType.after_call_sms.length > 140 && (
                       <span style={{ color: '#f59e0b' }}>
-                        ⚠️ Long message ({editingCallType.after_call_sms.length > 150 ? '2 messages' : '1 message'})
+                        ⚠️ {t('calls.modals.sms.longMessage', { parts: editingCallType.after_call_sms.length > 150 ? 2 : 1 })}
                       </span>
                     )}
                   </div>
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 16, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>Thank you for taking our call! This message is sent after the customer answers the phone and the call ends.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>{t('calls.modals.callTypeMiniExamples.title')}</div>
+                  <div>{t('calls.modals.callTypeMiniExamples.afterCallSms')}</div>
                 </div>
               </div>
 
@@ -602,18 +602,18 @@ pyysikö kauppa olemaan vielä yhteydessä"
                   />
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4, fontSize: 12 }}>
                     <span style={{ color: '#6b7280' }}>
-                      {editingCallType.missed_call_sms ? `${editingCallType.missed_call_sms.length}/160 characters` : '0/160 characters'}
+                      {t('calls.modals.sms.counter', { count: editingCallType.missed_call_sms?.length || 0 })}
                     </span>
                     {editingCallType.missed_call_sms && editingCallType.missed_call_sms.length > 140 && (
                       <span style={{ color: '#f59e0b' }}>
-                        ⚠️ Long message ({editingCallType.missed_call_sms.length > 150 ? '2 messages' : '1 message'})
+                        ⚠️ {t('calls.modals.sms.longMessage', { parts: editingCallType.missed_call_sms.length > 150 ? 2 : 1 })}
                       </span>
                     )}
                   </div>
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 16, fontSize: 13, color: '#374151' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Mini example</div>
-                  <div>We tried to reach you but couldn't connect. This message is sent when the customer doesn't answer the phone.</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>{t('calls.modals.callTypeMiniExamples.title')}</div>
+                  <div>{t('calls.modals.callTypeMiniExamples.missedCallSms')}</div>
                 </div>
               </div>
             </div>

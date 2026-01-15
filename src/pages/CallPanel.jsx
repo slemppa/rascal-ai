@@ -2799,7 +2799,7 @@ export default function CallPanel() {
                 
                 <div>
                   <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-                    Suunta
+                    {t('calls.messagesTab.table.direction')}
                   </label>
                   <select
                     value={directionFilter}
@@ -2814,9 +2814,9 @@ export default function CallPanel() {
                       background: '#fff'
                     }}
                   >
-                    <option value="">Kaikki</option>
-                    <option value="outbound">Lähtevät</option>
-                    <option value="inbound">Saapuvat</option>
+                    <option value="">{t('calls.logsTab.filters.all')}</option>
+                    <option value="outbound">{t('calls.messagesTab.direction.outbound')}</option>
+                    <option value="inbound">{t('calls.messagesTab.direction.inbound')}</option>
                   </select>
                 </div>
                 
@@ -2921,7 +2921,7 @@ export default function CallPanel() {
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1', marginBottom: 8 }}>
                     {stats.totalCalls}
                 </div>
-                <div style={{ fontSize: 14, color: '#6b7280' }}>Soittoyritykset</div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>{t('dashboard.campaigns.stats.calledCalls')}</div>
               </div>
               
               <div style={{ 
@@ -2933,7 +2933,7 @@ export default function CallPanel() {
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e', marginBottom: 8 }}>
                     {stats.answered}
                 </div>
-                <div style={{ fontSize: 14, color: '#6b7280' }}>Vastatut puhelut</div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>{t('calls.logsTab.filters.statusOptions.success')}</div>
               </div>
               
               <div style={{ 
@@ -2945,7 +2945,7 @@ export default function CallPanel() {
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#10b981', marginBottom: 8 }}>
                     {stats.successful}
                 </div>
-                <div style={{ fontSize: 14, color: '#6b7280' }}>Onnistuneet puhelut</div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>{t('calls.logsTab.filters.statusOptions.successful')}</div>
               </div>
               
               <div style={{ 
@@ -2957,7 +2957,7 @@ export default function CallPanel() {
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#ef4444', marginBottom: 8 }}>
                     {stats.failed}
                 </div>
-                <div style={{ fontSize: 14, color: '#6b7280' }}>Epäonnistuneet</div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>{t('calls.logsTab.filters.statusOptions.failed')}</div>
               </div>
               
               <div style={{ 
@@ -2969,7 +2969,7 @@ export default function CallPanel() {
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#f59e0b', marginBottom: 8 }}>
                     {stats.pending}
                 </div>
-                <div style={{ fontSize: 14, color: '#6b7280' }}>Aikataulutettu</div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>{t('calls.logsTab.filters.statusOptions.pending')}</div>
               </div>
 
               <div style={{ 
@@ -2981,7 +2981,7 @@ export default function CallPanel() {
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6', marginBottom: 8 }}>
                     {stats.inProgress}
                 </div>
-                <div style={{ fontSize: 14, color: '#6b7280' }}>Jonossa</div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>{t('calls.logsTab.filters.statusOptions.inProgress')}</div>
               </div>
                   
               <div style={{ 
@@ -2993,7 +2993,7 @@ export default function CallPanel() {
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1', marginBottom: 8 }}>
                     {stats.totalLogs}
                 </div>
-                <div style={{ fontSize: 14, color: '#6b7280' }}>Yhteensä</div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>{t('visitors.total')}</div>
               </div>
               
               {/* Outbound/Inbound tilastot */}
@@ -3006,7 +3006,7 @@ export default function CallPanel() {
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#1d4ed8', marginBottom: 8 }}>
                   {stats.outbound}
                 </div>
-                <div style={{ fontSize: 14, color: '#6b7280' }}>Lähtevät puhelut</div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>{t('calls.messagesTab.direction.outbound')}</div>
               </div>
               
               <div style={{ 
@@ -3018,7 +3018,7 @@ export default function CallPanel() {
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#92400e', marginBottom: 8 }}>
                   {stats.inbound}
                 </div>
-                <div style={{ fontSize: 14, color: '#6b7280' }}>Saapuvat puhelut</div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>{t('calls.messagesTab.direction.inbound')}</div>
               </div>
               
               {/* Hinta-tilastot */}
@@ -3109,7 +3109,7 @@ export default function CallPanel() {
                         </th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Vastattu</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Yhteydenotto</th>
-                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Suunta</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>{t('calls.messagesTab.table.direction')}</th>
                         <th 
                           style={{ 
                             padding: '8px', 

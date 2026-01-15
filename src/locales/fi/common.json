@@ -938,6 +938,77 @@
       }
     },
     "modals": {
+      "callTypeLanguages": {
+        "enUS": "🇺🇸 English (US)",
+        "bg": "🇧🇬 Български",
+        "cs": "🇨🇿 Čeština",
+        "deDE": "🇩🇪 Deutsch",
+        "el": "🇬🇷 Ελληνικά",
+        "fi": "🇫🇮 Suomi",
+        "frFR": "🇫🇷 Français",
+        "esES": "🇪🇸 Español",
+        "hu": "🇭🇺 Magyar",
+        "it": "🇮🇹 Italiano",
+        "fr": "🇫🇷 Français",
+        "ptBR": "🇧🇷 Português (Brasil)",
+        "nlNL": "🇳🇱 Nederlands",
+        "hi": "🇮🇳 हिन्दी",
+        "zhCN": "🇨🇳 中文",
+        "no": "🇳🇴 Norsk",
+        "svSE": "🇸🇪 Svenska",
+        "da": "🇩🇰 Dansk",
+        "daDK": "🇩🇰 Dansk (Danmark)",
+        "id": "🇮🇩 Bahasa Indonesia",
+        "ja": "🇯🇵 日本語",
+        "ko": "🇰🇷 한국어",
+        "ms": "🇲🇾 Bahasa Melayu",
+        "ro": "🇷🇴 Română",
+        "ru": "🇷🇺 Русский",
+        "sk": "🇸🇰 Slovenčina",
+        "tr": "🇹🇷 Türkçe",
+        "uk": "🇺🇦 Українська",
+        "vi": "🇻🇳 Tiếng Việt",
+        "th": "🇹🇭 ไทย",
+        "pl": "🇵🇱 Polski"
+      },
+      "callTypeMiniExamples": {
+        "title": "Mini-esimerkki",
+        "summary": "Tiivistä 2-3 lauseessa: osallistuiko [tapahtumaan], keskeiset kiinnostukset/haasteet, sovitut seuraavat askeleet (aika/tapa).",
+        "successAssessment": "Arvioi, saavutettiinko: 1) tiedonkeruu, 2) kiinnostukset/haasteet, 3) seuranta, 4) yhteystapa/aika. Perustele lyhyesti.",
+        "firstSms": "Kirjoita ytimekäs ja lämmin viesti, joka esittelee puhelun ja asettaa odotukset. Tämä viesti lähetetään automaattisesti ennen puhelua.",
+        "afterCallSms": "Kiitos puhelusta! Tämä viesti lähetetään sen jälkeen, kun asiakas vastaa puheluun ja puhelu päättyy.",
+        "missedCallSms": "Yritimme tavoittaa sinut, mutta emme saaneet yhteyttä. Tämä viesti lähetetään, kun asiakas ei vastaa puheluun."
+      },
+      "sms": {
+        "counter": "{{count}}/160 merkkiä",
+        "longMessage": "Pitkä viesti ({{parts}} viestiä)"
+      },
+      "callTypeActionPresets": {
+        "salesCall": {
+          "label": "Myyntipuhelu",
+          "text": "Merkitse puhelu onnistuneeksi, kun asiakas ilmaisee kiinnostusta ostaa tuote tai palvelu. Varmista seuraavat askeleet: lähetä tarjous, varaa demo tai sovita seuraava puhelu."
+        },
+        "appointment": {
+          "label": "Ajanvaraus",
+          "text": "Merkitse puhelu onnistuneeksi, kun asiakas suostuu varaamaan ajan. Varmista seuraavat askeleet: vahvista päivämäärä ja kellonaika, lähetä kalenterilinkki tai vahvista muulla tavalla."
+        },
+        "eventInvite": {
+          "label": "Tapahtumakutsu",
+          "text": "Merkitse puhelu onnistuneeksi, kun asiakas suostuu osallistumaan tapahtumaan. Varmista seuraavat askeleet: lähetä tapahtuman tiedot, vahvista osallistuminen tai kerää lisätiedot."
+        },
+        "followUp": {
+          "label": "Follow-up",
+          "text": "Merkitse puhelu onnistuneeksi, kun asiakas on kiinnostunut jatkamaan keskustelua. Varmista seuraavat askeleet: sovita seuraava puhelu, lähetä lisämateriaaleja tai merkitse seurantaan."
+        },
+        "leadQualification": {
+          "label": "Lead qualification",
+          "text": "Merkitse puhelu onnistuneeksi, kun asiakas täyttää kvalifiointikriteerit. Varmista seuraavat askeleet: kerää tarvittavat tiedot, arvioi potentiaali ja siirrä myyntiprosessiin."
+        },
+        "universal": {
+          "label": "Universaali action",
+          "text": "Merkitse puhelu onnistuneeksi, kun asiakas ilmaisee kiinnostusta jatkaa keskustelua tuotteesta tai palvelusta."
+        }
+      },
       "mass": {
         "title": "Massapuhelut",
         "step1": {
@@ -1044,6 +1115,17 @@
       },
       "addCallType": {
         "title": "Lisää uusi puhelun tyyppi",
+        "hints": {
+          "targetAudience": "Kenelle tämä puhelu on tarkoitettu? Esim. \"yrityksen toimitusjohtajat\", \"kaupan eineshankinta\", \"Inbound-liidit\".",
+          "mainGoal": "Mitä haluat saavuttaa puhelulla? Kirjoita 1–3 tavoitetta. Esim. \"kiinnostuksen herättäminen\", \"ajan sopiminen\", \"kvalifiointi\".",
+          "toneStyle": "Millä sävyllä agentin tulisi puhua? Esim. \"selkeä, ystävällinen, asiallinen, teitittelevä\".",
+          "firstSentence": "Ensimmäinen lause sen jälkeen kun asiakas puhuu. Pidä lyhyenä. Esim. \"Hei, olen [Agentti], saanko kysyä yhden asian?\".",
+          "callStart": "Miten esittelet asian lyhyesti? Kerro tarkoitus kahdella lauseella ja kysy lupa jatkaa.",
+          "questions": "Muotoile kysymykset lyhyiksi. Kysy vain yksi asia kerrallaan. Jokaisen jälkeen agentti odottaa vastausta automaattisesti.",
+          "callEnd": "Lopeta kohteliaasti ja tarjoa seuraava askel (esim. ajan sopiminen tai lisätietojen lähettäminen).",
+          "successfulEnd": "Milloin puhelu katsotaan onnistuneeksi? Esim. \"kun asiakas ilmaisee kiinnostusta jatkaa keskustelua\".",
+          "actionPreset": "Valitse valmis Action-pohja (valinnainen):"
+        },
         "steps": {
           "basics": "Perustiedot",
           "content": "Sisältö",

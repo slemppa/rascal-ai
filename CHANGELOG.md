@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.113.3](https://github.com/slemppa/rascal-ai/compare/v1.113.2...v1.113.3) (2026-01-16)
+
+
+### 🐛 Bug Fixes
+
+* correct api _lib import paths ([9970df8](https://github.com/slemppa/rascal-ai/commit/9970df8a010c34ce86747076c719dc539cf9912b))
+* handle missing Supabase envs in secrets endpoints ([55c5207](https://github.com/slemppa/rascal-ai/commit/55c5207b8702b4b544df5127b490032a69a18363))
+* send GA webhook via HMAC client ([7238408](https://github.com/slemppa/rascal-ai/commit/7238408aa183fb22fd8fddb9e46a4047bf4cfd2f))
+* update settings integrations actions ([94bbcca](https://github.com/slemppa/rascal-ai/commit/94bbcca7bd796508cbda32831730282550551bf2))
+
 ### [1.113.2](https://github.com/slemppa/rascal-ai/compare/v1.113.1...v1.113.2) (2026-01-15)
 
 

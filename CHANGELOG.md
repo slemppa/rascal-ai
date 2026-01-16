@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.114.0](https://github.com/slemppa/rascal-ai/compare/v1.113.3...v1.114.0) (2026-01-16)
+
+
+### ✨ Features
+
+* track plugin download ([ae21342](https://github.com/slemppa/rascal-ai/commit/ae21342e96e1506e55b8ef3613a5454290c12c20))
+
 ### [1.113.3](https://github.com/slemppa/rascal-ai/compare/v1.113.2...v1.113.3) (2026-01-16)
 
 

@@ -1,4 +1,4 @@
-import { sendToN8N } from '../_lib/n8n-client.js'
+import { sendToN8N } from '../../_lib/n8n-client.js'
 
 const N8N_UPDATE_POST_URL = process.env.N8N_UPDATE_POST_URL || 'https://samikiias.app.n8n.cloud/webhook/update-post1233214'
 

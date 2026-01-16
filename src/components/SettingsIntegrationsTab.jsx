@@ -953,6 +953,16 @@ export default function SettingsIntegrationsTab() {
                 ) : (
                   <span className="status-badge status-badge-inactive">Ei konfiguroitu</span>
                 )}
+                {integration.id === 'wordpress' && integration.isConfigured && expandedCard !== integration.id && (
+                  <a
+                    href="/plugins/rascal-ai.zip"
+                    download="rascal-ai.zip"
+                    className="integration-download-link"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    Lataa plugin
+                  </a>
+                )}
                 <span className="expand-icon">{expandedCard === integration.id ? '▲' : '▼'}</span>
               </div>
             </div>
@@ -1059,6 +1069,37 @@ export default function SettingsIntegrationsTab() {
                       </div>
                     ))}
 
+                    {integration.isConfigured && (
+                      <div className="integration-link-actions">
+                        {integration.id === 'wordpress' && (
+                          <>
+                            <button
+                              type="button"
+                              className="btn-link"
+                              onClick={() => handleTestWordPressConnection(integration)}
+                              disabled={saving || testingConnection}
+                            >
+                              {testingConnection ? 'Testataan...' : 'Testaa yhteys'}
+                            </button>
+                            <a
+                              href="/plugins/rascal-ai.zip"
+                              download="rascal-ai.zip"
+                              className="btn-link"
+                            >
+                              Lataa WordPress-plugin
+                            </a>
+                          </>
+                        )}
+                        <button
+                          type="button"
+                          className="btn-link btn-link-danger"
+                          onClick={() => handleDelete(integration)}
+                          disabled={saving || testingConnection}
+                        >
+                          Poista integraatio
+                        </button>
+                      </div>
+                    )}
                     <div className="integration-card-actions">
                       <button
                         type="submit"
@@ -1067,31 +1108,6 @@ export default function SettingsIntegrationsTab() {
                       >
                         {saving ? t('ui.buttons.saving') : integration.isConfigured ? t('ui.buttons.update') : t('ui.buttons.save')}
                       </button>
-                      {integration.isConfigured && integration.id === 'wordpress' && (
-                        <button
-                          type="button"
-                          className="btn-secondary"
-                          onClick={() => handleTestWordPressConnection(integration)}
-                          disabled={saving || testingConnection}
-                          style={{
-                            backgroundColor: '#f3f4f6',
-                            color: '#374151',
-                            border: '1px solid #d1d5db'
-                          }}
-                        >
-                          {testingConnection ? 'Testataan...' : 'Testaa yhteys'}
-                        </button>
-                      )}
-                      {integration.isConfigured && (
-                        <button
-                          type="button"
-                          className="btn-danger"
-                          onClick={() => handleDelete(integration)}
-                          disabled={saving || testingConnection}
-                        >
-                          Poista
-                        </button>
-                      )}
                     </div>
                   </form>
                 )}

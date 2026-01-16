@@ -56,11 +56,14 @@ export default function FeaturesTab({
   const [onboardingMessage, setOnboardingMessage] = useState('')
   const [saveMessage, setSaveMessage] = useState('')
   const [localChanges, setLocalChanges] = useState({})
+  const [wordpressConfigured, setWordpressConfigured] = useState(false)
+  const [wordpressLoading, setWordpressLoading] = useState(true)
 
   // Lataa käyttäjän kaikki tiedot
   useEffect(() => {
     if (!userId) {
       setOnboardingLoading(false)
+      setWordpressLoading(false)
       return
     }
 
@@ -92,7 +95,31 @@ export default function FeaturesTab({
       }
     }
 
+    // Tarkista WordPress-integraation tila
+    const checkWordPressIntegration = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('user_secrets')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('secret_type', 'wordpress_api_key')
+          .eq('is_active', true)
+          .maybeSingle()
+
+        if (error) {
+          console.error('[FeaturesTab] Error checking WordPress integration:', error)
+        } else {
+          setWordpressConfigured(!!data)
+        }
+      } catch (error) {
+        console.error('[FeaturesTab] Error in checkWordPressIntegration:', error)
+      } finally {
+        setWordpressLoading(false)
+      }
+    }
+
     loadUserData()
+    checkWordPressIntegration()
   }, [userId])
 
   // Tallenna onboarding_completed arvo
@@ -469,6 +496,75 @@ export default function FeaturesTab({
           <strong>Valittuna:</strong> {currentPlatforms.length} / {ALL_PLATFORMS.length}
         </div>
       </div>
+
+      {/* WordPress-plugin latausosio - näytetään vain jos WordPress on konfiguroitu */}
+      {wordpressLoading ? (
+        <div style={{ marginBottom: '32px', padding: '20px', backgroundColor: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+          <div style={{ color: '#6b7280', fontSize: '14px' }}>Tarkistetaan WordPress-integraatiota...</div>
+        </div>
+      ) : wordpressConfigured && (
+        <div className="wordpress-plugin-section" style={{
+          marginBottom: '32px',
+          padding: '20px',
+          backgroundColor: '#fff',
+          borderRadius: '12px',
+          border: '1px solid #e5e7eb',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h3 style={{  
+            margin: '0 0 8px 0',  
+            fontSize: '16px',  
+            fontWeight: 600,  
+            color: '#1f2937'  
+          }}>
+            WordPress-plugin
+          </h3>
+          <p style={{  
+            margin: '0 0 16px 0',  
+            fontSize: '14px',  
+            color: '#6b7280'  
+          }}>
+            WordPress-integraatio on konfiguroitu. Voit ladata Rascal AI WordPress-pluginin alla olevasta linkistä.
+          </p>
+
+          <a
+            href="/plugins/rascal-ai.zip"
+            download="rascal-ai.zip"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 16px',
+              backgroundColor: '#10b981',
+              color: '#fff',
+              borderRadius: '6px',
+              fontSize: '14px',
+              fontWeight: 500,
+              textDecoration: 'none',
+              transition: 'background-color 0.2s',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = '#059669'
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = '#10b981'
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 15.5V8.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M8.5 12L12 15.5L15.5 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Lataa WordPress-plugin
+          </a>
+
+          <div style={{ marginTop: '12px', fontSize: '12px', color: '#9ca3af' }}>
+            Versio: 1.0 | Tiedoston koko: ~100KB
+          </div>
+        </div>
+      )}
 
       <div className="features-description">
         <p>Hallitse käyttäjän käytössä olevia ominaisuuksia. Ota ominaisuudet käyttöön tai poista ne käytöstä vaihtamalla kytkintä.</p>

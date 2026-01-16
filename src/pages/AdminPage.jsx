@@ -45,7 +45,8 @@ export default function AdminPage() {
     'Dev',
     'Voicemail',
     'Leads',
-    'UGC'
+    'UGC',
+    'Media Monitoring'
   ]
 
   const KNOWN_FEATURES = useMemo(() => {

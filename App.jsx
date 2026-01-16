@@ -46,6 +46,8 @@ import LeadMagnetPage from './src/pages/LeadMagnetPage'
 import VastaajaPage from './src/pages/VastaajaPage'
 import LeadScrapingPage from './src/pages/LeadScrapingPage'
 import TestN8NPage from './src/pages/TestN8NPage'
+import MediaMonitoringPage from './src/pages/MediaMonitoringPage'
+import MonitoringCreatePostPage from './src/pages/MonitoringCreatePostPage'
 
 // ConditionalChatbotWidget komponentti - ei tarvita enää
 function ConditionalChatbotWidget() {
@@ -110,6 +112,16 @@ export default function App() {
                   <Route path="/meeting-notes" element={<MeetingNotesPage />} />
                   <Route path="/vastaaja" element={<VastaajaPage />} />
                   <Route path="/lead-scraping" element={<LeadScrapingPage />} />
+                  <Route path="/monitoring" element={
+                    <ProtectedRoute requiredFeatures={['Media Monitoring']}>
+                      <MediaMonitoringPage />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/monitoring/create" element={
+                    <ProtectedRoute requiredFeatures={['Media Monitoring']}>
+                      <MonitoringCreatePostPage />
+                    </ProtectedRoute>
+                  } />
                 </Route>
                 
                 {/* Admin-reitit (vaativat admin-roolin) */}

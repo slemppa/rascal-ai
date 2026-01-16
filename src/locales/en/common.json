@@ -434,7 +434,8 @@
       "meetingNotes": "Meeting Notes",
       "leads": "Leads",
       "organizationMembers": "Organization Management",
-      "accountManager": "Portfolio Management"
+      "accountManager": "Portfolio Management",
+      "monitoring": "Media Monitoring"
     },
     "settings": "Settings",
     "helpCenter": "Help Center",
@@ -1886,5 +1887,30 @@
     "languageSwitcher": "Language switcher",
     "toggleMobileMenu": "Toggle mobile menu",
     "crmConnected": "CRM connected"
+  },
+  "monitoring": {
+    "title": "Media Monitoring",
+    "subtitle": "Monitor your industry and pick ideas for content",
+    "loading": "Loading news feed...",
+    "empty": "No news available",
+    "createPost": "Create Post",
+    "hide": "Hide",
+    "create": {
+      "title": "Create post from media",
+      "subtitle": "Edit and submit post for generation",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Enter post title...",
+      "bodyLabel": "Body text",
+      "bodyPlaceholder": "Write post body text...",
+      "sourceUrlLabel": "Source URL",
+      "sourceUrlPlaceholder": "https://...",
+      "typeLabel": "Type",
+      "submit": "Create post",
+      "success": "Post submitted for generation!",
+      "redirecting": "Redirecting back to media monitoring..."
+    }
+  },
+  "common": {
+    "retry": "Retry"
   }
 }

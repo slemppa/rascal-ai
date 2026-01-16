@@ -37,6 +37,17 @@ const getMenuItems = (t) => [
     )
   },
   { 
+    label: t('sidebar.labels.monitoring'), 
+    path: '/monitoring', 
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 3h20v18H2V3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M7 8h10M7 12h10M7 16h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="18" cy="6" r="2" fill="currentColor"/>
+      </svg>
+    )
+  },
+  { 
     label: t('general.blogsNewsletters'), 
     path: '/blog-newsletter', 
     icon: (
@@ -309,7 +320,7 @@ export default function Sidebar() {
         <span className={`${styles['chevron']} ${openSections.markkinointi ? styles['open'] : ''}`}>▾</span>
       </button>
       {openSections.markkinointi && (<ul className={styles['nav-menu']}>
-        {menuItems.filter(i => ['/posts','/blog-newsletter','/strategy'].includes(i.path)).map(item => {
+        {menuItems.filter(i => ['/posts','/blog-newsletter','/strategy','/monitoring'].includes(i.path)).map(item => {
           const adminOnly = item.adminOnly && !isAdmin
           const moderatorOnly = item.moderatorOnly && !isModerator
           if (adminOnly || moderatorOnly) return null
@@ -317,6 +328,7 @@ export default function Sidebar() {
           if (item.path === '/posts' && !hasFeature('Social Media')) return null
           if (item.path === '/blog-newsletter' && !hasFeature('Email marketing integration')) return null
           if (item.path === '/strategy' && !hasFeature('Marketing assistant')) return null
+          if (item.path === '/monitoring' && !hasFeature('Media Monitoring')) return null
           return (
             <li className={styles['nav-item']} key={item.path}>
               <button

@@ -24,6 +24,7 @@ export default function MobileNavigation() {
     { label: t('sidebar.labels.posts'), path: '/posts', feature: 'Social Media' },
     { label: t('sidebar.labels.blogNewsletter'), path: '/blog-newsletter', feature: 'Social Media' },
     { label: t('sidebar.labels.strategy'), path: '/strategy', feature: 'Social Media' },
+    { label: t('sidebar.labels.monitoring'), path: '/monitoring', feature: 'Media Monitoring' },
     { label: t('sidebar.labels.calls'), path: '/calls', feature: 'Phone Calls' },
     { label: t('sidebar.labels.assistentti'), path: '/ai-chat', feature: 'Marketing assistant' },
     { label: 'Dev', path: '/dev', feature: null, adminOnly: true },

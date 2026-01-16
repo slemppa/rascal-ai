@@ -451,7 +451,8 @@
       "meetingNotes": "Palaverimuistiot",
       "accountManager": "Salkun hallinta",
       "leads": "Liidit",
-      "organizationMembers": "Organisaation hallinta"
+      "organizationMembers": "Organisaation hallinta",
+      "monitoring": "Mediaseuranta"
     },
     "settings": "Asetukset",
     "helpCenter": "Ohjekeskus",
@@ -1976,5 +1977,30 @@
       "month": "Kuukausi",
       "week": "Viikko"
     }
+  },
+  "monitoring": {
+    "title": "Mediaseuranta",
+    "subtitle": "Seuraa alaasi ja poimi ideat sisältöön",
+    "loading": "Ladataan uutisvirtaa...",
+    "empty": "Ei uutisia saatavilla",
+    "createPost": "Luo Postaus",
+    "hide": "Piilota",
+    "create": {
+      "title": "Luo postaus mediasta",
+      "subtitle": "Muokkaa ja lähetä postaus generoitavaksi",
+      "titleLabel": "Otsikko",
+      "titlePlaceholder": "Anna postaukselle otsikko...",
+      "bodyLabel": "Leipäteksti",
+      "bodyPlaceholder": "Kirjoita postauksen leipäteksti...",
+      "sourceUrlLabel": "Lähde-URL",
+      "sourceUrlPlaceholder": "https://...",
+      "typeLabel": "Tyyppi",
+      "submit": "Luo postaus",
+      "success": "Postaus lähetetty generoitavaksi!",
+      "redirecting": "Siirrytään takaisin mediaseurantaan..."
+    }
+  },
+  "common": {
+    "retry": "Yritä uudelleen"
   }
 }

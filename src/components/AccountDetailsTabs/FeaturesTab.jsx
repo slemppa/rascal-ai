@@ -13,7 +13,8 @@ const ALL_FEATURES = [
   'Dev',
   'Voicemail',
   'Leads',
-  'UGC'
+  'UGC',
+  'Media Monitoring'
 ]
 
 const ALL_PLATFORMS = [
@@ -37,7 +38,8 @@ const getFeatureLabel = (feature) => {
     'Segments': 'Segmentit',
     'CRM': 'CRM',
     'Dev': 'Kehitys',
-    'UGC': 'UGC'
+    'UGC': 'UGC',
+    'Media Monitoring': 'Mediaseuranta'
   }
   return labels[feature] || feature
 }

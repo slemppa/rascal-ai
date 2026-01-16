@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import axios from 'axios'
 import logger from '../../_lib/logger.js'
+import { sendToN8N } from '../../_lib/n8n-client.js'
 
 function escapeHtml(str) {
   if (!str) return ''
@@ -158,20 +159,11 @@ export default async function handler(req, res) {
       // 4. Lähetä n8n:ään (ei pysäytä prosessia jos epäonnistuu, mutta logitetaan)
       if (n8nWebhookUrl) {
         try {
-          const headers = {
-            'Content-Type': 'application/json'
-          }
-          
-          const n8nSecretKey = process.env.N8N_SECRET_KEY
-          if (n8nSecretKey) {
-            headers['x-api-key'] = n8nSecretKey
-          }
-
           let apiBaseUrl = process.env.APP_URL
             || process.env.NEXT_PUBLIC_APP_URL
             || 'https://app.rascalai.fi'
 
-          await axios.post(n8nWebhookUrl, {
+          await sendToN8N(n8nWebhookUrl, {
             action: 'google_analytics_connected',
             integration_type: 'google_analytics_credentials',
             integration_name: 'Google Analytics Refresh Token',
@@ -193,9 +185,6 @@ export default async function handler(req, res) {
               secret_name: 'Google Analytics Refresh Token',
               user_id: orgId
             }
-          }, { 
-            headers: headers,
-            timeout: 5000 
           }).catch(err => logger.warn('n8n webhook warning', { message: err.message }));
         } catch (e) {
           // Ignorataan n8n virheet käyttäjältä

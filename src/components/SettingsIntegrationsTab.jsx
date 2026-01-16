@@ -121,6 +121,35 @@ export default function SettingsIntegrationsTab() {
   const [aiModelSaving, setAiModelSaving] = useState(false)
   const [aiModelMessage, setAiModelMessage] = useState('')
 
+  const trackPluginDownload = async (source) => {
+    try {
+      const session = await supabase.auth.getSession()
+      const token = session.data.session?.access_token
+
+      if (!token) {
+        console.warn('No access token found for plugin download tracking')
+        return
+      }
+
+      const timestamp = new Date().toISOString()
+      await axios.post('/api/users/secrets', {
+        secret_type: 'wordpress_plugin_download',
+        secret_name: 'WordPress Plugin Download',
+        plaintext_value: timestamp,
+        metadata: {
+          source,
+          downloaded_at: timestamp
+        }
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+    } catch (error) {
+      console.error('Error tracking plugin download:', error)
+    }
+  }
+
   // Lataa AI-mallin valinta
   const loadAiModel = useCallback(async () => {
     if (!user?.id) return
@@ -958,7 +987,10 @@ export default function SettingsIntegrationsTab() {
                     href="/plugins/rascal-ai.zip"
                     download="rascal-ai.zip"
                     className="integration-download-link"
-                    onClick={(event) => event.stopPropagation()}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      trackPluginDownload('card-header')
+                    }}
                   >
                     Lataa plugin
                   </a>
@@ -1085,6 +1117,7 @@ export default function SettingsIntegrationsTab() {
                               href="/plugins/rascal-ai.zip"
                               download="rascal-ai.zip"
                               className="btn-link"
+                              onClick={() => trackPluginDownload('card-content')}
                             >
                               Lataa WordPress-plugin
                             </a>

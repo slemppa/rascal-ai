@@ -72,6 +72,14 @@ async function handler(req, res) {
 
     const features = Array.isArray(orgData.features) ? orgData.features : null
 
+    // Turvallisesti hae krediitit (uudet kentät voivat olla null tai undefined)
+    const enrichmentCreditsMonthly = orgData.enrichment_credits_monthly != null 
+      ? orgData.enrichment_credits_monthly 
+      : 100
+    const enrichmentCreditsUsed = orgData.enrichment_credits_used != null 
+      ? orgData.enrichment_credits_used 
+      : 0
+
     // Palautetaan turvallisesti vain tarvittavat kentät
     const userData = {
       id: orgData.id,
@@ -90,6 +98,8 @@ async function handler(req, res) {
       organization_role: req.organization.role,
       organization: organization,
       features: features,
+      enrichment_credits_monthly: enrichmentCreditsMonthly,
+      enrichment_credits_used: enrichmentCreditsUsed,
       created_at: orgData.created_at,
       updated_at: orgData.updated_at,
     }

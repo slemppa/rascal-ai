@@ -85,7 +85,7 @@ const OrganizationMembersPage = () => {
       }
 
       await axios.post(
-        "/api/organization/invite",
+        "/api/organization/invites",
         {
           email: inviteEmail,
           role: inviteRole,
@@ -128,7 +128,7 @@ const OrganizationMembersPage = () => {
       }
 
       await axios.put(
-        "/api/organization/update-role",
+        "/api/organization/members",
         {
           auth_user_id: authUserId,
           role: newRole,
@@ -166,7 +166,7 @@ const OrganizationMembersPage = () => {
         return;
       }
 
-      await axios.delete("/api/organization/remove-member", {
+      await axios.delete("/api/organization/members", {
         params: {
           auth_user_id: authUserId,
         },
@@ -197,7 +197,7 @@ const OrganizationMembersPage = () => {
       }
 
       await axios.post(
-        "/api/organization/resend-invite",
+        "/api/organization/invites?action=resend",
         {
           auth_user_id: authUserId,
         },

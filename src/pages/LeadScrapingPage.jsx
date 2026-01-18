@@ -13,7 +13,7 @@ import './LeadScrapingPage.css'
 export default function LeadScrapingPage() {
   const { t } = useTranslation('common')
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, organization } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -165,6 +165,12 @@ export default function LeadScrapingPage() {
   const [selectedLeadIds, setSelectedLeadIds] = useState(new Set())
   const [deletingLeads, setDeletingLeads] = useState(false)
   
+  // Enrichment credits
+  const [creditsMonthly, setCreditsMonthly] = useState(100)
+  const [creditsUsed, setCreditsUsed] = useState(0)
+  const [loadingCredits, setLoadingCredits] = useState(false)
+  const [enrichingLeads, setEnrichingLeads] = useState(false)
+  
   // Export modal
   const [showExportModal, setShowExportModal] = useState(false)
   const [exportFields, setExportFields] = useState({
@@ -205,7 +211,7 @@ export default function LeadScrapingPage() {
       const filteredLeads = applyFilters(allLeads)
       
       if (!filteredLeads.length) {
-        setError('Ei liidejä exportattavaksi!')
+        setError(t('leadScraping.exportErrorNoLeads'))
         setTimeout(() => setError(''), 3000)
         return
       }
@@ -216,37 +222,37 @@ export default function LeadScrapingPage() {
         .map(([field, _]) => field)
 
       if (selectedFields.length === 0) {
-        setError('Valitse vähintään yksi kenttä exportattavaksi!')
+        setError(t('leadScraping.exportErrorNoFields'))
         setTimeout(() => setError(''), 3000)
         return
       }
 
       // Määritä kenttien nimet suomeksi
       const fieldLabels = {
-        fullName: 'Koko nimi',
-        firstName: 'Etunimi',
-        lastName: 'Sukunimi',
-        email: 'Sähköposti',
-        phone: 'Puhelin',
-        position: 'Tehtävä',
-        orgName: 'Yritys',
-        city: 'Kaupunki',
-        orgCity: 'Yrityksen kaupunki',
-        state: 'Osavaltio/Maakunta',
-        orgState: 'Yrityksen osavaltio/Maakunta',
-        country: 'Maa',
-        orgCountry: 'Yrityksen maa',
-        linkedinUrl: 'LinkedIn URL',
-        orgWebsite: 'Yrityksen verkkosivusto',
-        orgLinkedinUrl: 'Yrityksen LinkedIn URL',
-        orgFoundedYear: 'Perustettu',
-        orgIndustry: 'Toimiala',
-        orgSize: 'Yrityksen koko',
-        orgDescription: 'Yrityksen kuvaus',
-        score: 'Pisteet',
-        status: 'Tila',
-        seniority: 'Seniority',
-        functional: 'Functional'
+        fullName: t('leadScraping.exportFullName'),
+        firstName: t('leadScraping.exportFirstName'),
+        lastName: t('leadScraping.exportLastName'),
+        email: t('leadScraping.exportEmail'),
+        phone: t('leadScraping.exportPhone'),
+        position: t('leadScraping.exportPosition'),
+        orgName: t('leadScraping.exportOrgName'),
+        city: t('leadScraping.exportCity'),
+        orgCity: t('leadScraping.exportOrgCity'),
+        state: t('leadScraping.exportState'),
+        orgState: t('leadScraping.exportOrgState'),
+        country: t('leadScraping.exportCountry'),
+        orgCountry: t('leadScraping.exportOrgCountry'),
+        linkedinUrl: t('leadScraping.exportLinkedInUrl'),
+        orgWebsite: t('leadScraping.exportOrgWebsite'),
+        orgLinkedinUrl: t('leadScraping.exportOrgLinkedInUrl'),
+        orgFoundedYear: t('leadScraping.exportOrgFoundedYear'),
+        orgIndustry: t('leadScraping.exportOrgIndustry'),
+        orgSize: t('leadScraping.exportOrgSize'),
+        orgDescription: t('leadScraping.exportOrgDescription'),
+        score: t('leadScraping.exportScore'),
+        status: t('leadScraping.exportStatus'),
+        seniority: t('leadScraping.exportSeniority'),
+        functional: t('leadScraping.exportFunctional')
       }
 
       // Luo CSV headerit
@@ -296,11 +302,11 @@ export default function LeadScrapingPage() {
       URL.revokeObjectURL(url)
 
       setShowExportModal(false)
-      setSuccess(`Exportattu ${filteredLeads.length} liidiä CSV-muodossa!`)
+      setSuccess(t('leadScraping.exportSuccess', { count: filteredLeads.length }))
       setTimeout(() => setSuccess(''), 3000)
     } catch (error) {
       console.error('Export epäonnistui:', error)
-      setError('Export epäonnistui: ' + error.message)
+      setError(t('leadScraping.exportFailed', { error: error.message }))
       setTimeout(() => setError(''), 5000)
     }
   }
@@ -588,7 +594,7 @@ export default function LeadScrapingPage() {
   const deleteSelectedLeads = async () => {
     if (selectedLeadIds.size === 0) return
 
-    if (!confirm(`Haluatko varmasti poistaa ${selectedLeadIds.size} liidiä?`)) {
+    if (!confirm(t('leadScraping.confirmDelete', { count: selectedLeadIds.size }))) {
       return
     }
 
@@ -603,7 +609,7 @@ export default function LeadScrapingPage() {
         throw new Error('Kirjaudu sisään jatkaaksesi')
       }
 
-      const response = await axios.delete('/api/leads/delete', {
+      const response = await axios.delete('/api/leads', {
         data: {
           leadIds: Array.from(selectedLeadIds)
         },
@@ -716,12 +722,122 @@ export default function LeadScrapingPage() {
     }
   }, [allLeads, filterEmail, filterPosition, filterCity, filterScoreMin, filterScoreMax, filterDate, currentPage, resultsPerPage])
 
-  // Hae liidit kun käyttäjä muuttuu
+  // Hae krediitit
+  const fetchCredits = async () => {
+    if (!user?.id || !organization?.id) return
+
+    setLoadingCredits(true)
+    try {
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData?.session?.access_token
+
+      if (!token) {
+        return
+      }
+
+      // Hae krediitit organisaation users-rivistä (organisaation ID)
+      const { data: orgData, error } = await supabase
+        .from('users')
+        .select('enrichment_credits_monthly, enrichment_credits_used')
+        .eq('id', organization.id)
+        .single()
+
+      if (error) {
+        console.error('Error fetching credits:', error)
+        // Jatketaan oletusarvoilla
+        return
+      }
+
+      if (orgData) {
+        setCreditsMonthly(orgData.enrichment_credits_monthly ?? 100)
+        setCreditsUsed(orgData.enrichment_credits_used ?? 0)
+      }
+    } catch (err) {
+      console.error('Error fetching credits:', err)
+      // Jatketaan oletusarvoilla
+    } finally {
+      setLoadingCredits(false)
+    }
+  }
+
+  // Rikasta valitut liidit
+  const enrichSelectedLeads = async () => {
+    if (selectedLeadIds.size === 0) return
+
+    const creditsNeeded = selectedLeadIds.size
+    const creditsRemaining = creditsMonthly - creditsUsed
+
+    if (creditsRemaining < creditsNeeded) {
+      setError(`Ei tarpeeksi krediittejä. Tarvitset ${creditsNeeded} krediittiä, mutta jäljellä on vain ${creditsRemaining}.`)
+      setTimeout(() => setError(''), 5000)
+      return
+    }
+
+    if (!confirm(t('leadScraping.confirmEnrich', { count: selectedLeadIds.size, credits: creditsNeeded, creditsPerLead: 1 }))) {
+      return
+    }
+
+    setEnrichingLeads(true)
+    setError('')
+
+    try {
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData?.session?.access_token
+
+      if (!token) {
+        throw new Error('Kirjaudu sisään jatkaaksesi')
+      }
+
+      const response = await axios.post('/api/leads?action=enrich', {
+        leadIds: Array.from(selectedLeadIds)
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.data.success) {
+        setSuccess(`Rikastus aloitettu ${response.data.leads_enriched} liidille! Krediitit päivitetty.`)
+        setTimeout(() => setSuccess(''), 5000)
+
+        // Päivitä krediitit
+        if (response.data.credits_remaining !== undefined) {
+          setCreditsUsed(response.data.credits_used)
+          setCreditsMonthly(response.data.credits_monthly)
+        }
+
+        // Tyhjennä valinnat
+        setSelectedLeadIds(new Set())
+
+        // Päivitä liidit
+        await fetchLeads()
+      } else {
+        throw new Error(response.data.error || 'Rikastus epäonnistui')
+      }
+    } catch (err) {
+      console.error('Error enriching leads:', err)
+      const errorMessage = err.response?.data?.error || err.response?.data?.details || err.message || 'Rikastus epäonnistui'
+      setError(errorMessage)
+      setTimeout(() => setError(''), 5000)
+    } finally {
+      setEnrichingLeads(false)
+    }
+  }
+
+  // Hae liidit kun käyttäjä muuttuu (ei tarvitse organisaatiota, backend hoitaa sen)
   useEffect(() => {
     if (user?.id) {
       fetchLeads()
     }
   }, [user?.id])
+
+  // Hae krediitit kun organisaatio on saatavilla
+  useEffect(() => {
+    if (user?.id && organization?.id) {
+      fetchCredits()
+    }
+  }, [user?.id, organization?.id])
 
 
   const totalPages = Math.ceil(totalLeads / resultsPerPage)
@@ -794,9 +910,9 @@ export default function LeadScrapingPage() {
   return (
     <div className="lead-scraping-page">
       <div className="lead-scraping-header">
-        <h1>Liidien etsintä</h1>
+        <h1>{t('leadScraping.pageTitle')}</h1>
         <p>
-          Määritä hakukriteerit ja aloita liidien haku{' '}
+          {t('leadScraping.pageDescription')}{' '}
           <a 
             href="/help#lead-scraping" 
             onClick={(e) => {
@@ -809,7 +925,7 @@ export default function LeadScrapingPage() {
               cursor: 'pointer'
             }}
           >
-            Lue lisää
+            {t('leadScraping.readMore')}
           </a>
         </p>
       </div>
@@ -836,7 +952,7 @@ export default function LeadScrapingPage() {
                 onClick={() => setShowBuyerPersonaModal(true)}
                 style={{ width: '100%' }}
               >
-                {buyerPersona ? '✓ Ostajapersoona' : 'Ostajapersoona'}
+                {buyerPersona ? t('leadScraping.buyerPersonaSaved') : t('leadScraping.buyerPersona')}
               </Button>
             </div>
           </div>
@@ -849,7 +965,7 @@ export default function LeadScrapingPage() {
             onClick={() => toggleFilter('contact')}
             type="button"
           >
-            <span>Contact Filters</span>
+            <span>{t('leadScraping.contactFilters')}</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               {getFilterCount('contact') > 0 && (
                 <span className="filter-count-badge">{getFilterCount('contact')}</span>
@@ -860,11 +976,11 @@ export default function LeadScrapingPage() {
           {openFilters.contact && (
             <div className="filter-group-content">
               <div className="form-field">
-                <label>Email Status</label>
+                <label>{t('leadScraping.emailStatus')}</label>
                 <select value={emailStatus} onChange={(e) => setEmailStatus(e.target.value)}>
-                  <option value="">All</option>
-                  <option value="verified">Verified</option>
-                  <option value="unverified">Unverified</option>
+                  <option value="">{t('leadScraping.emailStatusAll')}</option>
+                  <option value="verified">{t('leadScraping.emailStatusVerified')}</option>
+                  <option value="unverified">{t('leadScraping.emailStatusUnverified')}</option>
                 </select>
               </div>
               <div className="form-field">
@@ -874,7 +990,7 @@ export default function LeadScrapingPage() {
                     checked={onlyWithEmail}
                     onChange={(e) => setOnlyWithEmail(e.target.checked)}
                   />
-                  Has email
+                  {t('leadScraping.hasEmail')}
                 </label>
               </div>
               <div className="form-field">
@@ -884,7 +1000,7 @@ export default function LeadScrapingPage() {
                     checked={onlyWithPhone}
                     onChange={(e) => setOnlyWithPhone(e.target.checked)}
                   />
-                  Has phone
+                  {t('leadScraping.hasPhone')}
                 </label>
               </div>
             </div>
@@ -898,7 +1014,7 @@ export default function LeadScrapingPage() {
             onClick={() => toggleFilter('company')}
             type="button"
           >
-            <span>Company Filters</span>
+            <span>{t('leadScraping.companyFilters')}</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               {getFilterCount('company') > 0 && (
                 <span className="filter-count-badge">{getFilterCount('company')}</span>
@@ -910,7 +1026,7 @@ export default function LeadScrapingPage() {
             <div className="filter-group-content">
               <div className="form-field">
                 <MultiSelect
-                  label="Employee range — Includes"
+                  label={t('leadScraping.employeeRangeLabel')}
                   options={employeeRangeOptions}
                   value={employeeRange}
                   onChange={setEmployeeRange}
@@ -919,46 +1035,46 @@ export default function LeadScrapingPage() {
               </div>
               <div className="form-field">
                 <MultiSelect
-                  label="Industry — Includes"
+                  label={t('leadScraping.industryIncludesLabel')}
                   options={industryOptions}
                   value={industriesIncludes}
                   onChange={setIndustriesIncludes}
-                  placeholder={t('leadScraping.industriesIncludePlaceholder')}
+                  placeholder={t('leadScraping.industryIncludesPlaceholder')}
                   searchable={true}
                 />
               </div>
               <div className="form-field">
                 <MultiSelect
-                  label="Industry — Excludes"
+                  label={t('leadScraping.industryExcludesLabel')}
                   options={industryOptions}
                   value={industriesExcludes}
                   onChange={setIndustriesExcludes}
-                  placeholder={t('leadScraping.industriesExcludePlaceholder')}
+                  placeholder={t('leadScraping.industryExcludesPlaceholder')}
                   searchable={true}
                 />
               </div>
               <div className="form-field-row">
                 <div className="form-field">
-                  <label>Founded From</label>
+                  <label>{t('leadScraping.foundedFromLabel')}</label>
                   <input
                     type="number"
                     value={foundedYearFrom}
                     onChange={(e) => setFoundedYearFrom(e.target.value)}
-                    placeholder={t('leadScraping.foundedYearFromPlaceholder')}
+                    placeholder={t('leadScraping.foundedFromPlaceholder')}
                   />
                 </div>
                 <div className="form-field">
-                  <label>Founded To</label>
+                  <label>{t('leadScraping.foundedToLabel')}</label>
                   <input
                     type="number"
                     value={foundedYearTo}
                     onChange={(e) => setFoundedYearTo(e.target.value)}
-                    placeholder={t('leadScraping.foundedYearToPlaceholder')}
+                    placeholder={t('leadScraping.foundedToPlaceholder')}
                   />
                 </div>
               </div>
               <div className="form-field">
-                <label>Company — Domains</label>
+                <label>{t('leadScraping.companyDomainsLabel')}</label>
                 <input
                   type="text"
                   value={companyDomains}
@@ -977,7 +1093,7 @@ export default function LeadScrapingPage() {
             onClick={() => toggleFilter('peopleLocation')}
             type="button"
           >
-            <span>People Location Filters</span>
+            <span>{t('leadScraping.peopleLocationFilters')}</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               {getFilterCount('peopleLocation') > 0 && (
                 <span className="filter-count-badge">{getFilterCount('peopleLocation')}</span>
@@ -1056,7 +1172,7 @@ export default function LeadScrapingPage() {
             onClick={() => toggleFilter('companyLocation')}
             type="button"
           >
-            <span>Company Location Filters</span>
+            <span>{t('leadScraping.companyLocationFilters')}</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               {getFilterCount('companyLocation') > 0 && (
                 <span className="filter-count-badge">{getFilterCount('companyLocation')}</span>
@@ -1417,17 +1533,36 @@ export default function LeadScrapingPage() {
         <div className="lead-scraping-results">
         <div className="results-header">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', width: '100%' }}>
-            <h2>Kerätyt liidit</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <h2>{t('leadScraping.collectedLeads')}</h2>
+              {!loadingCredits && (
+                <div style={{ fontSize: '14px', color: '#6b7280', display: 'flex', gap: '16px', alignItems: 'center' }}>
+                  <span>{t('leadScraping.creditsRemaining', { remaining: creditsMonthly - creditsUsed, total: creditsMonthly })}</span>
+                  <span style={{ color: '#9ca3af' }}>•</span>
+                  <span>{t('leadScraping.creditCharge')}</span>
+                </div>
+              )}
+            </div>
             <div className="results-controls" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               {selectedLeadIds.size > 0 && (
-                <Button 
-                  variant="primary" 
-                  onClick={deleteSelectedLeads} 
-                  disabled={deletingLeads}
-                  style={{ backgroundColor: '#dc2626', color: '#ffffff' }}
-                >
-                  {deletingLeads ? 'Poistetaan...' : `Poista (${selectedLeadIds.size})`}
-                </Button>
+                <>
+                  <Button 
+                    variant="primary" 
+                    onClick={enrichSelectedLeads} 
+                    disabled={enrichingLeads || (creditsMonthly - creditsUsed < selectedLeadIds.size)}
+                    style={{ backgroundColor: '#10b981', color: '#ffffff' }}
+                  >
+                    {enrichingLeads ? t('leadScraping.enriching') : t('leadScraping.enrichSelected', { count: selectedLeadIds.size })}
+                  </Button>
+                  <Button 
+                    variant="primary" 
+                    onClick={deleteSelectedLeads} 
+                    disabled={deletingLeads}
+                    style={{ backgroundColor: '#dc2626', color: '#ffffff' }}
+                  >
+                    {deletingLeads ? t('leadScraping.deleting') : t('leadScraping.deleteSelected', { count: selectedLeadIds.size })}
+                  </Button>
+                </>
               )}
               <select 
                 value={resultsPerPage} 
@@ -1436,22 +1571,25 @@ export default function LeadScrapingPage() {
                   setCurrentPage(1)
                 }}
               >
-                <option value="10">10 per sivu</option>
-                <option value="20">20 per sivu</option>
-                <option value="50">50 per sivu</option>
-                <option value="100">100 per sivu</option>
+                <option value="10">{t('leadScraping.resultsPerPage', { count: 10 })}</option>
+                <option value="20">{t('leadScraping.resultsPerPage', { count: 20 })}</option>
+                <option value="50">{t('leadScraping.resultsPerPage', { count: 50 })}</option>
+                <option value="100">{t('leadScraping.resultsPerPage', { count: 100 })}</option>
               </select>
-              <Button variant="secondary" onClick={fetchLeads} disabled={loadingLeads}>
-                {loadingLeads ? 'Ladataan...' : 'Päivitä'}
+              <Button variant="secondary" onClick={() => {
+                fetchLeads()
+                fetchCredits()
+              }} disabled={loadingLeads || loadingCredits}>
+                {loadingLeads || loadingCredits ? t('common.loading') : t('leadScraping.refresh')}
               </Button>
               <Button variant="secondary" onClick={() => setShowExportModal(true)}>
-                Export
+                {t('leadScraping.export')}
               </Button>
             </div>
           </div>
           <div className="results-filters">
             <div className="result-filter-group">
-              <label htmlFor="filter-email">Sähköposti</label>
+              <label htmlFor="filter-email">{t('leadScraping.filterEmail')}</label>
               <select
                 id="filter-email"
                 value={filterEmail}
@@ -1467,13 +1605,13 @@ export default function LeadScrapingPage() {
                   width: '100%'
                 }}
               >
-                <option value="">Kaikki</option>
-                <option value="has">Löytyy</option>
-                <option value="missing">Ei löydy</option>
+                <option value="">{t('leadScraping.filterEmailAll')}</option>
+                <option value="has">{t('leadScraping.filterEmailHas')}</option>
+                <option value="missing">{t('leadScraping.filterEmailMissing')}</option>
               </select>
             </div>
             <div className="result-filter-group">
-              <label htmlFor="filter-position">Tehtävä</label>
+              <label htmlFor="filter-position">{t('leadScraping.filterPosition')}</label>
               <input
                 id="filter-position"
                 type="text"
@@ -1492,7 +1630,7 @@ export default function LeadScrapingPage() {
               />
             </div>
             <div className="result-filter-group">
-              <label htmlFor="filter-city">Kaupunki</label>
+              <label htmlFor="filter-city">{t('leadScraping.filterCity')}</label>
               <input
                 id="filter-city"
                 type="text"
@@ -1511,7 +1649,7 @@ export default function LeadScrapingPage() {
               />
             </div>
             <div className="result-filter-group">
-              <label htmlFor="filter-score-min">Pisteet</label>
+              <label htmlFor="filter-score-min">{t('leadScraping.filterScore')}</label>
               <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                 <input
                   id="filter-score-min"
@@ -1549,7 +1687,7 @@ export default function LeadScrapingPage() {
               </div>
             </div>
             <div className="result-filter-group">
-              <label htmlFor="filter-date">Haettu päivämäärän jälkeen</label>
+              <label htmlFor="filter-date">{t('leadScraping.filterDate')}</label>
               <input
                 id="filter-date"
                 type="date"
@@ -1580,7 +1718,7 @@ export default function LeadScrapingPage() {
                   }}
                   style={{ alignSelf: 'flex-end', marginTop: '24px' }}
                 >
-                  Tyhjennä filtterit
+                  {t('leadScraping.clearFilters')}
                 </Button>
               </div>
             )}
@@ -1588,10 +1726,10 @@ export default function LeadScrapingPage() {
         </div>
 
         {loadingLeads ? (
-          <div className="loading-state">Ladataan liidejä...</div>
+          <div className="loading-state">{t('leadScraping.loadingLeads')}</div>
         ) : leads.length === 0 ? (
           <div className="empty-state">
-            Ei liidejä vielä. Aloita scraping yllä olevilla filttereillä.
+            {t('leadScraping.noLeads')}
           </div>
         ) : (
           <>
@@ -1605,19 +1743,19 @@ export default function LeadScrapingPage() {
                         checked={leads.length > 0 && leads.every(lead => selectedLeadIds.has(lead.id))}
                         onChange={toggleSelectAll}
                         style={{ cursor: 'pointer' }}
-                        title="Valitse kaikki"
+                        title={t('leadScraping.selectAll')}
                       />
                     </th>
-                    <th>Nimi</th>
-                    <th>Sähköposti</th>
-                    <th>Tehtävä</th>
-                    <th>Yritys</th>
-                    <th>Kaupunki</th>
-                    <th>Maa</th>
-                    <th>LinkedIn</th>
-                    <th>Pisteet</th>
-                    <th>Yhteenveto</th>
-                    <th>Toiminnot</th>
+                    <th>{t('leadScraping.tableName')}</th>
+                    <th>{t('leadScraping.tableEmail')}</th>
+                    <th>{t('leadScraping.tablePosition')}</th>
+                    <th>{t('leadScraping.tableCompany')}</th>
+                    <th>{t('leadScraping.tableCity')}</th>
+                    <th>{t('leadScraping.tableCountry')}</th>
+                    <th>{t('leadScraping.tableLinkedIn')}</th>
+                    <th>{t('leadScraping.tableScore')}</th>
+                    <th>{t('leadScraping.tableSummary')}</th>
+                    <th>{t('leadScraping.tableActions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1653,9 +1791,9 @@ export default function LeadScrapingPage() {
                             setSelectedLead(lead)
                             setShowLeadModal(true)
                           }}
-                          title="Näytä kaikki tiedot"
+                          title={t('leadScraping.showAllDetails')}
                         >
-                          Näytä
+                          {t('leadScraping.showDetails')}
                         </button>
                       </td>
                     </tr>
@@ -1671,16 +1809,16 @@ export default function LeadScrapingPage() {
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
                 >
-                  « Edellinen
+                  {t('leadScraping.previous')}
                 </button>
                 <span>
-                  Sivu {currentPage} / {totalPages} (yhteensä {totalLeads} liidiä)
+                  {t('leadScraping.page', { current: currentPage, total: totalPages, count: totalLeads })}
                 </span>
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
                 >
-                  Seuraava »
+                  {t('leadScraping.next')}
                 </button>
               </div>
             )}
@@ -1705,7 +1843,7 @@ export default function LeadScrapingPage() {
             style={{ maxWidth: '800px', width: '90%' }}
           >
             <div className="modal-header">
-              <h2 className="modal-title">Export CSV</h2>
+              <h2 className="modal-title">{t('leadScraping.exportModalTitle')}</h2>
               <button
                 onClick={() => setShowExportModal(false)}
                 className="modal-close-btn"
@@ -1716,18 +1854,16 @@ export default function LeadScrapingPage() {
             <div className="modal-content" style={{ padding: '24px 32px' }}>
               <div className="export-info">
                 <p style={{ margin: '0 0 8px 0', color: '#374151', fontSize: '14px', fontWeight: '500' }}>
-                  Valitse kentät, jotka halutaan sisällyttää CSV-tiedostoon
+                  {t('leadScraping.exportSelectFields')}
                 </p>
-                <p style={{ margin: '0', color: '#6b7280', fontSize: '13px' }}>
-                  Exportataan <strong>{applyFilters(allLeads).length}</strong> liidiä (filtteröidyt tulokset)
-                </p>
+                <p style={{ margin: '0', color: '#6b7280', fontSize: '13px' }} dangerouslySetInnerHTML={{ __html: t('leadScraping.exportLeadsCount', { count: applyFilters(allLeads).length }).replace('<strong>', '<strong>').replace('</strong>', '</strong>') }} />
               </div>
               
               <div className="export-fields-container">
                 {/* Henkilön tiedot */}
                 <div className="export-field-group">
                   <div className="export-field-group-header">
-                    <h3 className="export-field-group-title">Henkilön tiedot</h3>
+                    <h3 className="export-field-group-title">{t('leadScraping.exportPersonFields')}</h3>
                     <button
                       type="button"
                       className="export-select-all-btn"
@@ -1743,19 +1879,19 @@ export default function LeadScrapingPage() {
                         })
                       }}
                     >
-                      {['fullName', 'firstName', 'lastName', 'email', 'phone', 'position', 'seniority', 'functional'].every(field => exportFields[field]) ? 'Poista kaikki' : 'Valitse kaikki'}
+                      {['fullName', 'firstName', 'lastName', 'email', 'phone', 'position', 'seniority', 'functional'].every(field => exportFields[field]) ? t('leadScraping.deselectAllFields') : t('leadScraping.selectAllFields')}
                     </button>
                   </div>
                   <div className="export-fields-grid">
                     {[
-                      { key: 'fullName', label: 'Koko nimi' },
-                      { key: 'firstName', label: 'Etunimi' },
-                      { key: 'lastName', label: 'Sukunimi' },
-                      { key: 'email', label: 'Sähköposti' },
-                      { key: 'phone', label: 'Puhelin' },
-                      { key: 'position', label: 'Tehtävä' },
-                      { key: 'seniority', label: 'Seniority' },
-                      { key: 'functional', label: 'Functional' }
+                      { key: 'fullName', label: t('leadScraping.exportFullName') },
+                      { key: 'firstName', label: t('leadScraping.exportFirstName') },
+                      { key: 'lastName', label: t('leadScraping.exportLastName') },
+                      { key: 'email', label: t('leadScraping.exportEmail') },
+                      { key: 'phone', label: t('leadScraping.exportPhone') },
+                      { key: 'position', label: t('leadScraping.exportPosition') },
+                      { key: 'seniority', label: t('leadScraping.exportSeniority') },
+                      { key: 'functional', label: t('leadScraping.exportFunctional') }
                     ].map(field => (
                       <label key={field.key} className="export-field-checkbox">
                         <input
@@ -1772,7 +1908,7 @@ export default function LeadScrapingPage() {
                 {/* Sijainti */}
                 <div className="export-field-group">
                   <div className="export-field-group-header">
-                    <h3 className="export-field-group-title">Sijainti</h3>
+                    <h3 className="export-field-group-title">{t('leadScraping.exportLocationFields')}</h3>
                     <button
                       type="button"
                       className="export-select-all-btn"
@@ -1788,14 +1924,14 @@ export default function LeadScrapingPage() {
                         })
                       }}
                     >
-                      {['city', 'state', 'country'].every(field => exportFields[field]) ? 'Poista kaikki' : 'Valitse kaikki'}
+                      {['city', 'state', 'country'].every(field => exportFields[field]) ? t('leadScraping.deselectAllFields') : t('leadScraping.selectAllFields')}
                     </button>
                   </div>
                   <div className="export-fields-grid">
                     {[
-                      { key: 'city', label: 'Kaupunki' },
-                      { key: 'state', label: 'Osavaltio/Maakunta' },
-                      { key: 'country', label: 'Maa' }
+                      { key: 'city', label: t('leadScraping.exportCity') },
+                      { key: 'state', label: t('leadScraping.exportState') },
+                      { key: 'country', label: t('leadScraping.exportCountry') }
                     ].map(field => (
                       <label key={field.key} className="export-field-checkbox">
                         <input
@@ -1812,7 +1948,7 @@ export default function LeadScrapingPage() {
                 {/* Yrityksen tiedot */}
                 <div className="export-field-group">
                   <div className="export-field-group-header">
-                    <h3 className="export-field-group-title">Yrityksen tiedot</h3>
+                    <h3 className="export-field-group-title">{t('leadScraping.exportCompanyFields')}</h3>
                     <button
                       type="button"
                       className="export-select-all-btn"
@@ -1828,21 +1964,21 @@ export default function LeadScrapingPage() {
                         })
                       }}
                     >
-                      {['orgName', 'orgCity', 'orgState', 'orgCountry', 'orgWebsite', 'orgLinkedinUrl', 'orgFoundedYear', 'orgIndustry', 'orgSize', 'orgDescription'].every(field => exportFields[field]) ? 'Poista kaikki' : 'Valitse kaikki'}
+                      {['orgName', 'orgCity', 'orgState', 'orgCountry', 'orgWebsite', 'orgLinkedinUrl', 'orgFoundedYear', 'orgIndustry', 'orgSize', 'orgDescription'].every(field => exportFields[field]) ? t('leadScraping.deselectAllFields') : t('leadScraping.selectAllFields')}
                     </button>
                   </div>
                   <div className="export-fields-grid">
                     {[
-                      { key: 'orgName', label: 'Yritys' },
-                      { key: 'orgCity', label: 'Yrityksen kaupunki' },
-                      { key: 'orgState', label: 'Yrityksen osavaltio/Maakunta' },
-                      { key: 'orgCountry', label: 'Yrityksen maa' },
-                      { key: 'orgWebsite', label: 'Yrityksen verkkosivusto' },
-                      { key: 'orgLinkedinUrl', label: 'Yrityksen LinkedIn URL' },
-                      { key: 'orgFoundedYear', label: 'Perustettu' },
-                      { key: 'orgIndustry', label: 'Toimiala' },
-                      { key: 'orgSize', label: 'Yrityksen koko' },
-                      { key: 'orgDescription', label: 'Yrityksen kuvaus' }
+                      { key: 'orgName', label: t('leadScraping.exportOrgName') },
+                      { key: 'orgCity', label: t('leadScraping.exportOrgCity') },
+                      { key: 'orgState', label: t('leadScraping.exportOrgState') },
+                      { key: 'orgCountry', label: t('leadScraping.exportOrgCountry') },
+                      { key: 'orgWebsite', label: t('leadScraping.exportOrgWebsite') },
+                      { key: 'orgLinkedinUrl', label: t('leadScraping.exportOrgLinkedInUrl') },
+                      { key: 'orgFoundedYear', label: t('leadScraping.exportOrgFoundedYear') },
+                      { key: 'orgIndustry', label: t('leadScraping.exportOrgIndustry') },
+                      { key: 'orgSize', label: t('leadScraping.exportOrgSize') },
+                      { key: 'orgDescription', label: t('leadScraping.exportOrgDescription') }
                     ].map(field => (
                       <label key={field.key} className="export-field-checkbox">
                         <input
@@ -1859,7 +1995,7 @@ export default function LeadScrapingPage() {
                 {/* Muut */}
                 <div className="export-field-group">
                   <div className="export-field-group-header">
-                    <h3 className="export-field-group-title">Muut</h3>
+                    <h3 className="export-field-group-title">{t('leadScraping.exportOtherFields')}</h3>
                     <button
                       type="button"
                       className="export-select-all-btn"
@@ -1875,14 +2011,14 @@ export default function LeadScrapingPage() {
                         })
                       }}
                     >
-                      {['linkedinUrl', 'score', 'status'].every(field => exportFields[field]) ? 'Poista kaikki' : 'Valitse kaikki'}
+                      {['linkedinUrl', 'score', 'status'].every(field => exportFields[field]) ? t('leadScraping.deselectAllFields') : t('leadScraping.selectAllFields')}
                     </button>
                   </div>
                   <div className="export-fields-grid">
                     {[
-                      { key: 'linkedinUrl', label: 'LinkedIn URL' },
-                      { key: 'score', label: 'Pisteet' },
-                      { key: 'status', label: 'Tila' }
+                      { key: 'linkedinUrl', label: t('leadScraping.exportLinkedInUrl') },
+                      { key: 'score', label: t('leadScraping.exportScore') },
+                      { key: 'status', label: t('leadScraping.exportStatus') }
                     ].map(field => (
                       <label key={field.key} className="export-field-checkbox">
                         <input
@@ -1908,13 +2044,13 @@ export default function LeadScrapingPage() {
                 variant="secondary"
                 onClick={() => setShowExportModal(false)}
               >
-                Peruuta
+                {t('common.cancel')}
               </Button>
               <Button 
                 variant="primary" 
                 onClick={exportToCSV}
               >
-                Export CSV
+                {t('leadScraping.exportButton')}
               </Button>
             </div>
           </div>
@@ -2049,38 +2185,38 @@ export default function LeadScrapingPage() {
             <div className="modal-content lead-details-content">
               {/* Henkilön tiedot */}
               <div className="lead-details-section">
-                <h3>Henkilön tiedot</h3>
+                <h3>{t('leadScraping.leadDetailsPersonInfo')}</h3>
                 <div className="lead-details-grid">
                   <div className="lead-detail-item">
-                    <label>Etunimi:</label>
+                    <label>{t('leadScraping.leadDetailsFirstName')}</label>
                     <span>{selectedLead.firstName || '-'}</span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Sukunimi:</label>
+                    <label>{t('leadScraping.leadDetailsLastName')}</label>
                     <span>{selectedLead.lastName || '-'}</span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Koko nimi:</label>
+                    <label>{t('leadScraping.leadDetailsFullName')}</label>
                     <span>{selectedLead.fullName || '-'}</span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Sähköposti:</label>
+                    <label>{t('leadScraping.leadDetailsEmail')}</label>
                     <span>{selectedLead.email || '-'}</span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Puhelin:</label>
+                    <label>{t('leadScraping.leadDetailsPhone')}</label>
                     <span>{selectedLead.phone || '-'}</span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Tehtävä:</label>
+                    <label>{t('leadScraping.leadDetailsPosition')}</label>
                     <span>{selectedLead.position || '-'}</span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Seniority:</label>
+                    <label>{t('leadScraping.leadDetailsSeniority')}</label>
                     <span>{selectedLead.seniority || '-'}</span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Functional:</label>
+                    <label>{t('leadScraping.leadDetailsFunctional')}</label>
                     <span>
                       {Array.isArray(selectedLead.functional) 
                         ? selectedLead.functional.join(', ') 
@@ -2088,7 +2224,7 @@ export default function LeadScrapingPage() {
                     </span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>LinkedIn:</label>
+                    <label>{t('leadScraping.leadDetailsLinkedIn')}</label>
                     <span>
                       {selectedLead.linkedinUrl ? (
                         <a href={selectedLead.linkedinUrl} target="_blank" rel="noopener noreferrer">
@@ -2098,15 +2234,15 @@ export default function LeadScrapingPage() {
                     </span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Kaupunki:</label>
+                    <label>{t('leadScraping.leadDetailsCity')}</label>
                     <span>{selectedLead.city || '-'}</span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Osavaltio/Maakunta:</label>
+                    <label>{t('leadScraping.leadDetailsState')}</label>
                     <span>{selectedLead.state || '-'}</span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Maa:</label>
+                    <label>{t('leadScraping.leadDetailsCountry')}</label>
                     <span>{selectedLead.country || '-'}</span>
                   </div>
                 </div>
@@ -2114,14 +2250,14 @@ export default function LeadScrapingPage() {
 
               {/* Organisaation tiedot */}
               <div className="lead-details-section">
-                <h3>Organisaation tiedot</h3>
+                <h3>{t('leadScraping.leadDetailsCompanyInfo')}</h3>
                 <div className="lead-details-grid">
                   <div className="lead-detail-item">
-                    <label>Yrityksen nimi:</label>
+                    <label>{t('leadScraping.leadDetailsCompanyName')}</label>
                     <span>{selectedLead.orgName || '-'}</span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Verkkosivusto:</label>
+                    <label>{t('leadScraping.leadDetailsWebsite')}</label>
                     <span>
                       {selectedLead.orgWebsite ? (
                         <a href={selectedLead.orgWebsite} target="_blank" rel="noopener noreferrer">
@@ -2131,7 +2267,7 @@ export default function LeadScrapingPage() {
                     </span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>LinkedIn URL:</label>
+                    <label>{t('leadScraping.leadDetailsOrgLinkedInUrl')}</label>
                     <span>
                       {Array.isArray(selectedLead.orgLinkedinUrl) && selectedLead.orgLinkedinUrl.length > 0
                         ? selectedLead.orgLinkedinUrl.map((url, idx) => (
@@ -2144,11 +2280,11 @@ export default function LeadScrapingPage() {
                     </span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Perustettu:</label>
+                    <label>{t('leadScraping.leadDetailsFounded')}</label>
                     <span>{selectedLead.orgFoundedYear || '-'}</span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Toimiala:</label>
+                    <label>{t('leadScraping.leadDetailsIndustry')}</label>
                     <span>
                       {Array.isArray(selectedLead.orgIndustry) 
                         ? selectedLead.orgIndustry.join(', ') 
@@ -2156,23 +2292,23 @@ export default function LeadScrapingPage() {
                     </span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Koko:</label>
+                    <label>{t('leadScraping.leadDetailsSize')}</label>
                     <span>{selectedLead.orgSize || '-'}</span>
                   </div>
                   <div className="lead-detail-item lead-detail-item--full">
-                    <label>Kuvaus:</label>
+                    <label>{t('leadScraping.leadDetailsDescription')}</label>
                     <span>{selectedLead.orgDescription || '-'}</span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Kaupunki:</label>
+                    <label>{t('leadScraping.leadDetailsOrgCity')}</label>
                     <span>{selectedLead.orgCity || '-'}</span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Osavaltio/Maakunta:</label>
+                    <label>{t('leadScraping.leadDetailsOrgState')}</label>
                     <span>{selectedLead.orgState || '-'}</span>
                   </div>
                   <div className="lead-detail-item">
-                    <label>Maa:</label>
+                    <label>{t('leadScraping.leadDetailsOrgCountry')}</label>
                     <span>{selectedLead.orgCountry || '-'}</span>
                   </div>
                 </div>
@@ -2180,10 +2316,10 @@ export default function LeadScrapingPage() {
 
               {/* Muut tiedot */}
               <div className="lead-details-section">
-                <h3>Muut tiedot</h3>
+                <h3>{t('leadScraping.leadDetailsOtherInfo')}</h3>
                 <div className="lead-details-grid">
                   <div className="lead-detail-item">
-                    <label>Luontipäivä:</label>
+                    <label>{t('leadScraping.leadDetailsCreatedDate')}</label>
                     <span>
                       {selectedLead.created_at 
                         ? new Date(selectedLead.created_at).toLocaleDateString('fi-FI', {
@@ -2196,13 +2332,13 @@ export default function LeadScrapingPage() {
                   </div>
                   {selectedLead.score !== null && selectedLead.score !== undefined && (
                     <div className="lead-detail-item">
-                      <label>Pisteet:</label>
+                      <label>{t('leadScraping.leadDetailsScore')}</label>
                       <span>{selectedLead.score}</span>
                     </div>
                   )}
                   {(selectedLead.score_criteria || selectedLead.scoreCriteria) && (
                     <div className="lead-detail-item lead-detail-item--full">
-                      <label>Yhteenveto:</label>
+                      <label>{t('leadScraping.leadDetailsSummary')}</label>
                       <span>{selectedLead.score_criteria || selectedLead.scoreCriteria || '-'}</span>
                     </div>
                   )}
@@ -2214,7 +2350,7 @@ export default function LeadScrapingPage() {
                 setShowLeadModal(false)
                 setSelectedLead(null)
               }}>
-                Sulje
+                {t('common.close')}
               </Button>
             </div>
           </div>

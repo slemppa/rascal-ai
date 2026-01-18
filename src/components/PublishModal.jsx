@@ -2,6 +2,7 @@ import React from 'react'
 import { createPortal } from 'react-dom'
 import Button from './Button'
 import './PublishModal.css'
+import './KeskenModal.css' // Shared media styles (.media-placeholder, etc.)
 
 const PublishModal = ({ 
   show, 

@@ -1,8 +1,25 @@
-import React from 'react'
+import React, { useState, useRef } from 'react'
 import Button from '../Button'
+import ConfirmPopover from '../ConfirmPopover'
 import './PostCard.css'
 
 function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext, onDragStart, onDragEnd, isDragging, hideActions = false, t }) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const deleteButtonRef = useRef(null)
+
+  const handleDeleteClick = (e) => {
+    e.stopPropagation()
+    setShowDeleteConfirm(true)
+  }
+
+  const handleConfirmDelete = () => {
+    setShowDeleteConfirm(false)
+    onDelete(post)
+  }
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirm(false)
+  }
   return (
     <div 
       className={`post-card ${isDragging ? 'dragging' : ''} ${hideActions ? 'clickable' : ''}`}
@@ -234,8 +251,9 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
                   
                   {post.status !== 'Aikataulutettu' && (
                     <Button 
+                      ref={deleteButtonRef}
                       variant="danger" 
-                      onClick={() => onDelete(post)}
+                      onClick={handleDeleteClick}
                       className="post-button-small"
                     >
                       {t('posts.actions.delete')}
@@ -247,6 +265,18 @@ function PostCard({ post, onEdit, onDelete, onPublish, onSchedule, onMoveToNext,
           </div>
         </div>
       </div>
+
+      <ConfirmPopover
+        show={showDeleteConfirm}
+        message={t('posts.alerts.deleteConfirm') || 'Haluatko varmasti poistaa tämän postauksen? Tätä toimintoa ei voi perua.'}
+        confirmText={t('posts.actions.delete') || 'Poista'}
+        cancelText={t('ui.buttons.cancel') || 'Peruuta'}
+        variant="danger"
+        anchorElement={deleteButtonRef.current}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        t={t}
+      />
     </div>
   )
 }

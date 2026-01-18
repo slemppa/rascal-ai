@@ -54,23 +54,7 @@
   object-fit: contain;
 }
 
-.media-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #f9fafb;
-  position: relative;
-}
-
-.media-placeholder img {
-  width: 80px;
-  height: 80px;
-  opacity: 0.5;
-  margin-bottom: 16px;
-}
+/* .media-placeholder and .media-placeholder img are defined in KeskenModal.css */
 
 .post-content-box {
   background-color: #f8f9fa;
@@ -79,81 +63,15 @@
   padding: 16px;
 }
 
+/* .carousel-slides, .slides-grid, .slide-item, .slide-number, .slide-image, 
+   .slide-placeholder, .slide-placeholder img, .slide-caption are defined in KeskenModal.css */
+
 .carousel-slides {
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  padding: 16px;
+  padding: 16px; /* Override for PublishModal */
 }
 
 .slides-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 12px;
-  max-height: 320px;
-  overflow-y: auto;
-  padding-right: 8px;
-}
-
-.slide-item {
-  position: relative;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #f9fafb;
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-}
-
-.slide-number {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  z-index: 2;
-}
-
-.slide-image {
-  width: 100%;
-  height: 80px;
-  object-fit: cover;
-  flex: 1;
-}
-
-.slide-placeholder {
-  width: 100%;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f3f4f6;
-  flex: 1;
-}
-
-.slide-placeholder img {
-  width: 24px;
-  height: 24px;
-  opacity: 0.5;
-}
-
-.slide-caption {
-  padding: 6px 8px;
-  font-size: 11px;
-  color: #6b7280;
-  background: white;
-  border-top: 1px solid #e5e7eb;
-  max-height: 40px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  max-height: 320px; /* Override for PublishModal (KeskenModal has 450px) */
 }
 
 @media (max-width: 768px) {

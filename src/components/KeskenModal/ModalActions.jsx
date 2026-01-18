@@ -24,7 +24,7 @@ const ModalActions = ({
           variant="secondary"
           onClick={handleClose}
         >
-          {t('common.cancel')}
+          {t('ui.buttons.cancel')}
         </Button>
       </div>
       <div className="modal-actions-right">
@@ -33,7 +33,7 @@ const ModalActions = ({
           variant="primary"
           disabled={loading || disabled}
         >
-          {loading ? t('ui.buttons.saving') : t('common.save')}
+          {loading ? t('ui.buttons.saving') : t('ui.buttons.save')}
         </Button>
       </div>
     </div>

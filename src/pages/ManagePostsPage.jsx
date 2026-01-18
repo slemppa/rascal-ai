@@ -735,38 +735,36 @@ export default function ManagePostsPage() {
   }
 
   const handleDeletePost = async (post) => {
-    if (window.confirm(t('posts.messages.confirmDelete'))) {
-      try {
-        // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
-        const userId = await getUserOrgId(user.id)
+    try {
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user.id)
 
-        if (!userId) {
-          throw new Error(t('posts.messages.userIdNotFound'))
-        }
-
-        // Muutetaan status 'Deleted':ksi sen sijaan että poistetaan rivi
-        const { error: updateError } = await supabase
-          .from('content')
-          .update({ status: 'Deleted' })
-          .eq('id', post.id)
-          .eq('user_id', userId)
-
-        if (updateError) {
-          throw new Error(t('posts.messages.statusUpdateFailed') + ' ' + updateError.message)
-        }
-
-        // Päivitetään UI
-        await fetchPosts()
-        if (post.source === 'reels') {
-          await fetchReelsPosts()
-        }
-
-        setSuccessMessage(t('posts.messages.deleteSuccess'))
-        
-      } catch (error) {
-        console.error('Delete error:', error)
-        setErrorMessage(t('posts.messages.deleteError') + ' ' + error.message)
+      if (!userId) {
+        throw new Error(t('error.organizationIdNotFound'))
       }
+
+      // Muutetaan status 'Deleted':ksi sen sijaan että poistetaan rivi
+      const { error: updateError } = await supabase
+        .from('content')
+        .update({ status: 'Deleted' })
+        .eq('id', post.id)
+        .eq('user_id', userId)
+
+      if (updateError) {
+        throw new Error(updateError.message)
+      }
+
+      // Päivitetään UI
+      await fetchPosts()
+      if (post.source === 'reels') {
+        await fetchReelsPosts()
+      }
+
+      toast.success(t('posts.alerts.deleted'))
+      
+    } catch (error) {
+      console.error('Delete error:', error)
+      toast.error(t('posts.alerts.deleteFailed', { message: error.message }))
     }
   }
 

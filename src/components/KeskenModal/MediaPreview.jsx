@@ -67,18 +67,16 @@ const MediaPreview = ({
     return (
       <div className="media-placeholder">
         <img src="/placeholder.png" alt="Ei mediaa" />
-        {isPhotoType && (
-          <MediaControls
-            userAccountType={userAccountType}
-            imageLoading={imageLoading}
-            showMediaSourceMenu={showMediaSourceMenu}
-            onToggleMediaSourceMenu={onToggleMediaSourceMenu}
-            onSelectKuvapankki={onSelectKuvapankki}
-            onSelectKoneelta={() => fileInputRef.current?.click()}
-            variant="primary"
-            t={t}
-          />
-        )}
+        <MediaControls
+          userAccountType={userAccountType}
+          imageLoading={imageLoading}
+          showMediaSourceMenu={showMediaSourceMenu}
+          onToggleMediaSourceMenu={onToggleMediaSourceMenu}
+          onSelectKuvapankki={onSelectKuvapankki}
+          onSelectKoneelta={() => fileInputRef.current?.click()}
+          variant="primary"
+          t={t}
+        />
       </div>
     )
   }
@@ -86,11 +84,33 @@ const MediaPreview = ({
   // Video
   if (mediaUrl.includes('.mp4') || mediaUrl.includes('video')) {
     return (
-      <video 
-        src={mediaUrl} 
-        className="media-preview"
-        controls
-      />
+      <div className="media-wrapper">
+        {imageLoading && (
+          <div className="image-loading-overlay">
+            <div className="loading-spinner"></div>
+            <p>{t('media.buttons.loading')}</p>
+          </div>
+        )}
+        <video 
+          src={mediaUrl} 
+          className="media-preview"
+          controls
+        />
+        {/* Videon hallintanapit */}
+        <MediaControls
+          userAccountType={userAccountType}
+          imageLoading={imageLoading}
+          showMediaSourceMenu={showMediaSourceMenu}
+          onToggleMediaSourceMenu={onToggleMediaSourceMenu}
+          onSelectKuvapankki={onSelectKuvapankki}
+          onSelectKoneelta={() => fileInputRef.current?.click()}
+          onDeleteImage={onDeleteImage}
+          mediaUrl={mediaUrl}
+          variant="secondary"
+          showDelete={true}
+          t={t}
+        />
+      </div>
     )
   }
 
@@ -116,22 +136,20 @@ const MediaPreview = ({
       <div className="media-placeholder" style={{ display: 'none' }}>
         <img src="/placeholder.png" alt="Ei mediaa" />
       </div>
-      {/* Kuvan hallintanapit - vain Photo-tyyppisille */}
-      {isPhotoType && (
-        <MediaControls
-          userAccountType={userAccountType}
-          imageLoading={imageLoading}
-          showMediaSourceMenu={showMediaSourceMenu}
-          onToggleMediaSourceMenu={onToggleMediaSourceMenu}
-          onSelectKuvapankki={onSelectKuvapankki}
-          onSelectKoneelta={() => fileInputRef.current?.click()}
-          onDeleteImage={onDeleteImage}
-          mediaUrl={mediaUrl}
-          variant="secondary"
-          showDelete={true}
-          t={t}
-        />
-      )}
+      {/* Kuvan hallintanapit */}
+      <MediaControls
+        userAccountType={userAccountType}
+        imageLoading={imageLoading}
+        showMediaSourceMenu={showMediaSourceMenu}
+        onToggleMediaSourceMenu={onToggleMediaSourceMenu}
+        onSelectKuvapankki={onSelectKuvapankki}
+        onSelectKoneelta={() => fileInputRef.current?.click()}
+        onDeleteImage={onDeleteImage}
+        mediaUrl={mediaUrl}
+        variant="secondary"
+        showDelete={true}
+        t={t}
+      />
     </div>
   )
 }

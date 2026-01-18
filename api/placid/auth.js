@@ -1,8 +1,30 @@
 import crypto from 'crypto';
+import { withOrganization } from '../_middleware/with-organization.js';
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Ota vastaan template_id query-parametreista
+  const { template_id } = req.query;
+
+  if (!template_id) {
+    return res.status(400).json({ error: 'Missing template_id' });
+  }
+
+  // TARKISTA OMISTAJUUS: Varmista, että tämä template kuuluu tälle organisaatiolle
+  // req.organization.id tulee withOrganization-middlewaresta
+  const { data: template, error: dbError } = await req.supabase
+    .from('variables')
+    .select('id, placid_id')
+    .eq('placid_id', template_id)
+    .eq('user_id', req.organization.id) // user_id viittaa organisaatioon variables-taulussa
+    .single();
+
+  if (dbError || !template) {
+    console.error('Unauthorized access attempt to template:', template_id, req.organization.id);
+    return res.status(403).json({ error: 'Unauthorized: You do not own this template' });
   }
 
   // 1. Private API Secret (Signing key)
@@ -12,19 +34,10 @@ export default async function handler(req, res) {
   const sdkToken = process.env.PLACID_SDK_TOKEN;
 
   // Tarkistetaan konfiguraatio
-  if (!apiSecret) {
-    console.error('PLACID_API_TOKEN missing');
+  if (!apiSecret || !sdkToken) {
     return res.status(503).json({ 
       error: 'CONFIGURATION_ERROR',
-      message: 'Server configuration error: PLACID_API_TOKEN missing from environment.' 
-    });
-  }
-
-  if (!sdkToken) {
-    console.error('PLACID_SDK_TOKEN missing');
-    return res.status(503).json({ 
-      error: 'CONFIGURATION_ERROR',
-      message: 'Server configuration error: PLACID_SDK_TOKEN missing from environment. Please add your Placid Public Token.' 
+      message: 'Missing API keys' 
     });
   }
 
@@ -44,8 +57,8 @@ export default async function handler(req, res) {
       // Placid specific fields
       sdk_token: sdkToken, // Public Token
       
-      // Scopes: Annetaan oikeus muokata kaikkia projektin templateja
-      // (Voisi rajata myös per template-uuid: "template:{UUID}:write")
+      // RAJAA OIKEUDET: Vaikka Placid ei tukisi resource-scopeja, 
+      // omistajuustarkistus (yllä) estää jo luvattoman tokenin luonnin.
       scopes: [
         "templates:write",
         "templates:read"
@@ -93,3 +106,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Token generation failed' });
   }
 }
+
+// Wrap handler withOrganization-middlewareen
+export default withOrganization(handler);

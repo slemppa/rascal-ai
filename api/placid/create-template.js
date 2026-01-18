@@ -23,28 +23,59 @@ async function handler(req, res) {
     const orgId = req.organization.id;
     const authUserId = req.authUser.id;
 
-    // Lähetä data N8N:lle
-    const payload = {
-      action: 'create_placid_template',
-      userId: authUserId,
-      orgId: orgId,
-      templateData: req.body.templateData || {}
-    };
+    // Tarkista action: 'create' tai 'update_template_ready'
+    const action = req.body.action || 'create';
 
-    console.log('Creating Placid template via N8N:', payload);
+    let payload;
+
+    if (action === 'update_template_ready') {
+      // Päivitä template_ready tila Airtableen
+      const { templateId, templateReady } = req.body;
+
+      if (!templateId) {
+        return res.status(400).json({ 
+          error: 'Missing templateId',
+          message: 'templateId is required when action is update_template_ready' 
+        });
+      }
+
+      payload = {
+        action: 'update_template_ready',
+        userId: authUserId,
+        orgId: orgId,
+        templateId: templateId,
+        templateReady: Boolean(templateReady)
+      };
+
+      console.log('Updating template ready status via N8N:', payload);
+    } else {
+      // Oletus: luo uusi template
+      payload = {
+        action: 'create_placid_template',
+        userId: authUserId,
+        orgId: orgId,
+        templateData: req.body.templateData || {}
+      };
+
+      console.log('Creating Placid template via N8N:', payload);
+    }
 
     const result = await sendToN8N(webhookUrl, payload);
 
+    const successMessage = action === 'update_template_ready' 
+      ? 'Template ready status update started'
+      : 'Template creation started';
+
     return res.status(200).json({ 
       success: true, 
-      message: 'Template creation started',
+      message: successMessage,
       data: result 
     });
 
   } catch (error) {
-    console.error('Error creating template:', error);
+    console.error('Error in placid template endpoint:', error);
     return res.status(500).json({ 
-      error: 'Template creation failed',
+      error: 'Template operation failed',
       message: error.message 
     });
   }

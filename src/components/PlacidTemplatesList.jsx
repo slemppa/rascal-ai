@@ -16,45 +16,51 @@ export default function PlacidTemplatesList() {
   const [loading, setLoading] = useState(true)
   const [editingTemplate, setEditingTemplate] = useState(null)
   const [creating, setCreating] = useState(false)
+  const [togglingTemplateId, setTogglingTemplateId] = useState(null)
 
-  // Tarkista onko käyttäjä admin (systemRole === 'admin' tai company_id === 1)
-  const isAdmin = user?.systemRole === 'admin' || user?.systemRole === 'superadmin' || user?.company_id === 1
+  // Tarkista onko käyttäjä admin
+  const isAdmin = user?.systemRole === 'admin' || user?.systemRole === 'superadmin'
 
   // Näytä vain admin-käyttäjille
   if (!isAdmin) {
     return null
   }
 
-  useEffect(() => {
-    const fetchTemplates = async () => {
-      if (!user?.id) return
+  const fetchTemplates = async () => {
+    if (!user?.id) return
 
-      try {
-        setLoading(true)
-        const orgId = await getUserOrgId(user.id)
-        if (!orgId) return
+    try {
+      setLoading(true)
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) return
 
-        // Hae kaikki rivit variables-taulusta jossa on placid_id
-        const { data, error } = await supabase
-          .from('variables')
-          .select('id, placid_id, variable_id, thumbnail_url')
-          .eq('user_id', orgId)
-          .not('placid_id', 'is', null)
+      // Hae kaikki rivit variables-taulusta jossa on placid_id
+      const { data, error } = await supabase
+        .from('variables')
+        .select('id, placid_id, variable_id, thumbnail_url, template_ready')
+        .eq('user_id', orgId)
+        .not('placid_id', 'is', null)
 
-        if (error) {
-            console.error('Error fetching templates:', error)
-        } else {
-            // Suodatetaan tyhjät pois varmuuden vuoksi
-            const validTemplates = data.filter(t => t.placid_id && t.placid_id.trim() !== '')
-            setTemplates(validTemplates)
-        }
-      } catch (err) {
-        console.error('Error:', err)
-      } finally {
-        setLoading(false)
+      if (error) {
+          console.error('Error fetching templates:', error)
+      } else {
+          // Suodatetaan tyhjät pois varmuuden vuoksi
+          const validTemplates = data
+            .filter(t => t.placid_id && t.placid_id.trim() !== '')
+            .map(t => ({
+              ...t,
+              template_ready: t.template_ready ?? false // Käytä oletusarvoa jos null
+            }))
+          setTemplates(validTemplates)
       }
+    } catch (err) {
+      console.error('Error:', err)
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchTemplates()
   }, [user])
 
@@ -81,8 +87,13 @@ export default function PlacidTemplatesList() {
 
       if (response.data.success) {
         toast.success(t('general.templateCreationStarted'))
-        // Voit myös päivittää listan automaattisesti
-        // fetchTemplates()
+        
+        // Päivitä lista hetken päästä, jotta N8N ehtii luoda rivin kantaan
+        setLoading(true) // Näytä latausindikaattori hetken
+        setTimeout(() => {
+          fetchTemplates() // Kutsu listanhakufunktiota
+          setLoading(false)
+        }, 3000) // 3 sekunnin odotus (säädä N8N nopeuden mukaan)
       }
     } catch (error) {
       console.error('Error creating template:', error)
@@ -90,6 +101,79 @@ export default function PlacidTemplatesList() {
       toast.error(t('general.templateCreationFailed', { message: errorMessage }))
     } finally {
       setCreating(false)
+    }
+  }
+
+  const handleToggleReady = async (templateId, currentReady) => {
+    if (!user?.id) return
+
+    try {
+      setTogglingTemplateId(templateId)
+      
+      // Hae session token
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError || !sessionData.session?.access_token) {
+        throw new Error('Sessio vanhentunut. Kirjaudu uudelleen.')
+      }
+
+      const orgId = await getUserOrgId(user.id)
+      if (!orgId) return
+
+      // Hae template-tiedot placid_id:n saamiseksi
+      const { data: template, error: templateError } = await supabase
+        .from('variables')
+        .select('id, placid_id')
+        .eq('id', templateId)
+        .eq('user_id', orgId)
+        .single()
+
+      if (templateError || !template) {
+        throw new Error('Templatea ei löytynyt')
+      }
+
+      const newReadyStatus = !currentReady
+
+      // Päivitä template_ready kenttä Supabasessa
+      const { error: updateError } = await supabase
+        .from('variables')
+        .update({ template_ready: newReadyStatus })
+        .eq('id', templateId)
+        .eq('user_id', orgId)
+
+      if (updateError) {
+        throw new Error(updateError.message)
+      }
+
+      // Päivitä Airtableen N8N:n kautta
+      try {
+        await axios.post('/api/placid/create-template', {
+          action: 'update_template_ready',
+          templateId: template.placid_id, // Lähetä placid_id N8N:ään
+          templateReady: newReadyStatus
+        }, {
+          headers: {
+            'Authorization': `Bearer ${sessionData.session.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+      } catch (n8nError) {
+        // Loggaa virhe mutta älä peruuta koko toimintoa - Supabase on jo päivitetty
+        console.warn('N8N sync failed (continuing anyway):', n8nError)
+      }
+
+      // Päivitä paikallinen tila
+      setTemplates(prev => prev.map(t => 
+        t.id === templateId 
+          ? { ...t, template_ready: newReadyStatus }
+          : t
+      ))
+
+      toast.success(newReadyStatus ? t('general.templateMarkedReady') : t('general.templateMarkedNotReady'))
+    } catch (error) {
+      console.error('Error toggling template ready status:', error)
+      toast.error(error.message || t('general.templateToggleFailed'))
+    } finally {
+      setTogglingTemplateId(null)
     }
   }
 
@@ -130,6 +214,20 @@ export default function PlacidTemplatesList() {
                 <div className={styles.cardContent}>
                     <div className={styles.templateName}>{template.variable_id || t('general.untitledTemplate')}</div>
                     <div className={styles.templateId}>ID: {template.placid_id}</div>
+                    <div className={styles.templateReadyToggle}>
+                      <span className={styles.readyLabel}>
+                        {template.template_ready ? t('general.templateReady') : t('general.templateNotReady')}
+                      </span>
+                      <label className={styles.switch}>
+                        <input
+                          type="checkbox"
+                          checked={template.template_ready || false}
+                          onChange={() => handleToggleReady(template.id, template.template_ready || false)}
+                          disabled={togglingTemplateId === template.id}
+                        />
+                        <span className={styles.slider} />
+                      </label>
+                    </div>
                 </div>
                 <button 
                     onClick={() => setEditingTemplate(template.placid_id)}

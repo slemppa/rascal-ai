@@ -1491,6 +1491,11 @@
     "noTemplatesYet": "Ei vielä malleja. Luo ensimmäinen malli yllä olevasta napista.",
     "templateCreationStarted": "Mallin luonti aloitettu! Päivitä sivu hetken kuluttua.",
     "templateCreationFailed": "Mallin luonti epäonnistui: {message}",
+    "templateReady": "Valmis",
+    "templateNotReady": "Ei valmis",
+    "templateMarkedReady": "Malli merkitty valmiiksi",
+    "templateMarkedNotReady": "Mallin valmiustila poistettu",
+    "templateToggleFailed": "Mallin tilan päivitys epäonnistui",
     "sendTicket": "Lähetä tiketti",
     "maxFiles": "Maksimi {count} tiedostoa"
   },

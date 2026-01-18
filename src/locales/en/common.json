@@ -1379,6 +1379,11 @@
     "noTemplatesYet": "No templates yet. Create the first template using the button above.",
     "templateCreationStarted": "Template creation started! Refresh the page in a moment.",
     "templateCreationFailed": "Template creation failed: {message}",
+    "templateReady": "Ready",
+    "templateNotReady": "Not ready",
+    "templateMarkedReady": "Template marked as ready",
+    "templateMarkedNotReady": "Template ready status removed",
+    "templateToggleFailed": "Failed to update template status",
     "sendTicket": "Send ticket",
     "maxFiles": "Maximum {count} files"
   },

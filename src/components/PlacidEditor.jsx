@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
+import { supabase } from '../lib/supabase'
 import styles from './PlacidEditor.module.css'
 
 export default function PlacidEditor({ placidId, onClose }) {
@@ -44,8 +45,18 @@ export default function PlacidEditor({ placidId, onClose }) {
             clearInterval(checkSdkInterval)
             
             try {
-              // Hae Auth Token backendistä
-              const response = await fetch('/api/placid/auth')
+              // Hae session token Supabasesta
+              const { data: { session } } = await supabase.auth.getSession()
+              if (!session?.access_token) {
+                throw new Error('Sessio vanhentunut. Kirjaudu uudelleen.')
+              }
+
+              // Hae Auth Token backendistä ja lähetä template ID, jota halutaan muokata
+              const response = await fetch(`/api/placid/auth?template_id=${encodeURIComponent(placidId)}`, {
+                headers: {
+                  'Authorization': `Bearer ${session.access_token}`
+                }
+              })
               const data = await response.json()
               
               if (!response.ok) {

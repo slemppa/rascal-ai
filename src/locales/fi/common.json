@@ -12,7 +12,8 @@
     "back": "← Takaisin",
     "continue": "Jatka →",
     "save": "Tallenna",
-    "loading": "Ladataan..."
+    "loading": "Ladataan...",
+    "retry": "Yritä uudelleen"
   },
   "meta": {
     "title": "RascalAI.fi – Myyjän paras työpari",
@@ -1985,6 +1986,56 @@
     "empty": "Ei uutisia saatavilla",
     "createPost": "Luo Postaus",
     "hide": "Piilota",
+    "startMonitoring": "Aloitetaan mediaseuranta",
+    "addSources": {
+      "label": "Lisää lähteitä",
+      "success": "Lähdelisäys pyyntö lähetetty!",
+      "error": "Lähdelisäys epäonnistui."
+    },
+    "viewFeeds": "Lähteet",
+    "viewNews": "Uutiset",
+    "deleteFeed": {
+      "button": "Poista lähde",
+      "success": "Lähde poistettu onnistuneesti",
+      "error": "Lähden poistaminen epäonnistui"
+    },
+    "feeds": {
+      "empty": "Ei lähteitä saatavilla"
+    },
+    "refresh": "Päivitä",
+    "sort": {
+      "newest": "Uusin ensin",
+      "oldest": "Vanhin ensin",
+      "sourceAz": "Lähde A-Z",
+      "sourceZa": "Lähde Z-A"
+    },
+    "addFeed": {
+      "title": "Lisää RSS syöte tai avainsana",
+      "subtitle": "Syötä RSS-feedin URL-osoite tai avainsana",
+      "urlLabel": "RSS syöte tai avainsana",
+      "urlPlaceholder": "https://example.com/feed.xml tai esim. avainsana",
+      "urlHint": "Syötä joko RSS-syötteen URL-osoite tai avainsana jota seurataan",
+      "urlRequired": "RSS syöte tai avainsana on pakollinen",
+      "submit": "Lisää",
+      "cancel": "Peruuta",
+      "success": "Lähde lisätty onnistuneesti!",
+      "error": "Lähteen lisääminen epäonnistui"
+    },
+    "error": {
+      "authRequired": "Kirjautuminen vaaditaan",
+      "feedLoadFailed": "Uutisvirran lataus epäonnistui",
+      "startFailed": "Mediaseurannan aloitus epäonnistui"
+    },
+    "createUser": {
+      "title": "Aloitetaan mediaseuranta",
+      "subtitle": "Täytä tiedot aloittaaksesi mediaseurannan",
+      "username": "Käyttäjänimi",
+      "usernamePlaceholder": "kayttajanimi",
+      "password": "Salasana",
+      "passwordPlaceholder": "salasana",
+      "submit": "Aloita mediaseuranta",
+      "success": "Mediaseuranta aloitettu onnistuneesti!"
+    },
     "create": {
       "title": "Luo postaus mediasta",
       "subtitle": "Muokkaa ja lähetä postaus generoitavaksi",

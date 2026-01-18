@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { idea, content, type, companyId, caption, count } = req.body
+    const { idea, content, type, companyId, caption, count, action, sourceUrl } = req.body
 
     if (!idea || !companyId) {
       return res.status(400).json({ error: 'Missing required fields: idea, companyId' })
@@ -27,6 +27,9 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Webhook configuration missing' })
     }
 
+    // Käytä annettua actionia tai oletusarvoa
+    const payloadAction = action || 'idea_generation'
+
     const safePayload = {
       idea: String(idea),
       content: content ? String(content) : null,
@@ -34,8 +37,9 @@ export default async function handler(req, res) {
       companyId: String(companyId),
       caption: caption ? String(caption) : null,
       count: Number(postCount),
+      sourceUrl: sourceUrl ? String(sourceUrl) : null,
       timestamp: new Date().toISOString(),
-      action: 'idea_generation'
+      action: payloadAction
     }
 
     await sendToN8N(n8nWebhookUrl, safePayload)

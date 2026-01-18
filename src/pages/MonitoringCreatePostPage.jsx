@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import axios from 'axios'
 import { supabase } from '../lib/supabase'
-import { getCurrentUser } from '../utils/userApi'
+import { useAuth } from '../contexts/AuthContext'
+import { getUserOrgId } from '../lib/getUserOrgId'
 import Button from '../components/Button'
 import './MonitoringCreatePostPage.css'
 
@@ -11,6 +12,7 @@ const MonitoringCreatePostPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { t } = useTranslation('common')
+  const { user } = useAuth()
 
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
@@ -42,10 +44,25 @@ const MonitoringCreatePostPage = () => {
     setSuccess(false)
 
     try {
-      // Hae käyttäjän tiedot company_id:lle
-      const userData = await getCurrentUser()
-      if (!userData?.company_id) {
-        throw new Error('Yritystietoja ei löytynyt')
+      if (!user?.id) {
+        throw new Error('Käyttäjä ei ole kirjautunut')
+      }
+
+      // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
+      const userId = await getUserOrgId(user.id)
+      if (!userId) {
+        throw new Error('Organisaation ID ei löytynyt')
+      }
+
+      // Hae company_id users taulusta
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('company_id')
+        .eq('id', userId)
+        .single()
+
+      if (userError || !userData?.company_id) {
+        throw new Error('Company ID ei löytynyt')
       }
 
       // Lähetä postaus generoitavaksi
@@ -61,7 +78,9 @@ const MonitoringCreatePostPage = () => {
           caption: body,
           type: type,
           companyId: userData.company_id,
-          count: 1
+          count: 1,
+          action: 'media_monitoring',
+          sourceUrl: sourceUrl || null
         },
         {
           headers: {

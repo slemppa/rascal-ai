@@ -12,7 +12,8 @@
     "back": "← Back",
     "continue": "Continue →",
     "save": "Save",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "retry": "Retry"
   },
   "meta": {
     "title": "RascalAI – Your best sales assistant",
@@ -1895,6 +1896,56 @@
     "empty": "No news available",
     "createPost": "Create Post",
     "hide": "Hide",
+    "startMonitoring": "Start Media Monitoring",
+    "addSources": {
+      "label": "Add Sources",
+      "success": "Feed addition request sent!",
+      "error": "Failed to add sources."
+    },
+    "viewFeeds": "Feeds",
+    "viewNews": "News",
+    "deleteFeed": {
+      "button": "Delete feed",
+      "success": "Feed deleted successfully",
+      "error": "Failed to delete feed"
+    },
+    "feeds": {
+      "empty": "No feeds available"
+    },
+    "refresh": "Refresh",
+    "sort": {
+      "newest": "Newest first",
+      "oldest": "Oldest first",
+      "sourceAz": "Source A-Z",
+      "sourceZa": "Source Z-A"
+    },
+    "addFeed": {
+      "title": "Add RSS Feed or Keyword",
+      "subtitle": "Enter RSS feed URL or keyword",
+      "urlLabel": "RSS Feed or Keyword",
+      "urlPlaceholder": "https://example.com/feed.xml or e.g. keyword",
+      "urlHint": "Enter either RSS feed URL or a keyword to monitor",
+      "urlRequired": "RSS feed or keyword is required",
+      "submit": "Add",
+      "cancel": "Cancel",
+      "success": "Feed added successfully!",
+      "error": "Failed to add feed"
+    },
+    "error": {
+      "authRequired": "Authentication required",
+      "feedLoadFailed": "Failed to load news feed",
+      "startFailed": "Failed to start media monitoring"
+    },
+    "createUser": {
+      "title": "Start Media Monitoring",
+      "subtitle": "Fill in the details to start media monitoring",
+      "username": "Username",
+      "usernamePlaceholder": "username",
+      "password": "Password",
+      "passwordPlaceholder": "password",
+      "submit": "Start Monitoring",
+      "success": "Media monitoring started successfully!"
+    },
     "create": {
       "title": "Create post from media",
       "subtitle": "Edit and submit post for generation",

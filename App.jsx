@@ -13,6 +13,7 @@ import { AutoLogoutProvider } from './src/contexts/AutoLogoutContext'
 import { PostsProvider } from './src/contexts/PostsContext'
 import { NotificationProvider } from './src/contexts/NotificationContext'
 import { StrategyStatusProvider } from './src/contexts/StrategyStatusContext'
+import { MonitoringProvider } from './src/contexts/MonitoringContext'
 import { ToastProvider } from './src/contexts/ToastContext'
 import Layout from './src/components/Layout'
 import InactivityWarningModal from './src/components/InactivityWarningModal'
@@ -77,6 +78,7 @@ export default function App() {
           <OnboardingModal />
           <PostsProvider>
             <NotificationProvider>
+              <MonitoringProvider>
               <StrategyStatusProvider>
               <Routes>
                 {/* Kirjautumisreitit */}
@@ -141,6 +143,7 @@ export default function App() {
               <VersionNotification />
               <StrategyModalManager />
             </StrategyStatusProvider>
+            </MonitoringProvider>
           </NotificationProvider>
         </PostsProvider>
         <ConditionalChatbotWidget />

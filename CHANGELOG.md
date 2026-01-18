@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.118.0](https://github.com/slemppa/rascal-ai/compare/v1.114.0...v1.118.0) (2026-01-18)
+
+
+### ✨ Features
+
+* add media monitoring feature with Miniflux integration ([7e23bc7](https://github.com/slemppa/rascal-ai/commit/7e23bc7c48a6712b4fcc3d87024a3a4394e8854a))
+* mediaseuranta - feedien hallinta, lajittelu ja päivitys ([36061a2](https://github.com/slemppa/rascal-ai/commit/36061a28e2cb9c9edb6c2397dacc312e04df6e9a))
+
+
+### 🔧 Chores
+
+* **release:** 1.115.0 ([c615590](https://github.com/slemppa/rascal-ai/commit/c6155900c8872a6d146847e7dc5b94f3c96bd916))
+* **release:** 1.117.0 ([610e9b4](https://github.com/slemppa/rascal-ai/commit/610e9b4ea93fbe858b203a96e50dbfcf6d95cecd))
+
 ## [1.117.0](https://github.com/slemppa/rascal-ai/compare/v1.114.0...v1.117.0) (2026-01-18)
 
 

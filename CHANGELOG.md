@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.120.0](https://github.com/slemppa/rascal-ai/compare/v1.119.1...v1.120.0) (2026-01-19)
+
+
+### ✨ Features
+
+* lisää Sivustorakentaja-sivuun sidebar-linkki ja feature toggle ([74ba73a](https://github.com/slemppa/rascal-ai/commit/74ba73a1417cb6546ae5bea49c746de1964eb826))
+* piilota drag & drop member-roolilta ja lisää infoviesti ([99e9d4e](https://github.com/slemppa/rascal-ai/commit/99e9d4e042f89c4220d50b3f7258fa3de672aca2))
+
 ### [1.119.1](https://github.com/slemppa/rascal-ai/compare/v1.114.0...v1.119.1) (2026-01-18)
 
 

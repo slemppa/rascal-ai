@@ -1427,7 +1427,8 @@
         "uploadError": "Error uploading files",
         "uploadSuccess": "{count} file(s) uploaded successfully!",
         "missingCompany": "Company ID is missing",
-        "missingAssistant": "Assistant ID is missing"
+        "missingAssistant": "Assistant ID is missing",
+        "memberInfo": "File uploads are restricted to organization owners and administrators. Please contact your organization administrator to add files."
       },
       "list": {
         "title": "Files",

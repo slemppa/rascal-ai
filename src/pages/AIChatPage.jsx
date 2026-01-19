@@ -1531,6 +1531,13 @@ export default function AIChatPage() {
               {uploadSuccess && <p className="success-msg">{uploadSuccess}</p>}
             </div>
                 )}
+                
+                {/* Info-viesti jäsenille, jotka eivät voi lisätä tiedostoja */}
+                {organization?.role === 'member' && (
+                  <div className="sidebar-upload-info">
+                    <p>{t('assistant.files.uploadCard.memberInfo')}</p>
+                  </div>
+                )}
             
                 {/* Tiedostolista - näytetään kaikille käyttäjille */}
                 <div className="sidebar-files">

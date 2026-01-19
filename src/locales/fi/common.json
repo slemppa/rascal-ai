@@ -1372,7 +1372,8 @@
         "uploadSuccess": "{count} tiedosto(a) ladattu onnistuneesti!",
         "limitExceeded": "Yhteiskoko liian suuri. Max {limitMB} MB per lähetys.",
         "missingCompany": "Yrityksen ID puuttuu",
-        "missingAssistant": "Assistentin ID puuttuu"
+        "missingAssistant": "Assistentin ID puuttuu",
+        "memberInfo": "Tiedostojen lisääminen on rajoitettu organisaation omistajille ja ylläpitäjille. Ota yhteyttä organisaatiosi ylläpitäjään lisätäksesi tiedostoja."
       },
       "list": {
         "title": "Tiedostot",

@@ -16,13 +16,17 @@ const ProtectedRoute = ({ children, requiredFeatures = [], requiredRole = null }
   }
 
   // ROOLITARKISTUS
+  // Roolihierarkia: superadmin > admin > moderator > user
   if (requiredRole) {
-    if (requiredRole === 'admin') {
+    if (requiredRole === 'superadmin') {
+      if (user.systemRole !== 'superadmin') {
+        return <Navigate to="/dashboard" replace />
+      }
+    } else if (requiredRole === 'admin') {
       if (user.systemRole !== 'admin' && user.systemRole !== 'superadmin') {
         return <Navigate to="/dashboard" replace />
       }
-    } 
-    else if (requiredRole === 'moderator') {
+    } else if (requiredRole === 'moderator') {
       const isModerator = user.systemRole === 'moderator' || user.systemRole === 'admin' || user.systemRole === 'superadmin'
       if (!isModerator) {
         return <Navigate to="/dashboard" replace />

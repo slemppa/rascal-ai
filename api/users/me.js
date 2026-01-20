@@ -39,7 +39,10 @@ async function handler(req, res) {
           org_members_role: req.organization.role 
         })
         
-        if (accountRow.role === 'admin' || accountRow.company_id === 1) {
+        if (accountRow.role === 'superadmin') {
+          effectiveRole = 'superadmin'
+          console.log('[api/users/me] Setting role to superadmin')
+        } else if (accountRow.role === 'admin' || accountRow.company_id === 1) {
           effectiveRole = 'admin'
           console.log('[api/users/me] Setting role to admin (users.role or company_id check)')
         } else if (accountRow.role === 'moderator') {

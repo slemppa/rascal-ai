@@ -136,10 +136,10 @@ const getMenuItems = (t) => [
       </svg>
     )
   },
-  { 
-    label: t('sidebar.labels.admin'), 
-    path: '/admin', 
-    adminOnly: true, 
+  {
+    label: t('sidebar.labels.admin'),
+    path: '/admin',
+    superadminOnly: true, 
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -147,10 +147,10 @@ const getMenuItems = (t) => [
       </svg>
     )
   },
-  { 
-    label: t('sidebar.labels.adminBlog'), 
-    path: '/admin-blog', 
-    moderatorOnly: true, 
+  {
+    label: t('sidebar.labels.adminBlog'),
+    path: '/admin-blog',
+    superadminOnly: true, 
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M4 19.5C4 18.1193 5.11929 17 6.5 17H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -175,9 +175,9 @@ const getMenuItems = (t) => [
     )
   },
     {
-      label: t('sidebar.labels.accountManager'), 
-      path: '/account-manager', 
-      moderatorOnly: true,
+      label: t('sidebar.labels.accountManager'),
+      path: '/account-manager',
+      superadminOnly: true,
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M17 20H22V18C22 16.3431 20.6569 15 19 15C18.0444 15 17.1931 15.4468 16.6438 16.1429M17 20H7M17 20V18C17 15.2386 14.7614 13 12 13C9.23858 13 7 15.2386 7 18V20M7 20H2V18C2 16.3431 3.34315 15 5 15C5.95561 15 6.80686 15.4468 7.35625 16.1429M15 7C15 9.20914 13.2091 11 11 11C8.79086 11 7 9.20914 7 7C7 4.79086 8.79086 3 11 3C13.2091 3 15 4.79086 15 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -217,8 +217,11 @@ export default function Sidebar() {
     jarjestelma: true
   })
   
-  // KORJATTU: Käytetään suoraan user.systemRole AuthContextista
-  const isAdmin = user?.systemRole === 'admin' || user?.systemRole === 'superadmin'
+  // Roolihierarkia: superadmin > admin > moderator > user
+  // superadmin = näkee kaikki admin-sivut
+  // admin = näkee vain organisaation hallinnan
+  const isSuperAdmin = user?.systemRole === 'superadmin'
+  const isAdmin = user?.systemRole === 'admin' || isSuperAdmin
   const isModerator = user?.systemRole === 'moderator' || isAdmin
 
   const toggleSection = (key) => {
@@ -227,14 +230,20 @@ export default function Sidebar() {
 
   // Apufunktiot näkyvyyden arviointiin
   const isItemVisible = (item) => {
-    // Organisaation hallinta näkyy vain owner/admin roolilla
+    // Organisaation hallinta näkyy:
+    // - superadmin: aina
+    // - admin (systemRole): aina
+    // - owner/admin (org_members.role): aina
     if (item.path === '/organization-members') {
+      if (isSuperAdmin || user?.systemRole === 'admin') return true
       const orgRole = organization?.role
       return orgRole === 'owner' || orgRole === 'admin'
     }
-    const adminOnly = item.adminOnly && !isAdmin
-    const moderatorOnly = item.moderatorOnly && !isModerator
-    return !(adminOnly || moderatorOnly)
+    // Superadmin-only sivut: /admin, /admin-blog, /account-manager
+    if (item.superadminOnly && !isSuperAdmin) return false
+    // Moderator-only sivut (superadmin näkee myös)
+    if (item.moderatorOnly && !isSuperAdmin && !isModerator) return false
+    return true
   }
 
   // Työkalut - julkiset työkalut

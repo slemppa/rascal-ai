@@ -126,14 +126,10 @@ export default function App() {
                   } />
                 </Route>
                 
-                {/* Admin-reitit (vaativat admin-roolin) */}
-                <Route element={<ProtectedRoute requiredRole="admin"><Layout /></ProtectedRoute>}>
+                {/* Superadmin-reitit (vaativat superadmin-roolin) */}
+                <Route element={<ProtectedRoute requiredRole="superadmin"><Layout /></ProtectedRoute>}>
                   <Route path="/admin" element={<AdminPage />} />
                   <Route path="/dev" element={<DevPage />} />
-                </Route>
-                
-                {/* Moderator-reitit */}
-                <Route element={<ProtectedRoute requiredRole="moderator"><Layout /></ProtectedRoute>}>
                   <Route path="/admin-blog" element={<AdminBlogPage />} />
                   <Route path="/admin-testimonials" element={<AdminTestimonialsPage />} />
                   <Route path="/account-manager" element={<AccountManagerPage />} />

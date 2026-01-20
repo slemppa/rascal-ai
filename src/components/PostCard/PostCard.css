@@ -322,6 +322,18 @@
   opacity: 0.3;
 }
 
+/* Published post actions */
+.published-post-actions {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.published-post-actions button {
+  width: 100%;
+  justify-content: center;
+}
+
 
 
 

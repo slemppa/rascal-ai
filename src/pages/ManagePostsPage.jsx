@@ -768,6 +768,105 @@ export default function ManagePostsPage() {
     }
   }
 
+  const handleDuplicatePost = async (post) => {
+    try {
+      // 1. Tarkista kuukausiraja (valinnainen, jos monistus kuluttaa kiintiötä)
+      if (!monthlyLimit.canCreate) {
+        setErrorMessage('Kuukausiraja täynnä, et voi monistaa postausta.')
+        return
+      }
+
+      // 2. Hae käyttäjän organisaatio ID
+      const userId = await getUserOrgId(user.id)
+      if (!userId) throw new Error(t('posts.messages.userIdNotFound'))
+
+      // 3. Valmistele kopioitava data
+      // Poistetaan ID, luontiajat ja asetetaan status 'Kesken'
+      // Korjattu: ei lähetetä thumbnail-kenttää, sillä sitä ei ole content-taulussa
+      // Korjattu: käytetään idea-kenttää title-sijasta (content-taulussa ei ole title-kenttää)
+      // Korjattu: status 'In Progress' englanniksi kuten muissakin lisäyksissä
+      // Korjattu: varmistetaan että media_urls on oikeassa muodossa (array)
+      
+      // Kokeillaan eri lähteitä media_urls:lle
+      let mediaUrls = [];
+      
+      // 1. Kokeillaan post.media_urls
+      if (Array.isArray(post.media_urls) && post.media_urls.length > 0) {
+        mediaUrls = [...post.media_urls];
+      }
+      // 2. Kokeillaan post.mediaUrls
+      else if (Array.isArray(post.mediaUrls) && post.mediaUrls.length > 0) {
+        mediaUrls = [...post.mediaUrls];
+      }
+      // 3. Kokeillaan post.originalData.media_urls
+      else if (post.originalData?.media_urls && Array.isArray(post.originalData.media_urls) && post.originalData.media_urls.length > 0) {
+        mediaUrls = [...post.originalData.media_urls];
+      }
+      // 4. Kokeillaan thumbnailia (jos se on URL)
+      else if (post.thumbnail && typeof post.thumbnail === 'string' && post.thumbnail.startsWith('http')) {
+        mediaUrls = [post.thumbnail];
+      }
+      // 5. Kokeillaan segments-taulun media_urls (Carousel-tyypeille)
+      else if (post.type === 'Carousel' && post.segments && post.segments.length > 0) {
+        mediaUrls = post.segments
+          .filter(seg => seg.media_urls && Array.isArray(seg.media_urls))
+          .flatMap(seg => seg.media_urls);
+      }
+      
+      const newPostData = {
+        user_id: userId,
+        type: post.type,
+        idea: `${post.originalData?.idea || post.title || post.caption} (Kopio)`,
+        caption: post.caption,
+        media_urls: mediaUrls,
+        status: 'In Progress', // Palautetaan luonnokseksi (englanniksi kuten API:ssa)
+        voiceover: post.voiceover,
+        voiceover_ready: post.voiceoverReady,
+        provider: post.provider, // Säilytetään kanava tai tyhjennetään tarvittaessa
+        is_generated: false, // Lisätään kuten import-post API:ssa
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+
+      // 4. Tallenna uusi postaus Supabaseen
+      const { data: insertedPost, error: insertError } = await supabase
+        .from('content')
+        .insert(newPostData)
+        .select()
+        .single()
+
+      if (insertError) throw insertError
+
+      // 5. Jos kyseessä on Carousel, monista myös segmentit
+      if (post.type === 'Carousel' && post.segments && post.segments.length > 0) {
+        const newSegments = post.segments.map(seg => ({
+          content_id: insertedPost.id, // Linkitä uuteen postaukseen
+          slide_no: seg.slide_no,
+          title: seg.title,
+          description: seg.description,
+          media_urls: seg.media_urls,
+          image_prompt: seg.image_prompt,
+          voiceover: seg.voiceover
+        }))
+
+        const { error: segmentsError } = await supabase
+          .from('segments')
+          .insert(newSegments)
+
+        if (segmentsError) console.error('Error duplicating segments:', segmentsError)
+      }
+
+      // 6. Päivitä näkymä ja ilmoita käyttäjälle
+      toast.success('Postaus monistettu onnistuneesti')
+      monthlyLimit.refresh() // Päivitä limiitti jos tarpeen
+      await fetchPosts() // Lataa lista uudelleen
+
+    } catch (error) {
+      console.error('Duplicate error:', error)
+      setErrorMessage('Postauksen monistaminen epäonnistui: ' + error.message)
+    }
+  }
+
   const handleSchedulePost = async (post, scheduledDate = null, selectedAccounts = []) => {
     try {
       // Jos päivämäärää ei annettu, kysytään käyttäjältä
@@ -1585,6 +1684,7 @@ export default function ManagePostsPage() {
           posts={filteredPosts}
           onEdit={handleEditPost}
           onDelete={handleDeletePost}
+          onDuplicate={handleDuplicatePost}
           onPublish={handlePublishPost}
           onSchedule={handleSchedulePost}
           onMoveToNext={handleMoveToNext}

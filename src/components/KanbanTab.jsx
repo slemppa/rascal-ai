@@ -15,6 +15,7 @@ export default function KanbanTab({
   posts = [],
   onEdit,
   onDelete,
+  onDuplicate,
   onPublish,
   onSchedule,
   onMoveToNext,
@@ -195,6 +196,7 @@ export default function KanbanTab({
                         post={safePost}
                         onEdit={onEdit}
                         onDelete={onDelete}
+                        onDuplicate={onDuplicate}
                         onPublish={onPublish}
                         onSchedule={onSchedule}
                         onMoveToNext={onMoveToNext}
@@ -247,6 +249,7 @@ export default function KanbanTab({
                       post={safePost}
                       onEdit={onEdit}
                       onDelete={onDelete}
+                      onDuplicate={onDuplicate}
                       onPublish={onPublish}
                       onSchedule={onSchedule}
                       onMoveToNext={onMoveToNext}

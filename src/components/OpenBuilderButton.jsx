@@ -14,7 +14,7 @@ export function OpenBuilderButton() {
     // 2. Määritä uuden sovelluksen URL
     const builderUrl = import.meta.env.DEV 
       ? 'http://localhost:3001' // Next.js pyörii portissa 3000
-      : 'https://rascal-pages.vercel.app/' // Tuotannon URL
+      : import.meta.env.VITE_BUILDER_URL // Tuotannon URL
 
     // 3. Rakenna "Handoff URL" (tokenit hashissa)
     const handoffUrl = `${builderUrl}/auth/handoff#access_token=${session.access_token}&refresh_token=${session.refresh_token}`

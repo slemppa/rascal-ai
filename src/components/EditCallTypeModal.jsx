@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import Button from './Button'
+import ConfirmationToast from './ConfirmationToast'
 import './ModalComponents.css'
 import { useTranslation } from 'react-i18next'
+import { useToast } from '../contexts/ToastContext'
 import { supabase } from '../lib/supabase'
 
 const EditCallTypeModal = ({ 
@@ -15,15 +17,16 @@ const EditCallTypeModal = ({
   onAIEnhancementSent
 }) => {
   const { t } = useTranslation('common')
+  const toast = useToast()
   const [currentStep, setCurrentStep] = useState(1)
+  const [showConfirmToast, setShowConfirmToast] = useState(false)
   const totalSteps = 6
 
   // ESC-toiminnallisuus - pitää olla heti useState jälkeen
   useEffect(() => {
     const handleEscKey = (event) => {
       if (event.key === 'Escape') {
-        const cancelHandler = onCancel || onClose
-        cancelHandler()
+        showCloseConfirmation()
       }
     }
 
@@ -34,7 +37,7 @@ const EditCallTypeModal = ({
     return () => {
       document.removeEventListener('keydown', handleEscKey)
     }
-  }, [showModal, onClose, onCancel])
+  }, [showModal])
 
   if (!showModal || !editingCallType) return null
 
@@ -47,11 +50,26 @@ const EditCallTypeModal = ({
     { id: 6, label: t('calls.modals.editCallType.steps.aiEnhancement') }
   ]
 
+  // Vahvistus ennen sulkemista
+  const handleConfirmSave = async () => {
+    setShowConfirmToast(false)
+    await handleSubmit()
+  }
+
+  const handleConfirmDiscard = () => {
+    setShowConfirmToast(false)
+    const cancelHandler = onCancel || onClose
+    cancelHandler()
+  }
+
+  const showCloseConfirmation = () => {
+    setShowConfirmToast(true)
+  }
+
   // Tyhjän tilan klikkaus
   const handleOverlayClick = (event) => {
     if (event.target === event.currentTarget) {
-      const cancelHandler = onCancel || onClose
-      cancelHandler()
+      showCloseConfirmation()
     }
   }
 
@@ -69,14 +87,19 @@ const EditCallTypeModal = ({
 
   const handleSubmit = async () => {
     if (onSave) {
-      await onSave()
-      // onSave sulkee modaalin CallPanel.jsx:ssä
-      // Jos modaali ei sulkeudu, kutsu onClose() manuaalisesti
-      setTimeout(() => {
-        if (showModal && onClose) {
-          onClose()
-        }
-      }, 100)
+      try {
+        await onSave()
+        toast.success(t('calls.modals.editCallType.saveSuccess', 'Puhelutyyppi tallennettu'))
+        // onSave sulkee modaalin CallPanel.jsx:ssä
+        // Jos modaali ei sulkeudu, kutsu onClose() manuaalisesti
+        setTimeout(() => {
+          if (showModal && onClose) {
+            onClose()
+          }
+        }, 100)
+      } catch (error) {
+        toast.error(t('calls.modals.editCallType.saveError', 'Tallennus epäonnistui'))
+      }
     } else if (onClose) {
       onClose()
     }
@@ -130,10 +153,7 @@ const EditCallTypeModal = ({
             {t('calls.modals.editCallType.title')}
           </h2>
           <button
-            onClick={() => {
-              const cancelHandler = onCancel || onClose
-              cancelHandler()
-            }}
+            onClick={showCloseConfirmation}
             className="modal-close-btn"
           >
             ✕
@@ -709,6 +729,14 @@ pyysikö kauppa olemaan vielä yhteydessä"
             )}
           </div>
         </div>
+        <ConfirmationToast
+          show={showConfirmToast}
+          message={t('calls.modals.confirmClose.message', 'Tallenna muutokset?')}
+          onSave={handleConfirmSave}
+          onDiscard={handleConfirmDiscard}
+          saveLabel={t('common.save', 'Tallenna')}
+          discardLabel={t('calls.modals.confirmClose.discard', 'Hylkää')}
+        />
       </div>
     </div>,
     document.body

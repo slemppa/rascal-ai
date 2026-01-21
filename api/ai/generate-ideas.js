@@ -8,7 +8,11 @@ export default async function handler(req, res) {
   try {
     const { idea, content, type, companyId, caption, count, action, sourceUrl } = req.body
 
+    // Debug log - poista tuotannossa
+    console.log('[generate-ideas] Request body:', JSON.stringify({ idea: !!idea, type, companyId: !!companyId, count }))
+
     if (!idea || !companyId) {
+      console.log('[generate-ideas] Validation failed - idea:', idea, 'companyId:', companyId)
       return res.status(400).json({ error: 'Missing required fields: idea, companyId' })
     }
     

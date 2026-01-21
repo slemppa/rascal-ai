@@ -973,6 +973,10 @@
         "th": "🇹🇭 ไทย",
         "pl": "🇵🇱 Polski"
       },
+      "confirmClose": {
+        "message": "Tallenna muutokset?",
+        "discard": "Hylkää"
+      },
       "callTypeMiniExamples": {
         "title": "Mini-esimerkki",
         "summary": "Tiivistä 2-3 lauseessa: osallistuiko [tapahtumaan], keskeiset kiinnostukset/haasteet, sovitut seuraavat askeleet (aika/tapa).",
@@ -1223,6 +1227,8 @@
           "next": "Seuraava",
           "addCallType": "Lisää puhelun tyyppi"
         },
+        "saveSuccess": "Puhelutyyppi luotu",
+        "saveError": "Luonti epäonnistui",
         "saveBeforeAI": "Tallenna puhelun tyyppi ensin ennen AI-parannusta",
         "sendFailed": "Lähetys epäonnistui",
         "apiNotFound": "API endpoint ei löydy ({status}). Tarkista että /api/calls/type-improvement on olemassa.",
@@ -1321,7 +1327,9 @@
           "previous": "Edellinen",
           "next": "Seuraava",
           "saveChanges": "Tallenna muutokset"
-        }
+        },
+        "saveSuccess": "Puhelutyyppi tallennettu",
+        "saveError": "Tallennus epäonnistui"
       },
       "statusOptions": {
         "active": "Aktiivinen",
@@ -2174,8 +2182,5 @@
       "success": "Postaus lähetetty generoitavaksi!",
       "redirecting": "Siirrytään takaisin mediaseurantaan..."
     }
-  },
-  "common": {
-    "retry": "Yritä uudelleen"
   }
 }

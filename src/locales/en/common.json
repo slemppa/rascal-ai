@@ -947,6 +947,10 @@
         "th": "🇹🇭 ไทย",
         "pl": "🇵🇱 Polski"
       },
+      "confirmClose": {
+        "message": "Save changes?",
+        "discard": "Discard"
+      },
       "callTypeMiniExamples": {
         "title": "Mini example",
         "summary": "Summarize in 2–3 sentences: whether they attended [event], key interests/challenges, agreed next steps (time/method).",
@@ -1162,7 +1166,9 @@
           "previous": "Previous",
           "next": "Next",
           "addCallType": "Add call type"
-        }
+        },
+        "saveSuccess": "Call type created",
+        "saveError": "Creation failed"
       },
       "alerts": {
         "saveInboundFirst": "Save inbound settings first before AI enhancement!"
@@ -1250,7 +1256,9 @@
           "previous": "Previous",
           "next": "Next",
           "saveChanges": "Save changes"
-        }
+        },
+        "saveSuccess": "Call type saved",
+        "saveError": "Save failed"
       }
     },
     "manageTab": {
@@ -1966,8 +1974,5 @@
       "success": "Post submitted for generation!",
       "redirecting": "Redirecting back to media monitoring..."
     }
-  },
-  "common": {
-    "retry": "Retry"
   }
 }

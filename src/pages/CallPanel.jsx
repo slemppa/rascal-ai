@@ -828,7 +828,7 @@ export default function CallPanel() {
         const { error } = await supabase.from('call_types').update(fields).eq('id', editingCallType.id)
 
         if (!error) {
-          alert(t('alerts.success.callTypeUpdated'))
+          toast.success(t('alerts.success.callTypeUpdated'))
           fetchCallTypes() // Päivitä lista
         } else {
           throw new Error('Päivitys epäonnistui')
@@ -843,7 +843,7 @@ export default function CallPanel() {
       setShowEditModal(false)
     } catch (error) {
       console.error('Puhelun tyypin tallennus epäonnistui:', error)
-      alert(t('alerts.error.callTypeSaveFailed', { error: error.message || error }))
+      toast.error(t('alerts.error.callTypeSaveFailed', { error: error.message || error }))
     }
   }
 

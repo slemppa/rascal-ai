@@ -3817,18 +3817,13 @@ export default function CallPanel() {
       
         <AddCallTypeModal
           showModal={showAddModal}
-          onClose={async () => {
-            // Tallennetaan automaattisesti kun suljetaan, paitsi jos AI-parannus on lähetetty
-            if (!addModalAiEnhancementSent) {
-              await handleAddCallType()
-            }
+          onClose={() => {
             closeModals()
-            setAddModalAiEnhancementSent(false) // Reset flag
+            setAddModalAiEnhancementSent(false)
           }}
           onCancel={() => {
-            // Suljetaan ilman tallennusta
             closeModals()
-            setAddModalAiEnhancementSent(false) // Reset flag
+            setAddModalAiEnhancementSent(false)
           }}
           newCallType={newCallType}
           setNewCallType={setNewCallType}
@@ -3840,18 +3835,13 @@ export default function CallPanel() {
         />
         <EditCallTypeModal
           showModal={showEditModal}
-          onClose={async () => {
-            // Tallennetaan automaattisesti kun suljetaan, paitsi jos AI-parannus on lähetetty
-            if (!editModalAiEnhancementSent) {
-              await handleSaveCallType()
-            }
+          onClose={() => {
             closeModals()
-            setEditModalAiEnhancementSent(false) // Reset flag
+            setEditModalAiEnhancementSent(false)
           }}
           onCancel={() => {
-            // Suljetaan ilman tallennusta
             closeModals()
-            setEditModalAiEnhancementSent(false) // Reset flag
+            setEditModalAiEnhancementSent(false)
           }}
           editingCallType={editingCallType}
           setEditingCallType={setEditingCallType}

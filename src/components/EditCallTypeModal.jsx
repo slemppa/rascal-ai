@@ -4,7 +4,6 @@ import Button from './Button'
 import ConfirmationToast from './ConfirmationToast'
 import './ModalComponents.css'
 import { useTranslation } from 'react-i18next'
-import { useToast } from '../contexts/ToastContext'
 import { supabase } from '../lib/supabase'
 
 const EditCallTypeModal = ({ 
@@ -17,7 +16,6 @@ const EditCallTypeModal = ({
   onAIEnhancementSent
 }) => {
   const { t } = useTranslation('common')
-  const toast = useToast()
   const [currentStep, setCurrentStep] = useState(1)
   const [showConfirmToast, setShowConfirmToast] = useState(false)
   const totalSteps = 6
@@ -87,19 +85,8 @@ const EditCallTypeModal = ({
 
   const handleSubmit = async () => {
     if (onSave) {
-      try {
-        await onSave()
-        toast.success(t('calls.modals.editCallType.saveSuccess', 'Puhelutyyppi tallennettu'))
-        // onSave sulkee modaalin CallPanel.jsx:ssä
-        // Jos modaali ei sulkeudu, kutsu onClose() manuaalisesti
-        setTimeout(() => {
-          if (showModal && onClose) {
-            onClose()
-          }
-        }, 100)
-      } catch (error) {
-        toast.error(t('calls.modals.editCallType.saveError', 'Tallennus epäonnistui'))
-      }
+      await onSave()
+      // onSave hoitaa toastin ja sulkee modaalin CallPanel.jsx:ssä
     } else if (onClose) {
       onClose()
     }

@@ -51,7 +51,7 @@ const MediaControls = ({
               disabled={imageLoading}
               style={{ flexShrink: 0 }}
             >
-              Poista kuva
+              {t('keskenModal.deleteImage')}
             </Button>
           )}
         </div>
@@ -80,7 +80,7 @@ const MediaControls = ({
           onClick={() => onDeleteImage(mediaUrl)}
           disabled={imageLoading}
         >
-          Poista kuva
+          {t('keskenModal.deleteImage')}
         </Button>
       )}
     </div>

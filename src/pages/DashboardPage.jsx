@@ -1322,7 +1322,7 @@ export default function DashboardPage() {
                   <tr style={{ color: '#1f2937', fontWeight: 600, background: '#f7f8fc' }}>
                     <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.upcoming.headers.media')}</th>
                     <th style={{ textAlign: 'left', padding: '8px 4px' }}>{t('dashboard.upcoming.headers.caption')}</th>
-                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>Kanavat</th>
+                    <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.upcoming.headers.channels')}</th>
                     <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.upcoming.headers.status')}</th>
                     <th style={{ textAlign: 'left', padding: '8px 4px', whiteSpace: 'nowrap' }}>{t('dashboard.upcoming.headers.date')}</th>
                   </tr>

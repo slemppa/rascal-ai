@@ -19,8 +19,8 @@ async function handler(req, res) {
       return res.status(403).json({ error: 'User not found' })
     }
 
-    // Admin-oikeudet: users.role === 'admin' tai company_id === 1
-    const isAdmin = userRow.role === 'admin' || userRow.company_id === 1
+    // Admin-oikeudet: users.role === 'admin', 'superadmin' tai company_id === 1
+    const isAdmin = userRow.role === 'admin' || userRow.role === 'superadmin' || userRow.company_id === 1
     if (!isAdmin) {
       return res.status(403).json({ error: 'Admin access required' })
     }

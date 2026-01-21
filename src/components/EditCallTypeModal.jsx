@@ -112,15 +112,15 @@ const EditCallTypeModal = ({
         const contentType = response.headers.get('content-type')
         if (contentType && contentType.includes('application/json')) {
           const errorData = await response.json()
-          throw new Error(errorData.error || 'Lähetys epäonnistui')
+          throw new Error(errorData.error || t('calls.modals.editCallType.alerts.sendFailed'))
         } else {
           // Jos vastaus on HTML (404-sivu), endpoint ei löydy
-          throw new Error(`API endpoint ei löydy (${response.status}). Tarkista että /api/calls/type-improvement on olemassa.`)
+          throw new Error(t('calls.modals.editCallType.alerts.apiNotFound', { status: response.status }))
         }
       }
 
       const result = await response.json()
-      alert('Puhelun tyyppi lähetetty AI-parannukseen! Saat parannetun version pian.')
+      alert(t('calls.modals.editCallType.alerts.aiSentSuccess'))
       // Merkitse että AI-parannus on lähetetty ja sulje modaali
       if (onAIEnhancementSent) {
         onAIEnhancementSent()
@@ -128,7 +128,7 @@ const EditCallTypeModal = ({
       onClose()
     } catch (error) {
       console.error('AI-parannuksen lähetys epäonnistui:', error)
-      alert('AI-parannuksen lähetys epäonnistui: ' + (error.message || error))
+      alert(t('calls.modals.editCallType.alerts.aiSentError', { error: error.message || error }))
     }
   }
 
@@ -295,13 +295,13 @@ const EditCallTypeModal = ({
               <div className="form-group">
                 <label className="form-label">{t('calls.modals.editCallType.fields.targetAudience')}</label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Kenelle tämä puhelu on tarkoitettu? Esim. "yrityksen toimitusjohtajat", "kaupan eineshankinta", "Inbound-liidit".
+                  {t('calls.modals.editCallType.hints.targetAudience')}
                 </p>
                 <input
                   type="text"
                   value={editingCallType.target_audience || ''}
                   onChange={e => setEditingCallType({ ...editingCallType, target_audience: e.target.value })}
-                  placeholder="Yritysten talouspäättäjät, Kaupan vastaavat, LVI-yritysten yrittäjät"
+                  placeholder={t('calls.modals.editCallType.placeholders.targetAudience')}
                   className="form-input"
                 />
               </div>
@@ -309,12 +309,12 @@ const EditCallTypeModal = ({
               <div className="form-group">
                 <label className="form-label">{t('calls.modals.editCallType.fields.mainGoal')}</label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Mitä haluat saavuttaa puhelulla? Kirjoita 1–3 tavoitetta. Esim. "kiinnostuksen herättäminen", "ajan sopiminen", "kvalifiointi".
+                  {t('calls.modals.editCallType.hints.mainGoal')}
                 </p>
                 <textarea
                   value={editingCallType.goals || ''}
                   onChange={e => setEditingCallType({ ...editingCallType, goals: e.target.value })}
-                  placeholder="Kysy kiinnostusta, pyydä varmistus, kerro tapahtumasta ja varmista osallistuminen"
+                  placeholder={t('calls.modals.editCallType.placeholders.mainGoal')}
                   rows={3}
                   className="form-textarea"
                 />
@@ -323,12 +323,12 @@ const EditCallTypeModal = ({
               <div className="form-group">
                 <label className="form-label">{t('calls.modals.editCallType.fields.toneStyle')}</label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Millä sävyllä agentin tulisi puhua? Esim. "selkeä, ystävällinen, asiallinen, teitittelevä".
+                  {t('calls.modals.editCallType.hints.toneStyle')}
                 </p>
                 <textarea
                   value={editingCallType.style || ''}
                   onChange={e => setEditingCallType({ ...editingCallType, style: e.target.value })}
-                  placeholder="Ystävällinen, asiallinen ja rauhallinen. Ei smalltalkia."
+                  placeholder={t('calls.modals.editCallType.placeholders.toneStyle')}
                   rows={3}
                   className="form-textarea"
                 />
@@ -343,14 +343,14 @@ const EditCallTypeModal = ({
                   {t('calls.modals.editCallType.fields.firstSentence')}
                 </label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Ensimmäinen lause sen jälkeen kun asiakas puhuu. Pidä lyhyenä. Esim. "Hei, olen [Agentti], saanko kysyä yhden asian?".
+                  {t('calls.modals.editCallType.hints.firstSentence')}
                 </p>
                 <input
                   type="text"
                   value={editingCallType.first_line || ''}
                   onChange={e => setEditingCallType({ ...editingCallType, first_line: e.target.value })}
                   className="form-input"
-                  placeholder="Moi! Olen [agent_name], [yrityksestä]."
+                  placeholder={t('calls.modals.editCallType.placeholders.firstSentence')}
                 />
               </div>
 
@@ -359,12 +359,12 @@ const EditCallTypeModal = ({
                   {t('calls.modals.editCallType.fields.callStart')}
                 </label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Miten esittelet asian lyhyesti? Kerro tarkoitus kahdella lauseella ja kysy lupa jatkaa.
+                  {t('calls.modals.editCallType.hints.callStart')}
                 </p>
                 <textarea
                   value={editingCallType.intro || ''}
                   onChange={e => setEditingCallType({ ...editingCallType, intro: e.target.value })}
-                  placeholder="Meillä on uusia tuotteita, haluaisin nopeasti kertoa niistä."
+                  placeholder={t('calls.modals.editCallType.placeholders.callStart')}
                   rows={3}
                   className="form-textarea"
                 />
@@ -375,14 +375,12 @@ const EditCallTypeModal = ({
                   {t('calls.modals.editCallType.fields.questions')}
                 </label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Muotoile kysymykset lyhyiksi. Kysy vain yksi asia kerrallaan. Jokaisen jälkeen agentti odottaa vastausta automaattisesti.
+                  {t('calls.modals.editCallType.hints.questions')}
                 </p>
                 <textarea
                   value={editingCallType.questions || ''}
                   onChange={e => setEditingCallType({ ...editingCallType, questions: e.target.value })}
-                  placeholder={`Kiinnostaisiko testata?
-Haluaisitteko tilata nyt?
-Olisiko oikea henkilö paikalla?`}
+                  placeholder={t('calls.modals.editCallType.placeholders.questions')}
                   rows={8}
                   className="form-textarea"
                 />
@@ -393,12 +391,12 @@ Olisiko oikea henkilö paikalla?`}
                   {t('calls.modals.editCallType.fields.callEnd')}
                 </label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Lopeta kohteliaasti ja tarjoa seuraava askel (esim. ajan sopiminen tai lisätietojen lähettäminen).
+                  {t('calls.modals.editCallType.hints.callEnd')}
                 </p>
                 <textarea
                   value={editingCallType.outro || ''}
                   onChange={e => setEditingCallType({ ...editingCallType, outro: e.target.value })}
-                  placeholder="Kiitos ajastanne! Palataan tarvittaessa asiaan."
+                  placeholder={t('calls.modals.editCallType.placeholders.callEnd')}
                   rows={3}
                   className="form-textarea"
                 />
@@ -409,60 +407,50 @@ Olisiko oikea henkilö paikalla?`}
                   {t('calls.modals.editCallType.fields.successfulEnd')}
                 </label>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Milloin puhelu katsotaan onnistuneeksi? Esim. "kun asiakas ilmaisee kiinnostusta jatkaa keskustelua".
+                  {t('calls.modals.editCallType.hints.successfulEnd')}
                 </p>
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
-                  Valitse valmis Action-pohja (valinnainen):
+                  {t('calls.modals.editCallType.hints.actionPreset')}
                 </p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
-                  {['Myyntipuhelu', 'Ajanvaraus', 'Tapahtumakutsu', 'Follow-up', 'Lead qualification', 'Universaali action'].map((preset) => {
-                    const presetTexts = {
-                      'Myyntipuhelu': 'Merkitse puhelu onnistuneeksi, kun asiakas ilmaisee kiinnostusta ostaa tuote tai palvelu. Varmista seuraavat askeleet: lähetä tarjous, varaa demo tai sovita seuraava puhelu.',
-                      'Ajanvaraus': 'Merkitse puhelu onnistuneeksi, kun asiakas suostuu varaamaan ajan. Varmista seuraavat askeleet: vahvista päivämäärä ja kellonaika, lähetä kalenterilinkki tai vahvista muulla tavalla.',
-                      'Tapahtumakutsu': 'Merkitse puhelu onnistuneeksi, kun asiakas suostuu osallistumaan tapahtumaan. Varmista seuraavat askeleet: lähetä tapahtuman tiedot, vahvista osallistuminen tai kerää lisätiedot.',
-                      'Follow-up': 'Merkitse puhelu onnistuneeksi, kun asiakas on kiinnostunut jatkamaan keskustelua. Varmista seuraavat askeleet: sovita seuraava puhelu, lähetä lisämateriaaleja tai merkitse seurantaan.',
-                      'Lead qualification': 'Merkitse puhelu onnistuneeksi, kun asiakas täyttää kvalifiointikriteerit. Varmista seuraavat askeleet: kerää tarvittavat tiedot, arvioi potentiaali ja siirrä myyntiprosessiin.',
-                      'Universaali action': 'Merkitse puhelu onnistuneeksi, kun asiakas ilmaisee kiinnostusta jatkaa keskustelua tuotteesta tai palvelusta.'
-                    }
-                    return (
-                      <button
-                        key={preset}
-                        type="button"
-                        onClick={() => {
-                          setEditingCallType({ 
-                            ...editingCallType, 
-                            action: presetTexts[preset] || '' // Tallennetaan preset-teksti action-kenttään Supabaseen
-                          })
-                        }}
-                        style={{
-                          padding: '8px 16px',
-                          fontSize: 13,
-                          fontWeight: 500,
-                          background: '#f3f4f6',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          cursor: 'pointer',
-                          color: '#374151',
-                          transition: 'all 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.target.style.background = '#e5e7eb'
-                          e.target.style.borderColor = '#9ca3af'
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.background = '#f3f4f6'
-                          e.target.style.borderColor = '#d1d5db'
-                        }}
-                      >
-                        {preset}
-                      </button>
-                    )
-                  })}
+                  {['salesCall', 'appointment', 'eventInvite', 'followUp', 'leadQualification', 'universal'].map((presetKey) => (
+                    <button
+                      key={presetKey}
+                      type="button"
+                      onClick={() => {
+                        setEditingCallType({
+                          ...editingCallType,
+                          action: t(`calls.modals.callTypeActionPresets.${presetKey}.text`)
+                        })
+                      }}
+                      style={{
+                        padding: '8px 16px',
+                        fontSize: 13,
+                        fontWeight: 500,
+                        background: '#f3f4f6',
+                        border: '1px solid #d1d5db',
+                        borderRadius: 6,
+                        cursor: 'pointer',
+                        color: '#374151',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = '#e5e7eb'
+                        e.target.style.borderColor = '#9ca3af'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = '#f3f4f6'
+                        e.target.style.borderColor = '#d1d5db'
+                      }}
+                    >
+                      {t(`calls.modals.callTypeActionPresets.${presetKey}.label`)}
+                    </button>
+                  ))}
                 </div>
                 <textarea
                   value={editingCallType.action || ''}
                   readOnly
-                  placeholder="Merkitse puhelu onnistuneeksi, kun asiakas ilmaisee kiinnostusta jatkaa keskustelua tuotteesta tai palvelusta."
+                  placeholder={t('calls.modals.editCallType.placeholders.successfulEnd')}
                   rows={4}
                   className="form-textarea"
                   style={{ backgroundColor: '#f9fafb', cursor: 'not-allowed' }}
@@ -481,8 +469,7 @@ Olisiko oikea henkilö paikalla?`}
                   <textarea
                     value={editingCallType.summary || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, summary: e.target.value })}
-                    placeholder="Kirjoita kaupan nimi mihin soitit ja tilaus mitä kauppa tilasi
-pyysikö kauppa olemaan vielä yhteydessä"
+                    placeholder={t('calls.modals.editCallType.placeholders.summary')}
                     rows={5}
                     className="form-textarea"
                   />
@@ -500,8 +487,7 @@ pyysikö kauppa olemaan vielä yhteydessä"
                   <textarea
                     value={editingCallType.success_assessment || ''}
                     onChange={e => setEditingCallType({ ...editingCallType, success_assessment: e.target.value })}
-                    placeholder={`• Arvioi 2-3 lauseessa, täyttyivätkö Tavoitteet-osion tavoitteet.
-• Kuvaa miksi se onnistui/ei onnistunut ja mainitse puuttuvat kohdat.`}
+                    placeholder={t('calls.modals.editCallType.placeholders.successAssessment')}
                     rows={5}
                     className="form-textarea"
                   />

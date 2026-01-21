@@ -55,15 +55,15 @@ const StrategyConfirmationModal = ({ isOpen, onClose, onRequestUpdate, loading }
     return (
       <div className="strategy-modal-minimized" onClick={handleRestore}>
         <div className="strategy-modal-minimized-content">
-          <span>Strategia vahvistusta odottaa</span>
-          <button 
-            className="btn-restore" 
-            onClick={(e) => { 
+          <span>{t('strategyModal.minimized')}</span>
+          <button
+            className="btn-restore"
+            onClick={(e) => {
               e.stopPropagation()
               handleRestore()
             }}
           >
-            Palauta
+            {t('strategyModal.restore')}
           </button>
         </div>
       </div>
@@ -85,7 +85,7 @@ const StrategyConfirmationModal = ({ isOpen, onClose, onRequestUpdate, loading }
     >
       <div className="modal-container modal-container--create">
         <div className="modal-header">
-          <h2 className="modal-title">Uusi strategia saatavilla!</h2>
+          <h2 className="modal-title">{t('strategyModal.title')}</h2>
           <button
             onClick={onClose}
             className="modal-close-btn"
@@ -100,57 +100,57 @@ const StrategyConfirmationModal = ({ isOpen, onClose, onRequestUpdate, loading }
         <div className="modal-content">
           <div style={{ textAlign: 'center' }}>
 
-            <p style={{ 
-              margin: '0 0 20px 0', 
-              fontSize: '16px', 
+            <p style={{
+              margin: '0 0 20px 0',
+              fontSize: '16px',
               color: '#374151',
               lineHeight: '1.6'
             }}>
-              Ennen kuin voimme aloittaa sisällön generoinnin, meidän täytyy varmistaa että strategia on ajan tasalla ja sopii nykyiseen tilanteeseen.
+              {t('strategyModal.description')}
             </p>
-            
-            <div style={{ 
-              backgroundColor: '#fef3c7', 
-              padding: '20px', 
+
+            <div style={{
+              backgroundColor: '#fef3c7',
+              padding: '20px',
               borderRadius: '8px',
               marginBottom: '20px',
               border: '1px solid #fbbf24',
               textAlign: 'left'
             }}>
-              <h3 style={{ 
-                margin: '0 0 12px 0', 
-                fontSize: '18px', 
+              <h3 style={{
+                margin: '0 0 12px 0',
+                fontSize: '18px',
                 fontWeight: '600',
                 color: '#92400e',
                 textAlign: 'center'
               }}>
-                Miksi tämä on tärkeää?
+                {t('strategyModal.whyImportant')}
               </h3>
-              <ul style={{ 
-                margin: 0, 
-                paddingLeft: '20px', 
+              <ul style={{
+                margin: 0,
+                paddingLeft: '20px',
                 color: '#92400e',
                 lineHeight: '1.8',
                 fontSize: '14px'
               }}>
-                <li>Varmistamme että strategia vastaa nykyistä markkinatilannetta</li>
-                <li>Varmistamme että tavoitteet ovat edelleen relevantteja</li>
-                <li>Varmistamme että resurssit riittävät toteuttamiseen</li>
-                <li>Varmistamme että ympäristö ei ole muuttunut merkittävästi</li>
+                <li>{t('strategyModal.reason1')}</li>
+                <li>{t('strategyModal.reason2')}</li>
+                <li>{t('strategyModal.reason3')}</li>
+                <li>{t('strategyModal.reason4')}</li>
               </ul>
             </div>
 
-            <p style={{ 
+            <p style={{
               margin: '0 0 24px 0',
-              fontSize: '14px', 
+              fontSize: '14px',
               color: '#6b7280',
               fontStyle: 'italic'
             }}>
-              Tämä varmistaa että generoimamme strategia on mahdollisimman tehokas ja sopiva tilanteeseen.
+              {t('strategyModal.effectiveness')}
             </p>
 
-            <div style={{ 
-              display: 'flex', 
+            <div style={{
+              display: 'flex',
               justifyContent: 'center',
               gap: '12px'
             }}>
@@ -159,14 +159,14 @@ const StrategyConfirmationModal = ({ isOpen, onClose, onRequestUpdate, loading }
                 onClick={onRequestUpdate}
                 disabled={loading}
               >
-                {loading ? 'Käsitellään...' : 'Tarkista strategia'}
+                {loading ? t('strategyModal.processing') : t('strategyModal.checkStrategy')}
               </Button>
             </div>
           </div>
         </div>
 
         <div className="modal-actions" style={{ justifyContent: 'center', borderTop: '1px solid #e5e7eb', paddingTop: '16px' }}>
-          <button 
+          <button
             className="btn-text"
             onClick={handleSkip}
             style={{
@@ -180,7 +180,7 @@ const StrategyConfirmationModal = ({ isOpen, onClose, onRequestUpdate, loading }
               transition: 'color 0.2s'
             }}
           >
-            Piilota toistaiseksi
+            {t('strategyModal.hideForNow')}
           </button>
         </div>
       </div>

@@ -21,7 +21,7 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
         const data = await fetchCampaignById(campaignId)
         if (mounted) setCampaign(data)
       } catch (err) {
-        if (mounted) setError(err.message || 'Virhe haussa')
+        if (mounted) setError(err.message || t('campaigns.details.fetchError'))
       } finally {
         if (mounted) setLoading(false)
       }
@@ -63,7 +63,7 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
                       const fresh = await fetchCampaignById(campaign.id)
                       setCampaign(fresh)
                     } catch (e) {
-                      setPauseError(e.message || 'Keskeytys epäonnistui')
+                      setPauseError(e.message || t('campaigns.details.pauseError'))
                     } finally {
                       setPausing(false)
                     }
@@ -79,7 +79,7 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
                     cursor: pausing || campaign.status === 'paused' ? 'not-allowed' : 'pointer'
                   }}
                 >
-                  {pausing ? 'Keskeytetään…' : campaign.status === 'paused' ? 'Keskeytetty' : 'Keskeytä kampanja'}
+                  {pausing ? t('campaigns.details.pausing') : campaign.status === 'paused' ? t('campaigns.details.pausedButton') : t('campaigns.details.pauseButton')}
                 </button>
                 {pauseError && <div style={{ color: '#dc2626', alignSelf: 'center' }}>{pauseError}</div>}
               </div>
@@ -101,7 +101,7 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
                   <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1', marginBottom: 8 }}>
                     {campaign.attempt_count || 0}
                   </div>
-                  <div style={{ fontSize: 14, color: '#6b7280' }}>Soittoyritykset</div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>{t('campaigns.details.stats.callAttempts')}</div>
                 </div>
                 
                 <div style={{ 
@@ -113,7 +113,7 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
                   <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e', marginBottom: 8 }}>
                     {campaign.answered_calls || 0}
                   </div>
-                  <div style={{ fontSize: 14, color: '#6b7280' }}>Vastatut puhelut</div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>{t('campaigns.details.stats.answeredCalls')}</div>
                 </div>
                 
                 <div style={{ 
@@ -125,7 +125,7 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
                   <div style={{ fontSize: 32, fontWeight: 700, color: '#10b981', marginBottom: 8 }}>
                     {campaign.successful_calls || 0}
                   </div>
-                  <div style={{ fontSize: 14, color: '#6b7280' }}>Onnistuneet puhelut</div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>{t('campaigns.details.stats.successfulCalls')}</div>
                 </div>
                 
                 <div style={{ 
@@ -137,7 +137,7 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
                   <div style={{ fontSize: 32, fontWeight: 700, color: '#ef4444', marginBottom: 8 }}>
                     {campaign.failed_calls || 0}
                   </div>
-                  <div style={{ fontSize: 14, color: '#6b7280' }}>Epäonnistuneet</div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>{t('campaigns.details.stats.failedCalls')}</div>
                 </div>
                 
                 <div style={{ 
@@ -149,7 +149,7 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
                   <div style={{ fontSize: 32, fontWeight: 700, color: '#f59e0b', marginBottom: 8 }}>
                     {campaign.pending_calls || 0}
                   </div>
-                  <div style={{ fontSize: 14, color: '#6b7280' }}>Aikataulutettu</div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>{t('campaigns.details.stats.scheduledCalls')}</div>
                 </div>
 
                 <div style={{ 
@@ -161,7 +161,7 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
                   <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6', marginBottom: 8 }}>
                     {campaign.in_progress_calls || 0}
                   </div>
-                  <div style={{ fontSize: 14, color: '#6b7280' }}>Jonossa</div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>{t('campaigns.details.stats.queuedCalls')}</div>
                 </div>
                   
                 <div style={{ 
@@ -173,7 +173,7 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
                   <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1', marginBottom: 8 }}>
                     {campaign.total_calls || 0}
                   </div>
-                  <div style={{ fontSize: 14, color: '#6b7280' }}>Yhteensä</div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>{t('campaigns.details.stats.totalCalls')}</div>
                 </div>
                 
                 <div style={{ 
@@ -185,7 +185,7 @@ export default function CampaignDetailModal({ campaignId, onClose }) {
                   <div style={{ fontSize: 32, fontWeight: 700, color: '#1d4ed8', marginBottom: 8 }}>
                     {campaign.called_calls || 0}
                   </div>
-                  <div style={{ fontSize: 14, color: '#6b7280' }}>Soitetut</div>
+                  <div style={{ fontSize: 14, color: '#6b7280' }}>{t('campaigns.details.stats.calledCalls')}</div>
                 </div>
               </div>
               

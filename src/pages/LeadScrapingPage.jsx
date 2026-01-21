@@ -314,7 +314,7 @@ export default function LeadScrapingPage() {
   // Save buyer persona to database
   const saveBuyerPersona = async () => {
     if (!user?.id) {
-      setError('Kirjaudu sisään jatkaaksesi')
+      setError(t('leadScraping.errors.loginRequired'))
       return
     }
 
@@ -326,12 +326,12 @@ export default function LeadScrapingPage() {
       const token = sessionData?.session?.access_token
 
       if (!token) {
-        throw new Error('Kirjaudu sisään jatkaaksesi')
+        throw new Error(t('leadScraping.errors.loginRequired'))
       }
 
       // Hae käyttäjän public.users.id
       const { data: { user: authUser } } = await supabase.auth.getUser(token)
-      if (!authUser) throw new Error('Käyttäjätietoja ei löytynyt')
+      if (!authUser) throw new Error(t('leadScraping.errors.userNotFound'))
 
       const { data: userData } = await supabase
         .from('users')
@@ -339,7 +339,7 @@ export default function LeadScrapingPage() {
         .eq('auth_user_id', authUser.id)
         .single()
 
-      if (!userData) throw new Error('Käyttäjäprofiilia ei löytynyt')
+      if (!userData) throw new Error(t('leadScraping.errors.profileNotFound'))
 
       // Päivitä buyer_persona
       const { error: updateError } = await supabase
@@ -349,14 +349,14 @@ export default function LeadScrapingPage() {
 
       if (updateError) throw updateError
 
-      setSuccess('Ostajapersoona tallennettu onnistuneesti!')
+      setSuccess(t('leadScraping.buyerPersonaSaveSuccess'))
       setTimeout(() => {
         setSuccess('')
         setShowBuyerPersonaModal(false)
       }, 1500)
     } catch (err) {
       console.error('Error saving buyer persona:', err)
-      setError('Ostajapersoonan tallennus epäonnistui: ' + (err.message || 'Tuntematon virhe'))
+      setError(t('leadScraping.buyerPersonaSaveFailed', { error: err.message || t('leadScraping.errors.unknown') }))
     } finally {
       setSavingPersona(false)
     }
@@ -404,7 +404,7 @@ export default function LeadScrapingPage() {
 
   const handleStartScraping = async () => {
     if (!user?.id) {
-      setError('Kirjaudu sisään jatkaaksesi')
+      setError(t('leadScraping.errors.loginRequired'))
       return
     }
 
@@ -466,9 +466,9 @@ export default function LeadScrapingPage() {
       })
 
       if (response.data.success) {
-        setSuccess('Scraping aloitettu onnistuneesti! Tarkista tulokset hetken kuluttua.')
+        setSuccess(t('leadScraping.scrapingStarted'))
       } else {
-        throw new Error(response.data.error || 'Scraping aloitus epäonnistui')
+        throw new Error(response.data.error || t('leadScraping.scrapingFailed'))
       }
       setTimeout(() => setSuccess(''), 5000)
       
@@ -479,7 +479,7 @@ export default function LeadScrapingPage() {
 
     } catch (err) {
       console.error('Error starting scraping:', err)
-      setError(err.response?.data?.error || err.message || 'Scraping aloitus epäonnistui')
+      setError(err.response?.data?.error || err.message || t('leadScraping.scrapingFailed'))
     } finally {
       setLoading(false)
     }
@@ -549,7 +549,7 @@ export default function LeadScrapingPage() {
       const token = sessionData?.session?.access_token
 
       if (!token) {
-        throw new Error('Kirjaudu sisään jatkaaksesi')
+        throw new Error(t('leadScraping.errors.loginRequired'))
       }
 
       // Hae liidit API-endpointin kautta (haetaan kaikki, filtteröidään client-side)
@@ -579,12 +579,12 @@ export default function LeadScrapingPage() {
         setLeads(paginatedLeads)
         setTotalLeads(filteredLeads.length)
       } else {
-        throw new Error(response.data.error || 'Liidien haku epäonnistui')
+        throw new Error(response.data.error || t('leadScraping.fetchLeadsFailed', { error: '' }))
       }
 
     } catch (err) {
       console.error('Error fetching leads:', err)
-      setError('Liidien haku epäonnistui: ' + (err.response?.data?.error || err.message))
+      setError(t('leadScraping.fetchLeadsFailed', { error: err.response?.data?.error || err.message }))
     } finally {
       setLoadingLeads(false)
     }
@@ -606,7 +606,7 @@ export default function LeadScrapingPage() {
       const token = sessionData?.session?.access_token
 
       if (!token) {
-        throw new Error('Kirjaudu sisään jatkaaksesi')
+        throw new Error(t('leadScraping.errors.loginRequired'))
       }
 
       const response = await axios.delete('/api/leads', {
@@ -620,20 +620,20 @@ export default function LeadScrapingPage() {
       })
 
       if (response.data.success) {
-        setSuccess(`Poistettu ${response.data.deletedCount} liidiä`)
+        setSuccess(t('leadScraping.deletedLeads', { count: response.data.deletedCount }))
         setTimeout(() => setSuccess(''), 5000)
-        
+
         // Tyhjennä valinnat
         setSelectedLeadIds(new Set())
-        
+
         // Päivitä liidit
         await fetchLeads()
       } else {
-        throw new Error(response.data.error || 'Poisto epäonnistui')
+        throw new Error(response.data.error || t('leadScraping.deleteFailed'))
       }
     } catch (err) {
       console.error('Error deleting leads:', err)
-      setError('Liidien poisto epäonnistui: ' + (err.response?.data?.error || err.message))
+      setError(t('leadScraping.deleteLeadsFailed', { error: err.response?.data?.error || err.message }))
     } finally {
       setDeletingLeads(false)
     }
@@ -768,7 +768,7 @@ export default function LeadScrapingPage() {
     const creditsRemaining = creditsMonthly - creditsUsed
 
     if (creditsRemaining < creditsNeeded) {
-      setError(`Ei tarpeeksi krediittejä. Tarvitset ${creditsNeeded} krediittiä, mutta jäljellä on vain ${creditsRemaining}.`)
+      setError(t('leadScraping.notEnoughCredits', { needed: creditsNeeded, remaining: creditsRemaining }))
       setTimeout(() => setError(''), 5000)
       return
     }
@@ -785,7 +785,7 @@ export default function LeadScrapingPage() {
       const token = sessionData?.session?.access_token
 
       if (!token) {
-        throw new Error('Kirjaudu sisään jatkaaksesi')
+        throw new Error(t('leadScraping.errors.loginRequired'))
       }
 
       const response = await axios.post('/api/leads?action=enrich', {
@@ -798,7 +798,7 @@ export default function LeadScrapingPage() {
       })
 
       if (response.data.success) {
-        setSuccess(`Rikastus aloitettu ${response.data.leads_enriched} liidille! Krediitit päivitetty.`)
+        setSuccess(t('leadScraping.enrichmentStarted', { count: response.data.leads_enriched }))
         setTimeout(() => setSuccess(''), 5000)
 
         // Päivitä krediitit
@@ -813,11 +813,11 @@ export default function LeadScrapingPage() {
         // Päivitä liidit
         await fetchLeads()
       } else {
-        throw new Error(response.data.error || 'Rikastus epäonnistui')
+        throw new Error(response.data.error || t('leadScraping.enrichmentFailed'))
       }
     } catch (err) {
       console.error('Error enriching leads:', err)
-      const errorMessage = err.response?.data?.error || err.response?.data?.details || err.message || 'Rikastus epäonnistui'
+      const errorMessage = err.response?.data?.error || err.response?.data?.details || err.message || t('leadScraping.enrichmentFailed')
       setError(errorMessage)
       setTimeout(() => setError(''), 5000)
     } finally {
@@ -1105,7 +1105,7 @@ export default function LeadScrapingPage() {
             <div className="filter-group-content">
               <div className="form-field">
                 <MultiSelect
-                  label="People country — Includes"
+                  label={t('leadScraping.labels.peopleCountryIncludes')}
                   options={countryOptions}
                   value={peopleCountryIncludes}
                   onChange={setPeopleCountryIncludes}
@@ -1115,7 +1115,7 @@ export default function LeadScrapingPage() {
               </div>
               <div className="form-field">
                 <MultiSelect
-                  label="People country — Excludes"
+                  label={t('leadScraping.labels.peopleCountryExcludes')}
                   options={countryOptions}
                   value={peopleCountryExcludes}
                   onChange={setPeopleCountryExcludes}
@@ -1125,7 +1125,7 @@ export default function LeadScrapingPage() {
               </div>
               <div className="form-field">
                 <MultiSelect
-                  label="People state/region — Includes"
+                  label={t('leadScraping.labels.peopleStateIncludes')}
                   options={stateRegionOptions}
                   value={peopleStateIncludes}
                   onChange={setPeopleStateIncludes}
@@ -1135,7 +1135,7 @@ export default function LeadScrapingPage() {
               </div>
               <div className="form-field">
                 <MultiSelect
-                  label="People state/region — Excludes"
+                  label={t('leadScraping.labels.peopleStateExcludes')}
                   options={stateRegionOptions}
                   value={peopleStateExcludes}
                   onChange={setPeopleStateExcludes}
@@ -1144,7 +1144,7 @@ export default function LeadScrapingPage() {
                 />
               </div>
               <div className="form-field">
-                <label>People city — Includes</label>
+                <label>{t('leadScraping.labels.peopleCityIncludes')}</label>
                 <input
                   type="text"
                   value={peopleCityIncludes}
@@ -1153,7 +1153,7 @@ export default function LeadScrapingPage() {
                 />
               </div>
               <div className="form-field">
-                <label>People city — Excludes</label>
+                <label>{t('leadScraping.labels.peopleCityExcludes')}</label>
                 <input
                   type="text"
                   value={peopleCityExcludes}
@@ -1184,7 +1184,7 @@ export default function LeadScrapingPage() {
             <div className="filter-group-content">
               <div className="form-field">
                 <MultiSelect
-                  label="Company country — Includes"
+                  label={t('leadScraping.labels.companyCountryIncludes')}
                   options={countryOptions}
                   value={companyCountryIncludes}
                   onChange={setCompanyCountryIncludes}
@@ -1194,7 +1194,7 @@ export default function LeadScrapingPage() {
               </div>
               <div className="form-field">
                 <MultiSelect
-                  label="Company country — Excludes"
+                  label={t('leadScraping.labels.companyCountryExcludes')}
                   options={countryOptions}
                   value={companyCountryExcludes}
                   onChange={setCompanyCountryExcludes}
@@ -1204,7 +1204,7 @@ export default function LeadScrapingPage() {
               </div>
               <div className="form-field">
                 <MultiSelect
-                  label="Company state/region — Includes"
+                  label={t('leadScraping.labels.companyStateIncludes')}
                   options={stateRegionOptions}
                   value={companyStateIncludes}
                   onChange={setCompanyStateIncludes}
@@ -1214,7 +1214,7 @@ export default function LeadScrapingPage() {
               </div>
               <div className="form-field">
                 <MultiSelect
-                  label="Company state/region — Excludes"
+                  label={t('leadScraping.labels.companyStateExcludes')}
                   options={stateRegionOptions}
                   value={companyStateExcludes}
                   onChange={setCompanyStateExcludes}
@@ -1223,7 +1223,7 @@ export default function LeadScrapingPage() {
                 />
               </div>
               <div className="form-field">
-                <label>Company city — Includes</label>
+                <label>{t('leadScraping.labels.companyCityIncludes')}</label>
                 <input
                   type="text"
                   value={companyCityIncludes}
@@ -1232,7 +1232,7 @@ export default function LeadScrapingPage() {
                 />
               </div>
               <div className="form-field">
-                <label>Company city — Excludes</label>
+                <label>{t('leadScraping.labels.companyCityExcludes')}</label>
                 <input
                   type="text"
                   value={companyCityExcludes}
@@ -1246,12 +1246,12 @@ export default function LeadScrapingPage() {
 
         {/* Job Title Filters */}
         <div className="filter-group">
-          <button 
+          <button
             className="filter-group-header"
             onClick={() => toggleFilter('jobTitle')}
             type="button"
           >
-            <span>Job Title Filters</span>
+            <span>{t('leadScraping.jobTitleFiltersLabel')}</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               {getFilterCount('jobTitle') > 0 && (
                 <span className="filter-count-badge">{getFilterCount('jobTitle')}</span>
@@ -1263,7 +1263,7 @@ export default function LeadScrapingPage() {
             <div className="filter-group-content">
               <div className="form-field">
                 <MultiSelect
-                  label="Job title — Includes"
+                  label={t('leadScraping.labels.jobTitleIncludes')}
                   options={jobTitleOptions}
                   value={jobTitlesIncludes}
                   onChange={setJobTitlesIncludes}
@@ -1278,12 +1278,12 @@ export default function LeadScrapingPage() {
                     checked={includeSimilarTitles}
                     onChange={(e) => setIncludeSimilarTitles(e.target.checked)}
                   />
-                  Include people with similar titles
+                  {t('leadScraping.labels.includeSimilarTitles')}
                 </label>
               </div>
               <div className="form-field">
                 <MultiSelect
-                  label="Job title — Excludes"
+                  label={t('leadScraping.labels.jobTitleExcludes')}
                   options={jobTitleOptions}
                   value={jobTitlesExcludes}
                   onChange={setJobTitlesExcludes}
@@ -1292,7 +1292,7 @@ export default function LeadScrapingPage() {
                 />
               </div>
               <div className="form-field">
-                <label>Additional titles — Includes (free text)</label>
+                <label>{t('leadScraping.labels.additionalTitles')}</label>
                 <input
                   type="text"
                   value={additionalTitles}
@@ -1306,12 +1306,12 @@ export default function LeadScrapingPage() {
 
         {/* Management Level Filters */}
         <div className="filter-group">
-          <button 
+          <button
             className="filter-group-header"
             onClick={() => toggleFilter('management')}
             type="button"
           >
-            <span>Management Level Filters</span>
+            <span>{t('leadScraping.managementLevelFiltersLabel')}</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               {getFilterCount('management') > 0 && (
                 <span className="filter-count-badge">{getFilterCount('management')}</span>
@@ -1323,7 +1323,7 @@ export default function LeadScrapingPage() {
             <div className="filter-group-content">
               <div className="form-field">
                 <MultiSelect
-                  label="Management level — Includes"
+                  label={t('leadScraping.labels.managementLevelIncludes')}
                   options={managementLevelOptions}
                   value={managementLevelIncludes}
                   onChange={setManagementLevelIncludes}
@@ -1333,7 +1333,7 @@ export default function LeadScrapingPage() {
               </div>
               <div className="form-field">
                 <MultiSelect
-                  label="Management level — Excludes"
+                  label={t('leadScraping.labels.managementLevelExcludes')}
                   options={managementLevelOptions}
                   value={managementLevelExcludes}
                   onChange={setManagementLevelExcludes}
@@ -1347,12 +1347,12 @@ export default function LeadScrapingPage() {
 
         {/* Departments & Job Function Filters */}
         <div className="filter-group">
-          <button 
+          <button
             className="filter-group-header"
             onClick={() => toggleFilter('departments')}
             type="button"
           >
-            <span>Departments & Job Function Filters</span>
+            <span>{t('leadScraping.departmentsFiltersLabel')}</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               {getFilterCount('departments') > 0 && (
                 <span className="filter-count-badge">{getFilterCount('departments')}</span>
@@ -1364,7 +1364,7 @@ export default function LeadScrapingPage() {
             <div className="filter-group-content">
               <div className="form-field">
                 <MultiSelect
-                  label="Departments & job function — Includes"
+                  label={t('leadScraping.labels.departmentsIncludes')}
                   options={departmentOptions}
                   value={departmentsIncludes}
                   onChange={setDepartmentsIncludes}
@@ -1374,7 +1374,7 @@ export default function LeadScrapingPage() {
               </div>
               <div className="form-field">
                 <MultiSelect
-                  label="Departments & job function — Excludes"
+                  label={t('leadScraping.labels.departmentsExcludes')}
                   options={departmentOptions}
                   value={departmentsExcludes}
                   onChange={setDepartmentsExcludes}
@@ -1388,12 +1388,12 @@ export default function LeadScrapingPage() {
 
         {/* Name Filters */}
         <div className="filter-group">
-          <button 
+          <button
             className="filter-group-header"
             onClick={() => toggleFilter('names')}
             type="button"
           >
-            <span>Name Filters</span>
+            <span>{t('leadScraping.nameFilters')}</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               {getFilterCount('names') > 0 && (
                 <span className="filter-count-badge">{getFilterCount('names')}</span>
@@ -1404,7 +1404,7 @@ export default function LeadScrapingPage() {
           {openFilters.names && (
             <div className="filter-group-content">
               <div className="form-field">
-                <label>First name — Includes</label>
+                <label>{t('leadScraping.labels.firstNameIncludes')}</label>
                 <input
                   type="text"
                   value={firstNameIncludes}
@@ -1413,7 +1413,7 @@ export default function LeadScrapingPage() {
                 />
               </div>
               <div className="form-field">
-                <label>First name — Excludes</label>
+                <label>{t('leadScraping.labels.firstNameExcludes')}</label>
                 <input
                   type="text"
                   value={firstNameExcludes}
@@ -1422,7 +1422,7 @@ export default function LeadScrapingPage() {
                 />
               </div>
               <div className="form-field">
-                <label>Last name — Includes</label>
+                <label>{t('leadScraping.labels.lastNameIncludes')}</label>
                 <input
                   type="text"
                   value={lastNameIncludes}
@@ -1431,7 +1431,7 @@ export default function LeadScrapingPage() {
                 />
               </div>
               <div className="form-field">
-                <label>Last name — Excludes</label>
+                <label>{t('leadScraping.labels.lastNameExcludes')}</label>
                 <input
                   type="text"
                   value={lastNameExcludes}
@@ -1445,12 +1445,12 @@ export default function LeadScrapingPage() {
 
         {/* Lead Limit */}
         <div className="filter-group">
-          <button 
+          <button
             className="filter-group-header"
             onClick={() => toggleFilter('leadLimit')}
             type="button"
           >
-            <span>Tulosten määrä</span>
+            <span>{t('leadScraping.leadLimitLabel')}</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span className={`chevron ${openFilters.leadLimit ? 'open' : ''}`}>▾</span>
             </span>
@@ -1458,7 +1458,7 @@ export default function LeadScrapingPage() {
           {openFilters.leadLimit && (
             <div className="filter-group-content">
               <div className="form-field">
-                <label htmlFor="lead-limit">Tulosten määrä</label>
+                <label htmlFor="lead-limit">{t('leadScraping.leadLimitLabel')}</label>
                 <input
                   id="lead-limit"
                   type="number"
@@ -2074,7 +2074,7 @@ export default function LeadScrapingPage() {
             style={{ maxWidth: '700px', width: '90%' }}
           >
             <div className="modal-header">
-              <h2 className="modal-title">Ostajapersoona / Ihanneasiakas</h2>
+              <h2 className="modal-title">{t('leadScraping.buyerPersonaModalTitle')}</h2>
               <button
                 onClick={() => setShowBuyerPersonaModal(false)}
                 className="modal-close-btn"
@@ -2084,14 +2084,14 @@ export default function LeadScrapingPage() {
             </div>
             <div className="modal-content" style={{ padding: '24px 32px' }}>
               <div className="form-field" style={{ marginBottom: '24px' }}>
-                <label htmlFor="buyer-persona-textarea" style={{ 
+                <label htmlFor="buyer-persona-textarea" style={{
                   display: 'block',
                   marginBottom: '8px',
                   fontSize: '14px',
                   fontWeight: '500',
                   color: '#374151'
                 }}>
-                  Kuvaile ihanneasiakas / ostajapersoona
+                  {t('leadScraping.buyerPersonaLabel')}
                 </label>
                 <textarea
                   id="buyer-persona-textarea"
@@ -2122,28 +2122,28 @@ export default function LeadScrapingPage() {
                     e.target.style.boxShadow = 'none'
                   }}
                 />
-                <p style={{ 
-                  fontSize: '13px', 
-                  color: '#6b7280', 
+                <p style={{
+                  fontSize: '13px',
+                  color: '#6b7280',
                   margin: '12px 0 0 0',
                   lineHeight: '1.6'
                 }}>
-                  Määrittele tarkasti kuka on sinun ihanneasiakas. Tätä tietoa voidaan käyttää myöhemmin liidien pisteytyksessä ja priorisoinnissa. Voit kuvata esimerkiksi tehtävän, yrityksen koon, toimialan, sijainnin ja muut relevantit kriteerit.
+                  {t('leadScraping.buyerPersonaDescription')}
                 </p>
               </div>
             </div>
-            <div className="modal-footer" style={{ 
+            <div className="modal-footer" style={{
               padding: '20px 32px',
               borderTop: '1px solid #e5e7eb',
               display: 'flex',
               justifyContent: 'flex-end',
               gap: '12px'
             }}>
-              <Button 
+              <Button
                 variant="secondary"
                 onClick={() => setShowBuyerPersonaModal(false)}
               >
-                Peruuta
+                {t('common.cancel')}
               </Button>
               <Button 
                 variant="primary" 
@@ -2171,7 +2171,7 @@ export default function LeadScrapingPage() {
         >
           <div className="lead-details-modal modal-container">
             <div className="modal-header">
-              <h2 className="modal-title">Liidin kaikki tiedot</h2>
+              <h2 className="modal-title">{t('leadScraping.leadDetailsModalTitle')}</h2>
               <button
                 onClick={() => {
                   setShowLeadModal(false)

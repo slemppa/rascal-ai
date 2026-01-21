@@ -44,7 +44,7 @@ const PublishModal = ({
     >
       <div className="modal-container" style={{ maxWidth: '1200px' }}>
         <div className="modal-header">
-          <h2 className="modal-title">Valitse somekanavat julkaisua varten</h2>
+          <h2 className="modal-title">{t('posts.publishModal.title')}</h2>
           <button onClick={onClose} className="modal-close-btn">✕</button>
         </div>
         
@@ -62,7 +62,7 @@ const PublishModal = ({
                     return (
                       <div className="carousel-slides">
                         <h4 style={{ marginBottom: '12px', fontSize: '14px', fontWeight: '600', color: '#374151' }}>
-                          Slaidit ({publishingPost.segments.length})
+                          {t('posts.publishModal.slides', { count: publishingPost.segments.length })}
                         </h4>
                         <div className="slides-grid">
                           {publishingPost.segments.map((segment, index) => (
@@ -71,8 +71,8 @@ const PublishModal = ({
                                 {segment.slide_no || index + 1}
                               </div>
                               {segment.media_urls && segment.media_urls.length > 0 ? (
-                                <img 
-                                  src={segment.media_urls[0]} 
+                                <img
+                                  src={segment.media_urls[0]}
                                   alt={`Slaidi ${segment.slide_no || index + 1}`}
                                   className="slide-image"
                                   onError={(e) => {
@@ -82,12 +82,12 @@ const PublishModal = ({
                                 />
                               ) : (
                                 <div className="slide-placeholder">
-                                  <img src="/placeholder.png" alt="Ei mediaa" />
+                                  <img src="/placeholder.png" alt={t('posts.publishModal.noMedia')} />
                                 </div>
                               )}
                               {/* Fallback placeholder */}
                               <div className="slide-placeholder" style={{ display: 'none' }}>
-                                <img src="/placeholder.png" alt="Ei mediaa" />
+                                <img src="/placeholder.png" alt={t('posts.publishModal.noMedia')} />
                               </div>
                               {segment.caption && (
                                 <div className="slide-caption">
@@ -107,7 +107,7 @@ const PublishModal = ({
                   if (!mediaUrl) {
                     return (
                       <div className="media-placeholder">
-                        <img src="/placeholder.png" alt="Ei mediaa" />
+                        <img src="/placeholder.png" alt={t('posts.publishModal.noMedia')} />
                       </div>
                     )
                   }
@@ -138,10 +138,10 @@ const PublishModal = ({
                     </div>
                   )
                 })()}
-                
+
                 {/* Fallback placeholder */}
                 <div className="media-placeholder" style={{ display: 'none' }}>
-                  <img src="/placeholder.png" alt="Ei mediaa" />
+                  <img src="/placeholder.png" alt={t('posts.publishModal.noMedia')} />
                 </div>
               </div>
             </div>
@@ -152,7 +152,7 @@ const PublishModal = ({
               <div className="publish-modal-fields" style={{ height: '50%' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#111827' }}>
-                    Postaus
+                    {t('posts.publishModal.contentToPublish')}
                   </h3>
                   <span style={{ 
                     fontSize: '12px', 
@@ -174,16 +174,16 @@ const PublishModal = ({
                   lineHeight: '1.5',
                   color: '#374151'
                 }}>
-                  {publishingPost.caption || 'Ei kuvausta'}
+                  {publishingPost.caption || t('posts.publishModal.noCaption')}
                 </div>
                 {(publishingPost.caption?.length || 0) > 2000 && (
-                  <p style={{ 
-                    color: '#ef4444', 
-                    fontSize: '12px', 
+                  <p style={{
+                    color: '#ef4444',
+                    fontSize: '12px',
                     marginTop: '4px',
                     fontWeight: '500'
                   }}>
-                    Postauksen pituus ylittää maksimin 2000 merkkiä
+                    {t('posts.publishModal.captionTooLong')}
                   </p>
                 )}
               </div>
@@ -191,7 +191,7 @@ const PublishModal = ({
               {/* Julkaisupäivä */}
               <div className="publish-modal-schedule" style={{ height: '50%' }}>
                 <h3 style={{ marginTop: 0, marginBottom: '12px', fontSize: '16px', fontWeight: '600', color: '#111827' }}>
-                  Julkaisupäivä
+                  {t('posts.publishModal.scheduleDate')}
                 </h3>
                 <div style={{
                   padding: '16px',
@@ -219,19 +219,19 @@ const PublishModal = ({
             {/* Ala: Somekanavat */}
             <div className="publish-modal-accounts">
               <h3 style={{ marginTop: 0, marginBottom: '12px', fontSize: '16px', fontWeight: '600', color: '#111827' }}>
-                Kanavat
+                {t('posts.publishModal.selectChannels')}
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '350px', overflowY: 'auto' }}>
                 {loadingAccounts ? (
-                  <div style={{ 
-                    padding: '20px', 
-                    textAlign: 'center', 
+                  <div style={{
+                    padding: '20px',
+                    textAlign: 'center',
                     color: '#6b7280',
                     backgroundColor: '#f9fafb',
                     border: '1px solid #e5e7eb',
                     borderRadius: '8px'
                   }}>
-                    Ladataan tilejä...
+                    {t('posts.publishModal.loadingAccounts')}
                   </div>
                 ) : socialAccounts && socialAccounts.length > 0 ? (
                   socialAccounts.map((account) => {
@@ -290,15 +290,15 @@ const PublishModal = ({
                     )
                   })
                 ) : (
-                  <div style={{ 
-                    padding: '20px', 
-                    textAlign: 'center', 
+                  <div style={{
+                    padding: '20px',
+                    textAlign: 'center',
                     color: '#6b7280',
                     backgroundColor: '#f9fafb',
                     border: '1px solid #e5e7eb',
                     borderRadius: '8px'
                   }}>
-                    Ei yhdistettyjä sometilejä
+                    {t('posts.publishModal.noAccounts')}
                   </div>
                 )}
               </div>
@@ -311,17 +311,17 @@ const PublishModal = ({
           <div className="modal-actions">
             <div className="modal-actions-left">
               <Button type="button" variant="secondary" onClick={onClose}>
-                Peruuta
+                {t('posts.publishModal.cancel')}
               </Button>
             </div>
             <div className="modal-actions-right">
-              <Button 
-                type="button" 
-                variant="primary" 
+              <Button
+                type="button"
+                variant="primary"
                 onClick={() => onConfirm(publishDate)}
                 disabled={selectedAccounts.length === 0 || (publishingPost.caption?.length || 0) > 2000}
               >
-                {publishDate ? 'Aikatauluta' : 'Julkaise heti'}
+                {publishDate ? t('posts.publishModal.schedule') : t('posts.publishModal.publishNow')}
               </Button>
             </div>
           </div>

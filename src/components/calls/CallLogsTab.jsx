@@ -47,10 +47,10 @@ export default function CallLogsTab({
         </h2>
         <div style={{ display: 'flex', gap: 12 }}>
           <Button type="button" onClick={exportCallLogs} variant="secondary" style={{ padding: '8px 16px', fontSize: 14, background: '#10b981', color: '#fff' }}>
-            Export CSV
+            {t('calls.logsTab.buttons.export')}
           </Button>
           <Button type="button" onClick={() => fetchCallLogs()} disabled={loadingCallLogs} variant="secondary" style={{ padding: '8px 16px', fontSize: 14, background: loadingCallLogs ? '#9ca3af' : '#3b82f6', color: '#fff' }}>
-            {loadingCallLogs ? t('common.loading') ?? 'Päivitetään...' : t('common.refresh') ?? 'Päivitä'}
+            {loadingCallLogs ? t('calls.logsTab.buttons.refreshing') : t('calls.logsTab.buttons.refresh')}
           </Button>
         </div>
       </div>
@@ -58,37 +58,37 @@ export default function CallLogsTab({
       {/* Filtterit */}
       <div style={{ background: '#f8fafc', padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', marginBottom: 32 }}>
         <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#374151' }}>
-          Filtterit ja haku
+          {t('calls.logsTab.filters.title')}
         </h3>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 16 }}>
           <div>
             <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-              Hae nimeä, numeroa tai sähköpostia
+              {t('calls.logsTab.filters.searchLabel')}
             </label>
-            <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Matti Meikäläinen, +358... tai matt@example.com" style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 14, color: '#1f2937', background: '#fff' }} />
+            <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder={t('calls.logsTab.filters.searchPlaceholder')} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 14, color: '#1f2937', background: '#fff' }} />
           </div>
 
           <div>
             <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-              Tila
+              {t('calls.logsTab.filters.statusLabel')}
             </label>
             <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 14, color: '#1f2937', background: '#fff' }}>
-              <option value="">Kaikki</option>
-              <option value="success">Onnistuneet</option>
-              <option value="failed">Epäonnistuneet</option>
-              <option value="pending">Aikataulutettu</option>
-              <option value="in_progress">Jonossa</option>
+              <option value="">{t('calls.logsTab.filters.all')}</option>
+              <option value="success">{t('calls.logsTab.filters.statusOptions.success')}</option>
+              <option value="failed">{t('calls.logsTab.filters.statusOptions.failed')}</option>
+              <option value="pending">{t('calls.logsTab.filters.statusOptions.pending')}</option>
+              <option value="in_progress">{t('calls.logsTab.filters.statusOptions.inProgress')}</option>
             </select>
           </div>
 
           <div>
             <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-              Puhelun tyyppi
+              {t('calls.logsTab.filters.typeLabel')}
             </label>
             <select value={callTypeFilter} onChange={(e) => setCallTypeFilter(e.target.value)} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 14, color: '#1f2937', background: '#fff' }}>
-              <option value="">Kaikki</option>
-              <option value="successful">Onnistuneet</option>
+              <option value="">{t('calls.logsTab.filters.all')}</option>
+              <option value="successful">{t('calls.logsTab.filters.statusOptions.successful')}</option>
               {callTypes.map(type => (
                 <option key={type.id} value={type.name}>{type.name}</option>
               ))}
@@ -99,14 +99,14 @@ export default function CallLogsTab({
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 16 }}>
           <div>
             <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-              Päivämäärä alkaen
+              {t('calls.logsTab.filters.dateFrom')}
             </label>
             <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 14, color: '#1f2937', background: '#fff' }} />
           </div>
 
           <div>
             <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#374151' }}>
-              Päivämäärä asti
+              {t('calls.logsTab.filters.dateTo')}
             </label>
             <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 14, color: '#1f2937', background: '#fff' }} />
           </div>
@@ -114,10 +114,10 @@ export default function CallLogsTab({
 
         <div style={{ display: 'flex', gap: 12 }}>
           <Button onClick={handleSearch} disabled={loadingCallLogs} style={{ fontSize: 14, fontWeight: 500, marginRight: 8 }}>
-            Hae
+            {t('calls.logsTab.filters.searchButton')}
           </Button>
           <Button onClick={clearFilters} style={{ fontSize: 14, fontWeight: 500 }} variant="secondary">
-            🗑️ Tyhjennä filtterit
+            {t('calls.logsTab.filters.clearButton')}
           </Button>
         </div>
       </div>

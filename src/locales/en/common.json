@@ -339,13 +339,16 @@
       },
       "connectedAccounts": "Connected accounts",
       "noAccounts": "No connected accounts. Go to settings to connect your social accounts.",
-      "liveData": "Live data - Updated just now"
+      "liveData": "Live data - Updated just now",
+      "defaultWorkspace": "Default workspace",
+      "followersCount": "{{count}} followers"
     },
     "upcoming": {
       "title": "Upcoming posts",
       "headers": {
         "media": "Media",
         "caption": "Caption",
+        "channels": "Channels",
         "status": "Status",
         "date": "Date"
       },
@@ -411,6 +414,23 @@
         "igImpressions": "IG Impressions"
       },
       "noData": "No data"
+    },
+    "visitors": {
+      "title": "Website Visitors",
+      "total": "Total",
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "last30Days": "Last 30 Days",
+      "todayDescription": "Today's visitors",
+      "notConnected": "Google Analytics is not connected",
+      "connectButton": "Connect Google Analytics",
+      "loading": "Loading visitor data...",
+      "error": "Error loading visitor data",
+      "filters": {
+        "thisWeek": "This Week",
+        "last30Days": "Last 30 Days"
+      }
     }
   },
   "sidebar": {
@@ -445,7 +465,50 @@
   "posts": {
     "header": "Social media content",
     "searchPlaceholder": "Search social media content...",
-    "filters": { "allStatuses": "All statuses" },
+    "filters": {
+      "allStatuses": "All statuses",
+      "allTypes": "All types"
+    },
+    "typeOptions": {
+      "photo": "Photo",
+      "carousel": "Carousel",
+      "reels": "Reels",
+      "linkedin": "LinkedIn",
+      "video": "Video"
+    },
+    "buttons": {
+      "importPost": "Import post",
+      "generateNew": "Generate new post",
+      "generate": "Generate",
+      "cancel": "Cancel",
+      "importing": "Importing...",
+      "import": "Import post",
+      "addFromImageBank": "Add from image bank"
+    },
+    "errors": {
+      "loginRequired": "Please log in to continue",
+      "importSuccess": "Post imported successfully!",
+      "importFailed": "Post import failed",
+      "monthlyLimitReached": "Monthly limit reached",
+      "error": "Error"
+    },
+    "importModal": {
+      "title": "Import your post",
+      "fields": {
+        "type": "Type",
+        "media": "Media",
+        "title": "Title (optional)",
+        "caption": "Caption (optional)"
+      },
+      "placeholders": {
+        "title": "Give the post a title..."
+      }
+    },
+    "upload": {
+      "dropzone": "Drag and drop file here",
+      "clickToSelect": "or click to select a file",
+      "hint": "JPG, PNG, MP4, MOV (max 50MB)"
+    },
     "status": {
       "Kesken": "Draft",
       "Tarkistuksessa": "Ready to publish",
@@ -532,8 +595,42 @@
       "close": "Close",
       "contentToPublish": "Content to publish",
       "selectChannels": "Select channels",
+      "scheduleDate": "Publish date",
       "noAccounts": "No connected social accounts.",
-      "connectInSettings": "Connect social accounts in settings"
+      "connectInSettings": "Connect social accounts in settings",
+      "loadingAccounts": "Loading accounts...",
+      "cancel": "Cancel",
+      "schedule": "Schedule",
+      "publishNow": "Publish now",
+      "slides": "Slides ({{count}})",
+      "noMedia": "No media",
+      "noCaption": "No caption",
+      "captionTooLong": "Post exceeds maximum 2000 characters"
+    },
+    "carouselsTab": {
+      "title": "Carousels",
+      "count": "{{count}} carousels",
+      "empty": {
+        "text": "Carousels will appear here."
+      },
+      "caption": {
+        "title": "Caption",
+        "noCaption": "No caption"
+      },
+      "segments": {
+        "noSegments": "No segments",
+        "slideNumber": "Slide {{number}}",
+        "approved": "Approved",
+        "placeholder": "Segment text..."
+      },
+      "messages": {
+        "noChanges": "No changes to save",
+        "saved": "Saved {{count}} changes",
+        "saveFailed": "Save failed",
+        "segmentUpdateFailed": "Update for segment {{id}} failed",
+        "noAuth": "Not authenticated",
+        "userIdNotFound": "User ID not found"
+      }
     },
     "schedule": {
       "prompt": "Enter schedule (YYYY-MM-DD HH:MM):"
@@ -577,23 +674,29 @@
       "Tarkistuksessa": "Under Review",
       "Aikataulutettu": "Scheduled",
       "Valmis": "Done",
-      "Julkaistu": "Published"
+      "Julkaistu": "Published",
+      "Arkistoitu": "Archived"
     },
     "actions": {
       "view": "View",
+      "edit": "Edit",
       "publish": "Publish",
       "createNew": "+ Create content",
       "cancel": "Cancel",
       "delete": "Delete",
       "retry": "Try again",
       "close": "Close",
-      "download": "Download"
+      "download": "Download",
+      "saveChanges": "Save changes",
+      "archive": "Archive"
     },
     "loading": { "loadingContent": "Loading content..." },
     "empty": {
       "title": "No content yet",
       "description": "Start by creating a new blog article or newsletter",
-      "createFirst": "Create first content"
+      "createFirst": "Create first content",
+      "archiveTitle": "Nothing here yet",
+      "archiveDescription": "No archived content exists yet"
     },
     "placeholders": {
       "noImage": "No image",
@@ -623,7 +726,12 @@
       "publishFailed": "Publishing failed: {message}",
       "deleteConfirm": "Are you sure you want to delete this content?",
       "deleted": "Content deleted successfully!",
-      "deleteFailed": "Deletion failed: {message}"
+      "deleteFailed": "Deletion failed: {message}",
+      "addBlogTextFirst": "Add blog text before publishing"
+    },
+    "tabs": {
+      "content": "Content",
+      "archive": "Archive"
     }
   },
   "strategy": {
@@ -666,6 +774,26 @@
     "empty": {
       "title": "No strategies yet",
       "description": "Start by creating the first monthly strategy"
+    },
+    "companyAnalysis": {
+      "title": "Company Analysis",
+      "missing": "Company analysis is missing. Add a company description to get started.",
+      "create": "Create company analysis",
+      "edit": "Edit company analysis"
+    },
+    "toneOfVoice": {
+      "title": "Tone of Voice",
+      "missing": "Tone of voice is missing. Add your brand voice to get started.",
+      "create": "Create tone of voice",
+      "edit": "Edit tone of voice",
+      "modalTitle": "🎤 Tone of Voice & Brand Voice",
+      "helpButton": "I'm not sure, I need help",
+      "analyzing": "Analyzing social media...",
+      "socialUrlModal": {
+        "title": "Enter social account URL",
+        "label": "Social account URL (Instagram or LinkedIn personal profile)",
+        "placeholder": "https://instagram.com/example or https://linkedin.com/in/person"
+      }
     }
   },
   "campaigns": {
@@ -691,12 +819,39 @@
       "calls": "Calls",
       "answerRateShort": "Answer %",
       "successful": "Successful",
-      "script": "Script"
+      "script": "Script",
+      "callAttempts": "Call attempts",
+      "remaining": "Remaining",
+      "pauseButton": "Pause campaign",
+      "pausedButton": "Paused",
+      "pausing": "Pausing…",
+      "pauseError": "Pause failed",
+      "deleteButton": "Delete",
+      "deleting": "Deleting…",
+      "deleteError": "Delete failed",
+      "deleteConfirmTitle": "Confirm deletion",
+      "deleteConfirmMessage": "Are you sure you want to delete campaign \"{{name}}\"? This action cannot be undone.",
+      "cancelButton": "Cancel"
     },
     "details": {
       "title": "Campaign details",
       "loading": "Loading...",
-      "error": "Error"
+      "error": "Error",
+      "fetchError": "Error fetching data",
+      "pauseError": "Pause failed",
+      "pausing": "Pausing…",
+      "pauseButton": "Pause campaign",
+      "pausedButton": "Paused",
+      "stats": {
+        "callAttempts": "Call attempts",
+        "answeredCalls": "Answered calls",
+        "successfulCalls": "Successful calls",
+        "failedCalls": "Failed",
+        "scheduledCalls": "Scheduled",
+        "queuedCalls": "In queue",
+        "totalCalls": "Total",
+        "calledCalls": "Called"
+      }
     },
     "form": {
       "nameLabel": "Campaign name *",
@@ -835,7 +990,11 @@
       }
     },
     "logsTab": {
-      "buttons": { "refresh": "Refresh", "refreshing": "Refreshing..." },
+      "buttons": {
+        "export": "Export CSV",
+        "refresh": "Refresh",
+        "refreshing": "Refreshing..."
+      },
       "filters": {
         "title": "Filters and search",
         "searchLabel": "Search name, number or email",
@@ -882,6 +1041,58 @@
         "failed": "Failed",
         "pending": "Pending"
       }
+    },
+    "callPanel": {
+      "stats": {
+        "callAttempts": "Call Attempts",
+        "totalLogs": "Total Calls",
+        "totalPrice": "Total Price"
+      },
+      "history": {
+        "title": "Call History",
+        "totalCalls": "{count} calls total",
+        "loading": "Loading call logs...",
+        "empty": "No calls found with selected filters"
+      },
+      "table": {
+        "name": "Name",
+        "phoneNumber": "Phone Number",
+        "email": "Email",
+        "summary": "Summary",
+        "callType": "Call Type",
+        "date": "Date",
+        "answered": "Answered",
+        "wantsContact": "Wants Contact",
+        "duration": "Duration",
+        "status": "Status",
+        "attempts": "Attempts"
+      },
+      "badges": {
+        "answered": {
+          "yes": "Yes",
+          "no": "No"
+        },
+        "wantsContact": {
+          "yes": "Will contact",
+          "no": "Won't contact",
+          "undefined": "Not defined"
+        },
+        "direction": {
+          "outbound": "Outbound",
+          "inbound": "Inbound"
+        },
+        "status": {
+          "scheduled": "Scheduled",
+          "cancelled": "Cancelled",
+          "voicemail": "Voicemail",
+          "success": "Success",
+          "failed": "Failed",
+          "pending": "Pending",
+          "inProgress": "In Progress",
+          "unknown": "Unknown"
+        }
+      },
+      "unknownName": "Unknown name"
     },
     "textMessagesTab": {
       "header": "Text messages",
@@ -1013,6 +1224,13 @@
           "segment": { "label": "Segment (optional)", "none": "No segment" },
           "type": { "label": "Call type" },
           "voice": { "label": "Voice" },
+          "sms": {
+            "title": "Text messages",
+            "before": "Before call",
+            "after": "After answer",
+            "missed": "If call not answered",
+            "preview": "Preview of selected SMS messages:"
+          },
           "smsFirst": {
             "label": "Text first",
             "readonly": "First SMS (read only)",
@@ -1038,6 +1256,14 @@
       "single": {
         "title": "Single call",
         "close": "Close",
+        "callType": "Call type",
+        "selectCallType": "Select call type...",
+        "voice": "Voice",
+        "name": "Name",
+        "phone": "Phone number",
+        "phonePlaceholder": "040 123 4567 or +358401234567",
+        "calling": "Calling…",
+        "call": "Call",
         "step1": {
           "title": "Step 1: Call settings",
           "type": {
@@ -1070,7 +1296,16 @@
       },
       "inbound": {
         "title": "Inbound settings",
-        "close": "Close"
+        "close": "Close",
+        "voiceLabel": "Voice",
+        "testVoice": "Test voice",
+        "welcomeMessageLabel": "Welcome message",
+        "welcomeMessagePlaceholder": "Write the welcome message...",
+        "welcomeMessageHint": "The first message sent to the customer when they call you.",
+        "scriptLabel": "Inbound script",
+        "scriptPlaceholder": "Write the script for inbound calls...",
+        "scriptHint": "Greeting and instructions for customers who call you. Use *wait for answer* notation when you want the AI to wait for the customer's response.",
+        "save": "Save settings"
       },
       "addCallType": {
         "title": "Add new call type",
@@ -1175,6 +1410,23 @@
       },
       "editCallType": {
         "title": "Edit call type",
+        "hints": {
+          "targetAudience": "Who is this call for? E.g. \"company CEOs\", \"retail purchasing managers\", \"inbound leads\".",
+          "mainGoal": "What do you want to achieve with the call? Write 1-3 goals. E.g. \"generate interest\", \"book appointment\", \"qualify lead\".",
+          "toneStyle": "What tone should the agent use? E.g. \"clear, friendly, professional, formal\".",
+          "firstSentence": "The first sentence after the customer speaks. Keep it short. E.g. \"Hi, I'm [Agent], may I ask you one thing?\".",
+          "callStart": "How do you introduce the topic briefly? State the purpose in two sentences and ask permission to continue.",
+          "questions": "Keep questions short. Ask only one thing at a time. After each question, the agent will automatically wait for a response.",
+          "callEnd": "End politely and offer the next step (e.g. scheduling a meeting or sending more information).",
+          "successfulEnd": "When is the call considered successful? E.g. \"when the customer shows interest in continuing the conversation\".",
+          "actionPreset": "Choose a ready-made Action template (optional):"
+        },
+        "alerts": {
+          "sendFailed": "Send failed",
+          "apiNotFound": "API endpoint not found ({{status}}). Check that /api/calls/type-improvement exists.",
+          "aiSentSuccess": "Call type sent to AI enhancement! You'll receive the improved version soon.",
+          "aiSentError": "AI enhancement failed: {{error}}"
+        },
         "steps": {
           "basics": "Basics",
           "content": "Content",
@@ -1187,22 +1439,31 @@
           "name": "Name",
           "status": "Status",
           "version": "Version",
-          "agentName": "Agent Name",
+          "language": "Language",
+          "agentName": "Agent Name / Introduction",
+          "callSettings": "Call Settings",
+          "responseSpeed": "Response Speed",
+          "initialPause": "Initial Pause",
           "targetAudience": "Target Audience",
+          "mainGoal": "Main Goal of the Call",
           "agentPersona": "Agent Persona / Role",
           "toneStyle": "Tone & Speaking Style",
           "callGoals": "Call Objective / Goals",
           "guidelines": "Guidelines & Rules",
           "greeting": "Greeting",
           "purposeIntro": "Purpose Introduction / Reason for Call",
-          "questions": "Product/Service Questions List",
+          "firstSentence": "First Sentence",
+          "callStart": "Call Opening",
+          "questions": "Questions",
+          "callEnd": "Call Ending",
+          "successfulEnd": "Successful Ending",
           "closing": "Call Closing / Goodbye",
           "agentNotes": "Agent Notes / Special Instructions",
           "firstSms": "First text message (SMS)",
           "afterCallSms": "SMS After Answered Call",
           "missedCallSms": "SMS When Call Not Answered",
-          "summary": "Summary (analytics)",
-          "successAssessment": "Success assessment (analytics)"
+          "summary": "Summary (Analytics)",
+          "successAssessment": "Success Assessment (Analytics)"
         },
         "statusOptions": {
           "active": "Active",
@@ -1210,8 +1471,17 @@
           "archived": "Archived"
         },
         "placeholders": {
-          "agentName": "Sarah from Sales",
-          "targetAudience": "B2B decision makers, CFOs at mid-size companies",
+          "agentName": "e.g. Sarah from Sales",
+          "targetAudience": "Corporate finance managers, retail managers, entrepreneurs",
+          "mainGoal": "Ask for interest, request confirmation, tell about the event and confirm participation",
+          "toneStyle": "Friendly, professional and calm. No small talk.",
+          "firstSentence": "Hi! I'm [agent_name], from [company].",
+          "callStart": "We have new products, I'd like to briefly tell you about them.",
+          "questions": "Would you be interested in testing?\nWould you like to order now?\nIs the right person available?",
+          "callEnd": "Thank you for your time! We'll get back to you if needed.",
+          "successfulEnd": "Mark the call as successful when the customer expresses interest in continuing the conversation about the product or service.",
+          "summary": "Write the store name you called and what the store ordered.\nDid the store ask to be contacted again?",
+          "successAssessment": "• In 2-3 sentences, assess whether the Goals section goals were met.\n• Describe why it succeeded/failed and mention any gaps.",
           "agentPersona": "You are Sarah, a friendly sales consultant at TechCorp. You help business owners streamline their operations with our software solutions.",
           "toneStyle": "Professional yet warm. Use clear, jargon-free language. Keep sentences short and pause naturally for responses.",
           "callGoals": "1. Qualify budget and timeline\n2. Identify key pain points\n3. Determine decision-making process\n4. Book demo with qualified leads",
@@ -1304,7 +1574,9 @@
       "save": "Save",
       "update": "Update",
       "send": "Send",
-      "sending": "Sending..."
+      "sending": "Sending...",
+      "today": "Today",
+      "cancel": "Cancel"
     },
     "labels": {
       "or": "or",
@@ -1444,8 +1716,47 @@
         "error": "Error loading files",
         "emptyTitle": "You haven't added any files yet",
         "emptyAlt": "No files",
-        "delete": "Delete"
+        "delete": "Delete",
+        "empty": "No files",
+        "unsupportedFormat": "File format {extension} is not supported. Supported formats: PDF, text files (.txt, .md, .rtf), images (JPG, PNG, GIF, etc.) and audio files (MP3)."
+      },
+      "delete": {
+        "confirmDelete": "Are you sure you want to delete the file \"{fileName}\"?"
       }
+    },
+    "errors": {
+      "notLoggedIn": "User is not logged in",
+      "organizationIdNotFound": "Organization ID not found",
+      "notLoggedInContact": "User is not logged in. Please contact support.",
+      "organizationIdNotFoundContact": "Organization ID not found. Please contact support.",
+      "processingResponse": "Processing response...",
+      "loginRequired": "Login required",
+      "loginRequiredRefresh": "Login required. Please refresh the page and log in again."
+    },
+    "threads": {
+      "newThread": "New conversation",
+      "deleteConfirm": "Are you sure you want to delete this conversation?",
+      "title": "Conversations",
+      "database": "Knowledge base",
+      "databaseLink": "Knowledge base ({{count}})",
+      "empty": "No conversations. Start a new one by pressing +",
+      "count": "Conversations ({{count}})"
+    },
+    "types": {
+      "marketing": "Marketing",
+      "sales": "Sales"
+    },
+    "title": "AI Assistant",
+    "welcome": {
+      "title": "Welcome to AI Assistant",
+      "description": "Ask me anything. I'm here to help you."
+    },
+    "labels": {
+      "ai": "AI",
+      "me": "Me"
+    },
+    "hints": {
+      "enterToSend": "Enter to send • Shift + Enter for new line"
     }
   },
   "settings": {
@@ -1463,6 +1774,13 @@
     },
     "personalInfo": {
       "title": "Personal information"
+    },
+    "userInfo": {
+      "title": "User Information",
+      "organizationInfo": "Organization Information",
+      "personalInfo": "Personal Information",
+      "memberSince": "Member since",
+      "showDetails": "Show details"
     },
     "profile": {
       "title": "User information",
@@ -1529,7 +1847,7 @@
       "workInProgress": "We're currently working on new avatar functionality"
     },
     "voice": {
-      "title": "Audio files (Voice Clone)",
+      "title": "Voice Clone",
       "loading": "Loading audio...",
       "addNewAria": "Add new audio file",
       "add": "Add",
@@ -1537,11 +1855,24 @@
       "added": "Audio added",
       "fetchError": "Failed to fetch audio files",
       "uploadError": "Audio upload failed",
-      "infoNone": "{count}/1 audio file added. Add an audio file for the voice clone.",
-      "infoSome": "{count}/1 audio file added. The audio file is permanent and cannot be deleted."
+      "infoNone": "{{count}}/1 audio file added. Add an audio file for the voice clone.",
+      "infoSome": "{{count}}/1 audio file added. The audio file is permanent and cannot be deleted.",
+      "cloned": "Voice cloned",
+      "clonedDescription": "Your voice clone is ready to use",
+      "addAudioFile": "Add audio file",
+      "dragOrSelect": "Select a file or drag it here"
     },
     "social": {
       "title": "Social media connections",
+      "connectedAccounts": "Connected accounts",
+      "connecting": "Connecting...",
+      "connectButton": "Connect social media",
+      "memberRestriction": "Member role: You can view connected social accounts but cannot connect new ones. Contact organization admin to connect new accounts.",
+      "howItWorks": "How it works:",
+      "step1": "Click the \"Connect social media\" button",
+      "step2": "Mixpost service opens in a modal",
+      "step3": "Sign in and connect your social accounts",
+      "step4": "Close the modal and accounts will update automatically",
       "errorTitle": "Error:",
       "errorHelp": "If the problem persists, contact support.",
       "connectedTitle": "Connected accounts ({count})",
@@ -1577,6 +1908,21 @@
     },
     "accountSettings": {
       "title": "Account settings",
+      "edit": "Edit",
+      "cancel": "Cancel",
+      "loading": "Loading...",
+      "saveSuccess": "Settings saved successfully!",
+      "contentVoice": "Content voice",
+      "company": "Company",
+      "personalBrand": "Personal brand",
+      "targetAudience": "Target audience",
+      "optional": "(optional)",
+      "b2b": "B2B",
+      "b2c": "B2C",
+      "both": "Both",
+      "noSelection": "No selection",
+      "businessCustomers": "Business customers",
+      "consumers": "Consumers",
       "contentLanguage": "Content language",
       "contentLanguageDescription": "Language for AI-generated content",
       "contentLanguagePlaceholder": "e.g. Finnish, English, Swedish",
@@ -1639,6 +1985,76 @@
       "unknownError": "Unknown error"
     }
   },
+  "integrations": {
+    "loading": "Loading integrations...",
+    "description": "Connect Rascal AI to other services. Configure API keys and settings for each platform.",
+    "configured": "Configured",
+    "notConfigured": "Not configured",
+    "testFailed": "Test failed",
+    "aiModel": {
+      "title": "AI Model",
+      "description": "Select which AI model to use for content generation",
+      "loading": "Loading...",
+      "saveError": "Error saving AI model"
+    },
+    "loadError": "Error loading integrations",
+    "saveError": "Error saving integration",
+    "deleteError": "Error deleting integration",
+    "oauthError": "Error starting OAuth flow",
+    "delete": "Delete",
+    "deleteIntegration": "Delete integration",
+    "wordpress": {
+      "description": "Connect your WordPress site to Rascal AI",
+      "username": "Username",
+      "usernameHelp": "Users -> edit user -> Username",
+      "password": "Password",
+      "passwordHelp": "Users -> edit user -> Application Passwords -> Add new application password -> code (shown only once)",
+      "urlHelp": "Settings -> General -> WordPress Address",
+      "downloadPlugin": "Download WordPress Plugin",
+      "downloadPluginShort": "Download Plugin"
+    },
+    "googleAnalytics": {
+      "description": "Connect Google Analytics to Rascal AI with OAuth 2.0 authorization",
+      "reconnectHint": "Reconnect if you want to update authorization.",
+      "connectDescription": "Connect your Google Analytics account with OAuth 2.0 authorization. You will be redirected to Google's authorization page where you can grant permission for Rascal AI to use your Analytics data.",
+      "reconnect": "Reconnect",
+      "connect": "Connect Google Analytics",
+      "connecting": "Connecting...",
+      "connectedSuccess": "Google Analytics connected successfully!"
+    },
+    "testConnection": {
+      "button": "Test Connection",
+      "testing": "Testing...",
+      "success": "WordPress connection tested successfully! Connection works.",
+      "failed": "Connection test failed",
+      "noResponse": "No response from server. Check network connection.",
+      "unknownError": "Unknown error",
+      "notConfigured": "Integration not configured. Save settings first.",
+      "missingCredentials": "WordPress credentials missing. Fill in username and URL before testing.",
+      "credentialsError": "Failed to connect to WordPress. Check that you have saved WordPress credentials (username, password, URL) and that they are correct.",
+      "noSocialAccounts": "No connected social media accounts. Connect at least one social media account (Instagram, Facebook, LinkedIn, X) before testing WordPress connection."
+    },
+    "messages": {
+      "aiModelUpdated": "AI model updated successfully!",
+      "integrationSaved": "Integration saved successfully!",
+      "integrationDeleted": "Integration deleted successfully"
+    }
+  },
+  "strategyModal": {
+    "minimized": "Strategy confirmation pending",
+    "restore": "Restore",
+    "title": "New strategy available!",
+    "description": "Before we can start generating content, we need to confirm that your strategy is still current and relevant.",
+    "whyImportant": "Why is this important?",
+    "reason1": "We ensure that the strategy matches the current market situation",
+    "reason2": "We ensure that the goals are still relevant",
+    "reason3": "We ensure that resources are sufficient for implementation",
+    "reason4": "We ensure that the environment hasn't changed significantly",
+    "effectiveness": "This ensures that the strategy we generate is effective, targeted, and supports your business goals.",
+    "processing": "Processing...",
+    "checkStrategy": "Check strategy",
+    "hideForNow": "Hide for now"
+  },
   "meetingNotes": {
     "title": "Meeting Notes",
     "header": "Meeting Notes",
@@ -1698,14 +2114,208 @@
     "nextMonth": "You can create new content only next month.",
     "thisMonth": "This month's content",
     "limit": "Monthly limit",
-    "createAnyway": "Create anyway (not available)"
+    "createAnyway": "Create anyway (not available)",
+    "loading": "Loading monthly quota...",
+    "generatedThisMonth": "generated content this month",
+    "onlyRemaining": "Only {count} remaining",
+    "quotaFull": "Monthly quota full",
+    "loadingNextMonth": "Loading next month's quota...",
+    "generatedNextMonth": "generated content next month",
+    "nextMonthQuotaFull": "Next month's quota full"
   },
   "leadScraping": {
+    "pageTitle": "Lead Scraping",
+    "pageDescription": "Define search criteria and start lead scraping",
+    "readMore": "Read more",
+    "buyerPersona": "Buyer Persona",
+    "buyerPersonaSaved": "✓ Buyer Persona",
+    "contactFilters": "Contact Information",
+    "companyFilters": "Company",
+    "peopleLocationFilters": "Person Location",
+    "companyLocationFilters": "Company Location",
+    "jobTitleFilters": "Job Title",
+    "managementFilters": "Management Level",
+    "departmentFilters": "Department",
+    "nameFilters": "Name",
+    "emailStatus": "Email Status",
+    "emailStatusAll": "All",
+    "emailStatusVerified": "Verified",
+    "emailStatusUnverified": "Unverified",
+    "hasEmail": "Has Email",
+    "hasPhone": "Has Phone",
+    "employeeRangeLabel": "Employee Count — Includes",
+    "employeeRangePlaceholder": "Select employee count...",
+    "industryIncludesLabel": "Industry — Includes",
+    "industryIncludesPlaceholder": "Select industries...",
+    "industryExcludesLabel": "Industry — Excludes",
+    "industryExcludesPlaceholder": "Select industries to exclude...",
+    "foundedFromLabel": "Founded From",
+    "foundedFromPlaceholder": "e.g. 2020",
+    "foundedToLabel": "Founded To",
+    "foundedToPlaceholder": "e.g. 2024",
+    "companyDomainsLabel": "Company Domains",
+    "companyDomainsPlaceholder": "Enter domains (comma-separated)",
+    "collectedLeads": "Collected Leads",
+    "creditsRemaining": "Remaining: {remaining}/{total}",
+    "creditCharge": "Charge: 1 credit / lead",
+    "enrichSelected": "Enrich Selected ({count})",
+    "enriching": "Enriching...",
+    "deleteSelected": "Delete ({count})",
+    "deleting": "Deleting...",
+    "resultsPerPage": "{count} per page",
+    "refresh": "Refresh",
+    "export": "Export",
+    "filterEmail": "Email",
+    "filterEmailAll": "All",
+    "filterEmailHas": "Has",
+    "filterEmailMissing": "Missing",
+    "filterPosition": "Position",
+    "filterCity": "City",
+    "filterScore": "Score",
+    "filterDate": "Fetched after date",
+    "clearFilters": "Clear filters",
+    "loadingLeads": "Loading leads...",
+    "noLeads": "No leads yet. Start scraping with the filters above.",
+    "selectAll": "Select all",
+    "tableName": "Name",
+    "tableEmail": "Email",
+    "tablePosition": "Position",
+    "tableCompany": "Company",
+    "tableCity": "City",
+    "tableCountry": "Country",
+    "tableLinkedIn": "LinkedIn",
+    "tableScore": "Score",
+    "tableSummary": "Summary",
+    "tableActions": "Actions",
+    "showDetails": "Show",
+    "showAllDetails": "Show all details",
+    "previous": "« Previous",
+    "next": "Next »",
+    "page": "Page {current} / {total} ({count} leads total)",
+    "exportModalTitle": "Export CSV",
+    "exportSelectFields": "Select fields to include in the CSV file",
+    "exportLeadsCount": "Exporting <strong>{count}</strong> leads (filtered results)",
+    "exportPersonFields": "Person Information",
+    "exportLocationFields": "Location",
+    "exportCompanyFields": "Company Information",
+    "exportOtherFields": "Other",
+    "selectAllFields": "Select all",
+    "deselectAllFields": "Deselect all",
+    "exportFullName": "Full Name",
+    "exportFirstName": "First Name",
+    "exportLastName": "Last Name",
+    "exportEmail": "Email",
+    "exportPhone": "Phone",
+    "exportPosition": "Position",
+    "exportSeniority": "Seniority",
+    "exportFunctional": "Functional",
+    "exportCity": "City",
+    "exportState": "State/Region",
+    "exportCountry": "Country",
+    "exportOrgName": "Company",
+    "exportOrgCity": "Company City",
+    "exportOrgState": "Company State/Region",
+    "exportOrgCountry": "Company Country",
+    "exportOrgWebsite": "Company Website",
+    "exportOrgLinkedInUrl": "Company LinkedIn URL",
+    "exportOrgFoundedYear": "Founded",
+    "exportOrgIndustry": "Industry",
+    "exportOrgSize": "Company Size",
+    "exportOrgDescription": "Company Description",
+    "exportLinkedInUrl": "LinkedIn URL",
+    "exportScore": "Score",
+    "exportStatus": "Status",
+    "exportButton": "Export CSV",
+    "exportErrorNoLeads": "No leads to export!",
+    "exportErrorNoFields": "Select at least one field to export!",
+    "exportSuccess": "Exported {count} leads to CSV!",
+    "exportFailed": "Export failed: {error}",
+    "leadDetailsPersonInfo": "Person Information",
+    "leadDetailsCompanyInfo": "Organization Information",
+    "leadDetailsOtherInfo": "Other Information",
+    "leadDetailsFirstName": "First Name:",
+    "leadDetailsLastName": "Last Name:",
+    "leadDetailsFullName": "Full Name:",
+    "leadDetailsEmail": "Email:",
+    "leadDetailsPhone": "Phone:",
+    "leadDetailsPosition": "Position:",
+    "leadDetailsSeniority": "Seniority:",
+    "leadDetailsFunctional": "Functional:",
+    "leadDetailsLinkedIn": "LinkedIn:",
+    "leadDetailsCity": "City:",
+    "leadDetailsState": "State/Region:",
+    "leadDetailsCountry": "Country:",
+    "leadDetailsCompanyName": "Company Name:",
+    "leadDetailsWebsite": "Website:",
+    "leadDetailsOrgLinkedInUrl": "LinkedIn URL:",
+    "leadDetailsFounded": "Founded:",
+    "leadDetailsIndustry": "Industry:",
+    "leadDetailsSize": "Size:",
+    "leadDetailsDescription": "Description:",
+    "leadDetailsOrgCity": "City:",
+    "leadDetailsOrgState": "State/Region:",
+    "leadDetailsOrgCountry": "Country:",
+    "leadDetailsCreatedDate": "Created Date:",
+    "leadDetailsScore": "Score:",
+    "leadDetailsSummary": "Summary:",
+    "confirmEnrich": "Enrich {count} leads? Charge: {credits} credits ({creditsPerLead} credit / lead).",
+    "confirmDelete": "Are you sure you want to delete {count} leads?",
     "buttons": {
       "resetFilters": "Reset Filters",
       "starting": "Starting...",
-      "start": "Start"
-    }
+      "start": "Start Scraping"
+    },
+    "errors": {
+      "loginRequired": "Please log in to continue",
+      "userNotFound": "User data not found",
+      "profileNotFound": "User profile not found",
+      "unknown": "Unknown error"
+    },
+    "buyerPersonaSaveSuccess": "Buyer persona saved successfully!",
+    "buyerPersonaSaveFailed": "Failed to save buyer persona: {error}",
+    "scrapingStarted": "Scraping started successfully! Check results shortly.",
+    "scrapingFailed": "Failed to start scraping",
+    "fetchLeadsFailed": "Failed to fetch leads: {error}",
+    "deletedLeads": "Deleted {count} leads",
+    "deleteFailed": "Delete failed",
+    "deleteLeadsFailed": "Failed to delete leads: {error}",
+    "notEnoughCredits": "Not enough credits. You need {needed} credits but only have {remaining}.",
+    "enrichmentStarted": "Enrichment started for {count} leads! Credits updated.",
+    "enrichmentFailed": "Enrichment failed",
+    "labels": {
+      "peopleCountryIncludes": "People country — Includes",
+      "peopleCountryExcludes": "People country — Excludes",
+      "peopleStateIncludes": "People state/region — Includes",
+      "peopleStateExcludes": "People state/region — Excludes",
+      "peopleCityIncludes": "People city — Includes",
+      "peopleCityExcludes": "People city — Excludes",
+      "companyCountryIncludes": "Company country — Includes",
+      "companyCountryExcludes": "Company country — Excludes",
+      "companyStateIncludes": "Company state/region — Includes",
+      "companyStateExcludes": "Company state/region — Excludes",
+      "companyCityIncludes": "Company city — Includes",
+      "companyCityExcludes": "Company city — Excludes",
+      "jobTitleIncludes": "Job title — Includes",
+      "jobTitleExcludes": "Job title — Excludes",
+      "includeSimilarTitles": "Include people with similar titles",
+      "additionalTitles": "Additional titles — Includes (free text)",
+      "managementLevelIncludes": "Management level — Includes",
+      "managementLevelExcludes": "Management level — Excludes",
+      "departmentsIncludes": "Departments & job function — Includes",
+      "departmentsExcludes": "Departments & job function — Excludes",
+      "firstNameIncludes": "First name — Includes",
+      "firstNameExcludes": "First name — Excludes",
+      "lastNameIncludes": "Last name — Includes",
+      "lastNameExcludes": "Last name — Excludes"
+    },
+    "leadLimitLabel": "Lead Limit",
+    "jobTitleFiltersLabel": "Job Title Filters",
+    "managementLevelFiltersLabel": "Management Level Filters",
+    "departmentsFiltersLabel": "Departments & Job Function Filters",
+    "buyerPersonaModalTitle": "Buyer Persona / Ideal Customer",
+    "buyerPersonaLabel": "Describe your ideal customer / buyer persona",
+    "buyerPersonaDescription": "Define exactly who is your ideal customer. This information can be used later for lead scoring and prioritization. You can describe position, company size, industry, location and other relevant criteria.",
+    "leadDetailsModalTitle": "All Lead Details"
   },
   "test": {
     "buttons": {
@@ -1782,17 +2392,49 @@
   "validation": {
     "fileTypeNotSupported": "File type {type} is not supported. Allowed formats: JPG, PNG, GIF, MP4, M4V"
   },
+  "keskenModal": {
+    "title": "Edit Post",
+    "created": "Created",
+    "notAvailable": "Not available",
+    "deleteImage": "Delete image",
+    "postLabel": "Post",
+    "errors": {
+      "userNotFound": "Failed to fetch user information: User not found",
+      "imageDeleteFailed": "Image deletion failed",
+      "imageDeleteFailedWithDetails": "Image deletion failed: {{message}}",
+      "oldImageDeleteFailed": "Old image deletion failed: {{error}}",
+      "imageUploadFailed": "Image upload failed: {{error}}",
+      "imageUploadFailedGeneric": "Image upload failed: {{message}}",
+      "imageFromKuvapankkiFailed": "Adding image from image bank failed: {{message}}",
+      "captionTooLong": "Post length exceeds maximum of 2000 characters",
+      "saveFailed": "Saving data failed"
+    }
+  },
   "ticket": {
     "title": "Report problem",
+    "buttonLabel": "Issues?",
+    "buttonTitle": "Report a problem or ask for help",
     "success": "Ticket sent successfully! We will respond to you soon.",
+    "successMessage": "Ticket sent successfully! We will respond to you soon.",
     "error": "Error sending ticket. Please try again or contact support directly.",
+    "errorMessage": "Error sending ticket. Please try again or contact support directly.",
     "errorDetails": "Error: {details}",
+    "fillAllRequired": "Please fill in all required fields",
+    "sessionExpired": "Session expired. Please log in again.",
+    "unexpectedResponse": "Unexpected response from server",
     "pageLabel": "Page *",
-    "pageHint": "(Where did the problem occur?)",
+    "pageHint": "Where did the problem occur?",
     "pagePlaceholder": "Example: Posts page, Dashboard, AI Chat...",
     "descriptionLabel": "Describe the problem *",
-    "descriptionHint": "(Please provide as much detail as possible)",
-    "descriptionPlaceholder": "Example: When I try to add images on the posts page, I get an error 'Image upload failed'. This happens every time I..."
+    "descriptionHint": "Please provide as much detail as possible",
+    "descriptionPlaceholder": "Example: When I try to add images on the posts page, I get an error 'Image upload failed'. This happens every time I...",
+    "attachmentsLabel": "Attachments",
+    "attachmentsHint": "Optional",
+    "dragDropText": "Drag and drop files here",
+    "dragDropHint": "or click to select",
+    "supportedFiles": "Supported file types: images, videos, audio files",
+    "selectedFiles": "Selected files:",
+    "fileTypeNotSupported": "File type {type} is not supported ({name})"
   },
   "orgMembers": {
     "pageTitle": "Organization Members",

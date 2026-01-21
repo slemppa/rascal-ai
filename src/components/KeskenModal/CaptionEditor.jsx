@@ -1,18 +1,19 @@
 import React from 'react'
 
-const CaptionEditor = ({ 
-  caption, 
-  onChange, 
+const CaptionEditor = ({
+  caption,
+  onChange,
   placeholder = "Kirjoita postauksen kuvaus...",
   maxLength = 2000,
-  height = '500px'
+  height = '500px',
+  t
 }) => {
   const isOverLimit = caption.length > maxLength
 
   return (
     <div className="form-group">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <label className="form-label" style={{ marginBottom: 0 }}>Postaus</label>
+        <label className="form-label" style={{ marginBottom: 0 }}>{t('keskenModal.postLabel')}</label>
         <span style={{ 
           fontSize: '12px', 
           color: isOverLimit ? '#ef4444' : '#6b7280',
@@ -39,13 +40,13 @@ const CaptionEditor = ({
         />
       </div>
       {isOverLimit && (
-        <p style={{ 
-          color: '#ef4444', 
-          fontSize: '12px', 
+        <p style={{
+          color: '#ef4444',
+          fontSize: '12px',
           marginTop: '4px',
           fontWeight: '500'
         }}>
-          Postauksen pituus ylittää maksimin {maxLength} merkkiä
+          {t('keskenModal.errors.captionTooLong')}
         </p>
       )}
     </div>

@@ -391,9 +391,7 @@ const AddCallTypeModal = ({
                 <textarea
                   value={newCallType.questions || ''}
                   onChange={e => setNewCallType({ ...newCallType, questions: e.target.value })}
-                  placeholder={`Kiinnostaisiko testata?
-Haluaisitteko tilata nyt?
-Olisiko oikea henkilö paikalla?`}
+                  placeholder={t('calls.modals.addCallType.placeholders.questions')}
                   rows={8}
                   className="form-textarea"
                 />
@@ -509,8 +507,7 @@ Olisiko oikea henkilö paikalla?`}
                   <textarea
                     value={newCallType.success_assessment || ''}
                     onChange={e => setNewCallType({ ...newCallType, success_assessment: e.target.value })}
-                    placeholder={`• Arvioi 2-3 lauseessa, täyttyivätkö Tavoitteet-osion tavoitteet.
-• Kuvaa miksi se onnistui/ei onnistunut ja mainitse puuttuvat kohdat.`}
+                    placeholder={t('calls.modals.addCallType.placeholders.successAssessment')}
                     rows={5}
                     className="form-textarea"
                   />

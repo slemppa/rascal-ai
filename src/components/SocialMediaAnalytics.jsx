@@ -15,7 +15,7 @@ const SocialMediaAnalytics = () => {
   const [loading, setLoading] = useState(true);
   
   const [workspaces, setWorkspaces] = useState([
-    { id: 'main', name: 'Oletus työtila', role: 'admin' }
+    { id: 'main', name: t('dashboard.analytics.defaultWorkspace'), role: 'admin' }
   ]);
 
   const [accounts, setAccounts] = useState({
@@ -368,7 +368,7 @@ const SocialMediaAnalytics = () => {
                 </div>
               </div>
               <div className="text-lg font-semibold text-green-600">
-                {account.followers.toLocaleString()} seuraajaa
+                {t('dashboard.analytics.followersCount', { count: account.followers.toLocaleString() })}
               </div>
             </div>
           ))}

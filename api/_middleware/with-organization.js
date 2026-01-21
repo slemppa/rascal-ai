@@ -116,15 +116,16 @@ export function withOrganization(handler) {
           .eq('auth_user_id', user.id)
           .maybeSingle()
         
-        logger.debug('withOrganization: Admin check result', { 
-          hasAdminCheck: !!adminCheck, 
-          hasError: !!adminError, 
+        logger.debug('withOrganization: Admin check result', {
+          hasAdminCheck: !!adminCheck,
+          hasError: !!adminError,
           role: adminCheck?.role,
           isAdmin: adminCheck?.role === 'admin',
+          isSuperAdmin: adminCheck?.role === 'superadmin',
           isModerator: adminCheck?.role === 'moderator'
         })
-        
-        if (!adminError && adminCheck && (adminCheck.role === 'admin' || adminCheck.role === 'moderator')) {
+
+        if (!adminError && adminCheck && (adminCheck.role === 'admin' || adminCheck.role === 'superadmin' || adminCheck.role === 'moderator')) {
           // Globaali admin / moderator -käyttäjä, käytä users.id organisaatio-ID:nä
           // ja aseta rooli suoraan users-taulun roolin mukaan
           logger.info('withOrganization: Setting organization for global admin/moderator', {

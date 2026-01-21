@@ -970,7 +970,7 @@ export default function ContentStrategyPage() {
           <div className="strategy-top-row">
             {/* Yritysanalyysi-kortti */}
             <div className="strategy-card">
-              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>Yritysanalyysi</div>
+              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>{t('strategy.companyAnalysis.title')}</div>
               <div style={{ flex: 1 }}>
                 {companySummary && companySummary.length > 0 ? (
                   <>
@@ -998,14 +998,14 @@ export default function ContentStrategyPage() {
                             setCompanySummaryEditText(companySummary)
                           }}
                         >
-                          Muokkaa
+                          {t('strategy.buttons.edit')}
                         </button>
                       </div>
                   </>
                 ) : (
                   <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
-                    <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Yritysanalyysi puuttuu. Lisää yrityksen kuvaus aloittaaksesi.</p>
-                    <button 
+                    <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>{t('strategy.companyAnalysis.missing')}</p>
+                    <button
                       style={{
                         background: '#22c55e',
                         color: '#ffffff',
@@ -1021,7 +1021,7 @@ export default function ContentStrategyPage() {
                         setCompanySummaryEditText('')
                       }}
                     >
-                      Luo yritysanalyysi
+                      {t('strategy.companyAnalysis.create')}
                     </button>
                   </div>
                 )}
@@ -1152,7 +1152,7 @@ export default function ContentStrategyPage() {
 
             {/* TOV-kortti */}
             <div className="strategy-card">
-              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🎤 Äänenlaatu & TOV</div>
+              <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🎤 {t('strategy.toneOfVoice.title')}</div>
               <div style={{ flex: 1 }}>
                 {tov && tov.length > 0 ? (
                   <>
@@ -1180,14 +1180,14 @@ export default function ContentStrategyPage() {
                             setTovEditText(tov)
                           }}
                         >
-                          Muokkaa
+                          {t('strategy.buttons.edit')}
                         </button>
                       </div>
                   </>
                 ) : (
                   <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
-                    <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Äänenlaatu ja TOV puuttuu. Lisää yrityksen äänenlaatu aloittaaksesi.</p>
-                    <button 
+                    <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>{t('strategy.toneOfVoice.missing')}</p>
+                    <button
                       style={{
                         background: '#22c55e',
                         color: '#ffffff',
@@ -1203,7 +1203,7 @@ export default function ContentStrategyPage() {
                         setTovEditText('')
                       }}
                     >
-                      Luo TOV-kuvaus
+                      {t('strategy.toneOfVoice.create')}
                     </button>
                   </div>
                 )}
@@ -1319,10 +1319,10 @@ export default function ContentStrategyPage() {
         {/* TOV jos ei ole vielä olemassa */}
         {(!tov || tov.length === 0) && (
           <div className="strategy-card">
-            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🎤 Äänenlaatu & TOV</div>
+            <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 12 }}>🎤 {t('strategy.toneOfVoice.title')}</div>
             <div style={{ flex: 1, textAlign: 'center', padding: 24 }}>
-              <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>Äänenlaatu ja TOV puuttuu. Lisää yrityksen äänenlaatu aloittaaksesi.</p>
-              <button 
+              <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>{t('strategy.toneOfVoice.missing')}</p>
+              <button
                 style={{
                   background: '#22c55e',
                   color: '#ffffff',
@@ -1338,7 +1338,7 @@ export default function ContentStrategyPage() {
                   setTovEditText('')
                 }}
               >
-                Luo TOV-kuvaus
+                {t('strategy.toneOfVoice.create')}
               </button>
             </div>
           </div>
@@ -1565,7 +1565,7 @@ export default function ContentStrategyPage() {
                 fontWeight: '700', 
                 color: '#374151' 
               }}>
-                Yritysanalyysi
+                {t('strategy.companyAnalysis.title')}
               </h3>
               <button
                 onClick={() => setViewingCompanySummary(false)}
@@ -1621,9 +1621,9 @@ export default function ContentStrategyPage() {
                   setCompanySummaryEditText(companySummary)
                 }}
               >
-                Muokkaa
+                {t('strategy.buttons.edit')}
               </button>
-              <button 
+              <button
                 style={{
                   background: '#6b7280',
                   color: '#ffffff',
@@ -1951,13 +1951,13 @@ export default function ContentStrategyPage() {
               alignItems: 'center', 
               marginBottom: '20px' 
             }}>
-              <h3 style={{ 
-                margin: 0, 
-                fontSize: '20px', 
-                fontWeight: '700', 
-                color: '#374151' 
+              <h3 style={{
+                margin: 0,
+                fontSize: '20px',
+                fontWeight: '700',
+                color: '#374151'
               }}>
-                🎤 Äänenlaatu & TOV
+                {t('strategy.toneOfVoice.modalTitle')}
               </h3>
               <button
                 onClick={() => setViewingTov(false)}
@@ -2013,9 +2013,9 @@ export default function ContentStrategyPage() {
                   setTovEditText(tov)
                 }}
               >
-                Muokkaa
+                {t('strategy.buttons.edit')}
               </button>
-              <button 
+              <button
                 style={{
                   background: '#6b7280',
                   color: '#ffffff',
@@ -2079,13 +2079,13 @@ export default function ContentStrategyPage() {
               alignItems: 'center', 
               marginBottom: '20px' 
             }}>
-              <h3 style={{ 
-                margin: 0, 
-                fontSize: '20px', 
-                fontWeight: '700', 
-                color: '#374151' 
+              <h3 style={{
+                margin: 0,
+                fontSize: '20px',
+                fontWeight: '700',
+                color: '#374151'
               }}>
-                Muokkaa yritysanalyysiä
+                {t('strategy.companyAnalysis.edit')}
               </h3>
               <button
                 onClick={() => setEditingCompanySummaryModal(false)}
@@ -2500,13 +2500,13 @@ export default function ContentStrategyPage() {
               alignItems: 'center', 
               marginBottom: '20px' 
             }}>
-              <h3 style={{ 
-                margin: 0, 
-                fontSize: '20px', 
-                fontWeight: '700', 
-                color: '#374151' 
+              <h3 style={{
+                margin: 0,
+                fontSize: '20px',
+                fontWeight: '700',
+                color: '#374151'
               }}>
-                🎤 Äänenlaatu & TOV
+                {t('strategy.toneOfVoice.modalTitle')}
               </h3>
               <button
                 onClick={() => {
@@ -2557,7 +2557,7 @@ export default function ContentStrategyPage() {
                   }
                 }}
               >
-                {analyzingTov ? 'Analysoidaan somea...' : 'En ole varma, tarvitsen apua'}
+                {analyzingTov ? t('strategy.toneOfVoice.analyzing') : t('strategy.toneOfVoice.helpButton')}
               </button>
             </div>
             
@@ -2677,13 +2677,13 @@ export default function ContentStrategyPage() {
               alignItems: 'center', 
               marginBottom: '20px' 
             }}>
-              <h3 style={{ 
-                margin: 0, 
-                fontSize: '20px', 
-                fontWeight: '700', 
-                color: '#374151' 
+              <h3 style={{
+                margin: 0,
+                fontSize: '20px',
+                fontWeight: '700',
+                color: '#374151'
               }}>
-                Syötä sometilin URL
+                {t('strategy.toneOfVoice.socialUrlModal.title')}
               </h3>
               <button
                 onClick={() => {
@@ -2715,13 +2715,13 @@ export default function ContentStrategyPage() {
                 fontWeight: '600',
                 color: '#374151'
               }}>
-                Sometilin URL (Instagram tai LinkedIn henkilöprofiili)
+                {t('strategy.toneOfVoice.socialUrlModal.label')}
               </label>
               <input
                 type="url"
                 value={tovSocialUrl}
                 onChange={(e) => handleSocialUrlChange(e.target.value)}
-                placeholder="https://instagram.com/example tai https://linkedin.com/in/henkilo"
+                placeholder={t('strategy.toneOfVoice.socialUrlModal.placeholder')}
                 style={{
                   width: '100%',
                   padding: '12px',
@@ -2777,9 +2777,9 @@ export default function ContentStrategyPage() {
                   setTovSocialUrlError('')
                 }}
               >
-                Peruuta
+                {t('strategy.buttons.cancel')}
               </button>
-              <button 
+              <button
                 style={{
                   background: analyzingTov ? '#9ca3af' : '#f59e0b',
                   color: '#ffffff',

@@ -76,7 +76,7 @@ export default function CampaignCard({ campaign, onStatusChange, onDelete }) {
         <div style={{ padding: 16, borderTop: '1px solid #f3f4f6' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr', gap: 12, fontSize: 14 }}>
             <div>
-              <div style={{ color: '#6b7280' }}>Soittoyritykset</div>
+              <div style={{ color: '#6b7280' }}>{t('campaigns.card.callAttempts')}</div>
               <div style={{ fontWeight: 600 }}>{attemptCount}</div>
             </div>
             <div>
@@ -108,7 +108,7 @@ export default function CampaignCard({ campaign, onStatusChange, onDelete }) {
                   const fresh = await fetchCampaignById(campaign.id)
                   onStatusChange && onStatusChange(fresh)
                 } catch (e) {
-                  setPauseError(e.message || 'Keskeytys epäonnistui')
+                  setPauseError(e.message || t('campaigns.card.pauseError'))
                 } finally {
                   setPausing(false)
                 }
@@ -124,7 +124,7 @@ export default function CampaignCard({ campaign, onStatusChange, onDelete }) {
                 cursor: pausing || status === 'paused' ? 'not-allowed' : 'pointer'
               }}
             >
-              {pausing ? 'Keskeytetään…' : status === 'paused' ? 'Keskeytetty' : 'Keskeytä kampanja'}
+              {pausing ? t('campaigns.card.pausing') : status === 'paused' ? t('campaigns.card.pausedButton') : t('campaigns.card.pauseButton')}
             </button>
             <button
               type="button"
@@ -140,14 +140,13 @@ export default function CampaignCard({ campaign, onStatusChange, onDelete }) {
                 cursor: deleting ? 'not-allowed' : 'pointer'
               }}
             >
-              {deleting ? 'Poistetaan…' : 'Poista'}
+              {deleting ? t('campaigns.card.deleting') : t('campaigns.card.deleteButton')}
             </button>
             {pauseError && <div style={{ color: '#dc2626', alignSelf: 'center' }}>{pauseError}</div>}
             {deleteError && <div style={{ color: '#dc2626', alignSelf: 'center' }}>{deleteError}</div>}
           </div>
-          {/* Jäljellä */}
           <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ color: '#6b7280', fontSize: 14 }}>Jäljellä</div>
+            <div style={{ color: '#6b7280', fontSize: 14 }}>{t('campaigns.card.remaining')}</div>
             <div style={{ fontWeight: 700 }}>{remainingCalls} / {totalCalls}</div>
           </div>
           {campaign.call_types?.name && (
@@ -169,11 +168,11 @@ export default function CampaignCard({ campaign, onStatusChange, onDelete }) {
         }}>
           <div className="modal-container" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2 className="modal-title">Vahvista poisto</h2>
+              <h2 className="modal-title">{t('campaigns.card.deleteConfirmTitle')}</h2>
               <button className="modal-close-btn" onClick={() => setShowDeleteConfirm(false)} type="button">×</button>
             </div>
             <div className="modal-content">
-              <p style={{ marginBottom: 16 }}>Haluatko varmasti poistaa kampanjan "{campaign.name}"? Tätä toimintoa ei voi perua.</p>
+              <p style={{ marginBottom: 16 }}>{t('campaigns.card.deleteConfirmMessage', { name: campaign.name })}</p>
               <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
                 <button
                   type="button"
@@ -189,7 +188,7 @@ export default function CampaignCard({ campaign, onStatusChange, onDelete }) {
                     cursor: deleting ? 'not-allowed' : 'pointer'
                   }}
                 >
-                  Peruuta
+                  {t('campaigns.card.cancelButton')}
                 </button>
                 <button
                   type="button"
@@ -201,7 +200,7 @@ export default function CampaignCard({ campaign, onStatusChange, onDelete }) {
                       setShowDeleteConfirm(false)
                       onDelete && onDelete(campaign.id)
                     } catch (e) {
-                      setDeleteError(e.message || 'Poisto epäonnistui')
+                      setDeleteError(e.message || t('campaigns.card.deleteError'))
                     } finally {
                       setDeleting(false)
                     }
@@ -217,7 +216,7 @@ export default function CampaignCard({ campaign, onStatusChange, onDelete }) {
                     cursor: deleting ? 'not-allowed' : 'pointer'
                   }}
                 >
-                  {deleting ? 'Poistetaan…' : 'Poista'}
+                  {deleting ? t('campaigns.card.deleting') : t('campaigns.card.deleteButton')}
                 </button>
               </div>
               {deleteError && (

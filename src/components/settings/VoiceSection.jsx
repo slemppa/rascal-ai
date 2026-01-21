@@ -141,7 +141,7 @@ export default function VoiceSection({ companyId }) {
   
   return (
     <div>
-      <h2 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#1f2937' }}>Ääniklooni</h2>
+      <h2 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 600, color: '#1f2937' }}>{t('settings.voice.title')}</h2>
       {loading ? (
         <div style={{ color: '#6b7280', fontSize: 14 }}>{t('settings.voice.loading')}</div>
       ) : hasAudio ? (
@@ -188,20 +188,20 @@ export default function VoiceSection({ companyId }) {
                 d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
               />
             </svg>
-            <div style={{ 
+            <div style={{
               color: '#334155',
               fontSize: '16px',
               fontWeight: 600,
               marginBottom: '8px'
             }}>
-              Ääni kloonattu
+              {t('settings.voice.cloned')}
             </div>
-            <div style={{ 
+            <div style={{
               color: '#64748b',
               fontSize: '13px',
               lineHeight: '1.5'
             }}>
-              Äänikloonisi on valmis käyttöön
+              {t('settings.voice.clonedDescription')}
             </div>
           </div>
         </div>
@@ -267,20 +267,20 @@ export default function VoiceSection({ companyId }) {
                 d="M12 4v16m8-8H4"
               />
             </svg>
-            <div style={{ 
+            <div style={{
               color: '#334155',
               fontSize: '16px',
               fontWeight: 600,
               marginBottom: '8px'
             }}>
-              Lisää äänitiedosto
+              {t('settings.voice.addAudioFile')}
             </div>
-            <div style={{ 
+            <div style={{
               color: '#64748b',
               fontSize: '13px',
               lineHeight: '1.5'
             }}>
-              Valitse tiedosto tai vedä se tähän
+              {t('settings.voice.dragOrSelect')}
             </div>
           </div>
         </div>

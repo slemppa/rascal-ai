@@ -14,6 +14,9 @@ import CallsTab from '../components/calls/CallsTab'
 import CallLogsTab from '../components/calls/CallLogsTab'
 import MessageLogsTab from '../components/calls/MessageLogsTab'
 import CallsKnowledgeBaseModal from '../components/calls/CallsKnowledgeBaseModal'
+import InboundSettingsModal from '../components/calls/InboundSettingsModal'
+import MassCallModal from '../components/calls/MassCallModal'
+import SingleCallModal from '../components/calls/SingleCallModal'
 import { useTranslation } from 'react-i18next'
 import Button from '../components/Button'
 import { useAuth } from '../contexts/AuthContext'
@@ -3026,7 +3029,7 @@ export default function CallPanel() {
                 <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1', marginBottom: 8 }}>
                     {stats.totalLogs}
                 </div>
-                <div style={{ fontSize: 14, color: '#6b7280' }}>{t('visitors.total')}</div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>{t('calls.callPanel.stats.totalLogs')}</div>
               </div>
               
               {/* Outbound/Inbound tilastot */}
@@ -3067,7 +3070,7 @@ export default function CallPanel() {
                     return total + price
                   }, 0).toFixed(2)}
                 </div>
-                <div style={{ fontSize: 14, color: '#6b7280' }}>Kokonaishinta</div>
+                <div style={{ fontSize: 14, color: '#6b7280' }}>{t('calls.callPanel.stats.totalPrice')}</div>
               </div>
             </div>
 
@@ -3090,11 +3093,11 @@ export default function CallPanel() {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#374151' }}>
-                  Puheluhistoria
+                  {t('calls.callPanel.history.title')}
                 </h3>
                 {totalCount > 0 && (
                   <div style={{ fontSize: 14, color: '#6b7280' }}>
-                    Yhteensä {totalCount} puhelua
+                    {t('calls.callPanel.history.totalCalls', { count: totalCount })}
                   </div>
                 )}
               </div>
@@ -3103,22 +3106,22 @@ export default function CallPanel() {
               
               {loadingCallLogs ? (
                 <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
-                  Ladataan puhelulokia...
+                  {t('calls.callPanel.history.loading')}
                 </div>
               ) : callLogs.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: 32, color: '#6b7280' }}>
-                  Ei puheluja löytynyt valituilla filttereillä
+                  {t('calls.callPanel.history.empty')}
                 </div>
               ) : (
                 <div style={{ overflowX: 'auto', marginBottom: 24 }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
                     <thead>
                       <tr style={{ background: '#f3f4f6', color: '#374151' }}>
-                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Nimi</th>
-                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Puhelinnumero</th>
-                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Sähköposti</th>
-                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Yhteenveto</th>
-                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Puhelun tyyppi</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>{t('calls.callPanel.table.name')}</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>{t('calls.callPanel.table.phoneNumber')}</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>{t('calls.callPanel.table.email')}</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>{t('calls.callPanel.table.summary')}</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>{t('calls.callPanel.table.callType')}</th>
                         <th 
                           style={{ 
                             padding: '8px', 
@@ -3133,15 +3136,15 @@ export default function CallPanel() {
                           onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e5e7eb'}
                           onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
                         >
-                          Päivämäärä
+                          {t('calls.callPanel.table.date')}
                           {sortField === 'call_date' && (
                             <span style={{ marginLeft: 4, fontSize: 12 }}>
                               {sortDirection === 'asc' ? '↑' : '↓'}
                             </span>
                           )}
                         </th>
-                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Vastattu</th>
-                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Yhteydenotto</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>{t('calls.callPanel.table.answered')}</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>{t('calls.callPanel.table.wantsContact')}</th>
                         <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>{t('calls.messagesTab.table.direction')}</th>
                         <th 
                           style={{ 
@@ -3157,17 +3160,17 @@ export default function CallPanel() {
                           onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e5e7eb'}
                           onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
                         >
-                          Kesto
+                          {t('calls.callPanel.table.duration')}
                           {sortField === 'duration' && (
                             <span style={{ marginLeft: 4, fontSize: 12 }}>
                               {sortDirection === 'asc' ? '↑' : '↓'}
                             </span>
                           )}
                         </th>
-                        <th 
-                          style={{ 
-                            padding: '8px', 
-                            textAlign: 'center', 
+                        <th
+                          style={{
+                            padding: '8px',
+                            textAlign: 'center',
                             fontWeight: 600,
                             cursor: 'pointer',
                             userSelect: 'none',
@@ -3178,14 +3181,14 @@ export default function CallPanel() {
                           onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e5e7eb'}
                           onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
                         >
-                          Tila
+                          {t('calls.callPanel.table.status')}
                           {sortField === 'call_status' && (
                             <span style={{ marginLeft: 4, fontSize: 12 }}>
                               {sortDirection === 'asc' ? '↑' : '↓'}
                             </span>
                           )}
                         </th>
-                        <th style={{ padding: '8px', textAlign: 'right', fontWeight: 600 }}>Soittoyritykset</th>
+                        <th style={{ padding: '8px', textAlign: 'right', fontWeight: 600 }}>{t('calls.callPanel.table.attempts')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -3202,7 +3205,7 @@ export default function CallPanel() {
                           onMouseOver={e => e.currentTarget.style.background = '#f3f4f6'}
                           onMouseOut={e => e.currentTarget.style.background = '#fff'}
                         >
-                              <td style={{ padding: '8px', fontWeight: 500, color: '#1f2937' }}>{log.customer_name || 'Tuntematon nimi'}</td>
+                              <td style={{ padding: '8px', fontWeight: 500, color: '#1f2937' }}>{log.customer_name || t('calls.callPanel.unknownName')}</td>
                               <td style={{ padding: '8px', color: '#1f2937' }}>{log.phone_number || '-'}</td>
                               <td style={{ padding: '8px', color: '#1f2937' }}>{log.email || '-'}</td>
                               <td style={{ padding: '8px', color: '#1f2937', fontSize: 13 }}>
@@ -3214,7 +3217,7 @@ export default function CallPanel() {
                                   new Date(log.call_date).toLocaleDateString('fi-FI') + ' ' + (log.call_time ? log.call_time : new Date(log.call_date).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }))
                                 ) : '-'}
                               </td>
-                              <td style={{ padding: '8px', color: '#1f2937' }}>{log.answered ? 'Kyllä' : 'Ei'}</td>
+                              <td style={{ padding: '8px', color: '#1f2937' }}>{log.answered ? t('calls.callPanel.badges.answered.yes') : t('calls.callPanel.badges.answered.no')}</td>
                           <td style={{ padding: '8px', textAlign: 'center' }}>
                                 {log.wants_contact === true ? (
                             <span style={{
@@ -3227,7 +3230,7 @@ export default function CallPanel() {
                                     color: '#166534',
                                     minWidth: 80
                                   }}>
-                                    ✅ Otetaan yhteyttä
+                                    ✅ {t('calls.callPanel.badges.wantsContact.yes')}
                                   </span>
                                 ) : log.wants_contact === false ? (
                                   <span style={{
@@ -3240,7 +3243,7 @@ export default function CallPanel() {
                                     color: '#dc2626',
                                     minWidth: 80
                                   }}>
-                                    ❌ Ei oteta yhteyttä
+                                    ❌ {t('calls.callPanel.badges.wantsContact.no')}
                                   </span>
                                 ) : (
                                   <span style={{
@@ -3253,7 +3256,7 @@ export default function CallPanel() {
                                     color: '#6b7280',
                                     minWidth: 80
                                   }}>
-                                    ⚪ Ei määritelty
+                                    ⚪ {t('calls.callPanel.badges.wantsContact.undefined')}
                                   </span>
                                 )}
                               </td>
@@ -3268,7 +3271,7 @@ export default function CallPanel() {
                                   color: log.direction === 'outbound' ? '#1d4ed8' : '#92400e',
                                   minWidth: 80
                                 }}>
-                                  {log.direction === 'outbound' ? 'Lähtenyt' : 'Vastaanotettu'}
+                                  {log.direction === 'outbound' ? t('calls.callPanel.badges.direction.outbound') : t('calls.callPanel.badges.direction.inbound')}
                                 </span>
                               </td>
                               <td style={{ padding: '8px', color: '#1f2937' }}>
@@ -3295,13 +3298,13 @@ export default function CallPanel() {
                                          log.call_status === 'in progress' ? '#1d4ed8' : '#dc2626',
                               minWidth: 60
                             }}>
-                                  {(log.call_date && log.call_time && log.call_status === 'pending') ? 'Ajastettu' : 
-                                   (log.call_status === 'done' && log.call_outcome === 'cancelled') ? 'Peruttu' :
-                                   (log.call_status === 'done' && log.call_outcome === 'voice mail') ? 'Vastaaja' :
-                                   log.call_status === 'done' && log.answered ? 'Onnistui' : 
-                                   log.call_status === 'done' && !log.answered ? 'Epäonnistui' :
-                                   log.call_status === 'pending' ? 'Aikataulutettu' : 
-                                   log.call_status === 'in progress' ? 'Jonossa' : 'Tuntematon'}
+                                  {(log.call_date && log.call_time && log.call_status === 'pending') ? t('calls.callPanel.badges.status.scheduled') :
+                                   (log.call_status === 'done' && log.call_outcome === 'cancelled') ? t('calls.callPanel.badges.status.cancelled') :
+                                   (log.call_status === 'done' && log.call_outcome === 'voice mail') ? t('calls.callPanel.badges.status.voicemail') :
+                                   log.call_status === 'done' && log.answered ? t('calls.callPanel.badges.status.success') :
+                                   log.call_status === 'done' && !log.answered ? t('calls.callPanel.badges.status.failed') :
+                                   log.call_status === 'pending' ? t('calls.callPanel.badges.status.pending') :
+                                   log.call_status === 'in progress' ? t('calls.callPanel.badges.status.inProgress') : t('calls.callPanel.badges.status.unknown')}
                             </span>
                           </td>
                           <td style={{ padding: '8px', textAlign: 'right', whiteSpace: 'nowrap' }}>
@@ -3874,683 +3877,81 @@ export default function CallPanel() {
         />
         
         {/* Inbound-asetukset modaali */}
-        {showInboundModal && createPortal(
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.5)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 1000,
-              padding: 20
-            }}
-            onClick={async (e) => {
-              if (e.target === e.currentTarget) {
-                // Tallennetaan automaattisesti kun klikkaa ulkopuolelta
-                await handleSaveInboundSettings()
-                setShowInboundModal(false)
-              }
-            }}
-          >
-            <div
-              style={{
-                background: '#fff',
-                borderRadius: 16,
-                padding: 32,
-                width: '100%',
-                maxWidth: 800,
-                maxHeight: '90vh',
-                overflowY: 'auto',
-                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>
-                  {t('calls.modals.inbound.title')}
-                </h2>
-                <Button
-                  variant="secondary"
-                  onClick={() => setShowInboundModal(false)}
-                  style={{ width: 'auto', padding: '8px 16px' }}
-                >
-                  {t('calls.modals.inbound.close')}
-                </Button>
-              </div>
-              
-              <div style={{ marginBottom: 24 }}>
-                <label className="label">Ääni</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                  <select value={inboundVoice} onChange={e => setInboundVoice(e.target.value)} className="select" style={{ flex: 1 }}>
-                    {getVoiceOptions().map(voice => <option key={voice.value} value={voice.value}>{voice.label}</option>)}
-                  </select>
-                  <Button 
-                    variant="secondary"
-                    onClick={() => playVoiceSample(inboundVoice)}
-                    style={{ width: 'auto', padding: '8px 16px' }}
-                  >
-                    Testaa ääntä
-                  </Button>
-                </div>
-              </div>
-              
-              <div style={{ marginBottom: 24 }}>
-                <label className="label">Aloitusviesti</label>
-                <textarea 
-                  value={inboundWelcomeMessage} 
-                  onChange={e => setInboundWelcomeMessage(e.target.value)} 
-                  placeholder="Kirjoita aloitusviesti..." 
-                  rows={5} 
-                  className="textarea"
-                  style={{ 
-                    width: '100%',
-                    fontFamily: 'monospace',
-                    fontSize: 14,
-                    lineHeight: 1.5
-                  }}
-                />
-                <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8 }}>
-                  Ensimmäinen viesti joka lähetetään asiakkaalle kun he soittavat sinulle.
-                </div>
-              </div>
-              
-              <div style={{ marginBottom: 24 }}>
-                <label className="label">Inbound-skripti</label>
-                <textarea 
-                  value={inboundScript} 
-                  onChange={e => setInboundScript(e.target.value)} 
-                  placeholder="Kirjoita inbound-puhelujen skripti..." 
-                  rows={15} 
-                  className="textarea"
-                  style={{ 
-                    width: '100%',
-                    minHeight: 300,
-                    fontFamily: 'monospace',
-                    fontSize: 14,
-                    lineHeight: 1.5
-                  }}
-                />
-                <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8 }}>
-                  Tervehdys ja ohjeistus asiakkaille jotka soittavat sinulle. Käytä *odota vastaus* merkintää kun haluat että AI odottaa asiakkaan vastausta.
-                </div>
-              </div>
-              
-              <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
-                <Button
-                  variant="secondary"
-                  onClick={() => setShowInboundModal(false)}
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </Button>
-                <Button
-                  onClick={async () => {
-                    await handleSaveInboundSettings()
-                    setShowInboundModal(false)
-                  }}
-                  variant="primary"
-                >
-                  Tallenna asetukset
-                </Button>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
-        
-        {/* Massapuhelumodaali */}
-        {showMassCallModal && createPortal(
-          <div 
-            onClick={resetMassCallModal}
-            className="modal-overlay modal-overlay--dark"
-          >
-            <div 
-              onClick={(e) => e.stopPropagation()}
-              className="modal-container modal-container--create mass-call-modal"
-            >
-              <div className="modal-header">
-                <h2 className="modal-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
-                    <path d="M4.5 16.5c-1.5 1.5-1.5 4 0 5.5s4 1.5 5.5 0L12 20l2-2M20 6l-8.5 8.5a2.83 2.83 0 0 1-4 0 2.83 2.83 0 0 1 0-4L16 2"/>
-                  </svg>
-                  {t('calls.modals.mass.title')}
-                </h2>
-                <button
-                  onClick={resetMassCallModal}
-                  className="modal-close-btn"
-                  type="button"
-                  aria-label={t('calls.common.close')}
-                  title="Sulje"
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
-              </div>
-              
-              <div className="modal-content">
-                {/* Vaihe 1: Google Sheets validointi */}
-                {massCallStep === 1 && (
-                  <div>
-                    <div style={{ marginBottom: 20 }}>
-                      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937', backgroundColor: 'transparent' }}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                          <polyline points="14,2 14,8 20,8"/>
-                          <line x1="16" y1="13" x2="8" y2="13"/>
-                          <line x1="16" y1="17" x2="8" y2="17"/>
-                          <polyline points="10,9 9,9 8,9"/>
-                        </svg>
-                        {t('calls.modals.mass.step1.title')}
-                      </h3>
-                      <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 16 }}>
-                        {t('calls.modals.mass.step1.desc')}
-                      </p>
-                    </div>
-                    
-                    <label className="label">{t('calls.modals.mass.step1.labelUrl')}</label>
-                    <input 
-                      type="url" 
-                      value={massCallSheetUrl} 
-                      onChange={e => setMassCallSheetUrl(e.target.value)} 
-                      placeholder={t('calls.modals.mass.step1.placeholderUrl')} 
-                      className="input" 
-                      style={{ width: '100%', marginBottom: 16 }}
-                    />
-                    
-                    {massCallError && (
-                      <div className="status-error" style={{ marginBottom: 16 }}>
-                        {massCallError}
-                      </div>
-                    )}
-                    
-                    <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
-                      <Button
-                        onClick={resetMassCallModal}
-                        variant="secondary"
-                      >
-                        {t('calls.common.cancel')}
-                      </Button>
-                      <Button
-                        onClick={handleMassCallValidate}
-                        disabled={massCallValidating || !massCallSheetUrl}
-                        variant="primary"
-                      >
-                        {massCallValidating ? t('calls.modals.mass.step1.validating') : t('calls.modals.mass.step1.validate')}
-                      </Button>
-                    </div>
-                  </div>
-                )}
-                
-                {/* Vaihe 2: Puhelun tyyppi ja ääni */}
-                {massCallStep === 2 && (
-                  <div>
-                    <div style={{ marginBottom: 20 }}>
-                      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937', backgroundColor: 'transparent' }}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
-                          <circle cx="12" cy="12" r="3"/>
-                          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                        </svg>
-                        {t('calls.modals.mass.step2.title')}
-                      </h3>
-                      <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 16 }}>
-                        {t('calls.modals.mass.step2.desc')}
-                      </p>
+        <InboundSettingsModal
+          open={showInboundModal}
+          onClose={() => setShowInboundModal(false)}
+          inboundVoice={inboundVoice}
+          setInboundVoice={setInboundVoice}
+          inboundWelcomeMessage={inboundWelcomeMessage}
+          setInboundWelcomeMessage={setInboundWelcomeMessage}
+          inboundScript={inboundScript}
+          setInboundScript={setInboundScript}
+          handleSaveInboundSettings={handleSaveInboundSettings}
+          getVoiceOptions={getVoiceOptions}
+          playVoiceSample={playVoiceSample}
+        />
 
-                      <div style={{ display: 'grid', gap: 16, marginTop: 8 }}>
-                        {/* Ensimmäinen rivi: Kampanja ja Puhelun tyyppi vierekkäin */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                          <div>
-                            <label className="label">{t('calls.modals.mass.step2.campaign.label')}</label>
-                            <select value={massCallCampaignId} onChange={e => setMassCallCampaignId(e.target.value)} className="select">
-                              <option value="">{t('calls.modals.mass.step2.campaign.select')}</option>
-                              {massCallCampaigns.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                            </select>
-                          </div>
-                          <div>
-                            <label className="label">{t('calls.modals.mass.step2.type.label')}</label>
-                            <select 
-                              value={massCallCallType} 
-                              onChange={e => setMassCallCallType(e.target.value)} 
-                              className="select"
-                            >
-                              {callTypes.map(type => (
-                                <option key={type.id} value={type.value}>{type.label}</option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
+        <MassCallModal
+          open={showMassCallModal}
+          onClose={resetMassCallModal}
+          massCallStep={massCallStep}
+          setMassCallStep={setMassCallStep}
+          massCallSheetUrl={massCallSheetUrl}
+          setMassCallSheetUrl={setMassCallSheetUrl}
+          massCallValidating={massCallValidating}
+          massCallValidationResult={massCallValidationResult}
+          massCallError={massCallError}
+          handleMassCallValidate={handleMassCallValidate}
+          massCallCallType={massCallCallType}
+          setMassCallCallType={setMassCallCallType}
+          massCallSelectedVoice={massCallSelectedVoice}
+          setMassCallSelectedVoice={setMassCallSelectedVoice}
+          massCallSmsFirst={massCallSmsFirst}
+          setMassCallSmsFirst={setMassCallSmsFirst}
+          massCallSmsAfterCall={massCallSmsAfterCall}
+          setMassCallSmsAfterCall={setMassCallSmsAfterCall}
+          massCallSmsMissedCall={massCallSmsMissedCall}
+          setMassCallSmsMissedCall={setMassCallSmsMissedCall}
+          massCallCampaignId={massCallCampaignId}
+          setMassCallCampaignId={setMassCallCampaignId}
+          massCallCampaigns={massCallCampaigns}
+          callTypes={callTypes}
+          getVoiceOptions={getVoiceOptions}
+          massCallScheduledDate={massCallScheduledDate}
+          setMassCallScheduledDate={setMassCallScheduledDate}
+          massCallScheduledTime={massCallScheduledTime}
+          setMassCallScheduledTime={setMassCallScheduledTime}
+          massCallStarting={massCallStarting}
+          massCallScheduling={massCallScheduling}
+          handleMassCallStart={handleMassCallStart}
+          handleMassCallSchedule={handleMassCallSchedule}
+        />
 
-                        {/* Toinen rivi: Ääni ja kolme SMS-valintaa */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                          <div>
-                            <label className="label">{t('calls.modals.mass.step2.voice.label')}</label>
-                            <select 
-                              value={massCallSelectedVoice} 
-                              onChange={e => setMassCallSelectedVoice(e.target.value)} 
-                              className="select"
-                            >
-                              {getVoiceOptions().map(voice => (
-                                <option key={voice.value} value={voice.value}>{voice.label}</option>
-                              ))}
-                            </select>
-                          </div>
-                          
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                            <label style={{ fontWeight: 600, fontSize: 14, marginBottom: 8 }}>Tekstiviestit</label>
-                            <div style={{ fontSize: 10, color: '#666', marginBottom: 8 }}>
-                              Debug: {massCallSmsFirst ? 'true' : 'false'}, {massCallSmsAfterCall ? 'true' : 'false'}, {massCallSmsMissedCall ? 'true' : 'false'}
-                            </div>
-                            
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                              <label style={{ fontWeight: 500, fontSize: 13, minWidth: 120 }}>Ennen puhelua</label>
-                              <label className="switch" key={`sms-first-${massCallSmsFirst}`}>
-                                <input 
-                                  type="checkbox" 
-                                  checked={massCallSmsFirst} 
-                                  onChange={e => {
-                                    console.log('SMS First changed to:', e.target.checked)
-                                    setMassCallSmsFirst(e.target.checked)
-                                  }} 
-                                />
-                                <span className="slider round"></span>
-                              </label>
-                            </div>
-
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                              <label style={{ fontWeight: 500, fontSize: 13, minWidth: 120 }}>Vastauksen jälkeen</label>
-                              <label className="switch" key={`sms-after-${massCallSmsAfterCall}`}>
-                                <input 
-                                  type="checkbox" 
-                                  checked={massCallSmsAfterCall} 
-                                  onChange={e => {
-                                    console.log('SMS After Call changed to:', e.target.checked)
-                                    setMassCallSmsAfterCall(e.target.checked)
-                                  }} 
-                                />
-                                <span className="slider round"></span>
-                              </label>
-                            </div>
-
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                              <label style={{ fontWeight: 500, fontSize: 13, minWidth: 120 }}>Jos puheluun ei vastata</label>
-                              <label className="switch" key={`sms-missed-${massCallSmsMissedCall}`}>
-                                <input 
-                                  type="checkbox" 
-                                  checked={massCallSmsMissedCall} 
-                                  onChange={e => {
-                                    console.log('SMS Missed Call changed to:', e.target.checked)
-                                    setMassCallSmsMissedCall(e.target.checked)
-                                  }} 
-                                />
-                                <span className="slider round"></span>
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* SMS-esikatselu */}
-                        {(massCallSmsFirst || massCallSmsAfterCall || massCallSmsMissedCall) && (
-                          <div className="sms-preview-container">
-                            <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>Valittujen SMS-viestien esikatselu:</div>
-                            {(() => {
-                              const selectedCallType = callTypes.find(t => t.value === massCallCallType)
-                              return (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                                  {massCallSmsFirst && selectedCallType?.first_sms && (
-                                    <div style={{ padding: 8, background: '#f3f4f6', borderRadius: 6, fontSize: 12 }}>
-                                      <strong>Ennen puhelua:</strong> {selectedCallType.first_sms}
-                                    </div>
-                                  )}
-                                  {massCallSmsAfterCall && selectedCallType?.after_call_sms && (
-                                    <div style={{ padding: 8, background: '#f3f4f6', borderRadius: 6, fontSize: 12 }}>
-                                      <strong>Vastauksen jälkeen:</strong> {selectedCallType.after_call_sms}
-                                    </div>
-                                  )}
-                                  {massCallSmsMissedCall && selectedCallType?.missed_call_sms && (
-                                    <div style={{ padding: 8, background: '#f3f4f6', borderRadius: 6, fontSize: 12 }}>
-                                      <strong>Jos puheluun ei vastata:</strong> {selectedCallType.missed_call_sms}
-                                    </div>
-                                  )}
-                                </div>
-                              )
-                            })()}
-                          </div>
-                        )}
-                      </div>
-                      
-                      {massCallValidationResult && (
-                        <div className="status-success" style={{ marginTop: 8, marginBottom: 16 }}>
-                          <div style={{ fontWeight: 600 }}>{t('calls.modals.mass.step1.validationOk')}</div>
-                          <div><strong>{t('calls.modals.mass.step1.found.phones', { count: massCallValidationResult.phoneCount })}</strong></div>
-                          {massCallValidationResult.emailCount > 0 && (
-                            <div><strong>{t('calls.modals.mass.step1.found.emails', { count: massCallValidationResult.emailCount })}</strong></div>
-                          )}
-                          {massCallValidationResult.totalRows > 0 && (
-                            <div>{t('calls.modals.mass.step1.found.rows', { count: massCallValidationResult.totalRows })}</div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    
-                    
-                    <div style={{ display: 'flex', gap: 12, justifyContent: 'space-between' }}>
-                      <Button
-                        onClick={() => setMassCallStep(1)}
-                        variant="secondary"
-                      >
-                        {t('calls.modals.mass.step2.back')}
-                      </Button>
-                      <Button
-                        onClick={() => setMassCallStep(3)}
-                        disabled={!massCallCallType || !massCallSelectedVoice}
-                        variant="primary"
-                      >
-                        {t('calls.modals.mass.step2.next')}
-                      </Button>
-                    </div>
-                  </div>
-                )}
-                
-                {/* Vaihe 3: Ajastus tai aloitus */}
-                {massCallStep === 3 && (
-                  <div>
-                    <div style={{ marginBottom: 20 }}>
-                      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#1f2937', backgroundColor: 'transparent' }}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
-                          <circle cx="12" cy="12" r="10"/>
-                          <polyline points="12,6 12,12 16,14"/>
-                        </svg>
-                        {t('calls.modals.mass.step3.title')}
-                      </h3>
-                      <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 16 }}>
-                        {t('calls.modals.mass.step3.desc')}
-                      </p>
-                    </div>
-                    
-                    <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-                      <Button
-                        onClick={handleMassCallStart}
-                        disabled={massCallStarting}
-                        variant="primary"
-                        style={{ flex: 1, padding: '16px 24px', fontSize: 16, fontWeight: 600 }}
-                      >
-                        {massCallStarting ? t('calls.modals.mass.step3.startNow.starting') : t('calls.modals.mass.step3.startNow.label')}
-                      </Button>
-                    </div>
-                    
-                    <div style={{ 
-                      borderTop: '1px solid #e5e7eb', 
-                      paddingTop: 20, 
-                      marginTop: 20 
-                    }}>
-                      <h4 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12, color: '#374151' }}>
-                        {t('calls.modals.mass.step3.orSchedule')}
-                      </h4>
-                      
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
-                        <div>
-                          <label className="label">{t('calls.modals.mass.step3.date')}</label>
-                          <input 
-                            type="date" 
-                            value={massCallScheduledDate} 
-                            onChange={e => setMassCallScheduledDate(e.target.value)}
-                            className="input"
-                            min={new Date().toISOString().split('T')[0]}
-                          />
-                        </div>
-                        <div>
-                          <label className="label">{t('calls.modals.mass.step3.time')}</label>
-                          <div style={{ display: 'flex', gap: 8 }}>
-                            <select
-                              className="select"
-                              value={(massCallScheduledTime || '').split(':')[0] || ''}
-                              onChange={e => {
-                                const hour = String(e.target.value || '').padStart(2, '0')
-                                const minute = (massCallScheduledTime || '').split(':')[1] || '00'
-                                const mm = parseInt(minute, 10) >= 30 ? '30' : '00'
-                                setMassCallScheduledTime(hour ? `${hour}:${mm}` : '')
-                              }}
-                              style={{ flex: 1 }}
-                            >
-                              <option value="">--</option>
-                              {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map(hh => (
-                                <option key={hh} value={hh}>{hh}</option>
-                              ))}
-                            </select>
-                            <select
-                              className="select"
-                              value={(massCallScheduledTime || '').split(':')[1] || ''}
-                              onChange={e => {
-                                const minute = e.target.value === '30' ? '30' : '00'
-                                const hour = (massCallScheduledTime || '').split(':')[0] || ''
-                                setMassCallScheduledTime(hour ? `${String(hour).padStart(2, '0')}:${minute}` : '')
-                              }}
-                              style={{ width: 100 }}
-                            >
-                              <option value="">--</option>
-                              <option value="00">00</option>
-                              <option value="30">30</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <Button
-                        onClick={handleMassCallSchedule}
-                        disabled={massCallScheduling || !massCallScheduledDate || !massCallScheduledTime}
-                        variant="secondary"
-                        style={{ width: '100%', padding: '12px 24px' }}
-                      >
-                        {massCallScheduling ? t('calls.modals.mass.step3.schedule.scheduling') : t('calls.modals.mass.step3.schedule.label')}
-                      </Button>
-                    </div>
-                    
-                    <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-start', marginTop: 20 }}>
-                      <Button
-                        onClick={() => setMassCallStep(2)}
-                        variant="secondary"
-                      >
-                        {t('calls.modals.mass.step3.back')}
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
-
-        {/* Yksittäisen puhelun modaali */}
-        {showSingleCallModal && createPortal(
-          <div 
-            onClick={() => { setShowSingleCallModal(false) }}
-            className="modal-overlay modal-overlay--dark"
-          >
-            <div 
-              onClick={(e) => e.stopPropagation()}
-              className="modal-container"
-              style={{ maxWidth: '800px' }}
-            >
-              <div className="modal-header">
-                <h2 className="modal-title" style={{ fontSize: 22, color: '#1f2937', fontWeight: '700', backgroundColor: 'transparent' }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                  </svg>
-                  Yksittäinen puhelu
-                </h2>
-                <Button
-                  onClick={() => { setShowSingleCallModal(false) }}
-                  variant="secondary"
-                  className="modal-close-btn"
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </Button>
-              </div>
-
-              <div className="modal-body">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-                  {/* Vasen sarake: Ääni + Puhelun tyyppi */}
-                  <div>
-                    <label className="label">Puhelun tyyppi</label>
-                    <select 
-                      value={callType} 
-                      onChange={e => { setCallType(e.target.value); updateScriptFromCallType(e.target.value) }} 
-                      className="select"
-                      style={{ width: '100%', marginBottom: 20 }}
-                    >
-                      <option value="">Valitse puhelun tyyppi...</option>
-                      {callTypes.map(type => (
-                        <option key={type.value} value={type.value}>{type.label}</option>
-                      ))}
-                    </select>
-
-                    <label className="label">Ääni</label>
-                    <select 
-                      value={selectedVoice} 
-                      onChange={e => setSelectedVoice(e.target.value)}
-                      className="select"
-                      style={{ width: '100%', marginBottom: 20 }}
-                    >
-                      {getVoiceOptions().map(voice => (
-                        <option key={voice.value} value={voice.value}>{voice.label}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Oikea sarake: Nimi + Puhelinnumero */}
-                  <div>
-                    <label className="label">Nimi</label>
-                    <input 
-                      type="text" 
-                      value={name} 
-                      onChange={e => setName(e.target.value)} 
-                      placeholder={t('placeholders.exampleName')} 
-                      className="input" 
-                      style={{ marginBottom: 20 }}
-                    />
-                    
-                    <label className="label">Puhelinnumero</label>
-                    <input 
-                      type="tel" 
-                      value={phoneNumber} 
-                      onChange={e => setPhoneNumber(e.target.value)} 
-                      placeholder="040 123 4567 tai +358401234567" 
-                      className="input" 
-                      style={{ marginBottom: 20 }}
-                    />
-
-                    {/* SMS-kytkimet */}
-                    <div style={{ marginTop: 8, marginBottom: 12 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                        <label style={{ fontWeight: 500, fontSize: 13, minWidth: 120 }}>Ennen puhelua</label>
-                        <label className="switch">
-                          <input
-                            type="checkbox"
-                            checked={singleCallSmsFirst}
-                            onChange={e => setSingleCallSmsFirst(e.target.checked)}
-                            disabled={!(() => { const t = callTypes.find(t => t.value === callType); return t?.first_sms && t.first_sms.trim().length > 0 })()}
-                          />
-                          <span className="slider round"></span>
-                        </label>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                        <label style={{ fontWeight: 500, fontSize: 13, minWidth: 120 }}>Vastauksen jälkeen</label>
-                        <label className="switch">
-                          <input
-                            type="checkbox"
-                            checked={singleCallSmsAfterCall}
-                            onChange={e => setSingleCallSmsAfterCall(e.target.checked)}
-                            disabled={!(() => { const t = callTypes.find(t => t.value === callType); return t?.after_call_sms && t.after_call_sms.trim().length > 0 })()}
-                          />
-                          <span className="slider round"></span>
-                        </label>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                        <label style={{ fontWeight: 500, fontSize: 13, minWidth: 120 }}>Jos puheluun ei vastata</label>
-                        <label className="switch">
-                          <input
-                            type="checkbox"
-                            checked={singleCallSmsMissedCall}
-                            onChange={e => setSingleCallSmsMissedCall(e.target.checked)}
-                            disabled={!(() => { const t = callTypes.find(t => t.value === callType); return t?.missed_call_sms && t.missed_call_sms.trim().length > 0 })()}
-                          />
-                          <span className="slider round"></span>
-                        </label>
-                      </div>
-                    </div>
-
-                    {/* SMS-esikatselu */}
-                    {(singleCallSmsFirst || singleCallSmsAfterCall || singleCallSmsMissedCall) && (
-                      <div className="sms-preview-container" style={{ marginTop: 12 }}>
-                        <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>Valittujen SMS-viestien esikatselu:</div>
-                        {(() => {
-                          const selectedCallType = callTypes.find(t => t.value === callType)
-                          return (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                              {singleCallSmsFirst && selectedCallType?.first_sms && (
-                                <div style={{ padding: 8, background: '#f3f4f6', borderRadius: 6, fontSize: 12 }}>
-                                  <strong>Ennen puhelua:</strong> {selectedCallType.first_sms}
-                                </div>
-                              )}
-                              {singleCallSmsAfterCall && selectedCallType?.after_call_sms && (
-                                <div style={{ padding: 8, background: '#f3f4f6', borderRadius: 6, fontSize: 12 }}>
-                                  <strong>Vastauksen jälkeen:</strong> {selectedCallType.after_call_sms}
-                                </div>
-                              )}
-                              {singleCallSmsMissedCall && selectedCallType?.missed_call_sms && (
-                                <div style={{ padding: 8, background: '#f3f4f6', borderRadius: 6, fontSize: 12 }}>
-                                  <strong>Jos puheluun ei vastata:</strong> {selectedCallType.missed_call_sms}
-                                </div>
-                              )}
-                            </div>
-                          )
-                        })()}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Soita-nappi ja virheilmoitukset */}
-                <div style={{ marginTop: 24, paddingTop: 24, borderTop: '1px solid #e5e7eb' }}>
-                  <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
-                    <Button 
-                      onClick={() => { setShowSingleCallModal(false) }} 
-                      variant="secondary"
-                    >
-                      Peruuta
-                    </Button>
-                    <Button 
-                      onClick={handleSingleCall} 
-                      disabled={calling || !name.trim() || !phoneNumber.trim() || !callType || !script.trim() || !selectedVoice} 
-                      variant="primary"
-                    >
-                      {calling ? 'Soittaa…' : 'Soita'}
-                    </Button>
-                  </div>
-
-                  {singleCallError && (
-                    <div className="status-error" style={{ marginTop: 12 }}>{singleCallError}</div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
+        <SingleCallModal
+          open={showSingleCallModal}
+          onClose={() => setShowSingleCallModal(false)}
+          callType={callType}
+          setCallType={setCallType}
+          selectedVoice={selectedVoice}
+          setSelectedVoice={setSelectedVoice}
+          name={name}
+          setName={setName}
+          phoneNumber={phoneNumber}
+          setPhoneNumber={setPhoneNumber}
+          singleCallSmsFirst={singleCallSmsFirst}
+          setSingleCallSmsFirst={setSingleCallSmsFirst}
+          singleCallSmsAfterCall={singleCallSmsAfterCall}
+          setSingleCallSmsAfterCall={setSingleCallSmsAfterCall}
+          singleCallSmsMissedCall={singleCallSmsMissedCall}
+          setSingleCallSmsMissedCall={setSingleCallSmsMissedCall}
+          callTypes={callTypes}
+          getVoiceOptions={getVoiceOptions}
+          script={script}
+          calling={calling}
+          singleCallError={singleCallError}
+          handleSingleCall={handleSingleCall}
+          updateScriptFromCallType={updateScriptFromCallType}
+        />
 
       {/* Export Modal */}
       <ExportCallLogsModal

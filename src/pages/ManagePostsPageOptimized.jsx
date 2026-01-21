@@ -46,7 +46,7 @@ const initialPosts = [
 const columns = [
   { status: 'Avatar', title: 'Avatar', color: '#fef3c7' },
   { status: 'Kesken', title: 'Kesken', color: '#fef3c7' },
-  { status: 'Tarkistuksessa', title: 'Valmiina julkaisuun', color: '#dbeafe' },
+  { status: 'Tarkistuksessa', titleKey: 'posts.columns.readyToPublish', color: '#dbeafe' },
   { status: 'Aikataulutettu', title: 'Aikataulutettu', color: '#fce7f3' }
 ]
 
@@ -441,7 +441,7 @@ export default function ManagePostsPageOptimized() {
           >
             <option value="">Kaikki statukset</option>
             <option value="Kesken">Kesken</option>
-            <option value="Tarkistuksessa">Valmiina julkaisuun</option>
+            <option value="Tarkistuksessa">{t('posts.columns.readyToPublish')}</option>
             <option value="Aikataulutettu">Aikataulutettu</option>
             <option value="Julkaistu">Julkaistu</option>
           </select>

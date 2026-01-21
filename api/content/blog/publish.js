@@ -99,17 +99,18 @@ async function handler(req, res) {
         })
       }
 
-      if (!accountsData || accountsData.length === 0) {
-        return res.status(400).json({ 
+      // Jos action on 'test', ohitetaan sometilien tarkistus (WordPress-yhteyden testaus)
+      if (action !== 'test' && (!accountsData || accountsData.length === 0)) {
+        return res.status(400).json({
           error: 'Ei yhdistettyjä sometilejä'
         })
       }
 
-      socialAccounts = accountsData
+      socialAccounts = accountsData || []
 
     } catch (error) {
       console.error('Supabase error:', error)
-      return res.status(500).json({ 
+      return res.status(500).json({
         error: 'Supabase virhe',
         details: error.message
       })
@@ -117,11 +118,14 @@ async function handler(req, res) {
 
     // Käytetään valittuja tilejä tai ensimmäistä yhdistettyä tiliä
     let accountIds = []
-    
-    if (selected_accounts && selected_accounts.length > 0) {
+
+    // Jos action on 'test', ei tarvita sometilejä
+    if (action === 'test') {
+      accountIds = []
+    } else if (selected_accounts && selected_accounts.length > 0) {
       // Käytä valittuja tilejä
       accountIds = selected_accounts
-    } else {
+    } else if (socialAccounts && socialAccounts.length > 0) {
       // Fallback: käytä ensimmäistä yhdistettyä tiliä
       accountIds = [socialAccounts[0].mixpost_account_uuid]
     }
@@ -178,11 +182,11 @@ async function handler(req, res) {
         publish_date, // Keep original for N8N if needed
         date,
         time,
-        action: 'publish', // Blog-publish käyttää aina 'publish' actionia
+        action: action, // Käytä frontendin lähettämää actionia ('publish', 'schedule', 'test')
         post_type, // 'post', 'reel', 'carousel'
         workspace_uuid: mixpost_workspace_uuid || mixpostConfig.mixpost_workspace_uuid,
         mixpost_api_token: mixpost_api_token || mixpostConfig.mixpost_api_token,
-        account_ids: accountIds, // Useita tilejä
+        account_ids: accountIds, // Useita tilejä (tyhjä array jos action === 'test')
         selected_accounts: selected_accounts, // Valitut tilit
         timestamp: new Date().toISOString()
       }

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import TicketModal from './TicketModal'
 import './Button.css'
 
 const TicketButton = () => {
+  const { t } = useTranslation('common')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { user } = useAuth()
   const [isVisible, setIsVisible] = useState(false)
@@ -21,7 +23,7 @@ const TicketButton = () => {
       <button
         onClick={() => setIsModalOpen(true)}
         className="button button-primary ticket-button"
-        title="Raportoi ongelma tai kysy apua"
+        title={t('ticket.buttonTitle')}
         style={{
           position: 'fixed',
           top: '50%',
@@ -40,7 +42,7 @@ const TicketButton = () => {
           minWidth: 'auto'
         }}
       >
-        <span>Ongelmia?</span>
+        <span>{t('ticket.buttonLabel')}</span>
       </button>
 
       {isModalOpen && createPortal(

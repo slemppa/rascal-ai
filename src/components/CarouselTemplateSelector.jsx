@@ -127,7 +127,7 @@ export default function CarouselTemplateSelector() {
 
   return (
     <div className="carousel-selector">
-      <h2 className="carousel-title">Valitse karusellin ulkoasu</h2>
+      <h2 className="carousel-title">{t('settings.carousel.title')}</h2>
       
       <div className="templates-grid">
         {templates.map((tpl) => {
@@ -177,7 +177,7 @@ export default function CarouselTemplateSelector() {
       </div>
       
       <div className="color-section">
-        <h3 className="color-title">Valitse väri</h3>
+        <h3 className="color-title">{t('settings.carousel.colorLabel')}</h3>
         <div className="color-picker-wrapper">
           <ColorPicker
             value={selectedColor}

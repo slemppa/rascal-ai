@@ -13,7 +13,7 @@ import './AccountDetailsPage.css'
 export default function AccountDetailsPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { organization } = useAuth()
+  const { organization, user } = useAuth()
   const [account, setAccount] = useState(null)
   const [accountDetails, setAccountDetails] = useState(null)
   const [accountFeatures, setAccountFeatures] = useState([])
@@ -540,9 +540,21 @@ export default function AccountDetailsPage() {
     try {
       // Varmista että newFeatures on array
       const featuresToSave = Array.isArray(newFeatures) ? newFeatures : []
-      
+
       // Tarkista onko käyttäjä admin/moderator/owner
-      const isAdmin = organization?.role === 'admin' || organization?.role === 'owner' || organization?.role === 'moderator'
+      // Tarkistetaan SEKÄ system role (users.role) ETTÄ organization role (org_members.role)
+      const isSystemAdmin = user?.systemRole === 'admin' || user?.systemRole === 'superadmin' || user?.systemRole === 'moderator'
+      const isOrgAdmin = organization?.role === 'admin' || organization?.role === 'owner' || organization?.role === 'moderator'
+      const isAdmin = isSystemAdmin || isOrgAdmin
+
+      console.log('[handleFeatureToggle] Permission check:', {
+        isSystemAdmin,
+        isOrgAdmin,
+        isAdmin,
+        systemRole: user?.systemRole,
+        orgRole: organization?.role,
+        userId: account.id
+      })
       
       if (isAdmin) {
         // Käytä admin-data endpointia admin-käyttäjille (ohittaa RLS:n)

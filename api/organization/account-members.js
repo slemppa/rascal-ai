@@ -61,11 +61,12 @@ async function handler(req, res) {
       return res.status(403).json({ error: 'User not found' })
     }
 
-    // Tarkista että käyttäjä on admin tai moderator
+    // Tarkista että käyttäjä on admin, superadmin tai moderator
     const isAdmin = userData.role === 'admin'
+    const isSuperAdmin = userData.role === 'superadmin'
     const isModerator = userData.role === 'moderator'
 
-    if (!isAdmin && !isModerator) {
+    if (!isAdmin && !isSuperAdmin && !isModerator) {
       return res.status(403).json({ error: 'Admin or moderator access required' })
     }
 
@@ -75,8 +76,24 @@ async function handler(req, res) {
       return res.status(400).json({ error: 'org_id is required' })
     }
 
-    // Tarkista että käyttäjä on account manager tälle organisaatiolle (jos ei admin)
-    if (!isAdmin) {
+    // Admin/superadmin käyttää Service Role clientia (ohittaa RLS:n)
+    // Moderator/muut käyttää käyttäjän omaa tokenia (RLS voimassa)
+    let dbClient = supabase
+
+    if (isAdmin || isSuperAdmin) {
+      // Admin/superadmin: käytä Service Role clientia
+      if (!supabaseServiceKey) {
+        return res.status(500).json({ error: 'Service role key not configured' })
+      }
+      dbClient = createClient(supabaseUrl, supabaseServiceKey, {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        }
+      })
+      console.log('[account-members] Using Service Role client for admin/superadmin')
+    } else {
+      // Moderator: tarkista että on account manager tälle organisaatiolle
       const { data: accountCheck, error: accountError } = await supabase
         .from('users')
         .select('account_manager_id')
@@ -90,14 +107,21 @@ async function handler(req, res) {
       if (accountCheck.account_manager_id !== userData.id) {
         return res.status(403).json({ error: 'Access denied' })
       }
+      console.log('[account-members] Using RLS client for moderator')
     }
 
     // Hae organisaation käyttäjät org_members taulusta
-    const { data: orgMembers, error: orgError } = await supabase
+    console.log('[account-members] Fetching members for org_id:', org_id)
+    const { data: orgMembers, error: orgError } = await dbClient
       .from('org_members')
       .select('auth_user_id, role, email, created_at')
       .eq('org_id', org_id)
       .order('created_at', { ascending: false })
+
+    console.log('[account-members] Query result:', {
+      count: orgMembers?.length,
+      error: orgError?.message
+    })
 
     if (orgError) {
       console.error('Error fetching org members:', orgError)

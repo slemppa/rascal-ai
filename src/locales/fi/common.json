@@ -339,13 +339,16 @@
       },
       "connectedAccounts": "Yhdistetyt tilit",
       "noAccounts": "Ei yhdistettyjä tilejä. Käy asetuksissa yhdistämässä some-tilisi.",
-      "liveData": "Live data - Päivitetty juuri nyt"
+      "liveData": "Live data - Päivitetty juuri nyt",
+      "defaultWorkspace": "Oletus työtila",
+      "followersCount": "{{count}} seuraajaa"
     },
     "upcoming": {
       "title": "Tulevat julkaisut",
       "headers": {
         "media": "Media",
         "caption": "Caption",
+        "channels": "Kanavat",
         "status": "Status",
         "date": "Pvm"
       },
@@ -475,7 +478,17 @@
       "inProgress": "Kesken",
       "next": "Seuraava"
     },
-    "filters": { "allStatuses": "Kaikki statukset" },
+    "filters": {
+      "allStatuses": "Kaikki statukset",
+      "allTypes": "Kaikki tyypit"
+    },
+    "typeOptions": {
+      "photo": "Photo",
+      "carousel": "Carousel",
+      "reels": "Reels",
+      "linkedin": "LinkedIn",
+      "video": "Video"
+    },
     "status": {
       "Kesken": "Luonnos",
       "Tarkistuksessa": "Valmiina julkaisuun",
@@ -511,17 +524,52 @@
       "noVideo": "Video ei saatavilla"
     },
     "untitled": "Nimetön julkaisu",
+    "buttons": {
+      "importPost": "Tuo oma julkaisu",
+      "generateNew": "Generoi uusi julkaisu",
+      "generate": "Generoi",
+      "cancel": "Peruuta",
+      "importing": "Tuodaan...",
+      "import": "Tuo julkaisu",
+      "addFromImageBank": "Lisää kuvapankista"
+    },
+    "errors": {
+      "loginRequired": "Kirjaudu sisään jatkaaksesi",
+      "importSuccess": "Julkaisu tuotu onnistuneesti!",
+      "importFailed": "Julkaisun tuonti epäonnistui",
+      "monthlyLimitReached": "Kuukausiraja täynnä",
+      "error": "Virhe"
+    },
+    "importModal": {
+      "title": "Tuo oma julkaisu",
+      "fields": {
+        "type": "Tyyppi",
+        "media": "Media",
+        "title": "Otsikko (valinnainen)",
+        "caption": "Postaus (valinnainen)"
+      },
+      "placeholders": {
+        "title": "Anna julkaisulle otsikko..."
+      }
+    },
+    "upload": {
+      "dropzone": "Vedä ja pudota tiedosto tähän",
+      "clickToSelect": "tai klikkaa valitaksesi tiedoston",
+      "hint": "JPG, PNG, MP4, MOV (max 50MB)"
+    },
     "createModal": {
       "title": "Luo uusi some-sisältö",
       "close": "Sulje",
       "fields": {
         "title": "Otsikko",
         "type": "Tyyppi",
-        "description": "Kuvaus"
+        "description": "Kuvaus",
+        "count": "Määrä"
       },
       "placeholders": {
         "title": "Syötä some-sisällön otsikko...",
-        "description": "Kirjoita some-sisällön kuvaus..."
+        "description": "Kirjoita some-sisällön kuvaus...",
+        "count": "Kuinka monta postausta generoidaan?"
       },
       "cancel": "Peruuta",
       "create": "Luo some-sisältö"
@@ -551,8 +599,42 @@
       "close": "Sulje",
       "contentToPublish": "Julkaistava sisältö",
       "selectChannels": "Valitse somekanavat",
+      "scheduleDate": "Julkaisupäivä",
       "noAccounts": "Ei yhdistettyjä somekanavia.",
-      "connectInSettings": "Yhdistä somekanavat asetuksissa"
+      "connectInSettings": "Yhdistä somekanavat asetuksissa",
+      "loadingAccounts": "Ladataan tilejä...",
+      "cancel": "Peruuta",
+      "schedule": "Aikatauluta",
+      "publishNow": "Julkaise heti",
+      "slides": "Slaidit ({{count}})",
+      "noMedia": "Ei mediaa",
+      "noCaption": "Ei kuvausta",
+      "captionTooLong": "Postauksen pituus ylittää maksimin 2000 merkkiä"
+    },
+    "carouselsTab": {
+      "title": "Karusellit",
+      "count": "{{count}} karusellia",
+      "empty": {
+        "text": "Karusellit tulevat tänne."
+      },
+      "caption": {
+        "title": "Caption",
+        "noCaption": "Ei captionia"
+      },
+      "segments": {
+        "noSegments": "Ei segmenttejä",
+        "slideNumber": "Slide {{number}}",
+        "approved": "Hyväksytty",
+        "placeholder": "Segmentin teksti..."
+      },
+      "messages": {
+        "noChanges": "Ei muutoksia tallennettavaksi",
+        "saved": "Tallennettu {{count}} muutosta",
+        "saveFailed": "Tallennus epäonnistui",
+        "segmentUpdateFailed": "Segmentin {{id}} päivitys epäonnistui",
+        "noAuth": "Ei autentikointia",
+        "userIdNotFound": "Käyttäjän ID ei löytynyt"
+      }
     },
     "schedule": {
       "prompt": "Syötä ajastuspäivä (YYYY-MM-DD HH:MM):"
@@ -596,23 +678,29 @@
       "Tarkistuksessa": "Tarkistuksessa",
       "Aikataulutettu": "Aikataulutettu",
       "Valmis": "Valmis",
-      "Julkaistu": "Julkaistu"
+      "Julkaistu": "Julkaistu",
+      "Arkistoitu": "Arkistoitu"
     },
     "actions": {
       "view": "Näytä",
+      "edit": "Muokkaa",
       "publish": "Julkaise",
       "createNew": "+ Luo sisältö",
       "cancel": "Peruuta",
       "delete": "Poista",
       "retry": "Yritä uudelleen",
       "close": "Sulje",
-      "download": "Lataa"
+      "download": "Lataa",
+      "saveChanges": "Tallenna muutokset",
+      "archive": "Arkistoi"
     },
     "loading": { "loadingContent": "Ladataan sisältöä..." },
     "empty": {
       "title": "Ei sisältöä vielä",
       "description": "Aloita luomalla uusi blog-artikkeli tai newsletter",
-      "createFirst": "Luo ensimmäinen sisältö"
+      "createFirst": "Luo ensimmäinen sisältö",
+      "archiveTitle": "Täällä ei ole vielä mitään",
+      "archiveDescription": "Arkistoituja sisältöjä ei ole vielä olemassa"
     },
     "placeholders": {
       "noImage": "Ei kuvaa",
@@ -642,7 +730,12 @@
       "publishFailed": "Julkaisu epäonnistui: {message}",
       "deleteConfirm": "Oletko varma, että haluat poistaa tämän sisällön?",
       "deleted": "Sisältö poistettu onnistuneesti!",
-      "deleteFailed": "Poisto epäonnistui: {message}"
+      "deleteFailed": "Poisto epäonnistui: {message}",
+      "addBlogTextFirst": "Lisää blogiteksti ennen julkaisua"
+    },
+    "tabs": {
+      "content": "Sisältö",
+      "archive": "Arkisto"
     }
   },
   "strategy": {
@@ -683,15 +776,29 @@
     "strategyCard": {
       "placeholder": "Kirjoita kuukauden sisältöstrategia tähän..."
     },
-    "buttons": {
-      "save": "Tallenna",
-      "cancel": "Peruuta",
-      "edit": "Muokkaa",
-      "saveAndApprove": "Tallenna ja hyväksy"
-    },
     "empty": {
       "title": "Sinulla ei ole vielä strategiaa",
       "description": "Aloita luomalla ensimmäinen kuukausistrategia"
+    },
+    "companyAnalysis": {
+      "title": "Yritysanalyysi",
+      "missing": "Yritysanalyysi puuttuu. Lisää yrityksen kuvaus aloittaaksesi.",
+      "create": "Luo yritysanalyysi",
+      "edit": "Muokkaa yritysanalyysiä"
+    },
+    "toneOfVoice": {
+      "title": "Äänenlaatu ja TOV",
+      "missing": "Äänenlaatu ja TOV puuttuu. Lisää yrityksen äänenlaatu aloittaaksesi.",
+      "create": "Luo äänenlaatu",
+      "edit": "Muokkaa äänenlaatuasetuksia",
+      "modalTitle": "🎤 Äänenlaatu & TOV",
+      "helpButton": "En ole varma, tarvitsen apua",
+      "analyzing": "Analysoidaan somea...",
+      "socialUrlModal": {
+        "title": "Syötä sometilin URL",
+        "label": "Sometilin URL (Instagram tai LinkedIn henkilöprofiili)",
+        "placeholder": "https://instagram.com/example tai https://linkedin.com/in/henkilo"
+      }
     }
   },
   "campaigns": {
@@ -719,12 +826,39 @@
       "calls": "Puhelut",
       "answerRateShort": "Vastaus%",
       "successful": "Onnistuneet",
-      "script": "Skripti"
+      "script": "Skripti",
+      "callAttempts": "Soittoyritykset",
+      "remaining": "Jäljellä",
+      "pauseButton": "Keskeytä kampanja",
+      "pausedButton": "Keskeytetty",
+      "pausing": "Keskeytetään…",
+      "pauseError": "Keskeytys epäonnistui",
+      "deleteButton": "Poista",
+      "deleting": "Poistetaan…",
+      "deleteError": "Poisto epäonnistui",
+      "deleteConfirmTitle": "Vahvista poisto",
+      "deleteConfirmMessage": "Haluatko varmasti poistaa kampanjan \"{{name}}\"? Tätä toimintoa ei voi perua.",
+      "cancelButton": "Peruuta"
     },
     "details": {
       "title": "Kampanjan tiedot",
       "loading": "Ladataan...",
-      "error": "Virhe"
+      "error": "Virhe",
+      "fetchError": "Virhe haussa",
+      "pauseError": "Keskeytys epäonnistui",
+      "pausing": "Keskeytetään…",
+      "pauseButton": "Keskeytä kampanja",
+      "pausedButton": "Keskeytetty",
+      "stats": {
+        "callAttempts": "Soittoyritykset",
+        "answeredCalls": "Vastatut puhelut",
+        "successfulCalls": "Onnistuneet puhelut",
+        "failedCalls": "Epäonnistuneet",
+        "scheduledCalls": "Aikataulutettu",
+        "queuedCalls": "Jonossa",
+        "totalCalls": "Yhteensä",
+        "calledCalls": "Soitetut"
+      }
     },
     "form": {
       "nameLabel": "Kampanjan nimi *",
@@ -813,6 +947,32 @@
       "textmessages": "Tekstiviestit",
       "manage": "Hallinta",
       "crm": "CRM"
+    },
+    "logsTab": {
+      "buttons": {
+        "export": "Vie CSV",
+        "refresh": "Päivitä",
+        "refreshing": "Päivitetään..."
+      },
+      "filters": {
+        "title": "Filtterit ja haku",
+        "searchLabel": "Hae nimeä, numeroa tai sähköpostia",
+        "searchPlaceholder": "Matti Meikäläinen, +358... tai matt@example.com",
+        "statusLabel": "Tila",
+        "typeLabel": "Puhelun tyyppi",
+        "dateFrom": "Päivämäärä alkaen",
+        "dateTo": "Päivämäärä asti",
+        "searchButton": "Hae",
+        "clearButton": "🗑️ Tyhjennä filtterit",
+        "all": "Kaikki",
+        "statusOptions": {
+          "success": "Vastatut",
+          "successful": "Onnistuneet",
+          "failed": "Epäonnistuneet",
+          "pending": "Aikataulutettu",
+          "inProgress": "Jonossa"
+        }
+      }
     },
     "callsTab": {
       "mass": {
@@ -915,6 +1075,58 @@
         "failed": "Epäonnistui",
         "pending": "Odottaa"
       }
+    },
+    "callPanel": {
+      "stats": {
+        "callAttempts": "Soittoyritykset",
+        "totalLogs": "Puhelut yhteensä",
+        "totalPrice": "Kokonaishinta"
+      },
+      "history": {
+        "title": "Puheluhistoria",
+        "totalCalls": "Yhteensä {count} puhelua",
+        "loading": "Ladataan puhelulokia...",
+        "empty": "Ei puheluja löytynyt valituilla filttereillä"
+      },
+      "table": {
+        "name": "Nimi",
+        "phoneNumber": "Puhelinnumero",
+        "email": "Sähköposti",
+        "summary": "Yhteenveto",
+        "callType": "Puhelun tyyppi",
+        "date": "Päivämäärä",
+        "answered": "Vastattu",
+        "wantsContact": "Yhteydenotto",
+        "duration": "Kesto",
+        "status": "Tila",
+        "attempts": "Soittoyritykset"
+      },
+      "badges": {
+        "answered": {
+          "yes": "Kyllä",
+          "no": "Ei"
+        },
+        "wantsContact": {
+          "yes": "Otetaan yhteyttä",
+          "no": "Ei oteta yhteyttä",
+          "undefined": "Ei määritelty"
+        },
+        "direction": {
+          "outbound": "Lähtenyt",
+          "inbound": "Vastaanotettu"
+        },
+        "status": {
+          "scheduled": "Ajastettu",
+          "cancelled": "Peruttu",
+          "voicemail": "Vastaaja",
+          "success": "Onnistui",
+          "failed": "Epäonnistui",
+          "pending": "Aikataulutettu",
+          "inProgress": "Jonossa",
+          "unknown": "Tuntematon"
+        }
+      },
+      "unknownName": "Tuntematon nimi"
     },
     "textMessagesTab": {
       "header": "Tekstiviestit",
@@ -1042,6 +1254,13 @@
           },
           "type": { "label": "Puhelun tyyppi" },
           "voice": { "label": "Ääni" },
+          "sms": {
+            "title": "Tekstiviestit",
+            "before": "Ennen puhelua",
+            "after": "Vastauksen jälkeen",
+            "missed": "Jos puheluun ei vastata",
+            "preview": "Valittujen SMS-viestien esikatselu:"
+          },
           "smsFirst": {
             "label": "Tekstari ensin",
             "readonly": "Ensimmäinen SMS (vain luku)",
@@ -1070,6 +1289,14 @@
       "single": {
         "title": "Yksittäinen puhelu",
         "close": "Sulje",
+        "callType": "Puhelun tyyppi",
+        "selectCallType": "Valitse puhelun tyyppi...",
+        "voice": "Ääni",
+        "name": "Nimi",
+        "phone": "Puhelinnumero",
+        "phonePlaceholder": "040 123 4567 tai +358401234567",
+        "calling": "Soittaa…",
+        "call": "Soita",
         "step1": {
           "title": "Vaihe 1: Puhelun asetukset",
           "type": {
@@ -1103,6 +1330,15 @@
       "inbound": {
         "title": "Inbound-asetukset",
         "close": "Sulje",
+        "voiceLabel": "Ääni",
+        "testVoice": "Testaa ääntä",
+        "welcomeMessageLabel": "Aloitusviesti",
+        "welcomeMessagePlaceholder": "Kirjoita aloitusviesti...",
+        "welcomeMessageHint": "Ensimmäinen viesti joka lähetetään asiakkaalle kun he soittavat sinulle.",
+        "scriptLabel": "Inbound-skripti",
+        "scriptPlaceholder": "Kirjoita inbound-puhelujen skripti...",
+        "scriptHint": "Tervehdys ja ohjeistus asiakkaille jotka soittavat sinulle. Käytä *odota vastaus* merkintää kun haluat että AI odottaa asiakkaan vastausta.",
+        "save": "Tallenna asetukset",
         "aiEnhancement": {
           "title": "AI-parannus inbound asetuksiin",
           "description": "Lähetä inbound-asetukset AI-parannukseen. Saat takaisin optimoidun version, joka on paremmin räätälöity asiakkaillesi.",
@@ -1237,6 +1473,23 @@
       },
       "editCallType": {
         "title": "Muokkaa puhelun tyyppiä",
+        "hints": {
+          "targetAudience": "Kenelle tämä puhelu on tarkoitettu? Esim. \"yrityksen toimitusjohtajat\", \"kaupan eineshankinta\", \"Inbound-liidit\".",
+          "mainGoal": "Mitä haluat saavuttaa puhelulla? Kirjoita 1–3 tavoitetta. Esim. \"kiinnostuksen herättäminen\", \"ajan sopiminen\", \"kvalifiointi\".",
+          "toneStyle": "Millä sävyllä agentin tulisi puhua? Esim. \"selkeä, ystävällinen, asiallinen, teitittelevä\".",
+          "firstSentence": "Ensimmäinen lause sen jälkeen kun asiakas puhuu. Pidä lyhyenä. Esim. \"Hei, olen [Agentti], saanko kysyä yhden asian?\".",
+          "callStart": "Miten esittelet asian lyhyesti? Kerro tarkoitus kahdella lauseella ja kysy lupa jatkaa.",
+          "questions": "Muotoile kysymykset lyhyiksi. Kysy vain yksi asia kerrallaan. Jokaisen jälkeen agentti odottaa vastausta automaattisesti.",
+          "callEnd": "Lopeta kohteliaasti ja tarjoa seuraava askel (esim. ajan sopiminen tai lisätietojen lähettäminen).",
+          "successfulEnd": "Milloin puhelu katsotaan onnistuneeksi? Esim. \"kun asiakas ilmaisee kiinnostusta jatkaa keskustelua\".",
+          "actionPreset": "Valitse valmis Action-pohja (valinnainen):"
+        },
+        "alerts": {
+          "sendFailed": "Lähetys epäonnistui",
+          "apiNotFound": "API endpoint ei löydy ({{status}}). Tarkista että /api/calls/type-improvement on olemassa.",
+          "aiSentSuccess": "Puhelun tyyppi lähetetty AI-parannukseen! Saat parannetun version pian.",
+          "aiSentError": "AI-parannuksen lähetys epäonnistui: {{error}}"
+        },
         "steps": {
           "basics": "Perustiedot",
           "content": "Sisältö",
@@ -1282,33 +1535,24 @@
         },
         "placeholders": {
           "agentName": "esim. Sarah myynnistä",
-          "targetAudience": "B2B päätöksentekijät, CFOt keskikokoisissa yrityksissä",
-          "agentPersona": "Olet Sarah, ystävällinen myyntikonsultti TechCorpissa. Autat yritysjohtajia virtaviivaistamaan toimintaansa ohjelmistoratkaisuillamme.",
-          "toneStyle": "Ammattimainen mutta lämminsydämminen. Käytä selkeää, ammattislangitonta kieltä. Pidä lauseet lyhyinä ja pausoi luonnollisesti vastauksia varten.",
-          "callGoals": "1. Kvalifioi budjetti ja aikataulu\n2. Tunnista keskeiset kipukohdat\n3. Määritä päätöksentekoprosessi\n4. Varaa demo kvalifioiduille liideille",
-          "guidelines": "Vahvista aina ymmärtäminen ennen eteenpäin siirtymistä. Jos asiakas kysyy aiheen ulkopuolisia kysymyksiä, tunnusta lyhyesti ja ohjaa takaisin aiheeseen. Älä koskaan keskeytä; anna heidän lopettaa puhuminen kokonaan.",
-          "greeting": "Hei, tämä on Sarah TechCorpista!",
-          "purposeIntro": "Otan yhteyttä koska latasit äsken hintalistamme. Halusin nähdä onko sinulla kysymyksiä ja kertoa miten olemme auttaneet vastaavia yrityksiä vähentämään kustannuksia 30%.",
-          "questions": "1. Mikä on nykyinen prosessisi [tietty tehtävä]?\n   [odota vastaus]\n2. Mitä haasteita kohtaat tuossa lähestymistavassa?\n   [odota vastaus]\n3. Jos voisit heiluttaa taikasauvaa, miltä ihannratkaisu näyttäisi?\n   [odota vastaus]",
-          "closing": "Tämä on ollut todella hyödyllistä! Sen perusteella mitä jaoit, ajattelen että henkilökohtainen demo olisi arvokas. Lähetän sinulle kalenterilinkin - sopiiko tiistai vai torstai paremmin?",
-          "agentNotes": "Tallenna: Suosittu yhteydenottoaika, nykyinen ratkaisun nimi, mainittu budjettialue, päätöksentekoaikataulu, kilpailijan maininnat, tietyn kipukohdat ja kaikki seurantavelvoitteet.",
+          "targetAudience": "Yritysten talouspäättäjät, Kaupan vastaavat, LVI-yritysten yrittäjät",
+          "mainGoal": "Kysy kiinnostusta, pyydä varmistus, kerro tapahtumasta ja varmista osallistuminen",
+          "toneStyle": "Ystävällinen, asiallinen ja rauhallinen. Ei smalltalkia.",
+          "firstSentence": "Moi! Olen [agent_name], [yrityksestä].",
+          "callStart": "Meillä on uusia tuotteita, haluaisin nopeasti kertoa niistä.",
+          "questions": "Kiinnostaisiko testata?\nHaluaisitteko tilata nyt?\nOlisiko oikea henkilö paikalla?",
+          "callEnd": "Kiitos ajastanne! Palataan tarvittaessa asiaan.",
+          "successfulEnd": "Merkitse puhelu onnistuneeksi, kun asiakas ilmaisee kiinnostusta jatkaa keskustelua tuotteesta tai palvelusta.",
           "firstSms": "SMS-viesti joka lähetetään asiakkaalle ennen puhelua... (max 160 merkkiä)",
-          "summary": "• 2-3 lauseen yhteenveto suomeksi.\n• Kuvaa mitä opittiin + sovittu seuraavat askeleet.",
+          "afterCallSms": "Kiitos ajasta! Tämä viesti lähetetään puhelun jälkeen.",
+          "missedCallSms": "Yritimme tavoittaa sinua, mutta emme saaneet yhteyttä. Otamme uudelleen yhteyttä!",
+          "summary": "Kirjoita kaupan nimi mihin soitit ja tilaus mitä kauppa tilasi.\nPyysikö kauppa olemaan vielä yhteydessä?",
           "successAssessment": "• Arvioi 2-3 lauseessa, täyttyivätkö Tavoitteet-osion tavoitteet.\n• Kuvaa miksi se onnistui/ei onnistunut ja mainitse puuttuvat kohdat."
         },
         "examples": {
           "users": "Esimerkki",
           "agentName": "\"Emma Customer Successistä\" tai \"Alex - Tekninen tuki\"",
           "targetAudience": "Ole tarkka: \"HR-päälliköt 50-500 työntekijän yrityksissä\" \"HR-päälliköt\" sijaan",
-          "agentPersona": "\"Olet Emma, asiakastyön erikoistunut CloudCo:ssa. Autat asiakkaita maksimoimaan ROI:n tunnistamalla optimointimahdollisuudet ja tarjoamalla toimintasuosituksia.\"",
-          "toneStyle": "\"Keskusteluhenkinen ja konsultoiva. Peilaa asiakkaan energiatasoa. Käytä 'me'-kieltä rakentaaksesi kumppanuutta. Vältä teknisiä termejä ellei asiakas käytä niitä ensin.\"",
-          "callGoals": "\"1. Vahvista nykyinen ratkaisu & tyytyväisyystaso\n2. Tunnista 2-3 tiettyä haastetta\n3. Mittaa kiinnostusta ROI-laskuriin\n4. Aikatauluta seuraava kosketus\"",
-          "decisionProcess": "\"Kysy lupa ennen kysymysten syventämistä. Jos he ovat kiireisiä, tarjoa uudelleenaikataulutus heti. Esitä vastaväitteet lempeästi 'Kuulostaa siltä että...'-kehystelyllä. Lopeta aina selkeällä seuraavalla askeleella.\"",
-          "greeting": "\"Hyvää huomenta! Tämä on Alex CloudCo:sta.\" - Pidä luonnollinen ja ystävällinen.",
-          "purposeIntro": "\"Huomasin että osallistuit webinaariimme viime viikolla. Seuraan nähdäkseni mikä resonoi sinussa ja vastata kysymyksiisi. Onko nyt hyvä aika pikaiselle keskustelulle, ehkä 5-7 minuuttia?\"",
-          "questions": "1. Miten käsittelet tällä hetkellä asiakasintegrointia?\n   [odota vastaus]\n   → Jos manuaalinen: Kuinka paljon aikaa se vie viikossa?\n2. Mikä on suurin pullonkaula tuossa prosessissa?\n   [odota vastaus]\n3. Oletko tutkinut automatisointityökaluja aikaisemmin?\n   [odota vastaus]\n   → Jos kyllä: Mikä ei toiminut niissä?",
-          "closing": "\"Kiitos ajastasi! Lähetän sinulle sähköpostilla ne resurssit joista keskustelimme plus ROI-laskurimme. Onko viimeisiä kysymyksiä ennen kuin päästän sinut menemään? Täydellinen - puhutaan pian!\"",
-          "agentNotes": "\"Merkitse 'Kuumaksi liidiksi' jos budjetti vahvistettu + päätöksentekoaikataulu alle 60 päivää. Tägi ensisijaisella käyttötapauksella. Huomioi kaikki mainitut tekniset vaatimukset tai integrointitarpeet.\"",
           "summary": "Yhteenveto 2-3 lauseessa: osallistuiko [tapahtuma], keskeiset kiinnostuksen kohteet/haasteet, sovittu seuraavat askeleet (puhelunaika/menetelmä).",
           "successAssessment": "Arvioi, saavutettiinko: 1) tiedonotto, 2) kiinnostuksen kohteet/haasteet, 3) seuranta, 4) yhteydenoton menetelmä/aika. Perustele lyhyesti."
         },
@@ -1389,8 +1633,47 @@
         "error": "Virhe haettaessa tiedostoja",
         "emptyTitle": "Et ole vielä lisännyt tiedostoja",
         "emptyAlt": "Ei tiedostoja",
-        "delete": "Poista"
+        "delete": "Poista",
+        "empty": "Ei tiedostoja",
+        "unsupportedFormat": "Tiedostomuotoa {extension} ei tueta. Sallitut muodot: PDF, tekstitiedostot (.txt, .md, .rtf), kuvat (JPG, PNG, GIF, jne.) ja äänitiedostot (MP3)."
+      },
+      "delete": {
+        "confirmDelete": "Haluatko varmasti poistaa tiedoston \"{fileName}\"?"
       }
+    },
+    "errors": {
+      "notLoggedIn": "Käyttäjä ei ole kirjautunut",
+      "organizationIdNotFound": "Organisaation ID ei löytynyt",
+      "notLoggedInContact": "Käyttäjä ei ole kirjautunut. Ota yhteyttä ylläpitoon.",
+      "organizationIdNotFoundContact": "Organisaation ID ei löytynyt. Ota yhteyttä ylläpitoon.",
+      "processingResponse": "Käsitellään vastausta...",
+      "loginRequired": "Kirjautuminen vaaditaan",
+      "loginRequiredRefresh": "Kirjautuminen vaaditaan. Päivitä sivu ja kirjaudu uudelleen."
+    },
+    "threads": {
+      "newThread": "Uusi keskustelu",
+      "deleteConfirm": "Haluatko varmasti poistaa tämän keskustelun?",
+      "title": "Keskustelut",
+      "database": "Tietokanta",
+      "databaseLink": "Tietokanta ({{count}})",
+      "empty": "Ei keskusteluja. Aloita uusi painamalla +",
+      "count": "Keskustelut ({{count}})"
+    },
+    "types": {
+      "marketing": "Markkinointi",
+      "sales": "Myynti"
+    },
+    "title": "AI Assistant",
+    "welcome": {
+      "title": "Tervetuloa AI Assistanttiin",
+      "description": "Kysy mitä tahansa. Olen täällä auttamassa sinua."
+    },
+    "labels": {
+      "ai": "AI",
+      "me": "Me"
+    },
+    "hints": {
+      "enterToSend": "Enter lähettää • Shift + Enter uudelle riville"
     }
   },
   "ui": {
@@ -1417,7 +1700,8 @@
       "update": "Päivitä",
       "send": "Lähetä",
       "sending": "Lähetetään...",
-      "today": "Tänään"
+      "today": "Tänään",
+      "cancel": "Peruuta"
     },
     "labels": {
       "or": "tai",
@@ -1542,6 +1826,13 @@
     "personalInfo": {
       "title": "Henkilökohtaiset tiedot"
     },
+    "userInfo": {
+      "title": "Käyttäjätiedot",
+      "organizationInfo": "Organisaation tiedot",
+      "personalInfo": "Omat tiedot",
+      "memberSince": "Jäsenyys alkanut",
+      "showDetails": "Näytä lisätiedot"
+    },
     "profile": {
       "title": "Käyttäjätiedot",
       "loading": "Ladataan käyttäjätietoja...",
@@ -1631,7 +1922,7 @@
       "workInProgress": "Työskentelemme parhaillaan uuden avatar-toiminnallisuuden parissa"
     },
     "voice": {
-      "title": "Äänitiedostot (Voice Clone)",
+      "title": "Ääniklooni",
       "loading": "Ladataan äänitiedostoa...",
       "addNewAria": "Lisää uusi äänitiedosto",
       "add": "Lisää",
@@ -1639,11 +1930,24 @@
       "added": "Ääni lisätty",
       "fetchError": "Äänitiedostojen haku epäonnistui",
       "uploadError": "Äänitiedoston lähetys epäonnistui",
-      "infoNone": "{count}/1 äänitiedosto lisätty. Lisää äänitiedosto voice clone -ominaisuutta varten.",
-      "infoSome": "{count}/1 äänitiedosto lisätty. Äänitiedosto pysyy pysyvästi ja sitä ei voi poistaa."
+      "infoNone": "{{count}}/1 äänitiedosto lisätty. Lisää äänitiedosto voice clone -ominaisuutta varten.",
+      "infoSome": "{{count}}/1 äänitiedosto lisätty. Äänitiedosto pysyy pysyvästi ja sitä ei voi poistaa.",
+      "cloned": "Ääni kloonattu",
+      "clonedDescription": "Äänikloonisi on valmis käyttöön",
+      "addAudioFile": "Lisää äänitiedosto",
+      "dragOrSelect": "Valitse tiedosto tai vedä se tähän"
     },
     "social": {
       "title": "Sosiaalisen median yhdistäminen",
+      "connectedAccounts": "Yhdistetyt tilit",
+      "connecting": "Yhdistetään...",
+      "connectButton": "Yhdistä somet",
+      "memberRestriction": "Jäsen-rooli: Voit tarkastella yhdistettyjä sometilejä, mutta et voi yhdistää uusia. Ota yhteyttä organisaation ylläpitoon uusien tilien yhdistämiseksi.",
+      "howItWorks": "Miten toimii:",
+      "step1": "Klikkaa \"Yhdistä somet\" -nappia",
+      "step2": "Mixpost-palvelu avautuu modaalissa",
+      "step3": "Kirjaudu ja yhdistä haluamasi some-tilit",
+      "step4": "Sulje modaali ja tilit päivittyvät automaattisesti",
       "errorTitle": "Virhe:",
       "errorHelp": "Jos ongelma jatkuu, ota yhteyttä tukeen.",
       "connectedTitle": "Yhdistetyt sometilit ({count})",
@@ -1684,6 +1988,21 @@
     },
     "accountSettings": {
       "title": "Tilin asetukset",
+      "edit": "Muokkaa",
+      "cancel": "Peruuta",
+      "loading": "Ladataan...",
+      "saveSuccess": "Asetukset tallennettu onnistuneesti!",
+      "contentVoice": "Sisällön ääni",
+      "company": "Yritys",
+      "personalBrand": "Henkilöbrändi",
+      "targetAudience": "Kohderyhmätyyppi",
+      "optional": "(valinnainen)",
+      "b2b": "B2B",
+      "b2c": "B2C",
+      "both": "Molemmat",
+      "noSelection": "Ei valintaa",
+      "businessCustomers": "Yritysasiakkaat",
+      "consumers": "Kuluttajat",
       "contentLanguage": "Sisällön kieli",
       "contentLanguageDescription": "Millä kielellä tekoälyn luoma sisältö tuotetaan",
       "contentLanguagePlaceholder": "esim. Suomi, English, Svenska",
@@ -1721,6 +2040,61 @@
       "userCompanyMissing": "Käyttäjän company ID ei löytynyt",
       "sendError": "Virhe lähetyksessä",
       "unknownError": "Tuntematon virhe"
+    }
+  },
+  "integrations": {
+    "loading": "Ladataan integraatioita...",
+    "description": "Yhdistä Rascal AI muihin palveluihin. Määritä API-avaimet ja asetukset jokaiselle alustalle.",
+    "configured": "Konfiguroitu",
+    "notConfigured": "Ei konfiguroitu",
+    "testFailed": "Testaus epäonnistui",
+    "aiModel": {
+      "title": "AI-malli",
+      "description": "Valitse mikä AI-malli käytetään sisällöntuotannossa",
+      "loading": "Ladataan...",
+      "saveError": "Virhe AI-mallin tallennuksessa"
+    },
+    "loadError": "Virhe integraatioiden latauksessa",
+    "saveError": "Virhe integraation tallennuksessa",
+    "deleteError": "Virhe integraation poistossa",
+    "oauthError": "Virhe OAuth-virran käynnistyksessä",
+    "delete": "Poista",
+    "deleteIntegration": "Poista integraatio",
+    "wordpress": {
+      "description": "Yhdistä WordPress-sivustosi Rascal AI:hin",
+      "username": "Käyttäjätunnus",
+      "usernameHelp": "Käyttäjät -> muokkaa käyttäjää -> Käyttäjätunnus",
+      "password": "Salasana",
+      "passwordHelp": "Käyttäjät -> muokkaa käyttäjää -> Sovellusten salasanat -> Lisää sovellussalasana -> koodi (näkyy vain kerran)",
+      "urlHelp": "Asetukset -> Yleinen -> WordPressin osoite",
+      "downloadPlugin": "Lataa WordPress-plugin",
+      "downloadPluginShort": "Lataa plugin"
+    },
+    "googleAnalytics": {
+      "description": "Yhdistä Google Analytics Rascal AI:hin OAuth 2.0 -valtuutuksella",
+      "reconnectHint": "Yhdistä uudelleen jos haluat päivittää valtuutuksen.",
+      "connectDescription": "Yhdistä Google Analytics -tiliisi OAuth 2.0 -valtuutuksella. Sinut ohjataan Googlen valtuutussivulle, jossa voit antaa luvan Rascal AI:lle käyttää Analytics-tietojasi.",
+      "reconnect": "Yhdistä uudelleen",
+      "connect": "Yhdistä Google Analytics",
+      "connecting": "Yhdistetään...",
+      "connectedSuccess": "Google Analytics on yhdistetty onnistuneesti!"
+    },
+    "testConnection": {
+      "button": "Testaa yhteys",
+      "testing": "Testataan...",
+      "success": "WordPress-yhteys testattu onnistuneesti! Yhteys toimii.",
+      "failed": "Yhteyden testaus epäonnistui",
+      "noResponse": "Ei vastausta palvelimelta. Tarkista verkkoyhteys.",
+      "unknownError": "Tuntematon virhe",
+      "notConfigured": "Integraatiota ei ole konfiguroitu. Tallenna asetukset ensin.",
+      "missingCredentials": "WordPress-tunnukset puuttuvat. Täytä käyttäjätunnus ja URL-osoite ennen testausta.",
+      "credentialsError": "WordPress-yhteyden muodostaminen epäonnistui. Tarkista että olet tallentanut WordPress-tunnukset (käyttäjätunnus, salasana, URL) ja että ne ovat oikein.",
+      "noSocialAccounts": "Ei yhdistettyjä sometilejä. Yhdistä vähintään yksi some-tili (Instagram, Facebook, LinkedIn, X) ennen WordPress-yhteyden testaamista."
+    },
+    "messages": {
+      "aiModelUpdated": "AI-malli päivitetty onnistuneesti!",
+      "integrationSaved": "Integraatio tallennettu onnistuneesti!",
+      "integrationDeleted": "Integraatio poistettu onnistuneesti"
     }
   },
   "meetingNotes": {
@@ -1821,7 +2195,29 @@
     "nextMonth": "Voit luoda uutta sisältöä vasta ensi kuussa.",
     "thisMonth": "Tämän kuun sisältöä",
     "limit": "Kuukausiraja",
-    "createAnyway": "Luo silti (ei käytettävissä)"
+    "createAnyway": "Luo silti (ei käytettävissä)",
+    "loading": "Ladataan kuukausirajaa...",
+    "generatedThisMonth": "generoitua sisältöä tässä kuussa",
+    "onlyRemaining": "Vain {count} jäljellä",
+    "quotaFull": "Kuukausiraja täynnä",
+    "loadingNextMonth": "Ladataan seuraavan kuun kiintiötä...",
+    "generatedNextMonth": "generoitua sisältöä seuraavassa kuussa",
+    "nextMonthQuotaFull": "Seuraavan kuun kiintiö täynnä"
+  },
+  "strategyModal": {
+    "minimized": "Strategia vahvistusta odottaa",
+    "restore": "Palauta",
+    "title": "Uusi strategia saatavilla!",
+    "description": "Ennen kuin voimme aloittaa sisällön generoinnin, meidän täytyy varmistaa että strategia on ajan tasalla ja sopii nykyiseen tilanteeseen.",
+    "whyImportant": "Miksi tämä on tärkeää?",
+    "reason1": "Varmistamme että strategia vastaa nykyistä markkinatilannetta",
+    "reason2": "Varmistamme että tavoitteet ovat edelleen relevantteja",
+    "reason3": "Varmistamme että resurssit riittävät toteuttamiseen",
+    "reason4": "Varmistamme että ympäristö ei ole muuttunut merkittävästi",
+    "effectiveness": "Tämä varmistaa että generoimamme strategia on mahdollisimman tehokas ja sopiva tilanteeseen.",
+    "processing": "Käsitellään...",
+    "checkStrategy": "Tarkista strategia",
+    "hideForNow": "Piilota toistaiseksi"
   },
   "errors": {
     "imageUploadFailed": "Kuva-lataus epäonnistui",
@@ -1859,17 +2255,49 @@
   "validation": {
     "fileTypeNotSupported": "Tiedostotyyppi {type} ei ole tuettu. Sallitut muodot: JPG, PNG, GIF, MP4, M4V"
   },
+  "keskenModal": {
+    "title": "Muokkaa postausta",
+    "created": "Luotu",
+    "notAvailable": "Ei tiedossa",
+    "deleteImage": "Poista kuva",
+    "postLabel": "Postaus",
+    "errors": {
+      "userNotFound": "Käyttäjätietojen haku epäonnistui: Käyttäjää ei löytynyt",
+      "imageDeleteFailed": "Kuvan poisto epäonnistui",
+      "imageDeleteFailedWithDetails": "Kuvan poisto epäonnistui: {{message}}",
+      "oldImageDeleteFailed": "Vanhan kuvan poisto epäonnistui: {{error}}",
+      "imageUploadFailed": "Kuvan lataus epäonnistui: {{error}}",
+      "imageUploadFailedGeneric": "Kuvan lataus epäonnistui: {{message}}",
+      "imageFromKuvapankkiFailed": "Kuvan lisäys kuvapankista epäonnistui: {{message}}",
+      "captionTooLong": "Postauksen pituus ylittää maksimin 2000 merkkiä",
+      "saveFailed": "Tietojen tallentaminen epäonnistui"
+    }
+  },
   "ticket": {
     "title": "Raportoi ongelma",
+    "buttonLabel": "Ongelmia?",
+    "buttonTitle": "Raportoi ongelma tai kysy apua",
     "success": "Tiketti lähetetty onnistuneesti! Vastaamme sinulle pian.",
+    "successMessage": "Tiketti lähetetty onnistuneesti! Vastaamme sinulle pian.",
     "error": "Virhe tiketin lähettämisessä. Yritä uudelleen tai ota yhteyttä suoraan tukeen.",
+    "errorMessage": "Virhe tiketin lähettämisessä. Yritä uudelleen tai ota yhteyttä suoraan tukeen.",
     "errorDetails": "Virhe: {details}",
+    "fillAllRequired": "Täytä kaikki pakolliset kentät",
+    "sessionExpired": "Istunto vanhentunut. Kirjaudu sisään uudelleen.",
+    "unexpectedResponse": "Odottamaton vastaus palvelimelta",
     "pageLabel": "Sivu *",
-    "pageHint": "(Missä ongelma tapahtui?)",
+    "pageHint": "Missä ongelma tapahtui?",
     "pagePlaceholder": "Esimerkki: Posts-sivu, Dashboard, AI Chat...",
     "descriptionLabel": "Kuvaile ongelmaa *",
-    "descriptionHint": "(Kerro mahdollisimman yksityiskohtaisesti)",
-    "descriptionPlaceholder": "Esimerkki: Kun yritän lisätä kuvia posts-sivulla, sain virheen 'Kuvan lataus epäonnistui'. Tapahtuu joka kerta kun..."
+    "descriptionHint": "Kerro mahdollisimman yksityiskohtaisesti",
+    "descriptionPlaceholder": "Esimerkki: Kun yritän lisätä kuvia posts-sivulla, sain virheen 'Kuvan lataus epäonnistui'. Tapahtuu joka kerta kun...",
+    "attachmentsLabel": "Liitteet",
+    "attachmentsHint": "Valinnainen",
+    "dragDropText": "Vedä ja pudota tiedostot tähän",
+    "dragDropHint": "tai klikkaa valitaksesi",
+    "supportedFiles": "Tuetut tiedostotyypit: kuvat, videot, äänitiedostot",
+    "selectedFiles": "Valitut tiedostot:",
+    "fileTypeNotSupported": "Tiedostotyyppi {type} ei ole tuettu ({name})"
   },
   "orgMembers": {
     "pageTitle": "Organisaation jäsenet",
@@ -2063,7 +2491,63 @@
     "leadDetailsScore": "Pisteet:",
     "leadDetailsSummary": "Yhteenveto:",
     "confirmEnrich": "Rikastetaanko {count} liidiä? Veloitus: {credits} krediittiä ({creditsPerLead} krediittiä / liidi).",
-    "confirmDelete": "Haluatko varmasti poistaa {count} liidiä?"
+    "confirmDelete": "Haluatko varmasti poistaa {count} liidiä?",
+    "buttons": {
+      "resetFilters": "Nollaa filtterit",
+      "starting": "Aloitetaan...",
+      "start": "Aloita scraping"
+    },
+    "errors": {
+      "loginRequired": "Kirjaudu sisään jatkaaksesi",
+      "userNotFound": "Käyttäjätietoja ei löytynyt",
+      "profileNotFound": "Käyttäjäprofiilia ei löytynyt",
+      "unknown": "Tuntematon virhe"
+    },
+    "buyerPersonaSaveSuccess": "Ostajapersoona tallennettu onnistuneesti!",
+    "buyerPersonaSaveFailed": "Ostajapersoonan tallennus epäonnistui: {error}",
+    "scrapingStarted": "Scraping aloitettu onnistuneesti! Tarkista tulokset hetken kuluttua.",
+    "scrapingFailed": "Scraping aloitus epäonnistui",
+    "fetchLeadsFailed": "Liidien haku epäonnistui: {error}",
+    "deletedLeads": "Poistettu {count} liidiä",
+    "deleteFailed": "Poisto epäonnistui",
+    "deleteLeadsFailed": "Liidien poisto epäonnistui: {error}",
+    "notEnoughCredits": "Ei tarpeeksi krediittejä. Tarvitset {needed} krediittiä, mutta jäljellä on vain {remaining}.",
+    "enrichmentStarted": "Rikastus aloitettu {count} liidille! Krediitit päivitetty.",
+    "enrichmentFailed": "Rikastus epäonnistui",
+    "labels": {
+      "peopleCountryIncludes": "Henkilön maa — Sisältää",
+      "peopleCountryExcludes": "Henkilön maa — Poissulkee",
+      "peopleStateIncludes": "Henkilön osavaltio/alue — Sisältää",
+      "peopleStateExcludes": "Henkilön osavaltio/alue — Poissulkee",
+      "peopleCityIncludes": "Henkilön kaupunki — Sisältää",
+      "peopleCityExcludes": "Henkilön kaupunki — Poissulkee",
+      "companyCountryIncludes": "Yrityksen maa — Sisältää",
+      "companyCountryExcludes": "Yrityksen maa — Poissulkee",
+      "companyStateIncludes": "Yrityksen osavaltio/alue — Sisältää",
+      "companyStateExcludes": "Yrityksen osavaltio/alue — Poissulkee",
+      "companyCityIncludes": "Yrityksen kaupunki — Sisältää",
+      "companyCityExcludes": "Yrityksen kaupunki — Poissulkee",
+      "jobTitleIncludes": "Tehtävä — Sisältää",
+      "jobTitleExcludes": "Tehtävä — Poissulkee",
+      "includeSimilarTitles": "Sisällytä henkilöt samanlaisilla nimikkeillä",
+      "additionalTitles": "Lisänimikkeet — Sisältää (vapaa teksti)",
+      "managementLevelIncludes": "Johtotaso — Sisältää",
+      "managementLevelExcludes": "Johtotaso — Poissulkee",
+      "departmentsIncludes": "Osastot ja toiminto — Sisältää",
+      "departmentsExcludes": "Osastot ja toiminto — Poissulkee",
+      "firstNameIncludes": "Etunimi — Sisältää",
+      "firstNameExcludes": "Etunimi — Poissulkee",
+      "lastNameIncludes": "Sukunimi — Sisältää",
+      "lastNameExcludes": "Sukunimi — Poissulkee"
+    },
+    "leadLimitLabel": "Tulosten määrä",
+    "jobTitleFiltersLabel": "Tehtävä filtterit",
+    "managementLevelFiltersLabel": "Johtotaso filtterit",
+    "departmentsFiltersLabel": "Osastot ja toiminto filtterit",
+    "buyerPersonaModalTitle": "Ostajapersoona / Ihanneasiakas",
+    "buyerPersonaLabel": "Kuvaile ihanneasiakas / ostajapersoona",
+    "buyerPersonaDescription": "Määrittele tarkasti kuka on sinun ihanneasiakas. Tätä tietoa voidaan käyttää myöhemmin liidien pisteytyksessä ja priorisoinnissa. Voit kuvata esimerkiksi tehtävän, yrityksen koon, toimialan, sijainnin ja muut relevantit kriteerit.",
+    "leadDetailsModalTitle": "Liidin kaikki tiedot"
   },
   "addCallType": {
     "agentNamePlaceholder": "",

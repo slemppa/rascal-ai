@@ -107,7 +107,7 @@ export default function CarouselsTab({
         const userId = await getUserOrgId(user.id)
         
         if (!userId) {
-          console.error('Käyttäjän ID ei löytynyt')
+          console.error(t('posts.carouselsTab.messages.userIdNotFound'))
           return
         }
 
@@ -179,7 +179,7 @@ export default function CarouselsTab({
       setSaveMessage(null)
 
       if (!user) {
-        throw new Error('Ei autentikointia')
+        throw new Error(t('posts.carouselsTab.messages.noAuth'))
       }
 
       // Kerää kaikki muutokset kaikista karuselleista
@@ -205,7 +205,7 @@ export default function CarouselsTab({
       })
 
       if (updates.length === 0) {
-        setSaveMessage({ type: 'info', text: 'Ei muutoksia tallennettavaksi' })
+        setSaveMessage({ type: 'info', text: t('posts.carouselsTab.messages.noChanges') })
         return
       }
 
@@ -242,15 +242,15 @@ export default function CarouselsTab({
               .eq('content_id', update.contentId)
             
             if (retryError) {
-              throw new Error(`Segmentin ${update.id} päivitys epäonnistui`)
+              throw new Error(t('posts.carouselsTab.messages.segmentUpdateFailed', { id: update.id }))
             }
           } else {
-            throw new Error(`Segmentin ${update.id} päivitys epäonnistui`)
+            throw new Error(t('posts.carouselsTab.messages.segmentUpdateFailed', { id: update.id }))
           }
         }
       }
 
-      setSaveMessage({ type: 'success', text: `Tallennettu ${updates.length} muutosta` })
+      setSaveMessage({ type: 'success', text: t('posts.carouselsTab.messages.saved', { count: updates.length }) })
       
       // Päivitä data uudelleen onnistuneen tallennuksen jälkeen
       const userId = await getUserOrgId(user.id)
@@ -301,7 +301,7 @@ export default function CarouselsTab({
 
     } catch (error) {
       console.error('Error saving changes:', error)
-      setSaveMessage({ type: 'error', text: error.message || 'Tallennus epäonnistui' })
+      setSaveMessage({ type: 'error', text: error.message || t('posts.carouselsTab.messages.saveFailed') })
     } finally {
       setSaving(false)
     }
@@ -310,10 +310,10 @@ export default function CarouselsTab({
   return (
     <div className="carousels-tab-container">
       <div className="carousels-tab-header">
-        <h2 className="carousels-tab-title">Karusellit</h2>
+        <h2 className="carousels-tab-title">{t('posts.carouselsTab.title')}</h2>
         <div className="carousels-header-actions">
           {carouselsData.length > 0 && (
-            <span className="carousels-count">{carouselsData.length} karusellia</span>
+            <span className="carousels-count">{t('posts.carouselsTab.count', { count: carouselsData.length })}</span>
           )}
           {carouselsData.length > 0 && Object.keys(segmentEdits).length > 0 && (
             <button
@@ -337,7 +337,7 @@ export default function CarouselsTab({
       {carouselsData.length === 0 ? (
         <div className="carousels-empty">
           <div className="carousels-empty-icon">🎠</div>
-          <p className="carousels-empty-text">Karusellit tulevat tänne.</p>
+          <p className="carousels-empty-text">{t('posts.carouselsTab.empty.text')}</p>
         </div>
       ) : (
         <div className="carousels-list">
@@ -357,8 +357,8 @@ export default function CarouselsTab({
                 {/* Vasemmalla 1/4: Caption-laatikko */}
                 <div className="carousel-caption-box">
                   <div className="carousel-caption-content">
-                    <h3 className="carousel-caption-title">Caption</h3>
-                    <p className="carousel-caption-text">{content.caption || 'Ei captionia'}</p>
+                    <h3 className="carousel-caption-title">{t('posts.carouselsTab.caption.title')}</h3>
+                    <p className="carousel-caption-text">{content.caption || t('posts.carouselsTab.caption.noCaption')}</p>
                   </div>
                 </div>
 
@@ -366,7 +366,7 @@ export default function CarouselsTab({
                 <div className="carousel-segments">
                   {sortedSegments.length === 0 ? (
                     <div className="carousel-segment-empty">
-                      <p>Ei segmenttejä</p>
+                      <p>{t('posts.carouselsTab.segments.noSegments')}</p>
                     </div>
                   ) : (
                     sortedSegments.map((segment, segIndex) => {
@@ -381,7 +381,7 @@ export default function CarouselsTab({
                       return (
                         <div key={segmentId} className="carousel-segment">
                           <div className="carousel-segment-header">
-                            <span className="carousel-segment-number">Slide {segment.slideNo || segIndex + 1}</span>
+                            <span className="carousel-segment-number">{t('posts.carouselsTab.segments.slideNumber', { number: segment.slideNo || segIndex + 1 })}</span>
                             <div className="carousel-segment-header-right">
                               {segment.status && (
                                 <span className={`carousel-segment-status status-${segment.status.toLowerCase()}`}>
@@ -405,7 +405,7 @@ export default function CarouselsTab({
                                   />
                                   <span className="slider"></span>
                                 </label>
-                                <span className="carousel-segment-approved-label">Hyväksytty</span>
+                                <span className="carousel-segment-approved-label">{t('posts.carouselsTab.segments.approved')}</span>
                               </div>
                             </div>
                           </div>
@@ -421,7 +421,7 @@ export default function CarouselsTab({
                                 }
                               }))
                             }}
-                            placeholder="Segmentin teksti..."
+                            placeholder={t('posts.carouselsTab.segments.placeholder')}
                             rows={3}
                           />
                         </div>

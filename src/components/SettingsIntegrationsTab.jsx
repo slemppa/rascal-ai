@@ -59,7 +59,7 @@ const AVAILABLE_INTEGRATIONS = [
   {
     id: 'wordpress',
     name: 'WordPress',
-    description: 'Yhdistä WordPress-sivustosi Rascal AI:hin',
+    descriptionKey: 'integrations.wordpress.description',
     icon: <WordPressLogo size={40} />,
     secretType: 'wordpress_api_key',
     secretName: 'WordPress REST API Key',
@@ -68,17 +68,17 @@ const AVAILABLE_INTEGRATIONS = [
         id: 'username',
         label: 'Username',
         type: 'text',
-        placeholder: 'Käyttäjätunnus',
+        placeholderKey: 'integrations.wordpress.username',
         required: true,
-        helpText: 'Käyttäjät -> muokkaa käyttäjää -> Käyttäjätunnus'
+        helpTextKey: 'integrations.wordpress.usernameHelp'
       },
       {
         id: 'password',
         label: 'Password',
         type: 'password',
-        placeholder: 'Salasana',
+        placeholderKey: 'integrations.wordpress.password',
         required: true,
-        helpText: 'Käyttäjät -> muokkaa käyttäjää -> Sovellusten salasanat -> Lisää sovellussalasana -> koodi (näkyy vain kerran)'
+        helpTextKey: 'integrations.wordpress.passwordHelp'
       },
       {
         id: 'url',
@@ -86,14 +86,14 @@ const AVAILABLE_INTEGRATIONS = [
         type: 'url',
         placeholder: 'https://example.com',
         required: true,
-        helpText: 'Asetukset -> Yleinen -> WordPressin osoite'
+        helpTextKey: 'integrations.wordpress.urlHelp'
       }
     ]
   },
   {
     id: 'google_analytics',
     name: 'Google Analytics',
-    description: 'Yhdistä Google Analytics Rascal AI:hin OAuth 2.0 -valtuutuksella',
+    descriptionKey: 'integrations.googleAnalytics.description',
     icon: <GoogleAnalyticsLogo size={40} />,
     secretType: 'google_analytics_credentials',
     secretName: 'Google Analytics Refresh Token',
@@ -221,11 +221,11 @@ export default function SettingsIntegrationsTab() {
       }
 
       setAiModel(newModel)
-      setAiModelMessage('AI-malli päivitetty onnistuneesti!')
+      setAiModelMessage(t('integrations.messages.aiModelUpdated'))
       setTimeout(() => setAiModelMessage(''), 3000)
     } catch (error) {
       console.error('Error saving AI model:', error)
-      setAiModelMessage('Virhe AI-mallin tallennuksessa')
+      setAiModelMessage(t('integrations.aiModel.saveError'))
       setTimeout(() => setAiModelMessage(''), 5000)
     } finally {
       setAiModelSaving(false)
@@ -308,7 +308,7 @@ export default function SettingsIntegrationsTab() {
       console.error('Error loading integrations:', error)
       setMessage({
         type: 'error',
-        text: 'Virhe integraatioiden latauksessa'
+        text: t('integrations.loadError')
       })
     } finally {
       setLoading(false)
@@ -469,7 +469,7 @@ export default function SettingsIntegrationsTab() {
 
       setMessage({
         type: 'success',
-        text: 'Integraatio tallennettu onnistuneesti!'
+        text: t('integrations.messages.integrationSaved')
       })
 
       // Päivitä integraatio
@@ -491,7 +491,7 @@ export default function SettingsIntegrationsTab() {
       }, 1000)
     } catch (error) {
       console.error('Error saving integration:', error)
-      const errorMessage = error.response?.data?.error || 'Virhe integraation tallennuksessa'
+      const errorMessage = error.response?.data?.error || t('integrations.saveError')
       const errorDetails = error.response?.data?.details
       setMessage({
         type: 'error',
@@ -531,12 +531,12 @@ export default function SettingsIntegrationsTab() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || 'Virhe integraation poistossa')
+        throw new Error(errorData.error || t('integrations.deleteError'))
       }
 
       setMessage({
         type: 'success',
-        text: 'Integraatio poistettu onnistuneesti'
+        text: t('integrations.messages.integrationDeleted')
       })
 
       // Päivitä integraatio
@@ -559,7 +559,7 @@ export default function SettingsIntegrationsTab() {
       console.error('Error deleting integration:', error)
       setMessage({
         type: 'error',
-        text: error.message || 'Virhe integraation poistossa'
+        text: error.message || t('integrations.deleteError')
       })
     } finally {
       setSaving(false)
@@ -632,18 +632,24 @@ export default function SettingsIntegrationsTab() {
         throw new Error('Organisaation ID puuttuu')
       }
 
-      // Lähetä testidata blog publish endpointiin
-      // Käytetään testi-post_id:tä ja testisisältöä
+      // Testaa yhteyttä blog/publish-endpointilla
+      // Käytetään kiinteää test-post_id:tä jota N8N tunnistaa
       const testData = {
         post_id: 'f6787bf5-d025-49df-a077-0153f4f396f8',
         auth_user_id: user.id,
         user_id: orgUserId,
-        content: 'Testi: WordPress-yhteyden testaus Rascal AI:sta',
+        content: 'WordPress-yhteyden testaus Rascal AI:sta',
         media_urls: [],
         segments: [],
         post_type: 'post',
-        action: 'publish'
+        action: 'test'
       }
+
+      console.log('Testing WordPress connection with:', {
+        endpoint: '/api/content/blog/publish',
+        userId: orgUserId,
+        authUserId: user.id
+      })
 
       const response = await axios.post('/api/content/blog/publish', testData, {
         headers: {
@@ -652,48 +658,58 @@ export default function SettingsIntegrationsTab() {
         }
       })
 
+      console.log('WordPress test response:', response.data)
+
       if (response.status === 200 && response.data?.success) {
         setMessage({
           type: 'success',
-          text: 'WordPress-yhteys testattu onnistuneesti! Yhteys toimii.'
+          text: t('integrations.testConnection.success')
         })
       } else {
         // Jos vastaus ei ole success, heitä virhe
-        const errorMsg = response.data?.error || response.data?.details || 'Testaus epäonnistui'
+        const errorMsg = response.data?.error || response.data?.details || t('integrations.testFailed')
         throw new Error(errorMsg)
       }
     } catch (error) {
       console.error('Error testing WordPress connection:', error)
-      
+      console.error('Error response:', error.response?.data)
+
       // Käsittele axios-virheet erikseen
-      let errorMessage = 'Yhteyden testaus epäonnistui'
-      
+      let errorMessage = t('integrations.testConnection.failed')
+
       if (error.response) {
         // Serveri vastasi virhekoodilla
         const status = error.response.status
         const data = error.response.data
-        
+
+        // Näytä backendin palauttama virheviesti
         if (data?.error) {
-          errorMessage = data.error
+          // Tarkista onko kyseessä "Ei yhdistettyjä sometilejä" -virhe
+          if (data.error === 'Ei yhdistettyjä sometilejä' || data.error.toLowerCase().includes('no connected social')) {
+            errorMessage = t('integrations.testConnection.noSocialAccounts')
+          } else {
+            errorMessage = data.error
+          }
+
           if (data?.details) {
-            errorMessage += `: ${data.details}`
+            errorMessage += `\n\n${data.details}`
           }
           if (data?.hint) {
-            errorMessage += `\n\nVihje: ${data.hint}`
+            errorMessage += `\n\n💡 ${data.hint}`
           }
         } else if (data?.message) {
           errorMessage = data.message
         } else {
-          errorMessage = `HTTP ${status}: ${error.response.statusText || 'Tuntematon virhe'}`
+          errorMessage = `HTTP ${status}: ${error.response.statusText || t('integrations.testConnection.unknownError')}`
         }
       } else if (error.request) {
         // Pyyntö lähetettiin mutta vastausta ei saatu
-        errorMessage = 'Ei vastausta palvelimelta. Tarkista verkkoyhteys.'
+        errorMessage = t('integrations.testConnection.noResponse')
       } else {
         // Jokin muu virhe
-        errorMessage = error.message || 'Tuntematon virhe'
+        errorMessage = error.message || t('integrations.testConnection.unknownError')
       }
-      
+
       setMessage({
         type: 'error',
         text: errorMessage
@@ -780,7 +796,7 @@ export default function SettingsIntegrationsTab() {
     } catch (error) {
       console.error('Error starting Google Analytics OAuth:', error)
       setOauthConnecting(false)
-      const errorMessage = error.response?.data?.error || error.message || 'Virhe OAuth-virran käynnistyksessä'
+      const errorMessage = error.response?.data?.error || error.message || t('integrations.oauthError')
       const errorDetails = error.response?.data?.details
       const errorHint = error.response?.data?.hint
       
@@ -804,7 +820,7 @@ export default function SettingsIntegrationsTab() {
     return (
       <div className="settings-integrations-container">
         <div className="integrations-loading">
-          <div>Ladataan integraatioita...</div>
+          <div>{t('integrations.loading')}</div>
         </div>
       </div>
     )
@@ -821,20 +837,20 @@ export default function SettingsIntegrationsTab() {
         border: '1px solid #e5e7eb',
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
       }}>
-        <h3 style={{ 
-          margin: '0 0 12px 0', 
-          fontSize: '16px', 
-          fontWeight: 600, 
-          color: '#1f2937' 
+        <h3 style={{
+          margin: '0 0 12px 0',
+          fontSize: '16px',
+          fontWeight: 600,
+          color: '#1f2937'
         }}>
-          AI-malli
+          {t('integrations.aiModel.title')}
         </h3>
-        <p style={{ 
-          margin: '0 0 16px 0', 
-          fontSize: '14px', 
-          color: '#6b7280' 
+        <p style={{
+          margin: '0 0 16px 0',
+          fontSize: '14px',
+          color: '#6b7280'
         }}>
-          Valitse mikä AI-malli käytetään sisällöntuotannossa
+          {t('integrations.aiModel.description')}
         </p>
 
         {aiModelMessage && (
@@ -843,16 +859,16 @@ export default function SettingsIntegrationsTab() {
             marginBottom: '16px',
             borderRadius: '6px',
             fontSize: '14px',
-            backgroundColor: aiModelMessage.includes('Virhe') ? '#fef2f2' : '#f0fdf4',
-            color: aiModelMessage.includes('Virhe') ? '#dc2626' : '#16a34a',
-            border: `1px solid ${aiModelMessage.includes('Virhe') ? '#fecaca' : '#bbf7d0'}`
+            backgroundColor: (aiModelMessage.includes('Virhe') || aiModelMessage.includes('Error')) ? '#fef2f2' : '#f0fdf4',
+            color: (aiModelMessage.includes('Virhe') || aiModelMessage.includes('Error')) ? '#dc2626' : '#16a34a',
+            border: `1px solid ${(aiModelMessage.includes('Virhe') || aiModelMessage.includes('Error')) ? '#fecaca' : '#bbf7d0'}`
           }}>
             {aiModelMessage}
           </div>
         )}
 
         {aiModelLoading ? (
-          <div style={{ color: '#6b7280', fontSize: '14px' }}>Ladataan...</div>
+          <div style={{ color: '#6b7280', fontSize: '14px' }}>{t('integrations.aiModel.loading')}</div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <label style={{ 
@@ -918,7 +934,7 @@ export default function SettingsIntegrationsTab() {
       </div>
 
       <div className="integrations-description">
-        <p>Yhdistä Rascal AI muihin palveluihin. Määritä API-avaimet ja asetukset jokaiselle alustalle.</p>
+        <p>{t('integrations.description')}</p>
         <div style={{ marginTop: '8px' }}>
           <a
             href="https://rascalcompany.notion.site/"
@@ -973,14 +989,14 @@ export default function SettingsIntegrationsTab() {
                 </div>
                 <div>
                   <h3>{integration.name}</h3>
-                  <p>{integration.description}</p>
+                  <p>{t(integration.descriptionKey)}</p>
                 </div>
               </div>
               <div className="integration-card-status">
                 {integration.isConfigured ? (
-                  <span className="status-badge status-badge-active">Konfiguroitu</span>
+                  <span className="status-badge status-badge-active">{t('integrations.configured')}</span>
                 ) : (
-                  <span className="status-badge status-badge-inactive">Ei konfiguroitu</span>
+                  <span className="status-badge status-badge-inactive">{t('integrations.notConfigured')}</span>
                 )}
                 {integration.id === 'wordpress' && integration.isConfigured && expandedCard !== integration.id && (
                   <a
@@ -992,7 +1008,7 @@ export default function SettingsIntegrationsTab() {
                       trackPluginDownload('card-header')
                     }}
                   >
-                    Lataa plugin
+                    {t('integrations.wordpress.downloadPluginShort')}
                   </a>
                 )}
                 <span className="expand-icon">{expandedCard === integration.id ? '▲' : '▼'}</span>
@@ -1015,14 +1031,14 @@ export default function SettingsIntegrationsTab() {
                           fontSize: '14px',
                           marginBottom: '16px'
                         }}>
-                          ✅ Google Analytics on yhdistetty onnistuneesti!
+                          ✅ {t('integrations.googleAnalytics.connectedSuccess')}
                         </div>
                         <p style={{ 
                           fontSize: '14px', 
                           color: '#6b7280',
                           marginBottom: '16px'
                         }}>
-                          Yhdistä uudelleen jos haluat päivittää valtuutuksen.
+                          {t('integrations.googleAnalytics.reconnectHint')}
                         </p>
                       </div>
                     ) : (
@@ -1032,9 +1048,7 @@ export default function SettingsIntegrationsTab() {
                           color: '#6b7280',
                           marginBottom: '16px'
                         }}>
-                          Yhdistä Google Analytics -tiliisi OAuth 2.0 -valtuutuksella. 
-                          Sinut ohjataan Googlen valtuutussivulle, jossa voit antaa luvan 
-                          Rascal AI:lle käyttää Analytics-tietojasi.
+                          {t('integrations.googleAnalytics.connectDescription')}
                         </p>
                       </div>
                     )}
@@ -1052,12 +1066,12 @@ export default function SettingsIntegrationsTab() {
                       >
                         {oauthConnecting ? (
                           <>
-                            <span>Yhdistetään...</span>
+                            <span>{t('integrations.googleAnalytics.connecting')}</span>
                           </>
                         ) : integration.isConfigured ? (
-                          'Yhdistä uudelleen'
+                          t('integrations.googleAnalytics.reconnect')
                         ) : (
-                          'Yhdistä Google Analytics'
+                          t('integrations.googleAnalytics.connect')
                         )}
                       </button>
                       {integration.isConfigured && (
@@ -1067,7 +1081,7 @@ export default function SettingsIntegrationsTab() {
                           onClick={() => handleDelete(integration)}
                           disabled={saving || oauthConnecting}
                         >
-                          Poista
+                          {t('integrations.delete')}
                         </button>
                       )}
                     </div>
@@ -1091,12 +1105,12 @@ export default function SettingsIntegrationsTab() {
                           type={field.type}
                           value={integration.formData[field.id] || ''}
                           onChange={(e) => handleFormChange(integration.id, field.id, e.target.value)}
-                          placeholder={field.placeholder}
+                          placeholder={field.placeholderKey ? t(field.placeholderKey) : field.placeholder}
                           required={field.required}
                           disabled={saving}
                         />
-                        {field.helpText && (
-                          <span className="form-field-help">{field.helpText}</span>
+                        {(field.helpTextKey || field.helpText) && (
+                          <span className="form-field-help">{field.helpTextKey ? t(field.helpTextKey) : field.helpText}</span>
                         )}
                       </div>
                     ))}
@@ -1111,7 +1125,7 @@ export default function SettingsIntegrationsTab() {
                               onClick={() => handleTestWordPressConnection(integration)}
                               disabled={saving || testingConnection}
                             >
-                              {testingConnection ? 'Testataan...' : 'Testaa yhteys'}
+                              {testingConnection ? t('integrations.testConnection.testing') : t('integrations.testConnection.button')}
                             </button>
                             <a
                               href="/plugins/rascal-ai.zip"
@@ -1119,7 +1133,7 @@ export default function SettingsIntegrationsTab() {
                               className="btn-link"
                               onClick={() => trackPluginDownload('card-content')}
                             >
-                              Lataa WordPress-plugin
+                              {t('integrations.wordpress.downloadPlugin')}
                             </a>
                           </>
                         )}
@@ -1129,7 +1143,7 @@ export default function SettingsIntegrationsTab() {
                           onClick={() => handleDelete(integration)}
                           disabled={saving || testingConnection}
                         >
-                          Poista integraatio
+                          {t('integrations.deleteIntegration')}
                         </button>
                       </div>
                     )}

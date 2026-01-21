@@ -106,7 +106,7 @@ const KeskenModal = ({
       const userId = await getUserOrgId(user?.id)
 
       if (!userId) {
-        setError('Käyttäjätietojen haku epäonnistui: Käyttäjää ei löytynyt')
+        setError(t('keskenModal.errors.userNotFound'))
         return
       }
 
@@ -123,14 +123,14 @@ const KeskenModal = ({
       })
 
       if (!response.ok) {
-        throw new Error('Kuvan poisto epäonnistui')
+        throw new Error(t('keskenModal.errors.imageDeleteFailed'))
       }
 
       // Päivitä editingPost data
       const result = await response.json()
       onSave()
     } catch (err) {
-      setError('Kuvan poisto epäonnistui: ' + err.message)
+      setError(t('keskenModal.errors.imageDeleteFailedWithDetails', { message: err.message }))
     } finally {
       setImageLoading(false)
     }
@@ -146,7 +146,7 @@ const KeskenModal = ({
       const userId = await getUserOrgId(user?.id)
 
       if (!userId) {
-        setError('Käyttäjätietojen haku epäonnistui: Käyttäjää ei löytynyt')
+        setError(t('keskenModal.errors.userNotFound'))
         return
       }
 
@@ -168,7 +168,7 @@ const KeskenModal = ({
 
           if (!deleteResponse.ok) {
             const errorData = await deleteResponse.json().catch(() => ({}))
-            throw new Error(`Vanhan kuvan poisto epäonnistui: ${errorData.error || deleteResponse.statusText}`)
+            throw new Error(t('keskenModal.errors.oldImageDeleteFailed', { error: errorData.error || deleteResponse.statusText }))
           }
         }
       }
@@ -196,11 +196,11 @@ const KeskenModal = ({
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        throw new Error(`Kuvan lataus epäonnistui: ${errorData.error || response.statusText}`)
+        throw new Error(t('keskenModal.errors.imageUploadFailed', { error: errorData.error || response.statusText }))
       }
 
       const result = await response.json()
-      
+
       // Päivitä editingPost data
       const updatedPost = {
         ...editingPost,
@@ -225,7 +225,7 @@ const KeskenModal = ({
       }, 100)
     } catch (err) {
       console.error('Error adding image from kuvapankki:', err)
-      setError('Kuvan lisäys kuvapankista epäonnistui: ' + err.message)
+      setError(t('keskenModal.errors.imageFromKuvapankkiFailed', { message: err.message }))
     } finally {
       setImageLoading(false)
     }
@@ -255,7 +255,7 @@ const KeskenModal = ({
       const userId = await getUserOrgId(user?.id)
 
       if (!userId) {
-        setError('Käyttäjätietojen haku epäonnistui: Käyttäjää ei löytynyt')
+        setError(t('keskenModal.errors.userNotFound'))
         return
       }
 
@@ -278,7 +278,7 @@ const KeskenModal = ({
 
           if (!deleteResponse.ok) {
             const errorData = await deleteResponse.json().catch(() => ({}))
-            throw new Error(`Vanhan kuvan poisto epäonnistui: ${errorData.error || deleteResponse.statusText}`)
+            throw new Error(t('keskenModal.errors.oldImageDeleteFailed', { error: errorData.error || deleteResponse.statusText }))
           }
         }
       }
@@ -299,12 +299,12 @@ const KeskenModal = ({
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        throw new Error(`Kuvan lataus epäonnistui: ${errorData.error || response.statusText}`)
+        throw new Error(t('keskenModal.errors.imageUploadFailed', { error: errorData.error || response.statusText }))
       }
 
       // Päivitä editingPost data
       const result = await response.json()
-      
+
       // Tallenna myös caption tietokantaan samalla kun kuva vaihdetaan
       // Näin muokattu teksti ei katoa
       try {
@@ -356,7 +356,7 @@ const KeskenModal = ({
         onSave(updatedPost)
       }, 100)
     } catch (err) {
-      setError('Kuvan lataus epäonnistui: ' + err.message)
+      setError(t('keskenModal.errors.imageUploadFailedGeneric', { message: err.message }))
       // Tyhjennä file input myös virhetilanteessa
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
@@ -373,7 +373,7 @@ const KeskenModal = ({
 
     // Validoi merkkimäärä
     if (formData.caption.length > 2000) {
-      setError('Postauksen pituus ylittää maksimin 2000 merkkiä')
+      setError(t('keskenModal.errors.captionTooLong'))
       setLoading(false)
       return
     }
@@ -383,7 +383,7 @@ const KeskenModal = ({
       const userId = await getUserOrgId(user?.id)
 
       if (!userId) {
-        setError('Käyttäjätietojen haku epäonnistui: Käyttäjää ei löytynyt')
+        setError(t('keskenModal.errors.userNotFound'))
         return
       }
 
@@ -398,13 +398,13 @@ const KeskenModal = ({
         .eq('user_id', userId)
 
       if (updateError) {
-        setError('Tietojen tallentaminen epäonnistui')
+        setError(t('keskenModal.errors.saveFailed'))
         return
       }
 
       onSave()
     } catch (err) {
-      setError('Tietojen tallentaminen epäonnistui')
+      setError(t('keskenModal.errors.saveFailed'))
     } finally {
       setLoading(false)
     }
@@ -438,7 +438,7 @@ const KeskenModal = ({
         >
       <div className="modal-container" style={{ maxWidth: '800px' }}>
         <div className="modal-header">
-          <h2 className="modal-title">Muokkaa postausta</h2>
+          <h2 className="modal-title">{t('keskenModal.title')}</h2>
           <button
             onClick={() => {
               // Tyhjennä file input kun modaali suljetaan
@@ -456,8 +456,8 @@ const KeskenModal = ({
           <form onSubmit={handleSubmit}>
           {/* Luontipäivämäärä */}
           <div className="form-group" style={{ marginBottom: '16px' }}>
-            <label className="form-label">Luotu</label>
-            <p className="form-text" style={{ 
+            <label className="form-label">{t('keskenModal.created')}</label>
+            <p className="form-text" style={{
               padding: '8px 12px',
               backgroundColor: '#f8f9fa',
               border: '1px solid #e5e7eb',
@@ -471,7 +471,7 @@ const KeskenModal = ({
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
-              }) : 'Ei tiedossa'}
+              }) : t('keskenModal.notAvailable')}
             </p>
           </div>
 
@@ -493,6 +493,7 @@ const KeskenModal = ({
                       <CaptionEditor
                         caption={formData.caption}
                         onChange={handleCaptionChange}
+                        t={t}
                       />
                     </div>
 
@@ -586,6 +587,7 @@ const KeskenModal = ({
                 <CaptionEditor
                   caption={formData.caption}
                   onChange={handleCaptionChange}
+                  t={t}
                 />
               </div>
             </div>

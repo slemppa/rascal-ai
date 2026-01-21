@@ -98,9 +98,9 @@ export default function AccountTypeSection({
         .eq("id", userProfile.id);
 
       if (error) {
-        setMessage(`Virhe: ${error.message}`);
+        setMessage(`${t("settings.common.error")}: ${error.message}`);
       } else {
-        setMessage("Asetukset tallennettu onnistuneesti!");
+        setMessage(t("settings.accountSettings.saveSuccess"));
         setIsEditing(false);
 
         // Fetch updated profile
@@ -115,7 +115,7 @@ export default function AccountTypeSection({
         }
       }
     } catch (error) {
-      setMessage(`Virhe: ${error.message}`);
+      setMessage(`${t("settings.common.error")}: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -124,14 +124,16 @@ export default function AccountTypeSection({
   // Get current selection summary
   const getCurrentSelection = () => {
     const accountTypeText =
-      formData.account_type === "company" ? "Yritys" : "Henkilöbrändi";
+      formData.account_type === "company"
+        ? t("settings.accountSettings.company")
+        : t("settings.accountSettings.personalBrand");
     const marketText =
       formData.company_type === "B2B"
-        ? "Yritysasiakkaat"
+        ? t("settings.accountSettings.businessCustomers")
         : formData.company_type === "B2C"
-          ? "Kuluttajat"
+          ? t("settings.accountSettings.consumers")
           : formData.company_type === "Both"
-            ? "Molemmat"
+            ? t("settings.accountSettings.both")
             : "";
 
     if (marketText) {
@@ -149,7 +151,9 @@ export default function AccountTypeSection({
     return (
       <div className={styles.card}>
         <div style={{ textAlign: "center", padding: "40px 20px" }}>
-          <div style={{ fontSize: "16px", color: "#6b7280" }}>Ladataan...</div>
+          <div style={{ fontSize: "16px", color: "#6b7280" }}>
+            {t("settings.accountSettings.loading")}
+          </div>
         </div>
       </div>
     );
@@ -185,7 +189,7 @@ export default function AccountTypeSection({
               marginBottom: 4,
             }}
           >
-            Tilin asetukset
+            {t("settings.accountSettings.title")}
           </h2>
           {!isEditing && (
             <div style={{ fontSize: 13, color: "#6b7280", fontWeight: 500 }}>
@@ -199,7 +203,7 @@ export default function AccountTypeSection({
             className={`${styles.btn} ${styles.btnSecondary}`}
             style={{ fontSize: 13, padding: "6px 12px" }}
           >
-            Muokkaa
+            {t("settings.accountSettings.edit")}
           </button>
         ) : (
           <div style={{ display: "flex", gap: "6px" }}>
@@ -216,7 +220,7 @@ export default function AccountTypeSection({
               className={`${styles.btn} ${styles.btnNeutral}`}
               style={{ fontSize: 13, padding: "6px 12px" }}
             >
-              Peruuta
+              {t("settings.accountSettings.cancel")}
             </button>
           </div>
         )}
@@ -242,7 +246,7 @@ export default function AccountTypeSection({
             fontSize: 14,
           }}
         >
-          Sisällön ääni
+          {t("settings.accountSettings.contentVoice")}
         </label>
         <div
           style={{
@@ -284,7 +288,7 @@ export default function AccountTypeSection({
               opacity: isEditing ? 1 : 0.6,
             }}
           >
-            Yritys
+            {t("settings.accountSettings.company")}
           </button>
           <button
             type="button"
@@ -321,7 +325,7 @@ export default function AccountTypeSection({
               opacity: isEditing ? 1 : 0.6,
             }}
           >
-            Henkilöbrändi
+            {t("settings.accountSettings.personalBrand")}
           </button>
         </div>
       </div>
@@ -337,9 +341,9 @@ export default function AccountTypeSection({
             fontSize: 14,
           }}
         >
-          Kohderyhmätyyppi{" "}
+          {t("settings.accountSettings.targetAudience")}{" "}
           <span style={{ fontWeight: 400, color: "#9ca3af", fontSize: 12 }}>
-            (valinnainen)
+            {t("settings.accountSettings.optional")}
           </span>
         </label>
         <div
@@ -386,7 +390,11 @@ export default function AccountTypeSection({
                 opacity: isEditing ? 1 : 0.6,
               }}
             >
-              {type === "B2B" ? "B2B" : type === "B2C" ? "B2C" : "Molemmat"}
+              {type === "B2B"
+                ? t("settings.accountSettings.b2b")
+                : type === "B2C"
+                  ? t("settings.accountSettings.b2c")
+                  : t("settings.accountSettings.both")}
             </button>
           ))}
           <button
@@ -420,7 +428,7 @@ export default function AccountTypeSection({
               opacity: isEditing ? 1 : 0.6,
             }}
           >
-            Ei valintaa
+            {t("settings.accountSettings.noSelection")}
           </button>
         </div>
       </div>

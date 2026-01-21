@@ -15,6 +15,7 @@ import { getUserOrgId } from "../lib/getUserOrgId";
 import SettingsIntegrationsTab from "../components/SettingsIntegrationsTab";
 import VoiceSection from "../components/settings/VoiceSection";
 import AccountTypeSection from "../components/settings/AccountTypeSection";
+import UserInfoModal from "../components/UserInfoModal";
 
 import styles from "./SettingsPage.module.css";
 
@@ -24,6 +25,8 @@ export default function SettingsPage() {
   const { refreshUserStatus, userStatus } = useStrategyStatus();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingOrgInfo, setIsEditingOrgInfo] = useState(false);
+  const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [showPasswordChange, setShowPasswordChange] = useState(false);
@@ -51,6 +54,8 @@ export default function SettingsPage() {
   const [logoDragActive, setLogoDragActive] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [showUserId, setShowUserId] = useState(false);
+  const [showUserInfoModal, setShowUserInfoModal] = useState(false);
+  const [orgMemberData, setOrgMemberData] = useState(null);
 
   // Mixpost-integration hook
   const {
@@ -250,6 +255,34 @@ export default function SettingsPage() {
     };
 
     fetchUserProfile();
+  }, [user?.id]);
+
+  // Hae org_members tiedot kutsutuille käyttäjille
+  useEffect(() => {
+    const fetchOrgMemberData = async () => {
+      if (!user?.id) return;
+
+      try {
+        const { data, error } = await supabase
+          .from("org_members")
+          .select("*")
+          .eq("auth_user_id", user.id)
+          .single();
+
+        if (error) {
+          if (error.code !== "PGRST116") {
+            console.error("Error fetching org_member data:", error);
+          }
+          return;
+        }
+
+        setOrgMemberData(data);
+      } catch (error) {
+        console.error("Error fetching org_member data:", error);
+      }
+    };
+
+    fetchOrgMemberData();
   }, [user?.id]);
 
   // Synkronoi sometilit kun ne on haettu Mixpostista
@@ -969,134 +1002,168 @@ export default function SettingsPage() {
                         ? t("settings.personalInfo.title")
                         : t("settings.profile.title")}
                     </h3>
-                    {!isInvitedUser && !isEditing ? (
-                      <button
-                        onClick={() => setIsEditing(true)}
-                        className={`${styles.btn} ${styles.btnSecondary}`}
-                      >
-                        {t("settings.buttons.edit")}
-                      </button>
-                    ) : !isInvitedUser && isEditing ? (
-                      <div style={{ display: "flex", gap: "8px" }}>
-                        <button
-                          onClick={handleSave}
-                          disabled={loading}
-                          className={`${styles.btn} ${styles.btnPrimary}`}
-                        >
-                          {loading
-                            ? t("settings.buttons.saving")
-                            : t("settings.buttons.save")}
-                        </button>
-                        <button
-                          onClick={handleCancel}
-                          className={`${styles.btn} ${styles.btnNeutral}`}
-                        >
-                          {t("settings.buttons.cancel")}
-                        </button>
-                      </div>
-                    ) : null}
                   </div>
 
                   <div className={styles.cardContent}>
-                    {isInvitedUser && (
+                    {/* Organisaation tiedot - kaikille käyttäjille */}
+                    <div
+                      style={{
+                        marginBottom: 16,
+                        padding: 16,
+                        backgroundColor: "#f8fafc",
+                        border: "1px solid #e2e8f0",
+                        borderRadius: 12,
+                      }}
+                    >
                       <div
                         style={{
-                          marginBottom: 16,
-                          padding: 12,
-                          backgroundColor: "#f0f9ff",
-                          border: "1px solid #bae6fd",
-                          borderRadius: 8,
-                          fontSize: 14,
-                          color: "#0369a1",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: 12,
                         }}
                       >
-                        <strong>{t("ui.labels.organization")}:</strong>{" "}
-                        {organization?.data?.company_name ||
-                          t("ui.labels.noName")}
-                        <br />
-                        <strong>{t("ui.labels.role")}:</strong>{" "}
-                        {organization?.role === "admin"
-                          ? t("ui.labels.admin")
-                          : organization?.role === "member"
-                            ? t("ui.labels.member")
-                            : t("ui.labels.owner")}
-                      </div>
-                    )}
-
-                    {message && (
-                      <div
-                        className={`${styles.message} ${message.includes(t("settings.common.error")) ? styles.messageError : styles.messageSuccess}`}
-                      >
-                        {message}
-                      </div>
-                    )}
-
-                    {!isInvitedUser && (
-                      <div className={styles["form-group"]}>
-                        <label>{t("settings.fields.name")}</label>
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            name="contact_person"
-                            value={formData.contact_person}
-                            onChange={handleInputChange}
-                            className={styles["form-input"]}
-                            placeholder={t("settings.fields.namePlaceholder")}
-                          />
-                        ) : (
-                          <input
-                            type="text"
-                            value={name || t("settings.common.notSet")}
-                            readOnly
-                            className={`${styles["form-input"]} ${styles.readonly}`}
-                          />
+                        <h4
+                          style={{
+                            margin: 0,
+                            fontSize: 14,
+                            fontWeight: 600,
+                            color: "#374151",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                          }}
+                        >
+                          <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#ff6600"
+                            strokeWidth="2"
+                          >
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                          </svg>
+                          {t("settings.userInfo.organizationInfo")}
+                        </h4>
+                        {!isInvitedUser && (
+                          <>
+                            {!isEditingOrgInfo ? (
+                              <button
+                                onClick={() => setIsEditingOrgInfo(true)}
+                                className={`${styles.btn} ${styles.btnSecondary}`}
+                                style={{
+                                  fontSize: "12px",
+                                  padding: "4px 12px",
+                                }}
+                              >
+                                {t("settings.buttons.edit")}
+                              </button>
+                            ) : (
+                              <div style={{ display: "flex", gap: "6px" }}>
+                                <button
+                                  onClick={async () => {
+                                    await handleSave();
+                                    setIsEditingOrgInfo(false);
+                                  }}
+                                  disabled={loading}
+                                  className={`${styles.btn} ${styles.btnPrimary}`}
+                                  style={{
+                                    fontSize: "12px",
+                                    padding: "4px 12px",
+                                  }}
+                                >
+                                  {loading
+                                    ? t("settings.buttons.saving")
+                                    : t("settings.buttons.save")}
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setIsEditingOrgInfo(false);
+                                    handleCancel();
+                                  }}
+                                  className={`${styles.btn} ${styles.btnNeutral}`}
+                                  style={{
+                                    fontSize: "12px",
+                                    padding: "4px 12px",
+                                  }}
+                                >
+                                  {t("settings.buttons.cancel")}
+                                </button>
+                              </div>
+                            )}
+                          </>
                         )}
                       </div>
-                    )}
 
-                    <div className={styles["form-group"]}>
-                      <label>{t("settings.fields.email")}</label>
-                      {isInvitedUser ? (
-                        <input
-                          type="email"
-                          value={email || t("settings.common.notAvailable")}
-                          readOnly
-                          className={`${styles["form-input"]} ${styles.readonly}`}
-                        />
-                      ) : isEditing ? (
-                        <input
-                          type="email"
-                          name="contact_email"
-                          value={formData.contact_email}
-                          onChange={handleInputChange}
-                          className={styles["form-input"]}
-                          placeholder={t("settings.fields.emailPlaceholder")}
-                        />
-                      ) : (
-                        <input
-                          type="email"
-                          value={email || t("settings.common.notAvailable")}
-                          readOnly
-                          className={`${styles["form-input"]} ${styles.readonly}`}
-                        />
-                      )}
-                    </div>
-
-                    {!isInvitedUser && (
-                      <>
-                        <div className={styles["form-group"]}>
-                          <label>{t("settings.fields.company")}</label>
-                          <input
-                            type="text"
-                            value={companyName || t("settings.common.notSet")}
-                            readOnly
-                            className={`${styles["form-input"]} ${styles.readonly}`}
-                          />
+                      {!isEditingOrgInfo ? (
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 8,
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span style={{ fontSize: 13, color: "#6b7280" }}>
+                              {t("settings.fields.company")}
+                            </span>
+                            <span
+                              style={{
+                                fontSize: 14,
+                                fontWeight: 500,
+                                color: "#1f2937",
+                              }}
+                            >
+                              {userProfile?.company_name ||
+                                t("settings.common.notSet")}
+                            </span>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span style={{ fontSize: 13, color: "#6b7280" }}>
+                              {t("settings.fields.industry")}
+                            </span>
+                            <span
+                              style={{
+                                fontSize: 14,
+                                fontWeight: 500,
+                                color: "#1f2937",
+                              }}
+                            >
+                              {userProfile?.industry ||
+                                t("settings.common.notSet")}
+                            </span>
+                          </div>
                         </div>
-
-                        <div className={styles["form-group"]}>
-                          <label>{t("settings.fields.industry")}</label>
-                          {isEditing ? (
+                      ) : (
+                        <div>
+                          <div className={styles["form-group"]}>
+                            <label>{t("settings.fields.company")}</label>
+                            <input
+                              type="text"
+                              value={
+                                userProfile?.company_name ||
+                                t("settings.common.notSet")
+                              }
+                              readOnly
+                              className={`${styles["form-input"]} ${styles.readonly}`}
+                            />
+                          </div>
+                          <div className={styles["form-group"]}>
+                            <label>{t("settings.fields.industry")}</label>
                             <input
                               type="text"
                               name="industry"
@@ -1105,57 +1172,233 @@ export default function SettingsPage() {
                               className={styles["form-input"]}
                               placeholder={t("settings.fields.industry")}
                             />
-                          ) : (
-                            <input
-                              type="text"
-                              value={industry || t("settings.common.notSet")}
-                              readOnly
-                              className={`${styles["form-input"]} ${styles.readonly}`}
-                            />
-                          )}
+                          </div>
                         </div>
+                      )}
+                    </div>
 
-                        <div className={styles["form-group"]}>
-                          <label>{t("settings.fields.userId")}</label>
+                    {/* Käyttäjän tiedot - kaikille käyttäjille */}
+                    <div
+                      style={{
+                        marginBottom: 16,
+                        padding: 16,
+                        backgroundColor: "#f0f9ff",
+                        border: "1px solid #bae6fd",
+                        borderRadius: 12,
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: 12,
+                        }}
+                      >
+                        <h4
+                          style={{
+                            margin: 0,
+                            fontSize: 14,
+                            fontWeight: 600,
+                            color: "#374151",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                          }}
+                        >
+                          <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#0369a1"
+                            strokeWidth="2"
+                          >
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                          </svg>
+                          {t("settings.userInfo.personalInfo")}
+                        </h4>
+                        {!isInvitedUser && (
+                          <>
+                            {!isEditingPersonalInfo ? (
+                              <button
+                                onClick={() => setIsEditingPersonalInfo(true)}
+                                className={`${styles.btn} ${styles.btnSecondary}`}
+                                style={{
+                                  fontSize: "12px",
+                                  padding: "4px 12px",
+                                }}
+                              >
+                                {t("settings.buttons.edit")}
+                              </button>
+                            ) : (
+                              <div style={{ display: "flex", gap: "6px" }}>
+                                <button
+                                  onClick={async () => {
+                                    await handleSave();
+                                    setIsEditingPersonalInfo(false);
+                                  }}
+                                  disabled={loading}
+                                  className={`${styles.btn} ${styles.btnPrimary}`}
+                                  style={{
+                                    fontSize: "12px",
+                                    padding: "4px 12px",
+                                  }}
+                                >
+                                  {loading
+                                    ? t("settings.buttons.saving")
+                                    : t("settings.buttons.save")}
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setIsEditingPersonalInfo(false);
+                                    handleCancel();
+                                  }}
+                                  className={`${styles.btn} ${styles.btnNeutral}`}
+                                  style={{
+                                    fontSize: "12px",
+                                    padding: "4px 12px",
+                                  }}
+                                >
+                                  {t("settings.buttons.cancel")}
+                                </button>
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+
+                      {!isEditingPersonalInfo ? (
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 8,
+                          }}
+                        >
+                          {orgMemberData?.name && (
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                              }}
+                            >
+                              <span style={{ fontSize: 13, color: "#6b7280" }}>
+                                {t("settings.fields.name")}
+                              </span>
+                              <span
+                                style={{
+                                  fontSize: 14,
+                                  fontWeight: 500,
+                                  color: "#1f2937",
+                                }}
+                              >
+                                {orgMemberData.name}
+                              </span>
+                            </div>
+                          )}
                           <div
                             style={{
                               display: "flex",
-                              gap: "8px",
+                              justifyContent: "space-between",
                               alignItems: "center",
                             }}
                           >
-                            <input
-                              type={showUserId ? "text" : "password"}
-                              value={
-                                userProfile?.id ||
-                                user?.id ||
-                                t("settings.common.notAvailable")
-                              }
-                              readOnly
-                              className={`${styles["form-input"]} ${styles.readonly}`}
+                            <span style={{ fontSize: 13, color: "#6b7280" }}>
+                              {t("settings.fields.email")}
+                            </span>
+                            <span
                               style={{
-                                fontFamily: "monospace",
-                                fontSize: "12px",
-                                flex: 1,
-                              }}
-                            />
-                            <button
-                              type="button"
-                              onClick={() => setShowUserId(!showUserId)}
-                              className={`${styles.btn} ${styles.btnNeutral}`}
-                              style={{
-                                fontSize: "13px",
-                                padding: "6px 12px",
-                                whiteSpace: "nowrap",
+                                fontSize: 14,
+                                fontWeight: 500,
+                                color: "#1f2937",
                               }}
                             >
-                              {showUserId
-                                ? t("ui.buttons.hide")
-                                : t("ui.buttons.show")}
-                            </button>
+                              {orgMemberData?.email ||
+                                user?.email ||
+                                t("settings.common.notAvailable")}
+                            </span>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span style={{ fontSize: 13, color: "#6b7280" }}>
+                              {t("ui.labels.role")}
+                            </span>
+                            <span
+                              style={{
+                                fontSize: 12,
+                                fontWeight: 600,
+                                color: "white",
+                                padding: "4px 12px",
+                                borderRadius: 20,
+                                background:
+                                  "linear-gradient(135deg, #ff6600 0%, #ff8533 100%)",
+                                textTransform: "capitalize",
+                              }}
+                            >
+                              {orgMemberData?.role === "owner"
+                                ? t("ui.labels.owner")
+                                : orgMemberData?.role === "admin"
+                                  ? t("ui.labels.admin")
+                                  : orgMemberData?.role === "member"
+                                    ? t("ui.labels.member")
+                                    : organization?.role ||
+                                      t("ui.labels.member")}
+                            </span>
                           </div>
                         </div>
-                      </>
+                      ) : (
+                        <div>
+                          <div className={styles["form-group"]}>
+                            <label>{t("settings.fields.name")}</label>
+                            <input
+                              type="text"
+                              name="contact_person"
+                              value={formData.contact_person}
+                              onChange={handleInputChange}
+                              className={styles["form-input"]}
+                              placeholder={t("settings.fields.namePlaceholder")}
+                            />
+                          </div>
+                          <div className={styles["form-group"]}>
+                            <label>{t("settings.fields.email")}</label>
+                            <input
+                              type="email"
+                              name="contact_email"
+                              value={formData.contact_email}
+                              onChange={handleInputChange}
+                              className={styles["form-input"]}
+                              placeholder={t(
+                                "settings.fields.emailPlaceholder",
+                              )}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Näytä lisätiedot -nappi - kaikille käyttäjille */}
+                    <button
+                      onClick={() => setShowUserInfoModal(true)}
+                      className={`${styles.btn} ${styles.btnSecondary}`}
+                      style={{ width: "100%", marginBottom: "16px" }}
+                    >
+                      {t("settings.userInfo.showDetails")}
+                    </button>
+
+                    {message && (
+                      <div
+                        className={`${styles.message} ${message.includes(t("settings.common.error")) ? styles.messageError : styles.messageSuccess}`}
+                      >
+                        {message}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -1563,6 +1806,20 @@ export default function SettingsPage() {
           </div>
         )}
       </div>
+
+      {/* UserInfoModal kaikille käyttäjille */}
+      <UserInfoModal
+        isOpen={showUserInfoModal}
+        onClose={() => setShowUserInfoModal(false)}
+        organizationData={userProfile}
+        memberData={{
+          name: orgMemberData?.name || null,
+          email: orgMemberData?.email || user?.email,
+          role: orgMemberData?.role || organization?.role || "owner",
+          created_at: orgMemberData?.created_at,
+          userId: orgMemberData?.id || null,
+        }}
+      />
     </>
   );
 }

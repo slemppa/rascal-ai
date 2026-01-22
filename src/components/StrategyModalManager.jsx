@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
-import { useStrategyStatus } from '../contexts/StrategyStatusContext'
-import { useAuth } from '../contexts/AuthContext'
-import StrategyConfirmationModal from './StrategyConfirmationModal'
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { useStrategyStatus } from "../contexts/StrategyStatusContext";
+import { useAuth } from "../contexts/AuthContext";
+import StrategyConfirmationModal from "./StrategyConfirmationModal";
 
 /**
  * Erillinen komponentti joka hallinnoi strategia-modalin näkyvyyttä.
@@ -10,10 +10,10 @@ import StrategyConfirmationModal from './StrategyConfirmationModal'
  * TÄRKEÄ: Näyttää modalin VAIN kirjautuneille käyttäjille suojatuilla sivuilla.
  */
 export default function StrategyModalManager() {
-  const context = useStrategyStatus()
-  const { user, loading } = useAuth()
-  const location = useLocation()
-  const [forceOpen, setForceOpen] = useState(false)
+  const context = useStrategyStatus();
+  const { user, loading } = useAuth();
+  const location = useLocation();
+  const [forceOpen, setForceOpen] = useState(false);
 
   // HUOM: Blacklist-logiikka hoidetaan StrategyStatusContext:issa
   // Tämä komponentti tarkistaa vain että käyttäjä on kirjautunut
@@ -21,40 +21,57 @@ export default function StrategyModalManager() {
   // Kuuntele window eventejä modalin avaamiseen
   useEffect(() => {
     const handleOpen = (e) => {
-      setForceOpen(true)
-    }
+      setForceOpen(true);
+    };
 
-    window.addEventListener('strategy-modal-should-open', handleOpen)
-    window.addEventListener('force-strategy-modal-open', handleOpen)
-    
+    window.addEventListener("strategy-modal-should-open", handleOpen);
+    window.addEventListener("force-strategy-modal-open", handleOpen);
+
     return () => {
-      window.removeEventListener('strategy-modal-should-open', handleOpen)
-      window.removeEventListener('force-strategy-modal-open', handleOpen)
-    }
-  }, [])
+      window.removeEventListener("strategy-modal-should-open", handleOpen);
+      window.removeEventListener("force-strategy-modal-open", handleOpen);
+    };
+  }, []);
 
   // Tarkista onko modal minimoitu localStorageen
-  const [isMinimized, setIsMinimized] = useState(false)
+  const [isMinimized, setIsMinimized] = useState(false);
 
   useEffect(() => {
     if (user?.id) {
-      const skipped = localStorage.getItem(`strategy_modal_skipped_${user.id}`)
-      setIsMinimized(skipped === 'true')
+      const skipped = localStorage.getItem(`strategy_modal_skipped_${user.id}`);
+      setIsMinimized(skipped === "true");
     }
-  }, [user?.id])
+  }, [user?.id]);
+
+  // Kuuntele modalin palautusta ja päivitä isMinimized-tila
+  useEffect(() => {
+    const handleRestore = () => {
+      if (user?.id) {
+        const skipped = localStorage.getItem(
+          `strategy_modal_skipped_${user.id}`,
+        );
+        setIsMinimized(skipped === "true");
+      }
+    };
+
+    window.addEventListener("strategy-modal-restored", handleRestore);
+    return () => {
+      window.removeEventListener("strategy-modal-restored", handleRestore);
+    };
+  }, [user?.id]);
 
   // Tarkista onko modal auki joko contextin tai force-flagin takia
   // Älä avaa jos modaali on minimoitu
-  const isOpen = !isMinimized && (context?.showStrategyModal || forceOpen)
+  const isOpen = !isMinimized && (context?.showStrategyModal || forceOpen);
 
   const handleClose = () => {
-    setForceOpen(false)
-    context?.closeModal?.()
-  }
+    setForceOpen(false);
+    context?.closeModal?.();
+  };
 
   if (!context) {
-    console.warn('StrategyModalManager: No context available')
-    return null
+    console.warn("StrategyModalManager: No context available");
+    return null;
   }
 
   // ⚠️ TÄRKEÄ: Älä renderöi modaalia jos:
@@ -62,11 +79,11 @@ export default function StrategyModalManager() {
   // 2. Käyttäjä ei ole kirjautunut (user = null)
   // Blacklist-sivu logiikka hoidetaan StrategyStatusContext:issa
   if (loading) {
-    return null // Odotetaan että käyttäjätiedot latautuvat
+    return null; // Odotetaan että käyttäjätiedot latautuvat
   }
-  
+
   if (!user) {
-    return null // Ei kirjautunut
+    return null; // Ei kirjautunut
   }
 
   return (
@@ -76,6 +93,5 @@ export default function StrategyModalManager() {
       onRequestUpdate={context.requestStrategyUpdate}
       loading={context.loading}
     />
-  )
+  );
 }
-

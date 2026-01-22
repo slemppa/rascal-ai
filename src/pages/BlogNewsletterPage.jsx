@@ -93,8 +93,10 @@ function ContentCard({
   onArchive,
   onDownload,
   onEdit,
+  publishingId,
 }) {
   const { t } = useTranslation("common");
+  const isPublishing = publishingId === content.id;
   return (
     <div className="content-card">
       <div className="content-card-content">
@@ -192,29 +194,42 @@ function ContentCard({
               >
                 {t("blogNewsletter.actions.view")}
               </Button>
-              {content.status !== "Valmis" && (
-                <Button
-                  variant="secondary"
-                  onClick={() => onEdit(content)}
-                  style={{ fontSize: "11px", padding: "6px 10px" }}
-                >
-                  {t("blogNewsletter.actions.edit")}
-                </Button>
-              )}
-              {/* Julkaisu-nappi vain jos status on "Tarkistuksessa" */}
-              {content.status === "Tarkistuksessa" && (
-                <Button
-                  variant="primary"
-                  onClick={() => onPublish(content)}
-                  style={{
-                    backgroundColor: "#22c55e",
-                    fontSize: "11px",
-                    padding: "6px 10px",
-                  }}
-                >
-                  {t("blogNewsletter.actions.publish")}
-                </Button>
-              )}
+              {content.status !== "Valmis" &&
+                content.status !== "Done" &&
+                content.status !== "Julkaistu" &&
+                content.status !== "Published" &&
+                content.status !== "Arkistoitu" &&
+                content.status !== "Archived" && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => onEdit(content)}
+                    style={{ fontSize: "11px", padding: "6px 10px" }}
+                  >
+                    {t("blogNewsletter.actions.edit")}
+                  </Button>
+                )}
+              {/* Julkaisu-nappi jos ei ole jo julkaistu tai arkistoitu */}
+              {content.status !== "Valmis" &&
+                content.status !== "Done" &&
+                content.status !== "Julkaistu" &&
+                content.status !== "Published" &&
+                content.status !== "Arkistoitu" &&
+                content.status !== "Archived" && (
+                  <Button
+                    variant="primary"
+                    onClick={() => onPublish(content)}
+                    disabled={isPublishing}
+                    style={{
+                      backgroundColor: "#22c55e",
+                      fontSize: "11px",
+                      padding: "6px 10px",
+                    }}
+                  >
+                    {isPublishing
+                      ? t("blogNewsletter.actions.publishing")
+                      : t("blogNewsletter.actions.publish")}
+                  </Button>
+                )}
               {/* Arkistoi-nappi kaikille muille paitsi jo arkistoiduille */}
               {content.status !== "Arkistoitu" && (
                 <Button
@@ -257,6 +272,7 @@ export default function BlogNewsletterPage() {
   const [editingContent, setEditingContent] = useState(null);
   const [socialAccounts, setSocialAccounts] = useState([]);
   const [loadingAccounts, setLoadingAccounts] = useState(false);
+  const [publishingId, setPublishingId] = useState(null);
 
   const hasInitialized = useRef(false);
 
@@ -298,7 +314,7 @@ export default function BlogNewsletterPage() {
 
   // Hae somekanavat Supabasesta
   const fetchSocialAccounts = async () => {
-    if (!user) return;
+    if (!user) return [];
 
     try {
       setLoadingAccounts(true);
@@ -308,7 +324,7 @@ export default function BlogNewsletterPage() {
       if (!orgId) {
         console.error("Organisaation ID ei löytynyt");
         setSocialAccounts([]);
-        return;
+        return [];
       }
 
       // Haetaan yhdistetyt sometilit käyttäen organisaation ID:tä
@@ -324,12 +340,14 @@ export default function BlogNewsletterPage() {
       if (accountsError) {
         console.error("Error fetching social accounts:", accountsError);
         setSocialAccounts([]);
-        return;
+        return [];
       }
       setSocialAccounts(accountsData || []);
+      return accountsData || [];
     } catch (error) {
       console.error("Error fetching social accounts:", error);
       setSocialAccounts([]);
+      return [];
     } finally {
       setLoadingAccounts(false);
     }
@@ -340,7 +358,7 @@ export default function BlogNewsletterPage() {
 
     hasInitialized.current = true;
     fetchContents();
-    fetchSocialAccounts(); // Haetaan somekanavat
+    // Somekanavat haetaan vain jos niitä tarvitaan
   }, [user]);
 
   // Filtteröidään sisältö
@@ -463,11 +481,7 @@ export default function BlogNewsletterPage() {
       toast.success(t("dashboard.edit.saveSuccess"));
     } catch (error) {
       console.error("Update error:", error);
-      setToast({
-        visible: true,
-        message: "Päivitys epäonnistui: " + error.message,
-      });
-      setTimeout(() => setToast({ visible: false, message: "" }), 2500);
+      toast.error("Päivitys epäonnistui: " + error.message);
     }
   };
 
@@ -503,8 +517,7 @@ export default function BlogNewsletterPage() {
 
       // Päivitetään UI
       await fetchContents();
-      setToast({ visible: true, message: "Kuva päivitetty" });
-      setTimeout(() => setToast({ visible: false, message: "" }), 2500);
+      toast.success("Kuva päivitetty");
     } catch (error) {
       console.error("Image upload error:", error);
 
@@ -519,9 +532,6 @@ export default function BlogNewsletterPage() {
           "Verkkoyhteys ongelma. Tarkista internetyhteytesi ja kokeile uudelleen.";
       }
 
-      setToast({ visible: true, message: errorMessage });
-      setTimeout(() => setToast({ visible: false, message: "" }), 2500);
-
       // Näytä toast käyttäjälle
       toast.error(t("errors.imageUploadError", { error: errorMessage }));
     }
@@ -529,16 +539,15 @@ export default function BlogNewsletterPage() {
 
   const handlePublishContent = async (content) => {
     try {
+      setPublishingId(content.id);
+
       // Estä julkaisu, jos blogiteksti puuttuu
       if (
         !content?.blog_post ||
         String(content.blog_post).trim().length === 0
       ) {
-        setToast({
-          visible: true,
-          message: t("blogNewsletter.alerts.addBlogTextFirst"),
-        });
-        setTimeout(() => setToast({ visible: false, message: "" }), 2500);
+        setPublishingId(null);
+        toast.warning(t("blogNewsletter.alerts.addBlogTextFirst"));
         return;
       }
 
@@ -581,20 +590,9 @@ export default function BlogNewsletterPage() {
         mediaUrls = contentData.media_urls || [];
       }
 
-      // Haetaan sometilit jos ne eivät ole vielä haettu
-      if (socialAccounts.length === 0) {
-        await fetchSocialAccounts();
-      }
-
-      // Valitse ensimmäinen yhdistetty tili automaattisesti jos tilejä on saatavilla
+      // Blogit ja newsletterit eivät vaadi sometilejä julkaisuun
+      // Sometilit tarvitaan vain jos ne halutaan jakaa sosiaalisessa mediassa
       let selectedAccountIds = [];
-      if (socialAccounts.length > 0) {
-        selectedAccountIds = [socialAccounts[0].mixpost_account_uuid];
-      } else {
-        throw new Error(
-          "Sometilejä ei löydy. Yhdistä sometilit asetuksista ennen julkaisua.",
-        );
-      }
 
       // Lähetetään data backend:iin, joka hoitaa Supabase-kyselyt
       const publishData = {
@@ -640,11 +638,7 @@ export default function BlogNewsletterPage() {
       if (response.status === 200 && response.data?.success) {
         // Päivitetään UI
         await fetchContents();
-        setToast({
-          visible: true,
-          message: response.data.message || "Julkaistu",
-        });
-        setTimeout(() => setToast({ visible: false, message: "" }), 2500);
+        toast.success(response.data.message || "Julkaistu");
       } else {
         throw new Error(response.data?.error || "Julkaisu epäonnistui");
       }
@@ -681,6 +675,8 @@ export default function BlogNewsletterPage() {
       }
 
       toast.error(errorMessage);
+    } finally {
+      setPublishingId(null);
     }
   };
 
@@ -701,11 +697,10 @@ export default function BlogNewsletterPage() {
       if (error) throw error;
 
       await fetchContents();
-      setToast({ visible: true, message: "Siirretty arkistoon" });
-      setTimeout(() => setToast({ visible: false, message: "" }), 2500);
+      toast.success("Siirretty arkistoon");
     } catch (err) {
       console.error("Archive error:", err);
-      alert(t("alerts.error.archiveFailed", { error: err.message }));
+      toast.error(t("alerts.error.archiveFailed", { error: err.message }));
     }
   };
 
@@ -730,11 +725,10 @@ export default function BlogNewsletterPage() {
 
       // Päivitetään UI
       await fetchContents();
-      setToast({ visible: true, message: "Poistettu" });
-      setTimeout(() => setToast({ visible: false, message: "" }), 2500);
+      toast.success("Poistettu");
     } catch (error) {
       console.error("Delete error:", error);
-      alert(t("alerts.error.deleteFailed", { error: error.message }));
+      toast.error(t("alerts.error.deleteFailed", { error: error.message }));
     }
   };
 
@@ -766,12 +760,10 @@ export default function BlogNewsletterPage() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      setToast({ visible: true, message: "Kuva ladattu" });
-      setTimeout(() => setToast({ visible: false, message: "" }), 2500);
+      toast.success("Kuva ladattu");
     } catch (error) {
       console.error("Download error:", error);
-      setToast({ visible: true, message: "Lataus epäonnistui" });
-      setTimeout(() => setToast({ visible: false, message: "" }), 2500);
+      toast.error("Lataus epäonnistui");
     }
   };
 
@@ -925,8 +917,7 @@ export default function BlogNewsletterPage() {
             if (monthlyLimit.canCreate) {
               setShowCreateModal(true);
             } else {
-              setToast({ visible: true, message: "Kuukausiraja täynnä" });
-              setTimeout(() => setToast({ visible: false, message: "" }), 2500);
+              toast.warning("Kuukausiraja täynnä");
             }
           }}
           disabled={!monthlyLimit.canCreate}
@@ -988,6 +979,7 @@ export default function BlogNewsletterPage() {
                 onArchive={handleArchiveContent}
                 onDownload={handleDownloadImage}
                 onEdit={handleEditContent}
+                publishingId={publishingId}
               />
             ))
           )}
@@ -1248,22 +1240,30 @@ export default function BlogNewsletterPage() {
                     </Button>
                   </div>
                   <div className="modal-actions-right">
-                    {viewingContent.status !== "Valmis" && (
-                      <Button
-                        type="button"
-                        variant="primary"
-                        onClick={() => {
-                          handlePublishContent(viewingContent);
-                        }}
-                        style={{
-                          marginRight: "8px",
-                          backgroundColor: "#22c55e",
-                          borderColor: "#16a34a",
-                        }}
-                      >
-                        {t("blogNewsletter.actions.publish")}
-                      </Button>
-                    )}
+                    {viewingContent.status !== "Valmis" &&
+                      viewingContent.status !== "Done" &&
+                      viewingContent.status !== "Julkaistu" &&
+                      viewingContent.status !== "Published" &&
+                      viewingContent.status !== "Arkistoitu" &&
+                      viewingContent.status !== "Archived" && (
+                        <Button
+                          type="button"
+                          variant="primary"
+                          onClick={() => {
+                            handlePublishContent(viewingContent);
+                          }}
+                          disabled={publishingId === viewingContent.id}
+                          style={{
+                            marginRight: "8px",
+                            backgroundColor: "#22c55e",
+                            borderColor: "#16a34a",
+                          }}
+                        >
+                          {publishingId === viewingContent.id
+                            ? t("blogNewsletter.actions.publishing")
+                            : t("blogNewsletter.actions.publish")}
+                        </Button>
+                      )}
                     <Button
                       type="button"
                       variant="danger"

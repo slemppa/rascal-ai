@@ -1,25 +1,25 @@
-import { withOrganization } from '../../_middleware/with-organization.js'
-import { setCorsHeaders, handlePreflight } from '../../_lib/cors.js'
-import { sendToN8N } from '../../_lib/n8n-client.js'
+import { withOrganization } from "../../_middleware/with-organization.js";
+import { setCorsHeaders, handlePreflight } from "../../_lib/cors.js";
+import { sendToN8N } from "../../_lib/n8n-client.js";
 
 async function handler(req, res) {
-  console.log('blog-publish API called:', req.method, req.url)
-  
+  console.log("blog-publish API called:", req.method, req.url);
+
   // CORS headers
-  setCorsHeaders(res, ['GET', 'POST', 'OPTIONS'])
-  
+  setCorsHeaders(res, ["GET", "POST", "OPTIONS"]);
+
   // Handle preflight requests
   if (handlePreflight(req, res)) {
-    return
+    return;
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    console.log('blog-publish request body:', req.body)
-    const { 
+    console.log("blog-publish request body:", req.body);
+    const {
       post_id,
       auth_user_id,
       content,
@@ -30,148 +30,138 @@ async function handler(req, res) {
       mixpost_api_token,
       mixpost_workspace_uuid,
       post_type, // 'post', 'reel', 'carousel'
-      action = 'publish', // Blog-publish käyttää aina 'publish' actionia
-      selected_accounts = [] // Valitut somekanavat
-    } = req.body
+      action = "publish", // Blog-publish käyttää aina 'publish' actionia
+      selected_accounts = [], // Valitut somekanavat
+    } = req.body;
 
     if (!post_id) {
-      return res.status(400).json({ 
-        error: 'Missing required fields: post_id' 
-      })
+      return res.status(400).json({
+        error: "Missing required fields: post_id",
+      });
     }
 
     // req.organization.id = organisaation ID (public.users.id)
     // req.supabase = authenticated Supabase client
-    const orgId = req.organization.id
+    const orgId = req.organization.id;
 
-    console.log('blog-publish: Using orgId:', orgId)
+    console.log("blog-publish: Using orgId:", orgId);
 
     // Haetaan Mixpost konfiguraatio ja sometilit Supabase:sta
-    let mixpostConfig = null
-    let socialAccounts = null
+    let mixpostConfig = null;
+    let socialAccounts = null;
 
     try {
       // Haetaan Mixpost konfiguraatio käyttäen organisaation ID:tä
-      console.log('blog-publish: Fetching Mixpost config for orgId:', orgId)
+      console.log("blog-publish: Fetching Mixpost config for orgId:", orgId);
       const { data: configData, error: configError } = await req.supabase
-        .from('user_mixpost_config')
-        .select('mixpost_workspace_uuid, mixpost_api_token')
-        .eq('user_id', orgId) // Käytetään organisaation ID:tä
-        .single()
+        .from("user_mixpost_config")
+        .select("mixpost_workspace_uuid, mixpost_api_token")
+        .eq("user_id", orgId) // Käytetään organisaation ID:tä
+        .single();
 
-      console.log('blog-publish: Config query result:', { configData, configError })
+      console.log("blog-publish: Config query result:", {
+        configData,
+        configError,
+      });
 
-      if (configError || !configData || !configData.mixpost_workspace_uuid || !configData.mixpost_api_token) {
-        console.error('Error fetching mixpost config:', configError)
-        console.error('Config data:', configData)
-        console.error('Org ID used:', orgId)
-        
-        // Tarkista onko konfiguraatio olemassa mutta eri user_id:llä (vanha data)
-        const { data: allConfigs } = await req.supabase
-          .from('user_mixpost_config')
-          .select('user_id, mixpost_workspace_uuid')
-          .limit(5)
-        
-        console.log('blog-publish: Sample configs in database:', allConfigs)
-        
-        return res.status(400).json({ 
-          error: 'Mixpost konfiguraatio ei löytynyt',
-          details: configError?.message || 'Konfiguraatio puuttuu tai on epätäydellinen',
-          orgId: orgId,
-          hint: 'Varmista että Mixpost-konfiguraatio on tallennettu käyttäen organisaation ID:tä (public.users.id)'
-        })
+      // Mixpost config on valinnainen - tarvitaan vain jos käytetään sometilejä
+      if (
+        configData &&
+        configData.mixpost_workspace_uuid &&
+        configData.mixpost_api_token
+      ) {
+        mixpostConfig = configData;
+      } else {
+        console.log(
+          "blog-publish: No Mixpost config found - proceeding without social accounts",
+        );
+        mixpostConfig = null;
       }
-
-      mixpostConfig = configData
 
       // Haetaan yhdistetyt sometilit käyttäen organisaation ID:tä
       const { data: accountsData, error: accountsError } = await req.supabase
-        .from('user_social_accounts')
-        .select('mixpost_account_uuid, provider, account_name')
-        .eq('user_id', orgId) // Käytetään organisaation ID:tä
-        .eq('is_authorized', true)
+        .from("user_social_accounts")
+        .select("mixpost_account_uuid, provider, account_name")
+        .eq("user_id", orgId) // Käytetään organisaation ID:tä
+        .eq("is_authorized", true);
 
       if (accountsError) {
-        console.error('Error fetching social accounts:', accountsError)
-        return res.status(400).json({ 
-          error: 'Sometilien haku epäonnistui',
-          details: accountsError.message
-        })
+        console.error("Error fetching social accounts:", accountsError);
+        // Ei palauteta virhettä - sometilit ovat valinnaisia blogeille
       }
 
-      // Jos action on 'test', ohitetaan sometilien tarkistus (WordPress-yhteyden testaus)
-      if (action !== 'test' && (!accountsData || accountsData.length === 0)) {
-        return res.status(400).json({
-          error: 'Ei yhdistettyjä sometilejä'
-        })
-      }
+      // Blogit eivät vaadi sometilejä - sometilit ovat valinnaisia
+      // Käytetään sometilejä vain jos niitä on saatavilla
+      socialAccounts = accountsData || [];
 
-      socialAccounts = accountsData || []
-
+      console.log(
+        "blog-publish: Found social accounts:",
+        socialAccounts.length,
+      );
     } catch (error) {
-      console.error('Supabase error:', error)
+      console.error("Supabase error:", error);
       return res.status(500).json({
-        error: 'Supabase virhe',
-        details: error.message
-      })
+        error: "Supabase virhe",
+        details: error.message,
+      });
     }
 
     // Käytetään valittuja tilejä tai ensimmäistä yhdistettyä tiliä
-    let accountIds = []
+    let accountIds = [];
 
     // Jos action on 'test', ei tarvita sometilejä
-    if (action === 'test') {
-      accountIds = []
+    if (action === "test") {
+      accountIds = [];
     } else if (selected_accounts && selected_accounts.length > 0) {
       // Käytä valittuja tilejä
-      accountIds = selected_accounts
+      accountIds = selected_accounts;
     } else if (socialAccounts && socialAccounts.length > 0) {
       // Fallback: käytä ensimmäistä yhdistettyä tiliä
-      accountIds = [socialAccounts[0].mixpost_account_uuid]
+      accountIds = [socialAccounts[0].mixpost_account_uuid];
     }
 
     // Lähetetään data N8N webhook:iin
-    const webhookUrl = process.env.N8N_BLOG_PUBLISH_URL
-    
+    const webhookUrl = process.env.N8N_BLOG_PUBLISH_URL;
+
     if (!webhookUrl) {
-      return res.status(500).json({ 
-        error: 'N8N_BLOG_PUBLISH_URL ympäristömuuttuja ei ole asetettu',
-        hint: 'Aseta N8N_BLOG_PUBLISH_URL Vercel-ympäristömuuttujaksi'
-      })
+      return res.status(500).json({
+        error: "N8N_BLOG_PUBLISH_URL ympäristömuuttuja ei ole asetettu",
+        hint: "Aseta N8N_BLOG_PUBLISH_URL Vercel-ympäristömuuttujaksi",
+      });
     }
-    
+
     // Käsittele scheduled_date ja publish_date erillisiksi date ja time kentiksi
-    let date = null
-    let time = null
-    
+    let date = null;
+    let time = null;
+
     // Käytä publish_date jos se on saatavilla (sisältää ajan)
-    if (publish_date && publish_date.trim() !== '') {
+    if (publish_date && publish_date.trim() !== "") {
       try {
-        const dateTime = new Date(publish_date)
+        const dateTime = new Date(publish_date);
         if (!isNaN(dateTime.getTime())) {
-          date = dateTime.toISOString().split('T')[0] // YYYY-MM-DD
-          time = dateTime.toTimeString().split(' ')[0] // HH:MM:SS
+          date = dateTime.toISOString().split("T")[0]; // YYYY-MM-DD
+          time = dateTime.toTimeString().split(" ")[0]; // HH:MM:SS
         }
       } catch (error) {
-        console.error('Error parsing publish_date:', error)
+        console.error("Error parsing publish_date:", error);
       }
     }
     // Fallback: käytä scheduled_date jos publish_date ei ole saatavilla
-    else if (scheduled_date && scheduled_date.trim() !== '') {
+    else if (scheduled_date && scheduled_date.trim() !== "") {
       try {
-        const dateTime = new Date(scheduled_date)
+        const dateTime = new Date(scheduled_date);
         if (!isNaN(dateTime.getTime())) {
-          date = dateTime.toISOString().split('T')[0] // YYYY-MM-DD
-          time = null // scheduled_date ei sisällä aikaa
+          date = dateTime.toISOString().split("T")[0]; // YYYY-MM-DD
+          time = null; // scheduled_date ei sisällä aikaa
         }
       } catch (error) {
-        console.error('Error parsing scheduled_date:', error)
+        console.error("Error parsing scheduled_date:", error);
       }
     }
-    
+
     // Luodaan turvallinen payload: userId on luotettu, data on epäluotettu
     const safePayload = {
-      userId: req.authUser?.id || auth_user_id,  // Luotettu auth.users.id
+      userId: req.authUser?.id || auth_user_id, // Luotettu auth.users.id
       data: {
         post_id,
         user_id: orgId, // Käytetään organisaation ID:tä
@@ -184,41 +174,43 @@ async function handler(req, res) {
         time,
         action: action, // Käytä frontendin lähettämää actionia ('publish', 'schedule', 'test')
         post_type, // 'post', 'reel', 'carousel'
-        workspace_uuid: mixpost_workspace_uuid || mixpostConfig.mixpost_workspace_uuid,
-        mixpost_api_token: mixpost_api_token || mixpostConfig.mixpost_api_token,
-        account_ids: accountIds, // Useita tilejä (tyhjä array jos action === 'test')
+        workspace_uuid:
+          mixpost_workspace_uuid ||
+          mixpostConfig?.mixpost_workspace_uuid ||
+          null,
+        mixpost_api_token:
+          mixpost_api_token || mixpostConfig?.mixpost_api_token || null,
+        account_ids: accountIds, // Useita tilejä (tyhjä array jos ei sometilejä)
         selected_accounts: selected_accounts, // Valitut tilit
-        timestamp: new Date().toISOString()
-      }
-    }
+        timestamp: new Date().toISOString(),
+      },
+    };
 
     // Lähetetään N8N:ään HMAC-allekirjoituksella käyttäen sendToN8N funktiota
-    let result = { success: true, message: 'Blog published successfully' }
-    
+    let result = { success: true, message: "Blog published successfully" };
+
     try {
-      result = await sendToN8N(webhookUrl, safePayload)
+      result = await sendToN8N(webhookUrl, safePayload);
     } catch (error) {
-      console.error('Webhook request failed:', error)
+      console.error("Webhook request failed:", error);
       return res.status(500).json({
         success: false,
-        error: 'Blogin julkaisu epäonnistui',
-        details: error.message
-      })
+        error: "Blogin julkaisu epäonnistui",
+        details: error.message,
+      });
     }
 
     return res.status(200).json({
       success: true,
       data: result,
-      message: 'Blog published successfully'
-    })
-
+      message: "Blog published successfully",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: error.message
-    })
+      error: error.message,
+    });
   }
 }
 
-export default withOrganization(handler)
-
+export default withOrganization(handler);

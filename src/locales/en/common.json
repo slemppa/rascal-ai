@@ -1534,7 +1534,6 @@
     "manageTab": {
       "header": { "title": "Manage call types" },
       "cta": { "addNew": "➕ Add new type" },
-      "description": "Manage call types in the Supabase database. Only types with Active status are shown in calls.",
       "existing": { "title": "Existing call types" },
       "loading": "Loading call types...",
       "empty": "No call types added yet",

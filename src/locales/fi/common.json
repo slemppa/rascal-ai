@@ -1585,7 +1585,6 @@
     "manageTab": {
       "header": { "title": "Puhelun tyyppien hallinta" },
       "cta": { "addNew": "Lisää uusi tyyppi" },
-      "description": "Hallitse puhelun tyyppejä Supabase-tietokannassa. Vain Active-status olevat tyypit näkyvät puheluissa.",
       "existing": { "title": "Olemassa olevat puhelun tyypit" },
       "loading": "Ladataan puhelun tyyppejä...",
       "empty": "Ei puhelun tyyppejä vielä lisätty",

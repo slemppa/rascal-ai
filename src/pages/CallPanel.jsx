@@ -3409,11 +3409,7 @@ export default function CallPanel() {
                 {t('calls.manageTab.cta.addNew')}
               </Button>
             </div>
-            
-            <p style={{ margin: '0 0 24px 0', color: '#6b7280', fontSize: 14 }}>
-              {t('calls.manageTab.description')}
-            </p>
-            
+
             {/* Olemassa olevat puhelun tyypit */}
             <div>
               <h3 style={{ margin: '0 0 16px 0', fontSize: 18, fontWeight: 600, color: '#374151' }}>

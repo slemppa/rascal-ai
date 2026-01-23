@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.120.1](https://github.com/slemppa/rascal-ai/compare/v1.120.0...v1.120.1) (2026-01-23)
+
+
+### 🔧 Chores
+
+* päivitä login-photo.png ([45c4b62](https://github.com/slemppa/rascal-ai/commit/45c4b62c345312b64a89ccd149d845823a6a960b))
+
+
+### ✨ Features
+
+* lisää postauksen monistus-toiminnallisuus ([3c31679](https://github.com/slemppa/rascal-ai/commit/3c3167964fe3208b700be127b7b15df885100be9))
+* lisää superadmin-rooli ja päivitä roolihierarkia ([36f598e](https://github.com/slemppa/rascal-ai/commit/36f598e505a3f4cfcb510a8403f2b1859625e995))
+* lisää toast-vahvistus modaalien sulkemiseen ([671f044](https://github.com/slemppa/rascal-ai/commit/671f044f4fd018e2b8c27c47b9652c2b7a7039ba))
+* poista scatter- ja heatmap-kaaviot dashboardilta ([3205151](https://github.com/slemppa/rascal-ai/commit/3205151719886c07a66745e5046be73a40d66968))
+* päivitä sivustorakentaja URL ja siirrä ympäristömuuttujaan ([93d0922](https://github.com/slemppa/rascal-ai/commit/93d09222619b052fbbf27805bd141b9547013c87))
+
+
+### 🐛 Bug Fixes
+
+* **auth:** lisää superadmin-tuki ja korjaa käyttöoikeudet ([d635a79](https://github.com/slemppa/rascal-ai/commit/d635a7966ca2a3af8b163380c6752a331047c493))
+* **kanban:** korjaa drag & drop -toiminnallisuuden ongelmat ([dc410f2](https://github.com/slemppa/rascal-ai/commit/dc410f20e27bb6ab4028d38347e29ee3bde68492))
+* korjaa duplikaatti-tallennus puhelutyyppien modaaleissa ([8e46444](https://github.com/slemppa/rascal-ai/commit/8e464446b849a845827fa4c829f3ef10026a0fcd))
+* korjaa modal restore, blog-julkaisu ja feature-gating ([85577e2](https://github.com/slemppa/rascal-ai/commit/85577e2826ceff860ebd2c36c708045f621b7e1a))
+* korjaa sivustorakentaja URL ja ohjauslogiikka ([c475e91](https://github.com/slemppa/rascal-ai/commit/c475e91e870b018899617d5247921413f61322d2))
+* OpenBuilderButton.jsx fix ([db127e8](https://github.com/slemppa/rascal-ai/commit/db127e87a998af5bad6ab50b9d48a83003882cf6))
+* **permissions:** salli moderaattoreiden pääsy account-manageriin ([300230c](https://github.com/slemppa/rascal-ai/commit/300230c60399c061f7b540cf7f3302ccbac788cd))
+* translation issues in calls module ([b12e9bc](https://github.com/slemppa/rascal-ai/commit/b12e9bc03a8cea1f9c4ac3f66aa9c9142597df48))
+* **ui:** korjaa minimoidut modalit etteivät mene päällekkäin ([f481b16](https://github.com/slemppa/rascal-ai/commit/f481b165a96685abf57f508139679c5df5c9689c))
+* **ui:** poista login-kuvan hover-efekti ([0bf0f0e](https://github.com/slemppa/rascal-ai/commit/0bf0f0ec6fd430703b9dc1ecaa9636a766166f48))
+* **ui:** poista Manage call types -kuvaus /calls-sivulta ([d895574](https://github.com/slemppa/rascal-ai/commit/d8955747b04bd7a90a87ca9df9c309d5ed5039b8))
+
 ## [1.120.0](https://github.com/slemppa/rascal-ai/compare/v1.119.1...v1.120.0) (2026-01-19)
 
 

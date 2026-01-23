@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { createPortal } from "react-dom";
@@ -163,6 +163,8 @@ export default function ManagePostsPage() {
       try {
         if (!showEditModal || editModalStep !== 2) return;
         if (!user) return;
+        // Optimization #5: Estä uudelleenhaku jos avataarit on jo haettu
+        if (avatarImages.length > 0) return;
 
         setAvatarLoading(true);
         setAvatarError("");
@@ -299,10 +301,15 @@ export default function ManagePostsPage() {
     if (!user || hasInitialized.current) return;
 
     hasInitialized.current = true;
-    fetchPosts();
-    fetchReelsPosts(); // Haetaan reels data automaattisesti
-    fetchSocialAccounts(); // Haetaan somekanavat
-    fetchMixpostPosts(); // Haetaan Mixpost postaukset
+    // Optimization #2: Parallel Data Fetching - haetaan kaikki data rinnakkain
+    Promise.all([
+      fetchPosts(),
+      fetchReelsPosts(),
+      fetchSocialAccounts(),
+      fetchMixpostPosts(),
+    ]).catch((error) => {
+      console.error("Error fetching initial data:", error);
+    });
   }, [
     user,
     fetchPosts,
@@ -340,19 +347,21 @@ export default function ManagePostsPage() {
   // allPosts, currentLoading, currentError käytetään hookista
   const currentPosts = allPosts;
 
-  // Filtteröidään postit
-  const filteredPosts = allPosts.filter((post) => {
-    const matchesSearch =
-      (post.title?.toLowerCase() || "").includes(
-        debouncedSearchTerm.toLowerCase(),
-      ) ||
-      (post.caption?.toLowerCase() || "").includes(
-        debouncedSearchTerm.toLowerCase(),
-      );
-    const matchesStatus = statusFilter === "" || post.status === statusFilter;
-    const matchesType = typeFilter === "" || post.type === typeFilter;
-    return matchesSearch && matchesStatus && matchesType;
-  });
+  // Optimization #4: Memoize filteredPosts - suodatus ajetaan vain kun riippuvuudet muuttuvat
+  const filteredPosts = useMemo(() => {
+    return allPosts.filter((post) => {
+      const matchesSearch =
+        (post.title?.toLowerCase() || "").includes(
+          debouncedSearchTerm.toLowerCase(),
+        ) ||
+        (post.caption?.toLowerCase() || "").includes(
+          debouncedSearchTerm.toLowerCase(),
+        );
+      const matchesStatus = statusFilter === "" || post.status === statusFilter;
+      const matchesType = typeFilter === "" || post.type === typeFilter;
+      return matchesSearch && matchesStatus && matchesType;
+    });
+  }, [allPosts, debouncedSearchTerm, statusFilter, typeFilter]);
 
   // "Valmiina julkaisuun" (Tarkistuksessa) postaukset
   const readyPosts = filteredPosts.filter(
@@ -765,19 +774,19 @@ export default function ManagePostsPage() {
       } catch (error) {
         console.error("Error updating Supabase:", error);
         setErrorMessage("Tietojen tallentaminen epäonnistui");
+        // Optimization #1: Virhetilanteessa palautetaan vanha data
+        try {
+          await fetchPosts();
+          if (editingPost.source === "reels") {
+            await fetchReelsPosts();
+          }
+        } catch (fetchError) {
+          console.error("Error recovering data:", fetchError);
+        }
         return;
       }
 
-      // Päivitetään data palvelimelta varmistaaksemme synkronointi
-      try {
-        await fetchPosts();
-        if (editingPost.source === "reels") {
-          await fetchReelsPosts();
-        }
-      } catch (error) {
-        console.error("Error refreshing data:", error);
-        // Jatketaan silti modaalin sulkemista
-      }
+      // Optimization #1: Ei haeta dataa uudelleen onnistumisen jälkeen - optimistinen päivitys riittää
 
       setShowEditModal(false);
       setEditingPost(null);
@@ -785,6 +794,22 @@ export default function ManagePostsPage() {
   };
 
   const handleDeletePost = async (post) => {
+    // Optimization #1: Optimistinen UI-päivitys - poistetaan heti näkyvistä
+    const previousPosts = [...posts];
+    const previousReelsPosts = [...reelsPosts];
+    const wasModalOpen = editingPost && editingPost.id === post.id;
+
+    setPosts((prev) => prev.filter((p) => p.id !== post.id));
+    if (post.source === "reels") {
+      setReelsPosts((prev) => prev.filter((p) => p.id !== post.id));
+    }
+
+    // Sulje modaali jos se on auki tälle postaukselle
+    if (wasModalOpen) {
+      setShowEditModal(false);
+      setEditingPost(null);
+    }
+
     try {
       // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
       const userId = await getUserOrgId(user.id);
@@ -804,15 +829,16 @@ export default function ManagePostsPage() {
         throw new Error(updateError.message);
       }
 
-      // Päivitetään UI
-      await fetchPosts();
-      if (post.source === "reels") {
-        await fetchReelsPosts();
-      }
+      // Optimization #1: Ei haeta dataa uudelleen onnistumisen jälkeen
 
       toast.success(t("posts.alerts.deleted"));
     } catch (error) {
       console.error("Delete error:", error);
+      // Optimization #1: Virhetilanteessa palautetaan alkuperäinen data
+      setPosts(previousPosts);
+      if (post.source === "reels") {
+        setReelsPosts(previousReelsPosts);
+      }
       toast.error(t("posts.alerts.deleteFailed", { message: error.message }));
     }
   };
@@ -1054,10 +1080,9 @@ export default function ManagePostsPage() {
       };
 
       // Päivitetään paikallinen tila heti
-      setPosts((prevPosts) => {
-        const filteredPosts = prevPosts.filter((p) => p.id !== post.id);
-        return [...filteredPosts, updatedPost];
-      });
+      setPosts((prevPosts) =>
+        prevPosts.map((p) => (p.id === post.id ? updatedPost : p)),
+      );
 
       setSuccessMessage(result.message || t("posts.messages.scheduleSuccess"));
       setShowEditModal(false);
@@ -1082,8 +1107,10 @@ export default function ManagePostsPage() {
     setSelectedAccounts([]); // Tyhjennä aiemmat valinnat
     setShowPublishModal(true);
 
-    // Haetaan somekanavat kun modaali avataan
-    await fetchSocialAccounts();
+    // Optimization #3: Haetaan somekanavat vain jos ne puuttuvat
+    if (socialAccounts.length === 0) {
+      await fetchSocialAccounts();
+    }
   };
 
   const handleConfirmPublish = async (publishDate) => {
@@ -1176,6 +1203,41 @@ export default function ManagePostsPage() {
 
       console.log("Sending publish data:", publishData);
 
+      // Optimization #1: Optimistinen UI-päivitys - päivitetään status heti
+      const previousPosts = [...posts];
+      const previousReelsPosts = [...reelsPosts];
+
+      const newStatus =
+        publishDate && new Date(publishDate) > new Date()
+          ? "Aikataulutettu"
+          : "Julkaistu";
+
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === publishingPost.id
+            ? {
+                ...p,
+                status: newStatus,
+                publishDate: publishDate || p.publishDate,
+              }
+            : p,
+        ),
+      );
+
+      if (publishingPost.source === "reels") {
+        setReelsPosts((prev) =>
+          prev.map((p) =>
+            p.id === publishingPost.id
+              ? {
+                  ...p,
+                  status: newStatus,
+                  publishDate: publishDate || p.publishDate,
+                }
+              : p,
+          ),
+        );
+      }
+
       const response = await fetch("/api/social/posts/actions", {
         method: "POST",
         headers: {
@@ -1193,11 +1255,7 @@ export default function ManagePostsPage() {
         throw new Error(result.error || "Julkaisu epäonnistui");
       }
 
-      // Päivitetään UI
-      await fetchPosts();
-      if (publishingPost.source === "reels") {
-        await fetchReelsPosts();
-      }
+      // Optimization #1: Ei haeta dataa uudelleen onnistumisen jälkeen
 
       setSuccessMessage(result.message || t("posts.messages.publishSuccess"));
       setShowPublishModal(false);
@@ -1205,20 +1263,51 @@ export default function ManagePostsPage() {
       setSelectedAccounts([]);
     } catch (error) {
       console.error("Publish error:", error);
+      // Optimization #1: Virhetilanteessa palautetaan alkuperäinen data
+      setPosts(previousPosts);
+      if (publishingPost?.source === "reels") {
+        setReelsPosts(previousReelsPosts);
+      }
       setErrorMessage(t("posts.messages.publishError") + " " + error.message);
     }
   };
 
   const handleMoveToNext = async (post, newStatus) => {
-    try {
-      // Varmistetaan että kyseessä on Supabase-postaus
-      if (post.source !== "supabase") {
-        setErrorMessage(
-          "Siirtyminen on mahdollista vain Supabase-postauksille",
-        );
-        return;
-      }
+    // Varmistetaan että kyseessä on Supabase-postaus
+    if (post.source !== "supabase") {
+      setErrorMessage("Siirtyminen on mahdollista vain Supabase-postauksille");
+      return;
+    }
 
+    // Optimization #1: ENSIN päivitetään UI optimistisesti
+    const updatedPost = {
+      ...post,
+      status: newStatus,
+      updated_at: new Date().toISOString(),
+    };
+
+    const previousPosts = [...posts];
+    const previousEditingPost = editingPost;
+
+    setPosts((prevPosts) =>
+      prevPosts.map((p) => (p.id === post.id ? updatedPost : p)),
+    );
+
+    // Jos modaali on auki tälle postaukselle, sulje se
+    // Modaalit on tarkoitettu tietyille statuksille, joten kun status muuttuu, modaali ei ole enää relevantti
+    if (editingPost && editingPost.id === post.id) {
+      setShowEditModal(false);
+      setEditingPost(null);
+    }
+
+    // Sulje myös julkaisumodaali jos se on auki
+    if (publishingPost && publishingPost.id === post.id) {
+      setShowPublishModal(false);
+      setPublishingPost(null);
+    }
+
+    // SITTEN lähetetään API-kutsu taustalla
+    try {
       // Hae oikea user_id (organisaation ID kutsutuille käyttäjille)
       const userId = await getUserOrgId(user.id);
 
@@ -1246,28 +1335,15 @@ export default function ManagePostsPage() {
         throw new Error(t("posts.messages.supabaseUpdateFailed"));
       }
 
-      // Optimistinen UI-päivitys - siirretään postaus heti sarakkeeseen
-      const updatedPost = {
-        ...post,
-        status: newStatus,
-        updated_at: new Date().toISOString(),
-      };
-
-      // Päivitetään paikallinen tila heti
-      setPosts((prevPosts) => {
-        const filteredPosts = prevPosts.filter((p) => p.id !== post.id);
-        return [...filteredPosts, updatedPost];
-      });
-
       setSuccessMessage(`Postaus siirretty sarakkeeseen: ${newStatus}`);
-
-      // Haetaan data taustalla varmistamaan synkronointi
-      setTimeout(async () => {
-        await fetchPosts();
-      }, 1000);
     } catch (error) {
       console.error("Move to next error:", error);
       setErrorMessage(t("posts.messages.moveError") + " " + error.message);
+      // Optimization #1: Virhetilanteessa palautetaan vanha data
+      setPosts(previousPosts);
+      if (previousEditingPost) {
+        setEditingPost(previousEditingPost);
+      }
     }
   };
 

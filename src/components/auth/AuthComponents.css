@@ -56,12 +56,7 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.6);
-  transition: opacity 0.3s ease;
   opacity: 1;
-}
-
-.login-photo-container:hover .login-photo-overlay {
-  background: rgba(255, 107, 43, 0.2);
 }
 
 

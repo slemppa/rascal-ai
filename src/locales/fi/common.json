@@ -365,15 +365,7 @@
       "empty": "Ei kampanjoita"
     },
     "charts": {
-      "title": "Puhelut ja viestit aikajärjestyksessä",
-      "scatter": "Kesto vs. onnistumisaste",
-      "heatmap": "Parhaiten toimivat puheluajat",
-      "day": "Päivä",
-      "axis": {
-        "duration": "Kesto (s)",
-        "successRate": "Onnistumis%",
-        "count": "Lukumäärä"
-      }
+      "title": "Puhelut ja viestit aikajärjestyksessä"
     },
     "visitors": {
       "title": "Sivuston kävijät",

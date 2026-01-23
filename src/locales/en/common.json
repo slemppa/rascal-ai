@@ -365,15 +365,7 @@
       "empty": "No campaigns"
     },
     "charts": {
-      "title": "Calls and messages over time",
-      "scatter": "Duration vs success rate",
-      "heatmap": "Best performing call times",
-      "day": "Day",
-      "axis": {
-        "duration": "Duration (s)",
-        "successRate": "Success %",
-        "count": "Count"
-      }
+      "title": "Calls and messages over time"
     },
     "status": {
       "Draft": "Draft",

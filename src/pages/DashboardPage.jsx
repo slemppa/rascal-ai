@@ -346,8 +346,6 @@ export default function DashboardPage() {
   const [chartLoading, setChartLoading] = useState(true)
   const [successStats, setSuccessStats] = useState({ total: 0, answered: 0, success: 0, answerRate: 0, successRate: 0, perDay: [] })
   const [campaignMetrics, setCampaignMetrics] = useState([])
-  const [scatterData, setScatterData] = useState([])
-  const [heatmapData, setHeatmapData] = useState([])
   
   // Google Analytics -kävijätiedot
   const [gaConnected, setGaConnected] = useState(false)
@@ -533,16 +531,7 @@ export default function DashboardPage() {
       if (authLoading || !user) return
       try {
         const session = await supabase.auth.getSession()
-        const token = session?.data?.session?.access_token
-        if (!token) return
-        const [scRes, hmRes] = await Promise.all([
-          fetch(`/api/analytics/scatter?days=30`, { headers: { Authorization: `Bearer ${token}` } }),
-          fetch(`/api/analytics/heatmap?days=30`, { headers: { Authorization: `Bearer ${token}` } })
-        ])
-        const scJson = await scRes.json().catch(() => [])
-        const hmJson = await hmRes.json().catch(() => [])
-        if (Array.isArray(scJson)) setScatterData(scJson)
-        if (Array.isArray(hmJson)) setHeatmapData(hmJson)
+        // Heatmap ja scatter API-kutsut poistettu
       } catch (_) {}
     }
     fetchAdvanced()
@@ -1443,62 +1432,8 @@ export default function DashboardPage() {
 
         </div>
         
-        {/* Split-row: 3/5 (scatter) + 2/5 (heatmap) */}
-        <div style={{ gridColumn: '1 / -1', paddingTop: 16, paddingBottom: 8, maxWidth: '100%', overflow: 'hidden' }}>
-          <div className={styles['split-row']}>
-            <div className={styles.card} style={{ minHeight: 220, display: 'flex', flexDirection: 'column', maxWidth: '100%', overflow: 'hidden' }}>
-              <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>{t('dashboard.charts.scatter')}</div>
-              <div style={{ width: '100%', height: 220 }}>
-                <ResponsiveContainer width="100%" height={220}>
-                  <ScatterChart>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="avgDurationSec" name={t('dashboard.charts.axis.duration')} unit="s" stroke="#6b7280" fontSize={12} />
-                    <YAxis dataKey="successRate" name={t('dashboard.charts.axis.successRate')} unit="%" stroke="#6b7280" fontSize={12} />
-                    <ZAxis dataKey="count" range={[40, 200]} name={t('dashboard.charts.axis.count')} />
-                    <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value, name) => [value, name]} />
-                    <Legend />
-                    <Scatter name="Bin" data={scatterData} fill="#2563eb" />
-                  </ScatterChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-            <div className={styles.card} style={{ minHeight: 260, display: 'flex', flexDirection: 'column', maxWidth: '100%', overflow: 'hidden' }}>
-              <div style={{ fontWeight: 700, fontSize: 'clamp(16px, 4vw, 18px)', color: '#1f2937', marginBottom: 12 }}>{t('dashboard.charts.heatmap')}</div>
-              <div style={{ overflowX: 'auto', maxWidth: '100%', width: '100%' }}>
-                <table style={{ width: '100%', maxWidth: '720px', borderCollapse: 'collapse', minWidth: 'min(720px, 100%)' }}>
-                  <thead>
-                    <tr style={{ color: '#1f2937', fontWeight: 600, background: '#f7f8fc' }}>
-                      <th style={{ padding: 6, textAlign: 'left' }}>{t('dashboard.charts.day')}</th>
-                      {Array.from({ length: 24 }).map((_, h) => (
-                        <th key={h} style={{ padding: 4, fontSize: 11 }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Array.from({ length: 7 }).map((_, d) => {
-                      const dayLabels = i18n.language === 'fi' ? ['Ma','Ti','Ke','To','Pe','La','Su'] : ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
-                      const dayLabel = dayLabels[d]
-                      return (
-                        <tr key={d}>
-                          <td style={{ padding: 6, fontWeight: 600, color: '#374151' }}>{dayLabel}</td>
-                          {Array.from({ length: 24 }).map((_, h) => {
-                            const cell = heatmapData.find(x => x.day === d && x.hour === h) || { total: 0, success: 0 }
-                            const rate = cell.total > 0 ? Math.round((cell.success / cell.total) * 100) : 0
-                            const alpha = rate === 0 ? 0.05 : Math.min(0.85, 0.15 + rate / 100)
-                            const bg = `rgba(34,197,94,${alpha})`
-                            return (
-                              <td key={h} title={`${rate}% (${cell.success}/${cell.total})`} style={{ width: 24, height: 18, background: bg, border: '1px solid #fff' }} />
-                            )
-                          })}
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Heatmap */}
+        {/* Heatmap ja scatter kaaviot poistettu */}
         
         {/* Grafiikki Section - VAPIn tyylillä */}
         <div className={styles['chart-section']}>

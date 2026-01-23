@@ -202,6 +202,17 @@
   .onboarding-modal-footer {
     padding: 16px 24px 30px;
   }
+
+  .onboarding-modal-minimized {
+    left: 10px;
+    bottom: 10px;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .onboarding-modal-minimized-content span {
+    display: none;
+  }
 }
 
 /* Minimized state */
@@ -226,8 +237,7 @@
 .onboarding-modal-minimized {
   position: fixed;
   bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 20px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -243,18 +253,18 @@
 
 @keyframes slideUpMinimized {
   from {
-    transform: translateX(-50%) translateY(100px);
+    transform: translateY(100px);
     opacity: 0;
   }
   to {
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
 
 .onboarding-modal-minimized:hover {
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
-  transform: translateX(-50%) translateY(-2px);
+  transform: translateY(-2px);
 }
 
 .onboarding-modal-minimized-content {

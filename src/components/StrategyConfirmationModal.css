@@ -2,8 +2,7 @@
 .strategy-modal-minimized {
   position: fixed;
   bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 20px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -14,23 +13,23 @@
   align-items: center;
   gap: 12px;
   transition: all 0.2s;
-  animation: slideUpMinimized 0.3s ease-out;
+  animation: slideUpMinimizedStrategy 0.3s ease-out;
 }
 
-@keyframes slideUpMinimized {
+@keyframes slideUpMinimizedStrategy {
   from {
-    transform: translateX(-50%) translateY(100px);
+    transform: translateY(100px);
     opacity: 0;
   }
   to {
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
 
 .strategy-modal-minimized:hover {
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
-  transform: translateX(-50%) translateY(-2px);
+  transform: translateY(-2px);
 }
 
 .strategy-modal-minimized-content {
@@ -72,6 +71,20 @@
 .btn-text:hover {
   color: #111827;
   text-decoration: underline;
+}
+
+/* Responsive - mobiili */
+@media (max-width: 640px) {
+  .strategy-modal-minimized {
+    right: 10px;
+    bottom: 10px;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .strategy-modal-minimized-content span {
+    display: none;
+  }
 }
 
 

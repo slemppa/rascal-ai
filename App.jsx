@@ -132,6 +132,10 @@ export default function App() {
                   <Route path="/dev" element={<DevPage />} />
                   <Route path="/admin-blog" element={<AdminBlogPage />} />
                   <Route path="/admin-testimonials" element={<AdminTestimonialsPage />} />
+                </Route>
+
+                {/* Moderator-reitit (vaativat moderator-roolin tai ylemmän) */}
+                <Route element={<ProtectedRoute requiredRole="moderator"><Layout /></ProtectedRoute>}>
                   <Route path="/account-manager" element={<AccountManagerPage />} />
                   <Route path="/account-manager/:id" element={<AccountDetailsPage />} />
                 </Route>

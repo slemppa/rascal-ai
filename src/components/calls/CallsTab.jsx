@@ -85,7 +85,7 @@ export default function CallsTab({
       <div className="card">
         <h2 className="section-title">Tietokanta</h2>
         <p style={{ color: '#6b7280', marginBottom: 20, fontSize: 15 }}>
-          Hallitse Synthflown knowledge basea (tiedostot ja sisältö), jota käytetään puheluissa.
+          Hallitse tietokantaa (tiedostot ja sisältö), jota käytetään puheluissa.
         </p>
         <Button
           onClick={openCallsKnowledgeModal}

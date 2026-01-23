@@ -941,6 +941,10 @@
       "manage": "Manage",
       "crm": "CRM"
     },
+    "common": {
+      "cancel": "Cancel",
+      "close": "Close"
+    },
     "callsTab": {
       "mass": {
         "header": "Mass calls",

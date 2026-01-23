@@ -949,6 +949,13 @@
       "manage": "Hallinta",
       "crm": "CRM"
     },
+    "common": {
+      "cancel": "Peruuta",
+      "close": "Sulje",
+      "back": "Takaisin",
+      "continue": "Jatka",
+      "save": "Tallenna"
+    },
     "logsTab": {
       "buttons": {
         "export": "Vie CSV",

@@ -1,13 +1,15 @@
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import styles from './Sidebar.module.css'
 
 export function OpenBuilderButton() {
+  const { t } = useTranslation('common')
   const handleOpenBuilder = async () => {
     // 1. Hae nykyinen sessio
     const { data: { session } } = await supabase.auth.getSession()
     
     if (!session) {
-      alert('Kirjaudu ensin sisään!')
+      alert(t('alerts.error.loginRequired'))
       return
     }
 
@@ -51,7 +53,7 @@ export function OpenBuilderButton() {
             <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </span>
-        Avaa Sivustorakentaja
+        {t('sidebar.labels.siteBuilder')}
       </button>
     </li>
   )

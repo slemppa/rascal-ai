@@ -24,6 +24,7 @@ describe("StrategyConfirmationModal", () => {
     onClose: mockOnClose,
     onRequestUpdate: mockOnRequestUpdate,
     loading: false,
+    userStatus: "Pending",
   };
 
   beforeEach(() => {
@@ -164,14 +165,14 @@ describe("StrategyConfirmationModal", () => {
       expect(screen.getByText("strategyModal.checkStrategy")).toBeDefined();
     });
 
-    it("should render minimized view when localStorage has skip flag", () => {
+    it("should render minimized view when localStorage has skip flag and status is Pending", () => {
       const userId = "test-user-123";
       const storageKey = `strategy_modal_skipped_${userId}`;
 
       // Set minimized state before rendering
       localStorage.setItem(storageKey, "true");
 
-      render(<StrategyConfirmationModal {...defaultProps} />);
+      render(<StrategyConfirmationModal {...defaultProps} userStatus="Pending" />);
 
       // Should show minimized view
       expect(screen.getByText("strategyModal.minimized")).toBeDefined();
@@ -179,6 +180,23 @@ describe("StrategyConfirmationModal", () => {
 
       // Should NOT show full modal content
       expect(screen.queryByText("strategyModal.checkStrategy")).toBeNull();
+    });
+
+    it("should NOT render minimized view when userStatus is Approved", () => {
+      const userId = "test-user-123";
+      const storageKey = `strategy_modal_skipped_${userId}`;
+
+      // Set minimized state before rendering
+      localStorage.setItem(storageKey, "true");
+
+      const { container } = render(
+        <StrategyConfirmationModal {...defaultProps} userStatus="Approved" />,
+      );
+
+      // Should NOT show minimized view when status is Approved
+      expect(screen.queryByText("strategyModal.minimized")).toBeNull();
+      // Modal should not render at all (isOpen is true but userStatus is Approved, so minimized check fails, and !isOpen check passes)
+      expect(container.firstChild).toBeNull();
     });
   });
 

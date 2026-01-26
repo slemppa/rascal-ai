@@ -138,6 +138,10 @@ export const StrategyStatusProvider = ({ children }) => {
       if (response.ok) {
         setUserStatus('Approved')
         setShowStrategyModal(false)
+        // Tyhjennä minimoitu-lippu kun strategia on vahvistettu
+        if (user?.id) {
+          localStorage.removeItem(`strategy_modal_skipped_${user.id}`)
+        }
       } else {
         const errorData = await response.json()
         console.error('StrategyStatus: Approval failed:', errorData)

@@ -448,7 +448,8 @@
       "accountManager": "Salkun hallinta",
       "leads": "Liidit",
       "organizationMembers": "Organisaation hallinta",
-      "monitoring": "Mediaseuranta"
+      "monitoring": "Mediaseuranta",
+      "siteBuilder": "Sivustorakentaja"
     },
     "settings": "Asetukset",
     "helpCenter": "Ohjekeskus",

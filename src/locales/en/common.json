@@ -448,7 +448,8 @@
       "leads": "Leads",
       "organizationMembers": "Organization Management",
       "accountManager": "Portfolio Management",
-      "monitoring": "Media Monitoring"
+      "monitoring": "Media Monitoring",
+      "siteBuilder": "Site Builder"
     },
     "settings": "Settings",
     "helpCenter": "Help Center",

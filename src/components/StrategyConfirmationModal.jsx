@@ -11,6 +11,7 @@ const StrategyConfirmationModal = ({
   onClose,
   onRequestUpdate,
   loading,
+  userStatus,
 }) => {
   const { t } = useTranslation("common");
   const { user } = useAuth();
@@ -38,6 +39,14 @@ const StrategyConfirmationModal = ({
     }
   }, [isOpen, user?.id]);
 
+  // Tyhjennä localStorage-lippu ja nollaa isMinimized kun strategia hyväksytään
+  useEffect(() => {
+    if (userStatus === 'Approved' && user?.id) {
+      localStorage.removeItem(`strategy_modal_skipped_${user.id}`);
+      setIsMinimized(false);
+    }
+  }, [userStatus, user?.id]);
+
   const handleSkip = () => {
     // Minimoi modaali ja tallenna localStorageen
     if (user?.id) {
@@ -59,8 +68,9 @@ const StrategyConfirmationModal = ({
     window.dispatchEvent(new CustomEvent("force-strategy-modal-open"));
   };
 
-  // Jos minimoitu, näytä vain pieni nappi
-  if (isMinimized && user?.id) {
+  // Jos minimoitu JA strategia on vielä Pending, näytä pieni nappi
+  // Älä näytä jos strategia on jo hyväksytty
+  if (isMinimized && user?.id && userStatus === 'Pending') {
     return (
       <div className="strategy-modal-minimized" onClick={handleRestore}>
         <div className="strategy-modal-minimized-content">

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { useStrategyStatus } from "../contexts/StrategyStatusContext";
 import { useAuth } from "../contexts/AuthContext";
 import StrategyConfirmationModal from "./StrategyConfirmationModal";
@@ -12,7 +11,6 @@ import StrategyConfirmationModal from "./StrategyConfirmationModal";
 export default function StrategyModalManager() {
   const context = useStrategyStatus();
   const { user, loading } = useAuth();
-  const location = useLocation();
   const [forceOpen, setForceOpen] = useState(false);
 
   // HUOM: Blacklist-logiikka hoidetaan StrategyStatusContext:issa
@@ -20,7 +18,7 @@ export default function StrategyModalManager() {
 
   // Kuuntele window eventejä modalin avaamiseen
   useEffect(() => {
-    const handleOpen = (e) => {
+    const handleOpen = () => {
       setForceOpen(true);
     };
 
@@ -92,6 +90,7 @@ export default function StrategyModalManager() {
       onClose={handleClose}
       onRequestUpdate={context.requestStrategyUpdate}
       loading={context.loading}
+      userStatus={context.userStatus}
     />
   );
 }

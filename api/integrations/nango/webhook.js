@@ -43,19 +43,23 @@ export default async function handler(req, res) {
 
     const {
       type,
+      operation,
       connectionId,
       providerConfigKey,
       provider,
       success,
       error: webhookError,
+      endUser,
     } = req.body;
 
     logger.info("Received Nango webhook", {
       type,
+      operation,
       connectionId,
       providerConfigKey,
       provider,
       success,
+      endUser,
     });
 
     const supabaseUrl =
@@ -71,34 +75,112 @@ export default async function handler(req, res) {
 
     switch (type) {
       case "auth": {
-        if (success && connectionId) {
-          const { data: existingSecret, error: findError } = await supabaseAdmin
-            .from("user_secrets")
-            .select("id, user_id, metadata")
-            .eq("secret_type", "nango_connection")
-            .eq("secret_value", connectionId)
-            .eq("is_active", true)
-            .maybeSingle();
+        if (operation === "creation" && success && connectionId) {
+          const orgId = endUser?.endUserId || endUser?.id;
 
-          if (!findError && existingSecret) {
-            await supabaseAdmin
-              .from("user_secrets")
-              .update({
-                metadata: {
-                  ...existingSecret.metadata,
-                  last_auth_at: new Date().toISOString(),
-                  auth_success: true,
-                },
-              })
-              .eq("id", existingSecret.id);
-
-            logger.info("Updated Nango connection after auth webhook", {
+          if (!orgId) {
+            logger.error("Missing endUser.endUserId in auth creation webhook", {
               connectionId,
-              userId: existingSecret.user_id,
+              endUser,
             });
+            break;
           }
-        } else if (!success && webhookError) {
-          logger.warn("Nango auth failed", {
+
+          const integrationMapping = {
+            "google-ads": {
+              id: "google_ads",
+              secretType: "nango_connection",
+              secretName: "Google Ads Connection",
+            },
+            "facebook-ads": {
+              id: "meta_ads",
+              secretType: "nango_connection",
+              secretName: "Meta Ads Connection",
+            },
+          };
+
+          const integrationConfig = integrationMapping[providerConfigKey];
+          if (!integrationConfig) {
+            logger.warn("Unknown provider in auth creation webhook", {
+              providerConfigKey,
+            });
+            break;
+          }
+
+          const encryptionKey = process.env.USER_SECRETS_ENCRYPTION_KEY;
+          if (!encryptionKey) {
+            logger.error(
+              "Missing USER_SECRETS_ENCRYPTION_KEY for auth webhook",
+            );
+            break;
+          }
+
+          const { error: secretError } = await supabaseAdmin.rpc(
+            "store_user_secret",
+            {
+              p_user_id: orgId,
+              p_secret_type: integrationConfig.secretType,
+              p_secret_name: integrationConfig.secretName,
+              p_plaintext_value: connectionId,
+              p_encryption_key: encryptionKey,
+              p_metadata: {
+                provider: providerConfigKey,
+                integration_id: integrationConfig.id,
+                connection_id: connectionId,
+                connected_at: new Date().toISOString(),
+                source: "nango_webhook",
+              },
+            },
+          );
+
+          if (secretError) {
+            logger.error("Error storing Nango connection from auth webhook", {
+              message: secretError.message,
+              code: secretError.code,
+              orgId,
+            });
+          } else {
+            logger.info("Nango connection saved via auth webhook", {
+              orgId,
+              connectionId,
+              provider: providerConfigKey,
+            });
+
+            const n8nWebhookUrl = process.env.N8N_INTEGRATION_WEBHOOK_URL;
+            if (n8nWebhookUrl) {
+              try {
+                const apiBaseUrl =
+                  process.env.APP_URL ||
+                  process.env.NEXT_PUBLIC_APP_URL ||
+                  "https://app.rascalai.fi";
+
+                await sendToN8N(n8nWebhookUrl, {
+                  action: "nango_connected",
+                  integration_type: integrationConfig.secretType,
+                  integration_name: integrationConfig.secretName,
+                  provider: providerConfigKey,
+                  customer_id: orgId,
+                  user_id: orgId,
+                  connection_id: connectionId,
+                  timestamp: new Date().toISOString(),
+                  get_secret_url: `${apiBaseUrl}/api/users/secrets-service`,
+                  get_secret_params: {
+                    secret_type: integrationConfig.secretType,
+                    secret_name: integrationConfig.secretName,
+                    user_id: orgId,
+                  },
+                }).catch((err) =>
+                  logger.warn("n8n webhook warning", { message: err.message }),
+                );
+              } catch (e) {
+                logger.warn("n8n webhook error (non-critical)", {
+                  message: e.message,
+                });
+              }
+            }
+          }
+        } else if (operation === "refresh" && !success && webhookError) {
+          logger.warn("Nango auth refresh failed", {
             connectionId,
             error: webhookError,
           });
@@ -151,110 +233,6 @@ export default async function handler(req, res) {
           } else {
             logger.info("Deactivated Nango connection after deletion webhook", {
               connectionId,
-            });
-          }
-        }
-        break;
-      }
-
-      case "connection.created": {
-        logger.info("Nango connection.created webhook received", {
-          connectionId,
-          providerConfigKey,
-          provider,
-        });
-
-        if (connectionId && providerConfigKey) {
-          const integrationMapping = {
-            "google-ads": {
-              id: "google_ads",
-              secretType: "nango_connection",
-              secretName: "Google Ads Connection",
-            },
-            "facebook-ads": {
-              id: "meta_ads",
-              secretType: "nango_connection",
-              secretName: "Meta Ads Connection",
-            },
-          };
-
-          const integrationConfig = integrationMapping[providerConfigKey];
-          if (integrationConfig) {
-            const encryptionKey = process.env.USER_SECRETS_ENCRYPTION_KEY;
-            if (encryptionKey) {
-              const orgId = connectionId;
-
-              const { error: secretError } = await supabaseAdmin.rpc(
-                "store_user_secret",
-                {
-                  p_user_id: orgId,
-                  p_secret_type: integrationConfig.secretType,
-                  p_secret_name: integrationConfig.secretName,
-                  p_plaintext_value: connectionId,
-                  p_encryption_key: encryptionKey,
-                  p_metadata: {
-                    provider: providerConfigKey,
-                    integration_id: integrationConfig.id,
-                    connected_at: new Date().toISOString(),
-                    source: "nango_webhook",
-                  },
-                },
-              );
-
-              if (secretError) {
-                logger.error("Error storing Nango connection from webhook", {
-                  message: secretError.message,
-                  code: secretError.code,
-                });
-              } else {
-                logger.info("Nango connection saved via webhook", {
-                  orgId,
-                  provider: providerConfigKey,
-                });
-
-                const n8nWebhookUrl = process.env.N8N_INTEGRATION_WEBHOOK_URL;
-                if (n8nWebhookUrl) {
-                  try {
-                    const apiBaseUrl =
-                      process.env.APP_URL ||
-                      process.env.NEXT_PUBLIC_APP_URL ||
-                      "https://app.rascalai.fi";
-
-                    await sendToN8N(n8nWebhookUrl, {
-                      action: "nango_connected",
-                      integration_type: integrationConfig.secretType,
-                      integration_name: integrationConfig.secretName,
-                      provider: providerConfigKey,
-                      customer_id: orgId,
-                      user_id: orgId,
-                      connection_id: connectionId,
-                      timestamp: new Date().toISOString(),
-                      get_secret_url: `${apiBaseUrl}/api/users/secrets-service`,
-                      get_secret_params: {
-                        secret_type: integrationConfig.secretType,
-                        secret_name: integrationConfig.secretName,
-                        user_id: orgId,
-                      },
-                    }).catch((err) =>
-                      logger.warn("n8n webhook warning", {
-                        message: err.message,
-                      }),
-                    );
-                  } catch (e) {
-                    logger.warn("n8n webhook error (non-critical)", {
-                      message: e.message,
-                    });
-                  }
-                }
-              }
-            } else {
-              logger.error(
-                "Missing USER_SECRETS_ENCRYPTION_KEY for connection.created webhook",
-              );
-            }
-          } else {
-            logger.warn("Unknown provider in connection.created webhook", {
-              providerConfigKey,
             });
           }
         }

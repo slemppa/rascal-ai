@@ -2068,7 +2068,8 @@
       "passwordHelp": "Käyttäjät -> muokkaa käyttäjää -> Sovellusten salasanat -> Lisää sovellussalasana -> koodi (näkyy vain kerran)",
       "urlHelp": "Asetukset -> Yleinen -> WordPressin osoite",
       "downloadPlugin": "Lataa WordPress-plugin",
-      "downloadPluginShort": "Lataa plugin"
+      "downloadPluginShort": "Lataa plugin",
+      "pluginDownloaded": "Plugin ladattu"
     },
     "googleAnalytics": {
       "description": "Yhdistä Google Analytics Rascal AI:hin OAuth 2.0 -valtuutuksella",
@@ -2078,6 +2079,26 @@
       "connect": "Yhdistä Google Analytics",
       "connecting": "Yhdistetään...",
       "connectedSuccess": "Google Analytics on yhdistetty onnistuneesti!"
+    },
+    "googleAds": {
+      "description": "Yhdistä Google Ads -tilisi mainoskampanjoiden hallintaan"
+    },
+    "metaAds": {
+      "description": "Yhdistä Meta Ads (Facebook & Instagram) -tilisi mainoskampanjoiden hallintaan"
+    },
+    "nango": {
+      "connect": "Yhdistä",
+      "reconnect": "Yhdistä uudelleen",
+      "connecting": "Yhdistetään...",
+      "connectSuccess": "{{name}} yhdistetty onnistuneesti!",
+      "connectedSuccess": "{{name}} on yhdistetty!",
+      "connectError": "Yhdistäminen epäonnistui",
+      "connectDescription": "Yhdistä {{name}} -tilisi Nangon kautta. Sinut ohjataan valtuutussivulle.",
+      "reconnectHint": "Yhdistä uudelleen jos haluat päivittää valtuutuksen.",
+      "disconnectSuccess": "{{name}} -yhteys poistettu onnistuneesti",
+      "disconnectError": "Yhteyden poistaminen epäonnistui",
+      "confirmDisconnect": "Haluatko varmasti poistaa {{name}} -yhteyden?",
+      "cancelled": "Yhdistäminen peruutettu"
     },
     "testConnection": {
       "button": "Testaa yhteys",

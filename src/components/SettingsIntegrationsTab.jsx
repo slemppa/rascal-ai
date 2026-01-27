@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useAuth } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
-import axios from 'axios'
-import { getUserOrgId } from '../lib/getUserOrgId'
-import { useSearchParams } from 'react-router-dom'
-import './SettingsIntegrationsTab.css'
+import React, { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { useAuth } from "../contexts/AuthContext";
+import { useFeatures } from "../hooks/useFeatures";
+import { supabase } from "../lib/supabase";
+import axios from "axios";
+import { getUserOrgId } from "../lib/getUserOrgId";
+import { useSearchParams } from "react-router-dom";
+import "./SettingsIntegrationsTab.css";
 
 // WordPress Logo SVG Component (WordPress "W" logo)
 const WordPressLogo = ({ size = 40 }) => (
@@ -25,7 +26,44 @@ const WordPressLogo = ({ size = 40 }) => (
       fill="#21759B"
     />
   </svg>
-)
+);
+
+// Google Ads Logo SVG Component
+const GoogleAdsLogo = ({ size = 40 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M3.2 15.6L9.6 4.8c.8-1.4 2.6-1.9 4-1.1 1.4.8 1.9 2.6 1.1 4L8.3 18.5c-.8 1.4-2.6 1.9-4 1.1-1.4-.8-1.9-2.6-1.1-4z"
+      fill="#FBBC04"
+    />
+    <path
+      d="M20.8 15.6l-6.4-10.8c-.8-1.4-.3-3.2 1.1-4 1.4-.8 3.2-.3 4 1.1l6.4 10.8c.8 1.4.3 3.2-1.1 4-1.4.8-3.2.3-4-1.1z"
+      fill="#4285F4"
+    />
+    <circle cx="6" cy="18" r="3" fill="#34A853" />
+  </svg>
+);
+
+// Meta Ads Logo SVG Component
+const MetaAdsLogo = ({ size = 40 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12c0-5.523-4.477-10-10-10z"
+      fill="#1877F2"
+    />
+  </svg>
+);
 
 // Google Analytics Logo SVG Component
 const GoogleAnalyticsLogo = ({ size = 40 }) => (
@@ -53,245 +91,290 @@ const GoogleAnalyticsLogo = ({ size = 40 }) => (
       fill="#EA4335"
     />
   </svg>
-)
+);
 
 const AVAILABLE_INTEGRATIONS = [
   {
-    id: 'wordpress',
-    name: 'WordPress',
-    descriptionKey: 'integrations.wordpress.description',
+    id: "wordpress",
+    name: "WordPress",
+    descriptionKey: "integrations.wordpress.description",
     icon: <WordPressLogo size={40} />,
-    secretType: 'wordpress_api_key',
-    secretName: 'WordPress REST API Key',
+    secretType: "wordpress_api_key",
+    secretName: "WordPress REST API Key",
     fields: [
       {
-        id: 'username',
-        label: 'Username',
-        type: 'text',
-        placeholderKey: 'integrations.wordpress.username',
+        id: "username",
+        label: "Username",
+        type: "text",
+        placeholderKey: "integrations.wordpress.username",
         required: true,
-        helpTextKey: 'integrations.wordpress.usernameHelp'
+        helpTextKey: "integrations.wordpress.usernameHelp",
       },
       {
-        id: 'password',
-        label: 'Password',
-        type: 'password',
-        placeholderKey: 'integrations.wordpress.password',
+        id: "password",
+        label: "Password",
+        type: "password",
+        placeholderKey: "integrations.wordpress.password",
         required: true,
-        helpTextKey: 'integrations.wordpress.passwordHelp'
+        helpTextKey: "integrations.wordpress.passwordHelp",
       },
       {
-        id: 'url',
-        label: 'URL',
-        type: 'url',
-        placeholder: 'https://example.com',
+        id: "url",
+        label: "URL",
+        type: "url",
+        placeholder: "https://example.com",
         required: true,
-        helpTextKey: 'integrations.wordpress.urlHelp'
-      }
-    ]
+        helpTextKey: "integrations.wordpress.urlHelp",
+      },
+    ],
   },
   {
-    id: 'google_analytics',
-    name: 'Google Analytics',
-    descriptionKey: 'integrations.googleAnalytics.description',
+    id: "google_analytics",
+    name: "Google Analytics",
+    descriptionKey: "integrations.googleAnalytics.description",
     icon: <GoogleAnalyticsLogo size={40} />,
-    secretType: 'google_analytics_credentials',
-    secretName: 'Google Analytics Refresh Token',
-    useOAuth: true, // Merkitsee että tämä integraatio käyttää OAuthia
-    fields: [] // Ei kenttiä, käytetään OAuth-painiketta
+    secretType: "google_analytics_credentials",
+    secretName: "Google Analytics Refresh Token",
+    useOAuth: true,
+    fields: [],
   },
-  // Lisää tulevaisuudessa muita integraatioita tähän
-]
+  {
+    id: "google_ads",
+    name: "Google Ads",
+    descriptionKey: "integrations.googleAds.description",
+    icon: <GoogleAdsLogo size={40} />,
+    secretType: "nango_connection",
+    secretName: "Google Ads Connection",
+    useNango: true,
+    nangoIntegrationId: "google-ads",
+    feature: "nango",
+    fields: [],
+  },
+  {
+    id: "meta_ads",
+    name: "Meta Ads",
+    descriptionKey: "integrations.metaAds.description",
+    icon: <MetaAdsLogo size={40} />,
+    secretType: "nango_connection",
+    secretName: "Meta Ads Connection",
+    useNango: true,
+    nangoIntegrationId: "facebook-ads",
+    feature: "nango",
+    fields: [],
+  },
+];
 
 export default function SettingsIntegrationsTab() {
-  const { t } = useTranslation('common')
-  const { user, organization } = useAuth()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [integrations, setIntegrations] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState({ type: '', text: '' })
-  const [expandedCard, setExpandedCard] = useState(null)
-  const [oauthConnecting, setOauthConnecting] = useState(false)
-  const [testingConnection, setTestingConnection] = useState(false)
-  
+  const { t } = useTranslation("common");
+  const { user, organization } = useAuth();
+  const { has: hasFeature } = useFeatures();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [integrations, setIntegrations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
+  const [expandedCard, setExpandedCard] = useState(null);
+  const [oauthConnecting, setOauthConnecting] = useState(false);
+  const [nangoConnecting, setNangoConnecting] = useState(false);
+  const [testingConnection, setTestingConnection] = useState(false);
+  const [wordpressPluginDownloaded, setWordpressPluginDownloaded] =
+    useState(false);
+
   // AI-mallin valinta
-  const [aiModel, setAiModel] = useState('gemini')
-  const [aiModelLoading, setAiModelLoading] = useState(true)
-  const [aiModelSaving, setAiModelSaving] = useState(false)
-  const [aiModelMessage, setAiModelMessage] = useState('')
+  const [aiModel, setAiModel] = useState("gemini");
+  const [aiModelLoading, setAiModelLoading] = useState(true);
+  const [aiModelSaving, setAiModelSaving] = useState(false);
+  const [aiModelMessage, setAiModelMessage] = useState("");
 
   const trackPluginDownload = async (source) => {
     try {
-      const session = await supabase.auth.getSession()
-      const token = session.data.session?.access_token
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
 
       if (!token) {
-        console.warn('No access token found for plugin download tracking')
-        return
+        console.warn("No access token found for plugin download tracking");
+        return;
       }
 
-      const timestamp = new Date().toISOString()
-      await axios.post('/api/users/secrets', {
-        secret_type: 'wordpress_plugin_download',
-        secret_name: 'WordPress Plugin Download',
-        plaintext_value: timestamp,
-        metadata: {
-          source,
-          downloaded_at: timestamp
-        }
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
+      const timestamp = new Date().toISOString();
+      await axios.post(
+        "/api/users/secrets",
+        {
+          secret_type: "wordpress_plugin_download",
+          secret_name: "WordPress Plugin Download",
+          plaintext_value: timestamp,
+          metadata: {
+            source,
+            downloaded_at: timestamp,
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      setWordpressPluginDownloaded(true);
     } catch (error) {
-      console.error('Error tracking plugin download:', error)
+      console.error("Error tracking plugin download:", error);
     }
-  }
+  };
 
   // Lataa AI-mallin valinta
   const loadAiModel = useCallback(async () => {
-    if (!user?.id) return
+    if (!user?.id) return;
 
-    setAiModelLoading(true)
+    setAiModelLoading(true);
     try {
       // Hae organisaation ID
-      let orgUserId = null
+      let orgUserId = null;
       if (organization?.id) {
-        orgUserId = organization.id
+        orgUserId = organization.id;
       } else {
-        orgUserId = await getUserOrgId(user.id)
+        orgUserId = await getUserOrgId(user.id);
       }
 
       if (!orgUserId) {
-        console.error('Organisaation ID puuttuu')
-        setAiModelLoading(false)
-        return
+        console.error("Organisaation ID puuttuu");
+        setAiModelLoading(false);
+        return;
       }
 
       const { data, error } = await supabase
-        .from('users')
-        .select('preferred_ai_model')
-        .eq('id', orgUserId)
-        .single()
+        .from("users")
+        .select("preferred_ai_model")
+        .eq("id", orgUserId)
+        .single();
 
       if (error) {
-        console.error('Error loading AI model:', error)
+        console.error("Error loading AI model:", error);
       } else {
-        setAiModel(data?.preferred_ai_model || 'gemini')
+        setAiModel(data?.preferred_ai_model || "gemini");
       }
     } catch (error) {
-      console.error('Error loading AI model:', error)
+      console.error("Error loading AI model:", error);
     } finally {
-      setAiModelLoading(false)
+      setAiModelLoading(false);
     }
-  }, [user?.id, organization?.id])
+  }, [user?.id, organization?.id]);
 
   // Tallenna AI-mallin valinta
   const handleAiModelChange = async (newModel) => {
-    if (!user?.id || aiModelSaving) return
+    if (!user?.id || aiModelSaving) return;
 
-    setAiModelSaving(true)
-    setAiModelMessage('')
+    setAiModelSaving(true);
+    setAiModelMessage("");
 
     try {
       // Hae organisaation ID
-      let orgUserId = null
+      let orgUserId = null;
       if (organization?.id) {
-        orgUserId = organization.id
+        orgUserId = organization.id;
       } else {
-        orgUserId = await getUserOrgId(user.id)
+        orgUserId = await getUserOrgId(user.id);
       }
 
       if (!orgUserId) {
-        throw new Error('Organisaation ID puuttuu')
+        throw new Error("Organisaation ID puuttuu");
       }
 
       const { error } = await supabase
-        .from('users')
-        .update({ 
+        .from("users")
+        .update({
           preferred_ai_model: newModel,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', orgUserId)
+        .eq("id", orgUserId);
 
       if (error) {
-        throw error
+        throw error;
       }
 
-      setAiModel(newModel)
-      setAiModelMessage(t('integrations.messages.aiModelUpdated'))
-      setTimeout(() => setAiModelMessage(''), 3000)
+      setAiModel(newModel);
+      setAiModelMessage(t("integrations.messages.aiModelUpdated"));
+      setTimeout(() => setAiModelMessage(""), 3000);
     } catch (error) {
-      console.error('Error saving AI model:', error)
-      setAiModelMessage(t('integrations.aiModel.saveError'))
-      setTimeout(() => setAiModelMessage(''), 5000)
+      console.error("Error saving AI model:", error);
+      setAiModelMessage(t("integrations.aiModel.saveError"));
+      setTimeout(() => setAiModelMessage(""), 5000);
     } finally {
-      setAiModelSaving(false)
+      setAiModelSaving(false);
     }
-  }
+  };
 
   // Lataa AI-malli kun komponentti latautuu
   useEffect(() => {
     if (user?.id) {
-      loadAiModel()
+      loadAiModel();
     }
-  }, [user?.id, loadAiModel])
+  }, [user?.id, loadAiModel]);
 
   // Lataa integraatiot ja niiden asetukset
   const loadIntegrations = useCallback(async () => {
-    if (!user?.id) return
+    if (!user?.id) return;
 
-    setLoading(true)
+    setLoading(true);
     try {
       // Hae salaisuudet API:sta (metadata, ei purettuja arvoja)
-      const session = await supabase.auth.getSession()
-      const token = session.data.session?.access_token
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
 
       if (!token) {
-        console.error('No access token found')
-        return
+        console.error("No access token found");
+        return;
       }
 
-      const response = await axios.get('/api/users/secrets', {
+      const response = await axios.get("/api/users/secrets", {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      const secrets = response.data.secrets || []
+      const secrets = response.data.secrets || [];
 
-      // Yhdistä saatavilla olevat integraatiot tallennettujen kanssa
-      const mergedIntegrations = AVAILABLE_INTEGRATIONS.map(integration => {
+      // Tarkista onko WordPress-plugin ladattu
+      const pluginDownloadSecret = secrets.find(
+        (s) => s.secret_type === "wordpress_plugin_download",
+      );
+      setWordpressPluginDownloaded(Boolean(pluginDownloadSecret));
+
+      // Filtteröi integraatiot feature flagien mukaan ja yhdistä tallennettujen kanssa
+      const availableIntegrations = AVAILABLE_INTEGRATIONS.filter(
+        (integration) =>
+          !integration.feature || hasFeature(integration.feature),
+      );
+
+      const mergedIntegrations = availableIntegrations.map((integration) => {
         // Etsi tämän integraation salaisuus
         const secret = secrets.find(
-          s => s.secret_type === integration.secretType && s.secret_name === integration.secretName
-        )
+          (s) =>
+            s.secret_type === integration.secretType &&
+            s.secret_name === integration.secretName,
+        );
 
         // Lataa metadata
-        const metadata = secret?.metadata || {}
-        const isConfigured = Boolean(secret)
+        const metadata = secret?.metadata || {};
+        const isConfigured = Boolean(secret);
 
         // Täytä formData integraatiokohtaisesti
-        let formData = {}
-        if (integration.id === 'wordpress') {
+        let formData = {};
+        if (integration.id === "wordpress") {
           formData = {
-            username: metadata.username || '',
-            password: '', // Ei näytetä, koska se on salattu
-            url: metadata.url || ''
-          }
-        } else if (integration.id === 'google_analytics') {
+            username: metadata.username || "",
+            password: "", // Ei näytetä, koska se on salattu
+            url: metadata.url || "",
+          };
+        } else if (integration.id === "google_analytics") {
           // Google Analytics: Client ID ja Client Secret metadataan JSON-muodossa
           formData = {
-            client_id: metadata.client_id || '',
-            client_secret: '' // Ei näytetä, koska se on salattu
-          }
+            client_id: metadata.client_id || "",
+            client_secret: "", // Ei näytetä, koska se on salattu
+          };
         } else {
           formData = {
-            api_key: '',
-            endpoint: metadata.endpoint || ''
-          }
+            api_key: "",
+            endpoint: metadata.endpoint || "",
+          };
         }
 
         return {
@@ -299,127 +382,127 @@ export default function SettingsIntegrationsTab() {
           isConfigured,
           secretId: secret?.id,
           formData,
-          isActive: secret?.is_active || false
-        }
-      })
+          isActive: secret?.is_active || false,
+        };
+      });
 
-      setIntegrations(mergedIntegrations)
+      setIntegrations(mergedIntegrations);
     } catch (error) {
-      console.error('Error loading integrations:', error)
+      console.error("Error loading integrations:", error);
       setMessage({
-        type: 'error',
-        text: t('integrations.loadError')
-      })
+        type: "error",
+        text: t("integrations.loadError"),
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [user?.id])
+  }, [user?.id, hasFeature]);
 
   useEffect(() => {
     if (user?.id) {
-      loadIntegrations()
+      loadIntegrations();
     }
-  }, [user?.id, loadIntegrations])
+  }, [user?.id, loadIntegrations]);
 
   // Helper-funktio URL-parametrien sanitointiin (defense in depth)
   // React escapaa automaattisesti, mutta sanitoidaan silti turvallisuussyistä
   const sanitizeUrlParam = (param) => {
-    if (!param) return ''
+    if (!param) return "";
     try {
-      const decoded = decodeURIComponent(param)
+      const decoded = decodeURIComponent(param);
       // Poista mahdolliset script-tagit ja haitalliset attribuutit
       return decoded
-        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-        .replace(/javascript:/gi, '')
-        .replace(/on\w+\s*=/gi, '') // Poista onclick, onerror, jne.
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+        .replace(/javascript:/gi, "")
+        .replace(/on\w+\s*=/gi, "") // Poista onclick, onerror, jne.
         .trim()
-        .substring(0, 500) // Rajoita pituus
-    } catch (e) {
+        .substring(0, 500); // Rajoita pituus
+    } catch {
       // Jos dekoodaus epäonnistuu, palauta tyhjä
-      return ''
+      return "";
     }
-  }
+  };
 
   // Käsittele URL-parametrit (success/error OAuth-callbackista)
   useEffect(() => {
-    const success = searchParams.get('success')
-    const error = searchParams.get('error')
-    const tab = searchParams.get('tab')
+    const success = searchParams.get("success");
+    const error = searchParams.get("error");
+    const tab = searchParams.get("tab");
 
     if (success) {
       setMessage({
-        type: 'success',
-        text: sanitizeUrlParam(success)
-      })
+        type: "success",
+        text: sanitizeUrlParam(success),
+      });
       // Poista success-parametri URL:sta
-      searchParams.delete('success')
-      setSearchParams(searchParams, { replace: true })
+      searchParams.delete("success");
+      setSearchParams(searchParams, { replace: true });
       // Lataa integraatiot uudelleen
       if (user?.id) {
         setTimeout(() => {
-          loadIntegrations()
-        }, 1000)
+          loadIntegrations();
+        }, 1000);
       }
     }
 
     if (error) {
       setMessage({
-        type: 'error',
-        text: sanitizeUrlParam(error)
-      })
+        type: "error",
+        text: sanitizeUrlParam(error),
+      });
       // Poista error-parametri URL:sta
-      searchParams.delete('error')
-      setSearchParams(searchParams, { replace: true })
+      searchParams.delete("error");
+      setSearchParams(searchParams, { replace: true });
     }
 
     // Avaa features-tab jos tab-parametri on asetettu
-    if (tab === 'features') {
+    if (tab === "features") {
       // Tämä on SettingsPage:n vastuulla, mutta voimme varmistaa että kortti on auki
     }
-  }, [searchParams, setSearchParams, user?.id, loadIntegrations])
+  }, [searchParams, setSearchParams, user?.id, loadIntegrations]);
 
   // Tallenna integraation asetukset
   const handleSave = async (integration) => {
-    if (!user?.id) return
+    if (!user?.id) return;
 
-    setSaving(true)
-    setMessage({ type: '', text: '' })
+    setSaving(true);
+    setMessage({ type: "", text: "" });
 
     try {
-      const session = await supabase.auth.getSession()
-      const token = session.data.session?.access_token
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
 
       if (!token) {
-        throw new Error('No access token found')
+        throw new Error("No access token found");
       }
 
-      const formData = integration.formData
-      
+      const formData = integration.formData;
+
       // Validoi pakolliset kentät integraatiokohtaisesti
-      if (integration.id === 'wordpress') {
+      if (integration.id === "wordpress") {
         if (!formData.username || !formData.password || !formData.url) {
           setMessage({
-            type: 'error',
-            text: 'Täytä kaikki pakolliset kentät'
-          })
-          setSaving(false)
-          return
+            type: "error",
+            text: "Täytä kaikki pakolliset kentät",
+          });
+          setSaving(false);
+          return;
         }
-      } else if (integration.id === 'google_analytics') {
+      } else if (integration.id === "google_analytics") {
         if (!formData.client_id || !formData.client_secret) {
           setMessage({
-            type: 'error',
-            text: 'Täytä kaikki pakolliset kentät'
-          })
-          setSaving(false)
-          return
+            type: "error",
+            text: "Täytä kaikki pakolliset kentät",
+          });
+          setSaving(false);
+          return;
         }
       }
 
       // Valmistele tallennusdata integraatiokohtaisesti
-      let requestData = {}
-      
-      if (integration.id === 'wordpress') {
+      let requestData = {};
+
+      if (integration.id === "wordpress") {
         // WordPress: tallenna salasana plaintext_value-kenttään ja username sekä url metadataan
         requestData = {
           secret_type: integration.secretType,
@@ -428,10 +511,10 @@ export default function SettingsIntegrationsTab() {
           metadata: {
             username: formData.username,
             url: formData.url,
-            description: `${integration.name} integraatio`
-          }
-        }
-      } else if (integration.id === 'google_analytics') {
+            description: `${integration.name} integraatio`,
+          },
+        };
+      } else if (integration.id === "google_analytics") {
         // Google Analytics: tallenna Client Secret plaintext_value-kenttään ja Client ID metadataan
         requestData = {
           secret_type: integration.secretType,
@@ -439,147 +522,150 @@ export default function SettingsIntegrationsTab() {
           plaintext_value: formData.client_secret,
           metadata: {
             client_id: formData.client_id,
-            description: `${integration.name} integraatio`
-          }
-        }
+            description: `${integration.name} integraatio`,
+          },
+        };
       } else {
         // Oletus: WordPress-tyyppinen tallennus
         requestData = {
           secret_type: integration.secretType,
           secret_name: integration.secretName,
-          plaintext_value: formData.api_key || '',
+          plaintext_value: formData.api_key || "",
           metadata: {
-            endpoint: formData.endpoint || '',
-            description: `${integration.name} integraatio`
-          }
-        }
+            endpoint: formData.endpoint || "",
+            description: `${integration.name} integraatio`,
+          },
+        };
       }
 
       // Tallenna salaisuus API:sta
-      await axios.post(
-        '/api/users/secrets',
-        requestData,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      )
+      await axios.post("/api/users/secrets", requestData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       setMessage({
-        type: 'success',
-        text: t('integrations.messages.integrationSaved')
-      })
+        type: "success",
+        text: t("integrations.messages.integrationSaved"),
+      });
 
       // Päivitä integraatio
-      setIntegrations(prev => prev.map(integ =>
-        integ.id === integration.id
-          ? { ...integ, isConfigured: true, isActive: true }
-          : integ
-      ))
+      setIntegrations((prev) =>
+        prev.map((integ) =>
+          integ.id === integration.id
+            ? { ...integ, isConfigured: true, isActive: true }
+            : integ,
+        ),
+      );
 
       // Sulje kortti hetkeksi ja avaa uudelleen
-      setExpandedCard(null)
+      setExpandedCard(null);
       setTimeout(() => {
-        setExpandedCard(integration.id)
-      }, 500)
+        setExpandedCard(integration.id);
+      }, 500);
 
       // Lataa integraatiot uudelleen
       setTimeout(() => {
-        loadIntegrations()
-      }, 1000)
+        loadIntegrations();
+      }, 1000);
     } catch (error) {
-      console.error('Error saving integration:', error)
-      const errorMessage = error.response?.data?.error || t('integrations.saveError')
-      const errorDetails = error.response?.data?.details
+      console.error("Error saving integration:", error);
+      const errorMessage =
+        error.response?.data?.error || t("integrations.saveError");
+      const errorDetails = error.response?.data?.details;
       setMessage({
-        type: 'error',
-        text: errorDetails ? `${errorMessage}: ${errorDetails}` : errorMessage
-      })
+        type: "error",
+        text: errorDetails ? `${errorMessage}: ${errorDetails}` : errorMessage,
+      });
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   // Poista integraatio
   const handleDelete = async (integration) => {
-    if (!user?.id) return
-    if (!confirm('Haluatko varmasti poistaa tämän integraation?')) return
+    if (!user?.id) return;
+    if (!confirm("Haluatko varmasti poistaa tämän integraation?")) return;
 
-    setSaving(true)
-    setMessage({ type: '', text: '' })
+    setSaving(true);
+    setMessage({ type: "", text: "" });
 
     try {
-      const session = await supabase.auth.getSession()
-      const token = session.data.session?.access_token
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
 
       if (!token) {
-        throw new Error('No access token found')
+        throw new Error("No access token found");
       }
 
       const response = await fetch(
         `/api/users/secrets?secret_type=${integration.secretType}&secret_name=${encodeURIComponent(integration.secretName)}`,
         {
-          method: 'DELETE',
+          method: "DELETE",
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      )
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || t('integrations.deleteError'))
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || t("integrations.deleteError"));
       }
 
       setMessage({
-        type: 'success',
-        text: t('integrations.messages.integrationDeleted')
-      })
+        type: "success",
+        text: t("integrations.messages.integrationDeleted"),
+      });
 
       // Päivitä integraatio
-      setIntegrations(prev => prev.map(integ =>
-        integ.id === integration.id
-          ? {
-              ...integ,
-              isConfigured: false,
-              isActive: false,
-              formData: {
-                api_key: '',
-                endpoint: ''
+      setIntegrations((prev) =>
+        prev.map((integ) =>
+          integ.id === integration.id
+            ? {
+                ...integ,
+                isConfigured: false,
+                isActive: false,
+                formData: {
+                  api_key: "",
+                  endpoint: "",
+                },
               }
-            }
-          : integ
-      ))
+            : integ,
+        ),
+      );
 
-      setExpandedCard(null)
+      setExpandedCard(null);
     } catch (error) {
-      console.error('Error deleting integration:', error)
+      console.error("Error deleting integration:", error);
       setMessage({
-        type: 'error',
-        text: error.message || t('integrations.deleteError')
-      })
+        type: "error",
+        text: error.message || t("integrations.deleteError"),
+      });
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   // Päivitä lomaketietoja
   const handleFormChange = (integrationId, fieldId, value) => {
-    setIntegrations(prev => prev.map(integ =>
-      integ.id === integrationId
-        ? {
-            ...integ,
-            formData: {
-              ...integ.formData,
-              [fieldId]: value
+    setIntegrations((prev) =>
+      prev.map((integ) =>
+        integ.id === integrationId
+          ? {
+              ...integ,
+              formData: {
+                ...integ.formData,
+                [fieldId]: value,
+              },
             }
-          }
-        : integ
-    ))
-  }
+          : integ,
+      ),
+    );
+  };
 
   // Kuuntele popupin postMessage-viestejä
   useEffect(() => {
@@ -587,346 +673,551 @@ export default function SettingsIntegrationsTab() {
       // Varmista tarvittaessa origin tietoturvasyistä
       // if (event.origin !== window.location.origin) return;
 
-      if (event.data && event.data.type === 'GOOGLE_AUTH_RESULT') {
+      if (event.data && event.data.type === "GOOGLE_AUTH_RESULT") {
         setOauthConnecting(false);
-        
-        if (event.data.status === 'success') {
-          setMessage({ type: 'success', text: event.data.message });
+
+        if (event.data.status === "success") {
+          setMessage({ type: "success", text: event.data.message });
           setTimeout(() => {
             loadIntegrations();
           }, 1000);
         } else {
-          setMessage({ type: 'error', text: event.data.message });
+          setMessage({ type: "error", text: event.data.message });
+        }
+      }
+
+      if (event.data && event.data.type === "NANGO_AUTH_RESULT") {
+        setNangoConnecting(false);
+
+        if (event.data.status === "success") {
+          setMessage({ type: "success", text: event.data.message });
+          setTimeout(() => {
+            loadIntegrations();
+          }, 1000);
+        } else {
+          setMessage({ type: "error", text: event.data.message });
         }
       }
     };
 
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
   }, [loadIntegrations]);
 
   // Testaa WordPress-yhteyttä
+  // eslint-disable-next-line no-unused-vars
   const handleTestWordPressConnection = async (integration) => {
-    if (!user?.id || testingConnection) return
+    if (!user?.id || testingConnection) return;
 
-    setTestingConnection(true)
-    setMessage({ type: '', text: '' })
+    setTestingConnection(true);
+    setMessage({ type: "", text: "" });
 
     try {
-      const session = await supabase.auth.getSession()
-      const token = session.data.session?.access_token
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
 
       if (!token) {
-        throw new Error('No access token found')
+        throw new Error("No access token found");
       }
 
       // Hae organisaation ID
-      let orgUserId = null
+      let orgUserId = null;
       if (organization?.id) {
-        orgUserId = organization.id
+        orgUserId = organization.id;
       } else {
-        orgUserId = await getUserOrgId(user.id)
+        orgUserId = await getUserOrgId(user.id);
       }
 
       if (!orgUserId) {
-        throw new Error('Organisaation ID puuttuu')
+        throw new Error("Organisaation ID puuttuu");
       }
 
       // Testaa yhteyttä blog/publish-endpointilla
       // Käytetään kiinteää test-post_id:tä jota N8N tunnistaa
       const testData = {
-        post_id: 'f6787bf5-d025-49df-a077-0153f4f396f8',
+        post_id: "f6787bf5-d025-49df-a077-0153f4f396f8",
         auth_user_id: user.id,
         user_id: orgUserId,
-        content: 'WordPress-yhteyden testaus Rascal AI:sta',
+        content: "WordPress-yhteyden testaus Rascal AI:sta",
         media_urls: [],
         segments: [],
-        post_type: 'post',
-        action: 'test'
-      }
+        post_type: "post",
+        action: "test",
+      };
 
-      console.log('Testing WordPress connection with:', {
-        endpoint: '/api/content/blog/publish',
+      console.log("Testing WordPress connection with:", {
+        endpoint: "/api/content/blog/publish",
         userId: orgUserId,
-        authUserId: user.id
-      })
+        authUserId: user.id,
+      });
 
-      const response = await axios.post('/api/content/blog/publish', testData, {
+      const response = await axios.post("/api/content/blog/publish", testData, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-      console.log('WordPress test response:', response.data)
+      console.log("WordPress test response:", response.data);
 
       if (response.status === 200 && response.data?.success) {
         setMessage({
-          type: 'success',
-          text: t('integrations.testConnection.success')
-        })
+          type: "success",
+          text: t("integrations.testConnection.success"),
+        });
       } else {
         // Jos vastaus ei ole success, heitä virhe
-        const errorMsg = response.data?.error || response.data?.details || t('integrations.testFailed')
-        throw new Error(errorMsg)
+        const errorMsg =
+          response.data?.error ||
+          response.data?.details ||
+          t("integrations.testFailed");
+        throw new Error(errorMsg);
       }
     } catch (error) {
-      console.error('Error testing WordPress connection:', error)
-      console.error('Error response:', error.response?.data)
+      console.error("Error testing WordPress connection:", error);
+      console.error("Error response:", error.response?.data);
 
       // Käsittele axios-virheet erikseen
-      let errorMessage = t('integrations.testConnection.failed')
+      let errorMessage = t("integrations.testConnection.failed");
 
       if (error.response) {
         // Serveri vastasi virhekoodilla
-        const status = error.response.status
-        const data = error.response.data
+        const status = error.response.status;
+        const data = error.response.data;
 
         // Näytä backendin palauttama virheviesti
         if (data?.error) {
           // Tarkista onko kyseessä "Ei yhdistettyjä sometilejä" -virhe
-          if (data.error === 'Ei yhdistettyjä sometilejä' || data.error.toLowerCase().includes('no connected social')) {
-            errorMessage = t('integrations.testConnection.noSocialAccounts')
+          if (
+            data.error === "Ei yhdistettyjä sometilejä" ||
+            data.error.toLowerCase().includes("no connected social")
+          ) {
+            errorMessage = t("integrations.testConnection.noSocialAccounts");
           } else {
-            errorMessage = data.error
+            errorMessage = data.error;
           }
 
           if (data?.details) {
-            errorMessage += `\n\n${data.details}`
+            errorMessage += `\n\n${data.details}`;
           }
           if (data?.hint) {
-            errorMessage += `\n\n💡 ${data.hint}`
+            errorMessage += `\n\n💡 ${data.hint}`;
           }
         } else if (data?.message) {
-          errorMessage = data.message
+          errorMessage = data.message;
         } else {
-          errorMessage = `HTTP ${status}: ${error.response.statusText || t('integrations.testConnection.unknownError')}`
+          errorMessage = `HTTP ${status}: ${error.response.statusText || t("integrations.testConnection.unknownError")}`;
         }
       } else if (error.request) {
         // Pyyntö lähetettiin mutta vastausta ei saatu
-        errorMessage = t('integrations.testConnection.noResponse')
+        errorMessage = t("integrations.testConnection.noResponse");
       } else {
         // Jokin muu virhe
-        errorMessage = error.message || t('integrations.testConnection.unknownError')
+        errorMessage =
+          error.message || t("integrations.testConnection.unknownError");
       }
 
       setMessage({
-        type: 'error',
-        text: errorMessage
-      })
+        type: "error",
+        text: errorMessage,
+      });
     } finally {
-      setTestingConnection(false)
+      setTestingConnection(false);
     }
-  }
+  };
 
   // Käynnistä Google Analytics OAuth -virta
   const handleGoogleAnalyticsOAuth = async () => {
-    if (!user?.id || oauthConnecting) return
+    if (!user?.id || oauthConnecting) return;
 
-    setOauthConnecting(true)
-    setMessage({ type: '', text: '' })
+    setOauthConnecting(true);
+    setMessage({ type: "", text: "" });
 
     try {
-      const session = await supabase.auth.getSession()
-      const token = session.data.session?.access_token
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
 
       if (!token) {
-        throw new Error('No access token found')
+        throw new Error("No access token found");
       }
 
       // Kutsu backend-endpointia joka luo OAuth-URL:n
-      const response = await axios.get('/api/auth/google/start', {
+      const response = await axios.get("/api/auth/google/start", {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      const { authUrl } = response.data
+      const { authUrl } = response.data;
 
       if (!authUrl) {
-        throw new Error('OAuth URL ei saatu')
+        throw new Error("OAuth URL ei saatu");
       }
 
       // Avaa popup keskelle ruutua
-      const width = 600
-      const height = 700
-      const left = window.screenX + (window.outerWidth - width) / 2
-      const top = window.screenY + (window.outerHeight - height) / 2
-      
+      const width = 600;
+      const height = 700;
+      const left = window.screenX + (window.outerWidth - width) / 2;
+      const top = window.screenY + (window.outerHeight - height) / 2;
+
       const popup = window.open(
         authUrl,
-        'google_analytics_oauth',
-        `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=yes,status=no`
-      )
+        "google_analytics_oauth",
+        `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=yes,status=no`,
+      );
 
       if (!popup) {
-        setOauthConnecting(false)
-        setMessage({ type: 'error', text: 'Popup estetty. Salli popup-ikkunat tälle sivustolle.' })
-        return
+        setOauthConnecting(false);
+        setMessage({
+          type: "error",
+          text: "Popup estetty. Salli popup-ikkunat tälle sivustolle.",
+        });
+        return;
       }
 
       // Fallback: jos postMessage ei toimi tai ikkuna suljetaan manuaalisesti ilman viestiä
       const checkPopup = setInterval(() => {
         if (popup.closed) {
-          clearInterval(checkPopup)
+          clearInterval(checkPopup);
           // Jos tila on yhä "connecting", käyttäjä todennäköisesti sulki ikkunan manuaalisesti
           setOauthConnecting((prev) => {
             if (prev) {
               // Voimme yrittää ladata integraatiot varmuuden vuoksi, jos viesti jäi saamatta
-              loadIntegrations()
-              return false
+              loadIntegrations();
+              return false;
             }
-            return false
-          })
+            return false;
+          });
         }
-      }, 1000)
+      }, 1000);
 
       // Timeout 5 minuutin jälkeen
-      setTimeout(() => {
-        if (!popup.closed) {
-          popup.close()
-          clearInterval(checkPopup)
-          setOauthConnecting(false)
-          setMessage({
-            type: 'error',
-            text: 'OAuth-yhdistys aikakatkaistiin. Yritä uudelleen.'
-          })
-        }
-      }, 5 * 60 * 1000)
+      setTimeout(
+        () => {
+          if (!popup.closed) {
+            popup.close();
+            clearInterval(checkPopup);
+            setOauthConnecting(false);
+            setMessage({
+              type: "error",
+              text: "OAuth-yhdistys aikakatkaistiin. Yritä uudelleen.",
+            });
+          }
+        },
+        5 * 60 * 1000,
+      );
     } catch (error) {
-      console.error('Error starting Google Analytics OAuth:', error)
-      setOauthConnecting(false)
-      const errorMessage = error.response?.data?.error || error.message || t('integrations.oauthError')
-      const errorDetails = error.response?.data?.details
-      const errorHint = error.response?.data?.hint
-      
+      console.error("Error starting Google Analytics OAuth:", error);
+      setOauthConnecting(false);
+      const errorMessage =
+        error.response?.data?.error ||
+        error.message ||
+        t("integrations.oauthError");
+      const errorDetails = error.response?.data?.details;
+      const errorHint = error.response?.data?.hint;
+
       // Muodosta virheilmoitus
-      let fullErrorMessage = errorMessage
+      let fullErrorMessage = errorMessage;
       if (errorDetails) {
-        fullErrorMessage += `: ${errorDetails}`
+        fullErrorMessage += `: ${errorDetails}`;
       }
       if (errorHint) {
-        fullErrorMessage += `\n\nVihje: ${errorHint}`
+        fullErrorMessage += `\n\nVihje: ${errorHint}`;
       }
-      
+
       setMessage({
-        type: 'error',
-        text: fullErrorMessage
-      })
+        type: "error",
+        text: fullErrorMessage,
+      });
     }
-  }
+  };
+
+  // Käynnistä Nango OAuth -virta (Google Ads, Meta Ads jne.)
+  const handleNangoConnect = async (integration) => {
+    if (!user?.id || nangoConnecting) return;
+
+    setNangoConnecting(true);
+    setMessage({ type: "", text: "" });
+
+    try {
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
+
+      if (!token) {
+        throw new Error("No access token found");
+      }
+
+      const response = await axios.post(
+        "/api/integrations/nango/connect",
+        {
+          integration_id: integration.nangoIntegrationId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const { connect_link } = response.data;
+
+      if (!connect_link) {
+        throw new Error("Connect link ei saatu backendistä");
+      }
+
+      const width = 600;
+      const height = 700;
+      const left = window.screenX + (window.outerWidth - width) / 2;
+      const top = window.screenY + (window.outerHeight - height) / 2;
+
+      const popup = window.open(
+        connect_link,
+        "nango_connect",
+        `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=yes,status=no`,
+      );
+
+      if (!popup) {
+        setNangoConnecting(false);
+        setMessage({
+          type: "error",
+          text: "Popup estetty. Salli popup-ikkunat tälle sivustolle.",
+        });
+        return;
+      }
+
+      const checkPopup = setInterval(() => {
+        if (popup.closed) {
+          clearInterval(checkPopup);
+          setNangoConnecting((prev) => {
+            if (prev) {
+              loadIntegrations();
+              return false;
+            }
+            return false;
+          });
+        }
+      }, 1000);
+
+      setTimeout(
+        () => {
+          if (!popup.closed) {
+            popup.close();
+            clearInterval(checkPopup);
+            setNangoConnecting(false);
+            setMessage({
+              type: "error",
+              text: "Nango-yhdistys aikakatkaistiin. Yritä uudelleen.",
+            });
+          }
+        },
+        5 * 60 * 1000,
+      );
+    } catch (error) {
+      console.error("Error connecting with Nango:", error);
+
+      const errorMessage =
+        error.response?.data?.error ||
+        error.response?.data?.details ||
+        error.message ||
+        t("integrations.nango.connectError");
+
+      setMessage({
+        type: "error",
+        text: errorMessage,
+      });
+      setNangoConnecting(false);
+    }
+  };
+
+  // Poista Nango-yhteys
+  const handleNangoDisconnect = async (integration) => {
+    if (!user?.id || saving) return;
+    if (
+      !confirm(
+        t("integrations.nango.confirmDisconnect", { name: integration.name }),
+      )
+    )
+      return;
+
+    setSaving(true);
+    setMessage({ type: "", text: "" });
+
+    try {
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
+
+      await axios.delete(
+        `/api/integrations/nango/disconnect?provider=${integration.nangoIntegrationId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setMessage({
+        type: "success",
+        text: t("integrations.nango.disconnectSuccess", {
+          name: integration.name,
+        }),
+      });
+
+      // Päivitä integraatioiden tila
+      setTimeout(() => {
+        loadIntegrations();
+      }, 1000);
+    } catch (error) {
+      console.error("Error disconnecting Nango:", error);
+      setMessage({
+        type: "error",
+        text:
+          error.response?.data?.error ||
+          t("integrations.nango.disconnectError"),
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (loading) {
     return (
       <div className="settings-integrations-container">
         <div className="integrations-loading">
-          <div>{t('integrations.loading')}</div>
+          <div>{t("integrations.loading")}</div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="settings-integrations-container">
       {/* AI-mallin valinta */}
-      <div className="ai-model-selector" style={{
-        marginBottom: '24px',
-        padding: '20px',
-        backgroundColor: '#fff',
-        borderRadius: '12px',
-        border: '1px solid #e5e7eb',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-      }}>
-        <h3 style={{
-          margin: '0 0 12px 0',
-          fontSize: '16px',
-          fontWeight: 600,
-          color: '#1f2937'
-        }}>
-          {t('integrations.aiModel.title')}
+      <div
+        className="ai-model-selector"
+        style={{
+          marginBottom: "24px",
+          padding: "20px",
+          backgroundColor: "#fff",
+          borderRadius: "12px",
+          border: "1px solid #e5e7eb",
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <h3
+          style={{
+            margin: "0 0 12px 0",
+            fontSize: "16px",
+            fontWeight: 600,
+            color: "#1f2937",
+          }}
+        >
+          {t("integrations.aiModel.title")}
         </h3>
-        <p style={{
-          margin: '0 0 16px 0',
-          fontSize: '14px',
-          color: '#6b7280'
-        }}>
-          {t('integrations.aiModel.description')}
+        <p
+          style={{
+            margin: "0 0 16px 0",
+            fontSize: "14px",
+            color: "#6b7280",
+          }}
+        >
+          {t("integrations.aiModel.description")}
         </p>
 
         {aiModelMessage && (
-          <div style={{
-            padding: '8px 12px',
-            marginBottom: '16px',
-            borderRadius: '6px',
-            fontSize: '14px',
-            backgroundColor: (aiModelMessage.includes('Virhe') || aiModelMessage.includes('Error')) ? '#fef2f2' : '#f0fdf4',
-            color: (aiModelMessage.includes('Virhe') || aiModelMessage.includes('Error')) ? '#dc2626' : '#16a34a',
-            border: `1px solid ${(aiModelMessage.includes('Virhe') || aiModelMessage.includes('Error')) ? '#fecaca' : '#bbf7d0'}`
-          }}>
+          <div
+            style={{
+              padding: "8px 12px",
+              marginBottom: "16px",
+              borderRadius: "6px",
+              fontSize: "14px",
+              backgroundColor:
+                aiModelMessage.includes("Virhe") ||
+                aiModelMessage.includes("Error")
+                  ? "#fef2f2"
+                  : "#f0fdf4",
+              color:
+                aiModelMessage.includes("Virhe") ||
+                aiModelMessage.includes("Error")
+                  ? "#dc2626"
+                  : "#16a34a",
+              border: `1px solid ${aiModelMessage.includes("Virhe") || aiModelMessage.includes("Error") ? "#fecaca" : "#bbf7d0"}`,
+            }}
+          >
             {aiModelMessage}
           </div>
         )}
 
         {aiModelLoading ? (
-          <div style={{ color: '#6b7280', fontSize: '14px' }}>{t('integrations.aiModel.loading')}</div>
+          <div style={{ color: "#6b7280", fontSize: "14px" }}>
+            {t("integrations.aiModel.loading")}
+          </div>
         ) : (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <label style={{ 
-              fontSize: '14px', 
-              fontWeight: 500, 
-              color: aiModel === 'gemini' ? '#1f2937' : '#9ca3af',
-              cursor: 'pointer',
-              transition: 'color 0.2s'
-            }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <label
+              style={{
+                fontSize: "14px",
+                fontWeight: 500,
+                color: aiModel === "gemini" ? "#1f2937" : "#9ca3af",
+                cursor: "pointer",
+                transition: "color 0.2s",
+              }}
+            >
               Gemini 3
             </label>
-            
+
             {/* Liukukytkin */}
             <button
               type="button"
-              onClick={() => handleAiModelChange(aiModel === 'gemini' ? 'mistral' : 'gemini')}
+              onClick={() =>
+                handleAiModelChange(aiModel === "gemini" ? "mistral" : "gemini")
+              }
               disabled={aiModelSaving}
               style={{
-                position: 'relative',
-                width: '52px',
-                height: '28px',
-                borderRadius: '14px',
-                border: 'none',
-                cursor: aiModelSaving ? 'not-allowed' : 'pointer',
-                backgroundColor: aiModel === 'gemini' ? '#10b981' : '#6b7280',
-                transition: 'background-color 0.3s',
-                outline: 'none',
-                padding: '2px'
+                position: "relative",
+                width: "52px",
+                height: "28px",
+                borderRadius: "14px",
+                border: "none",
+                cursor: aiModelSaving ? "not-allowed" : "pointer",
+                backgroundColor: aiModel === "gemini" ? "#10b981" : "#6b7280",
+                transition: "background-color 0.3s",
+                outline: "none",
+                padding: "2px",
               }}
               onMouseEnter={(e) => {
                 if (!aiModelSaving) {
-                  e.target.style.opacity = '0.9'
+                  e.target.style.opacity = "0.9";
                 }
               }}
               onMouseLeave={(e) => {
-                e.target.style.opacity = '1'
+                e.target.style.opacity = "1";
               }}
             >
-              <div style={{
-                position: 'absolute',
-                top: '2px',
-                left: aiModel === 'gemini' ? '2px' : '26px',
-                width: '24px',
-                height: '24px',
-                borderRadius: '50%',
-                backgroundColor: '#fff',
-                transition: 'left 0.3s',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
-              }} />
+              <div
+                style={{
+                  position: "absolute",
+                  top: "2px",
+                  left: aiModel === "gemini" ? "2px" : "26px",
+                  width: "24px",
+                  height: "24px",
+                  borderRadius: "50%",
+                  backgroundColor: "#fff",
+                  transition: "left 0.3s",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                }}
+              />
             </button>
 
-            <label style={{ 
-              fontSize: '14px', 
-              fontWeight: 500, 
-              color: aiModel === 'mistral' ? '#1f2937' : '#9ca3af',
-              cursor: 'pointer',
-              transition: 'color 0.2s'
-            }}>
+            <label
+              style={{
+                fontSize: "14px",
+                fontWeight: 500,
+                color: aiModel === "mistral" ? "#1f2937" : "#9ca3af",
+                cursor: "pointer",
+                transition: "color 0.2s",
+              }}
+            >
               Mistral
             </label>
           </div>
@@ -934,25 +1225,25 @@ export default function SettingsIntegrationsTab() {
       </div>
 
       <div className="integrations-description">
-        <p>{t('integrations.description')}</p>
-        <div style={{ marginTop: '8px' }}>
+        <p>{t("integrations.description")}</p>
+        <div style={{ marginTop: "8px" }}>
           <a
             href="https://rascalcompany.notion.site/"
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              fontSize: '14px',
-              color: '#3b82f6',
-              textDecoration: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px'
+              fontSize: "14px",
+              color: "#3b82f6",
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "4px",
             }}
             onMouseEnter={(e) => {
-              e.target.style.textDecoration = 'underline'
+              e.target.style.textDecoration = "underline";
             }}
             onMouseLeave={(e) => {
-              e.target.style.textDecoration = 'none'
+              e.target.style.textDecoration = "none";
             }}
           >
             Katso tarkemmat ohjeet →
@@ -961,27 +1252,34 @@ export default function SettingsIntegrationsTab() {
       </div>
 
       {message.text && (
-        <div className={`integrations-message ${message.type === 'error' ? 'integrations-message-error' : 'integrations-message-success'}`}>
+        <div
+          className={`integrations-message ${message.type === "error" ? "integrations-message-error" : "integrations-message-success"}`}
+        >
           {message.text}
         </div>
       )}
 
       <div className="integrations-grid">
-        {integrations.map(integration => (
+        {integrations.map((integration) => (
           <div
             key={integration.id}
-            className={`integration-card ${integration.isConfigured ? 'integration-card-configured' : ''} ${expandedCard === integration.id ? 'integration-card-expanded' : ''}`}
+            className={`integration-card ${integration.isConfigured ? "integration-card-configured" : ""} ${expandedCard === integration.id ? "integration-card-expanded" : ""}`}
           >
-            {(integration.id === 'wordpress' || integration.id === 'google_analytics') && (
+            {(integration.id === "wordpress" ||
+              integration.id === "google_analytics") && (
               <span className="beta-tag">Beta</span>
             )}
             <div
               className="integration-card-header"
-              onClick={() => setExpandedCard(expandedCard === integration.id ? null : integration.id)}
+              onClick={() =>
+                setExpandedCard(
+                  expandedCard === integration.id ? null : integration.id,
+                )
+              }
             >
               <div className="integration-card-title">
                 <div className="integration-card-icon">
-                  {typeof integration.icon === 'string' ? (
+                  {typeof integration.icon === "string" ? (
                     <span>{integration.icon}</span>
                   ) : (
                     integration.icon
@@ -994,61 +1292,177 @@ export default function SettingsIntegrationsTab() {
               </div>
               <div className="integration-card-status">
                 {integration.isConfigured ? (
-                  <span className="status-badge status-badge-active">{t('integrations.configured')}</span>
+                  <span className="status-badge status-badge-active">
+                    {t("integrations.configured")}
+                  </span>
                 ) : (
-                  <span className="status-badge status-badge-inactive">{t('integrations.notConfigured')}</span>
+                  <span className="status-badge status-badge-inactive">
+                    {t("integrations.notConfigured")}
+                  </span>
                 )}
-                {integration.id === 'wordpress' && integration.isConfigured && expandedCard !== integration.id && (
-                  <a
-                    href="/plugins/rascal-ai.zip"
-                    download="rascal-ai.zip"
-                    className="integration-download-link"
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      trackPluginDownload('card-header')
-                    }}
-                  >
-                    {t('integrations.wordpress.downloadPluginShort')}
-                  </a>
-                )}
-                <span className="expand-icon">{expandedCard === integration.id ? '▲' : '▼'}</span>
+                <span className="expand-icon">
+                  {expandedCard === integration.id ? "▲" : "▼"}
+                </span>
               </div>
             </div>
+            {integration.id === "wordpress" &&
+              integration.isConfigured &&
+              expandedCard !== integration.id && (
+                <div className="integration-plugin-download-row">
+                  {wordpressPluginDownloaded ? (
+                    <span className="plugin-downloaded-badge">
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M20 6L9 17L4 12"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      {t("integrations.wordpress.pluginDownloaded")}
+                    </span>
+                  ) : (
+                    <a
+                      href="/plugins/rascal-ai.zip"
+                      download="rascal-ai.zip"
+                      className="integration-download-link"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        trackPluginDownload("card-header");
+                      }}
+                    >
+                      {t("integrations.wordpress.downloadPluginShort")}
+                    </a>
+                  )}
+                </div>
+              )}
 
             {expandedCard === integration.id && (
               <div className="integration-card-content">
-                {integration.useOAuth ? (
-                  // OAuth-pohjainen integraatio (Google Analytics)
+                {integration.useNango ? (
+                  // Nango-pohjainen integraatio (Google Ads, Meta Ads jne.)
                   <div>
                     {integration.isConfigured ? (
-                      <div style={{ marginBottom: '20px' }}>
-                        <div style={{
-                          padding: '12px',
-                          backgroundColor: '#f0fdf4',
-                          border: '1px solid #bbf7d0',
-                          borderRadius: '6px',
-                          color: '#16a34a',
-                          fontSize: '14px',
-                          marginBottom: '16px'
-                        }}>
-                          ✅ {t('integrations.googleAnalytics.connectedSuccess')}
+                      <div style={{ marginBottom: "20px" }}>
+                        <div
+                          style={{
+                            padding: "12px",
+                            backgroundColor: "#f0fdf4",
+                            border: "1px solid #bbf7d0",
+                            borderRadius: "6px",
+                            color: "#16a34a",
+                            fontSize: "14px",
+                            marginBottom: "16px",
+                          }}
+                        >
+                          ✅{" "}
+                          {t("integrations.nango.connectedSuccess", {
+                            name: integration.name,
+                          })}
                         </div>
-                        <p style={{ 
-                          fontSize: '14px', 
-                          color: '#6b7280',
-                          marginBottom: '16px'
-                        }}>
-                          {t('integrations.googleAnalytics.reconnectHint')}
+                        <p
+                          style={{
+                            fontSize: "14px",
+                            color: "#6b7280",
+                            marginBottom: "16px",
+                          }}
+                        >
+                          {t("integrations.nango.reconnectHint")}
                         </p>
                       </div>
                     ) : (
-                      <div style={{ marginBottom: '20px' }}>
-                        <p style={{ 
-                          fontSize: '14px', 
-                          color: '#6b7280',
-                          marginBottom: '16px'
-                        }}>
-                          {t('integrations.googleAnalytics.connectDescription')}
+                      <div style={{ marginBottom: "20px" }}>
+                        <p
+                          style={{
+                            fontSize: "14px",
+                            color: "#6b7280",
+                            marginBottom: "16px",
+                          }}
+                        >
+                          {t("integrations.nango.connectDescription", {
+                            name: integration.name,
+                          })}
+                        </p>
+                      </div>
+                    )}
+                    <div className="integration-card-actions">
+                      <button
+                        type="button"
+                        className="btn-primary"
+                        onClick={() => handleNangoConnect(integration)}
+                        disabled={nangoConnecting || saving}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                        }}
+                      >
+                        {nangoConnecting ? (
+                          <span>{t("integrations.nango.connecting")}</span>
+                        ) : integration.isConfigured ? (
+                          t("integrations.nango.reconnect")
+                        ) : (
+                          t("integrations.nango.connect")
+                        )}
+                      </button>
+                      {integration.isConfigured && (
+                        <button
+                          type="button"
+                          className="btn-danger"
+                          onClick={() => handleNangoDisconnect(integration)}
+                          disabled={saving || nangoConnecting}
+                        >
+                          {t("integrations.delete")}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ) : integration.useOAuth ? (
+                  // OAuth-pohjainen integraatio (Google Analytics)
+                  <div>
+                    {integration.isConfigured ? (
+                      <div style={{ marginBottom: "20px" }}>
+                        <div
+                          style={{
+                            padding: "12px",
+                            backgroundColor: "#f0fdf4",
+                            border: "1px solid #bbf7d0",
+                            borderRadius: "6px",
+                            color: "#16a34a",
+                            fontSize: "14px",
+                            marginBottom: "16px",
+                          }}
+                        >
+                          ✅{" "}
+                          {t("integrations.googleAnalytics.connectedSuccess")}
+                        </div>
+                        <p
+                          style={{
+                            fontSize: "14px",
+                            color: "#6b7280",
+                            marginBottom: "16px",
+                          }}
+                        >
+                          {t("integrations.googleAnalytics.reconnectHint")}
+                        </p>
+                      </div>
+                    ) : (
+                      <div style={{ marginBottom: "20px" }}>
+                        <p
+                          style={{
+                            fontSize: "14px",
+                            color: "#6b7280",
+                            marginBottom: "16px",
+                          }}
+                        >
+                          {t("integrations.googleAnalytics.connectDescription")}
                         </p>
                       </div>
                     )}
@@ -1059,19 +1473,21 @@ export default function SettingsIntegrationsTab() {
                         onClick={handleGoogleAnalyticsOAuth}
                         disabled={oauthConnecting || saving}
                         style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px'
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
                         }}
                       >
                         {oauthConnecting ? (
                           <>
-                            <span>{t('integrations.googleAnalytics.connecting')}</span>
+                            <span>
+                              {t("integrations.googleAnalytics.connecting")}
+                            </span>
                           </>
                         ) : integration.isConfigured ? (
-                          t('integrations.googleAnalytics.reconnect')
+                          t("integrations.googleAnalytics.reconnect")
                         ) : (
-                          t('integrations.googleAnalytics.connect')
+                          t("integrations.googleAnalytics.connect")
                         )}
                       </button>
                       {integration.isConfigured && (
@@ -1081,7 +1497,7 @@ export default function SettingsIntegrationsTab() {
                           onClick={() => handleDelete(integration)}
                           disabled={saving || oauthConnecting}
                         >
-                          {t('integrations.delete')}
+                          {t("integrations.delete")}
                         </button>
                       )}
                     </div>
@@ -1090,50 +1506,72 @@ export default function SettingsIntegrationsTab() {
                   // Lomake-pohjainen integraatio (WordPress jne.)
                   <form
                     onSubmit={(e) => {
-                      e.preventDefault()
-                      handleSave(integration)
+                      e.preventDefault();
+                      handleSave(integration);
                     }}
                   >
-                    {integration.fields.map(field => (
+                    {integration.fields.map((field) => (
                       <div key={field.id} className="form-field">
                         <label htmlFor={`${integration.id}-${field.id}`}>
                           {field.label}
-                          {field.required && <span className="required">*</span>}
+                          {field.required && (
+                            <span className="required">*</span>
+                          )}
                         </label>
                         <input
                           id={`${integration.id}-${field.id}`}
                           type={field.type}
-                          value={integration.formData[field.id] || ''}
-                          onChange={(e) => handleFormChange(integration.id, field.id, e.target.value)}
-                          placeholder={field.placeholderKey ? t(field.placeholderKey) : field.placeholder}
+                          value={integration.formData[field.id] || ""}
+                          onChange={(e) =>
+                            handleFormChange(
+                              integration.id,
+                              field.id,
+                              e.target.value,
+                            )
+                          }
+                          placeholder={
+                            field.placeholderKey
+                              ? t(field.placeholderKey)
+                              : field.placeholder
+                          }
                           required={field.required}
                           disabled={saving}
                         />
                         {(field.helpTextKey || field.helpText) && (
-                          <span className="form-field-help">{field.helpTextKey ? t(field.helpTextKey) : field.helpText}</span>
+                          <span className="form-field-help">
+                            {field.helpTextKey
+                              ? t(field.helpTextKey)
+                              : field.helpText}
+                          </span>
                         )}
                       </div>
                     ))}
 
                     {integration.isConfigured && (
                       <div className="integration-link-actions">
-                        {integration.id === 'wordpress' && (
+                        {integration.id === "wordpress" && (
                           <>
                             <button
                               type="button"
                               className="btn-link"
-                              onClick={() => handleTestWordPressConnection(integration)}
+                              onClick={() =>
+                                handleTestWordPressConnection(integration)
+                              }
                               disabled={saving || testingConnection}
                             >
-                              {testingConnection ? t('integrations.testConnection.testing') : t('integrations.testConnection.button')}
+                              {testingConnection
+                                ? t("integrations.testConnection.testing")
+                                : t("integrations.testConnection.button")}
                             </button>
                             <a
                               href="/plugins/rascal-ai.zip"
                               download="rascal-ai.zip"
                               className="btn-link"
-                              onClick={() => trackPluginDownload('card-content')}
+                              onClick={() =>
+                                trackPluginDownload("card-content")
+                              }
                             >
-                              {t('integrations.wordpress.downloadPlugin')}
+                              {t("integrations.wordpress.downloadPlugin")}
                             </a>
                           </>
                         )}
@@ -1143,7 +1581,7 @@ export default function SettingsIntegrationsTab() {
                           onClick={() => handleDelete(integration)}
                           disabled={saving || testingConnection}
                         >
-                          {t('integrations.deleteIntegration')}
+                          {t("integrations.deleteIntegration")}
                         </button>
                       </div>
                     )}
@@ -1153,7 +1591,11 @@ export default function SettingsIntegrationsTab() {
                         className="btn-primary"
                         disabled={saving}
                       >
-                        {saving ? t('ui.buttons.saving') : integration.isConfigured ? t('ui.buttons.update') : t('ui.buttons.save')}
+                        {saving
+                          ? t("ui.buttons.saving")
+                          : integration.isConfigured
+                            ? t("ui.buttons.update")
+                            : t("ui.buttons.save")}
                       </button>
                     </div>
                   </form>
@@ -1170,6 +1612,5 @@ export default function SettingsIntegrationsTab() {
         </div>
       )}
     </div>
-  )
+  );
 }
-

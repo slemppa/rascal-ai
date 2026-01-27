@@ -2007,7 +2007,8 @@
       "passwordHelp": "Users -> edit user -> Application Passwords -> Add new application password -> code (shown only once)",
       "urlHelp": "Settings -> General -> WordPress Address",
       "downloadPlugin": "Download WordPress Plugin",
-      "downloadPluginShort": "Download Plugin"
+      "downloadPluginShort": "Download Plugin",
+      "pluginDownloaded": "Plugin downloaded"
     },
     "googleAnalytics": {
       "description": "Connect Google Analytics to Rascal AI with OAuth 2.0 authorization",
@@ -2017,6 +2018,26 @@
       "connect": "Connect Google Analytics",
       "connecting": "Connecting...",
       "connectedSuccess": "Google Analytics connected successfully!"
+    },
+    "googleAds": {
+      "description": "Connect your Google Ads account for ad campaign management"
+    },
+    "metaAds": {
+      "description": "Connect your Meta Ads (Facebook & Instagram) account for ad campaign management"
+    },
+    "nango": {
+      "connect": "Connect",
+      "reconnect": "Reconnect",
+      "connecting": "Connecting...",
+      "connectSuccess": "{{name}} connected successfully!",
+      "connectedSuccess": "{{name}} is connected!",
+      "connectError": "Connection failed",
+      "connectDescription": "Connect your {{name}} account via Nango. You will be redirected to the authorization page.",
+      "reconnectHint": "Reconnect if you want to update authorization.",
+      "disconnectSuccess": "{{name}} connection removed successfully",
+      "disconnectError": "Failed to remove connection",
+      "confirmDisconnect": "Are you sure you want to remove the {{name}} connection?",
+      "cancelled": "Connection cancelled"
     },
     "testConnection": {
       "button": "Test Connection",

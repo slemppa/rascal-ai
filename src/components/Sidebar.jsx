@@ -475,7 +475,7 @@ const getMenuItems = (t) => [
   {
     label: t("sidebar.labels.accountManager"),
     path: "/account-manager",
-    moderatorOnly: true,
+    moderatorOrSuperadminOnly: true,
     icon: (
       <svg
         width="20"
@@ -582,6 +582,12 @@ export default function Sidebar() {
     }
     // Superadmin-only sivut: /admin, /admin-blog
     if (item.superadminOnly && !isSuperAdmin) return false;
+    // Moderator tai superadmin only (EI admin)
+    if (item.moderatorOrSuperadminOnly) {
+      return (
+        user?.systemRole === "moderator" || user?.systemRole === "superadmin"
+      );
+    }
     // Moderator-only sivut (superadmin näkee myös)
     if (item.moderatorOnly && !isSuperAdmin && !isModerator) return false;
     return true;

@@ -275,22 +275,24 @@ const MediaMonitoringPage = () => {
         <div className="monitoring-header-actions">
           {hasMonitoring ? (
             <>
-              <Button 
-                onClick={() => {
-                  setViewMode('feeds')
-                  fetchFeeds()
-                }}
-                variant={viewMode === 'feeds' ? 'primary' : 'secondary'}
-              >
-                {t('monitoring.viewFeeds')}
-              </Button>
-              <Button 
-                onClick={() => setViewMode('news')}
-                variant={viewMode === 'news' ? 'primary' : 'secondary'}
-              >
-                {t('monitoring.viewNews')}
-              </Button>
-              <Button 
+              <div className="monitoring-tab-group">
+                <button
+                  className={`monitoring-tab ${viewMode === 'news' ? 'monitoring-tab--active' : ''}`}
+                  onClick={() => setViewMode('news')}
+                >
+                  {t('monitoring.viewNews')}
+                </button>
+                <button
+                  className={`monitoring-tab ${viewMode === 'feeds' ? 'monitoring-tab--active' : ''}`}
+                  onClick={() => {
+                    setViewMode('feeds')
+                    fetchFeeds()
+                  }}
+                >
+                  {t('monitoring.viewFeeds')}
+                </button>
+              </div>
+              <Button
                 onClick={handleAddSources}
                 variant="primary"
                 disabled={createLoading}
@@ -299,7 +301,7 @@ const MediaMonitoringPage = () => {
               </Button>
             </>
           ) : (
-            <Button 
+            <Button
               onClick={handleStartMonitoring}
               variant="primary"
               disabled={createLoading}
@@ -366,7 +368,7 @@ const MediaMonitoringPage = () => {
                   variant="secondary"
                   disabled={loading}
                 >
-                  🔄 {t('monitoring.refresh')}
+                  {t('monitoring.refresh')}
                 </Button>
               </div>
             </div>

@@ -32,8 +32,41 @@
   margin-top: 24px;
   display: flex;
   justify-content: center;
-  gap: 12px;
+  align-items: center;
+  gap: 16px;
   flex-wrap: wrap;
+}
+
+/* Tab-ryhmä navigaatiolle */
+.monitoring-tab-group {
+  display: inline-flex;
+  background: #e5e7eb;
+  border-radius: 10px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.monitoring-tab {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  color: #6b7280;
+}
+
+.monitoring-tab:hover:not(.monitoring-tab--active) {
+  background: rgba(255, 255, 255, 0.5);
+  color: #374151;
+}
+
+.monitoring-tab--active {
+  background: #ff6600;
+  color: white;
+  box-shadow: 0 2px 4px rgba(255, 102, 0, 0.3);
 }
 
 /* Loading tila */

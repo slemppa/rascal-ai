@@ -1266,7 +1266,9 @@ export default function SettingsIntegrationsTab() {
             className={`integration-card ${integration.isConfigured ? "integration-card-configured" : ""} ${expandedCard === integration.id ? "integration-card-expanded" : ""}`}
           >
             {(integration.id === "wordpress" ||
-              integration.id === "google_analytics") && (
+              integration.id === "google_analytics" ||
+              integration.id === "google_ads" ||
+              integration.id === "meta_ads") && (
               <span className="beta-tag">Beta</span>
             )}
             <div

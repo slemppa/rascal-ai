@@ -374,6 +374,20 @@ export default function SimpleSocialConnect() {
         <p>
           <strong>{t("settings.social.howItWorks")}</strong>
         </p>
+        <p style={{ margin: "4px 0" }}>
+          <a
+            href="https://rascalcompany.notion.site/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: "#2563eb",
+              textDecoration: "underline",
+              cursor: "pointer",
+            }}
+          >
+            {t("settings.social.instructionsLink")}
+          </a>
+        </p>
         <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
           <li>{t("settings.social.step1")}</li>
           <li>{t("settings.social.step2")}</li>

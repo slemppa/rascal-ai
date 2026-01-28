@@ -1944,6 +1944,7 @@
       "connectButton": "Yhdistä somet",
       "memberRestriction": "Jäsen-rooli: Voit tarkastella yhdistettyjä sometilejä, mutta et voi yhdistää uusia. Ota yhteyttä organisaation ylläpitoon uusien tilien yhdistämiseksi.",
       "howItWorks": "Miten toimii:",
+      "instructionsLink": "Katso ohjeet täältä",
       "step1": "Klikkaa \"Yhdistä somet\" -nappia",
       "step2": "Mixpost-palvelu avautuu modaalissa",
       "step3": "Kirjaudu ja yhdistä haluamasi some-tilit",

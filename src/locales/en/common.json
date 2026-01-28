@@ -1865,6 +1865,7 @@
       "connectButton": "Connect social media",
       "memberRestriction": "Member role: You can view connected social accounts but cannot connect new ones. Contact organization admin to connect new accounts.",
       "howItWorks": "How it works:",
+      "instructionsLink": "View instructions here",
       "step1": "Click the \"Connect social media\" button",
       "step2": "Mixpost service opens in a modal",
       "step3": "Sign in and connect your social accounts",

@@ -388,12 +388,6 @@ export default function SimpleSocialConnect() {
             {t("settings.social.instructionsLink")}
           </a>
         </p>
-        <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
-          <li>{t("settings.social.step1")}</li>
-          <li>{t("settings.social.step2")}</li>
-          <li>{t("settings.social.step3")}</li>
-          <li>{t("settings.social.step4")}</li>
-        </ul>
       </div>
     </div>
   );

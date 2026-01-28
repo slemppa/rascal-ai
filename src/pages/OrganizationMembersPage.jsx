@@ -352,13 +352,16 @@ const OrganizationMembersPage = () => {
                       const memberRole = member.role || "member";
                       const isOwner = memberRole === "owner";
 
-                      // Owner-roolia ei voi muuttaa (kukaan ei voi vaihtaa owner-roolia)
-                      // Muut roolit voi muuttaa jos:
+                      // Roolin voi muuttaa jos:
                       // 1. Käyttäjällä on oikeudet (admin/owner) - tarkistetaan canUpdateRole
                       // 2. Ei ole oma käyttäjä - tarkistetaan !isCurrentUser
-                      // 3. Jäsenen rooli EI ole owner - tarkistetaan !isOwner
+                      // 3. JA JOKO:
+                      //    - Kirjautunut on owner (voi muuttaa ketä tahansa, myös ownereita)
+                      //    - TAI kohde ei ole owner (admin voi muuttaa admin/member välillä)
                       const canChangeThisRole = Boolean(
-                        canUpdateRole && !isCurrentUser && !isOwner,
+                        canUpdateRole &&
+                        !isCurrentUser &&
+                        (organization.role === "owner" || !isOwner),
                       );
 
                       // Debug logi - näytetään vain jos ongelma
@@ -375,8 +378,8 @@ const OrganizationMembersPage = () => {
                           canChangeThisRole,
                           reason: isCurrentUser
                             ? "is current user"
-                            : isOwner
-                              ? "is owner (cannot change owner role)"
+                            : isOwner && organization.role !== "owner"
+                              ? "is owner (only owner can change owner role)"
                               : "unknown",
                         });
                       }
@@ -402,7 +405,11 @@ const OrganizationMembersPage = () => {
                                 <option value="admin">
                                   {t("orgMembers.roleAdmin")}
                                 </option>
-                                {/* Owner-roolia ei voi valita select-kentästä */}
+                                {organization.role === "owner" && (
+                                  <option value="owner">
+                                    {t("orgMembers.roleOwner")}
+                                  </option>
+                                )}
                               </select>
                             ) : (
                               <span

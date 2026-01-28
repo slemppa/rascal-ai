@@ -52,7 +52,7 @@ export default function FeaturesTab({
   onFeatureToggle,
   userId, // Käyttäjän/organisaation ID
 }) {
-  const { organization } = useAuth();
+  const { organization, user } = useAuth();
   const [userData, setUserData] = useState(null);
   const [onboardingCompleted, setOnboardingCompleted] = useState(false);
   const [onboardingLoading, setOnboardingLoading] = useState(true);
@@ -143,10 +143,16 @@ export default function FeaturesTab({
 
     try {
       // Tarkista onko käyttäjä admin/moderator/owner
-      const isAdmin =
+      // Tarkistetaan SEKÄ system role (users.role) ETTÄ organization role (org_members.role)
+      const isSystemAdmin =
+        user?.systemRole === "admin" ||
+        user?.systemRole === "superadmin" ||
+        user?.systemRole === "moderator";
+      const isOrgAdmin =
         organization?.role === "admin" ||
         organization?.role === "owner" ||
         organization?.role === "moderator";
+      const isAdmin = isSystemAdmin || isOrgAdmin;
 
       if (isAdmin) {
         // Käytä admin-data endpointia admin-käyttäjille (ohittaa RLS:n)
@@ -226,10 +232,16 @@ export default function FeaturesTab({
       const platformsToSave = Array.isArray(newPlatforms) ? newPlatforms : [];
 
       // Tarkista onko käyttäjä admin/moderator/owner
-      const isAdmin =
+      // Tarkistetaan SEKÄ system role (users.role) ETTÄ organization role (org_members.role)
+      const isSystemAdmin =
+        user?.systemRole === "admin" ||
+        user?.systemRole === "superadmin" ||
+        user?.systemRole === "moderator";
+      const isOrgAdmin =
         organization?.role === "admin" ||
         organization?.role === "owner" ||
         organization?.role === "moderator";
+      const isAdmin = isSystemAdmin || isOrgAdmin;
 
       if (isAdmin) {
         // Käytä admin-data endpointia admin-käyttäjille (ohittaa RLS:n)

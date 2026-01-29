@@ -19,9 +19,9 @@ export default function PlacidTemplatesList() {
   const [togglingTemplateId, setTogglingTemplateId] = useState(null)
 
   // Tarkista onko käyttäjä admin
-  const isAdmin = user?.systemRole === 'admin' || user?.systemRole === 'superadmin'
+  const isAdmin = user?.systemRole === 'admin' || user?.systemRole === 'superadmin' || user?.systemRole === 'moderator'
 
-  // Näytä vain admin-käyttäjille
+  // Näytä vain admin-, superadmin- ja moderator-käyttäjille
   if (!isAdmin) {
     return null
   }

@@ -1295,7 +1295,7 @@
         "voice": "Ääni",
         "name": "Nimi",
         "phone": "Puhelinnumero",
-        "phonePlaceholder": "040 123 4567 tai +358401234567",
+        "phonePlaceholder": "040 123 4567, +358401234567, +4612345678",
         "calling": "Soittaa…",
         "call": "Soita",
         "step1": {

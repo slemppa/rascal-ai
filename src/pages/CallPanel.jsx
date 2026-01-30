@@ -410,46 +410,25 @@ export default function CallPanel() {
     }
   };
 
-  // Apufunktio puhelinnumeron normalisointiin +358-muotoon
+  // Apufunktio puhelinnumeron normalisointiin kansainväliseen muotoon
   const normalizePhoneNumber = (phoneNumber) => {
     if (!phoneNumber) return null;
+    let x = String(phoneNumber).trim();
+    // Poista välilyönnit ja yhdysmerkit
+    x = x.replace(/[\s-]/g, "");
 
-    // Poista kaikki ei-numeeriset merkit paitsi + ja -
-    let cleaned = phoneNumber.toString().replace(/[^\d+\-]/g, "");
-
-    // Jos numero alkaa +358:lla, palauta sellaisenaan
-    if (cleaned.startsWith("+358")) {
-      return cleaned;
+    // Lisää +358 vain 0-alkuisiin numeroihin (suomalaiset)
+    if (/^0\d+/.test(x)) {
+      return "+358" + x.slice(1);
     }
 
-    // Jos numero alkaa 358:lla ilman +, lisää +
-    if (cleaned.startsWith("358")) {
-      return "+" + cleaned;
+    // Jos alkaa +:lla, palauta sellaisenaan (kansainväliset numerot)
+    if (x.startsWith("+")) {
+      return x;
     }
 
-    // Jos numero alkaa 0:lla, poista se ja lisää +358
-    if (cleaned.startsWith("0")) {
-      return "+358" + cleaned.substring(1);
-    }
-
-    // Jos numero on 9 numeroa (suomalainen mobiili), lisää +358
-    // Tämä kattaa muodot kuten: 401234567, 501234567, 301234567
-    if (cleaned.length === 9 && /^\d{9}$/.test(cleaned)) {
-      return "+358" + cleaned;
-    }
-
-    // Jos numero on 10 numeroa ja alkaa 0:lla, poista 0 ja lisää +358
-    if (cleaned.length === 10 && cleaned.startsWith("0")) {
-      return "+358" + cleaned.substring(1);
-    }
-
-    // Jos numero on jo oikeassa muodossa (10-15 numeroa), lisää +358
-    if (cleaned.length >= 10 && cleaned.length <= 15 && /^\d+$/.test(cleaned)) {
-      return "+358" + cleaned;
-    }
-
-    // Jos mikään ei täsmää, palauta alkuperäinen
-    return phoneNumber;
+    // Kaikki muut hylätään (ei maakoodia)
+    return null;
   };
 
   const handleStartCalls = async () => {
@@ -691,8 +670,10 @@ export default function CallPanel() {
       // Normalisoi puhelinnumero
       const normalizedPhoneNumber = normalizePhoneNumber(phoneNumber);
 
-      if (!normalizedPhoneNumber || !normalizedPhoneNumber.startsWith("+358")) {
-        setSingleCallError("Kelvollinen suomalainen puhelinnumero vaaditaan");
+      if (!normalizedPhoneNumber || !normalizedPhoneNumber.startsWith("+")) {
+        setSingleCallError(
+          "Kelvollinen puhelinnumero maakoodilla vaaditaan (esim. +358401234567)",
+        );
         setCalling(false);
         return;
       }

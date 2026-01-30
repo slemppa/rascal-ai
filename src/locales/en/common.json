@@ -1258,7 +1258,7 @@
         "voice": "Voice",
         "name": "Name",
         "phone": "Phone number",
-        "phonePlaceholder": "040 123 4567 or +358401234567",
+        "phonePlaceholder": "040 123 4567, +358401234567, +4612345678",
         "calling": "Calling…",
         "call": "Call",
         "step1": {

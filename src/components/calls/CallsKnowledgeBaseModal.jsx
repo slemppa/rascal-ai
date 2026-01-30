@@ -1,208 +1,261 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
-import axios from 'axios'
-import { supabase } from '../../lib/supabase'
+import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import axios from "axios";
+import { supabase } from "../../lib/supabase";
+
+/**
+ * Safely converts any error value to a string for React rendering.
+ * Prevents React error #31 (objects are not valid as React children).
+ */
+function toErrorString(error) {
+  if (typeof error === "string") return error;
+  if (error && typeof error === "object") {
+    return error.message || error.error || JSON.stringify(error);
+  }
+  return String(error || "Unknown error");
+}
 
 export default function CallsKnowledgeBaseModal({ open, onClose }) {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [hasDatabase, setHasDatabase] = useState(false)
-  const [files, setFiles] = useState([])
-  const [activeTab, setActiveTab] = useState('files') // 'files' | 'add'
-  const [addMode, setAddMode] = useState('pdf') // 'pdf' | 'web'
-  const [inboundEnabled, setInboundEnabled] = useState(false)
-  const [outboundEnabled, setOutboundEnabled] = useState(false)
-  const [toggleLoading, setToggleLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [hasDatabase, setHasDatabase] = useState(false);
+  const [files, setFiles] = useState([]);
+  const [activeTab, setActiveTab] = useState("files"); // 'files' | 'add'
+  const [addMode, setAddMode] = useState("pdf"); // 'pdf' | 'web'
+  const [inboundEnabled, setInboundEnabled] = useState(false);
+  const [outboundEnabled, setOutboundEnabled] = useState(false);
+  const [toggleLoading, setToggleLoading] = useState(false);
 
-  const [pendingFiles, setPendingFiles] = useState([])
-  const [uploadLoading, setUploadLoading] = useState(false)
-  const [uploadError, setUploadError] = useState('')
-  const [uploadSuccess, setUploadSuccess] = useState('')
-  const dropRef = useRef(null)
-  const [dragActive, setDragActive] = useState(false)
+  const [pendingFiles, setPendingFiles] = useState([]);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const [uploadSuccess, setUploadSuccess] = useState("");
+  const dropRef = useRef(null);
+  const [dragActive, setDragActive] = useState(false);
 
-  const [webTitle, setWebTitle] = useState('')
-  const [webUrl, setWebUrl] = useState('')
-  const [webLoading, setWebLoading] = useState(false)
-  const [webError, setWebError] = useState('')
+  const [webTitle, setWebTitle] = useState("");
+  const [webUrl, setWebUrl] = useState("");
+  const [webLoading, setWebLoading] = useState(false);
+  const [webError, setWebError] = useState("");
 
   const fetchStatusAndList = async () => {
-    setError('')
-    setLoading(true)
+    setError("");
+    setLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.access_token) throw new Error('Ei aktiivista sessiota')
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error("Ei aktiivista sessiota");
 
       const statusResp = await axios.post(
-        '/api/calls/knowledge-base',
-        { action: 'status' },
-        { headers: { Authorization: `Bearer ${session.access_token}` } }
-      )
-      const has = Boolean(statusResp?.data?.vector_store_id)
-      setHasDatabase(has)
-      setInboundEnabled(Boolean(statusResp?.data?.inbound_enabled))
-      setOutboundEnabled(Boolean(statusResp?.data?.outbound_enabled))
+        "/api/calls/knowledge-base",
+        { action: "status" },
+        { headers: { Authorization: `Bearer ${session.access_token}` } },
+      );
+      const has = Boolean(statusResp?.data?.vector_store_id);
+      setHasDatabase(has);
+      setInboundEnabled(Boolean(statusResp?.data?.inbound_enabled));
+      setOutboundEnabled(Boolean(statusResp?.data?.outbound_enabled));
 
       if (!has) {
-        setFiles([])
-        return
+        setFiles([]);
+        return;
       }
 
       const listResp = await axios.post(
-        '/api/calls/knowledge-base',
-        { action: 'list' },
-        { headers: { Authorization: `Bearer ${session.access_token}` } }
-      )
+        "/api/calls/knowledge-base",
+        { action: "list" },
+        { headers: { Authorization: `Bearer ${session.access_token}` } },
+      );
 
-      const arr = Array.isArray(listResp?.data?.files) ? listResp.data.files : []
+      const arr = Array.isArray(listResp?.data?.files)
+        ? listResp.data.files
+        : [];
       const normalized = arr.map((item) => ({
         id: item?.id,
-        file_name: item?.file_name || 'Tiedosto',
-        source_type: item?.source_type || 'file',
+        file_name: item?.file_name || "Tiedosto",
+        source_type: item?.source_type || "file",
         source_url: item?.source_url || null,
-      }))
-      setFiles(normalized)
+      }));
+      setFiles(normalized);
     } catch (e) {
-      setError(e?.response?.data?.error || e?.message || 'Tietokannan haku epäonnistui')
+      setError(
+        toErrorString(
+          e?.response?.data?.error ||
+            e?.message ||
+            "Tietokannan haku epäonnistui",
+        ),
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    if (!open) return
-    setPendingFiles([])
-    setUploadError('')
-    setUploadSuccess('')
-    setWebError('')
-    setActiveTab('files')
-    setAddMode('pdf')
-    fetchStatusAndList()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open])
+    if (!open) return;
+    setPendingFiles([]);
+    setUploadError("");
+    setUploadSuccess("");
+    setWebError("");
+    setActiveTab("files");
+    setAddMode("pdf");
+    fetchStatusAndList();
+  }, [open]);
 
   const handlePickFiles = (fileList) => {
-    const next = Array.from(fileList || [])
-    if (!next.length) return
-    setPendingFiles((prev) => [...prev, ...next])
-  }
+    const next = Array.from(fileList || []);
+    if (!next.length) return;
+    setPendingFiles((prev) => [...prev, ...next]);
+  };
 
   const handleCreate = async () => {
-    setError('')
-    setLoading(true)
+    setError("");
+    setLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.access_token) throw new Error('Ei aktiivista sessiota')
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error("Ei aktiivista sessiota");
 
       await axios.post(
-        '/api/calls/knowledge-base',
-        { action: 'create' },
-        { headers: { Authorization: `Bearer ${session.access_token}` } }
-      )
-      setHasDatabase(true)
-      await fetchStatusAndList()
+        "/api/calls/knowledge-base",
+        { action: "create" },
+        { headers: { Authorization: `Bearer ${session.access_token}` } },
+      );
+      setHasDatabase(true);
+      await fetchStatusAndList();
     } catch (e) {
-      setError(e?.response?.data?.error || e?.message || 'Tietokannan luonti epäonnistui')
+      setError(
+        toErrorString(
+          e?.response?.data?.error ||
+            e?.message ||
+            "Tietokannan luonti epäonnistui",
+        ),
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleToggle = async (bot, enabled) => {
-    setError('')
-    setToggleLoading(true)
+    setError("");
+    setToggleLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.access_token) throw new Error('Ei aktiivista sessiota')
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error("Ei aktiivista sessiota");
 
       const resp = await axios.post(
-        '/api/calls/knowledge-base',
-        { action: 'set_enabled', bot, enabled },
-        { headers: { Authorization: `Bearer ${session.access_token}` } }
-      )
+        "/api/calls/knowledge-base",
+        { action: "set_enabled", bot, enabled },
+        { headers: { Authorization: `Bearer ${session.access_token}` } },
+      );
 
-      setInboundEnabled(Boolean(resp?.data?.inbound_enabled))
-      setOutboundEnabled(Boolean(resp?.data?.outbound_enabled))
+      setInboundEnabled(Boolean(resp?.data?.inbound_enabled));
+      setOutboundEnabled(Boolean(resp?.data?.outbound_enabled));
     } catch (e) {
-      setError(e?.response?.data?.error || e?.message || 'Kytkentä epäonnistui')
+      setError(
+        toErrorString(
+          e?.response?.data?.error || e?.message || "Kytkentä epäonnistui",
+        ),
+      );
     } finally {
-      setToggleLoading(false)
+      setToggleLoading(false);
     }
-  }
+  };
 
   const handleUpload = async () => {
-    setUploadError('')
-    setUploadSuccess('')
-    setUploadLoading(true)
+    setUploadError("");
+    setUploadSuccess("");
+    setUploadLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.access_token) throw new Error('Ei aktiivista sessiota')
-      if (!pendingFiles.length) throw new Error('Ei valittuja tiedostoja')
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error("Ei aktiivista sessiota");
+      if (!pendingFiles.length) throw new Error("Ei valittuja tiedostoja");
 
-      const fd = new FormData()
-      fd.append('fileNames', JSON.stringify(pendingFiles.map((f) => f.name)))
-      pendingFiles.forEach((f) => fd.append('files', f, f.name))
+      const fd = new FormData();
+      fd.append("fileNames", JSON.stringify(pendingFiles.map((f) => f.name)));
+      pendingFiles.forEach((f) => fd.append("files", f, f.name));
 
-      const resp = await axios.post(
-        '/api/calls/knowledge-base-upload',
-        fd,
-        { headers: { Authorization: `Bearer ${session.access_token}` } }
-      )
+      const resp = await axios.post("/api/calls/knowledge-base-upload", fd, {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
 
-      const uploadedCount = resp?.data?.uploaded || pendingFiles.length
-      setUploadSuccess(`${uploadedCount} tiedosto(a) ladattu`)
-      setPendingFiles([])
-      await fetchStatusAndList()
+      const uploadedCount = resp?.data?.uploaded || pendingFiles.length;
+      setUploadSuccess(`${uploadedCount} tiedosto(a) ladattu`);
+      setPendingFiles([]);
+      await fetchStatusAndList();
     } catch (e) {
-      setUploadError(e?.response?.data?.error || e?.message || 'Tiedostojen lähetys epäonnistui')
+      setUploadError(
+        toErrorString(
+          e?.response?.data?.error ||
+            e?.message ||
+            "Tiedostojen lähetys epäonnistui",
+        ),
+      );
     } finally {
-      setUploadLoading(false)
+      setUploadLoading(false);
     }
-  }
+  };
 
   const handleDelete = async (id) => {
-    if (!id) return
-    setError('')
+    if (!id) return;
+    setError("");
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.access_token) throw new Error('Ei aktiivista sessiota')
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error("Ei aktiivista sessiota");
 
       await axios.post(
-        '/api/calls/knowledge-base',
-        { action: 'delete', id },
-        { headers: { Authorization: `Bearer ${session.access_token}` } }
-      )
+        "/api/calls/knowledge-base",
+        { action: "delete", id },
+        { headers: { Authorization: `Bearer ${session.access_token}` } },
+      );
 
-      setFiles((prev) => prev.filter((f) => f.id !== id))
+      setFiles((prev) => prev.filter((f) => f.id !== id));
     } catch (e) {
-      setError(e?.response?.data?.error || e?.message || 'Poisto epäonnistui')
+      setError(
+        toErrorString(
+          e?.response?.data?.error || e?.message || "Poisto epäonnistui",
+        ),
+      );
     }
-  }
+  };
 
   const handleAddWeb = async () => {
-    setWebError('')
-    setWebLoading(true)
+    setWebError("");
+    setWebLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.access_token) throw new Error('Ei aktiivista sessiota')
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error("Ei aktiivista sessiota");
 
       await axios.post(
-        '/api/calls/knowledge-base-ingest',
-        { type: 'web', title: webTitle, url: webUrl },
-        { headers: { Authorization: `Bearer ${session.access_token}` } }
-      )
+        "/api/calls/knowledge-base-ingest",
+        { type: "web", title: webTitle, url: webUrl },
+        { headers: { Authorization: `Bearer ${session.access_token}` } },
+      );
 
-      setWebTitle('')
-      setWebUrl('')
-      await fetchStatusAndList()
+      setWebTitle("");
+      setWebUrl("");
+      await fetchStatusAndList();
     } catch (e) {
-      setWebError(e?.response?.data?.error || e?.message || 'URL:n lisäys epäonnistui')
+      setWebError(
+        toErrorString(
+          e?.response?.data?.error || e?.message || "URL:n lisäys epäonnistui",
+        ),
+      );
     } finally {
-      setWebLoading(false)
+      setWebLoading(false);
     }
-  }
+  };
 
-  if (!open) return null
+  if (!open) return null;
 
   return createPortal(
     <div
@@ -212,7 +265,7 @@ export default function CallsKnowledgeBaseModal({ open, onClose }) {
       <div
         className="edit-card-modal modal-container"
         onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: '720px' }}
+        style={{ maxWidth: "720px" }}
       >
         <div className="edit-card-modal-header">
           <h2>Tietokanta</h2>
@@ -227,31 +280,32 @@ export default function CallsKnowledgeBaseModal({ open, onClose }) {
 
         <div className="edit-card-modal-body">
           <div className="post-edit-fields">
-            <div className="post-edit-field" style={{ gridColumn: '1 / -1' }}>
+            <div className="post-edit-field" style={{ gridColumn: "1 / -1" }}>
               <div className="calls-kb-helper-text">
                 Sallitut arvot: <strong>pdf</strong>, <strong>web</strong>
               </div>
-              {error ? (
-                <div className="calls-kb-error">{error}</div>
-              ) : null}
+              {error ? <div className="calls-kb-error">{error}</div> : null}
             </div>
 
             {hasDatabase ? (
               <>
-                <div className="post-edit-field" style={{ gridColumn: '1 / -1' }}>
+                <div
+                  className="post-edit-field"
+                  style={{ gridColumn: "1 / -1" }}
+                >
                   <div className="calls-kb-tabs">
                     <button
                       type="button"
-                      className={`cancel-card-btn calls-kb-tab ${activeTab === 'files' ? 'is-active' : ''}`}
-                      onClick={() => setActiveTab('files')}
+                      className={`cancel-card-btn calls-kb-tab ${activeTab === "files" ? "is-active" : ""}`}
+                      onClick={() => setActiveTab("files")}
                       disabled={loading || uploadLoading || webLoading}
                     >
                       Tiedostot
                     </button>
                     <button
                       type="button"
-                      className={`cancel-card-btn calls-kb-tab ${activeTab === 'add' ? 'is-active' : ''}`}
-                      onClick={() => setActiveTab('add')}
+                      className={`cancel-card-btn calls-kb-tab ${activeTab === "add" ? "is-active" : ""}`}
+                      onClick={() => setActiveTab("add")}
                       disabled={loading || uploadLoading || webLoading}
                     >
                       Lisää
@@ -259,31 +313,58 @@ export default function CallsKnowledgeBaseModal({ open, onClose }) {
                   </div>
                 </div>
 
-                {activeTab === 'files' && (
-                  <div className="post-edit-field" style={{ gridColumn: '1 / -1' }}>
+                {activeTab === "files" && (
+                  <div
+                    className="post-edit-field"
+                    style={{ gridColumn: "1 / -1" }}
+                  >
                     <div className="calls-kb-files-header">
                       <label>Tiedostot ({files.length})</label>
                       <div className="calls-kb-switches">
                         <div className="calls-kb-switch">
                           <span className="calls-kb-switch-label">Inbound</span>
-                          <label className="switch switch--brand" title="Inbound tietokanta käyttöön/pois">
+                          <label
+                            className="switch switch--brand"
+                            title="Inbound tietokanta käyttöön/pois"
+                          >
                             <input
                               type="checkbox"
                               checked={inboundEnabled}
-                              onChange={(e) => handleToggle('inbound', e.target.checked)}
-                              disabled={!hasDatabase || toggleLoading || loading || uploadLoading || webLoading}
+                              onChange={(e) =>
+                                handleToggle("inbound", e.target.checked)
+                              }
+                              disabled={
+                                !hasDatabase ||
+                                toggleLoading ||
+                                loading ||
+                                uploadLoading ||
+                                webLoading
+                              }
                             />
                             <span className="slider" />
                           </label>
                         </div>
                         <div className="calls-kb-switch">
-                          <span className="calls-kb-switch-label">Outbound</span>
-                          <label className="switch switch--brand" title="Outbound tietokanta käyttöön/pois">
+                          <span className="calls-kb-switch-label">
+                            Outbound
+                          </span>
+                          <label
+                            className="switch switch--brand"
+                            title="Outbound tietokanta käyttöön/pois"
+                          >
                             <input
                               type="checkbox"
                               checked={outboundEnabled}
-                              onChange={(e) => handleToggle('outbound', e.target.checked)}
-                              disabled={!hasDatabase || toggleLoading || loading || uploadLoading || webLoading}
+                              onChange={(e) =>
+                                handleToggle("outbound", e.target.checked)
+                              }
+                              disabled={
+                                !hasDatabase ||
+                                toggleLoading ||
+                                loading ||
+                                uploadLoading ||
+                                webLoading
+                              }
                             />
                             <span className="slider" />
                           </label>
@@ -300,11 +381,20 @@ export default function CallsKnowledgeBaseModal({ open, onClose }) {
                         <ul className="calls-kb-file-ul">
                           {files.map((f, idx) => (
                             <li
-                              key={(f.id || f.file_name || 'file') + idx}
+                              key={(f.id || f.file_name || "file") + idx}
                               className="calls-kb-file-li"
                             >
-                              <span className="calls-kb-file-name" title={f.source_type === 'web' ? f.source_url || f.file_name : f.file_name}>
-                                {f.source_type === 'web' ? `URL: ${f.file_name}` : f.file_name}
+                              <span
+                                className="calls-kb-file-name"
+                                title={
+                                  f.source_type === "web"
+                                    ? f.source_url || f.file_name
+                                    : f.file_name
+                                }
+                              >
+                                {f.source_type === "web"
+                                  ? `URL: ${f.file_name}`
+                                  : f.file_name}
                               </span>
                               <button
                                 type="button"
@@ -322,23 +412,26 @@ export default function CallsKnowledgeBaseModal({ open, onClose }) {
                   </div>
                 )}
 
-                {activeTab === 'add' && (
+                {activeTab === "add" && (
                   <>
-                    <div className="post-edit-field" style={{ gridColumn: '1 / -1' }}>
+                    <div
+                      className="post-edit-field"
+                      style={{ gridColumn: "1 / -1" }}
+                    >
                       <label>Lisää tyyppi:</label>
                       <div className="calls-kb-tabs">
                         <button
                           type="button"
-                          className={`cancel-card-btn calls-kb-tab ${addMode === 'pdf' ? 'is-active' : ''}`}
-                          onClick={() => setAddMode('pdf')}
+                          className={`cancel-card-btn calls-kb-tab ${addMode === "pdf" ? "is-active" : ""}`}
+                          onClick={() => setAddMode("pdf")}
                           disabled={loading || uploadLoading || webLoading}
                         >
                           PDF
                         </button>
                         <button
                           type="button"
-                          className={`cancel-card-btn calls-kb-tab ${addMode === 'web' ? 'is-active' : ''}`}
-                          onClick={() => setAddMode('web')}
+                          className={`cancel-card-btn calls-kb-tab ${addMode === "web" ? "is-active" : ""}`}
+                          onClick={() => setAddMode("web")}
                           disabled={loading || uploadLoading || webLoading}
                         >
                           URL
@@ -346,29 +439,43 @@ export default function CallsKnowledgeBaseModal({ open, onClose }) {
                       </div>
                     </div>
 
-                    {addMode === 'pdf' && (
-                      <div className="post-edit-field" style={{ gridColumn: '1 / -1' }}>
+                    {addMode === "pdf" && (
+                      <div
+                        className="post-edit-field"
+                        style={{ gridColumn: "1 / -1" }}
+                      >
                         <label>Lisää PDF (pdf):</label>
 
                         <div
                           ref={dropRef}
-                          onDragOver={(e) => { e.preventDefault(); setDragActive(true) }}
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            setDragActive(true);
+                          }}
                           onDragLeave={() => setDragActive(false)}
                           onDrop={(e) => {
-                            e.preventDefault()
-                            setDragActive(false)
-                            handlePickFiles(e.dataTransfer.files)
+                            e.preventDefault();
+                            setDragActive(false);
+                            handlePickFiles(e.dataTransfer.files);
                           }}
-                          onClick={() => dropRef.current?.querySelector('input[type=file]')?.click()}
-                          className={`upload-dropzone ${dragActive ? 'drag-active' : ''}`}
+                          onClick={() =>
+                            dropRef.current
+                              ?.querySelector("input[type=file]")
+                              ?.click()
+                          }
+                          className={`upload-dropzone ${dragActive ? "drag-active" : ""}`}
                         >
-                          <div className="calls-kb-dropzone-title">Vedä ja pudota PDF tähän</div>
-                          <div className="calls-kb-dropzone-subtitle">tai klikkaa valitaksesi (.pdf)</div>
+                          <div className="calls-kb-dropzone-title">
+                            Vedä ja pudota PDF tähän
+                          </div>
+                          <div className="calls-kb-dropzone-subtitle">
+                            tai klikkaa valitaksesi (.pdf)
+                          </div>
                           <input
                             type="file"
                             multiple
                             accept=".pdf,application/pdf"
-                            style={{ display: 'none' }}
+                            style={{ display: "none" }}
                             onChange={(e) => handlePickFiles(e.target.files)}
                           />
                         </div>
@@ -391,13 +498,18 @@ export default function CallsKnowledgeBaseModal({ open, onClose }) {
                         ) : null}
 
                         {uploadSuccess ? (
-                          <div className="calls-kb-success">{uploadSuccess}</div>
+                          <div className="calls-kb-success">
+                            {uploadSuccess}
+                          </div>
                         ) : null}
                       </div>
                     )}
 
-                    {addMode === 'web' && (
-                      <div className="post-edit-field" style={{ gridColumn: '1 / -1' }}>
+                    {addMode === "web" && (
+                      <div
+                        className="post-edit-field"
+                        style={{ gridColumn: "1 / -1" }}
+                      >
                         <label>Lisää URL (web):</label>
                         <input
                           type="text"
@@ -423,7 +535,7 @@ export default function CallsKnowledgeBaseModal({ open, onClose }) {
                             onClick={handleAddWeb}
                             disabled={loading || webLoading || !webUrl.trim()}
                           >
-                            {webLoading ? 'Lisätään...' : 'Lisää URL'}
+                            {webLoading ? "Lisätään..." : "Lisää URL"}
                           </button>
                         </div>
                       </div>
@@ -432,7 +544,7 @@ export default function CallsKnowledgeBaseModal({ open, onClose }) {
                 )}
               </>
             ) : (
-              <div className="post-edit-field" style={{ gridColumn: '1 / -1' }}>
+              <div className="post-edit-field" style={{ gridColumn: "1 / -1" }}>
                 <div className="calls-kb-warn">
                   Tietokantaa ei ole vielä luotu tälle organisaatiolle.
                 </div>
@@ -456,7 +568,7 @@ export default function CallsKnowledgeBaseModal({ open, onClose }) {
               onClick={handleCreate}
               disabled={loading}
             >
-              {loading ? 'Luodaan...' : 'Luo tietokanta'}
+              {loading ? "Luodaan..." : "Luo tietokanta"}
             </button>
           ) : (
             <div className="calls-kb-footer-right">
@@ -470,16 +582,21 @@ export default function CallsKnowledgeBaseModal({ open, onClose }) {
               <button
                 className="save-card-btn"
                 onClick={handleUpload}
-                disabled={activeTab !== 'add' || addMode !== 'pdf' || loading || uploadLoading || pendingFiles.length === 0}
+                disabled={
+                  activeTab !== "add" ||
+                  addMode !== "pdf" ||
+                  loading ||
+                  uploadLoading ||
+                  pendingFiles.length === 0
+                }
               >
-                {uploadLoading ? 'Lähetetään...' : 'Lähetä tiedostot'}
+                {uploadLoading ? "Lähetetään..." : "Lähetä tiedostot"}
               </button>
             </div>
           )}
         </div>
       </div>
     </div>,
-    document.body
-  )
+    document.body,
+  );
 }
-
